@@ -43,6 +43,9 @@ namespace trotl
 /// encapsulation of the OCIServer handle, used in OCIPL::OciLogin
 TROTL_EXPORT typedef OciHandleWrapper<OCISvcCtx> OciContext;
 
+/// ten bytes (SID,SERIAL#) encoded
+typedef struct  UB10 { ub1 bytes[10]; } UB10;
+
 struct TROTL_EXPORT OracleServer : public OciHandle<OCIServer>
 {
 	typedef OciHandle<OCIServer> super;
@@ -171,12 +174,16 @@ struct TROTL_EXPORT OciLogin : public OciHandle<OCISvcCtx>
 	typedef OciHandle<OCISvcCtx> super;
 
 	OciLogin(OciEnv& env, const LoginPara& login_para, ub4 mode=OCI_DEFAULT)
-		: super(env),
-		  _server(env),
-		  _session(env),
-		  _connected(false)
+		: super(env)
+		, _server(env)
+		, _session(env)
+		, _connected(false)
+		, _sid(0)
+		, _serial(0)
+
 	{
 		connect(login_para._username, login_para._password, login_para._tnsname, mode);
+		getSidAndSerial();
 	}
 
 	OciLogin(OciEnv& env, const LoginAndPChangePara& login_para, ub4 mode=OCI_DEFAULT)
@@ -186,6 +193,7 @@ struct TROTL_EXPORT OciLogin : public OciHandle<OCISvcCtx>
 		  _connected(false)
 	{
 		connect_and_pchange(login_para._username, login_para._password, login_para._new_password, login_para._tnsname, mode);
+		getSidAndSerial();
 	}
 
 	OciLogin(OciEnv& env, const tstring& username, const tstring& password, const tstring& tnsname, ub4 mode=OCI_DEFAULT)
@@ -195,6 +203,7 @@ struct TROTL_EXPORT OciLogin : public OciHandle<OCISvcCtx>
 		  _connected(false)
 	{
 		connect(username, password, tnsname, mode);
+		getSidAndSerial();
 	}
 
 	void connect(const tstring& username, const tstring& password, const tstring& tnsname, ub4 mode=OCI_DEFAULT)
@@ -294,9 +303,25 @@ struct TROTL_EXPORT OciLogin : public OciHandle<OCISvcCtx>
 		oci_check_error(__TROTL_HERE__, _env._errh, res);
 	}
 
+	void getSidAndSerial()
+	{
+		// See metalink note 971323.1
+		UB10 s = _session.get_attribute<UB10>(OCI_ATTR_MIGSESSION);
+		ub1 * sessionInfo = &s.bytes[0];
+
+		// calculate SID by bitshifting - memcpy() would do fals order
+		for (int i=0; i< sessionInfo[1];i++)
+			_sid = _sid + ((ub4)(sessionInfo[2+i]) << ((3-i)*8));
+		// calculate SERIAL# by bitshifting - memcpy() would do fals order
+		for (int i=0; i< sessionInfo[6];i++)
+			_serial = _serial + ((ub4)(sessionInfo[7+i]) << ((1-i)*8));
+	}
+
 	OracleServer	_server;
 	tstring	_warnings;
 	tstring	_tnsname;
+	ub4 _sid;
+	ub2 _serial;
 
 protected:
 #if _MSC_VER==1400

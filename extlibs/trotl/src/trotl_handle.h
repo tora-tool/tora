@@ -359,15 +359,31 @@ struct OciHandle : public OciHandleID<TYPE>
 		if( Loki::TypeTraits<RETTYPE>::isIntegral)
 		{
 			RETTYPE retval;
-			sword res = OCICALL(OCIAttrGet(_handle, OciHandleID<OCIParam>::get_type_id(), &retval, 0, attrtype, _env._errh));
+			sword res = OCICALL(OCIAttrGet(_handle, OciHandleID<TYPE>::get_type_id(), &retval, 0, attrtype, _env._errh));
 			oci_check_error(__TROTL_HERE__, _env._errh, res);
 			return retval;
 		}
 		else if( Loki::TypeTraits<RETTYPE>::isPointer)
 		{
 			RETTYPE retval;
-			sword res = OCICALL(OCIAttrGet(_handle, OciHandleID<OCIParam>::get_type_id(), &retval, 0, attrtype, _env._errh));
+			sword res = OCICALL(OCIAttrGet(_handle, OciHandleID<TYPE>::get_type_id(), &retval, 0, attrtype, _env._errh));
 			oci_check_error(__TROTL_HERE__, _env._errh, res);
+			return retval;
+		} else if( Loki::IsSameType<RETTYPE, UB10>::value)
+		{
+			RETTYPE retval;
+			ub1* p_retval = &retval.bytes[0];
+			ub4 infoSize = sizeof(retval.bytes);
+
+			sword res = OCICALL(OCIAttrGet(_handle, OciHandleID<TYPE>::get_type_id(), (dvoid *)(&p_retval), &infoSize, attrtype, _env._errh));
+			oci_check_error(__TROTL_HERE__, _env._errh, res); // TODO potentical race. Use sessions local errh instead of "global" _env._errh
+
+			if( p_retval != &retval.bytes[0])
+			{
+				// Oracle does not use our provided bytes
+				// p_retval points into OCI interval structures (the example in the metalink note 971323.1 is wrong)
+				memcpy(&retval.bytes[0], p_retval, (std::min)(infoSize, sizeof(retval.bytes)));
+			}
 			return retval;
 		}
 		// NOTE: I can not specialize template method of the templace class.
