@@ -382,7 +382,7 @@ struct OciHandle : public OciHandleID<TYPE>
 			{
 				// Oracle does not use our provided bytes
 				// p_retval points into OCI interval structures (the example in the metalink note 971323.1 is wrong)
-				memcpy(&retval.bytes[0], p_retval, (std::min)(infoSize, sizeof(retval.bytes)));
+				memcpy(&retval.bytes[0], p_retval, (std::min)((size_t)infoSize, sizeof(retval.bytes)));
 			}
 			return retval;
 		}

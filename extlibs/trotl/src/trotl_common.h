@@ -84,6 +84,9 @@ namespace trotl
 typedef TROTL_EXPORT ::std::string tstring;
 typedef TROTL_EXPORT ::std::ostringstream tostream;
 
+/// ten bytes (SID,SERIAL#) encoded
+typedef struct  UB10 { ub1 bytes[10]; } UB10;
+
 //TODO
 //#include <fstream>
 //#define USE_BOOST_THREAD_MANAGER

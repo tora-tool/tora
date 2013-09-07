@@ -43,9 +43,6 @@ namespace trotl
 /// encapsulation of the OCIServer handle, used in OCIPL::OciLogin
 TROTL_EXPORT typedef OciHandleWrapper<OCISvcCtx> OciContext;
 
-/// ten bytes (SID,SERIAL#) encoded
-typedef struct  UB10 { ub1 bytes[10]; } UB10;
-
 struct TROTL_EXPORT OracleServer : public OciHandle<OCIServer>
 {
 	typedef OciHandle<OCIServer> super;
