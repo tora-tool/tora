@@ -469,14 +469,14 @@ void toHighlightedText::setHighlighter(int h) // slot
 
 	if(focus == this)
 		setHighlighter((HighlighterTypeEnum)h);
-	qDebug() << ">>> toHighlightedText::setHighlighter for" << focus->metaObject()->className();
+	TLOG(9, toDecorator, __HERE__) << " for: " << focus->metaObject()->className() << std::endl;
 }
 
 #ifdef QT_DEBUG
 void toHighlightedText::reportFocus()
 {
 	QWidget *focus = qApp->focusWidget();
-	qDebug() << "toHighlightedText::reportFocus: " << (focus ? focus->metaObject()->className() : QString("NULL"));
+	TLOG(9, toDecorator, __HERE__) << (focus ? focus->metaObject()->className() : QString("NULL")) << std::endl;
 }
 #endif
 
@@ -781,7 +781,7 @@ void toHighlightedText::focusInEvent(QFocusEvent *e)
 	m_haveFocus = true;
 	toHighlighterTypeButtonSingle::Instance().setEnabled(true);
 	toHighlighterTypeButtonSingle::Instance().setValue(highlighterType);
-	qDebug() << ">>> toHighlightedText::focusInEvent" << this << " " << highlighterType;
+	TLOG(9, toDecorator, __HERE__) << this << " " << highlighterType << std::endl;
 	scheduleParsing();
 	super::focusInEvent(e);
 }

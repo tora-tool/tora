@@ -161,7 +161,7 @@ inline thread_safe_log get_log( int idxLog)
     case 6: return templ_get_log_ownthread< 6>(NULL); // not used yet
     case 7: return templ_get_log_ownthread< 7>(NULL); // toEventQuery
     case 8: return templ_get_log_ownthread< 8>(NULL); // browser, other tools
-    case 9: return templ_get_log_ownthread< 9>(NULL); // not used yet
+    case 9: return templ_get_log_ownthread< 9>(NULL); // focus switching
     default:
         assert( false);
         return templ_get_log_ownthread< 0>(NULL);

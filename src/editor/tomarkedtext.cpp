@@ -43,6 +43,7 @@
 #include "core/toconf.h"
 #include "core/toconfiguration.h"
 #include "core/toglobalevent.h"
+#include "core/tologger.h"
 
 #include <QtGui/QClipboard>
 #include <QtGui/QPrintDialog>
@@ -553,7 +554,7 @@ void toMarkedText::setSelectionType(int aType)
 
 void toMarkedText::focusInEvent (QFocusEvent *e)
 {
-    qDebug() << ">>> toMarkedText::focusInEvent" << this;
+    TLOG(9, toDecorator, __HERE__) << this << std::endl;
     QsciScintilla::focusInEvent(e);
     int curline, curcol;
     getCursorPosition (&curline, &curcol);
