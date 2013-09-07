@@ -314,6 +314,15 @@ struct TROTL_EXPORT OciLogin : public OciHandle<OCISvcCtx>
 			_serial = _serial + ((ub4)(sessionInfo[7+i]) << ((1-i)*8));
 	}
 
+	bool hasTransaction()
+	{
+		boolean t = true;
+#if (OCI_MAJOR_VERSION >= 12)
+		t = _session.get_attribute<boolean>(OCI_ATTR_TRANSACTION_IN_PROGRESS);
+#endif
+		return t;
+	}
+
 	OracleServer	_server;
 	tstring	_warnings;
 	tstring	_tnsname;

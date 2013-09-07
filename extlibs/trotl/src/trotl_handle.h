@@ -356,26 +356,25 @@ struct OciHandle : public OciHandleID<TYPE>
 	template<class RETTYPE>
 	RETTYPE get_attribute(ub4 attrtype)
 	{
+		RETTYPE retval;
 		if( Loki::TypeTraits<RETTYPE>::isIntegral)
 		{
-			RETTYPE retval;
 			sword res = OCICALL(OCIAttrGet(_handle, OciHandleID<TYPE>::get_type_id(), &retval, 0, attrtype, _env._errh));
 			oci_check_error(__TROTL_HERE__, _env._errh, res);
 			return retval;
 		}
 		else if( Loki::TypeTraits<RETTYPE>::isPointer)
 		{
-			RETTYPE retval;
 			sword res = OCICALL(OCIAttrGet(_handle, OciHandleID<TYPE>::get_type_id(), &retval, 0, attrtype, _env._errh));
 			oci_check_error(__TROTL_HERE__, _env._errh, res);
 			return retval;
-		} else if( Loki::IsSameType<RETTYPE, UB10>::value)
+		}
+		else if( Loki::IsSameType<RETTYPE, UB10>::value)
 		{
-			RETTYPE retval;
 			ub1* p_retval = &retval.bytes[0];
 			ub4 infoSize = sizeof(retval.bytes);
 
-			sword res = OCICALL(OCIAttrGet(_handle, OciHandleID<TYPE>::get_type_id(), (dvoid *)(&p_retval), &infoSize, attrtype, _env._errh));
+			sword res = OCICALL(OCIAttrGet(_handle, OciHandleID<TYPE>::get_type_id(), &p_retval, &infoSize, attrtype, _env._errh));
 			oci_check_error(__TROTL_HERE__, _env._errh, res); // TODO potentical race. Use sessions local errh instead of "global" _env._errh
 
 			if( p_retval != &retval.bytes[0])
@@ -386,8 +385,6 @@ struct OciHandle : public OciHandleID<TYPE>
 			}
 			return retval;
 		}
-		// NOTE: I can not specialize template method of the templace class.
-		// see OCIParam::get_attribute<tstring>()
 		throw_oci_exception(OciException(__TROTL_HERE__, "Unsupported datatype: %s").arg(typeid(RETTYPE).name()));
 	};
 
