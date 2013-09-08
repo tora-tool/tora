@@ -300,6 +300,20 @@ struct TROTL_EXPORT OciLogin : public OciHandle<OCISvcCtx>
 		oci_check_error(__TROTL_HERE__, _env._errh, res);
 	}
 
+	unsigned sid()
+	{
+		if (_sid == 0)
+			getSidAndSerial();
+		return _sid;
+	}
+
+	unsigned serial()
+	{
+		if (_serial == 0)
+			getSidAndSerial();
+		return _serial;
+	}
+
 	void getSidAndSerial()
 	{
 		// See metalink note 971323.1

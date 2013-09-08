@@ -274,6 +274,8 @@ public:
      */
     void delWidget(QWidget *widget);
 
+    void connectionsMenu(QMenu*);
+
     /**
      * Add a statement to be run uppon making new connections.
      * @param sql Statement to run.
@@ -375,7 +377,7 @@ private:
     QList<QPointer<QWidget> > Widgets;
     QMap<QString, QString> InitStrings; // Key, SQL
     QSet<QString> Options;
-    QSet<toConnectionSub*> Connections;
+    QSet<toConnectionSub*> Connections, LentConnections;
     connectionImpl *pConnectionImpl;
     toConnectionTraits *pTrait;
     toCache *pCache;

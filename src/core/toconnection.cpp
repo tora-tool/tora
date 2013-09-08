@@ -50,6 +50,8 @@
 #include "core/toconfiguration.h"
 #include "core/toconnectionprovider.h"
 
+#include <QtGui/QMenu>
+
 toConnection::toConnection(const QString &provider,
                            const QString &user, const QString &password,
                            const QString &host, const QString &database,
@@ -286,6 +288,20 @@ bool toConnection::closeWidgets(void)
     return true;
 }
 
+void toConnection::connectionsMenu(QMenu *menu)
+{
+	QMutexLocker clock(&ConnectionLock);
+	Q_FOREACH(toConnectionSub* conn, LentConnections)
+	{
+		menu->addMenu(conn->sessionId());
+	}
+	menu->addSeparator();
+	Q_FOREACH(toConnectionSub* conn, Connections)
+	{
+		menu->addMenu(conn->sessionId());
+	}
+}
+
 QString toConnection::description(bool version) const
 {
     QString ret(User);
@@ -378,7 +394,8 @@ toConnectionSub* toConnection::borrowSub()
     if (!Connections.empty())
     {
         toConnectionSub* retval = *(Connections.begin());
-        Connections.erase(Connections.begin());
+        Connections.remove(retval);
+        LentConnections.insert(retval);
         LoanCnt.fetchAndAddAcquire(1);
         return retval;
     }
@@ -398,6 +415,7 @@ void toConnection::putBackSub(toConnectionSub *conn)
     	delete conn;
     else
     	Connections.insert(conn);
+    LentConnections.remove(conn);
 }
 
 void toConnection::allExecute(toSQL const& sql)

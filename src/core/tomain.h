@@ -166,7 +166,9 @@ protected slots:
     //bool close();
 
     /** Used to enable/disable entries in the windows menu */
-    virtual void updateWindowsMenu();
+    void updateWindowsMenu();
+
+    void updateConnectionsMenu();
 
     /** Used to enable/disable entries in the file menu */
     void showFileMenu(void);
@@ -312,7 +314,7 @@ private:
     toEditMenu &editMenu;
 
     /** View, Tools, Window, Help, Status menu. */
-    QMenu *viewMenu, *toolsMenu, *windowsMenu, *helpMenu, *statusMenu;
+    QMenu *viewMenu, *toolsMenu, *windowsMenu, *connectionsMenu, *helpMenu, *statusMenu;
 
     /** Current column/row label - diplayed in bottom right,  updated by worksheet widget*/
     QLabel *ColumnLabel, *RowLabel;

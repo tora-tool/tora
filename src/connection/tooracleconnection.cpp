@@ -331,6 +331,12 @@ QString toOracleConnectionSub::version()
 			.arg((int)_login->_server.releaseNumber(), 2, 10, QChar('0'));
 }
 
+QString toOracleConnectionSub::sessionId()
+{
+	QString retval("(%1, %2)");
+	return retval.arg(_login->sid()).arg(_login->serial());
+}
+
 queryImpl * toOracleConnectionSub::createQuery(toQuery *query)
 {
     return new oracleQuery(query, this);

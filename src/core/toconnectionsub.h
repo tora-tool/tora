@@ -59,6 +59,8 @@ public:
 
     virtual QString version() = 0;
 
+    virtual QString sessionId() = 0;
+
     virtual queryImpl* createQuery(toQuery *query) = 0;
 
     virtual toQAdditionalDescriptions* decribe(toCache::ObjectRef const&) = 0;

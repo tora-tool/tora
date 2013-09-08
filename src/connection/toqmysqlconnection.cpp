@@ -200,6 +200,28 @@ QString toQMySqlConnectionSub::version()
     return ret;
 }
 
+QString toQMySqlConnectionSub::sessionId()
+{
+	QString ret;
+	try
+	{
+		LockingPtr<QSqlDatabase> ptr(Connection, Lock);
+
+		QSqlQuery query = ptr->exec(toSQL::sql(SQLConnectionID, ParentConnection));
+		if (query.next() && query.isValid())
+		{
+			QSqlRecord record = query.record();
+			QVariant val = query.value(record.count() - 1);
+			ret = val.toString().toLatin1();
+		}
+	}
+	catch (...)
+	{
+		TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
+	}
+	return ret;
+}
+
 queryImpl* toQMySqlConnectionSub::createQuery(toQuery *query)
 {
 	return new mysqlQuery(query, this);

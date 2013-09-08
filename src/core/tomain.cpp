@@ -396,6 +396,9 @@ void toMain::createMenus()
             this,
             SLOT(windowCallback(QAction *)));
 
+    connectionsMenu = menuBar()->addMenu(tr("&Connection"));
+    connect(connectionsMenu, SIGNAL(aboutToShow()), this, SLOT(updateConnectionsMenu()));
+
     helpMenu = menuBar()->addMenu(tr("&Help"));
 
     helpMenu->addAction(helpCurrentAct);
@@ -639,6 +642,18 @@ void toMain::updateWindowsMenu(void)
     		action->setShortcut(Qt::CTRL + Qt::Key_1 + index++);
     	}
     }
+}
+
+void toMain::updateConnectionsMenu(void)
+{
+	connectionsMenu->clear();
+	try
+	{
+		toConnection &conn = toConnectionRegistrySing::Instance().currentConnection();
+		conn.connectionsMenu(connectionsMenu);
+	} catch(...) {
+
+	}
 }
 
 
