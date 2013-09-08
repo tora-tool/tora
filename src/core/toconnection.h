@@ -63,6 +63,8 @@ class queryImpl;         // defined in toqueryimpl.h
 class toConnectionSubLoan;
 class toSQL;
 
+class QMenu;
+
 /** Represent a database connection in TOra. Observe that this can mean several actual
  * connections to the database as queries that are expected to run a long time are sometimes
  * executed in their own connection to make sure the interface doesn't lock up for a long time.
