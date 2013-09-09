@@ -42,18 +42,18 @@
 #ifndef TOTEMPLATE_H
 #define TOTEMPLATE_H
 
-#include "tohelp.h"
-#include "toresultview.h"
+#include "core/tohelp.h"
+#include "core/toresultview.h"
 // due the TODock
-#include "utils.h"
+#include "core/utils.h"
+
+#include <QtCore/QString>
+#include <QtGui/QWidget>
+#include <QtGui/QShowEvent>
+#include <QtGui/QHideEvent>
 
 #include <list>
 #include <map>
-
-#include <QWidget>
-#include <QString>
-#include <QShowEvent>
-#include <QHideEvent>
 
 #include "ui_totemplateeditui.h"
 #include "ui_totemplateaddfileui.h"

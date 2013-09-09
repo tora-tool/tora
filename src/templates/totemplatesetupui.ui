@@ -125,7 +125,7 @@
   <customwidget>
    <class>toTreeWidget</class>
    <extends>QTreeWidget</extends>
-   <header>totreewidget.h</header>
+   <header>core/totreewidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

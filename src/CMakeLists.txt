@@ -154,9 +154,9 @@ SET(TORA_UI_SRC
 
   # #    toschedulerui.ui
 
-  #totemplateaddfileui.ui
-  #totemplateeditui.ui
-  #totemplatesetupui.ui
+  #TODO templates/totemplateaddfileui.ui
+  #TODO templates/totemplateeditui.ui
+  #TODO templates/totemplatesetupui.ui
   )
 
 IF (ORACLE_FOUND)
@@ -346,22 +346,21 @@ SET(TORA_MOC_CLASSES
 
   tools/toplsqltext.h
   tools/toplsqleditor.h
+
+  #TODO templates/tosqledit.h  
+  #TODO templates/totemplate.h
+  #     toproject.h
   
   #TODO tools/toalert.h
   #TODO tools/totuning.h
-  #TODO tools/tosqledit.h  
   #     todebug.h
   #     todebugtext.h
   #     toeditextensions.h
-  #     toplsqleditor.h
-  #     toplsqltext.h
-  #     toproject.h
   # #   toreport.h
   #     toresultlabel.h
   # #   toresultresources.h
   # #   toscheduler.h
   # # tostoragedefinition.h
-  #   totemplate.h
   )
 
 IF (ORACLE_FOUND)
@@ -593,14 +592,17 @@ SET(TORA_SOURCES
 
   tools/torollback.cpp
 
-  #TODO tools/toalert.cpp
-  #TODO tools/totuning.cpp
-  #TODO tools/tosqledit.cpp
-
   tools/toplsqleditor.cpp
   tools/toplsqltext.cpp
   
   tools/tosandboxtool.cpp
+
+  #TODO templates/tosqledit.cpp
+  #     totemplate.cpp
+  #     toproject.cpp
+
+  #TODO tools/toalert.cpp
+  #TODO tools/totuning.cpp
 
   #     totemplateprovider.cpp
 
@@ -610,17 +612,12 @@ SET(TORA_SOURCES
   #     toextratranslations.cpp
   #     tochartmanager.cpp
   #     tolegendchart.cpp
-  #     toplsqleditor.cpp
-  #     toplsqltext.cpp
 
-  #     toproject.cpp
   #     toreport.cpp
   #     toresultlabel.cpp
 
   #     toscheduler.cpp
 
-
-  #     totemplate.cpp
   #     tooracletable.cpp
   )
 

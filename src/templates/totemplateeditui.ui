@@ -89,7 +89,7 @@
        <widget class="QLineEdit" name="Name" />
       </item>
       <item row="3" column="0" colspan="3" >
-       <widget class="toMarkedText" native="1" name="Description" >
+       <widget class="toMarkedEditor" native="1" name="Description" >
         <property name="sizePolicy" >
          <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
           <horstretch>0</horstretch>
@@ -252,12 +252,12 @@
   <customwidget>
    <class>toTreeWidget</class>
    <extends>QTreeWidget</extends>
-   <header>totreewidget.h</header>
+   <header>core/totreewidget.h</header>
   </customwidget>
   <customwidget>
-   <class>toMarkedText</class>
+   <class>toMarkedEditor</class>
    <extends>QWidget</extends>
-   <header>tomarkedtext.h</header>
+   <header>editor/tomarkededitor.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

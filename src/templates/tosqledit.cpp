@@ -43,7 +43,9 @@
 #include "core/utils.h"
 #include "core/toconf.h"
 #include "core/toconnection.h"
-#include "editor/tohighlightedtext.h"
+#include "core/toeditmenu.h"
+#include "core/toconfiguration.h"
+#include "editor/tohighlightededitor.h"
 #include "core/tomainwindow.h"
 #include "core/toresultview.h"
 #include "core/tosql.h"
@@ -76,16 +78,16 @@
 class toSQLEditTool : public toTool
 {
 protected:
-    QWidget * Window;
+	toToolWidget *Window;
 
 public:
     toSQLEditTool()
         : toTool(920, "SQL Dictionary Editor")
+		, Window(NULL)
     {
-        Window = NULL;
     }
 
-    virtual QWidget *toolWindow(QWidget *parent, toConnection &connection)
+    virtual toToolWidget *toolWindow(QWidget *parent, toConnection &connection)
     {
         if (Window)
         {
@@ -106,7 +108,7 @@ public:
             qApp->translate("toSQLEditTool", "&Edit SQL..."),
             this,
             SLOT(createWindow()));
-        toMainWidget()->registerSQLEditor(key());
+        ////toMainWidget()->registerSQLEditor(key());
     }
 
     void closeWindow(void)
@@ -322,7 +324,7 @@ void toSQLEdit::deleteVersion(void)
 
         if (Version->count() == 0)
         {
-            toTreeWidgetItem *item = Utils::toFindItem(Statements, Name->text());
+            toTreeWidgetItem *item = Statements->toFindItem(Name->text());
             if (item)
             {
                 connectList(false);
@@ -380,13 +382,13 @@ void toSQLEdit::commitChanges(bool changeSelected)
     if (!splitVersion(Version->currentText(), provider, version))
         return ;
     QString name = Name->text();
-    toTreeWidgetItem *item = Utils::toFindItem(Statements, name);
+    toTreeWidgetItem *item = Statements->toFindItem(name);
     if (!item)
     {
         int i = name.indexOf(QString::fromLatin1(":"));
         if (i >= 0)
         {
-            item = Utils::toFindItem(Statements, name.mid(0, i));
+            item = Statements->toFindItem(name.mid(0, i));
             if (!item)
                 item = new toTreeWidgetItem(Statements, name.mid(0, i));
             item = new toTreeWidgetItem(item, name.mid(i + 1));
@@ -491,7 +493,7 @@ void toSQLEdit::changeSQL(const QString &name, const QString &maxver)
     Name->setText(name);
     Name->setModified(false);
 
-    toTreeWidgetItem *item = Utils::toFindItem(Statements, name);
+    toTreeWidgetItem *item = Statements->toFindItem(name);
     if (item)
     {
         connectList(false);
@@ -657,7 +659,8 @@ QString toSQLTemplateItem::allText(int) const
         toSQL::sqlMap defs = toSQL::definitions();
         if (defs.find(Name) == defs.end())
             return QString::null;
-        return toSQL::string(Name, toMainWidget()->currentConnection()) + ";";
+        QObject *o = this;
+        return toSQL::string(Name, toConnection::currentConnection(this)) + ";";
     }
     catch (...)
     {

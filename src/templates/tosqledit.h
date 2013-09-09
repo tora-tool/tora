@@ -43,7 +43,7 @@
 #define TOSQLEDIT_H
 
 #include "core/totool.h"
-#include "tools/totemplate.h"
+#include "templates/totemplate.h"
 
 #include <QtCore/QString>
 
