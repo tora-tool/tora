@@ -165,7 +165,7 @@ QList<QString> toConnection::running(void) const
     {
     	static QString sql("Session: %1\n%2\n");
     	toQuery *query = conn->query();
-    	ret << sql.arg(conn->sessionId()).arg(query->sql());
+    	ret << sql.arg(conn->sessionId()).arg(query ? query->sql() : QString("None"));
     }
     return ret;
 }
