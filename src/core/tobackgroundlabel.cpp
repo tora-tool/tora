@@ -94,10 +94,10 @@ void toBackgroundLabel::mouseReleaseEvent(QMouseEvent *e)
             foreach (toConnection const * conn, conns)
             {
                 QList<QString> running = conn->running();
-                if (!running.empty())
-                {
-                    str += "On connection " + conn->description(false) + ":\n\n";
-                }
+                if (running.empty())
+                	continue;
+
+                str += "On connection " + conn->description(false) + ":\n\n";
                 int num = 1;
                 foreach (QString const & q, running)
                 {

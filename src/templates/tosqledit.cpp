@@ -39,7 +39,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "tools/tosqledit.h"
+#include "templates/tosqledit.h"
 #include "core/utils.h"
 #include "core/toconf.h"
 #include "core/toconnection.h"

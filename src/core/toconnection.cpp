@@ -150,9 +150,10 @@ void toConnection::closeConnection(toConnectionSub *sub)
     {
         sub->close();
         Connections.remove(sub);
-    }
-    else
-        throw exception("Can not close non-existing toConnectionSub");
+//    } else if (LentConnections.contains(sub)) {
+//    	sub->cancel();
+    } else
+    	throw exception("Can not close non-existing toConnectionSub");
 }
 
 QList<QString> toConnection::running(void) const
@@ -160,9 +161,12 @@ QList<QString> toConnection::running(void) const
     Utils::toBusy busy;
     QMutexLocker lock(&ConnectionLock);
     QList<QString> ret;
-    ret << "Not implemented yet.";
-    // this is insane. disabled code that tried to get sql from
-    // running queries
+    Q_FOREACH(toConnectionSub *conn, LentConnections)
+    {
+    	static QString sql("Session: %1\n%2\n");
+    	toQuery *query = conn->query();
+    	ret << sql.arg(conn->sessionId()).arg(query->sql());
+    }
     return ret;
 }
 
