@@ -380,12 +380,12 @@ void toNewConnection::changeProvider(int current)
         if (provider.isNull() || provider.isEmpty())
             return;
 
+        bool oldStateH = Host->blockSignals(true);
+        Host->clear();
+        Host->blockSignals(oldStateH);
         QList<QString> hosts = toConnectionProviderRegistrySing::Instance().get(provider).hosts();
 
         DefaultPort = 0;
-        Database->clear();
-        Host->clear();
-        Database->clear();
         foreach(QString const & host, hosts)
         {
             if (host.isEmpty())
@@ -395,6 +395,9 @@ void toNewConnection::changeProvider(int current)
             else
                 Host->addItem(host);
         }
+
+        Database->clear();
+        changeHost(); // will populate Databases combobox
 
         // seems i broke this for oracle
         if (!DefaultPort)
@@ -416,7 +419,7 @@ void toNewConnection::changeProvider(int current)
 
         Port->setValue(DefaultPort);
 
-        if (Provider->currentText().startsWith(ORACLE_TNSCLIENT))
+        if (Provider->currentText().startsWith(ORACLE_TNSCLIENT) || getCurrentProvider() == "QODBC")
         {
             HostLabel->hide();
             Host->hide();
@@ -476,7 +479,7 @@ void toNewConnection::changeHost(void)
 
     try
     {
-        if(Host->isVisible() || (prov == "Oracle"))
+        if(Host->isVisible() || prov == "Oracle" || prov == "QODBC")
         {
             QString host = Host->currentText();
             if (Provider->currentText() == ORACLE_TNSCLIENT)
@@ -485,8 +488,10 @@ void toNewConnection::changeHost(void)
             QString current = Database->currentText();
 
             Database->clear();
-            foreach(QString const & s, databases)
-            Database->addItem(s);
+            Q_FOREACH(QString const & s, databases)
+            {
+            	Database->addItem(s);
+            }
             Database->lineEdit()->setText(current);
         }
     }

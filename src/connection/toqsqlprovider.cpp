@@ -58,7 +58,22 @@ QList<QString> toQSqlProvider::hosts()
 QList<QString> toQSqlProvider::databases(const QString &host, const QString &user, const QString &pwd)
 {
 	QList<QString> ret;
+#ifdef Q_OS_WIN32
+    QSettings settings("HKEY_CURRENT_USER\\Software\\ODBC\\ODBC.INI\\ODBC Data Sources", QSettings::NativeFormat);
+    foreach(QString key, settings.childGroups())
+    {
+    	QString s = key;
+    }
+
+    foreach(QString key, settings.childKeys())
+    {
+    	QString s = key;
+    	QString t = settings.value(key).toString();
+    	ret << key;
+    }
+#else
 	ret << "TBD databases";
+#endif
 	return ret;
 }
 
