@@ -44,6 +44,10 @@
 #include "core/toconnection.h"
 #include "core/toconnectionsub.h"
 
+#include <QtCore/QString>
+#include <QtSql/QSqlDatabase>
+
+class QSqlError;
 class toQSQLProvider;
 
 // Utility class to lock QSqlDriver - TODO move it into Utils or completely remove
@@ -132,23 +136,17 @@ protected:
     toQSqlConnectionImpl(toConnection &conn) : toConnection::connectionImpl(conn) {};
 public:
     /** Create a new connection to the database. */
-    virtual toConnectionSub *createConnection(void)
-    {
-    	throw QString("Not implemented yet toQSqlConnectionImpl::createConnection");
-    }
+    virtual toConnectionSub *createConnection(void);
 
     /** Close a connection to the database. */
-    virtual void closeConnection(toConnectionSub *)
-    {
-    	throw QString("Not implemented yet toQSqlConnectionImpl::closeConnection");
-    }
+    virtual void closeConnection(toConnectionSub *);
 };
 
 class toQSqlConnectionSub: public toConnectionSub
 {
     //friend class oracleQuery;
 public:
-    toQSqlConnectionSub(void*);
+    toQSqlConnectionSub(toConnection const& parent, QSqlDatabase const& db, QString const& dbname);
 
     virtual ~toQSqlConnectionSub();
     virtual void cancel();
@@ -159,7 +157,15 @@ public:
 
     virtual toQAdditionalDescriptions* decribe(toCache::ObjectRef const&);
 
-private:
+    static QString ErrorString(const QSqlError &err, const QString &sql = QString::null);
+
+    QMutex Lock;
+    QSqlDatabase Connection;
+    QString ConnectionID;
+protected:
+    QString Name;
+    toConnection const& ParentConnection;
+    bool HasTransactions;
 };
 
 

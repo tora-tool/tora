@@ -226,20 +226,3 @@ queryImpl* toQMySqlConnectionSub::createQuery(toQuery *query)
 {
 	return new mysqlQuery(query, this);
 }
-
-QString toQMySqlConnectionSub::ErrorString(const QSqlError &err, const QString &sql)
-{
-    QString ret;
-    if (err.databaseText().isEmpty())
-    {
-        if (err.driverText().isEmpty())
-            ret = QString::fromLatin1("Unknown error");
-        else
-            ret = err.driverText();
-    }
-    else
-        ret = err.databaseText();
-    if (!sql.isEmpty())
-        ret += QString::fromLatin1("\n\n") + sql;
-    return ret;
-}

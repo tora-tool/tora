@@ -39,6 +39,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "connection/toqsqlprovider.h"
+#include "connection/toqsqlconnection.h"
 
 #include <QtCore/QSettings>
 
@@ -102,9 +103,9 @@ QWidget* toQSqlProvider::configurationTab(QWidget *parent)
 	return NULL;
 }
 
-toConnection::connectionImpl* toQSqlProvider::createConnectionImpl(toConnection &con)
+toConnection::connectionImpl* toQSqlProvider::createConnectionImpl(toConnection &conn)
 {
-	throw QString("toConnectionTraits* toQSqlProvider::createConnectionImpl(toConnection&) not implemented yet");
+	return new toQSqlConnectionImpl(conn);
 }
 
 toConnectionTraits* toQSqlProvider::createConnectionTrait(void)

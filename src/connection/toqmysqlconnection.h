@@ -81,15 +81,12 @@ public:
 private:
 };
 
-class toQMySqlConnectionSub : public toConnectionSub
+class toQMySqlConnectionSub : public toQSqlConnectionSub
 {
 	friend class toQMySqlConnectionImpl;
 public:
         toQMySqlConnectionSub(toConnection const& parent, QSqlDatabase const& db, QString const& dbname)
-        	: ParentConnection(parent)
-            , Connection(db)
-        	, Name(dbname)
-            , HasTransactions(false)
+			: toQSqlConnectionSub(parent, db, dbname)
         {}
 
         ~toQMySqlConnectionSub()
@@ -128,15 +125,7 @@ public:
         	throw QString("Not implemented yet: toQMySqlConnectionSub::describe");
         }
 
-        static QString ErrorString(const QSqlError &err, const QString &sql = QString::null);
-
-        QSqlDatabase Connection;
-        QMutex Lock;
-        QString ConnectionID;
 private:
-        QString Name;
-        bool HasTransactions;
-        toConnection const& ParentConnection;
 };
 
 #endif

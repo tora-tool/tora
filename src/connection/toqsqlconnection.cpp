@@ -40,3 +40,88 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "connection/toqsqlconnection.h"
+
+#include <QtSql/QSqlDatabase>
+#include <QtSql/QSqlError>
+
+toQSqlConnectionSub::toQSqlConnectionSub(toConnection const& parent, QSqlDatabase const& db, QString const& dbname)
+	: ParentConnection(parent)
+	, Connection(db)
+	, Name(dbname)
+	, HasTransactions(false)
+{}
+
+toQSqlConnectionSub::~toQSqlConnectionSub()
+{
+
+}
+
+void toQSqlConnectionSub::cancel()
+{
+
+}
+
+void toQSqlConnectionSub::close()
+{
+
+}
+
+void toQSqlConnectionSub::commit()
+{
+
+}
+
+void toQSqlConnectionSub::rollback()
+{
+
+}
+
+queryImpl* toQSqlConnectionSub::createQuery(toQuery *query)
+{
+	return NULL;
+}
+
+toQAdditionalDescriptions* toQSqlConnectionSub::decribe(toCache::ObjectRef const&)
+{
+	return NULL;
+}
+
+toConnectionSub *toQSqlConnectionImpl::createConnection(void)
+{
+	static QAtomicInt ID_COUNTER(0);
+	int ID = ID_COUNTER.fetchAndAddAcquire(1);
+
+	QString dbName = QString::number(ID);
+
+	QSqlDatabase db = QSqlDatabase::addDatabase("QODBC", dbName);
+	db.setDatabaseName(parentConnection().database());
+	db.open(parentConnection().user(), parentConnection().password());
+	if (!db.isOpen())
+	{
+		QString t = toQSqlConnectionSub::ErrorString(db.lastError());
+		QSqlDatabase::removeDatabase(dbName);
+		throw t;
+	}
+}
+
+void toQSqlConnectionImpl::closeConnection(toConnectionSub *)
+{
+	throw QString("Not implemented yet toQSqlConnectionImpl::closeConnection");
+}
+
+QString toQSqlConnectionSub::ErrorString(const QSqlError &err, const QString &sql)
+{
+    QString ret;
+    if (err.databaseText().isEmpty())
+    {
+        if (err.driverText().isEmpty())
+            ret = QString::fromLatin1("Unknown error");
+        else
+            ret = err.driverText();
+    }
+    else
+        ret = err.databaseText();
+    if (!sql.isEmpty())
+        ret += QString::fromLatin1("\n\n") + sql;
+    return ret;
+}
