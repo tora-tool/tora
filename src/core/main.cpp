@@ -309,12 +309,20 @@ int main(int argc, char **argv)
                                str,
                                qApp->translate("main", "Exit"));
     }
+    catch (std::exception const& exc)
+    {
+        fprintf(stderr, "Unhandled exception: %s\n\n%s\n", typeid(exc).name(), exc.what());
+        TOMessageBox::critical(NULL,
+                               qApp->translate("main", "Unhandled exception: %1").arg(typeid(exc).name()),
+                               exc.what(),
+                               qApp->translate("main", "Exit"));
+    }
     catch (...)
     {
         fprintf(stderr, "Unhandled exception");
         TOMessageBox::critical(NULL,
                                qApp->translate("main", "Unhandled exception"),
-                               "unknown",
+                               "Unknown exception class type",
                                qApp->translate("main", "Exit"));
     }
 
