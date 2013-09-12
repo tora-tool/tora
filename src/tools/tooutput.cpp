@@ -310,15 +310,21 @@ void toOutput::disable(bool dis)
 {
     try
     {
+//        if (dis)
+//            connection().allExecute(SQLDisable);
+//        else
+//            connection().allExecute(SQLEnable);
+        QString str;
+
         if (dis)
-            connection().allExecute(SQLDisable);
+        	str = toSQL::string(SQLDisable, connection());
         else
-            connection().allExecute(SQLEnable);
-        QString str = toSQL::string(SQLEnable, connection());
-        if (dis)
-            connection().delInit("OUTPUT");
-        else
-            connection().setInit("OUTPUT", str);
+        	str = toSQL::string(SQLEnable, connection());
+        connection().setInit("OUTPUT", str);
+//        if (dis)
+//            connection().delInit("OUTPUT");
+//        else
+//            connection().setInit("OUTPUT", str);
     }
     catch (...)
     {
@@ -360,9 +366,8 @@ void toOutput::poll()
         bool any;
         do
         {
-            toQueryParams  params;
-			toConnectionSubLoan c(connection());
-            toQuery query(c, /*toQuery::All,*/ SQLLines, params);  // TODO FETCH FROM ALL THE CONNECTIONS IN THE POOL - impossible
+        	toConnectionSubLoan c(connection());
+        	toQuery query(c, SQLLines, toQueryParams());  // TODO FETCH FROM ALL THE CONNECTIONS IN THE POOL - impossible
 
             any = false;
             while (!query.eof())

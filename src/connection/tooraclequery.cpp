@@ -215,9 +215,21 @@ void oracleQuery::execute(QString const& sql)
 
 toQValue oracleQuery::readValue(void)
 {
-    toQValue retval;
-    Query->readValue(retval);
-    return retval;
+	toOracleConnectionSub *conn = dynamic_cast<toOracleConnectionSub*>(query()->connectionSubPtr());
+	try
+	{
+		toQValue retval;
+		Query->readValue(retval);
+		return retval;
+	}
+	catch (const ::trotl::OciException &exc) {
+		delete Query;
+		Query = NULL;
+		Running = false;
+		if(exc.is_critical())
+			conn->Broken = true;
+		ThrowException(exc);
+	}
 }
 
 void oracleQuery::cancel(void)
@@ -290,7 +302,7 @@ void oracleQuery::trotlQuery::readValue(toQValue &value)
     if((_state & EXECUTED) == 0)
         execute_internal(::trotl::g_OCIPL_BULK_ROWS, OCI_DEFAULT);
 
-	if((_state & FETCHED) == 0)
+	if((_state & FETCHED) == 0 && get_stmt_type() == STMT_SELECT)
 		fetch(_fetch_rows);
 
     trotl::BindPar const &BP(get_stmt_type() == STMT_SELECT ?
