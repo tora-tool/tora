@@ -58,6 +58,7 @@
 #include <stdlib.h>
 
 #include <memory>
+#include <typeinfo>
 
 #include <QtCore/QTextCodec>
 #include <QtCore/QString>
