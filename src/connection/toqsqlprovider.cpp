@@ -42,6 +42,7 @@
 #include "connection/toqsqlconnection.h"
 
 #include <QtCore/QSettings>
+#include <QtCore/QFileInfo>
 
 toQSqlProvider::toQSqlProvider(toConnectionProviderFinder::ConnectionProvirerParams const& p)
 	: toConnectionProvider(p)
@@ -79,7 +80,7 @@ QList<QString> toQSqlProvider::databases(const QString &host, const QString &use
     QFileInfo odbcINI(envODBC);
 
     if (envODBC.isEmpty() || !odbcINI.exists() || !odbcINI.isReadable())
-    	odbcINI = QFile("/etc/odbc.ini");
+    	odbcINI = QFileInfo("/etc/odbc.ini");
 
     QSettings settings(odbcINI.absoluteFilePath(), QSettings::IniFormat);
     foreach(QString key, settings.childGroups())
