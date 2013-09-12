@@ -521,6 +521,7 @@ SET(TORA_SOURCES
   connection/toqpsqlprovider.cpp
   connection/toqpsqlsetting.cpp
   connection/toqodbcprovider.cpp
+  connection/toqsqlquery.cpp
 
   #disabled parsing/tsqlparse.cpp
   parsing/tosyntaxanalyzer.cpp

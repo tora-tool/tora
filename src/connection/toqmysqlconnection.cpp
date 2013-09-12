@@ -43,11 +43,8 @@
 #include "connection/toqmysqlquery.h"
 #include "core/tosql.h"
 
-#include <QtSql/QSqlRecord>
-#include <QtSql/QSqlField>
-#include <QtSql/QSqlQuery>
-#include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlError>
+#include <QtSql/QSqlQuery>
 
 static toSQL SQLVersion("toQSqlConnection:Version",
                         "SHOW VARIABLES LIKE 'version'",
@@ -128,98 +125,12 @@ toConnectionSub *toQMySqlConnectionImpl::createConnection(void)
 		}
 
 		toQMySqlConnectionSub *ret = new toQMySqlConnectionSub(parentConnection(), db, dbName);
-
-		// Try to figure out the connection ID for canceling
-		try
-		{
-			QString sql = SQLConnectionID(parentConnection());
-			QSqlQuery query = db.exec(sql);
-			if (query.next())
-				ret->ConnectionID = query.value(0).toString();
-		}
-		catch (...)
-		{
-			TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
-		}
 		return ret;
 }
 
 void toQMySqlConnectionImpl::closeConnection(toConnectionSub *)
 {
 
-}
-
-void toQMySqlConnectionSub::throwError(const QString &sql)
-{
-   LockingPtr<QSqlDatabase> ptr(Connection, Lock);
-   throw ErrorString(ptr->lastError(), sql);
-}
-
-void toQMySqlConnectionSub::commit(void)
-{
-    LockingPtr<QSqlDatabase> ptr(Connection, Lock);
-    if(!ptr->commit() && HasTransactions)
-    {
-        ptr.unlock();
-        throwError(QString::fromLatin1("COMMIT"));
-    }
-}
-
-void toQMySqlConnectionSub::rollback(void)
-{
-    LockingPtr<QSqlDatabase> ptr(Connection, Lock);
-    if(!ptr->rollback() && HasTransactions)
-    {
-        ptr.unlock();
-        throwError(QString::fromLatin1("ROLLBACK"));
-    }
-}
-
-QString toQMySqlConnectionSub::version()
-{
-    QString ret;
-    try
-    {
-        LockingPtr<QSqlDatabase> ptr(Connection, Lock);
-
-        QSqlQuery query = ptr->exec(toSQL::sql(SQLVersion, ParentConnection));
-        if (query.next())
-        {
-            if (query.isValid())
-            {
-                QSqlRecord record = query.record();
-                QVariant val = query.value(record.count() - 1);
-                ret = val.toString().toLatin1();
-            }
-        }
-    }
-    catch (...)
-    {
-        TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
-    }
-    return ret;
-}
-
-QString toQMySqlConnectionSub::sessionId()
-{
-	QString ret;
-	try
-	{
-		LockingPtr<QSqlDatabase> ptr(Connection, Lock);
-
-		QSqlQuery query = ptr->exec(toSQL::sql(SQLConnectionID, ParentConnection));
-		if (query.next() && query.isValid())
-		{
-			QSqlRecord record = query.record();
-			QVariant val = query.value(record.count() - 1);
-			ret = val.toString().toLatin1();
-		}
-	}
-	catch (...)
-	{
-		TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
-	}
-	return ret;
 }
 
 queryImpl* toQMySqlConnectionSub::createQuery(toQuery *query)

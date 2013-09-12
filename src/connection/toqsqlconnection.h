@@ -153,6 +153,10 @@ public:
     virtual void close();
     virtual void commit();
     virtual void rollback();
+
+    virtual QString version();
+    virtual QString sessionId();
+
     virtual queryImpl* createQuery(toQuery *query);
 
     virtual toQAdditionalDescriptions* decribe(toCache::ObjectRef const&);
@@ -163,6 +167,8 @@ public:
     QSqlDatabase Connection;
     QString ConnectionID;
 protected:
+    void throwError(const QString &sql);
+
     QString Name;
     toConnection const& ParentConnection;
     bool HasTransactions;

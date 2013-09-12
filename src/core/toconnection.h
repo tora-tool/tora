@@ -82,8 +82,25 @@ class toConnection : public QObject
     friend class toQuery;
     friend class toCache;
 	friend class toCacheWorker;
-
+    friend class toResultModel;
 public:
+
+    // Utility class to store any pointer inside QVariant
+    // http://blog.bigpixel.ro/2010/04/storing-pointer-in-qvariant/
+    template <class T> class VPtr
+    {
+    public:
+    	static T* asPtr(QVariant v)
+    	{
+    		return  (T *) v.value<void *>();
+    	}
+
+    	static QVariant asQVariant(T* ptr)
+    	{
+    		return qVariantFromValue((void *) ptr);
+    	}
+    };
+
     /** Create a new connection.
      * @param provider Which database provider to use for this connection.
      * (See @ref to toDatabaseConnection)
@@ -187,7 +204,7 @@ public:
     }
 
     /** Get a list of currently running SQLs */
-    virtual QList<QString> running(void) const;
+    QList<QString> running(void) const;
 
     /** Return the connection most closely associated with a widget. Currently connections are
     * only stored in toToolWidgets.
@@ -360,6 +377,9 @@ protected:
     bool Abort;
     mutable QMutex ConnectionLock;
 
+private slots:
+	void commandCallback(QAction *);
+
 private:
     toConnectionSub* borrowSub();
     void putBackSub(toConnectionSub*);
@@ -384,7 +404,8 @@ private:
     toConnectionTraits *pTrait;
     toCache *pCache;
     QAtomicInt LoanCnt;
-    friend class toResultModel;
+
+    QSet<QAction*> ConnectionActions;
 
     bool NeedCommit;
 }; // toConnection

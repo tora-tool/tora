@@ -40,16 +40,23 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "connection/toqsqlconnection.h"
+#include "connection/toqsqlquery.h"
 
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlError>
+#include <QtSql/QSqlRecord>
+#include <QtSql/QSqlField>
+#include <QtSql/QSqlQuery>
+#include "core/tosql.h"
 
 toQSqlConnectionSub::toQSqlConnectionSub(toConnection const& parent, QSqlDatabase const& db, QString const& dbname)
 	: ParentConnection(parent)
 	, Connection(db)
 	, Name(dbname)
 	, HasTransactions(false)
-{}
+{
+	ConnectionID = sessionId();
+}
 
 toQSqlConnectionSub::~toQSqlConnectionSub()
 {
@@ -68,17 +75,77 @@ void toQSqlConnectionSub::close()
 
 void toQSqlConnectionSub::commit()
 {
-
+	LockingPtr<QSqlDatabase> ptr(Connection, Lock);
+	if(!ptr->commit() && HasTransactions)
+	{
+		ptr.unlock();
+		throwError(QString::fromLatin1("COMMIT"));
+	}
 }
 
 void toQSqlConnectionSub::rollback()
 {
+    LockingPtr<QSqlDatabase> ptr(Connection, Lock);
+    if(!ptr->rollback() && HasTransactions)
+    {
+        ptr.unlock();
+        throwError(QString::fromLatin1("ROLLBACK"));
+    }
+}
 
+QString toQSqlConnectionSub::version()
+{
+    QString ret;
+    try
+    {
+        LockingPtr<QSqlDatabase> ptr(Connection, Lock);
+
+        QSqlQuery query = ptr->exec(toSQL::sql("toQSqlConnection:Version", ParentConnection));
+        if (query.next())
+        {
+            if (query.isValid())
+            {
+                QSqlRecord record = query.record();
+                QVariant val = query.value(record.count() - 1);
+                ret = val.toString().toLatin1();
+            }
+        }
+    }
+    catch (...)
+    {
+        TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
+    }
+    return ret;
+}
+
+QString toQSqlConnectionSub::sessionId()
+{
+	QString ret;
+	try
+	{
+		LockingPtr<QSqlDatabase> ptr(Connection, Lock);
+
+		QSqlQuery query = ptr->exec(toSQL::sql("toQSqlConnection:ConnectionID", ParentConnection));
+		if (query.next() && query.isValid())
+		{
+			QSqlRecord record = query.record();
+			QVariant val = query.value(record.count() - 1);
+			ret = val.toString().toLatin1();
+		}
+	} catch (std::exception const&e) {
+		TLOG(1, toDecorator, __HERE__) << "	Ignored exception:" << e.what() << std::endl;
+	} catch (QString const&s) {
+		TLOG(1, toDecorator, __HERE__) << "	Ignored exception:" << qPrintable(s) << std::endl;
+	} catch (...)
+	{
+		TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
+	}
+	return ret;
 }
 
 queryImpl* toQSqlConnectionSub::createQuery(toQuery *query)
 {
-	return NULL;
+	return new qsqlQuery(query, this);
 }
 
 toQAdditionalDescriptions* toQSqlConnectionSub::decribe(toCache::ObjectRef const&)
@@ -102,6 +169,8 @@ toConnectionSub *toQSqlConnectionImpl::createConnection(void)
 		QSqlDatabase::removeDatabase(dbName);
 		throw t;
 	}
+	toQSqlConnectionSub *ret = new toQSqlConnectionSub(parentConnection(), db, dbName);
+	return ret;
 }
 
 void toQSqlConnectionImpl::closeConnection(toConnectionSub *)
@@ -124,4 +193,10 @@ QString toQSqlConnectionSub::ErrorString(const QSqlError &err, const QString &sq
     if (!sql.isEmpty())
         ret += QString::fromLatin1("\n\n") + sql;
     return ret;
+}
+
+void toQSqlConnectionSub::throwError(const QString &sql)
+{
+   LockingPtr<QSqlDatabase> ptr(Connection, Lock);
+   throw ErrorString(ptr->lastError(), sql);
 }

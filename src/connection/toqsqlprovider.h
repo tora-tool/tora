@@ -42,6 +42,7 @@
 #define __QSQL_PROVIDER__
 
 #include "core/toconnectionprovider.h"
+#include "core/toconnectiontraits.h"
 #include "connection/absfact.h"
 
 #define QSQL_FINDER     "QSQL"
@@ -80,7 +81,31 @@ public:
 
     /** see: @ref toConnection */
     virtual toConnectionTraits* createConnectionTrait(void);
+};
 
+class toQSqlTraits: public toConnectionTraits
+{
+public:
+    /** Return a string representation to address an object.
+    * @param name The name to be quoted.
+    * @param quoteLowercase Enclose in quotes when identifier has lowercase letters
+    * @return String addressing table.
+    */
+    virtual QString quote(const QString &name) const { return name; }
+
+    /** Perform the opposite of @ref quote.
+    * @param name The name to be un-quoted.
+    * @return String addressing table.
+    */
+    virtual QString unQuote(const QString &name) const { return name; }
+
+    /** Check if connection provider supports table level comments.
+     *  @return bool return true if database supports table level comments
+     *  See toSql: toResultCols:TableComment
+     */
+    virtual bool hasTableComments() const { return false; }
+
+    virtual bool hasAsyncBreak() const { return false; }
 };
 
 #endif

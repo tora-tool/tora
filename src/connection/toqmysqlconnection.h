@@ -87,15 +87,14 @@ class toQMySqlConnectionSub : public toQSqlConnectionSub
 public:
         toQMySqlConnectionSub(toConnection const& parent, QSqlDatabase const& db, QString const& dbname)
 			: toQSqlConnectionSub(parent, db, dbname)
-        {}
+        {
+        }
 
         ~toQMySqlConnectionSub()
         {
             LockingPtr<QSqlDatabase> ptr(Connection, Lock);
             ptr->close();
         }
-
-        void throwError(const QString &sql);
 
         /** Implemented abstract method inherited from toConnectionSub */
 
@@ -109,14 +108,6 @@ public:
         {
         	throw QString("Not implemented yet: toQMySqlConnectionSub::close");
         }
-
-        virtual void commit(void);
-
-        virtual void rollback(void);
-
-        virtual QString version();
-
-        virtual QString sessionId();
 
         virtual queryImpl* createQuery(toQuery *query);
 

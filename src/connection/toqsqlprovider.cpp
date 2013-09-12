@@ -111,5 +111,6 @@ toConnection::connectionImpl* toQSqlProvider::createConnectionImpl(toConnection 
 
 toConnectionTraits* toQSqlProvider::createConnectionTrait(void)
 {
-	throw QString("toConnectionTraits* toQSqlProvider::createConnectionTrait(void) not implemented yet");
+	static toQSqlTraits *t = new toQSqlTraits();
+	return t;
 }

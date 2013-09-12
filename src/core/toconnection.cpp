@@ -294,16 +294,52 @@ bool toConnection::closeWidgets(void)
 
 void toConnection::connectionsMenu(QMenu *menu)
 {
+	menu->clear();
+	//menu->disconnect(this);
+	Q_FOREACH(QAction *a, ConnectionActions)
+	{
+		delete a;
+	}
+
 	QMutexLocker clock(&ConnectionLock);
 	Q_FOREACH(toConnectionSub* conn, LentConnections)
 	{
-		menu->addMenu(conn->sessionId());
+		QMenu *sess = menu->addMenu(conn->sessionId());
+		QAction *cancel = new QAction("Cancel", this);
+		QAction *close = new QAction("Close", this);
+		cancel->setData(VPtr<toConnectionSub>::asQVariant(conn));
+		close->setData(VPtr<toConnectionSub>::asQVariant(conn));
+		sess->addAction(cancel);
+		sess->addAction(close);
+		ConnectionActions.insert(cancel);
+		ConnectionActions.insert(close);
+		connect(sess, SIGNAL(triggered(QAction *)), this, SLOT(commandCallback(QAction *)));
 	}
 	menu->addSeparator();
 	Q_FOREACH(toConnectionSub* conn, Connections)
 	{
-		menu->addMenu(conn->sessionId());
+		QMenu *sess = menu->addMenu(conn->sessionId());
+		QAction *close = new QAction("Close", this);
+		close->setData(VPtr<toConnectionSub>::asQVariant(conn));
+		sess->addAction(close);
+		ConnectionActions.insert(close);
+		connect(sess, SIGNAL(triggered(QAction *)), this, SLOT(commandCallback(QAction *)));
 	}
+}
+
+void toConnection::commandCallback(QAction *act)
+{
+	QString actionStr = act->text();
+	toConnectionSub *conn = VPtr<toConnectionSub>::asPtr(act->data());
+	if ( LentConnections.contains(conn))
+	{
+
+	} else if ( Connections.contains(conn)) {
+
+	} else {
+		Q_ASSERT_X(false, qPrintable(__QHERE__), "Unvalid QAction poiting onto unknown toConnectionSub");
+	}
+
 }
 
 QString toConnection::description(bool version) const

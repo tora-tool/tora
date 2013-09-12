@@ -646,7 +646,6 @@ void toMain::updateWindowsMenu(void)
 
 void toMain::updateConnectionsMenu(void)
 {
-	connectionsMenu->clear();
 	try
 	{
 		toConnection &conn = toConnectionRegistrySing::Instance().currentConnection();
