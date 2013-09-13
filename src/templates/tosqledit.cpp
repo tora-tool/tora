@@ -52,17 +52,17 @@
 #include "tools/toworksheet.h"
 #include "core/totreewidget.h"
 
-#include <QtGui/QComboBox>
+#include <QtCore/QString>
 #include <QtCore/QFileInfo>
+#include <QtCore/QString>
+
 #include <QtGui/QLabel>
 #include <QtGui/QLineEdit>
 #include <QtGui/QMenuBar>
 #include <QtGui/QMessageBox>
 #include <QtGui/QSplitter>
-#include <QtCore/QString>
 #include <QtGui/QToolButton>
-
-#include <QtCore/QString>
+#include <QtGui/QComboBox>
 #include <QtGui/QFrame>
 #include <QtGui/QPixmap>
 #include <QtGui/QVBoxLayout>
@@ -243,7 +243,7 @@ toSQLEdit::toSQLEdit(QWidget *main, toConnection &connection)
 
     splitter = new QSplitter(Qt::Vertical, vbox);
     vlay->addWidget(splitter);
-    Description = new toMarkedEditor(splitter);
+    Description = new toMarkedText(splitter);
     Worksheet = new toWorksheet(splitter, connection, false);
 
     hlay->setSpacing(0);
@@ -259,10 +259,10 @@ toSQLEdit::toSQLEdit(QWidget *main, toConnection &connection)
             SIGNAL(activated(const QString &)),
             this,
             SLOT(changeVersion(const QString &)));
-    connect(toMainWidget(),
-            SIGNAL(sqlEditor(const QString &)),
-            this,
-            SLOT(editSQL(const QString &)));
+    //connect(&toGlobalEventSingle::Instance(),
+    //        SIGNAL(sqlEditor(const QString &)),
+    //        this,
+    //        SLOT(editSQL(const QString &)));
 
     updateStatements();
 
@@ -572,12 +572,12 @@ void toSQLEdit::selectionChanged(const QString &maxver)
     TOCATCH;
 }
 
-void toSQLEdit::editSQL(const QString &nam)
+void toSQLEdit::editSQL(const QString &name)
 {
     try
     {
         if (checkStore(false))
-            changeSQL(nam, QString(connection().provider() + ":" + connection().version()));
+            changeSQL(name, QString(connection().provider() + ":" + connection().version()));
     }
     TOCATCH;
 }
@@ -604,6 +604,7 @@ static toSQLTemplate SQLTemplate;
 
 toSQLTemplateItem::toSQLTemplateItem(toTreeWidget *parent)
     : toTemplateItem(SQLTemplate, parent, qApp->translate("toSQL", "SQL Dictionary"))
+	, conn( toConnection::currentConnection(parent))
 {
     setExpandable(true);
 }
@@ -619,6 +620,7 @@ static QString JustLast(const QString &str)
 toSQLTemplateItem::toSQLTemplateItem(toSQLTemplateItem *parent,
                                      const QString &name)
     : toTemplateItem(parent, JustLast(name))
+	, conn(parent->connetion())
 {
     Name = name;
     std::list<QString> def = toSQL::range(Name + ":");
@@ -659,8 +661,7 @@ QString toSQLTemplateItem::allText(int) const
         toSQL::sqlMap defs = toSQL::definitions();
         if (defs.find(Name) == defs.end())
             return QString::null;
-        QObject *o = this;
-        return toSQL::string(Name, toConnection::currentConnection(this)) + ";";
+        return toSQL::string(Name, conn) + ";";
     }
     catch (...)
     {

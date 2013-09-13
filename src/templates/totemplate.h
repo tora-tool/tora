@@ -131,7 +131,7 @@ class toTemplateProvider
     static QString *ToolKey;
 
     QString Name;
-    bool Open;
+    //bool Open;
 
 public:
     toTemplateProvider(const QString &name);
@@ -331,14 +331,6 @@ public:
     virtual toTemplateItem *createChild(const QString &name)
     {
         return new toTemplateItem(this, name);
-    }
-    /** Get parameters to pass to query.
-     * @return List of strings to pass as input parameters to query
-     */
-    virtual toQList parameters(void)
-    {
-        toQList ret;
-        return ret;
     }
     /** Reimplemented for internal reasons.
      */

@@ -39,35 +39,34 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "utils.h"
-#include "tologger.h"
+#include "templates/totemplate.h"
 
-#include "toconf.h"
-#include "toconnection.h"
-#include "tohelp.h"
-#include "tomarkedtext.h"
-#include "toeventquery.h"
-#include "toresultview.h"
-#include "totemplate.h"
-#include "totool.h"
+#include "core/utils.h"
+#include "core/tologger.h"
+#include "core/toconfiguration.h"
+#include "core/toconnection.h"
+#include "core/tohelp.h"
+#include "editor/tomarkedtext.h"
+#include "core/toeventquery.h"
+#include "core/toresultview.h"
+#include "core/totool.h"
 
-#include <qfileinfo.h>
-#include <qlabel.h>
-#include <qlineedit.h>
-#include <qmessagebox.h>
-#include <qpushbutton.h>
-#include <qsplitter.h>
-#include <qtimer.h>
-#include <QToolBar>
+#include <QtCore/QString>
+#include <QtCore/QDir>
+#include <QtCore/QTimer>
 
-#include <QString>
-#include <QHideEvent>
-#include <QShowEvent>
-#include <QTextEdit>
-#include <QDir>
+#include <QtGui/QHideEvent>
+#include <QtGui/QShowEvent>
+#include <QtGui/QTextEdit>
+#include <QtCore/QFileInfo>
+#include <QtGui/QLabel>
+#include <QtGui/QLineEdit>
+#include <QtGui/QMessageBox>
+#include <QtGui/QPushButton>
+#include <QtGui/QSplitter>
+#include <QtGui/QToolBar>
 
 #include "icons/totemplate.xpm"
-
 
 static TemplatesMap DefaultText(void)
 {
@@ -108,7 +107,7 @@ void toTemplateEdit::connectList(bool conn)
 toTreeWidgetItem *toTemplateEdit::findLast(void)
 {
     QString name = (*LastTemplate).first;
-    return toFindItem(Templates, name);
+    return Templates->toFindItem(name);
 }
 void toTemplateEdit::allocateItem(void)
 {
@@ -179,7 +178,7 @@ void toTemplateEdit::updateFromMap(void)
                     last = last->parent();
                     lastLevel--;
                 }
-                while (last && lastLevel >= 0 && !toCompareLists(lstCtx, ctx, (unsigned int)lastLevel))
+                while (last && lastLevel >= 0 && !Utils::toCompareLists(lstCtx, ctx, (unsigned int)lastLevel))
                 {
                     last = last->parent();
                     lastLevel--;
@@ -331,7 +330,7 @@ toTemplateAddFile::toTemplateAddFile(QWidget *parent, const char *name)
 void toTemplateAddFile::browse()
 {
     QFileInfo file(Filename->text());
-    QString filename = toOpenFilename(file.dir().path(), QString("*.tpl"), this);
+    QString filename = Utils::toOpenFilename(file.dir().path(), QString("*.tpl"), this);
     if (!filename.isEmpty())
         Filename->setText(filename);
 }
@@ -465,7 +464,7 @@ public:
     {
         if (!Dock || !Window)
         {
-            Dock = toAllocDock(qApp->translate("toTemplateTool", "Template"), QString::null, *toolbarImage());
+            Dock = Utils::toAllocDock(qApp->translate("toTemplateTool", "Template"), QString::null, *toolbarImage());
             // fixes warning from QMainWindow::saveState
             Dock->setObjectName("Template");
             Window = new toTemplate(Dock);
@@ -481,7 +480,7 @@ public:
             Window->showResult(false);
         }
     }
-    virtual QWidget *toolWindow(QWidget *, toConnection &)
+    virtual toToolWidget *toolWindow(QWidget *, toConnection &)
     {
         toggleWindow();
         return NULL;
@@ -573,7 +572,7 @@ toTemplate::toTemplate(TODock *parent)
     vbox->setSpacing(0);
     vbox->setContentsMargins(0, 0, 0, 0);
 
-    Toolbar = toAllocBar(this, tr("Template Toolbar"));
+    Toolbar = Utils::toAllocBar(this, tr("Template Toolbar"));
     vbox->addWidget(Toolbar);
 
     List = new toListView(this);
@@ -584,7 +583,7 @@ toTemplate::toTemplate(TODock *parent)
     List->setTreeStepSize(10);
     List->setSelectionMode(toTreeWidget::Single);
     List->setResizeMode(toTreeWidget::AllColumns);
-    Result = toAllocDock(tr("Template result"),
+    Result = Utils::toAllocDock(tr("Template result"),
                          QString::null,
                          *TemplateTool.toolbarImage());
     // fixes warning from QMainWindow::saveState
@@ -605,14 +604,14 @@ toTemplate::toTemplate(TODock *parent)
                 i++)
             (*i)->insertItems(List, Toolbar);
 
-    Toolbar->addWidget(new toSpacer());
+    Toolbar->addWidget(new Utils::toSpacer());
 
     WidgetExtra = NULL;
     setWidget(NULL);
 
     setFocusProxy(List);
-    toAttachDock(parent, this, Qt::LeftDockWidgetArea);
-    toAttachDock(Result, Frame, Qt::BottomDockWidgetArea);
+    Utils::toAttachDock(parent, this, Qt::LeftDockWidgetArea);
+    Utils::toAttachDock(Result, Frame, Qt::BottomDockWidgetArea);
 
     setLayout(vbox);
 }
@@ -796,7 +795,7 @@ void toTextTemplate::addFile(toTreeWidget *parent, const QString &root, const QS
                     last = dynamic_cast<toTemplateItem *>(last->parent());
                     lastLevel--;
                 }
-                while (last && lastLevel >= 0 && !toCompareLists(lstCtx, ctx, (unsigned int)lastLevel))
+                while (last && lastLevel >= 0 && !Utils::toCompareLists(lstCtx, ctx, (unsigned int)lastLevel))
                 {
                     last = dynamic_cast<toTemplateItem *>(last->parent());
                     lastLevel--;
@@ -851,11 +850,14 @@ void toTemplateSQLObject::expand(void)
     {
         delete Query;
         Query = NULL;
-        Query = new toEventQuery(Parent->connection(), toQuery::Background,
-                                 Parent->SQL, Parent->parameters());
+        Query = new toEventQuery(this
+        		, Parent->connection()
+        		, Parent->SQL
+        		, toQueryParams()
+        		, toEventQuery::READ_ALL
+        		);
         connect(Query, SIGNAL(dataAvailable()), this, SLOT(poll()));
         connect(Query, SIGNAL(done()), this, SLOT(queryDone()));
-        Query->slotReadAll(); // indicate that all records should be fetched
         Query->start();
     }
     TOCATCH
@@ -880,7 +882,7 @@ void toTemplateSQLObject::poll(void)
     {
         delete Query;
         Query = NULL;
-        toStatusMessage(str);
+        Utils::toStatusMessage(str);
     }
 } // poll
 

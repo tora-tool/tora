@@ -106,6 +106,7 @@ class toTool : public QObject
 {
     Q_OBJECT;
     friend class toWorkSpace;
+    friend class toTemplate;
     friend class toToolsRegistry;
     friend class toToolWidget;
 public:

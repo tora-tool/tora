@@ -437,6 +437,12 @@ QFont toStringToFont(const QString &str);
 */
 QToolBar *toAllocBar(QWidget *parent, const QString &name);
 
+TODock *toAllocDock(const QString &name,
+                    const QString &db,
+                    const QPixmap &pix);
+
+void toAttachDock(TODock *dock, QWidget *container, Qt::DockWidgetArea area);
+
 /** Push an object to the end of a list.
 * @param lst List to push value in from of.
 * @param str Object to push.

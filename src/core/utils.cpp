@@ -252,36 +252,6 @@ QString toDeepCopy(const QString &str)
     return QString(str.data(), str.length());
 }
 
-TODock *toAllocDock(const QString &name,
-                    const QString &db,
-                    const QPixmap &pix)
-{
-    QString str = name;
-    if (!db.isEmpty() && toConfigurationSingle::Instance().dbTitle())
-    {
-        str += QString::fromLatin1(" ");
-        str += db;
-    }
-    QDockWidget *dock = new QDockWidget(str, toMainWidget());
-    dock->setFeatures(QDockWidget::DockWidgetClosable |
-                      QDockWidget::DockWidgetMovable |
-                      QDockWidget::DockWidgetFloatable);
-    if (!pix.isNull())
-        dock->setWindowIcon(QIcon(pix));
-    return dock;
-}
-
-void toAttachDock(TODock *dock, QWidget *container, Qt::DockWidgetArea area)
-{
-    QDockWidget *d = dynamic_cast<QDockWidget *>(dock);
-    if (d)
-    {
-        toMainWidget()->addDockWidget(area, d);
-        d->setWidget(container);
-        container->show();
-    }
-}
-
 static toTreeWidgetItem *FindItem(toTreeWidget *lst, toTreeWidgetItem *first, const QString &str)
 {
     while (first)
@@ -847,6 +817,36 @@ QToolBar *toAllocBar(QWidget *parent, const QString &str)
                                     QSizePolicy::Fixed));
     tool->setFocusPolicy(Qt::NoFocus);
     return tool;
+}
+
+TODock *toAllocDock(const QString &name,
+                    const QString &db,
+                    const QPixmap &pix)
+{
+    QString str = name;
+    if (!db.isEmpty() && toConfigurationSingle::Instance().dbTitle())
+    {
+        str += QString::fromLatin1(" ");
+        str += db;
+    }
+    QDockWidget *dock = new QDockWidget(str, toMainWindow::lookup());
+    dock->setFeatures(QDockWidget::DockWidgetClosable |
+                      QDockWidget::DockWidgetMovable |
+                      QDockWidget::DockWidgetFloatable);
+    if (!pix.isNull())
+        dock->setWindowIcon(QIcon(pix));
+    return dock;
+}
+
+void toAttachDock(TODock *dock, QWidget *container, Qt::DockWidgetArea area)
+{
+    QDockWidget *d = dynamic_cast<QDockWidget *>(dock);
+    if (d)
+    {
+        toMainWindow::lookup()->addDockWidget(area, d);
+        d->setWidget(container);
+        container->show();
+    }
 }
 
 QStringList toGetSessionTypes(void)

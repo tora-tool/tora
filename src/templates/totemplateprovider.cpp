@@ -39,12 +39,11 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "utils.h"
-#include "tologger.h"
+#include "templates/totemplate.h"
+#include "core/utils.h"
+#include "core/tologger.h"
 
-#include "totemplate.h"
-
-#include <QString>
+#include <QtCore/QString>
 
 std::list<toTemplateProvider *> *toTemplateProvider::Providers;
 bool toTemplateProvider::Shown = false;

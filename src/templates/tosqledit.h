@@ -51,7 +51,7 @@ class QComboBox;
 class QLineEdit;
 class toTreeWidget;
 class QAction;
-class toMarkedEditor;
+class toMarkedText;
 class toWorksheet;
 
 class toSQLEdit : public toToolWidget
@@ -60,7 +60,7 @@ class toSQLEdit : public toToolWidget
 
     toTreeWidget *Statements;
     QLineEdit    *Name;
-    toMarkedEditor *Description;
+    toMarkedText *Description;
     QComboBox    *Version;
     toWorksheet  *Worksheet;
     QAction      *TrashButton;
@@ -116,6 +116,9 @@ public:
     virtual QWidget *selectedWidget(QWidget *parent);
 
     virtual QString allText(int col) const;
+private:
+    toConnection& connetion() { return conn; }
+    toConnection &conn;
 };
 
 

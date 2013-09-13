@@ -154,9 +154,9 @@ SET(TORA_UI_SRC
 
   # #    toschedulerui.ui
 
-  #TODO templates/totemplateaddfileui.ui
-  #TODO templates/totemplateeditui.ui
-  #TODO templates/totemplatesetupui.ui
+  templates/totemplateaddfileui.ui
+  templates/totemplateeditui.ui
+  templates/totemplatesetupui.ui
   )
 
 IF (ORACLE_FOUND)
@@ -347,8 +347,8 @@ SET(TORA_MOC_CLASSES
   tools/toplsqltext.h
   tools/toplsqleditor.h
 
-  #TODO templates/tosqledit.h  
-  #TODO templates/totemplate.h
+  templates/tosqledit.h  
+  templates/totemplate.h
   #     toproject.h
   
   #TODO tools/toalert.h
@@ -598,14 +598,15 @@ SET(TORA_SOURCES
   
   tools/tosandboxtool.cpp
 
-  #TODO templates/tosqledit.cpp
-  #     totemplate.cpp
+  templates/tosqledit.cpp
+  templates/totemplate.cpp
+  templates/totemplateprovider.cpp
   #     toproject.cpp
 
   #TODO tools/toalert.cpp
   #TODO tools/totuning.cpp
 
-  #     totemplateprovider.cpp
+
 
   #     todebug.cpp
   #     todebugtext.cpp
