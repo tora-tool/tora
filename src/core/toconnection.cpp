@@ -298,6 +298,7 @@ void toConnection::connectionsMenu(QMenu *menu)
 	//menu->disconnect(this);
 	Q_FOREACH(QAction *a, ConnectionActions)
 	{
+		bool removed = ConnectionActions.remove(a);
 		delete a;
 	}
 
@@ -437,12 +438,16 @@ toConnectionSub* toConnection::borrowSub()
         Connections.remove(retval);
         LentConnections.insert(retval);
         LoanCnt.fetchAndAddAcquire(1);
+		Q_ASSERT_X((int)LoanCnt == LentConnections.size(), qPrintable(__QHERE__), "Invalid number of lent toConnectionSub(s)");
         return retval;
     }
     else
     {
-        LoanCnt.fetchAndAddAcquire(1);
-        return addConnection();
+		toConnectionSub* retval = addConnection();
+		LoanCnt.fetchAndAddAcquire(1);
+		LentConnections.insert(retval);
+		Q_ASSERT_X((int)LoanCnt == LentConnections.size(), qPrintable(__QHERE__), "Invalid number of lent toConnectionSub(s)");
+        return retval;
     }
 }
 
@@ -452,10 +457,14 @@ void toConnection::putBackSub(toConnectionSub *conn)
     Q_ASSERT_X( !Connections.contains(conn) , qPrintable(__QHERE__), "Invalid use of toConnectionSubLoan");
     LoanCnt.deref();
     if(conn->isBroken())
+    {
     	delete conn;
+    }
     else
     	Connections.insert(conn);
-    LentConnections.remove(conn);
+    bool removed = LentConnections.remove(conn);
+	Q_ASSERT_X(removed, qPrintable(__QHERE__), "Lent connection not found");
+	Q_ASSERT_X((int)LoanCnt == LentConnections.size(), qPrintable(__QHERE__), "Invalid number of lent toConnectionSub(s)");
 }
 
 void toConnection::allExecute(toSQL const& sql)

@@ -274,6 +274,8 @@ bool oracleQuery::eof(void)
         if(query())
         {
 			toOracleConnectionSub *conn = dynamic_cast<toOracleConnectionSub *>(query()->connectionSubPtr());
+    		if(exc.is_critical())
+    			conn->Broken = true;
             if(conn)
                 ThrowException(exc);
         }
