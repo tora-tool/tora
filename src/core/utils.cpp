@@ -57,6 +57,7 @@
 #include <QtGui/QPixmapCache>
 #include <QtGui/QPainter>
 #include <QtGui/QKeyEvent>
+#include <QtGui/QDockWidget>
 
 #include <stdlib.h>
 #include <algorithm>
