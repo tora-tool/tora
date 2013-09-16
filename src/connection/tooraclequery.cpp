@@ -270,16 +270,18 @@ bool oracleQuery::eof(void)
     }
     catch (const ::trotl::OciException &exc)
     {
-        TLOG(6, toDecorator, __HERE__) << "eof(e) - " << exc.what() << std::endl;
-        if(query())
-        {
-			toOracleConnectionSub *conn = dynamic_cast<toOracleConnectionSub *>(query()->connectionSubPtr());
-    		if(exc.is_critical())
-    			conn->Broken = true;
-            if(conn)
-                ThrowException(exc);
-        }
-        return true;
+    	TLOG(6, toDecorator, __HERE__) << "eof(e) - " << exc.what() << std::endl;
+    	if(query())
+    	{
+        	toOracleConnectionSub *conn = dynamic_cast<toOracleConnectionSub *>(query()->connectionSubPtr());
+    		if(conn)
+    		{
+    			if(exc.is_critical())
+    				conn->Broken = true;
+    			ThrowException(exc);
+    		}
+    	}
+    	return true;
     }
     return true; // never reached
 }
