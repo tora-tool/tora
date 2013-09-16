@@ -1014,15 +1014,26 @@ void toMain::enableConnectionActions(bool enabled)
     // now, loop through tools and enable/disable
     try
     {
-    	toConnection &conn = toConnectionRegistrySing::Instance().currentConnection();
-
-    	commitAct->setEnabled(conn.needCommit());
-    	rollbackAct->setEnabled(conn.needCommit());
     	stopAct->setEnabled(false);
     	closeConn->setEnabled(enabled);
     	refreshAct->setEnabled(enabled);
     	openAct->setEnabled(enabled);
     	recentMenu->setEnabled(enabled);
+
+    	// Handle situation when there are no connections open
+    	if(toConnectionRegistrySing::Instance().isEmpty())
+    	{
+        	for (ToolsRegistrySing::ObjectType::iterator i = ToolsRegistrySing::Instance().begin(); i != ToolsRegistrySing::Instance().end(); ++i)
+        	{
+        		toTool *pTool = i.value();
+        		pTool->enableAction(false);
+        	}
+        	return;
+    	}
+
+    	toConnection &conn = toConnectionRegistrySing::Instance().currentConnection();
+    	commitAct->setEnabled(conn.needCommit());
+    	rollbackAct->setEnabled(conn.needCommit());
 
     	for (ToolsRegistrySing::ObjectType::iterator i = ToolsRegistrySing::Instance().begin(); i != ToolsRegistrySing::Instance().end(); ++i)
     	{
