@@ -50,6 +50,7 @@ toDockbarButton::toDockbarButton(const QIcon &icon,
                                  QWidget *parent)
     : toRotatingButton(icon, text, parent)
 {
+    setFocusPolicy(Qt::NoFocus);
 }
 
 

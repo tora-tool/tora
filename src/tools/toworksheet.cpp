@@ -641,7 +641,7 @@ void toWorksheet::slotWindowActivated(toToolWidget *widget)
         // depending on the timing.
         // Editor->setFocus();
         //        if (Editor)
-        //            Editor->setFocus(Qt::ActiveWindowFocusReason);
+		Editor->setFocus(Qt::ActiveWindowFocusReason);
 
         // must set correct schema every time so having two worksheets
         // on different schemas works properly.

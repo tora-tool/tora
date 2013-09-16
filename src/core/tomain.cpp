@@ -490,8 +490,9 @@ void toMain::createStatusbar()
     statusBar()->addPermanentWidget(ColumnLabel);
     ColumnLabel->setMinimumWidth(60);
 
-    QToolButton *dispStatus = new toPopupButton(statusBar());
+    QToolButton *dispStatus = new toPopupButton(statusBar(), "dispStatus");
     dispStatus->setIcon(QPixmap(const_cast<const char**>(up_xpm)));
+    dispStatus->setFocusPolicy(Qt::NoFocus);
     statusBar()->addPermanentWidget(dispStatus, 0);
     statusMenu = new QMenu(dispStatus);
     dispStatus->setMenu(statusMenu);
@@ -749,6 +750,8 @@ void toMain::commandCallback(QAction *action)
 
     if (focus)
     {
+		QString name = focus->objectName();
+
     	toEditWidget *Edit = toEditMenuSingle::Instance().editWidget();
         toEditWidget *edit = toEditWidget::findEdit(focus);
         if (edit && edit != Edit)

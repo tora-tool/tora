@@ -59,6 +59,8 @@ toChangeConnection::toChangeConnection(QToolBar *parent, const char *name)
                     tr("Change the connection of the tool."),
                     parent, name)
 {
+	if (name == NULL)
+		setObjectName("toChangeConnection in ???");
     setMenu(new QMenu(this));
     setPopupMode(QToolButton::MenuButtonPopup);
     connect(menu(), SIGNAL(aboutToShow()), this, SLOT(popupMenu()));
