@@ -42,7 +42,7 @@
 #ifndef TOCONNECTION_OPTIONS_H
 #define TOCONNECTION_OPTIONS_H
 
-#include <QtCore/QMetatype>
+#include <QtCore/QMetaType>
 #include <QtCore/QString>
 #include <QtCore/QSet>
 
