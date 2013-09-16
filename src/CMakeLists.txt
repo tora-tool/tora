@@ -398,6 +398,7 @@ SET(TORA_SOURCES
   core/tocache.cpp
   core/toconfiguration.cpp
   core/toconnection.cpp
+  core/toconnectionoptions.cpp
   core/toconnectionregistry.cpp
   core/toconnectionsub.cpp
   core/toconnectionsubloan.cpp

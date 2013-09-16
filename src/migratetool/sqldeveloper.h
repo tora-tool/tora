@@ -44,7 +44,7 @@
 
 #include <QtCore/QList>
 
-#include "core/tonewconnection.h"
+#include "core/toconnectionoptions.h"
 
 namespace MigrateTool
 {

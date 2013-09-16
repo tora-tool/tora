@@ -55,47 +55,6 @@ class toConnectionModel;
 class QSortFilterProxyModel;
 class QMenu;
 
-
-/**
- * Simple class for storing connection options and comparisons
- */
-class toConnectionOptions
-{
-public:
-    // must have for qmap
-    toConnectionOptions()
-    	: port(0)
-    	{}
-
-    toConnectionOptions(const QString &_prov,
-                        const QString &_host,
-                        const QString &_data,
-                        const QString &_user,
-                        const QString &_pass,
-                        const QString &_schema,
-                        const QString &_color,
-                        int _port,
-                        QSet<QString> _options)
-        : provider (_prov)
-        , host     (_host)
-        , database (_data)
-        , username (_user)
-        , password (_pass)
-        , schema   (_schema)
-        , color    (_color)
-        , port     (_port)
-        , options  (_options)
-    {}
-
-    bool operator==(const toConnectionOptions &other);
-    bool operator==(const toConnection &conn);
-
-    QString provider, host, database, username, password, schema, color;
-    quint16 port;
-    QSet<QString> options;
-};
-
-
 class toNewConnection : public QDialog
     , public Ui::toNewConnectionUI
     , public toHelpContext

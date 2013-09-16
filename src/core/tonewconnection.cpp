@@ -63,27 +63,6 @@
 static toConnectionModel     *m_connectionModel = 0;
 static QSortFilterProxyModel *m_proxyModel      = 0;
 
-bool toConnectionOptions::operator==(const toConnectionOptions &other)
-{
-    return provider == other.provider
-    		&& host == other.host
-    		&& database == other.database
-    		&& username == other.username
-    		&& schema == other.schema
-    		&& color == other.color
-    		&& schema == other.schema;
-}
-
-bool toConnectionOptions::operator==(const toConnection &conn)
-{
-    return conn.provider() == provider
-    		&& conn.host() == (host + ":" + QString::number(port))
-    		&& conn.database() == database
-    		&& conn.user() == username
-    		&& conn.color() == color
-    		&& (schema.isEmpty() || (conn.schema() == schema));
-}
-
 toNewConnection::toNewConnection(QWidget* parent, Qt::WFlags fl)
     : QDialog(parent, fl)
     , toHelpContext(QString::fromLatin1("newconnection.html"))

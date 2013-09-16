@@ -7,7 +7,7 @@
  *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
- * Portions Copyright (C) 2004-2009 Numerous Other Contributors
+ * Portions Copyright (C) 2004-2008 Numerous Other Contributors
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -39,55 +39,48 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOCONNECTIONMODEL_H
-#define TOCONNECTIONMODEL_H
+#ifndef TOCONNECTION_OPTIONS_H
+#define TOCONNECTION_OPTIONS_H
 
-#include "core/toconnectionoptions.h"
+#include <QtCore/QMetatype>
+#include <QtCore/QString>
+#include <QtCore/QSet>
 
-#include <QtCore/QAbstractTableModel>
+class toConnection;
 
-/*! \brief Display imported/available connections in
-the Import dialog's view.
-\author Petr Vanek <petr@scribus.info>
-*/
-
-class toConnectionModel : public QAbstractTableModel
+/**
+ * Simple class for storing connection options and comparisons
+ */
+class toConnectionOptions
 {
-    Q_OBJECT
-
 public:
-    toConnectionModel();
+    // must have for qmap
+    toConnectionOptions()
+    	: port(0)
+    	{}
 
-    //! \brief Pull connections from QSettings
-    void readConfig();
-    //! \brief Set the m_data and update all connected views.
-    void setupData(QMap<int, toConnectionOptions> list);
-    void append(int ix, toConnectionOptions conn);
-    bool removeRow(int row, const QModelIndex & parent = QModelIndex());
-    //! \brief Bring m_data back to caller.
-    QMap<int, toConnectionOptions> availableConnections()
-    {
-        return m_data;
-    };
-    toConnectionOptions availableConnection(int ix)
-    {
-        return m_data[ix];
-    };
+    toConnectionOptions(const QString &_prov,
+                        const QString &_host,
+                        const QString &_data,
+                        const QString &_user,
+                        const QString &_pass,
+                        const QString &_schema,
+                        const QString &_color,
+                        int _port,
+                        QSet<QString> _options);
 
-    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
-    QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const;
-    int columnCount(const QModelIndex & parent = QModelIndex()) const
-    {
-        return 6;
-    };
-    int rowCount(const QModelIndex & parent = QModelIndex()) const
-    {
-        return m_data.count();
-    };
-    Qt::ItemFlags flags(const QModelIndex & index) const;
+    toConnectionOptions(toConnectionOptions const& other);
+    toConnectionOptions& operator=(const toConnectionOptions &other);
 
-private:
-    QMap<int, toConnectionOptions> m_data;
+    bool operator==(const toConnectionOptions &other);
+    bool operator==(const toConnection &conn);
+
+    QString provider, host, database, username, password, schema, color;
+    quint16 port;
+    QSet<QString> options;
 };
 
+Q_DECLARE_METATYPE(toConnectionOptions)
+
 #endif
+
