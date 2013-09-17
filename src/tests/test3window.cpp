@@ -43,14 +43,12 @@
 
 #include "core/toabout.h"
 #include "core/toconf.h"
-
 #include "core/toconnection.h"
 #include "core/todocklet.h"
-
 #include "core/toconfiguration.h"
 #include "core/toraversion.h"
-
 #include "core/toworkspace.h"
+#include "core/tologger.h"
 #include "tools/toworksheet.h"
 
 #include <QtGui/QStatusBar>

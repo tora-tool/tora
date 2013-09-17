@@ -44,11 +44,14 @@
 #include "core/toconnectionprovider.h"
 #include "core/tooracleconst.h"
 #include "core/tosql.h"
+#include "core/tocache.h"
+#include "core/toqvalue.h"
 #include "core/toraversion.h"
 #include "core/toabout.h"
 #include "core/toconf.h"
 #include "core/tomain.h"
 #include "core/utils.h"
+#include "core/tologger.h"
 
 #ifndef Q_OS_WIN32
 #include <unistd.h>

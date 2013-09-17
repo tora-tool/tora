@@ -44,9 +44,11 @@
 
 #include "core/toqvalue.h"
 #include "core/toconnection.h"
+#include "core/toquery.h"
 
 #include <QtCore/QAbstractItemModel>
 #include <QtCore/QList>
+
 #include <list>
 
 /** This is base class for all table based models.

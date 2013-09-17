@@ -43,7 +43,7 @@
 
 #include "core/toabout.h"
 #include "core/toconf.h"
-
+#include "core/tologger.h"
 #include "core/toconnection.h"
 #include "core/todocklet.h"
 

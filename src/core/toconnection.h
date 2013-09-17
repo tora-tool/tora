@@ -43,8 +43,7 @@
 #define TOCONNECTION_H
 
 #include "core/tora_export.h"
-#include "core/toquery.h"
-#include "core/tologger.h"
+#include "core/toconnectionoptions.h"
 
 #include <QtCore/QObject>
 #include <QtCore/QPointer>
@@ -84,23 +83,6 @@ class toConnection : public QObject
 	friend class toCacheWorker;
     friend class toResultModel;
 public:
-
-    // Utility class to store any pointer inside QVariant
-    // http://blog.bigpixel.ro/2010/04/storing-pointer-in-qvariant/
-    template <class T> class VPtr
-    {
-    public:
-    	static T* asPtr(QVariant v)
-    	{
-    		return  (T *) v.value<void *>();
-    	}
-
-    	static QVariant asQVariant(T* ptr)
-    	{
-    		return qVariantFromValue((void *) ptr);
-    	}
-    };
-
     /** Create a new connection.
      * @param provider Which database provider to use for this connection.
      * (See @ref to toDatabaseConnection)
@@ -116,6 +98,8 @@ public:
                  const QString &host, const QString &database, const QString &schema,
                  const QString &color,
                  const QSet<QString> &options);
+
+    toConnection(const toConnectionOptions &opts);
 
     /** Create a copy of a connection. Will not cache objects, so objects will never be available
      *  in a subconnection.
@@ -381,6 +365,24 @@ private slots:
 	void commandCallback(QAction *);
 
 private:
+
+    // Utility class to store any pointer inside QVariant
+    // http://blog.bigpixel.ro/2010/04/storing-pointer-in-qvariant/
+	// TODO move this into Utils namespace
+    template <class T> class VPtr
+    {
+    public:
+    	static T* asPtr(QVariant v)
+    	{
+    		return  (T *) v.value<void *>();
+    	}
+
+    	static QVariant asQVariant(T* ptr)
+    	{
+    		return qVariantFromValue((void *) ptr);
+    	}
+    };
+
     toConnectionSub* borrowSub();
     void putBackSub(toConnectionSub*);
     friend class toConnectionSubLoan;
@@ -402,6 +404,7 @@ private:
     QSet<toConnectionSub*> Connections, LentConnections;
     connectionImpl *pConnectionImpl;
     toConnectionTraits *pTrait;
+    toConnectionOptions connectionOptions;
     toCache *pCache;
     QAtomicInt LoanCnt;
 

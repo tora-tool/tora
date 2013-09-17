@@ -39,6 +39,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "core/toconnectionprovider.h"
+#include "core/tologger.h"
 #include "connection/toqsqlprovider.h"
 #include "connection/toqpsqlprovider.h"
 #include "connection/toqmysqlprovider.h"

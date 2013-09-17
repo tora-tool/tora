@@ -587,9 +587,15 @@ toConnection* toNewConnection::makeConnection(bool savePrefs)
             host = "";
         }
 
-        toConnectionOptions opts(getCurrentProvider(), host, database
-        		, Username->text(), Password->text()
-        		, schema, color, port, options);
+        toConnectionOptions opts(getCurrentProvider()
+        		, host
+        		, database
+        		, Username->text()
+        		, Password->text()
+        		, schema
+        		, color
+        		, port
+        		, options);
 
         // checks for existing connection
         foreach(toConnection * conn, toConnectionRegistrySing::Instance().connections())

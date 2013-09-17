@@ -58,6 +58,7 @@
 #include "core/toconfiguration.h"
 #include "core/toglobalevent.h"
 #include "core/utils.h"
+#include "core/tologger.h"
 #include "ts_log/toostream.h"
 #include "editor/tohighlightedtext.h"
 

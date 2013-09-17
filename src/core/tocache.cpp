@@ -43,6 +43,7 @@
 #include "core/toconnection.h"
 #include "core/toconnectionsub.h"
 #include "core/toconnectionsubloan.h"
+#include "core/toquery.h"
 #include "core/tosql.h"
 #include "core/toraversion.h"
 #include "core/utils.h"

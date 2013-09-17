@@ -42,14 +42,13 @@
 #include "tools/toplsqleditor.h"
 #include "tools/toplsqltext.h"
 #include "core/utils.h"
-//#include "core/tologger.h"
+#include "core/tologger.h"
 #include "core/toconnection.h"
-//#include "core/toquery.h"
+#include "core/toconnectionsubloan.h"
+#include "core/toqvalue.h"
+#include "core/toquery.h"
 #include "core/totreewidget.h"
-//#include "core/tomain.h"
 #include "core/tosql.h"
-//#include "core/toresultview.h"
-//#include "editor/tomarkededitor.h"
 #include "core/toglobalevent.h"
 
 #include <QtCore/QSettings>
