@@ -87,7 +87,7 @@ class toBrowserSchemaCodeBrowser;
 class toBrowserSchemaTableView;
 
 
-/*! \brief Main GUI fo Schema Browser.
+/*! \brief Main GUI for Schema Browser.
 toBrowser holds the GUI stuff for schema browsing. It contains
 some slots/actions related to the DB object manipulations - mainly
 the "mass" actions available for multiple objects (e.g. deleting

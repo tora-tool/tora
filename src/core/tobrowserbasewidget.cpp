@@ -41,7 +41,7 @@
 
 #include "core/tobrowserbasewidget.h"
 #include "core/toresultdata.h"
-#include "core/toconnectionregistry.h"
+#include "core/toconnectiontraits.h"
 
 #include <QtGui/QApplication>
 
@@ -147,28 +147,30 @@ void toBrowserBaseWidget::updateData(const QString & ix)
         return;
     }
 
+    toConnection &conn = toConnection::currentConnection(this);
+    QString Schema = conn.getTraits().unQuote(schema());
+    QString Object = conn.getTraits().unQuote(object());
+
     // Some result types need a type specified in order to get information on correct
     // object (when the same object name is used for objects of different types).
     if (currentWidget()->objectName() == "extractView")
     {
-        m_tabs[ix]->refreshWithParams(toQueryParams() << schema() << object() << type());
+        m_tabs[ix]->refreshWithParams(toQueryParams() << Schema << Object << type());
+        return;
+    }
+
+    if ( (conn.providerIs("QMYSQL") || conn.providerIs("Teradata")) &&
+    		!type().isEmpty() &&
+    		(type() == "PROCEDURE" || type() == "FUNCTION" || type() == "MACRO"))
+    {
+    	// MySQL requires additional parameter to fetch routine (procedure/function) creation script
+    	// Parameter type must be passed first because it is not possible to rearrange parameters
+    	// used in SQL.
+    	m_tabs[ix]->refreshWithParams(toQueryParams() <<  type() << Schema << Object);
     }
     else
     {
-        toConnection &conn = toConnectionRegistrySing::Instance().currentConnection();
-        if ( (conn.providerIs("QMYSQL") || conn.providerIs("Teradata")) &&
-                !type().isEmpty() &&
-                (type() == "PROCEDURE" || type() == "FUNCTION" || type() == "MACRO"))
-        {
-            // MySQL requires additional parameter to fetch routine (procedure/function) creation script
-            // Parameter type must be passed first because it is not possible to rearrange parameters
-            // used in SQL.
-            m_tabs[ix]->refreshWithParams(toQueryParams() <<  type() << schema() << object());
-        }
-        else
-        {
-            m_tabs[ix]->refreshWithParams(toQueryParams() << schema() << object());
-        }
+    	m_tabs[ix]->refreshWithParams(toQueryParams() << Schema << Object);
     }
 }
 

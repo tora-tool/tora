@@ -528,25 +528,19 @@ void toResultCols::query(const QString &sql, toQueryParams const& param)
 		    else
 			    Owner = conn.user().toUpper();
 		    Name = param.at(0);
-		    object = conn.getTraits().quote(param.at(0));
+		    object = param.at(0);
 		    break;
 	    case 2:
 		    Owner = param.at(0);
 		    Name = param.at(1);
-		    object = conn.getTraits().quote(param.at(0))
-			    + QString::fromLatin1(".")
-			    + conn.getTraits().quote(param.at(1));
+		    object = Owner + QString::fromLatin1(".") + Name;
 		    break;
 	    default:
 		    Q_ASSERT_X(false, qPrintable(__QHERE__), "Invalid size for params");
 		    break;
 	    }	    
 			    
-        //TableName = conn.getTraits().quote(Owner) + "." + conn.getTraits().quote(Name);
-	    Owner = conn.getTraits().unQuote(Owner);
-	    Name = conn.getTraits().unQuote(Name);
-
-        // TODO call is only if cache entry is not "described"
+        // TODO call this only if cache entry is not "described"
         Columns->refreshWithParams(toQueryParams() << Owner << Name);
     }
     TOCATCH;
