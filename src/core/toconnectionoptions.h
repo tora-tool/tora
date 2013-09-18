@@ -61,7 +61,7 @@ public:
 
     toConnectionOptions(const QString &_prov,
                         const QString &_host,
-                        const QString &_data,
+                        const QString &_database,
                         const QString &_user,
                         const QString &_pass,
                         const QString &_schema,

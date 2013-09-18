@@ -44,7 +44,7 @@
 
 toConnectionOptions::toConnectionOptions(const QString &_prov,
 		const QString &_host,
-		const QString &_data,
+		const QString &_database,
 		const QString &_user,
 		const QString &_pass,
 		const QString &_schema,
@@ -53,7 +53,7 @@ toConnectionOptions::toConnectionOptions(const QString &_prov,
 		QSet<QString> _options)
 	: provider (_prov)
 	, host     (_host)
-	, database (_data)
+	, database (_database)
 	, username (_user)
 	, password (_pass)
 	, schema   (_schema)

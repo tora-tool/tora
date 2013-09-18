@@ -53,6 +53,8 @@
 #include <QtCore/QMetaType>
 #include <QtCore/QDateTime>
 #include <QtCore/QAtomicInt>
+#include <QtCore/QVariant>
+#include <QtCore/QMutex>
 
 class toConnectionSub;
 class toConnectionTraits;
@@ -126,6 +128,12 @@ public:
     inline QSet<QString> const& options() const
     {
         return Options;
+    }
+
+    /** Get the options for the connection. */
+    inline toConnectionOptions const& connectionOptions() const
+    {
+        return ConnectionOptions;
     }
 
     /** Get username of connection. */
@@ -398,13 +406,13 @@ private:
     QString Schema;
     QString Version;
     QString Color;
-    QList<QPointer<QWidget> > Widgets;
+    QSet<QWidget*> Widgets;
     QMap<QString, QString> InitStrings; // Key, SQL
     QSet<QString> Options;
     QSet<toConnectionSub*> Connections, LentConnections;
     connectionImpl *pConnectionImpl;
     toConnectionTraits *pTrait;
-    toConnectionOptions connectionOptions;
+    toConnectionOptions ConnectionOptions;
     toCache *pCache;
     QAtomicInt LoanCnt;
 

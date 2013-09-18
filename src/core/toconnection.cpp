@@ -46,9 +46,12 @@
 #include "core/tologger.h"
 #include "core/toconf.h"
 #include "core/tocache.h"
+#include "core/toqvalue.h"
+#include "core/toquery.h"
 #include "core/totool.h"
 #include "core/toconfiguration.h"
 #include "core/toconnectionprovider.h"
+#include "core/toworkspace.h"
 
 #include <QtGui/QMenu>
 
@@ -71,6 +74,7 @@ toConnection::toConnection(const QString &provider,
     , NeedCommit(false)
     , Abort(false)
     , LoanCnt(0)
+	, ConnectionOptions(provider, host, database, user, password, schema, color , 0, options)
 {
     pConnectionImpl = toConnectionProviderRegistrySing::Instance().get(provider).createConnectionImpl(*this);
     pTrait = toConnectionProviderRegistrySing::Instance().get(provider).createConnectionTrait();
@@ -80,6 +84,42 @@ toConnection::toConnection(const QString &provider,
     Connections.insert(connSub);
 
     setSchema(schema);
+
+    pCache = new toCache(*this, description(false).trimmed());
+
+    ////Version = connSub->version();
+    {
+        QMutexLocker clock(&ConnectionLock);
+        if (toConfigurationSingle::Instance().objectCache() == toConfiguration::ON_CONNECT)
+        	pCache->readCache();
+
+    }
+}
+
+toConnection::toConnection(const toConnectionOptions &opts)
+    : Provider(opts.provider)
+    , User(opts.username)
+    , Password(opts.password)
+    , Host(opts.host)
+    , Database(opts.database)
+    , Color(opts.color)
+    , Options(opts.options)
+    , pConnectionImpl(NULL)
+    , pCache(NULL)
+    , pTrait(NULL)
+    , NeedCommit(false)
+    , Abort(false)
+    , LoanCnt(0)
+	, ConnectionOptions(opts)
+{
+    pConnectionImpl = toConnectionProviderRegistrySing::Instance().get(Provider).createConnectionImpl(*this);
+    pTrait = toConnectionProviderRegistrySing::Instance().get(Provider).createConnectionTrait();
+
+    toConnectionSub* connSub = addConnection();
+    Version = connSub->version();
+    Connections.insert(connSub);
+
+    setSchema(opts.schema);
 
     pCache = new toCache(*this, description(false).trimmed());
 
@@ -108,6 +148,7 @@ toConnection::toConnection(const toConnection &other)
     , NeedCommit(other.NeedCommit)
     , Abort(other.Abort)
     , LoanCnt(0)
+	, ConnectionOptions(other.ConnectionOptions)
 {
     //tool Connection = toConnectionProvider::connection(Provider, this);
     //ConnectionPool = new toConnectionPool(this);
@@ -250,45 +291,60 @@ void toConnection::rollback(void)
 
 void toConnection::delWidget(QWidget *widget)
 {
-    for (QList<QPointer<QWidget> >::iterator i = Widgets.begin();  i != Widgets.end();  i++)
+	Widgets.remove(widget);
+
+#ifdef QT_DEBUG
+    // Cross check tools connections against connections widgets
+    // Iterate over all the tool windows, increment the counter for every tool using this toConnection instance
+    unsigned toolCnt = 0;
+    QList<toToolWidget*> tools = toWorkSpaceSingle::Instance().toolWindowList();
+    Q_FOREACH(toToolWidget *tool, tools)
     {
-        if ((*i) && (*i) == widget)
-        {
-            Widgets.erase(i);
-            break;
-        }
+    	if (this->ConnectionOptions == tool->connection().connectionOptions())
+    		toolCnt++;
     }
+    Q_ASSERT_X(toolCnt == Widgets.size(), qPrintable(__QHERE__), "Widgets.size() != toolCnt");
+#endif
 }
 
 void toConnection::addWidget(QWidget *widget)
 {
-    Widgets.insert(Widgets.end(), QPointer<QWidget>(widget));
+    Widgets.insert(widget);
+
+#ifdef QT_DEBUG
+    // Cross check tools connections against connections widgets
+    // Iterate over all the tool windows, increment the counter for every tool using this instance
+    unsigned toolCnt = 0;
+    QList<toToolWidget*> tools = toWorkSpaceSingle::Instance().toolWindowList();
+    Q_FOREACH(toToolWidget *tool, tools)
+    {
+    	if (this->ConnectionOptions == tool->connection().connectionOptions())
+    		toolCnt++;
+    }
+	// +1:  This widget was not yet regitered with toWorkSpaceSingle. (See: toTool::createWindow())
+    Q_ASSERT_X(toolCnt+1 == Widgets.size(), qPrintable(__QHERE__), "Widgets.size() != toolCnt");
+#endif
 }
 
 bool toConnection::closeWidgets(void)
 {
-    for (QList<QPointer<QWidget> >::iterator i = Widgets.begin(); i != Widgets.end();  i++)
+    //for (QList<QPointer<QWidget> >::iterator i = Widgets.begin(); i != Widgets.end();  i++)
+	Q_FOREACH(QWidget* widget, Widgets)
     {
-
-        if (!(*i))
-            continue;
-
-#pragma message WARN("TODO/FIXME: close tool windows")
-
-        // make double sure destroy flag is set
-        (*i)->setAttribute(Qt::WA_DeleteOnClose);
-        if (!(*i)->close())
-        {
-            // close will fail if parent already closed.
-            // closing parent will hide children though
-            if ((*i)->isVisible())
-                return false;
-        }
-        else
-            delete *i;
+    	if (toToolWidget *toolWidget = dynamic_cast<toToolWidget*>(widget))
+    	{
+        	bool retval = toWorkSpaceSingle::Instance().closeToolWidget(toolWidget);
+        	if (retval)
+        	{
+        		bool removed = Widgets.remove(widget); // TODO: check if QT containers support modification while being iterated
+        		continue;
+        	}
+        	else
+        		return false;
+    	}
+    	Q_ASSERT_X(false, qPrintable(__QHERE__), qPrintable(QString("Unknown toConnectionWidget: %1").arg(widget->metaObject()->className())));
     }
-
-    Widgets.clear();
+	Q_ASSERT_X(Widgets.isEmpty(), qPrintable(__QHERE__), "toConnection::Widgets is not empty");
     return true;
 }
 

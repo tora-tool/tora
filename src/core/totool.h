@@ -297,7 +297,7 @@ public:
     toConnectionWidget(QWidget *widget);
     /** Destructor.
      */
-    virtual ~toConnectionWidget() {};
+    virtual ~toConnectionWidget();
     /** Change connection of the widget.
      */
     virtual void setConnection(toConnection &conn);

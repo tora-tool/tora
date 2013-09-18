@@ -98,6 +98,12 @@ toConnectionWidget::toConnectionWidget(QWidget *widget)
     Connection = NULL;
 }
 
+toConnectionWidget::~toConnectionWidget()
+{
+	if (Connection)
+		Connection->delWidget(Widget);
+}
+
 toConnection &toConnectionWidget::connection()
 {
     if (Connection)

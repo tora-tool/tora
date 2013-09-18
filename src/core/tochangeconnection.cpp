@@ -44,6 +44,7 @@
 #include "core/toconnectionregistry.h"
 #include "core/tomainwindow.h"
 #include "core/totool.h"
+#include "core/tologger.h"
 #include "core/utils.h"
 
 #include <QtGui/QMenu>
