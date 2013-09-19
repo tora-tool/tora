@@ -41,6 +41,10 @@
 
 #include "core/tosql.h"
 
+static toSQL SQLCurrentSchema("Global:CurrentSchema",
+                        "select sys_context('userenv', 'current_schema') from dual",
+                        "Get address of an SQL statement");
+
 static toSQL SQLConnectionHasTransaction("toConnection:HasTransaction"
 							, "select nvl2(dbms_transaction.local_transaction_id, 1, 0) from dual"
                             , "Returns 1 if transaction is active"

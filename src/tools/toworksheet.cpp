@@ -85,6 +85,7 @@
 #include <QtCore/QTextStream>
 #include <QtGui/QInputDialog>
 #include <QtGui/QProgressDialog>
+#include <QtCore/QCryptographicHash>
 
 #include "icons/clock.xpm"
 #include "icons/recall.xpm"
@@ -150,10 +151,6 @@ static toSQL SQLAddress("Global:Address",
                         " WHERE SQL_Text LIKE :f1<char[150]>||'%'",
                         "Get address of an SQL statement");
 
-static toSQL SQLCurrentSchema("Global:CurrentSchema",
-                        "select sys_context('userenv', 'current_schema') from dual",
-                        "Get address of an SQL statement");
-
 static QString toSQLToAddress(toConnection &conn, const QString &sql)
 {
   QString search = Utils::toSQLStripSpecifier(sql);
@@ -166,6 +163,37 @@ static QString toSQLToAddress(toConnection &conn, const QString &sql)
           return *i;
   }
   throw qApp->translate("toSQLToAddress", "SQL Query not found in SGA");
+}
+
+static QString toSQLToSql_Id(const QString &sql)
+{
+	// based on
+	// http://www.slaviks-blog.com/2010/03/30/oracle-sql_id-and-hash-value/
+	// Note: 11gR2 also has dbms_sqltune_util0.sqltext_to_sqlid - but who cares
+	QByteArray ba = sql.toLocal8Bit();
+	ba.append('\0');
+	QByteArray baHash = QCryptographicHash::hash(ba, QCryptographicHash::Md5);
+
+	QString sql_id;
+	//consider only last/most significant 64 bits of regular 128bit MD5 hash
+	quint32 *msb = (quint32*)(&(baHash.constData()[8]));
+	quint32 *lsb = (quint32*)(&(baHash.constData()[12])); // these bits are the traditional 32 bit hash value
+	quint64 value = (quint64)(*msb) * 4294967296ULL + (quint64)(*lsb);
+	static const char* base32 = "0123456789abcdfghjkmnpqrstuvwxyz";
+	if (value == 0)
+	{
+		sql_id = "0";
+	} else
+	{
+		while (value )
+		{
+			sql_id = base32[value % 32] + sql_id;
+			value /= 32;
+		}
+		sql_id = sql_id.rightJustified(13, '0');
+	}
+	quint32 *hash_value = (quint32*)(&(baHash.constData()[12]));
+	return QString("%1:%2").arg(*hash_value).arg(sql_id);
 }
 
 void toWorksheet::viewResources(void)
@@ -1346,7 +1374,6 @@ void toWorksheet::slotRollbackChanges(toConnection &conn)
 
 void toWorksheet::slotExecute()
 {
-
     if (Editor->hasSelectedText())
     {
     	querySelection(Normal);
@@ -1579,6 +1606,9 @@ void toWorksheet::slotDescribe(void)
 
 void toWorksheet::slotDescribeNew(void)
 {
+    toSyntaxAnalyzer::statement stat = currentStatement();
+    TOMessageBox::information (this, toSQLToSql_Id(stat.sql), stat.sql);
+
 #if 0
     int line, col;
     QString buffer;
@@ -2101,7 +2131,7 @@ void toWorksheet::lockConnection()
 	try
 	{
 		Utils::toBusy busy;
-		toQuery schema(*LockedConnection, SQLCurrentSchema, toQueryParams());
+		toQuery schema(*LockedConnection, toSQL::string("Global:CurrentSchema", connection()), toQueryParams());
 		QString value = schema.readValue();
 		Schema->setSelected(value);
 		Schema->refresh();
