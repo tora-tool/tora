@@ -2,6 +2,7 @@
 #define TOCONNECTIONSUB
 
 #include "core/tocache.h"
+#include "core/tora_export.h"
 
 #include <QtCore/QDateTime>
 
@@ -14,7 +15,7 @@ class toQuery;
  * bother with this class if you aren't creating a new database provider
  * (@ref toConnectionProvider).
  */
-class toConnectionSub
+class TORA_EXPORT toConnectionSub
 {
 public:
 
@@ -60,6 +61,8 @@ public:
     virtual QString version() = 0;
 
     virtual QString sessionId() = 0;
+
+    virtual bool hasTransaction();
 
     virtual queryImpl* createQuery(toQuery *query) = 0;
 

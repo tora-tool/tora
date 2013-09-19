@@ -41,6 +41,12 @@
 
 #include "core/tosql.h"
 
+static toSQL SQLConnectionHasTransaction("toConnection:HasTransaction"
+							, "select nvl2(dbms_transaction.local_transaction_id, 1, 0) from dual"
+                            , "Returns 1 if transaction is active"
+                            , "0900"
+                            , "Oracle");
+
 static toSQL SQLListObjectsInDatabase("toConnection:ListObjectsInDatabase",
                             "select a.owner,a.object_name,a.object_type,b.comments\n"
                             "  from sys.all_objects a,\n"

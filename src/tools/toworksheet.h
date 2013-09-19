@@ -206,6 +206,10 @@ private:
 
     void addLog(const QString &result);
 
+    void queryStarted(const toSyntaxAnalyzer::statement &stat);
+    void lockConnection();
+    void unlockConnection();
+
     toWorksheetEditor *Editor;
     toTabWidget       *ResultTab;
     toResultTableView *Result;
@@ -254,6 +258,7 @@ private:
      *statisticAct, *previousAct, *nextAct, *saveLastAct;
 
     QSharedPointer<toConnectionSubLoan> LockedConnection;
+    bool lockConnectionActClicked;
 };
 
 

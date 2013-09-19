@@ -46,3 +46,7 @@ void toConnectionSub::execute(QString const &SQL)
     throw toConnection::exception("Not implemented yet: void toConnectionSub::execute(QString const &SQL)");
 }
 
+bool toConnectionSub::hasTransaction()
+{
+	return true; // implicitly assume there is a transaction on the session
+}

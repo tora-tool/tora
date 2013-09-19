@@ -51,6 +51,7 @@
 #include "core/toconf.h"
 #include "core/tochangeconnection.h"
 #include "core/toconf.h"
+#include "core/toconnectionsub.h"
 #include "core/toparamget.h"
 ////obsolete #include "core/toresultbar.h"
 #include "core/toresultschema.h"
@@ -188,12 +189,6 @@ void toWorksheet::createActions()
     parseAct->setShortcut(Qt::CTRL + Qt::Key_F9);
     connect(parseAct, SIGNAL(triggered()), this, SLOT(slotParseAll(void)));
 
-    lockConnectionAct = new QAction(QPixmap(const_cast<const char**>(lockconnection_xpm)),
-                                    tr("Lock connection to this worksheet"),
-                                    this);
-    lockConnectionAct->setCheckable(true);
-    connect(lockConnectionAct, SIGNAL(toggled(bool)), this, SLOT(slotLockConnection(bool)));
-
     executeAct = new QAction(QPixmap(const_cast<const char**>(execute_xpm)),
                              tr("Execute current statement"),
                              this);
@@ -242,6 +237,12 @@ void toWorksheet::createActions()
     connect(stopAct, SIGNAL(triggered()), this, SLOT(slotStop(void)));
     stopAct->setEnabled(false);
 
+    lockConnectionAct = new QAction(QPixmap(const_cast<const char**>(lockconnection_xpm)),
+                                    tr("Lock connection to this worksheet"),
+                                    this);
+    lockConnectionAct->setCheckable(true);
+    connect(lockConnectionAct, SIGNAL(toggled(bool)), this, SLOT(slotLockConnection(bool)));
+
     eraseAct = new QAction(QPixmap(const_cast<const char**>(eraselog_xpm)),
                            tr("Clear execution log"),
                            this);
@@ -286,17 +287,14 @@ void toWorksheet::setup(bool autoLoad)
     workToolbar->addAction(describeAct);
     workToolbar->addAction(describeActNew);
     workToolbar->addAction(explainAct);
-
     workToolbar->addAction(stopAct);
+    workToolbar->addAction(lockConnectionAct);
 
     workToolbar->addSeparator();
-
     workToolbar->addAction(eraseAct);
 
     workToolbar->addSeparator();
-
     workToolbar->addAction(statisticAct);
-
     workToolbar->addWidget(new QLabel(tr("Refresh") + " ",
                                       workToolbar));
     Refresh = Utils::toRefreshCreate(workToolbar);
@@ -312,13 +310,10 @@ void toWorksheet::setup(bool autoLoad)
     connect(statisticAct, SIGNAL(toggled(bool)), Refresh, SLOT(setEnabled(bool)));
 
     workToolbar->addSeparator();
-
     workToolbar->addAction(previousAct);
-
     workToolbar->addAction(nextAct);
 
     workToolbar->addSeparator();
-
     InsertSavedMenu = new toEditableMenu(workToolbar);
     InsertSavedMenu->setIcon(
         QPixmap(const_cast<const char**>(insertsaved_xpm)));
@@ -367,8 +362,6 @@ void toWorksheet::setup(bool autoLoad)
             SLOT(update(const QString &)));
 
     new toChangeConnection(workToolbar);
-
-    workToolbar->addAction(lockConnectionAct);
 
     RefreshSeconds = 60;
     connect(&RefreshTimer, SIGNAL(timeout()), this, SLOT(slotRefresh()));
@@ -581,6 +574,7 @@ void toWorksheet::setup(bool autoLoad)
 toWorksheet::toWorksheet(QWidget *main, toConnection &connection, bool autoLoad)
     : toToolWidget(WorksheetTool, "worksheet.html", main, connection, "toWorksheet")
 	, CurrentTab(NULL)
+	, lockConnectionActClicked(false)
 {
     createActions();
     setup(autoLoad);
@@ -1072,6 +1066,7 @@ void toWorksheet::query(toSyntaxAnalyzer::statement const& statement, execTypeEn
     case Direct: {
     	try
     	{
+    		////lockConnection();
     		QString buffer;
     		if (!toConfigurationSingle::Instance().wsHistory())
     		{
@@ -1118,9 +1113,16 @@ void toWorksheet::query(toSyntaxAnalyzer::statement const& statement, execTypeEn
     				exc + "\n\n" + tr("Stop execution ('No' to continue)?"),
     				QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes)
     			throw BatchExecException();
+    		if (!lockConnectionActClicked)
+    			unlockConnection();
     	}
     } break;
     case Normal: {
+    	//if (statement.statementType != toSyntaxAnalyzer::SELECT) TODO: check for "FOR UPDATE HERE
+    	{
+    		lockConnection();
+    		lockConnectionAct->setDisabled(true);
+    	}
         this->m_lastQuery = statement;
 
         // unhide the results pane if there's something to show
@@ -1175,10 +1177,14 @@ void toWorksheet::query(toSyntaxAnalyzer::statement const& statement, execTypeEn
     	catch (const toConnection::exception &exc)
     	{
     		addLog(exc);
+    		if (!lockConnectionActClicked)
+    			unlockConnection();
     	}
     	catch (const QString &exc)
     	{
     		addLog(exc);
+    		if (!lockConnectionActClicked)
+    			unlockConnection();
     	}
     	try
     	{
@@ -1484,6 +1490,19 @@ void toWorksheet::slotQueryDone(void)
 {
 	timer()->stop();
     stopAct->setDisabled(true);
+
+    // TODO: LockedConnection.isNull is mandatory here. For some unknown reason slotQueryDone can be called twice for the same query
+    if (!lockConnectionActClicked && LockedConnection)
+    {
+    	try
+    	{
+    		Utils::toBusy busy;
+    		if( !(*LockedConnection)->hasTransaction())
+    			unlockConnection();
+    	}
+    	TOCATCH
+    }
+	lockConnectionAct->setEnabled(true);
 }
 
 void toWorksheet::saveDefaults(void)
@@ -2057,29 +2076,52 @@ void toWorksheet::slotChangeConnection(void)
     else
         Schema->setSelected(connection().user());
 
-    LockedConnection.clear();
-    lockConnectionAct->setChecked(false);
+	if (!lockConnectionActClicked)
+		unlockConnection();
+	lockConnectionAct->setEnabled(true);
 }
 
 void toWorksheet::slotLockConnection(bool enabled)
 {
 	if(enabled)
-	{
-		QSharedPointer<toConnectionSubLoan> conn(new toConnectionSubLoan(connection(), toConnectionSubLoan::INIT_SESSION));
-		this->LockedConnection = conn;
+		lockConnection();
+	else
+		unlockConnection();
+	lockConnectionActClicked = enabled;
+}
 
-		try
-		{
-			Utils::toBusy busy;
-			toQuery schema(*LockedConnection, SQLCurrentSchema, toQueryParams());
-			QString value = schema.readValue();
-			Schema->setSelected(value);
-			Schema->refresh();
-			connection().setSchema(value);
-		}
-		TOCATCH
-	} else
-		this->LockedConnection.clear();
+void toWorksheet::lockConnection()
+{
+	if (LockedConnection) // Do not lock connection twice
+		return;
+
+	QSharedPointer<toConnectionSubLoan> conn(new toConnectionSubLoan(connection(), toConnectionSubLoan::INIT_SESSION));
+	this->LockedConnection = conn;
+
+	try
+	{
+		Utils::toBusy busy;
+		toQuery schema(*LockedConnection, SQLCurrentSchema, toQueryParams());
+		QString value = schema.readValue();
+		Schema->setSelected(value);
+		Schema->refresh();
+		connection().setSchema(value);
+
+		bool oldVal = lockConnectionAct->blockSignals(true);
+	    lockConnectionAct->setChecked(true);
+	    lockConnectionAct->blockSignals(oldVal);
+	}
+	TOCATCH
+}
+
+void toWorksheet::unlockConnection()
+{
+	this->LockedConnection.clear();
+	lockConnectionActClicked = false;
+	bool oldVal = lockConnectionAct->blockSignals(true);
+    lockConnectionAct->setChecked(false);
+	lockConnectionAct->setEnabled(true);
+    lockConnectionAct->blockSignals(oldVal);
 }
 
 void toWorksheet::addLog(const QString &result)
@@ -2116,6 +2158,11 @@ void toWorksheet::addLog(const QString &result)
 		Logging->ensureItemVisible(item);
 		Logging->blockSignals(oldState);
 	}
+}
+
+void toWorksheet::queryStarted(const toSyntaxAnalyzer::statement &stat)
+{
+
 }
 
 toWorksheetSetup::toWorksheetSetup(toTool *tool, QWidget* parent, const char* name)

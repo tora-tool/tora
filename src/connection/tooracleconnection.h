@@ -97,6 +97,7 @@ public:
     virtual void rollback();
     virtual QString version();
     virtual QString sessionId();
+    virtual bool hasTransaction();
     virtual queryImpl* createQuery(toQuery *query);
 
     virtual toQAdditionalDescriptions* decribe(toCache::ObjectRef const&);

@@ -337,6 +337,17 @@ QString toOracleConnectionSub::sessionId()
 	return retval.arg(_login->sid()).arg(_login->serial());
 }
 
+bool toOracleConnectionSub::hasTransaction()
+{
+	//return true;
+	// NOTE: do not use OCI_ATTR_TRANSACTION_IN_PROGRESS, it Oracle 12c feature
+	oracleQuery::trotlQuery hasTrans(*_conn, "select nvl2(dbms_transaction.local_transaction_id, 1, 0) from dual");
+	toQValue ret;
+	hasTrans.readValue(ret);
+	int i = ret.toInt();
+	return i;
+}
+
 queryImpl * toOracleConnectionSub::createQuery(toQuery *query)
 {
     return new oracleQuery(query, this);
