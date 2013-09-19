@@ -51,6 +51,8 @@
 #include <QtCore/QSet>
 #include <QtCore/QMap>
 #include <QtCore/QMetaType>
+#include <QtCore/QMutex>
+#include <QtCore/QVariant>
 #include <QtCore/QDateTime>
 #include <QtCore/QAtomicInt>
 #include <QtCore/QVariant>
