@@ -761,7 +761,8 @@ SET(TEST1_SOURCES
   core/toconfiguration.cpp
   core/totool.cpp
   core/toconnection.cpp
-  core/toconnectionregistry.cpp
+  core/toconnectionoptions.cpp  
+  core/toconnectionregistry.cpp  
   core/toconnectionprovider.cpp
   core/toconnectionsubloan.cpp
   core/toqvalue.cpp
@@ -903,6 +904,7 @@ SET(TEST5_SOURCES
   core/tocodemodel.cpp
   core/toconfiguration.cpp
   core/toconnection.cpp
+  core/toconnectionoptions.cpp  
   core/toconnectionprovider.cpp
   core/toconnectionregistry.cpp
   core/toconnectionsub.cpp

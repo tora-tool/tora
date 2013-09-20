@@ -39,22 +39,24 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "core/utils.h"
-#include "core/tologger.h"
 
 #include "core/toabout.h"
+#include "core/tocache.h"
 #include "core/toconf.h"
-#include "core/tomain.h"
-#include "core/tosql.h"
 #include "core/toconfiguration.h"
-#include "core/toqvalue.h"
-#include "editor/tomarkededitor.h"
-#include "core/tosplash.h"
 #include "core/toconnection.h"
-#include "core/toraversion.h"
-
+#include "core/toconnection.h"
 #include "core/toconnectionprovider.h"
-#include "core/toconnection.h"
+#include "core/toconnectionsubloan.h"
+#include "core/tologger.h"
+#include "core/tomain.h"
+#include "core/toquery.h"
+#include "core/toqvalue.h"
+#include "core/toraversion.h"
+#include "core/tosplash.h"
+#include "core/tosql.h"
+#include "core/utils.h"
+#include "editor/tomarkededitor.h"
 
 #include <QtCore/QDateTime>
 #include <QtGui/QApplication>

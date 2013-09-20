@@ -41,13 +41,14 @@
 
 #include "tests/test3window.h"
 
-#include "core/tosplash.h"
-
-#include "core/utils.h"
-#include "core/tologger.h"
+#include "core/tocache.h"
 #include "core/toconfiguration.h"
 #include "core/toconnectionprovider.h"
+#include "core/tologger.h"
 #include "core/tooracleconst.h"
+#include "core/toqvalue.h"
+#include "core/tosplash.h"
+#include "core/utils.h"
 
 #include <QtCore/QDir>
 #include <QtCore/QLibrary>
