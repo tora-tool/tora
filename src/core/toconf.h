@@ -164,9 +164,7 @@
 #ifndef DEFAULT_MAX_LONG
 #define DEFAULT_MAX_LONG 30000
 #endif
-// tonewconnection
-#define CONF_PROVIDER_LIST_SORT_OFFSET "ProvListSort" //Sort by database/connection name, asc
-#define DEFAULT_PROVIDER_LIST_SORT_OFFSET 4
+
 // tosqlconnection
 #define CONF_MYSQL_HOME "MYSQL_HOME"
 #define CONF_PGSQL_HOME "PGSQL_HOME"

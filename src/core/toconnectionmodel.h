@@ -56,7 +56,7 @@ class toConnectionModel : public QAbstractTableModel
     Q_OBJECT
 
 public:
-    toConnectionModel();
+    toConnectionModel(QObject *parent = NULL);
 
     //! \brief Pull connections from QSettings
     void readConfig();

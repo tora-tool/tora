@@ -41,7 +41,6 @@
 
 #include "core/tonewconnection.h"
 #include "core/utils.h"
-#include "core/toconf.h"
 #include "core/tohelp.h"
 #include "core/toconnectionprovider.h"
 #include "core/toconnectionregistry.h"
@@ -59,6 +58,10 @@
 #include <QtGui/QMenu>
 #include <QtGui/QIcon>
 #include <QtGui/QSortFilterProxyModel>
+
+// TODO turn these into enum (QMetaEnum)
+#define CONF_PROVIDER_LIST_SORT_OFFSET "ProvListSort" //Sort by database/connection name, asc
+#define DEFAULT_PROVIDER_LIST_SORT_OFFSET 4
 
 static toConnectionModel     *m_connectionModel = 0;
 static QSortFilterProxyModel *m_proxyModel      = 0;
@@ -85,16 +88,19 @@ toNewConnection::toNewConnection(QWidget* parent, Qt::WFlags fl)
     QList<QString> lst = toConnectionProviderRegistrySing::Instance().providers();
     foreach(QString p, lst)
     {
-        if (p == "Oracle")
-        {
-            Provider->addItem(ORACLE_INSTANTCLIENT, QVariant(QString::fromAscii(ORACLE_PROVIDER)));
-            Provider->addItem(ORACLE_TNSCLIENT, QVariant(QString::fromAscii(ORACLE_PROVIDER)));
-        }
-        else
-        {
-        	toConnectionProvider &provider = toConnectionProviderRegistrySing::Instance().get(p);
-            Provider->addItem(provider.displayName(), QVariant(provider.name()));
-        }
+		try
+		{
+			if (p == "Oracle")
+			{
+				Provider->addItem(ORACLE_INSTANTCLIENT, QVariant(QString::fromAscii(ORACLE_PROVIDER)));
+				Provider->addItem(ORACLE_TNSCLIENT, QVariant(QString::fromAscii(ORACLE_PROVIDER)));
+			}
+			else
+			{
+				toConnectionProvider &provider = toConnectionProviderRegistrySing::Instance().get(p);
+				Provider->addItem(provider.displayName(), QVariant(provider.name()));
+			}
+		} TOCATCH
     }
 
     if (Provider->count() < 1)
@@ -167,6 +173,11 @@ toNewConnection::toNewConnection(QWidget* parent, Qt::WFlags fl)
 
     // must make sure this gets called manually.
     changeProvider(Provider->currentIndex());
+
+    int r = connectionModel()->rowCount() - 1;
+    QModelIndex last = connectionModel()->index(r, 1);
+    Previous->setCurrentIndex(last);
+    Previous->selectionModel()->clear();
     Previous->setFocus(Qt::OtherFocusReason);
 }
 
@@ -307,6 +318,15 @@ void toNewConnection::loadPrevious(const QModelIndex & current)
     int index = proxyModel()->data(baseIndex, Qt::DisplayRole).toInt();
     toConnectionOptions opt = connectionModel()->availableConnection(index);
 
+    // Connection provider for selected/current history connection entry was not found => throw exception
+    QVariant p = QVariant::fromValue(opt.provider);
+    int idx = Provider->findData(p, Qt::DisplayRole);
+    if (idx == -1)
+        throw QString("Connection provider not loaded: %1").arg(opt.provider);
+
+    QString RealProviderName = Provider->itemData(idx, Qt::UserRole).toString();
+    toConnectionProvider &prov = toConnectionProviderRegistrySing::Instance().get(RealProviderName);
+
     Provider->setCurrentIndex(Provider->findText(opt.provider));
     Host->lineEdit()->setText(opt.host);
     Database->lineEdit()->setText(opt.database);
@@ -361,9 +381,7 @@ void toNewConnection::changeProvider(int current)
 
         bool oldStateH = Host->blockSignals(true);
         Host->clear();
-        Host->blockSignals(oldStateH);
         QList<QString> hosts = toConnectionProviderRegistrySing::Instance().get(provider).hosts();
-
         DefaultPort = 0;
         foreach(QString const & host, hosts)
         {
@@ -372,8 +390,9 @@ void toNewConnection::changeProvider(int current)
             else if (host.startsWith(":"))
                 DefaultPort = host.mid(1).toInt();
             else
-                Host->addItem(host);
+                Host->addItem(host); // This might also call changeHost(), unless blockSignals == true
         }
+		Host->blockSignals(oldStateH);
 
         Database->clear();
         changeHost(); // will populate Databases combobox
@@ -442,8 +461,6 @@ void toNewConnection::changeProvider(int current)
             OptionGroup->hide();
         else
             OptionGroup->show();
-
-        changeHost();
     }
     catch (const QString &str)
     {

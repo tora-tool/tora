@@ -47,7 +47,8 @@
 #include <QtCore/QSettings>
 
 
-toConnectionModel::toConnectionModel()
+toConnectionModel::toConnectionModel(QObject *parent)
+	: QAbstractTableModel(parent)
 {
 }
 
