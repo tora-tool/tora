@@ -200,6 +200,7 @@ void SqlStatement::prepare(const tstring& sql, ub4 lang)
 	case OCI_STMT_UPDATE:
 	case OCI_STMT_DELETE:
 	case OCI_STMT_INSERT:
+	case 16:        // MERGE
 	case OCI_STMT_CREATE:
 	case OCI_STMT_DROP:
 	case OCI_STMT_ALTER:
@@ -417,6 +418,7 @@ bool SqlStatement::execute_internal(ub4 rows, ub4 mode)
 		_iters = 0;
 		break;
 	case STMT_UPDATE:
+	case STMT_MERGE:
 		_iters = 1;
 		break;
 	case STMT_DELETE:
@@ -448,6 +450,8 @@ bool SqlStatement::execute_internal(ub4 rows, ub4 mode)
 		// do nothing
 	case STMT_NONE:
 		break;
+	default:
+		throw_oci_exception(OciException(__TROTL_HERE__, "Unknown statement type: %d\n%s").arg(get_stmt_type()).arg(_parsed_stmt));
 	};
 
 	if(!_bound && _out_cnt)
