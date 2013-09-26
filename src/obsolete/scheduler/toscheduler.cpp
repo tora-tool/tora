@@ -113,7 +113,7 @@ public:
 //         {
 //             return new toSGATracePrefs(this, parent);
 //         }
-    virtual bool canHandle(toConnection &conn)
+    virtual bool canHandle(const toConnection &conn)
     {
         return conn.providerIs("Oracle");
     }
@@ -190,7 +190,7 @@ toScheduler::~toScheduler()
     s.endGroup();
 }
 
-bool toScheduler::canHandle(toConnection &conn)
+bool toScheduler::canHandle(const toConnection &conn)
 {
     try
     {

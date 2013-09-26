@@ -97,7 +97,7 @@ public:
         return "Invalid Objects";
     }
 
-    virtual bool canHandle(toConnection &conn)
+    virtual bool canHandle(const toConnection &conn)
     {
         return (conn.providerIs("Oracle"));
     }

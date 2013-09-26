@@ -300,7 +300,7 @@ void toResultItem::clearData()
     }
 }
 
-bool toResultItem::canHandle(toConnection &)
+bool toResultItem::canHandle(const toConnection &)
 {
     return true;
 }

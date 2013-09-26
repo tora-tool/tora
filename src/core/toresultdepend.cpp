@@ -72,7 +72,7 @@ static toSQL SQLResultDepend7("toResultDepend:Depends",
                               "",
                               "0703");
 
-bool toResultDepend::canHandle(toConnection &conn)
+bool toResultDepend::canHandle(const toConnection &conn)
 {
     return conn.providerIs("Oracle");
 }

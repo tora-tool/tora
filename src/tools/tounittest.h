@@ -102,7 +102,7 @@ public:
     /** \brief Inform upstream parent object for what platform
     is this tool available. It's Oracle only this time.
     */
-    virtual bool canHandle(toConnection &conn);
+    virtual bool canHandle(const toConnection &conn);
 
 private:
     //! Current schema. Updated in the toBrowser::changeSecond()

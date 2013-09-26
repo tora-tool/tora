@@ -372,7 +372,7 @@ toToolWidget* toTool::createWindow()
 }
 
 
-bool toTool::canHandle(toConnection &conn)
+bool toTool::canHandle(const toConnection &conn)
 {
 #ifdef TORA3_CONNECTION
     return (conn.providerIs("Oracle"));

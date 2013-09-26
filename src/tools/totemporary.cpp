@@ -111,7 +111,7 @@ public:
     {
         return new toTemporary(parent, connection);
     }
-    virtual bool canHandle(toConnection &conn)
+    virtual bool canHandle(const toConnection &conn)
     {
         if (conn.providerIs("Oracle") || conn.version() >= "0800")
         	return true;

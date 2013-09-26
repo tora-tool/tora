@@ -82,7 +82,7 @@ public:
      */
     virtual ~toResultStats();
 
-    virtual bool canHandle(toConnection &conn);
+    virtual bool canHandle(const toConnection &conn);
 
     /**
      * close this object

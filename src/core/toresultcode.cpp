@@ -152,7 +152,7 @@ void toResultCode::clearData()
     editor()->clear();
 }
 
-bool toResultCode::canHandle(toConnection &conn)
+bool toResultCode::canHandle(const toConnection &conn)
 {
     try
     {

@@ -278,7 +278,7 @@ public:
     /**
      * True by default
      */
-    virtual bool canHandle(toConnection &)
+    virtual bool canHandle(const toConnection &)
     {
         return true;
     }

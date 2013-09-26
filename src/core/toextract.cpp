@@ -292,7 +292,7 @@ void toExtract::parseObject(const QString &object,
     }
 }
 
-bool toExtract::canHandle(toConnection &conn)
+bool toExtract::canHandle(const toConnection &conn)
 {
     return bool(findExtractor(conn, QString::null, QString::null));
 }

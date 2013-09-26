@@ -127,7 +127,7 @@ public:
     {
         return new toWorksheetSetup(this, parent);
     }
-    virtual bool canHandle(toConnection &)
+    virtual bool canHandle(const toConnection &)
     {
         return true;
     }
@@ -834,7 +834,7 @@ toHighlightedEditor* toWorksheet::editor(void)
     return Editor;
 }
 
-bool toWorksheet::canHandle(toConnection &)
+bool toWorksheet::canHandle(const toConnection &)
 {
     return true;
 }

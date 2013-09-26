@@ -495,7 +495,7 @@ public:
     {
         return new toTemplatePrefs(this, parent);
     }
-    virtual bool canHandle(toConnection &)
+    virtual bool canHandle(const toConnection &)
     {
         return true;
     }

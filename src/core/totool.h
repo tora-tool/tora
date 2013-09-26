@@ -166,7 +166,7 @@ public:
      * connections from the provider Oracle.
      * @return True if connection can be handled.
      */
-    virtual bool canHandle(toConnection &conn);
+    virtual bool canHandle(const toConnection &conn);
 
     /**
      * This function is called as a last step after the main widget is created. It could
@@ -365,7 +365,7 @@ public:
      * @param provider Name of connection.
      * @return True if connection is handled.
      */
-    virtual bool canHandle(toConnection &conn)
+    virtual bool canHandle(const toConnection &conn)
     {
 	    return Tool.canHandle(conn);
     }

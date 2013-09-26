@@ -101,7 +101,7 @@ public:
         return "ER Schema";
     }
 
-    virtual bool canHandle(toConnection &conn)
+    virtual bool canHandle(const toConnection &conn)
     {
 		return conn.providerIs("Oracle");
     }

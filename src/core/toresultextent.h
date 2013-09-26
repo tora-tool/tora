@@ -60,7 +60,7 @@ public:
 
 	/** Support Oracle
 	 */
-	virtual bool canHandle(toConnection &conn);
+	virtual bool canHandle(const toConnection &conn);
 public slots:
 	/** Perform a query.
 	 * @param sql Execute an SQL statement.

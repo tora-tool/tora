@@ -66,7 +66,7 @@ public:
 
     /** Support Oracle
      */
-    virtual bool canHandle(toConnection &conn);
+    virtual bool canHandle(const toConnection &conn);
 
 private:
     void startQuery(void); // connect signals-slots and start query

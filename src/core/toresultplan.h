@@ -77,7 +77,7 @@ public:
 
     /** Support Oracle
      */
-    virtual bool canHandle(toConnection &conn);
+    virtual bool canHandle(const toConnection &conn);
 
 private:
     QString Ident;

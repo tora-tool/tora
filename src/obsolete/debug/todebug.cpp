@@ -170,7 +170,7 @@ public:
         if (i != Windows.end())
             Windows.erase(i);
     }
-    virtual bool canHandle(toConnection &conn)
+    virtual bool canHandle(const toConnection &conn)
     {
         // Debug Tool is only available for Oracle DB
         if (!toIsOracle(conn))

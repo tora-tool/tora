@@ -90,7 +90,7 @@ public:
 
     bool describe(toSyntaxAnalyzer::statement const&);
 
-    virtual bool canHandle(toConnection &);
+    virtual bool canHandle(const toConnection &);
 
 #ifdef TORA3_GRAPH
     virtual void exportData(std::map<QString, QString> &data, const QString &prefix);

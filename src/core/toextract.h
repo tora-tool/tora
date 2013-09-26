@@ -708,7 +708,7 @@ public:
      * @param conn Connection to check for support.
      * @return True if the database is supported.
      */
-    static bool canHandle(toConnection &conn);
+    static bool canHandle(const toConnection &conn);
 
     /** Add a list to description.
      * @param ret The return list to add a line to.

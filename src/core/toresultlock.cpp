@@ -51,7 +51,7 @@
 #include <map>
 
 
-bool toResultLock::canHandle(toConnection &conn)
+bool toResultLock::canHandle(const toConnection &conn)
 {
     return conn.providerIs("Oracle");
 }

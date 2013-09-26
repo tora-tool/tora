@@ -76,7 +76,7 @@ public:
      */
     toResultParam(QWidget *parent, const char *name = NULL);
 
-    virtual bool canHandle(toConnection &conn);
+    virtual bool canHandle(const toConnection &conn);
 
 private slots:
     void generateFile(void);

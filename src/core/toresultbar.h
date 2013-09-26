@@ -135,7 +135,7 @@ public:
     virtual std::list<double> transform(std::list<double> &input);
     /** Handle any connection
      */
-    virtual bool canHandle(toConnection &)
+    virtual bool canHandle(const toConnection &)
     {
         return true;
     }

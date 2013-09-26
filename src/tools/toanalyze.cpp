@@ -81,7 +81,7 @@ public:
     {
         return new toAnalyze(parent, connection);
     }
-    virtual bool canHandle(toConnection &conn)
+    virtual bool canHandle(const toConnection &conn)
     {
         return conn.providerIs("Oracle") || conn.providerIs("QMYSQL") || conn.providerIs("PostgreSQL");
     }

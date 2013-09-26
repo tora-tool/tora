@@ -124,7 +124,7 @@ void toResult::refreshWithParams(toQueryParams const& params)
     Params = params;
 }
 
-bool toResult::canHandle(toConnection &)
+bool toResult::canHandle(const toConnection &)
 {
     return false;
 }

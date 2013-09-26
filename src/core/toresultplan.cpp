@@ -112,7 +112,7 @@ static toSQL SQLViewPlan8("toResultPlan:ViewPlan",
                           "",
                           "0800");
 
-bool toResultPlan::canHandle(toConnection &conn)
+bool toResultPlan::canHandle(const toConnection &conn)
 {
     return
         conn.providerIs("Oracle") ||

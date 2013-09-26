@@ -87,7 +87,7 @@ public:
 
     QString currentFilename(void);
 
-    virtual bool canHandle(toConnection &conn);
+    virtual bool canHandle(const toConnection &conn);
 
     virtual void query(const QString &sql, toQueryParams const& param);
 

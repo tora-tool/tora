@@ -68,7 +68,7 @@ public:
     /** Reimplemented for internal reasons.
      */
     virtual void query(const QString &sql, const toQueryParams &params);
-    virtual bool canHandle(toConnection &)
+    virtual bool canHandle(const toConnection &)
     {
         return true;
     }

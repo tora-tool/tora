@@ -81,7 +81,7 @@ public:
         return "DB Extraction/Compare/Search";
     }
 
-    virtual bool canHandle(toConnection &conn)
+    virtual bool canHandle(const toConnection &conn)
     {
         try
         {

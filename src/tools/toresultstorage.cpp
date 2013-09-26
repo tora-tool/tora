@@ -189,7 +189,7 @@ public:
     }
 };
 
-bool toResultStorage::canHandle(toConnection &conn)
+bool toResultStorage::canHandle(const toConnection &conn)
 {
     return conn.providerIs("Oracle");
 }

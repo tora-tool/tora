@@ -149,7 +149,7 @@ toResultExtent::toResultExtent(QWidget *parent, const char *name)
 	setChildrenCollapsible(false);
 }
 
-bool toResultExtent::canHandle(toConnection &conn)
+bool toResultExtent::canHandle(const toConnection &conn)
 {
 	return conn.providerIs("Oracle");
 }

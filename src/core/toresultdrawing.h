@@ -64,7 +64,7 @@ public:
     /**
      * Reimplemented from toResult. Can handle all connections.
      */
-    virtual bool canHandle(toConnection &)
+    virtual bool canHandle(const toConnection &)
     {
         return true;
     }

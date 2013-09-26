@@ -132,7 +132,7 @@ public:
 
     /** Handle any connection
      */
-    virtual bool canHandle(toConnection &);
+    virtual bool canHandle(const toConnection &);
 
 protected:
     /** Start new query, hide all widgets.

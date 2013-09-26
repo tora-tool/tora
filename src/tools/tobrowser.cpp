@@ -117,7 +117,7 @@ toToolWidget* toBrowserTool::toolWindow(QWidget *parent, toConnection &connectio
     return new toBrowser(parent, connection);
 }
 
-bool toBrowserTool::canHandle(toConnection &conn)
+bool toBrowserTool::canHandle(const toConnection &conn)
 {
     return conn.providerIs("Oracle") || conn.providerIs("QMYSQL") || conn.providerIs("PostgreSQL") || conn.providerIs("SapDB") || conn.providerIs("Teradata");
 }
@@ -1589,7 +1589,7 @@ void toBrowser::defineFilter(void)
         FilterButton->setChecked(!Filter->isEmpty());
 }
 
-bool toBrowser::canHandle(toConnection &conn)
+bool toBrowser::canHandle(const toConnection &conn)
 {
     return conn.providerIs("Oracle") ||
            conn.providerIs("PostgreSQL") ||

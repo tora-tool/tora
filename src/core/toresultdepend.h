@@ -71,7 +71,7 @@ public:
 
     /** Support Oracle
      */
-    virtual bool canHandle(toConnection &conn);
+    virtual bool canHandle(const toConnection &conn);
 
     /** Clear result widget */
     virtual void clearData();

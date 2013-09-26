@@ -120,7 +120,7 @@ public:
     toSession(QWidget *parent, toConnection &connection);
     ~toSession();
 
-    virtual bool canHandle(toConnection &conn);
+    virtual bool canHandle(const toConnection &conn);
 
 public slots:
     void slotChangeTab(int);

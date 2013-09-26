@@ -95,7 +95,7 @@ public:
         return NULL;
     }
 
-    virtual bool canHandle(toConnection &conn)
+    virtual bool canHandle(const toConnection &conn)
     {
         return conn.providerIs("Oracle") || conn.providerIs("PostgreSQL");
     }
@@ -618,7 +618,7 @@ toSession::~toSession()
 	}
 }
 
-bool toSession::canHandle(toConnection &conn)
+bool toSession::canHandle(const toConnection &conn)
 {
     return conn.providerIs("Oracle") || conn.providerIs("PostgreSQL");
 }

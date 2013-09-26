@@ -101,7 +101,7 @@ static toSQL SQLHiddenParams("toResultParam:ListHidden",
                              " WHERE x.INDX+1=y.KSPFTCTXPN ORDER BY KSPPINM",
                              "List parameters available in the database including hidden parameters");
 
-bool toResultParam::canHandle(toConnection &conn)
+bool toResultParam::canHandle(const toConnection &conn)
 {
     return conn.providerIs("Oracle") || conn.providerIs("QMYSQL");
 }

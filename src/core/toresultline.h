@@ -117,7 +117,7 @@ public:
 
     /** Handle any connection
      */
-    virtual bool canHandle(toConnection &)
+    virtual bool canHandle(const toConnection &)
     {
         return true;
     }

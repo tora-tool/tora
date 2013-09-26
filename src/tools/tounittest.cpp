@@ -125,7 +125,7 @@ public:
 //         {
 //             return new toSGATracePrefs(this, parent);
 //         }
-    virtual bool canHandle(toConnection &conn)
+    virtual bool canHandle(const toConnection &conn)
     {
         return conn.providerIs("Oracle");
     }
@@ -225,7 +225,7 @@ toUnitTest::~toUnitTest()
     s.endGroup();
 }
 
-bool toUnitTest::canHandle(toConnection &conn)
+bool toUnitTest::canHandle(const toConnection &conn)
 {
     try
     {

@@ -122,7 +122,7 @@ toResultStats::~toResultStats()
     close();
 }
 
-bool toResultStats::canHandle(toConnection &conn)
+bool toResultStats::canHandle(const toConnection &conn)
 {
     return conn.providerIs("Oracle");
 }

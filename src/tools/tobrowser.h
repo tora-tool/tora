@@ -151,7 +151,7 @@ public:
 	 */
 	void addTab(QSplitter * page, const QString & label, bool enable);
 
-    virtual bool canHandle(toConnection &conn);
+    virtual bool canHandle(const toConnection &conn);
 #ifdef TORA3_SESSION
     virtual void exportData(std::map<QString, QString> &data,
                             const QString &prefix);
@@ -351,7 +351,7 @@ public:
     toBrowserTool();
     virtual const char *menuItem();
     virtual toToolWidget *toolWindow(QWidget *parent, toConnection &connection);
-    virtual bool canHandle(toConnection &conn);
+    virtual bool canHandle(const toConnection &conn);
     virtual void customSetup(void);
     virtual void closeWindow(toConnection &connection) {};
 

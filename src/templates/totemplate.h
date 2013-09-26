@@ -98,7 +98,7 @@ public:
     static toTemplate *templateWidget(toTreeWidget *obj);
     static bool templateShown();
 
-    virtual bool canHandle(toConnection &)
+    virtual bool canHandle(const toConnection &)
     {
         return true;
     }

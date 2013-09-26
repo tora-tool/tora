@@ -100,7 +100,7 @@ void toResultCombo::additionalItem(const QString &item)
     Additional << item;
 }
 
-bool toResultCombo::canHandle(toConnection &)
+bool toResultCombo::canHandle(const toConnection &)
 {
     return true;
 }

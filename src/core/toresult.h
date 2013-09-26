@@ -119,7 +119,7 @@ public:
 
     /** To be reimplemented for internal reasons. (returns false by default)
      */
-    virtual bool canHandle(toConnection &);
+    virtual bool canHandle(const toConnection &);
 
     /** Get last parameters used.
      * @return Don't modify the list returned.

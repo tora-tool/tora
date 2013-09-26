@@ -946,7 +946,7 @@ public slots:
     virtual void slotAddItem(void);
     /** Handle any connection by default
      */
-    virtual bool canHandle(toConnection &)
+    virtual bool canHandle(const toConnection &)
     {
         return true;
     }
