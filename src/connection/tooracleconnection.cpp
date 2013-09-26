@@ -290,11 +290,13 @@ void toOracleConnectionImpl::closeConnection(toConnectionSub *)
 toOracleConnectionSub::toOracleConnectionSub(::trotl::OciConnection *conn, ::trotl::OciLogin *login)
     : _conn(conn)
     , _login(login)
+	, _hasTrans(new ::trotl::SqlStatement(*_conn, "select nvl2(dbms_transaction.local_transaction_id, 1, 0) from dual"))
 {
 }
 
 toOracleConnectionSub::~toOracleConnectionSub()
 {
+	delete _hasTrans;
 }
 
 void toOracleConnectionSub::cancel()
@@ -339,12 +341,9 @@ QString toOracleConnectionSub::sessionId()
 
 bool toOracleConnectionSub::hasTransaction()
 {
-	//return true;
 	// NOTE: do not use OCI_ATTR_TRANSACTION_IN_PROGRESS, it Oracle 12c feature
-	oracleQuery::trotlQuery hasTrans(*_conn, "select nvl2(dbms_transaction.local_transaction_id, 1, 0) from dual");
-	toQValue ret;
-	hasTrans.readValue(ret);
-	int i = ret.toInt();
+	int i;
+	*_hasTrans >> i;
 	return i;
 }
 

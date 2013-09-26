@@ -168,7 +168,7 @@ SqlStatement::SqlStatement(OciConnection& conn, OciHandle<OCIStmt>& handle, ub4 
 	  _last_row(-1),
 	  _last_fetched_row(-1),
 	  _in_pos(0), _out_pos(0), _iters(0),
-	  _last_buff_row(0), _buff_size(g_OCIPL_BULK_ROWS),
+	  _last_buff_row(0), _buff_size(g_OCIPL_BULK_ROWS), _fetch_rows(g_OCIPL_BULK_ROWS),
 	  _all_binds(NULL), _all_defines(NULL),
 	  _in_binds(NULL), _out_binds(NULL),
 	  _bound(false)
@@ -376,19 +376,25 @@ const BindPar& SqlStatement::get_curr_column()
 
 bool SqlStatement::eof()
 {
-	if((_state & EXECUTED) == 0)
-		execute_internal(g_OCIPL_BULK_ROWS, OCI_DEFAULT);
+	if (_state & EOF_QUERY)
+		return true;
 
-	if(get_stmt_type() == STMT_SELECT && (_state & FETCHED) == 0)
-		fetch(_fetch_rows);
+	if ((_state & EXECUTED) == 0 && (_state & EOF_DATA) == 0  && (_state & EOF_QUERY) == 0)
+		pre_read_value();              // will possibly call execute_internal and fetch (is necessary), but not if EOF flag is already set
 
-	return _state >= EOF_DATA && _last_buff_row >= fetched_rows();
+	if (_state >= EOF_DATA && _last_buff_row >= fetched_rows())
+	{
+		_state |= EOF_QUERY;
+	}
+	return _state >= EOF_QUERY;
 }
 
 bool SqlStatement::execute_internal(ub4 rows, ub4 mode)
 {
-	if( _state & EXECUTED)
+	if( _state & EXECUTED)                        // Note EOF_DATA clears EXECUTED flag
 		return true;
+
+	_state &= ~FETCHED & ~EOF_DATA & ~EOF_QUERY & ~STMT_ERROR; // Clear three flags
 
 	//	TODO replace rows by something else - &FETCHED
 	if (rows==0 && get_stmt_type() == STMT_SELECT)
@@ -412,6 +418,8 @@ bool SqlStatement::execute_internal(ub4 rows, ub4 mode)
 	case STMT_OTHER:
 		_iters = 1;
 		_state |= EOF_DATA;
+		_state |= EOF_QUERY;
+		_state &= ~EXECUTED;
 		break;
 	case STMT_SELECT:
 		//_iters = rows;
@@ -446,6 +454,8 @@ bool SqlStatement::execute_internal(ub4 rows, ub4 mode)
 		_iters = 1;
 		_last_buff_row = 0;
 		_state |= EOF_DATA;
+		_state |= EOF_QUERY;
+		_state &= ~EXECUTED;
 		break;
 		// do nothing
 	case STMT_NONE:
@@ -493,9 +503,10 @@ bool SqlStatement::execute_internal(ub4 rows, ub4 mode)
 	{
 	case OCI_NO_DATA:
 		_state |= EOF_DATA;
+		_state &= ~EXECUTED;
 		return false;	// There are no additional rows pending to be fetched.
 	case OCI_ERROR:
-		_state = STMT_ERROR;
+		_state |= STMT_ERROR;
 		throw_oci_exception(OciException(__TROTL_HERE__, *this));
 	default:
 		if (rows > 0)
@@ -563,11 +574,16 @@ void SqlStatement::fetch(ub4 rows/*=-1*/)
 	{
 	case OCI_NO_DATA:
 		_state |= EOF_DATA;
+		_state &= ~EXECUTED;
 	case OCI_SUCCESS:
 		_state |= FETCHED;
 		break;
 		// case OCI_NEED_DATA:
 		// 	break;
+	case OCI_ERROR:
+		_state |= EOF_DATA;
+		_state |= EOF_QUERY;
+		_state &= ~EXECUTED;
 	default:
 		oci_check_error(__TROTL_HERE__, _errh, res);
 		break;
@@ -1121,72 +1137,42 @@ SqlStatement& SqlStatement::operator<< (const SqlValue &val)
 template<>
 SqlStatement& SqlStatement::operator>> <int> (int &val)
 {
+	pre_read_value();
+
 	BindPar const &BP(get_stmt_type() == STMT_SELECT ? get_next_column() : get_next_out_bindpar());
 	BindParNumber const &BP2 = dynamic_cast<const BindParNumber&>(BP);
 
-	if((_state & EXECUTED) == 0)
-		execute_internal(g_OCIPL_BULK_ROWS, OCI_DEFAULT);
-
-	//val = BP.get_int( _last_buff_row);
 	val = BP2.get_number<int>( _last_buff_row );
 
-	if(_out_pos == _column_count && BP._bind_type == BP.DEFINE_SELECT)
-		++_last_buff_row;
-
-	if(_out_pos == _out_cnt && get_stmt_type() != STMT_SELECT )
-		_state |= EOF_DATA;
-
-	if(_last_buff_row == fetched_rows() && ((_state & EOF_DATA) == 0) && get_stmt_type() == STMT_SELECT)
-		fetch(_fetch_rows);
-
+	post_read_value(BP);
 	return *this;
 };
 
 template<>
 SqlStatement& SqlStatement::operator>> <unsigned int> (unsigned int &val)
 {
+	pre_read_value();
+
 	BindPar const &BP(get_stmt_type() == STMT_SELECT ? get_next_column() : get_next_out_bindpar());
 	BindParNumber const &BP2 = dynamic_cast<const BindParNumber&>(BP);
 
-	if((_state & EXECUTED) == 0)
-		execute_internal(g_OCIPL_BULK_ROWS, OCI_DEFAULT);
-
-	//val = BP.get_uint( _last_buff_row);
 	val = BP2.get_number<unsigned int>( _last_buff_row );
 
-	if(_out_pos == _column_count && BP._bind_type == BP.DEFINE_SELECT)
-		++_last_buff_row;
-
-	if(_out_pos == _out_cnt && get_stmt_type() != STMT_SELECT )
-		_state |= EOF_DATA;
-
-	if(_last_buff_row == fetched_rows() && ((_state & EOF_DATA) == 0) && get_stmt_type() == STMT_SELECT)
-		fetch(_fetch_rows);
-
+	post_read_value(BP);
 	return *this;
 };
 
 template<>
 SqlStatement& SqlStatement::operator>> <long> (long &val)
 {
+	pre_read_value();
+
 	BindPar const &BP(get_stmt_type() == STMT_SELECT ? get_next_column() : get_next_out_bindpar());
 	BindParNumber const &BP2 = dynamic_cast<const BindParNumber&>(BP);
 
-	if((_state & EXECUTED) == 0)
-		execute_internal(g_OCIPL_BULK_ROWS, OCI_DEFAULT);
-
-	//val = BP.get_long( _last_buff_row);
 	val = BP2.get_number<long>( _last_buff_row );
 
-	if(_out_pos == _column_count && BP._bind_type == BP.DEFINE_SELECT)
-		++_last_buff_row;
-
-	if(_out_pos == _out_cnt && get_stmt_type() != STMT_SELECT )
-		_state |= EOF_DATA;
-
-	if(_last_buff_row == fetched_rows() && ((_state & EOF_DATA) == 0) && get_stmt_type() == STMT_SELECT)
-		fetch(_fetch_rows);
-
+	post_read_value(BP);
 	return *this;
 };
 
@@ -1194,72 +1180,42 @@ SqlStatement& SqlStatement::operator>> <long> (long &val)
 template<>
 SqlStatement& SqlStatement::operator>> <unsigned long> (unsigned long &val)
 {
+	pre_read_value();
+
 	BindPar const &BP(get_stmt_type() == STMT_SELECT ? get_next_column() : get_next_out_bindpar());
 	BindParNumber const &BP2 = dynamic_cast<const BindParNumber&>(BP);
 
-	if((_state & EXECUTED) == 0)
-		execute_internal(g_OCIPL_BULK_ROWS, OCI_DEFAULT);
-
-	//val = BP.get_ulong( _last_buff_row);
 	val = BP2.get_number<unsigned long>( _last_buff_row );
 
-	if(_out_pos == _column_count && BP._bind_type == BP.DEFINE_SELECT)
-		++_last_buff_row;
-
-	if(_out_pos == _out_cnt && get_stmt_type() != STMT_SELECT )
-		_state |= EOF_DATA;
-
-	if(_last_buff_row == fetched_rows() && ((_state & EOF_DATA) == 0) && get_stmt_type() == STMT_SELECT)
-		fetch(_fetch_rows);
-
+	post_read_value(BP);
 	return *this;
 };
 
 template<>
 SqlStatement& SqlStatement::operator>> <float> (float &val)
 {
+	pre_read_value();
+
 	BindPar const &BP(get_stmt_type() == STMT_SELECT ? get_next_column() : get_next_out_bindpar());
 	BindParNumber const &BP2 = dynamic_cast<const BindParNumber&>(BP);
 
-	if((_state & EXECUTED) == 0)
-		execute_internal(g_OCIPL_BULK_ROWS, OCI_DEFAULT);
-
-	//val = BP.get_float( _last_buff_row);
 	val = BP2.get_number<float>( _last_buff_row );
 
-	if(_out_pos == _column_count && BP._bind_type == BP.DEFINE_SELECT)
-		++_last_buff_row;
-
-	if(_out_pos == _out_cnt && get_stmt_type() != STMT_SELECT )
-		_state |= EOF_DATA;
-
-	if(_last_buff_row == fetched_rows() && ((_state & EOF_DATA) == 0) && get_stmt_type() == STMT_SELECT)
-		fetch(_fetch_rows);
-
+	post_read_value(BP);
 	return *this;
 };
 
 template<>
 SqlStatement& SqlStatement::operator>> <double> (double &val)
 {
+	pre_read_value();
+
 	BindPar const &BP(get_stmt_type() == STMT_SELECT ? get_next_column() : get_next_out_bindpar());
 	BindParNumber const &BP2 = dynamic_cast<const BindParNumber&>(BP);
 
-	if((_state & EXECUTED) == 0)
-		execute_internal(g_OCIPL_BULK_ROWS, OCI_DEFAULT);
-
-	//val = BP.get_double( _last_buff_row);
 	val = BP2.get_number<double>( _last_buff_row );
 
-	if(_out_pos == _column_count && BP._bind_type == BP.DEFINE_SELECT)
-		++_last_buff_row;
-
-	if(_out_pos == _out_cnt && get_stmt_type() != STMT_SELECT )
-		_state |= EOF_DATA;
-
-	if(_last_buff_row == fetched_rows() && ((_state & EOF_DATA) == 0) && get_stmt_type() == STMT_SELECT)
-		fetch(_fetch_rows);
-
+	post_read_value(BP);
 	return *this;
 };
 
@@ -1267,69 +1223,35 @@ SqlStatement& SqlStatement::operator>> <double> (double &val)
 template<>
 SqlStatement& SqlStatement::operator>> <tstring> (tstring &val)
 {
-	BindPar const &BP(get_stmt_type() == STMT_SELECT ? get_next_column() : get_next_out_bindpar());
+	pre_read_value();
 
-	if((_state & EXECUTED) == 0)
-		execute_internal(g_OCIPL_BULK_ROWS, OCI_DEFAULT);
+	BindPar const &BP(get_stmt_type() == STMT_SELECT ? get_next_column() : get_next_out_bindpar());
 
 	val = BP.get_string(_last_buff_row);
 
-	if(_out_pos == _column_count && BP._bind_type == BP.DEFINE_SELECT)
-		++_last_buff_row;
-
-	if(_out_pos == _out_cnt && get_stmt_type() != STMT_SELECT )
-		_state |= EOF_DATA;
-
-	if(_last_buff_row == fetched_rows() && ((_state & EOF_DATA) == 0) && get_stmt_type() == STMT_SELECT)
-		fetch(_fetch_rows);
-
+	post_read_value(BP);
 	return *this;
 }
 
-//this method is not used
-//template<>
-//SqlStatement& SqlStatement::operator>> <SqlValue> (SqlValue &val)
-//{
-//	BindPar const &BP( (get_stmt_type() == STMT_SELECT ? get_next_column() : get_next_out_bindpar()  ) );
-//
-//	std::cerr << "SqlStatement& SqlStatement::operator>> <SqlValue> (SqlValue &val)\n";
-//
-////	throw_ocipl_exception(
-////			OciException(
-////					__TROTL_HERE__,
-////					"!!!! Misssing conversion(%s%d to SqlValue)\n"
-////			).arg(BP.name).arg(BP.value_sz)
-////	);
-//
-//	return *this;
-//}
-
 SqlStatement& SqlStatement::operator>> (SqlValue &val)
 {
-	BindPar const &BP( (get_stmt_type() == STMT_SELECT ? get_next_column() : get_next_out_bindpar()  ) );
+	pre_read_value();
 
-	if((_state & EXECUTED) == 0)
-		execute_internal(g_OCIPL_BULK_ROWS, OCI_DEFAULT);
+	BindPar const &BP( (get_stmt_type() == STMT_SELECT ? get_next_column() : get_next_out_bindpar()  ) );
 
 	// TODO this multimethod dispatcher uses dynamic_cast so it knows the real type of &val
 	ConvertorForRead c(_last_buff_row);
 	DispatcherForRead::Go(BP, val, c);
 
-	if(_out_pos == _column_count && BP._bind_type == BP.DEFINE_SELECT)
-		++_last_buff_row;
-
-	if(_out_pos == _out_cnt && get_stmt_type() != STMT_SELECT )
-		_state |= EOF_DATA;
-
-	if(_last_buff_row == fetched_rows() && ((_state & EOF_DATA) == 0) && get_stmt_type() == STMT_SELECT)
-		fetch(_fetch_rows);
-
+	post_read_value(BP);
 	return *this;
 }
 
 template<>
 SqlStatement& SqlStatement::operator>> <int>(std::vector<int> &val)
 {
+	pre_read_value();
+
 	if( get_stmt_type() != STMT_DECLARE &&
 	                get_stmt_type() != STMT_BEGIN &&
 	                get_stmt_type() != STMT_INSERT )
@@ -1337,9 +1259,6 @@ SqlStatement& SqlStatement::operator>> <int>(std::vector<int> &val)
 
 	BindPar const &BP( (get_stmt_type() == STMT_SELECT ? get_next_column() : get_next_out_bindpar()  ) );
 	BindParNumber const &BP2 = dynamic_cast<const BindParNumber&>(BP);
-
-	if((_state & EXECUTED) == 0)
-		execute_internal(g_OCIPL_BULK_ROWS, OCI_DEFAULT);
 
 	ub4 iters = get_stmt_type() == STMT_INSERT ? _iters : BP._cnt;
 	val.resize(iters);
@@ -1349,21 +1268,15 @@ SqlStatement& SqlStatement::operator>> <int>(std::vector<int> &val)
 		val.at(i) = BP2.get_number<int>(i);
 	}
 
-//	if(_out_pos == _column_count && BP._bind_type == BP.DEFINE_SELECT)
-//		++_last_buff_row;
-
-	if(_out_pos == _out_cnt && get_stmt_type() != STMT_SELECT )
-		_state |= EOF_DATA;
-
-//	if(_last_buff_row == fetched_rows() && ((_state & EOF_DATA) == 0) && get_stmt_type() == STMT_SELECT)
-//		fetch(_fetch_rows);
-
+	post_read_value(BP);
 	return *this;
 }
 
 template<>
 SqlStatement& SqlStatement::operator>> <unsigned int>(std::vector<unsigned int> &val)
 {
+	pre_read_value();
+
 	if( get_stmt_type() != STMT_DECLARE &&
 	                get_stmt_type() != STMT_BEGIN &&
 	                get_stmt_type() != STMT_INSERT )
@@ -1371,9 +1284,6 @@ SqlStatement& SqlStatement::operator>> <unsigned int>(std::vector<unsigned int> 
 
 	BindPar const &BP( (get_stmt_type() == STMT_SELECT ? get_next_column() : get_next_out_bindpar()  ) );
 	BindParNumber const &BP2 = dynamic_cast<const BindParNumber&>(BP);
-
-	if((_state & EXECUTED) == 0)
-		execute_internal(g_OCIPL_BULK_ROWS, OCI_DEFAULT);
 
 	ub4 iters = get_stmt_type() == STMT_INSERT ? _iters : BP._cnt;
 	val.resize(iters);
@@ -1381,15 +1291,15 @@ SqlStatement& SqlStatement::operator>> <unsigned int>(std::vector<unsigned int> 
 	for(unsigned i=0; i < iters; ++i)
 		val.at(i) = BP2.get_number<unsigned int>(i);
 
-	if(_out_pos == _out_cnt && get_stmt_type() != STMT_SELECT )
-		_state |= EOF_DATA;
-
+	post_read_value(BP);
 	return *this;
 }
 
 template<>
 SqlStatement& SqlStatement::operator>> <long>(std::vector<long> &val)
 {
+	pre_read_value();
+
 	if( get_stmt_type() != STMT_DECLARE &&
 	                get_stmt_type() != STMT_BEGIN &&
 	                get_stmt_type() != STMT_INSERT )
@@ -1397,9 +1307,6 @@ SqlStatement& SqlStatement::operator>> <long>(std::vector<long> &val)
 
 	BindPar const &BP( (get_stmt_type() == STMT_SELECT ? get_next_column() : get_next_out_bindpar()  ) );
 	BindParNumber const &BP2 = dynamic_cast<const BindParNumber&>(BP);
-
-	if((_state & EXECUTED) == 0)
-		execute_internal(g_OCIPL_BULK_ROWS, OCI_DEFAULT);
 
 	ub4 iters = get_stmt_type() == STMT_INSERT ? _iters : BP._cnt;
 	val.resize(iters);
@@ -1407,15 +1314,15 @@ SqlStatement& SqlStatement::operator>> <long>(std::vector<long> &val)
 	for(unsigned i=0; i < BP._cnt; ++i)
 		val.at(i) = BP2.get_number<long>(i);
 
-	if(_out_pos == _out_cnt && get_stmt_type() != STMT_SELECT )
-		_state |= EOF_DATA;
-
+	post_read_value(BP);
 	return *this;
 }
 
 template<>
 SqlStatement& SqlStatement::operator>> <unsigned long>(std::vector<unsigned long> &val)
 {
+	pre_read_value();
+
 	if( get_stmt_type() != STMT_DECLARE &&
 	                get_stmt_type() != STMT_BEGIN &&
 	                get_stmt_type() != STMT_INSERT )
@@ -1423,9 +1330,6 @@ SqlStatement& SqlStatement::operator>> <unsigned long>(std::vector<unsigned long
 
 	BindPar const &BP( (get_stmt_type() == STMT_SELECT ? get_next_column() : get_next_out_bindpar()  ) );
 	BindParNumber const &BP2 = dynamic_cast<const BindParNumber&>(BP);
-
-	if((_state & EXECUTED) == 0)
-		execute_internal(g_OCIPL_BULK_ROWS, OCI_DEFAULT);
 
 	ub4 iters = get_stmt_type() == STMT_INSERT ? _iters : BP._cnt;
 	val.resize(iters);
@@ -1433,15 +1337,15 @@ SqlStatement& SqlStatement::operator>> <unsigned long>(std::vector<unsigned long
 	for(unsigned i=0; i < iters; ++i)
 		val.at(i) = BP2.get_number<unsigned long>(i);
 
-	if(_out_pos == _out_cnt && get_stmt_type() != STMT_SELECT )
-		_state |= EOF_DATA;
-
+	post_read_value(BP);
 	return *this;
 }
 
 template<>
 SqlStatement& SqlStatement::operator>> <float>(std::vector<float> &val)
 {
+	pre_read_value();
+
 	if( get_stmt_type() != STMT_DECLARE &&
 	                get_stmt_type() != STMT_BEGIN &&
 	                get_stmt_type() != STMT_INSERT )
@@ -1449,9 +1353,6 @@ SqlStatement& SqlStatement::operator>> <float>(std::vector<float> &val)
 
 	BindPar const &BP( (get_stmt_type() == STMT_SELECT ? get_next_column() : get_next_out_bindpar()  ) );
 	BindParNumber const &BP2 = dynamic_cast<const BindParNumber&>(BP);
-
-	if((_state & EXECUTED) == 0)
-		execute_internal(g_OCIPL_BULK_ROWS, OCI_DEFAULT);
 
 	ub4 iters = get_stmt_type() == STMT_INSERT ? _iters : BP._cnt;
 	val.resize(iters);
@@ -1459,15 +1360,15 @@ SqlStatement& SqlStatement::operator>> <float>(std::vector<float> &val)
 	for(unsigned i=0; i < iters; ++i)
 		val.at(i) = BP2.get_number<float>(i);
 
-	if(_out_pos == _out_cnt && get_stmt_type() != STMT_SELECT )
-		_state |= EOF_DATA;
-
+	post_read_value(BP);
 	return *this;
 }
 
 template<>
 SqlStatement& SqlStatement::operator>> <double>(std::vector<double> &val)
 {
+	pre_read_value();
+
 	if( get_stmt_type() != STMT_DECLARE &&
 	                get_stmt_type() != STMT_BEGIN &&
 	                get_stmt_type() != STMT_INSERT )
@@ -1476,24 +1377,21 @@ SqlStatement& SqlStatement::operator>> <double>(std::vector<double> &val)
 	BindPar const &BP( (get_stmt_type() == STMT_SELECT ? get_next_column() : get_next_out_bindpar()  ) );
 	BindParNumber const &BP2 = dynamic_cast<const BindParNumber&>(BP);
 
-	if((_state & EXECUTED) == 0)
-		execute_internal(g_OCIPL_BULK_ROWS, OCI_DEFAULT);
-
 	ub4 iters = get_stmt_type() == STMT_INSERT ? _iters : BP._cnt;
 	val.resize(iters);
 
 	for(unsigned i=0; i < _iters; ++i)
 		val.at(i) = BP2.get_number<double>(i);
 
-	if(_out_pos == _out_cnt && get_stmt_type() != STMT_SELECT )
-		_state |= EOF_DATA;
-
+	post_read_value(BP);
 	return *this;
 }
 
 template<>
 SqlStatement& SqlStatement::operator>> <tstring>(std::vector<tstring> &val)
 {
+	pre_read_value();
+
 	if( get_stmt_type() != STMT_DECLARE &&
 	                get_stmt_type() != STMT_BEGIN &&
 	                get_stmt_type() != STMT_INSERT )
@@ -1501,40 +1399,27 @@ SqlStatement& SqlStatement::operator>> <tstring>(std::vector<tstring> &val)
 
 	BindPar const &BP( (get_stmt_type() == STMT_SELECT ? get_next_column() : get_next_out_bindpar()  ) );
 
-	if((_state & EXECUTED) == 0)
-		execute_internal(g_OCIPL_BULK_ROWS, OCI_DEFAULT);
-
 	ub4 iters = get_stmt_type() == STMT_INSERT ? _iters : BP._cnt;
 	val.resize(iters);
 
 	for(unsigned i=0; i < iters; ++i)
 		val.at(i) = BP.get_string(i);
 
-	if(_out_pos == _out_cnt && get_stmt_type() != STMT_SELECT )
-		_state |= EOF_DATA;
-
+	post_read_value(BP);
 	return *this;
 }
 
 SqlStatement& SqlStatement::operator>> (SqlCursor &val)
 {
+	pre_read_value();
+
 	BindPar &BP(get_stmt_type() == STMT_SELECT ? get_next_column() : get_next_out_bindpar());
 	BindParCursor &BP2 = dynamic_cast<BindParCursor&>(BP);
 
 	val.c = BP2._cursors.at(_last_buff_row);
 	BP2.redefine(_last_buff_row);
 
-	if(_out_pos == _column_count && BP._bind_type == BP.DEFINE_SELECT)
-		++_last_buff_row;
-
-	if(_out_pos == _out_cnt && get_stmt_type() != STMT_SELECT )
-		_state |= EOF_DATA;
-
-	if(_last_buff_row == fetched_rows() && ((_state & EOF_DATA) == 0) && get_stmt_type() == STMT_SELECT)
-	{
-		fetch(_fetch_rows);
-	}
-
+	post_read_value(BP);
 	return *this;
 };
 

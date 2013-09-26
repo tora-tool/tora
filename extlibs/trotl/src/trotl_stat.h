@@ -95,7 +95,7 @@ public:
 	ub4 row_count() const;
 	ub4 fetched_rows() const;
 
-	STMT_TYPE get_stmt_type() const
+	inline STMT_TYPE get_stmt_type() const
 	{
 		return _stmt_type;
 	};
@@ -285,8 +285,10 @@ public:
 		DEFINED=4,
 		EXECUTED=8,
 		FETCHED=16,
-		EOF_DATA=32,
-		STMT_ERROR=64
+		EOF_DATA=32, // All rows were fetched from OCI but some rows may still be in our buffers
+		EOF_QUERY=64,
+		STMT_ERROR=128
+		// NOTE: flags EXECUTED and EOF_DATA are set "exclusively" they (both) must never be set to 1
 	};
 protected:
 
@@ -302,13 +304,47 @@ protected:
 	void define(BindPar &dp);
 	void define_all();
 
-	//OCISvcCtx* _svchp;
 public:	//todo delete me - these fields should not be public
+	inline void pre_read_value()
+	{
+		// Was not executed yet - or was executed but all rows were already fetched => re-execute
+		if ((_state & EXECUTED) == 0 && (_state & EOF_DATA) == 0) // Both flags are set to 0 => query was never executed
+			execute_internal(_buff_size, OCI_DEFAULT);
+
+		if ((_state & EXECUTED) == 0 && (_state & EOF_DATA) && (_state & EOF_QUERY)) // EXECUTED == 0 and EOF_QUERY was reached => re-execute
+			execute_internal(_buff_size, OCI_DEFAULT);
+
+		if ((_state & FETCHED) == 0 && get_stmt_type() == STMT_SELECT)
+			fetch(_fetch_rows);
+	}
+
+	inline void post_read_value(const BindPar &BP)
+	{
+		if (_out_pos == _column_count && BP._bind_type == BP.DEFINE_SELECT)
+			++_last_buff_row;
+
+		if (_out_pos == _out_cnt && get_stmt_type() != STMT_SELECT )
+		{
+			_state |= EOF_DATA;
+			_state |= EOF_QUERY;
+			_state &= ~EXECUTED;
+		}
+
+		if (((_state & EOF_DATA) == 0) && get_stmt_type() == STMT_SELECT && _last_buff_row == fetched_rows())
+			fetch(_fetch_rows);
+
+		if (_state >= EOF_DATA && get_stmt_type() == STMT_SELECT && _last_buff_row >= fetched_rows())
+		{
+			_state |= EOF_QUERY;
+		}
+	}
+
+	//OCISvcCtx* _svchp;
 	const ub4 _lang;
 	const tstring _orig_stmt;
 	mutable tstring _parsed_stmt;
 
-	int _state;
+	unsigned _state;
 	STMT_TYPE _stmt_type;
 	mutable ub4 _param_count, _column_count, _in_cnt, _out_cnt;
 	ub4 _last_row, _last_fetched_row, _in_pos, _out_pos, _iters;

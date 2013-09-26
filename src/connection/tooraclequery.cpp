@@ -303,12 +303,7 @@ oracleQuery::trotlQuery::trotlQuery(::trotl::OciConnection &conn,
 
 void oracleQuery::trotlQuery::readValue(toQValue &value)
 {
-    if((_state & EXECUTED) == 0)
-        execute_internal(::trotl::g_OCIPL_BULK_ROWS, OCI_DEFAULT);
-
-	if((_state & FETCHED) == 0 && get_stmt_type() == STMT_SELECT)
-		fetch(_fetch_rows);
-
+	pre_read_value();
     trotl::BindPar const &BP(get_stmt_type() == STMT_SELECT ?
                              get_next_column() :
                              get_next_out_bindpar());
@@ -487,12 +482,5 @@ void oracleQuery::trotlQuery::readValue(toQValue &value)
         }
     }
 
-    if(_out_pos == _column_count && BP._bind_type == BP.DEFINE_SELECT)
-        ++_last_buff_row;
-
-    if(_out_pos == _out_cnt && get_stmt_type() != STMT_SELECT )
-        _state |= EOF_DATA;
-
-    if(_last_buff_row == fetched_rows() && ((_state & EOF_DATA) == 0) && get_stmt_type() == STMT_SELECT)
-        fetch(_fetch_rows);
+    post_read_value(BP);
 }

@@ -60,6 +60,7 @@ struct OciEnv;
 struct OciConnection;
 struct OciLogin;
 struct OciException;
+class SqlStatement;
 };
 
 /** re-throw an exception while converting it from @ref trotl::OciException
@@ -105,6 +106,7 @@ public:
 private:
     ::trotl::OciConnection *_conn;
     ::trotl::OciLogin *_login;
+    ::trotl::SqlStatement *_hasTrans;
 };
 
 
