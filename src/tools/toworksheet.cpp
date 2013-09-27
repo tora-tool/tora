@@ -2134,7 +2134,7 @@ void toWorksheet::lockConnection()
 		toQuery schema(*LockedConnection, toSQL::string("Global:CurrentSchema", connection()), toQueryParams());
 		QString value = schema.readValue();
 		Schema->setSelected(value);
-		Schema->refresh();
+		//Schema->refresh();
 		connection().setSchema(value);
 
 		bool oldVal = lockConnectionAct->blockSignals(true);
