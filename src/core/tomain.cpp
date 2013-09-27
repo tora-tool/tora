@@ -48,6 +48,7 @@
 #include "core/toraversion.h"
 #include "core/toconnectionprovider.h"
 #include "core/toconnectionregistry.h"
+#include "core/toconnectionoptions.h"
 #include "core/tonewconnection.h"
 #include "core/todockbar.h"
 #include "core/tomemoeditor.h"
@@ -456,9 +457,11 @@ void toMain::createToolbars()
     ConnectionSelection->setMinimumWidth(300);
     ConnectionSelection->setFocusPolicy(Qt::NoFocus);
     connectionToolbar->addWidget(ConnectionSelection);
-    connect(ConnectionSelection, SIGNAL(activated(int)), this, SLOT(changeConnection()));
-    connect(ConnectionSelection, SIGNAL(currentIndexChanged(QString)), this, SLOT(changeConnection(QString)));
     ConnectionSelection->setModel(&toConnectionRegistrySing::Instance());
+    //connect(ConnectionSelection, SIGNAL(activated(int)), this, SLOT(connectionSelectionChanged()));
+    connect(ConnectionSelection, SIGNAL(currentIndexChanged(QString)), this, SLOT(connectionSelectionChanged()));
+    connect(ConnectionSelection, SIGNAL(currentIndexChanged(int)), &toConnectionRegistrySing::Instance(), SLOT(currentIndexChanged(int)));
+
 
     addToolBarBreak();
 
@@ -945,9 +948,7 @@ void toMain::addConnection(toConnection *newconn)
         enableConnectionActions(true);
 
     checkCaching();
-
-    changeConnection();
-
+    connectionSelectionChanged();
     // New connection was added - create a default tool for it
     createDefault();
 }
@@ -971,7 +972,7 @@ void toMain::setNeedCommit(toConnection &conn, bool needCommit)
 
 bool toMain::delCurrentConnection(void)
 {
-    toConnection &conn = Connections.connection(ConnectionSelection->currentText());
+    toConnection &conn = Connections.currentConnection();
     if (conn.needCommit())
     {
     	QString str = tr("Commit work in session to %1 before "
@@ -1006,7 +1007,7 @@ bool toMain::delCurrentConnection(void)
     if (ConnectionSelection->count() == 0)
         enableConnectionActions(false);
     else
-        changeConnection();
+    	connectionSelectionChanged();
     return true;
 }
 
@@ -1152,14 +1153,9 @@ void toMain::updateStatusMenu(void)
     }
 }
 
-void toMain::changeConnection(void)
+void toMain::connectionSelectionChanged(void)
 {
     enableConnectionActions(true);
-}
-
-void toMain::changeConnection(QString description)
-{
-	toConnectionRegistrySing::Instance().changeConnection(description);
 }
 
 void toMain::editOpenFile(const QString &file)

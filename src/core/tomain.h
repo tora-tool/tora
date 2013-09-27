@@ -190,9 +190,8 @@ protected slots:
 
     /** Change current connection
      */
-    void changeConnection(void);
+    void connectionSelectionChanged(void);
 
-    void changeConnection(QString description);
 
     /** Open a file in sql worksheet */
     void editOpenFile(const QString &file);

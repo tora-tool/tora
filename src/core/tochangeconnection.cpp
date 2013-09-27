@@ -41,6 +41,7 @@
 
 #include "core/tochangeconnection.h"
 #include "core/toconnection.h"
+#include "core/toconnectionoptions.h"
 #include "core/toconnectionregistry.h"
 #include "core/tomainwindow.h"
 #include "core/totool.h"
@@ -85,12 +86,13 @@ void toChangeConnection::popupMenu(void)
         QList<toConnection*> const& cons = toConnectionRegistrySing::Instance().connections();
         foreach(toConnection const * i, cons)
         {
-            if (toToolWidget::currentTool(this)->canHandle(toConnectionRegistrySing::Instance().connection(i->description())))
+            if (toToolWidget::currentTool(this)->canHandle(*i))
             {
             	// TODO use QAbstractListModel QModelIndex data here. display also QPixmap
                 QAction *act = menu()->addAction(i->description());
                 act->setCheckable(true);
-                if (conn.description() == i->description())
+                act->setData(QVariant::fromValue(i->connectionOptions()));
+                if (conn.connectionOptions() == i->connectionOptions())
                     act->setChecked(true);
                 else
                     act->setChecked(false);
@@ -108,7 +110,7 @@ void toChangeConnection::changeConnection(QAction *act)
 
     try
     {
-    	toConnection &con = toConnectionRegistrySing::Instance().connection(act->text());
+    	toConnection &con = toConnectionRegistrySing::Instance().connection(act->data().value<toConnectionOptions>());
     	toToolWidget *tool = toToolWidget::currentTool(parentWidget());
     	if (tool)
     	{

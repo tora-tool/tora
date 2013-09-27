@@ -84,34 +84,37 @@ toConnectionWidget::toConnectionWidget(toConnection &conn, QWidget *widget)
     Connection->addWidget(Widget);
 }
 
-void toConnectionWidget::setConnection(toConnection &conn)
-{
-    if (Connection)
-        Connection->delWidget(Widget);
-    Connection = &conn;
-    Connection->addWidget(Widget);
-}
-
 toConnectionWidget::toConnectionWidget(QWidget *widget)
     : Widget(widget)
 {
-    Connection = NULL;
+    Connection = &toConnection::currentConnection(widget->parentWidget());
+}
+
+void toConnectionWidget::setConnection(toConnection &conn)
+{
+	toConnection *oldConnection(Connection);
+    Connection = &conn;               // 1st change "registration" to toConnection
+	oldConnection->delWidget(Widget); // then notify old connection about the change
+    Connection->addWidget(Widget);
 }
 
 toConnectionWidget::~toConnectionWidget()
 {
-	if (Connection)
-		Connection->delWidget(Widget);
+	Connection->delWidget(Widget);
 }
 
-toConnection &toConnectionWidget::connection()
+toConnection& toConnectionWidget::connection()
 {
     if (Connection)
         return *Connection;
-    QWidget *widget = Widget;
-    if (!widget)
+    if (!Widget)
         throw qApp->translate("toConnectionWidget", "toConnectionWidget not inherited with a QWidget");
-    return toConnection::currentConnection(widget->parentWidget());
+    return toConnection::currentConnection(Widget->parentWidget());
+}
+
+const toConnection& toConnectionWidget::connection() const
+{
+	return *Connection;
 }
 
 toToolWidget::toToolWidget(toTool &tool, const QString &ctx, QWidget *parent, toConnection &conn, const char *name)
@@ -362,9 +365,6 @@ toToolWidget* toTool::createWindow()
 		// Some tools like toOutput return NULL if there is one window for session opened
 		if (newWin)
 			toWorkSpaceSingle::Instance().addToolWidget(newWin);
-		
-		// main->windowActivated(newsub);
-		// main->updateWindowsMenu();
 	}
 	TOCATCH;
 

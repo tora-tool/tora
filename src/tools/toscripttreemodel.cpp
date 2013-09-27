@@ -243,7 +243,7 @@ static toSQL SQLUserObjects7("toScriptTreeModel:UserObjects",
                              "",
                              "0703");
 
-void toScriptTreeModel::setupModelData(const QString & connId, const QString & schema)
+void toScriptTreeModel::setupModelData(const toConnectionOptions& connId, const QString & schema)
 {
 //     TLOG(2,toDecorator,__HERE__) << "void toScriptTreeModel::setupModelData(const QString & schema)" << schema;
     // clear old contents

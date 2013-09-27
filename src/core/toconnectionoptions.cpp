@@ -89,18 +89,31 @@ toConnectionOptions& toConnectionOptions::operator=(const toConnectionOptions &o
 	return *this;
 }
 
-bool toConnectionOptions::operator==(const toConnectionOptions &other)
+bool toConnectionOptions::operator==(const toConnectionOptions &other) const
 {
-    return provider == other.provider
-    		&& host == other.host
-    		&& database == other.database
-    		&& username == other.username
-    		&& schema == other.schema
-    		&& color == other.color
-    		&& schema == other.schema;
+	if ( provider != other.provider
+			|| host != other.host
+			|| database != other.database
+			|| username != other.username
+			|| schema != other.schema
+			|| color != other.color
+			|| port != other.port)
+		return false;
+
+	if (options.size() != other.options.size())
+		return false;
+
+	QStringList opts1 = options.toList(); qSort(opts1);
+	QStringList opts2 = other.options.toList(); qSort(opts2);
+	for(int i = 0; i < opts1.size(); i++)
+	{
+		if (opts1.at(i) != opts2.at(i))
+			return false;
+	}
+	return true;
 }
 
-bool toConnectionOptions::operator==(const toConnection &conn)
+bool toConnectionOptions::operator==(const toConnection &conn) const
 {
     return conn.provider() == provider
     		&& conn.host() == (host + ":" + QString::number(port))
@@ -108,4 +121,44 @@ bool toConnectionOptions::operator==(const toConnection &conn)
     		&& conn.user() == username
     		&& conn.color() == color
     		&& (schema.isEmpty() || (conn.schema() == schema));
+}
+
+template<> bool qMapLessThanKey<toConnectionOptions>(const toConnectionOptions &key1, const toConnectionOptions &key2)
+
+{
+	if (key1.provider != key2.provider)
+    	return key1.provider > key2.provider;
+	if (key1.database != key2.database)
+    	return key1.database > key2.database;
+	if (key1.port != key2.port)
+    	return key1.port > key2.port;
+	if (key1.host != key2.host)
+    	return key1.host > key2.host;
+	if (key1.username != key2.username)
+    	return key1.username > key2.username;
+	if (key1.schema != key2.schema)
+    	return key1.schema > key2.schema;
+	if (key1.color != key2.color)
+    	return key1.color > key2.color;
+	if (key1.options.size() != key2.options.size())
+		return key1.options.size() > key2.options.size();
+	QStringList opts1 = key1.options.toList(); qSort(opts1);
+	QStringList opts2 = key2.options.toList(); qSort(opts2);
+	for(int i = 0; i < opts1.size(); i++)
+	{
+		if (opts1.at(i) != opts2.at(i))
+			return opts1.at(i) > opts2.at(i);
+	}
+	return false;
+}
+
+QString toConnectionOptions::toString() const
+{
+	return QString("%1/%2@%3s:schema=%4;color=%5;port=%6;options=???")
+			.arg(username)
+			.arg(password)
+			.arg(database)
+			.arg(schema)
+			.arg(color)
+			.arg(port);
 }

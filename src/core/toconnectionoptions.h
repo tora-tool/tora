@@ -45,6 +45,7 @@
 #include <QtCore/QMetaType>
 #include <QtCore/QString>
 #include <QtCore/QSet>
+#include <QtCore/QMap>
 
 class toConnection;
 
@@ -72,8 +73,10 @@ public:
     toConnectionOptions(toConnectionOptions const& other);
     toConnectionOptions& operator=(const toConnectionOptions &other);
 
-    bool operator==(const toConnectionOptions &other);
-    bool operator==(const toConnection &conn);
+    bool operator==(const toConnectionOptions &other) const;
+    bool operator==(const toConnection &conn) const;
+
+    QString toString() const;
 
     QString provider, host, database, username, password, schema, color;
     quint16 port;
@@ -81,6 +84,8 @@ public:
 };
 
 Q_DECLARE_METATYPE(toConnectionOptions)
+
+template<> bool qMapLessThanKey<toConnectionOptions>(const toConnectionOptions &key1, const toConnectionOptions &key2);
 
 #endif
 

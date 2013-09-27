@@ -44,6 +44,8 @@
 
 #include "ui_toscriptschemawidgetui.h"
 
+#include "core/toconnectionoptions.h"
+
 class toScriptTreeModel;
 
 
@@ -67,8 +69,8 @@ public:
     //! Create commin string list with all selected objects for given QTreeView
     QItemSelectionModel * objectList();
 
-    //! Return current connection string
-    QString connectionString();
+    //! Return current connection options
+    toConnectionOptions connectionOptions();
     /*! Set the connection string from outside of this widget.
     \param c QString which will be set when its already in the
     ConnectionComboBox

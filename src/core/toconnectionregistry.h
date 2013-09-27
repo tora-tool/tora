@@ -43,6 +43,7 @@
 #define TOCONNECTION_REGISTRY_H
 
 #include "core/tora_export.h"
+#include "core/toconnectionoptions.h"
 #include "loki/Singleton.h"
 
 #include <QtCore/QAbstractListModel>
@@ -64,9 +65,7 @@ public:
      */
 	// TODO - duno how to implement this
 	// see void toChangeConnection::changeConnection(QAction *act)
-    //void changeConnection(void);
-	void changeConnection(QAction *act); // this one is not used yet
-	void changeConnection(QString);
+	void changeConnection(const toConnectionOptions &);
 
     /**
      * Get a list of currently open connections.
@@ -78,7 +77,7 @@ public:
      * @return A reference to a connection.
      * @exception QString If connection wasn't found.
      */
-    toConnection& connection(const QString &);
+    toConnection& connection(const toConnectionOptions &);
 
     /**
      * Get the current database connection
@@ -93,10 +92,11 @@ public:
     // QAbstractListModel interface
     int rowCount(const QModelIndex &) const;
     QVariant data(const QModelIndex &,int) const;
-
+public slots:
+    void currentIndexChanged(int);
 private:
-    QString m_currentConnectionDescription;
-	QMap<QString, toConnection *> m_ConnectionsMap;
+    toConnectionOptions m_currentConnection;
+	QMap<toConnectionOptions, toConnection *> m_ConnectionsMap;
 	QList<toConnection *> m_ConnectionsList;
 };
 

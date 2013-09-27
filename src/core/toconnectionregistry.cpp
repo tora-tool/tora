@@ -42,6 +42,7 @@
 #include "core/toconnectionregistry.h"
 #include "core/toconnection.h"
 #include "core/utils.h"
+#include "ts_log/ts_log_utils.h"
 
 #include <QtGui/QAction>
 
@@ -56,19 +57,12 @@ bool toConnectionRegistry::isEmpty() const
 	return m_ConnectionsList.empty();
 }
 
-void toConnectionRegistry::changeConnection(QAction *act)
+void toConnectionRegistry::changeConnection(const toConnectionOptions &opts)
 {
-	changeConnection(act->text());
-}
-
-void toConnectionRegistry::changeConnection(QString description)
-{
-	if (description.isEmpty()) // All connections were closed
-		m_currentConnectionDescription = description;
-	else if( m_ConnectionsMap.contains(description))
-		m_currentConnectionDescription = description;
+	if( m_ConnectionsMap.contains(opts))
+		m_currentConnection = opts;
 	else
-		throw QString("Unregistered connection(change): %1").arg(description);
+		throw QString("Unregistered connection(change): %1").arg(opts.toString());
 }
 
 int toConnectionRegistry::rowCount(const QModelIndex &) const
@@ -78,33 +72,33 @@ int toConnectionRegistry::rowCount(const QModelIndex &) const
 
 void toConnectionRegistry::addConnection(toConnection *conn)
 {
-	QString const& description = conn->description();
 	conn->setParent(this);
 
-	if(m_ConnectionsMap.contains(description))
+	if(m_ConnectionsMap.contains(conn->connectionOptions()))
 	{
+		QString opsStr = conn->connectionOptions().toString();
 		delete conn;
-		throw QString("Duplicit connection: %1").arg(description);
+		throw QString("Duplicit connection: %1").arg(opsStr);
 	}
 
 	if(m_ConnectionsList.empty())
-		m_currentConnectionDescription = description;
+		m_currentConnection = conn->connectionOptions();
 
 	beginInsertRows(QModelIndex(), m_ConnectionsList.size(), m_ConnectionsList.size());
-	m_ConnectionsMap.insert(description, conn);
+	m_ConnectionsMap.insert(conn->connectionOptions(), conn);
 	m_ConnectionsList.append(conn);
 	endInsertRows();
 }
 
 void toConnectionRegistry::removeConnection(toConnection *conn)
 {
-	QString const& description = conn->description();
+//	QString const& description = conn->description();
 
-	QList<QString> descriptions = m_ConnectionsMap.keys(conn);
-	if(descriptions.size() != 1 || !m_ConnectionsList.contains(conn))
+	QList<toConnectionOptions> conns = m_ConnectionsMap.keys(conn);
+	if(conns.size() != 1 || !m_ConnectionsList.contains(conn))
 	{
 		conn->setParent(this);
-		throw QString("Unregistered connection: %1").arg(description);
+		throw QString("Unregistered connection for removal: %1").arg(conn->description());
 	}
 	// TODO if TCP connection is lost this can hang "forever" - preventing application exit
 	// There must be some ugly way of doing this asynchronously in bg thread:
@@ -114,8 +108,7 @@ void toConnectionRegistry::removeConnection(toConnection *conn)
 
 	int pos = m_ConnectionsList.indexOf(conn);
 	beginRemoveRows(QModelIndex(), pos, pos);
-	int mRemoved = m_ConnectionsMap.remove(descriptions.at(0));
-	//int lRemoved = 
+	int mRemoved = m_ConnectionsMap.remove(conns.at(0));
 	m_ConnectionsList.removeAt(pos);
 	endRemoveRows();
 }
@@ -123,6 +116,9 @@ void toConnectionRegistry::removeConnection(toConnection *conn)
 QVariant toConnectionRegistry::data(const QModelIndex &idx, int role) const
 {
 	static QVariant nothing;
+
+	Q_ASSERT_X(idx.row() < m_ConnectionsList.size(), qPrintable(__QHERE__), "index out of range");
+
 	switch(role)
 	{
 		case Qt::DisplayRole:
@@ -132,6 +128,8 @@ QVariant toConnectionRegistry::data(const QModelIndex &idx, int role) const
 			QString const& color = m_ConnectionsList.at(idx.row())->color();
 			return QVariant(Utils::connectionColorPixmap(color));
 		}
+		case Qt::UserRole:
+			return QVariant::fromValue(m_ConnectionsList.at(idx.row())->connectionOptions());
 		default:
 			return nothing;	
 	}
@@ -139,16 +137,32 @@ QVariant toConnectionRegistry::data(const QModelIndex &idx, int role) const
 
 toConnection& toConnectionRegistry::currentConnection()
 {
-	if( m_ConnectionsMap.contains(m_currentConnectionDescription))
-		return *m_ConnectionsMap.value(m_currentConnectionDescription);
+	if( m_ConnectionsMap.contains(m_currentConnection))
+		return *m_ConnectionsMap.value(m_currentConnection);
     throw tr("Can't find active connection");
 }
 
-toConnection& toConnectionRegistry::connection(const QString &str)
+toConnection& toConnectionRegistry::connection(const toConnectionOptions &opt)
 {
-	if( m_ConnectionsMap.contains(str))
-		return *m_ConnectionsMap.value(str);
-    throw tr("Couldn't find specified connectionts (%1)").arg(str);
+	if( m_ConnectionsMap.contains(opt))
+		return *m_ConnectionsMap.value(opt);
+    throw tr("Couldn't find specified connectionts (%1)").arg(opt.toString());
+}
+
+void toConnectionRegistry::currentIndexChanged(int idx)
+{
+	if (idx == -1)
+	{
+		m_currentConnection = toConnectionOptions();
+		return; // No connection
+	}
+	Q_ASSERT_X(idx < m_ConnectionsList.size(), qPrintable(__QHERE__), qPrintable(QString("Connection index out of range: %1").arg(idx)));
+	QModelIndex i = index(idx, 0);
+	QVariant val = data(i, Qt::UserRole);
+	if (m_ConnectionsMap.contains(val.value<toConnectionOptions>()))
+		m_currentConnection = val.value<toConnectionOptions>();
+	else
+		throw tr("Can't find active connection");
 }
 
 QList<toConnection*> const& toConnectionRegistry::connections(void) const

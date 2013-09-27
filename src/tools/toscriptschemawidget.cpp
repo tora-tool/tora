@@ -96,7 +96,7 @@ void toScriptSchemaWidget::changeConnection(int val)
     SchemaComboBox->blockSignals(true);
 
     SchemaComboBox->clear();
-    toConnection &conn = toConnectionRegistrySing::Instance().connection(connectionString());
+    toConnection &conn = toConnectionRegistrySing::Instance().connection(this->connectionOptions());
     toQList schema = toQuery::readQuery(conn, SQLSchemas, toQueryParams());
     SchemaComboBox->addItem(tr("All"));
     while (schema.size() > 0)
@@ -109,9 +109,11 @@ void toScriptSchemaWidget::changeConnection(int val)
     SchemaComboBox->setCurrentIndex(ix);
 }
 
-QString toScriptSchemaWidget::connectionString()
+toConnectionOptions toScriptSchemaWidget::connectionOptions()
 {
-    return ConnectionComboBox->currentText();
+	QModelIndex i = ConnectionComboBox->model()->index(ConnectionComboBox->currentIndex(), 0);
+	QVariant data = ConnectionComboBox->model()->data(i, Qt::UserRole);
+    return data.value<toConnectionOptions>();
 }
 
 void toScriptSchemaWidget::setConnectionString(const QString & c)
@@ -145,7 +147,7 @@ void toScriptSchemaWidget::changeSchema(int val)
     setEnabled(false);
     WorkingWidget->show();
     QCoreApplication::processEvents();
-    Model->setupModelData(ConnectionComboBox->currentText(), schema);
+    Model->setupModelData(this->connectionOptions(), schema);
     WorkingWidget->hide();
     setEnabled(true);
 }

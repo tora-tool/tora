@@ -46,6 +46,7 @@
 
 class QModelIndex;
 class toScriptTreeItem;
+class toConnectionOptions;
 
 
 /*! \brief A tree model for QTreeView used in toScriptSchemaWidget.
@@ -70,11 +71,11 @@ public:
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
 
     /*! \brief Reset the model with newly readed data from database.
-    \param connId a connection string indentifier.
+    \param connId toConnectionOptions key indentifier for toConnectionRegistry
     \param schema it can be null. When it's given, the SQL statements
     will use WHERE clause with this string.
     */
-    void setupModelData(const QString & connId, const QString & schema = 0);
+    void setupModelData(const toConnectionOptions& connId, const QString & schema = 0);
 
 private:
     //! An universal root item. It's deleted and recreated in setupModelData()

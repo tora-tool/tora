@@ -286,13 +286,12 @@ public:
  */
 class toConnectionWidget
 {
-    toConnection *Connection;
-    QWidget *Widget;
 public:
     /** Constructor with the connection it should be set to initially.
      */
     toConnectionWidget(toConnection &conn, QWidget *widget);
     /** Constructor without a connection. Will inherit the connection from a parent connection widget.
+     * NOTE: not used yet
      */
     toConnectionWidget(QWidget *widget);
     /** Destructor.
@@ -303,7 +302,11 @@ public:
     virtual void setConnection(toConnection &conn);
     /** Get the connection it is pointed to.
      */
-    virtual toConnection &connection();
+    virtual toConnection& connection();
+    virtual const toConnection& connection() const;
+private:
+    toConnection *Connection;
+    QWidget *Widget;
 };
 
 /** Simple baseclass for widgets defining the main tool widget. It is in

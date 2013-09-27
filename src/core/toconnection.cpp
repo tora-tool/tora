@@ -321,8 +321,10 @@ void toConnection::addWidget(QWidget *widget)
     	if (this->ConnectionOptions == tool->connection().connectionOptions())
     		toolCnt++;
     }
-	// +1:  This widget was not yet regitered with toWorkSpaceSingle. (See: toTool::createWindow())
-    Q_ASSERT_X(toolCnt+1 == Widgets.size(), qPrintable(__QHERE__), "Widgets.size() != toolCnt");
+	// +1:  This widget was not yet regitered with toWorkSpaceSingle(has no parent). (See: toTool::createWindow())
+	if (widget->parent() == NULL)
+		toolCnt++;
+    Q_ASSERT_X(toolCnt == Widgets.size(), qPrintable(__QHERE__), "Widgets.size() != toolCnt");
 #endif
 }
 
