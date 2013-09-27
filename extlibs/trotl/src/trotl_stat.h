@@ -107,8 +107,12 @@ public:
 	ub4 get_bindpar_count() const;
 	const std::vector<DescribeColumn*>& get_columns()
 	{
-		if((_state & EXECUTED) == 0)
-			execute_internal(g_OCIPL_BULK_ROWS, OCI_DEFAULT);
+		// Was not executed yet - or was executed but all rows were already fetched => re-execute
+		if ((_state & EXECUTED) == 0 && (_state & EOF_DATA) == 0) // Both flags are set to 0 => query was never executed
+			execute_internal(_buff_size, OCI_DEFAULT);
+
+		if ((_state & EXECUTED) == 0 && (_state & EOF_DATA) && (_state & EOF_QUERY)) // EXECUTED == 0 and EOF_QUERY was reached => re-execute
+			execute_internal(_buff_size, OCI_DEFAULT);
 
 		return _columns;
 	};

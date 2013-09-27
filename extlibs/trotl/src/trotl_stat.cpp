@@ -379,8 +379,7 @@ bool SqlStatement::eof()
 	if (_state & EOF_QUERY)
 		return true;
 
-	if ((_state & EXECUTED) == 0 && (_state & EOF_DATA) == 0  && (_state & EOF_QUERY) == 0)
-		pre_read_value();              // will possibly call execute_internal and fetch (is necessary), but not if EOF flag is already set
+	pre_read_value();  // will possibly call execute_internal or fetch (if necessary), but not if EOF flag is already set
 
 	if (_state >= EOF_DATA && _last_buff_row >= fetched_rows())
 	{
@@ -592,6 +591,8 @@ void SqlStatement::fetch(ub4 rows/*=-1*/)
 	_last_row += _last_buff_row;
 	_last_fetched_row = row_count();
 	_last_buff_row = 0;
+	if ( _last_fetched_row == 0) // nothing was fetched
+		_state |= EOF_QUERY | EOF_DATA;
 }
 
 ub4 SqlStatement::row_count() const
