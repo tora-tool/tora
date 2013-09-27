@@ -78,8 +78,9 @@ toResultSchema::toResultSchema(QWidget *parent,
     if (conn.providerIs("Oracle") || conn.providerIs("SapDB"))
         sel = sel.toUpper();
 
-    conn.setSchema(sel);
     setSelected(sel);
+    if (SelectedFound)
+    	conn.setSchema(sel);
     connect(this, SIGNAL(currentIndexChanged(const QString &)),
             this, SLOT(updateLastSchema(const QString &)));
 
@@ -109,13 +110,15 @@ void toResultSchema::updateLastSchema(const QString &schema)
 		return;
     QSettings s;
     s.setValue("schema/" + ConnectionKey, schema);
-    connection().setSchema(schema);
+    if (SelectedFound)
+    	connection().setSchema(schema);
 }
 
 void toResultSchema::slotUsersFromCache(void)
 {
 	//userList.clear();
 	clear();
+	SelectedFound = false;
 	addItems(Additional);
 	for (int i = 0; i < Additional.count(); i++)
 		if (Additional[i] == Selected)
@@ -127,7 +130,10 @@ void toResultSchema::slotUsersFromCache(void)
 		QString t = (*i);
 		addItem(t);
 		if (t == Selected)
+		{
 			setCurrentIndex(count() - 1);
+			SelectedFound = true;
+		}
 	}
 	slotQueryDone();
 }

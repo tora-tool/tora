@@ -385,12 +385,12 @@ toSession::toSession(QWidget *main, toConnection &connection)
         toolbar->addSeparator();
 
         Select = new toResultSchema(toolbar);
-        Select->setSelected(tr("Only active users"));
         Select->additionalItem(tr("Only active users"));
         Select->additionalItem(tr("All"));
         Select->additionalItem(tr("No background"));
         Select->additionalItem(tr("No system"));
-               Select->refresh();
+        Select->setSelected(tr("Only active users"));
+        Select->refresh();
         toolbar->addWidget(Select);
 
         connect(Select, SIGNAL(activated(int)), this, SLOT(slotRefresh()));

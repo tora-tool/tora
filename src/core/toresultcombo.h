@@ -125,6 +125,7 @@ protected:
     selectionPolicy SelectionPolicy;
     QString Selected;
     QStringList Additional;
+    bool SelectedFound;       // Selected field was either retrieved from DB(true) or is member of Additional fields(false)
     toEventQuery *Query;
 };
 

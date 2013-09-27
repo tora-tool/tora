@@ -52,6 +52,7 @@ toResultCombo::toResultCombo(QWidget *parent, const char *name)
     : QComboBox(parent)
     , Query(NULL)
     , SelectionPolicy(None)
+	, SelectedFound(false)
 {
     setObjectName(name);
     connect(this, SIGNAL(activated(int)),
@@ -74,6 +75,7 @@ void toResultCombo::query(const QString &sql, toQueryParams const& param)
     try
     {
         clear();
+        SelectedFound = false;
         blockSignals(true); // Do not emit currentIndexChanged when 1st field is inserted
         addItems(Additional);
         for (int i = 0; i < Additional.count(); i++)
@@ -108,6 +110,7 @@ bool toResultCombo::canHandle(const toConnection &)
 void toResultCombo::setSelected(const QString &sel)
 {
     Selected = sel;
+    SelectedFound = !Additional.contains(Selected);
 }
 
 QString toResultCombo::selected(void)
@@ -149,7 +152,10 @@ void toResultCombo::slotPoll(void)
 //                    userList.append(new toCacheEntryUser(t));
 //                }
                 if (t == Selected)
+                {
                     setCurrentIndex(count() - 1);
+                    SelectedFound = true;
+                }
             }
         }
     }
@@ -200,4 +206,5 @@ void toResultCombo::slotQueryDone(void)
 void toResultCombo::slotChangeSelected(void)
 {
     Selected = currentText();
+    SelectedFound = !Additional.contains(Selected);
 }

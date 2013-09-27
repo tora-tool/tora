@@ -54,7 +54,6 @@ class toConnection;
 class toResultSchema : public toResultCombo
 {
     Q_OBJECT;
-
 public:
     /**
      * Create the widget.
