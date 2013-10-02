@@ -167,7 +167,7 @@ const ANTLR_UINT8* <name>Tokens::getTokenName(ANTLR_INT32 index) const
                return (ANTLR_UINT8*) "\<EOF>";
        return TokenNames[index];
 }
-
+ 
 /** \brief Table of all token names in symbolic order, mainly used for debugging.
  */
 ANTLR_UINT8* <name>Tokens::TokenNames[<length(tokens)>+4]
@@ -379,7 +379,7 @@ public:
 	};
 <if(LEXER)>
        const ANTLR_UINT8* getTokenName(ANTLR_INT32 index) const;
-
+ 
 protected:
        static ANTLR_UINT8* TokenNames[];
 <endif>
@@ -1211,7 +1211,7 @@ ruleLabelDefs() ::= <<
     :{it |<labelType> <it.label.text> = NULL;}; separator="\n"
 >
 <[ruleDescriptor.tokenListLabels,ruleDescriptor.ruleListLabels,ruleDescriptor.wildcardTreeListLabels]
-    :{it |ImplTraits::TokenPtrsListType list_<it.label.text>;}; separator="\n"
+    :{it |ImplTraits::TokenListType list_<it.label.text>;}; separator="\n"
 >
 <ruleDescriptor.ruleLabels:ruleLabelDef(); separator="\n">
 >>
@@ -2124,7 +2124,7 @@ break;
  *  state to jump to next if successful.
  */
 cyclicDFAEdge(labelExpr, targetStateNumber, edgeNumber, predicates) ::= <<
-if ( <if(predicates)>(<predicates>) && <endif>(<labelExpr>) )
+if ( (<labelExpr>) <if(predicates)>&& (<predicates>)<endif> )
 {
     s = <targetStateNumber>;
 }<\n>

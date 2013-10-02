@@ -3,6 +3,7 @@ ANTLR_BEGIN_NAMESPACE()
 template<class ImplTraits, class StreamType>
 ANTLR_ExceptionBase<ImplTraits, StreamType>::ANTLR_ExceptionBase(const StringType& message)
 	:m_message(message)
+	,m_input(NULL)
 {
 	m_index = 0;
 	m_token	= NULL;

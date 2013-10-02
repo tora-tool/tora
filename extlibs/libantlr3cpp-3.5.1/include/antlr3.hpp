@@ -30,7 +30,6 @@
 
 #include <string>
 #include <sstream>
-#include <memory>
 
 #include    "antlr3defs.hpp"
 

@@ -3,6 +3,7 @@ ANTLR_BEGIN_NAMESPACE()
 template<class ImplTraits>
 Lexer<ImplTraits>::Lexer(ANTLR_UINT32 sizeHint, RecognizerSharedStateType* state)
 	:Lexer<ImplTraits>::RecognizerType(sizeHint, state)
+	,m_input(NULL)
 {
 }
 

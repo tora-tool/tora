@@ -98,6 +98,8 @@
 #define ANTLR_BEGIN_NAMESPACE() namespace antlr3 {
 #define ANTLR_END_NAMESPACE() }
 
+#define ANTLR_USE_64BIT
+
 /* Common definitions come first
  */
 #include    <antlr3errors.hpp>
