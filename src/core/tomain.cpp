@@ -1217,7 +1217,7 @@ void toMain::showMessageImpl(QString str, bool save, bool log)
         if (!save && log)
         {
             Utils::toPush(StatusMessages, str);
-            if ((int) StatusMessages.size() > toConfigurationSingle::Instance().statusSave())
+            if ((int) StatusMessages.size() > toConfigurationSingle::Instance().historySize())
                 Utils::toShift(StatusMessages);
             statusBar()->setToolTip(str);
 

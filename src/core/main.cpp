@@ -110,7 +110,7 @@ int main(int argc, char **argv)
 
         QTranslator torats(0);
         QString qmDir = toConfigurationSingle::Instance().sharePath();
-        torats.load(qmDir + QString("tora_") + toConfigurationSingle::Instance().locale(), ".");
+        torats.load(qmDir + QString("tora_") + toConfigurationSingle::Instance().translation(), ".");
         qApp->installTranslator(&torats);
 
         if (toConfigurationSingle::Instance().toadBindings())
@@ -271,7 +271,7 @@ int main(int argc, char **argv)
 
         try
         {
-            toSQL::loadSQL(toConfigurationSingle::Instance().sqlFile());
+            toSQL::loadSQL(toConfigurationSingle::Instance().customSQL());
         }
 		catch (QString const& e) {
 			TLOG(1, toDecorator, __HERE__) << "	Ignored exception:" << e << std::endl;

@@ -21,13 +21,46 @@ typedef QMap<QString, QString> ConnectionColors;
 typedef QMapIterator<QString, QString> ConnectionColorsIterator;
 
 class toConfigurationPrivate;
-
-class TORA_EXPORT toConfiguration
+class TORA_EXPORT toConfiguration: public QObject
 {
-    toConfigurationPrivate *p;
+	Q_OBJECT;
 
+	// Global Settings
+	//  Paths
+	Q_PROPERTY(QString CustomSQL         READ customSQL           WRITE setCustomSQL)
+	Q_PROPERTY(QString HelpDirectory     READ helpDirectory       WRITE setHelpDirectory)
+	Q_PROPERTY(QString DefaultSession    READ defaultSession      WRITE setDefaultSession)
+	Q_PROPERTY(QString CacheDir          READ cacheDir            WRITE setCacheDir)
+	Q_PROPERTY(QString OracleHome        READ oracleHome          WRITE setOracleHome)
+	Q_PROPERTY(QString MysqlHome         READ mysqlHome           WRITE setMysqlHome)
+	Q_PROPERTY(QString PgsqlHome         READ pgsqlHome           WRITE setPgsqlHome)
+	//  Options (1st column)
+	Q_PROPERTY(bool    ChangeConnection  READ changeConnection    WRITE setChangeConnection)
+	Q_PROPERTY(bool    SavePassword      READ savePassword        WRITE setSavePassword)
+	Q_PROPERTY(bool    IncludeDbCaption  READ includeDbCaption    WRITE setIncludeDbCaption)
+	Q_PROPERTY(bool    RestoreSession    READ restoreSession      WRITE setRestoreSession)
+	Q_PROPERTY(bool    ToadBindings      READ toadBindings        WRITE setToadBindings)
+	Q_PROPERTY(bool    CacheDisk         READ cacheDisk           WRITE setCacheDisk)
+	Q_PROPERTY(bool    DisplayGridlines  READ displayGridlines    WRITE setDisplayGridlines)
+	Q_PROPERTY(bool    MultiLineResults  READ multiLineResults    WRITE setMultiLineResults)
+	Q_PROPERTY(bool    MessageStatusbar  READ messageStatusbar    WRITE setMessageStatusbar)
+	Q_PROPERTY(bool    ColorizedConnections READ colorizedConnections WRITE setColorizedConnections)
+	Q_PROPERTY(ConnectionColors ConnectionColors READ connectionColors WRITE setConnectionColors)
+	//  Options (2nd column)
+	Q_PROPERTY(int     CachedConnections READ cachedConnections   WRITE setCachedConnections)
+	Q_PROPERTY(int     StatusMessage     READ statusMessage       WRITE setStatusMessage)
+	Q_PROPERTY(int     HistorySize       READ historySize         WRITE setHistorySize)
+	Q_PROPERTY(int     ChartSamples      READ chartSamples        WRITE setChartSamples)
+	Q_PROPERTY(int     DisplaySamples    READ displaySamples      WRITE setDisplaySamples)
+	Q_PROPERTY(QString SizeUnit          READ sizeUnit            WRITE setSizeUnit)
+	Q_PROPERTY(QString Refresh           READ refresh             WRITE setRefresh)
+	Q_PROPERTY(int     DefaultFormat     READ defaultFormat       WRITE setDefaultFormat)
+	Q_PROPERTY(QString Style             READ style               WRITE setStyle)
+	Q_PROPERTY(QString Translation       READ translation         WRITE setTranslation)
+
+	Q_ENUMS(ObjectCache)
 public:
-    toConfiguration();
+    toConfiguration(QObject *parent = 0);
     ~toConfiguration();
 
     /* This enum represents various states from ObjectCache comboBox
@@ -74,6 +107,9 @@ public:
     bool savePassword();
     void setSavePassword(bool v);
 
+    int cachedConnections();
+    void setCachedConnections(int v);
+
     int maxNumber();
     void setMaxNumber(int v);
 
@@ -107,23 +143,23 @@ public:
     bool cacheDisk();
     void setCacheDisk(bool v);
 
-    QString sqlFile();
-    void setSqlFile(const QString & v);
+    QString customSQL();
+    void setCustomSQL(const QString & v);
 
     int statusMessage();
     void setStatusMessage(int v);
 
-    bool dbTitle();
-    void setDbTitle(bool v);
+    bool includeDbCaption();
+    void setIncludeDbCaption(bool v);
 
     QString sizeUnit();
     void setSizeUnit(const QString & v);
 
-    QString helpPath();
-    void setHelpPath(const QString & v);
+    QString helpDirectory();
+    void setHelpDirectory(const QString & v);
 
-    int statusSave();
-    void setStatusSave(int v);
+    int historySize();
+    void setHistorySize(int v);
 
     bool autoCommit();
     void setAutoCommit(bool v);
@@ -205,8 +241,8 @@ public:
     QString lastDir();
     void setLastDir(const QString & v);
 
-    QString locale();
-    void setLocale(const QString & v);
+    QString translation();
+    void setTranslation(const QString & v);
 
     int keepAlive();
     void setKeepAlive(int v);
@@ -522,6 +558,9 @@ public:
     
     // Aplication location paths
     QString sharePath();
+private:
+	toConfigurationPrivate * d_ptr;
+    Q_DECLARE_PRIVATE(toConfiguration);
 };
 
 typedef Loki::SingletonHolder<toConfiguration> toConfigurationSingle;

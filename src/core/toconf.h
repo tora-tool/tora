@@ -99,7 +99,6 @@
 #define CONF_AUTO_INDENT "AutoIndent"
 #define CONF_DONT_REREAD "DontReread"
 #define CONF_MESSAGE_STATUSBAR "MessageStatusbar"
-#define CONF_TABBED_TOOLS "TabbedTools"
 #define CONF_MULTI_LINE_RESULTS "MultiLineResults"
 #define DEFAULT_MULTI_LINE_RESULTS 0 // default false
 #define CONF_OBJECT_CACHE "ObjectCache"

@@ -180,6 +180,8 @@ SET(TORA_MOC_CLASSES
   core/toabout.h
   core/tobackground.h
   core/tobackgroundlabel.h
+  core/toconfiguration.h
+  core/toconfigurationpriv.h
   core/toconnection.h
   core/toconnectionregistry.h
   core/todockbar.h
@@ -397,6 +399,7 @@ SET(TORA_SOURCES
   core/tobackgroundlabel.cpp     
   core/tocache.cpp
   core/toconfiguration.cpp
+  core/toconfigurationpriv.cpp
   core/toconnection.cpp
   core/toconnectionoptions.cpp
   core/toconnectionregistry.cpp
@@ -759,6 +762,7 @@ if(TORA_DEBUG)
 SET(TEST1_SOURCES
   core/toworkspace.cpp
   core/toconfiguration.cpp
+  core/toconfigurationpriv.cpp
   core/totool.cpp
   core/toconnection.cpp
   core/toconnectionoptions.cpp  
@@ -841,6 +845,7 @@ ENDIF()
 # test4
 SET(TEST4_SOURCES
   core/toconfiguration.cpp
+  core/toconfigurationpriv.cpp
   core/toglobalevent.cpp
   core/utils_part.cpp
   core/tomainwindow.cpp
@@ -903,6 +908,7 @@ SET(TEST5_SOURCES
   core/tocache.cpp
   core/tocodemodel.cpp
   core/toconfiguration.cpp
+  core/toconfigurationpriv.cpp
   core/toconnection.cpp
   core/toconnectionoptions.cpp  
   core/toconnectionprovider.cpp

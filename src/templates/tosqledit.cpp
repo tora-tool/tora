@@ -280,7 +280,7 @@ void toSQLEdit::connectList(bool conn)
 toSQLEdit::~toSQLEdit()
 {
     SQLEditTool.closeWindow();
-    toSQL::saveSQL(toConfigurationSingle::Instance().sqlFile());
+    toSQL::saveSQL(toConfigurationSingle::Instance().customSQL());
 }
 
 void toSQLEdit::loadSQL(void)

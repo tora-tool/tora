@@ -263,7 +263,7 @@ void toToolWidget::importData(std::map<QString, QString> &data, const QString &p
 void toToolWidget::setCaption(QString const& caption)
 {
     QString title;
-    if (toConfigurationSingle::Instance().dbTitle())
+    if (toConfigurationSingle::Instance().includeDbCaption())
     {
         try
         {

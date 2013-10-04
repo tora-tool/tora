@@ -118,20 +118,36 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     TabbedTools->setVisible(false);
 #endif
 
-    SavePassword->setChecked(toConfigurationSingle::Instance().savePassword());
-    Utils::toRefreshCreate(OptionGroup, "toRefreshCreate", QString::null, Refresh);
+	CustomSQL->setText(toConfigurationSingle::Instance().customSQL());
+	HelpDirectory->setText(toConfigurationSingle::Instance().helpDirectory());
     DefaultSession->setText(toConfigurationSingle::Instance().defaultSession());
-    Status->setValue(toConfigurationSingle::Instance().statusMessage());
-    HistorySize->setValue(toConfigurationSingle::Instance().statusSave());
-    IncludeDB->setChecked(toConfigurationSingle::Instance().dbTitle());
-    Statusbar->setChecked(toConfigurationSingle::Instance().messageStatusbar());
+	CacheDir->setText(toCache::cacheDir().absolutePath());
+#ifdef Q_OS_WIN
+	MysqlHome->setEnabled(true);
+    MySQLHomeBrowse->setEnabled(true);
+    PgsqlHome->setEnabled(true);
+    PgSQLHomeBrowse->setEnabled(true);
+#endif
+    OracleHome->setText(toConfigurationSingle::Instance().oracleHome());
+    MysqlHome->setText(toConfigurationSingle::Instance().mysqlHome());
+    PgsqlHome->setText(toConfigurationSingle::Instance().pgsqlHome());
+
+    ChangeConnection->setChecked(toConfigurationSingle::Instance().changeConnection());
+	SavePassword->setChecked(toConfigurationSingle::Instance().savePassword());
+    IncludeDbCaption->setChecked(toConfigurationSingle::Instance().includeDbCaption());
+    RestoreSession->setChecked(toConfigurationSingle::Instance().restoreSession());
+	ToadBindings->setChecked(toConfigurationSingle::Instance().toadBindings());
+	CacheDisk->setChecked(toConfigurationSingle::Instance().cacheDisk());
+    DisplayGridlines->setChecked(toConfigurationSingle::Instance().displayGridlines());
     MultiLineResults->setChecked(toConfigurationSingle::Instance().multiLineResults());
+    MessageStatusbar->setChecked(toConfigurationSingle::Instance().messageStatusbar());
     ColorizedConnections->setChecked(toConfigurationSingle::Instance().colorizedConnections());
     connect(ColorizedConnectionsConfigure, SIGNAL(clicked()),
             this, SLOT(ColorizedConnectionsConfigure_clicked()));
-    RestoreSession->setChecked(toConfigurationSingle::Instance().restoreSession());
-    HelpDirectory->setText(toConfigurationSingle::Instance().helpPath()/*toHelpPath()*/);
-    ChangeConnection->setChecked(toConfigurationSingle::Instance().changeConnection());
+
+    CachedConnections->setValue(toConfigurationSingle::Instance().cachedConnections());
+    StatusMessage->setValue(toConfigurationSingle::Instance().statusMessage());
+    HistorySize->setValue(toConfigurationSingle::Instance().historySize());
     int samples = toConfigurationSingle::Instance().chartSamples();
     if (samples < 0)
     {
@@ -148,16 +164,17 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     }
     else
         DisplaySamples->setValue(samples);
-    DefaultFormat->setCurrentIndex(toConfigurationSingle::Instance().defaultFormat());
-    ToadBindings->setChecked(toConfigurationSingle::Instance().toadBindings());
-    DisplayGrid->setChecked(toConfigurationSingle::Instance().displayGridlines());
-
+    // SizeUnit
     QString typ(toConfigurationSingle::Instance().sizeUnit());
     if (typ == "KB")
         SizeUnit->setCurrentIndex(1);
     else if (typ == "MB")
         SizeUnit->setCurrentIndex(2);
-
+    // Refresh
+    Utils::toRefreshCreate(OptionGroup, "toRefreshCreate", QString::null, Refresh);
+    // DefaultFormat
+    DefaultFormat->setCurrentIndex(toConfigurationSingle::Instance().defaultFormat());
+    // style
     Style->addItems(Utils::toGetSessionTypes());
     QString str = Utils::toGetSessionType();
     for (int i = 0; i < Style->count(); i++)
@@ -168,25 +185,8 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
             break;
         }
     }
-
-#ifdef Q_OS_WIN
-    MySQLHome->setEnabled(true);
-    MySQLHomeBrowse->setEnabled(true);
-    PgSQLHome->setEnabled(true);
-    PgSQLHomeBrowse->setEnabled(true);
-#endif
-    OracleHome->setText(toConfigurationSingle::Instance().oracleHome());
-    MySQLHome->setText(toConfigurationSingle::Instance().mysqlHome());
-    PgSQLHome->setText(toConfigurationSingle::Instance().pgsqlHome());
-
-    /** disk caching options
-     */
-
-    CacheDirectory->setText(toCache::cacheDir().absolutePath());
-    DiskCaching->setChecked(toConfigurationSingle::Instance().cacheDisk());
-
-    CustomSQL->setText(toConfigurationSingle::Instance().sqlFile());
-    Locale->setText(toConfigurationSingle::Instance().locale());
+    // Translation
+    Translation->setText(toConfigurationSingle::Instance().translation());
 }
 
 void toGlobalSetting::sqlBrowse(void)
@@ -212,9 +212,9 @@ void toGlobalSetting::helpBrowse(void)
 
 void toGlobalSetting::cacheBrowse(void)
 {
-    QString str = Utils::toOpenFilename(CacheDirectory->text(), QString::fromLatin1(".tora_cache"), this);
+    QString str = Utils::toOpenFilename(CacheDir->text(), QString::fromLatin1(".tora_cache"), this);
     if (!str.isEmpty())
-        CacheDirectory->setText(str);
+        CacheDir->setText(str);
 }
 
 void toGlobalSetting::oracleBrowse(void)
@@ -226,12 +226,12 @@ void toGlobalSetting::oracleBrowse(void)
 
 void toGlobalSetting::mysqlBrowse(void)
 {
-    QString str = TOFileDialog::getExistingDirectory(this, tr("MySQL client installation"), MySQLHome->text());
+    QString str = TOFileDialog::getExistingDirectory(this, tr("MySQL client installation"), MysqlHome->text());
     if (str.isEmpty())
     	return;
     QFileInfo libmysql(str + QDir::separator() + "lib" + QDir::separator() + "opt", "libmysql.dll");
     if( Utils::toLibrary::isValidLibrary(libmysql))
-    	MySQLHome->setText(libmysql.absolutePath());
+    	MysqlHome->setText(libmysql.absolutePath());
     else
         TOMessageBox::warning(
         		Utils::toQMainWindow(),
@@ -242,12 +242,12 @@ void toGlobalSetting::mysqlBrowse(void)
 
 void toGlobalSetting::pqsqlBrowse(void)
 {
-    QString str = TOFileDialog::getExistingDirectory(this, tr("PgSQL client installation"), PgSQLHome->text());
+    QString str = TOFileDialog::getExistingDirectory(this, tr("PgSQL client installation"), PgsqlHome->text());
     if (str.isEmpty())
     	return;
     QFileInfo libpq(str + QDir::separator() + "lib", "libpq.dll");
     if( Utils::toLibrary::isValidLibrary(libpq))
-    	PgSQLHome->setText(str);
+    	PgsqlHome->setText(str);
     else
         TOMessageBox::warning(
         		Utils::toQMainWindow(),
@@ -264,44 +264,45 @@ void toGlobalSetting::ColorizedConnectionsConfigure_clicked()
 
 void toGlobalSetting::saveSetting(void)
 {
-    toConfigurationSingle::Instance().setOracleHome(OracleHome->text());
-    toConfigurationSingle::Instance().setMysqlHome(MySQLHome->text());
-    toConfigurationSingle::Instance().setPgsqlHome(PgSQLHome->text());
-
-    toConfigurationSingle::Instance().setCacheDisk(DiskCaching->isChecked());
-    toConfigurationSingle::Instance().setCacheDir(CacheDirectory->text());
-    toConfigurationSingle::Instance().setSqlFile(CustomSQL->text());
+	toConfigurationSingle::Instance().setCustomSQL(CustomSQL->text());
+    toConfigurationSingle::Instance().setHelpDirectory(HelpDirectory->text());
     toConfigurationSingle::Instance().setDefaultSession(DefaultSession->text());
-    toConfigurationSingle::Instance().setRefresh(Refresh->currentText());
-    toConfigurationSingle::Instance().setSavePassword(SavePassword->isChecked());
-    toConfigurationSingle::Instance().setStatusMessage(Status->value());
-    toConfigurationSingle::Instance().setStatusSave(HistorySize->value());
-    toConfigurationSingle::Instance().setChartSamples(ChartSamples->value());
-    toConfigurationSingle::Instance().setMessageStatusbar(Statusbar->isChecked());
-    toConfigurationSingle::Instance().setMultiLineResults(MultiLineResults->isChecked());
-    toConfigurationSingle::Instance().setColorizedConnections(ColorizedConnections->isChecked());
-    toConfigurationSingle::Instance().setRestoreSession(RestoreSession->isChecked());
-    toConfigurationSingle::Instance().setDefaultFormat(DefaultFormat->currentIndex());
-    toConfigurationSingle::Instance().setToadBindings(ToadBindings->isChecked());
-    toConfigurationSingle::Instance().setDisplayGridlines(DisplayGrid->isChecked());
+    toConfigurationSingle::Instance().setCacheDir(CacheDir->text());
+    toConfigurationSingle::Instance().setOracleHome(OracleHome->text());
+    toConfigurationSingle::Instance().setMysqlHome(MysqlHome->text());
+    toConfigurationSingle::Instance().setPgsqlHome(PgsqlHome->text());
+
     toConfigurationSingle::Instance().setChangeConnection(ChangeConnection->isChecked());
-    toConfigurationSingle::Instance().setDbTitle(IncludeDB->isChecked());
-    toConfigurationSingle::Instance().setSizeUnit(SizeUnit->currentText());
-    toConfigurationSingle::Instance().setHelpPath(HelpDirectory->text());
+    toConfigurationSingle::Instance().setSavePassword(SavePassword->isChecked());
+    toConfigurationSingle::Instance().setIncludeDbCaption(IncludeDbCaption->isChecked());
+    toConfigurationSingle::Instance().setRestoreSession(RestoreSession->isChecked());
+    toConfigurationSingle::Instance().setToadBindings(ToadBindings->isChecked());
+    toConfigurationSingle::Instance().setCacheDisk(CacheDisk->isChecked());
+    toConfigurationSingle::Instance().setDisplayGridlines(DisplayGridlines->isChecked());
+    toConfigurationSingle::Instance().setMultiLineResults(MultiLineResults->isChecked());
+    toConfigurationSingle::Instance().setMessageStatusbar(MessageStatusbar->isChecked());
+    toConfigurationSingle::Instance().setColorizedConnections(ColorizedConnections->isChecked());
 
-    toConfigurationSingle::Instance().setStyle(Style->currentText());
-    Utils::toSetSessionType(Style->currentText());
+    toConfigurationSingle::Instance().setCachedConnections(CachedConnections->value());
+    toConfigurationSingle::Instance().setStatusMessage(StatusMessage->value());
+    toConfigurationSingle::Instance().setHistorySize(HistorySize->value());
 
-    if (AllSamples->isChecked())
-        toConfigurationSingle::Instance().setDisplaySamples(-1);
-    else
-        toConfigurationSingle::Instance().setDisplaySamples(DisplaySamples->value());
     if (UnlimitedSamples->isChecked())
         toConfigurationSingle::Instance().setChartSamples(-1);
     else
         toConfigurationSingle::Instance().setChartSamples(ChartSamples->value());
 
-    toConfigurationSingle::Instance().setLocale(Locale->text());
+    if (AllSamples->isChecked())
+        toConfigurationSingle::Instance().setDisplaySamples(-1);
+    else
+        toConfigurationSingle::Instance().setDisplaySamples(DisplaySamples->value());
+
+    toConfigurationSingle::Instance().setSizeUnit(SizeUnit->currentText());
+    toConfigurationSingle::Instance().setRefresh(Refresh->currentText());
+    toConfigurationSingle::Instance().setDefaultFormat(DefaultFormat->currentIndex());
+    toConfigurationSingle::Instance().setStyle(Style->currentText());
+    Utils::toSetSessionType(Style->currentText());
+    toConfigurationSingle::Instance().setTranslation(Translation->text());
 }
 
 void toDatabaseSetting::numberFormatChange()

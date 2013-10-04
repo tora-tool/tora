@@ -797,7 +797,7 @@ QToolBar *toAllocBar(QWidget *parent, const QString &str)
     }
 
     QString name = str;
-    if (!db.isEmpty() && toConfigurationSingle::Instance().dbTitle())
+    if (!db.isEmpty() && toConfigurationSingle::Instance().includeDbCaption())
     {
         name += QString::fromLatin1(" ");
         name += db;
@@ -825,7 +825,7 @@ TODock *toAllocDock(const QString &name,
                     const QPixmap &pix)
 {
     QString str = name;
-    if (!db.isEmpty() && toConfigurationSingle::Instance().dbTitle())
+    if (!db.isEmpty() && toConfigurationSingle::Instance().includeDbCaption())
     {
         str += QString::fromLatin1(" ");
         str += db;
