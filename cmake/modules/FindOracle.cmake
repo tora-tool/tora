@@ -47,6 +47,8 @@ ELSE (ORACLE_PATH_INCLUDES)
             ${ORACLE_HOME}/OCI/include
             # instant client from rpm
             /usr/include/oracle/11.2/client${LIB_SUFFIX}/
+            # instantclient on OS X from macports
+            /opt/local/lib/oracle/sdk/include/
        )
 ENDIF (ORACLE_PATH_INCLUDES)
 
@@ -63,6 +65,8 @@ ELSE (ORACLE_PATH_LIB)
             ${ORACLE_HOME}/sdk/lib/msvc/
             # Instant client from rpm
             /usr/lib${LIB_SUFFIX}/
+            # instant client on OS X from macports
+            /opt/local/lib/oracle/
         )
 ENDIF (ORACLE_PATH_LIB)
 
