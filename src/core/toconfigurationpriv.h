@@ -5,6 +5,9 @@
 #include "core/toconfiguration.h"
 #include "core/utils.h"
 
+#include <QtCore/QDir>
+#include <QtCore/QVariant>
+
 class toConfigurationPrivate : public QObject
 {
 	Q_OBJECT;

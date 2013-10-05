@@ -7,14 +7,14 @@ SOURCES = $(wildcard *.cpp)
 PSOURCES = $(wildcard PLSQLParser*.cpp) PLSQLLexer.cpp
 POBJS = $(PSOURCES:.cpp=.o)
 GRAMMAROPTIONS= -report -Xconversiontimeout 1500000 -Xmultithreaded -Xwatchconversion
-ANTLR = antlr-complete-3.5.1-SNAPSHOT.jar
+ANTLR = antlr-complete-3.5.2-SNAPSHOT.jar
 
 .SUFFIXES:
 
 INCLUDES= -I. -I../libantlr3cpp-3.5.1/include/ -I../../../boost_1_46_1/
 
-CFLAGS=-ggdb3 -O0 -fno-inline
-##CFLAGS=-ggdb3 -O3
+##CFLAGS=-ggdb3 -O0 -fno-inline
+CFLAGS=-ggdb3 -Os
 
 TOBJS= utils.o
 
@@ -22,8 +22,9 @@ all: t0 t1 t2 t4 m0 p0 s0 s1 s2
 
 $(ANTLR): org/antlr/codegen/templates/Cpp/Cpp.stg \
 	org/antlr/codegen/templates/Cpp/AST.stg \
-	org/antlr/codegen/templates/Cpp/ASTParser.stg
-	jar uvf $(ANTLR) org/antlr/codegen/templates/Cpp/*.stg
+	org/antlr/codegen/templates/Cpp/ASTParser.stg \
+	org/antlr/codegen/templates/Java/Java.stg
+	jar uvf $(ANTLR) org/antlr/codegen/templates/*/*.stg
 
 t0:	t0.cpp PLSQLGuiLexer.tokens t0.cpp $(TOBJS) PLSQLGuiLexer.o Makefile UserGuiTraits.hpp
 	g++ $(CFLAGS) -DUSESTL $(INCLUDES) $(TOBJS) t0.cpp PLSQLGuiLexer.o $(LIBS) -o $@

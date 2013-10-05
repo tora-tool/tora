@@ -6,6 +6,7 @@
 #include <antlr3.hpp>
 #include <algorithm>
 #include <queue>
+#include <memory>
 #include <boost/algorithm/string/predicate.hpp>
 
 #include "TokenAttr.hpp"

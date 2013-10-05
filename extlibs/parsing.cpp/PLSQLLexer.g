@@ -33,6 +33,7 @@ tokens { // moved to the import vocabulary
 
 @lexer::includes
 {
+	#include <memory>
 	#include "UserTraits.hpp"
 }
 @lexer::namespace

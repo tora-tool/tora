@@ -1874,7 +1874,7 @@ dfaAcceptState(alt) ::= "alt<decisionNumber>=<alt>;"
  *  have to evaluate some predicates for this edge.
  */
 dfaEdge(labelExpr, targetState, predicates) ::= <<
-if ( <if(predicates)>(<predicates>) && <endif>(<labelExpr>))
+if ( (<labelExpr>) <if(predicates)> && (<predicates>)<endif>)
 {
     <targetState>
 }

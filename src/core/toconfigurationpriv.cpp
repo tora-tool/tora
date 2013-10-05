@@ -42,6 +42,8 @@
 #include "core/toconf.h"
 
 #include <QtCore/QString>
+#include <QtCore/QSettings>
+#include <QtCore/QLocale>
 #include <QtGui/QApplication>
 
 // A little magic to get lrefresh to work and get a check on qApp

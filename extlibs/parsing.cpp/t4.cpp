@@ -203,7 +203,7 @@ void parseFile(const char* fName, int fd)
 	//	}
 	//}
 
-	tstream->_LT(1);	// Don't do this mormally, just causes lexer to run for timings here
+	//tstream->_LT(1);	// Don't do this mormally, just causes lexer to run for timings here
 	//putc('P', stdout); fflush(stdout);
 	psr->seq_of_statements();
 	//putc('F', stdout); fflush(stdout);

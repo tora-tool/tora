@@ -784,6 +784,8 @@ SET(TEST1_SOURCES
 SET(TEST1_MOC_SOURCES
   core/moc_toworkspace.cxx
   core/moc_totool.cxx
+  core/moc_toconfiguration.cxx
+  core/moc_toconfigurationpriv.cxx  
   core/moc_toconnection.cxx
   core/moc_toconnectionregistry.cxx
   core/moc_tomainwindow.cxx
@@ -862,6 +864,8 @@ SET(TEST4_SOURCES
   )
 SET(TEST4_MOC_SOURCES
   tests/moc_test4window.cxx
+  core/moc_toconfiguration.cxx
+  core/moc_toconfigurationpriv.cxx    
   core/moc_tomainwindow.cxx
   core/moc_toglobalevent.cxx
   core/moc_topushbutton.cxx
@@ -983,6 +987,8 @@ SET(TEST5_MOC_SOURCES
   core/moc_tobrowserbasewidget.cxx
   core/moc_tocache.cxx
   core/moc_tocodemodel.cxx
+  core/moc_toconfiguration.cxx  
+  core/moc_toconfigurationpriv.cxx
   core/moc_toconnection.cxx
   core/moc_toconnectionregistry.cxx
   core/moc_todescribe.cxx
