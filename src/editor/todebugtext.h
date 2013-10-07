@@ -40,7 +40,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #ifndef TODEBUGTEXT_H
-#define TODEBIGTEXT_H
+#define TODEBUGTEXT_H
 
 #include "editor/tohighlightedtext.h"
 
