@@ -12,6 +12,7 @@
 //
 #include <antlr3.hpp>
 #include <algorithm>
+#include <memory>
 #include <boost/algorithm/string/predicate.hpp>
 
 namespace User {
