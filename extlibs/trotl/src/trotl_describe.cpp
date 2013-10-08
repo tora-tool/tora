@@ -30,10 +30,11 @@
 
 */
 
-#include "trotl_common.h"
-#include "trotl_export.h"
+
+
 #include "trotl_describe.h"
 #include "trotl_common.h"
+#include "trotl_export.h"
 #include "trotl_error.h"
 
 #include <vector>
@@ -209,6 +210,10 @@ Describe::Describe(OciConnection& con, const tstring &objectName)
 	, _objName(objectName)
 {
 	//_desc.alloc(conn._env);
+}
+
+Describe::~Describe()
+{
 }
 
 DescribeSynonym::DescribeSynonym(OciConnection &con, OciDescribe &desc, const tstring &objectName, bool isPublic)

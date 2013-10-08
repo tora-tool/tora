@@ -1485,7 +1485,7 @@ OciException::OciException(tstring where, SqlStatement& stmt) :
 		//#ifdef __STDC_WANT_SECURE_LIB__
 		//		char* b = buffer+l + snprintf_s(buffer+l, sizeof(buffer)-l, _TRUNCATE, "\nerror at SQL position %d [%d.%d]:\n", _parse_offset, line, column);
 		//#else
-		char* b = buffer+l + snprintf(buffer+l, sizeof(buffer)-l-1, "\nerror at SQL position %u [%u.%u]:\n", (unsigned)_parse_offset, line, column);
+		char* b = buffer+l + snprintf(buffer+l, sizeof(buffer)-l-1, "\nerror at SQL position %u [%u.%u]:\n", (unsigned)_parse_offset, line, (unsigned)column);
 		//#endif
 		char* p = b;
 		s = lp;

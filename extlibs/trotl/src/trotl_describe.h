@@ -209,6 +209,8 @@ public:
 
 	static objectType getObjectType(OciConnection &con, const tstring &objectName);
 	static Describe* createDescription(OciConnection &con, const tstring &objectName);
+
+	virtual ~Describe();
 protected:
 	Describe(const tstring &objectName);
 	Describe(OciConnection& con, const tstring &objectName);
