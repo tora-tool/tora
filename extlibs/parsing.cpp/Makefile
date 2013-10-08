@@ -32,8 +32,8 @@ t0:	t0.cpp PLSQLGuiLexer.tokens t0.cpp $(TOBJS) PLSQLGuiLexer.o Makefile UserGui
 t1:	t1.cpp PLSQLLexer.tokens PLSQLParser.tokens t1.cpp $(TOBJS) $(POBJS) Makefile UserTraits.hpp
 	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(TOBJS) t1.cpp $(POBJS) -o $@
 
-t2:	t2.cpp PLSQLLexer.tokens PLSQLParser.tokens t1.cpp $(TOBJS) $(PSOURCES) Makefile UserTraits.hpp
-	$(CXX) $(CXXFLAGS) -DUSEBOOST $(INCLUDES) $(TOBJS) t2.cpp $(PSOURCES) $(LIBS) -o $@
+t2:	t2.cpp PLSQLLexer.tokens PLSQLParser.tokens t1.cpp $(TOBJS) $(PSOURCES) $(POBJS) Makefile UserTraits.hpp
+	$(CXX) $(CXXFLAGS) -DUSEBOOST $(INCLUDES) $(TOBJS) t2.cpp $(POBJS) $(LIBS) -o $@
 
 t4:	t4.cpp PLSQLLexer.tokens PLSQLParser.tokens t4.cpp $(TOBJS) $(PSOURCES) $(POBJS) Makefile UserTraits.hpp
 	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(TOBJS) t4.cpp $(POBJS) -o $@
@@ -64,7 +64,7 @@ install:
 	cp PLSQLGuiLexer.hpp ../../src/parsing/PLSQLGuiLexer.hpp
 	cp UserGuiTraits.hpp ../../src/parsing/UserGuiTraits.hpp
 	cp TokenAttr.hpp     ../../src/parsing/TokenAttr.hpp
-	cp PLSQLLexer.cpp    ../../src/parsing/PLSQLGuiLexer.cc
+	cp PLSQLLexer.cpp    ../../src/parsing/PLSQLLexer.cc
 	cp PLSQLParser.cpp   ../../src/parsing/PLSQLParser.cc
 	cp PLSQLParser_PLSQLCommons.cpp    ../../src/parsing/PLSQLParser_PLSQLCommons.cc
 	cp PLSQLParser_PLSQL_DMLParser.cpp ../../src/parsing/PLSQLParser_PLSQL_DMLParser.cc
