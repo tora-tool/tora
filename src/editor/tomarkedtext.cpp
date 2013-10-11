@@ -110,7 +110,7 @@ toMarkedText::toMarkedText(QWidget *parent, const char *name)
 
     // sets default tab width
     super::setTabWidth(toConfigurationSingle::Instance().tabStop());
-    super::setIndentationsUseTabs(!toConfigurationSingle::Instance().tabSpaces());
+    super::setIndentationsUseTabs(!toConfigurationSingle::Instance().useSpacesForIndent());
 
     super::setUtf8(true);
     setAcceptDrops(true); // QWidget::setAcceptDrops

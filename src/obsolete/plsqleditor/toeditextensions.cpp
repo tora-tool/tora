@@ -605,7 +605,7 @@ toEditExtensionSetup::~toEditExtensionSetup()
 
 void toEditExtensionSetup::saveCurrent(void)
 {
-    Current.ExpandSpaces = toConfigurationSingle::Instance().tabSpaces();
+    Current.ExpandSpaces = toConfigurationSingle::Instance().useSpacesForIndent();
     Current.CommaBefore = CommaBefore->isChecked();
     Current.BlockOpenLine = BlockOpenLine->isChecked();
     Current.OperatorSpace = OperatorSpace->isChecked();
@@ -651,7 +651,7 @@ public:
     toEditExtensionTool() : toTool(910, "Editor Extensions")
     {
         toSQLParse::settings cur;
-        cur.ExpandSpaces = toConfigurationSingle::Instance().tabSpaces();
+        cur.ExpandSpaces = toConfigurationSingle::Instance().useSpacesForIndent();
         cur.CommaBefore = toConfigurationSingle::Instance().commaBefore();
         cur.BlockOpenLine = toConfigurationSingle::Instance().blockOpenLine();
         cur.OperatorSpace = toConfigurationSingle::Instance().operatorSpace();

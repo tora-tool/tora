@@ -47,8 +47,18 @@ public:
 
     // Editor
     //  Options
+    bool    m_syntaxHighlighting;
+    bool    m_useMaxTextWidthMark;
+    int     m_maxTextWidthMark;
     bool    m_keywordUpper;
     bool    m_objectNamesUpper;
+    bool    m_codeCompletion;
+    bool    m_completionSort;
+    bool               m_useEditorShortcuts;
+    EditorShortcutsMap m_editorShortcuts;
+    bool    m_autoIndent;
+    bool    m_useSpacesForIndent;
+
 
     int     m_maxNumber;
     int     m_maxColDisp;
@@ -59,16 +69,30 @@ public:
     QString m_listFont;
     QString m_dateFormat;
     QString m_timestampFormat;
-    QString m_highlightType;
     mutable QDir    m_applicationDir;
+
+    // tosyntaxsetup
+    QString m_syntaxDefault;
+    QString m_syntaxComment;
+    QString m_syntaxNumber;
+    QString m_syntaxKeyword;
+    QString m_syntaxString;
+    QString m_syntaxDefaultBg;
+    QString m_syntaxErrorBg;
+    QString m_syntaxDebugBg;
+    QString m_syntaxCurrentLineMarker;
+    QString m_syntaxStaticBg;
 
     bool    m_autoCommit;
 
     QString m_defaultTool;
 
-    bool    m_codeCompletion;
-    bool    m_completionSort;
-    bool    m_autoIndent;
+    int     m_tabStop;
+
+    bool    m_editDragDrop;
+
+
+
     bool    m_dontReread;
 
     toConfiguration::ObjectCache m_objectCache;
@@ -89,9 +113,6 @@ public:
     int     m_numberFormat;
     int     m_numberDecimals;
     int     m_cacheTimeout;
-    int     m_tabStop;
-    bool    m_tabSpaces;
-    bool    m_editDragDrop;
 
     int     m_connectionTestTimeout; // after how many seconds connection should be tested
     QString m_encoding;
@@ -190,27 +211,9 @@ public:
     bool m_wsExecLog;
     bool m_wsToplevelDescribe;
 
-    // tosyntaxsetup
-    QString m_syntaxDefault;
-    QString m_syntaxComment;
-    QString m_syntaxNumber;
-    QString m_syntaxKeyword;
-    QString m_syntaxString;
-    QString m_syntaxDefaultBg;
-    QString m_syntaxErrorBg;
-    QString m_syntaxDebugBg;
-    QString m_syntaxCurrentLineMarker;
-    QString m_syntaxStaticBg;
-    bool    m_useMaxTextWidthMark;
-    int     m_maxTextWidthMark;
-
     // mainwindow size
     QByteArray m_mainWindowGeometry;
     QByteArray m_mainWindowState;
-
-    // shortcut editor
-    bool               m_useEditorShortcuts;
-    EditorShortcutsMap m_editorShortcuts;
 
     // Extractor. Controls the method used to produce database object extracts
     // as well as extraction settings (which information should be extracted).

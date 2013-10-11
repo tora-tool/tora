@@ -393,15 +393,15 @@ void toConfiguration::setRefresh(const QString & v)
     d->m_refresh = v;
 }
 
-QString toConfiguration::highlightType()
+bool toConfiguration::syntaxHighlighting()
 {
 	Q_D(toConfiguration);
-    return d->m_highlightType;
+    return d->m_syntaxHighlighting;
 }
-void toConfiguration::setHighlightType(QString v)
+void toConfiguration::setSyntaxHighlighting(bool v)
 {
 	Q_D(toConfiguration);
-    d->m_highlightType = v;
+    d->m_syntaxHighlighting = v;
 }
 
 bool toConfiguration::keywordUpper()
@@ -563,7 +563,7 @@ bool toConfiguration::completionSort()
 	Q_D(toConfiguration);
     return d->m_completionSort;
 }
-void toConfiguration::setCodeCompletionSort(bool v)
+void toConfiguration::setCompletionSort(bool v)
 {
 	Q_D(toConfiguration);
     d->m_completionSort = v;
@@ -856,15 +856,15 @@ void toConfiguration::setTabStop(int v)
     d->m_tabStop = v;
 }
 
-bool toConfiguration::tabSpaces()
+bool toConfiguration::useSpacesForIndent()
 {
 	Q_D(toConfiguration);
-    return d->m_tabSpaces;
+    return d->m_useSpacesForIndent;
 }
-void toConfiguration::setTabSpaces(bool v)
+void toConfiguration::setUseSpacesForIndent(bool v)
 {
 	Q_D(toConfiguration);
-    d->m_tabSpaces = v;
+    d->m_useSpacesForIndent = v;
 }
 
 bool toConfiguration::editDragDrop()

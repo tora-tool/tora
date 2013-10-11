@@ -26,7 +26,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="OptionsTab">
       <attribute name="title">
@@ -37,6 +37,9 @@
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
           <widget class="QCheckBox" name="SyntaxHighlighting">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="toolTip">
             <string>Enable syntax highlighting, or use simple text editor</string>
            </property>
@@ -48,7 +51,7 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout">
            <item>
-            <widget class="QCheckBox" name="EdgeMarkCheckBox">
+            <widget class="QCheckBox" name="UseMaxTextWidthMark">
              <property name="toolTip">
               <string>Display the line/column marker at the specified position</string>
              </property>
@@ -58,7 +61,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QSpinBox" name="EdgeSizeSpinBox">
+            <widget class="QSpinBox" name="MaxTextWidthMark">
              <property name="toolTip">
               <string>Specify the column (text width) where to show marker</string>
              </property>
@@ -74,6 +77,9 @@
          </item>
          <item>
           <widget class="QCheckBox" name="KeywordUpper">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="toolTip">
             <string>Convert all keywords to uppercase when displayingsyntaxhighlighted text.  Only available for monospaced fonts.</string>
            </property>
@@ -84,6 +90,9 @@
          </item>
          <item>
           <widget class="QCheckBox" name="ObjectNamesUpper">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="toolTip">
             <string>Table, view, column names etc. are extracted in upper-case</string>
            </property>
@@ -97,11 +106,30 @@
          </item>
          <item>
           <widget class="QCheckBox" name="CodeCompletion">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="toolTip">
             <string>Activate code completion in SQL editors. Not recommended on slow connections.</string>
            </property>
            <property name="text">
             <string>&amp;Code completion</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="CompletionSort">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="toolTip">
+            <string>Sort the available completion rows alphabetically or in the order the are.</string>
+           </property>
+           <property name="text">
+            <string>&amp;Sort completion rows</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -124,28 +152,28 @@
           </layout>
          </item>
          <item>
-          <widget class="QCheckBox" name="CompletionSort">
+          <widget class="QCheckBox" name="AutoIndent">
            <property name="enabled">
             <bool>false</bool>
            </property>
-           <property name="toolTip">
-            <string>Sort the available completion rows alphabetically or in the order the are.</string>
-           </property>
-           <property name="text">
-            <string>&amp;Sort completion rows</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="AutoIndent">
            <property name="toolTip">
             <string>Indent a new line in an editor to the same column as the previous line</string>
            </property>
            <property name="text">
             <string>&amp;Indent same as previous line</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="UseSpacesForIndent">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="toolTip">
+            <string>If set the editor will insert spaces rather than tabs</string>
+           </property>
+           <property name="text">
+            <string>Use only spaces when indenting</string>
            </property>
           </widget>
          </item>
@@ -162,7 +190,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="PushButton1_2_2">
+            <widget class="QPushButton" name="TextExampleChoose">
              <property name="text">
               <string>Choose</string>
              </property>
@@ -183,7 +211,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="PushButton1_2">
+            <widget class="QPushButton" name="CodeExampleChoose">
              <property name="text">
               <string>Choose</string>
              </property>
@@ -204,7 +232,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="PushButton1">
+            <widget class="QPushButton" name="ResultExampleChoose">
              <property name="text">
               <string>Choose</string>
              </property>
@@ -229,6 +257,9 @@
           <layout class="QHBoxLayout" name="horizontalLayout_6">
            <item>
             <widget class="QLabel" name="TextLabel1_2">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="toolTip">
               <string>Number of character width of tabstops</string>
              </property>
@@ -254,16 +285,6 @@
             </widget>
            </item>
           </layout>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="TabSpaces">
-           <property name="toolTip">
-            <string>If set the editor will insert spaces rather than tabs</string>
-           </property>
-           <property name="text">
-            <string>Use only spaces when indenting</string>
-           </property>
-          </widget>
          </item>
          <item>
           <spacer name="verticalSpacer">
@@ -437,7 +458,7 @@
  <resources/>
  <connections>
   <connection>
-   <sender>PushButton1</sender>
+   <sender>ResultExampleChoose</sender>
    <signal>clicked()</signal>
    <receiver>toSyntaxSetupUI</receiver>
    <slot>selectResultFont()</slot>
@@ -453,7 +474,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>PushButton1_2</sender>
+   <sender>CodeExampleChoose</sender>
    <signal>clicked()</signal>
    <receiver>toSyntaxSetupUI</receiver>
    <slot>selectFont()</slot>
@@ -565,7 +586,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>PushButton1_2_2</sender>
+   <sender>TextExampleChoose</sender>
    <signal>clicked()</signal>
    <receiver>toSyntaxSetupUI</receiver>
    <slot>selectText()</slot>

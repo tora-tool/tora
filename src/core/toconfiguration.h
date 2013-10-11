@@ -58,6 +58,19 @@ class TORA_EXPORT toConfiguration: public QObject
 	Q_PROPERTY(QString Style             READ style               WRITE setStyle)
 	Q_PROPERTY(QString Translation       READ translation         WRITE setTranslation)
 
+	// Editor settings
+	//  Options tab
+	Q_PROPERTY(bool    SyntaxHighlighting READ syntaxHighlighting WRITE setSyntaxHighlighting)
+	Q_PROPERTY(bool    UseMaxTextWidthMark READ useMaxTextWidthMark WRITE setUseMaxTextWidthMark)
+	Q_PROPERTY(bool    KeywordUpper      READ keywordUpper        WRITE setKeywordUpper)
+	Q_PROPERTY(bool    ObjectNamesUpper  READ objectNamesUpper    WRITE setObjectNamesUpper)
+	Q_PROPERTY(bool    CodeCompletion    READ codeCompletion      WRITE setCodeCompletion)
+	Q_PROPERTY(bool    UseEditorShortcuts READ useEditorShortcuts WRITE setUseEditorShortcuts)
+	Q_PROPERTY(EditorShortcutsMap EditorShortcuts READ editorShortcuts WRITE setEditorShortcuts)
+	Q_PROPERTY(bool    CompletionSort    READ completionSort      WRITE setCompletionSort)
+	Q_PROPERTY(bool    AutoIndent        READ autoIndent          WRITE setAutoIndent)
+	Q_PROPERTY(bool    UseSpacesForIndent READ useSpacesForIndent WRITE setUseSpacesForIndent)
+
 	Q_ENUMS(ObjectCache)
 public:
     toConfiguration(QObject *parent = 0);
@@ -128,8 +141,8 @@ public:
     QString refresh();
     void setRefresh(const QString & v);
 
-    QString highlightType();
-    void setHighlightType(QString v);
+    bool syntaxHighlighting();
+    void setSyntaxHighlighting(bool v);
 
     bool keywordUpper();
     void setKeywordUpper(bool v);
@@ -183,7 +196,7 @@ public:
     void setCodeCompletion(bool v);
 
     bool completionSort();
-    void setCodeCompletionSort(bool v);
+    void setCompletionSort(bool v);
 
     bool autoIndent();
     void setAutoIndent(bool v);
@@ -258,8 +271,8 @@ public:
     int tabStop();
     void setTabStop(int v);
 
-    bool tabSpaces();
-    void setTabSpaces(bool v);
+    bool useSpacesForIndent();
+    void setUseSpacesForIndent(bool v);
 
     bool editDragDrop();
     void setEditDragDrop(bool v);

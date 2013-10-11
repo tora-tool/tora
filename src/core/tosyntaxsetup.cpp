@@ -69,8 +69,8 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
     KeywordUpper->setChecked(toConfigurationSingle::Instance().keywordUpper());
     ObjectNamesUpper->setChecked(toConfigurationSingle::Instance().objectNamesUpper());
     // TODO SyntaxHighlighting->setChecked(toConfigurationSingle::Instance().highlightType());
-    EdgeMarkCheckBox->setChecked(toConfigurationSingle::Instance().useMaxTextWidthMark());
-    EdgeSizeSpinBox->setValue(toConfigurationSingle::Instance().maxTextWidthMark());
+    UseMaxTextWidthMark->setChecked(toConfigurationSingle::Instance().useMaxTextWidthMark());
+    MaxTextWidthMark->setValue(toConfigurationSingle::Instance().maxTextWidthMark());
     CodeCompletion->setChecked(toConfigurationSingle::Instance().codeCompletion());
     EditorShortcuts->setChecked(toConfigurationSingle::Instance().useEditorShortcuts());
     connect(EditorShortcutsEdit, SIGNAL(clicked()),
@@ -79,7 +79,7 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
     AutoIndent->setChecked(toConfigurationSingle::Instance().autoIndent());
     Extensions->setText(toConfigurationSingle::Instance().extensions());
     TabStop->setValue(toConfigurationSingle::Instance().tabStop());
-    TabSpaces->setChecked(toConfigurationSingle::Instance().tabSpaces());
+    UseSpacesForIndent->setChecked(toConfigurationSingle::Instance().useSpacesForIndent());
 
     {
         QFont font(Utils::toStringToFont(toConfigurationSingle::Instance().codeFont()));
@@ -281,16 +281,16 @@ void toSyntaxSetup::saveSetting(void)
     toConfigurationSingle::Instance().setListFont(List);
     // TODO bool highlight = SyntaxHighlighting->isChecked();
     // TODO toConfigurationSingle::Instance().setHighlightType(highlight);
-    toConfigurationSingle::Instance().setUseMaxTextWidthMark(EdgeMarkCheckBox->isChecked());
-    toConfigurationSingle::Instance().setMaxTextWidthMark(EdgeSizeSpinBox->value());
+    toConfigurationSingle::Instance().setUseMaxTextWidthMark(UseMaxTextWidthMark->isChecked());
+    toConfigurationSingle::Instance().setMaxTextWidthMark(MaxTextWidthMark->value());
     toConfigurationSingle::Instance().setKeywordUpper(KeywordUpper->isChecked());
     toConfigurationSingle::Instance().setObjectNamesUpper(ObjectNamesUpper->isChecked());
     // TODO toConfigurationSingle::Instance().setCodeCompletion(highlight && CodeCompletion->isChecked());
-    toConfigurationSingle::Instance().setCodeCompletionSort(CompletionSort->isChecked());
+    toConfigurationSingle::Instance().setCompletionSort(CompletionSort->isChecked());
     toConfigurationSingle::Instance().setUseEditorShortcuts(EditorShortcuts->isChecked());
     toConfigurationSingle::Instance().setAutoIndent(AutoIndent->isChecked());
     toConfigurationSingle::Instance().setTabStop(TabStop->value());
-    toConfigurationSingle::Instance().setTabSpaces(TabSpaces->isChecked());
+    toConfigurationSingle::Instance().setUseSpacesForIndent(UseSpacesForIndent->isChecked());
     //for (std::map<QString, QColor>::iterator i = Colors.begin(); i != Colors.end(); i++)
     {
 //    	QString str(CONF_COLOR);

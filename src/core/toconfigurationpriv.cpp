@@ -128,7 +128,7 @@ void toConfigurationPrivate::loadConfig()
 	m_dateFormat = s.value(CONF_DATE_FORMAT, DEFAULT_DATE_FORMAT).toString();
 	m_timestampFormat = s.value(CONF_TIMESTAMP_FORMAT, DEFAULT_TIMESTAMP_FORMAT).toString();
 
-	m_highlightType = s.value(CONF_HIGHLIGHT, true).toBool();
+	m_syntaxHighlighting = s.value(CONF_HIGHLIGHT, true).toBool();
 	m_keywordUpper = s.value(CONF_KEYWORD_UPPER, DEFAULT_KEYWORD_UPPER).toBool();
 	m_objectNamesUpper = s.value(CONF_OBJECT_NAMES_UPPER, DEFAULT_OBJECT_NAMES_UPPER).toBool();
 
@@ -164,7 +164,7 @@ void toConfigurationPrivate::loadConfig()
 	m_numberDecimals = s.value(CONF_NUMBER_DECIMALS, DEFAULT_NUMBER_DECIMALS).toInt();
 	m_cacheTimeout = s.value(CONF_CACHE_TIMEOUT, DEFAULT_CACHE_TIMEOUT).toInt();
 	m_tabStop = s.value(CONF_TAB_STOP, DEFAULT_TAB_STOP).toInt();
-	m_tabSpaces = s.value(CONF_TAB_SPACES, DEFAULT_TAB_SPACES).toBool();
+	m_useSpacesForIndent = s.value(CONF_TAB_SPACES, DEFAULT_TAB_SPACES).toBool();
 	m_editDragDrop = s.value(CONF_EDIT_DRAG_DROP, DEFAULT_EDIT_DRAG_DROP).toBool();
 	// tooracleconnection.cpp
 
@@ -376,7 +376,7 @@ void toConfigurationPrivate::saveConfig()
 	s.setValue(CONF_DATE_FORMAT, m_dateFormat);
 	s.setValue(CONF_TIMESTAMP_FORMAT, m_timestampFormat);
 
-	s.setValue(CONF_HIGHLIGHT, m_highlightType);
+	s.setValue(CONF_HIGHLIGHT, m_syntaxHighlighting);
 	s.setValue(CONF_KEYWORD_UPPER, m_keywordUpper);
 	s.setValue(CONF_OBJECT_NAMES_UPPER, m_objectNamesUpper);
 
@@ -409,7 +409,7 @@ void toConfigurationPrivate::saveConfig()
 	s.setValue(CONF_NUMBER_DECIMALS, m_numberDecimals);
 	s.setValue(CONF_CACHE_TIMEOUT, m_cacheTimeout);
 	s.setValue(CONF_TAB_STOP, m_tabStop);
-	s.setValue(CONF_TAB_SPACES, m_tabSpaces);
+	s.setValue(CONF_TAB_SPACES, m_useSpacesForIndent);
 	s.setValue(CONF_EDIT_DRAG_DROP, m_editDragDrop);
 
 	// tooracleconnection
