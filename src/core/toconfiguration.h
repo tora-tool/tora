@@ -78,6 +78,7 @@ class TORA_EXPORT toConfiguration: public QObject
 	//  everything is disabled ATM on the Syntax tab
 
 	// Database settings
+	Q_PROPERTY(bool    AutoCommit        READ autoCommit          WRITE setAutoCommit)
 	Q_PROPERTY(int     CachedConnections READ cachedConnections   WRITE setCachedConnections)
 
 	Q_ENUMS(ObjectCache)
