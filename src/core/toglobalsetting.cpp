@@ -145,7 +145,6 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     connect(ColorizedConnectionsConfigure, SIGNAL(clicked()),
             this, SLOT(ColorizedConnectionsConfigure_clicked()));
 
-    CachedConnections->setValue(toConfigurationSingle::Instance().cachedConnections());
     StatusMessage->setValue(toConfigurationSingle::Instance().statusMessage());
     HistorySize->setValue(toConfigurationSingle::Instance().historySize());
     int samples = toConfigurationSingle::Instance().chartSamples();
@@ -283,7 +282,6 @@ void toGlobalSetting::saveSetting(void)
     toConfigurationSingle::Instance().setMessageStatusbar(MessageStatusbar->isChecked());
     toConfigurationSingle::Instance().setColorizedConnections(ColorizedConnections->isChecked());
 
-    toConfigurationSingle::Instance().setCachedConnections(CachedConnections->value());
     toConfigurationSingle::Instance().setStatusMessage(StatusMessage->value());
     toConfigurationSingle::Instance().setHistorySize(HistorySize->value());
 
@@ -362,6 +360,7 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent, const char *name, Qt::WFla
 //     DontReread->setChecked(toConfigurationSingle::Instance().dontReread());
     ObjectCache->setCurrentIndex(toConfigurationSingle::Instance().objectCache());
 //     BkgndConnect->setChecked(toConfigurationSingle::Instance().bkgndConnect());
+    CachedConnections->setValue(toConfigurationSingle::Instance().cachedConnections());
     IndicateEmpty->setChecked(toConfigurationSingle::Instance().indicateEmpty());
     FirewallMode->setChecked(toConfigurationSingle::Instance().firewallMode());
     ConnTestInterval->setValue(toConfigurationSingle::Instance().connTestInterval());
@@ -408,6 +407,7 @@ void toDatabaseSetting::saveSetting(void)
         toConfigurationSingle::Instance().setMaxContent(maxnum);
     }
     toConfigurationSingle::Instance().setAutoCommit(AutoCommit->isChecked());
+    toConfigurationSingle::Instance().setCachedConnections(CachedConnections->value());
 //     toConfigurationSingle::Instance().setDontReread(DontReread->isChecked());
     toConfigurationSingle::Instance().setObjectCache((toConfiguration::ObjectCache)ObjectCache->currentIndex());
 //     toConfigurationSingle::Instance().setBkgndConnect(BkgndConnect->isChecked());

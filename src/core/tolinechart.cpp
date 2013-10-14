@@ -128,7 +128,7 @@ toLineChart::toLineChart(QWidget *parent, const char *name, Qt::WFlags f)
     setMinimumSize(80, 50);
 
     // Use list font
-    QString str(toConfigurationSingle::Instance().listFont());
+    QString str(toConfigurationSingle::Instance().listFontName());
     if (!str.isEmpty())
     {
         QFont font(Utils::toStringToFont(str));
@@ -882,7 +882,7 @@ toLineChart::toLineChart (toLineChart *chart, QWidget *parent, const char *name,
     connect(Horizontal, SIGNAL(valueChanged(int)), this, SLOT(horizontalChange(int)));
 
     // Use list font
-    QString str(toConfigurationSingle::Instance().listFont());
+    QString str(toConfigurationSingle::Instance().listFontName());
     if (!str.isEmpty())
     {
         QFont font(Utils::toStringToFont(str));

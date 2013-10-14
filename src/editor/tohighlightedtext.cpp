@@ -73,7 +73,7 @@ toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
 #elif defined(Q_OS_MAC)
 	mono = QFont("Courier", 12);
 #else
-	mono = QFont(Utils::toStringToFont(toConfigurationSingle::Instance().codeFont()));
+	mono = QFont(Utils::toStringToFont(toConfigurationSingle::Instance().codeFontName()));
 #endif
 
     // set default keywords for code completion
@@ -459,7 +459,7 @@ void toHighlightedText::setHighlighter(HighlighterTypeEnum h)
 				QColor(toHighlightedText::lightMagenta),
 				mono);
 	}
-	setFont(Utils::toStringToFont(toConfigurationSingle::Instance().codeFont()));
+	setFont(Utils::toStringToFont(toConfigurationSingle::Instance().codeFontName()));
 	//update(); gets called by setFont
 }
 

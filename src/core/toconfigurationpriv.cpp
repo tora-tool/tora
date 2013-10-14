@@ -122,9 +122,9 @@ void toConfigurationPrivate::loadConfig()
 	m_maxColDisp = s.value(CONF_MAX_COL_DISP, DEFAULT_MAX_COL_DISP).toInt();
 	m_planTable = s.value(CONF_PLAN_TABLE, DEFAULT_PLAN_TABLE).toString();
 	m_planCheckpoint = s.value(CONF_PLAN_CHECKPOINT, DEFAULT_PLAN_CHECKPOINT).toString();
-	m_textFont = s.value(CONF_TEXT, "").toString();
-	m_codeFont = s.value(CONF_CODE, "").toString();
-	m_listFont = s.value(CONF_LIST, "").toString();
+	m_textFontName = s.value(CONF_TEXT, "").toString();
+	m_codeFontName = s.value(CONF_CODE, "").toString();
+	m_listFontName = s.value(CONF_LIST, "").toString();
 	m_dateFormat = s.value(CONF_DATE_FORMAT, DEFAULT_DATE_FORMAT).toString();
 	m_timestampFormat = s.value(CONF_TIMESTAMP_FORMAT, DEFAULT_TIMESTAMP_FORMAT).toString();
 
@@ -370,9 +370,9 @@ void toConfigurationPrivate::saveConfig()
 	s.setValue(CONF_MAX_COL_DISP, m_maxColDisp);
 	s.setValue(CONF_PLAN_TABLE, m_planTable);
 	s.setValue(CONF_PLAN_CHECKPOINT, m_planCheckpoint);
-	s.setValue(CONF_TEXT, m_textFont);
-	s.setValue(CONF_CODE, m_codeFont);
-	s.setValue(CONF_LIST, m_listFont);
+	s.setValue(CONF_TEXT, m_textFontName);
+	s.setValue(CONF_CODE, m_codeFontName);
+	s.setValue(CONF_LIST, m_listFontName);
 	s.setValue(CONF_DATE_FORMAT, m_dateFormat);
 	s.setValue(CONF_TIMESTAMP_FORMAT, m_timestampFormat);
 

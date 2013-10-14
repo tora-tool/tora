@@ -62,7 +62,7 @@ class toSyntaxSetup : public QWidget
 
     Q_OBJECT;
 
-    QString List;
+    QString ListFontName;
     QListWidgetItem *Current;
     QMetaEnum ColorsEnum;
     QMap<int, QColor> FGColors, BGColors; // enum toSyntaxAnalyzer::wordClass => QColor

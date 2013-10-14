@@ -82,15 +82,15 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
     UseSpacesForIndent->setChecked(toConfigurationSingle::Instance().useSpacesForIndent());
 
     {
-        QFont font(Utils::toStringToFont(toConfigurationSingle::Instance().codeFont()));
+        QFont font(Utils::toStringToFont(toConfigurationSingle::Instance().codeFontName()));
         checkFixedWidth(font);
         CodeExample->setFont(font);
     }
 
-    TextExample->setFont(Utils::toStringToFont(toConfigurationSingle::Instance().textFont()));
+    TextExample->setFont(Utils::toStringToFont(toConfigurationSingle::Instance().textFontName()));
 
     {
-        QString str(toConfigurationSingle::Instance().listFont());
+        QString str(toConfigurationSingle::Instance().listFontName());
         QFont font;
         if (str.isEmpty())
         {
@@ -101,7 +101,7 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
         {
             font = Utils::toStringToFont(str);
         }
-        List = Utils::toFontToString(font);
+        ListFontName = Utils::toFontToString(font);
         ResultExample->setFont(font);
     }
 
@@ -195,11 +195,11 @@ void toSyntaxSetup::selectText(void)
 void toSyntaxSetup::selectResultFont(void)
 {
     bool ok = true;
-    QFont font = QFontDialog::getFont(&ok, Utils::toStringToFont(List), this);
+    QFont font = QFontDialog::getFont(&ok, Utils::toStringToFont(ListFontName), this);
 
     if (ok)
     {
-        List = Utils::toFontToString(font);
+        ListFontName = Utils::toFontToString(font);
         ResultExample->setFont(font);
     }
 }
@@ -276,9 +276,9 @@ void toSyntaxSetup::selectColor(void)
 
 void toSyntaxSetup::saveSetting(void)
 {
-    toConfigurationSingle::Instance().setTextFont(Utils::toFontToString(TextExample->font()));
-    toConfigurationSingle::Instance().setCodeFont(Utils::toFontToString(CodeExample->font()));
-    toConfigurationSingle::Instance().setListFont(List);
+    toConfigurationSingle::Instance().setTextFontName(Utils::toFontToString(TextExample->font()));
+    toConfigurationSingle::Instance().setCodeFontName(Utils::toFontToString(CodeExample->font()));
+    toConfigurationSingle::Instance().setListFontName(ListFontName);
     // TODO bool highlight = SyntaxHighlighting->isChecked();
     // TODO toConfigurationSingle::Instance().setHighlightType(highlight);
     toConfigurationSingle::Instance().setUseMaxTextWidthMark(UseMaxTextWidthMark->isChecked());

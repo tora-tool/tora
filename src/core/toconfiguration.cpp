@@ -127,6 +127,7 @@ bool toConfiguration::saveMap(const QString &file, std::map<QString, QString> &p
     return d->saveMap(file, pairs);
 }
 
+#if TORA3_SYNTAX_SETUP
 QColor toConfiguration::syntaxDefault()
 {
 	Q_D(toConfiguration);
@@ -256,6 +257,7 @@ void toConfiguration::setSyntaxStaticBg(QColor v)
 	Q_D(toConfiguration);
     d->m_syntaxStaticBg = v.name();
 }
+#endif
 
 bool toConfiguration::savePassword()
 {
@@ -315,37 +317,37 @@ void toConfiguration::setPlanTable(const QString & v)
     d->m_planTable = v;
 }
 
-QString toConfiguration::textFont()
+QString toConfiguration::textFontName()
 {
 	Q_D(toConfiguration);
-    return d->m_textFont;
+    return d->m_textFontName;
 }
-void toConfiguration::setTextFont(const QString & v)
+void toConfiguration::setTextFontName(const QString & v)
 {
 	Q_D(toConfiguration);
-    d->m_textFont = v;
-}
-
-QString toConfiguration::codeFont()
-{
-	Q_D(toConfiguration);
-    return d->m_codeFont;
-}
-void toConfiguration::setCodeFont(const QString & v)
-{
-	Q_D(toConfiguration);
-    d->m_codeFont = v;
+    d->m_textFontName = v;
 }
 
-QString toConfiguration::listFont()
+QString toConfiguration::codeFontName()
 {
 	Q_D(toConfiguration);
-    return d->m_listFont;
+    return d->m_codeFontName;
 }
-void toConfiguration::setListFont(const QString & v)
+void toConfiguration::setCodeFontName(const QString & v)
 {
 	Q_D(toConfiguration);
-    d->m_listFont = v;
+    d->m_codeFontName = v;
+}
+
+QString toConfiguration::listFontName()
+{
+	Q_D(toConfiguration);
+    return d->m_listFontName;
+}
+void toConfiguration::setListFontName(const QString & v)
+{
+	Q_D(toConfiguration);
+    d->m_listFontName = v;
 }
 
 QString toConfiguration::oracleHome()

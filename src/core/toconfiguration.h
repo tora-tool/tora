@@ -47,7 +47,6 @@ class TORA_EXPORT toConfiguration: public QObject
 	Q_PROPERTY(bool    ColorizedConnections READ colorizedConnections WRITE setColorizedConnections)
 	Q_PROPERTY(ConnectionColors ConnectionColors READ connectionColors WRITE setConnectionColors)
 	//  Options (2nd column)
-	Q_PROPERTY(int     CachedConnections READ cachedConnections   WRITE setCachedConnections)
 	Q_PROPERTY(int     StatusMessage     READ statusMessage       WRITE setStatusMessage)
 	Q_PROPERTY(int     HistorySize       READ historySize         WRITE setHistorySize)
 	Q_PROPERTY(int     ChartSamples      READ chartSamples        WRITE setChartSamples)
@@ -65,11 +64,21 @@ class TORA_EXPORT toConfiguration: public QObject
 	Q_PROPERTY(bool    KeywordUpper      READ keywordUpper        WRITE setKeywordUpper)
 	Q_PROPERTY(bool    ObjectNamesUpper  READ objectNamesUpper    WRITE setObjectNamesUpper)
 	Q_PROPERTY(bool    CodeCompletion    READ codeCompletion      WRITE setCodeCompletion)
+	Q_PROPERTY(bool    CompletionSort    READ completionSort      WRITE setCompletionSort)
 	Q_PROPERTY(bool    UseEditorShortcuts READ useEditorShortcuts WRITE setUseEditorShortcuts)
 	Q_PROPERTY(EditorShortcutsMap EditorShortcuts READ editorShortcuts WRITE setEditorShortcuts)
-	Q_PROPERTY(bool    CompletionSort    READ completionSort      WRITE setCompletionSort)
 	Q_PROPERTY(bool    AutoIndent        READ autoIndent          WRITE setAutoIndent)
 	Q_PROPERTY(bool    UseSpacesForIndent READ useSpacesForIndent WRITE setUseSpacesForIndent)
+	Q_PROPERTY(int     TabStop           READ tabStop             WRITE setTabStop)
+	Q_PROPERTY(QString TextFontName      READ textFontName        WRITE setTextFontName)
+	Q_PROPERTY(QString CodeFontName      READ codeFontName        WRITE setCodeFontName)
+	Q_PROPERTY(QString ListFontName      READ listFontName        WRITE setListFontName)
+	Q_PROPERTY(QString Extensions        READ extensions          WRITE setExtensions)
+	//  Syntax tab
+	//  everything is disabled ATM on the Syntax tab
+
+	// Database settings
+	Q_PROPERTY(int     CachedConnections READ cachedConnections   WRITE setCachedConnections)
 
 	Q_ENUMS(ObjectCache)
 public:
@@ -129,14 +138,14 @@ public:
     int maxColDisp();
     void setMaxColDisp(int v);
 
-    QString textFont();
-    void setTextFont(const QString & v);
+    QString textFontName();
+    void setTextFontName(const QString & v);
 
-    QString codeFont();
-    void setCodeFont(const QString & v);
+    QString codeFontName();
+    void setCodeFontName(const QString & v);
 
-    QString listFont();
-    void setListFont(const QString & v);
+    QString listFontName();
+    void setListFontName(const QString & v);
 
     QString refresh();
     void setRefresh(const QString & v);
@@ -496,6 +505,7 @@ public:
     bool wsToplevelDescribe();
     void setWsToplevelDescribe(bool v);
 
+#ifdef TORA3_SYNTAX_SETUP
     // tosyntaxsetup
     QColor syntaxDefault();
     void setSyntaxDefault(QColor v);
@@ -517,6 +527,7 @@ public:
     void setSyntaxCurrentLineMarker(QColor v);
     QColor syntaxStaticBg();
     void setSyntaxStaticBg(QColor v);
+#endif
 
     bool useMaxTextWidthMark();
     void setUseMaxTextWidthMark(bool v);

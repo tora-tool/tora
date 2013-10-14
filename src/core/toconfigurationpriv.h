@@ -34,7 +34,6 @@ public:
     bool    m_colorizedConnections;
     ConnectionColors m_connectionColors;
     // Options (2nd column)
-    int     m_cachedConnections;
     int     m_statusMessage;
     int     m_historySize;
     int     m_chartSamples;
@@ -54,24 +53,15 @@ public:
     bool    m_objectNamesUpper;
     bool    m_codeCompletion;
     bool    m_completionSort;
-    bool               m_useEditorShortcuts;
+    bool    m_useEditorShortcuts;
     EditorShortcutsMap m_editorShortcuts;
     bool    m_autoIndent;
     bool    m_useSpacesForIndent;
-
-
-    int     m_maxNumber;
-    int     m_maxColDisp;
-    QString m_planTable;
-    QString m_planCheckpoint;
-    QString m_textFont;
-    QString m_codeFont;
-    QString m_listFont;
-    QString m_dateFormat;
-    QString m_timestampFormat;
-    mutable QDir    m_applicationDir;
-
-    // tosyntaxsetup
+    int     m_tabStop;
+    QString m_textFontName;
+    QString m_codeFontName;
+    QString m_listFontName;
+    //  Syntax
     QString m_syntaxDefault;
     QString m_syntaxComment;
     QString m_syntaxNumber;
@@ -83,11 +73,23 @@ public:
     QString m_syntaxCurrentLineMarker;
     QString m_syntaxStaticBg;
 
+    // Database
     bool    m_autoCommit;
+    int     m_cachedConnections;
+
+    int     m_maxNumber;
+    int     m_maxColDisp;
+    QString m_planTable;
+    QString m_planCheckpoint;
+
+    QString m_dateFormat;
+    QString m_timestampFormat;
+    mutable QDir    m_applicationDir;
+
+
 
     QString m_defaultTool;
 
-    int     m_tabStop;
 
     bool    m_editDragDrop;
 

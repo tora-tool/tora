@@ -497,7 +497,7 @@ toListView::toListView(QWidget *parent, const char *name, Qt::WFlags f)
             SIGNAL(customContextMenuRequested(const QPoint &)),
             this,
             SLOT(displayMenu(const QPoint &)));
-    QString str(toConfigurationSingle::Instance().listFont());
+    QString str(toConfigurationSingle::Instance().listFontName());
     if (!str.isEmpty())
     {
         QFont font(Utils::toStringToFont(str));

@@ -165,7 +165,7 @@ void toWaitEvents::setup(int session)
     Types->setAllColumnsShowFocus(true);
     Types->setSelectionMode(toTreeWidget::Multi);
     Types->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
-    QString str(toConfigurationSingle::Instance().listFont());
+    QString str(toConfigurationSingle::Instance().listFontName());
     if (!str.isEmpty())
     {
         QFont font(Utils::toStringToFont(str));

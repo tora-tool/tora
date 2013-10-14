@@ -83,7 +83,7 @@ toMarkedText::toMarkedText(QWidget *parent, const char *name)
     setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
-    super::setFont(Utils::toStringToFont(toConfigurationSingle::Instance().textFont()));
+    super::setFont(Utils::toStringToFont(toConfigurationSingle::Instance().textFontName()));
     super::setMarginLineNumbers(0, true);
     super::setCallTipsStyle(CallTipsNone);
 
