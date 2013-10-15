@@ -36,6 +36,10 @@
 #if _MSC_VER
 #   define FILE_LINE_LINK __FILE__ "(" STRINGISE(__LINE__) ") : "
 #   define WARN(exp) (FILE_LINE_LINK "WARNING: " exp)
+#elif __clang__
+//#   define DEFER(M,...) M(__VA_ARGS__)
+//#	define WARN(exp) _Pragma(STRINGISE_IMPL(GCC warning(exp " at line " DEFER(STRINGISE_IMPL,__LINE__))))
+#   define WARN(exp) ("WARNING: " exp)
 #else//__GNUC__ - may need other defines for different compilers
 #   define WARN(exp) ("WARNING: " exp)
 #endif
