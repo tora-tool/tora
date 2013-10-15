@@ -149,12 +149,15 @@ toMain::toMain()
 	    this, SLOT(createDefault()));
     connect(&toGlobalEventSingle::Instance(), SIGNAL(s_addConnection(toConnection*, bool)),
 	    this, SLOT(addConnection(toConnection *conn, bool)));
-    connect(&toGlobalEventSingle::Instance(), SIGNAL(s_setNeedCommit(toConnection&, bool)),
-	    this, SLOT(setNeedCommit(toConnection&, bool)));
+    connect(&toGlobalEventSingle::Instance(), SIGNAL(s_setNeedCommit(toToolWidget*, bool)),
+	    this, SLOT(setNeedCommit(toToolWidget*, bool)));
     connect(&toGlobalEventSingle::Instance(), SIGNAL(s_checkCaching()),
     	this, SLOT(checkCaching()));
     connect(&toGlobalEventSingle::Instance(), SIGNAL(s_showMessage(QString, bool, bool)),
     	this, SLOT(showMessageImpl(QString, bool, bool)), Qt::QueuedConnection);
+    connect(&toWorkSpaceSingle::Instance(), SIGNAL(activeToolChaged(toToolWidget*)),
+    		this, SLOT(slotActiveToolChaged(toToolWidget*)));
+
     
 #ifdef TORA3_SESSION
     if (toConfigurationSingle::Instance().restoreSession())
@@ -833,9 +836,10 @@ void toMain::commandCallback(QAction *action)
     {
         try
         {
-            toConnection &conn = toConnectionRegistrySing::Instance().currentConnection();
-            toGlobalEventSingle::Instance().commitRequested(conn);
-            setNeedCommit(conn, false);
+        	throw QString("Not implemented yet. %1").arg(__QHERE__);
+//            toConnection &conn = toConnectionRegistrySing::Instance().currentConnection();
+//            toGlobalEventSingle::Instance().commitRequested(conn);
+//            setNeedCommit(conn, false);
         }
         TOCATCH;
     }
@@ -843,9 +847,10 @@ void toMain::commandCallback(QAction *action)
     {
         try
         {
-            toConnection &conn = toConnectionRegistrySing::Instance().currentConnection();
-            toGlobalEventSingle::Instance().rollbackRequested(conn);
-            setNeedCommit(conn, false);
+        	throw QString("Not implemented yet. %1").arg(__QHERE__);
+//            toConnection &conn = toConnectionRegistrySing::Instance().currentConnection();
+//            toGlobalEventSingle::Instance().rollbackRequested(conn);
+//            setNeedCommit(conn, false);
         }
         TOCATCH;
     }
@@ -953,8 +958,17 @@ void toMain::addConnection(toConnection *newconn)
     createDefault();
 }
 
-void toMain::setNeedCommit(toConnection &conn, bool needCommit)
+void toMain::setNeedCommit(toToolWidget *tool, bool needCommit)
 {
+	if (tool == NULL)
+	{
+	    commitAct->setDisabled(true);
+	    rollbackAct->setDisabled(true);
+	    stopAct->setDisabled(true);
+	    return;
+	}
+
+	toConnection &conn = tool->connection();
     int pos = ConnectionSelection->currentIndex();
 
 #pragma message WARN("Set need commit on connection here")
@@ -1227,6 +1241,10 @@ void toMain::showMessageImpl(QString str, bool save, bool log)
     }
 }
 
+void toMain::slotActiveToolChaged(toToolWidget *tool)
+{
+	setNeedCommit(tool, tool->hasTransaction());
+}
 
 void toMain::checkCaching(void)
 {

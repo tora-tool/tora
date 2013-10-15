@@ -279,7 +279,10 @@ unsigned toResultTableViewEdit::commitDelete(ChangeSet &change, toConnection &co
 		if (toConfigurationSingle::Instance().autoCommit())
 			c->commit();
 		else
-			toGlobalEventSingle::Instance().setNeedCommit(conn); 
+		{
+			throw QString("Not implemented yet. %1").arg(__QHERE__);
+			//// TODO toGlobalEventSingle::Instance().setNeedCommit(conn);
+		}
 		return q.rowsProcessed();
 	}
 }
@@ -350,7 +353,10 @@ unsigned toResultTableViewEdit::commitAdd(ChangeSet &change, toConnection &conn)
 		if (toConfigurationSingle::Instance().autoCommit())
 			c->commit();
 		else
-			toGlobalEventSingle::Instance().setNeedCommit(conn); 
+		{
+			throw QString("Not implemented yet. %1").arg(__QHERE__);
+			//toGlobalEventSingle::Instance().setNeedCommit(conn);
+		}
 		return q.rowsProcessed();
 	}
 }
@@ -490,7 +496,10 @@ unsigned toResultTableViewEdit::commitUpdate(ChangeSet &change, toConnection &co
 		if (toConfigurationSingle::Instance().autoCommit())
 			c->commit();
 		else
-			toGlobalEventSingle::Instance().setNeedCommit(conn); 
+		{
+			throw QString("Not implemented yet. %1").arg(__QHERE__);
+			///toGlobalEventSingle::Instance().setNeedCommit(conn);
+		}
 		return q.rowsProcessed();
 	}
 }
@@ -565,7 +574,10 @@ bool toResultTableViewEdit::commitChanges(bool status)
             if (toConfigurationSingle::Instance().autoCommit())
                 conn.commit();
             else
-	        toGlobalEventSingle::Instance().setNeedCommit(conn); 
+            {
+    			throw QString("Not implemented yet. %1").arg(__QHERE__);
+            	///toGlobalEventSingle::Instance().setNeedCommit(conn);
+            }
         }
         catch(...)
         {

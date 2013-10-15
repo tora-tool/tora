@@ -829,6 +829,13 @@ toWorksheet::~toWorksheet()
 {
 }
 
+bool toWorksheet::hasTransaction() const
+{
+	if (LockedConnection)
+		return (*LockedConnection)->hasTransaction();
+	return false;
+}
+
 toHighlightedEditor* toWorksheet::editor(void)
 {
     return Editor;
@@ -1321,12 +1328,16 @@ void toWorksheet::slotFirstResult(const QString &sql,
         try
         {
         	// TODO: DDL commit/rollback on non-Oracle DBs
+        	// TODO: move this into queryDone
         	if (m_lastQuery.statementType == toSyntaxAnalyzer::DML)
         	{
         		if (toConfigurationSingle::Instance().autoCommit())
-        			connection().commit();
+        		{
+        			Q_ASSERT_X(LockedConnection, qPrintable(__QHERE__), "Connection was not lent for DML");
+        			(*LockedConnection)->commit();
+        		}
         		else
-        			toGlobalEventSingle::Instance().setNeedCommit(connection());
+        			toGlobalEventSingle::Instance().setNeedCommit(this, this->hasTransaction());
         	}
         }
         TOCATCH;
@@ -2154,7 +2165,7 @@ void toWorksheet::unlockConnection()
 {
 	try
 	{
-		if (LockedConnection && (*LockedConnection)->hasTransaction())
+		if (this->hasTransaction())
 		{
 			QString str = tr("Commit work in session?");
 			switch (TOMessageBox::warning(this,
@@ -2174,7 +2185,6 @@ void toWorksheet::unlockConnection()
 				bool oldVal = lockConnectionAct->blockSignals(true);
 				lockConnectionAct->setChecked(true);
 				lockConnectionAct->blockSignals(oldVal);
-				Utils::toStatusMessage(str);
 				return;
 			}
 		}
@@ -2184,9 +2194,11 @@ void toWorksheet::unlockConnection()
 	this->LockedConnection.clear();
 	lockConnectionActClicked = false;
 	bool oldVal = lockConnectionAct->blockSignals(true);
-    lockConnectionAct->setChecked(false);
+	lockConnectionAct->setChecked(false);
 	lockConnectionAct->setEnabled(true);
-    lockConnectionAct->blockSignals(oldVal);
+	lockConnectionAct->blockSignals(oldVal);
+
+	toGlobalEventSingle::Instance().setNeedCommit(this, false);
 }
 
 void toWorksheet::addLog(const QString &result)

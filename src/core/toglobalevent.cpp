@@ -103,9 +103,9 @@ void toGlobalEvent::addConnection(toConnection *conn, bool def)
 	emit s_addConnection(conn, def);
 }
 
-void toGlobalEvent::setNeedCommit(toConnection &conn, bool needCommit)
+void toGlobalEvent::setNeedCommit(toToolWidget *tool, bool needCommit)
 {
-	emit s_setNeedCommit(conn, needCommit);
+	emit s_setNeedCommit(tool, needCommit);
 }
 
 void toGlobalEvent::commitRequested(toConnection &conn)

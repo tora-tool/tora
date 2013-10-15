@@ -356,6 +356,15 @@ public:
 	    return toConnectionWidget::connection();
     }
 
+    /** Change connection of tool.
+     */
+    void setConnection(toConnection &conn);
+
+    virtual bool hasTransaction() const
+    {
+    	return false; // by default tool does not support transactions
+    }
+
     /** Get the tool for this tool widget.
      * @return Reference to a tool object.
      */
@@ -372,10 +381,6 @@ public:
     {
 	    return Tool.canHandle(conn);
     }
-
-    /** Change connection of tool.
-     */
-    void setConnection(toConnection &conn);
 
     /** Get timer of tool. Used by some results to get update time.
      * @return Pointer to a timer object.

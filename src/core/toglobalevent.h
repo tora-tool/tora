@@ -129,7 +129,7 @@ public:
 
     /** Set if a connection needs to be committed. Also updates visual feedback in interface.
      */
-    void setNeedCommit(toConnection &conn, bool needCommit = true);
+    void setNeedCommit(toToolWidget *tool, bool needCommit = true);
 
     void commitRequested(toConnection &conn);
     void rollbackRequested(toConnection &conn);
@@ -147,7 +147,7 @@ signals:
     void s_createDefaultTool(void);
     void s_showMessage(QString str, bool save, bool log);
     void s_addConnection(toConnection *conn, bool def);
-    void s_setNeedCommit(toConnection &conn, bool needCommit);
+    void s_setNeedCommit(toToolWidget *tool, bool needCommit);
 
     void s_commitRequested(toConnection &conn);
     void s_rollbackRequested(toConnection &conn);

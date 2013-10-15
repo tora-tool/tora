@@ -86,6 +86,8 @@ public:
     toWorksheet(QWidget *parent, toConnection &connection, bool autoLoad = true);
     virtual ~toWorksheet();
 
+    virtual bool hasTransaction() const; // override fro toToolWidget
+
     toHighlightedEditor *editor(void);
 
     bool describe(toSyntaxAnalyzer::statement const&);

@@ -208,7 +208,7 @@ protected slots:
 
     /** Set if a connection needs to be committed. Also updates visual feedback in interface.
      */
-    void setNeedCommit(toConnection &conn, bool needCommit = true);
+    void setNeedCommit(toToolWidget *tool, bool needCommit = true);
 
     /**
      * Add a new connection. The connection itself must already be created.
@@ -270,6 +270,8 @@ protected slots:
 
     /** Internal slot for handling status bar messages  */
     void showMessageImpl(QString, bool save, bool log);
+
+    void slotActiveToolChaged(toToolWidget*);
 
 protected:
     /** intercept close event from parent */

@@ -197,6 +197,7 @@ void toToolWidget::setConnection(toConnection &conn)
     	emit toolCaptionChanged();
     }
     emit connectionChange();
+    toGlobalEventSingle::Instance().setNeedCommit(this, this->hasTransaction());
 }
 
 toTimer *toToolWidget::timer(void)
