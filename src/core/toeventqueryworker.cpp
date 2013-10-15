@@ -166,7 +166,7 @@ void toEventQueryWorker::slotRead()
 			return;
 		}
 
-		unsigned maxRead = toConfigurationSingle::Instance().maxNumber(); 
+		unsigned maxRead = toConfigurationSingle::Instance().initialFetch(); 
 		ValuesList values;		
 		for(unsigned row = 0; row < maxRead; row++)
 		{

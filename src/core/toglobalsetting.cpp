@@ -331,13 +331,13 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent, const char *name, Qt::WFla
     setupUi(this);
 
     MaxColDisp->setValue(toConfigurationSingle::Instance().maxColDisp());
-    int mxNumber = toConfigurationSingle::Instance().maxNumber();
+    int mxNumber = toConfigurationSingle::Instance().initialFetch();
     if (mxNumber <= 0)
-        ReadAll->setChecked(true);
+        FetchAll->setChecked(true);
     else
         InitialFetch->setValue(mxNumber);
 
-    int mxContent = toConfigurationSingle::Instance().maxContent();
+    int mxContent = toConfigurationSingle::Instance().initialEditorContent();
     if (mxContent <= 0)
     {
         MaxContent->setValue(InitialFetch->value());
@@ -384,13 +384,21 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent, const char *name, Qt::WFla
 
 void toDatabaseSetting::saveSetting(void)
 {
-    toConfigurationSingle::Instance().setMaxColDisp(MaxColDisp->value());
-    if (ReadAll->isChecked())
-        toConfigurationSingle::Instance().setMaxNumber(-1);
+    toConfigurationSingle::Instance().setObjectCache((toConfiguration::ObjectCacheEnum)ObjectCache->currentIndex());
+
+    toConfigurationSingle::Instance().setAutoCommit(AutoCommit->isChecked());
+    toConfigurationSingle::Instance().setFirewallMode(FirewallMode->isChecked());
+    toConfigurationSingle::Instance().setConnTestInterval(ConnTestInterval->value());
+    toConfigurationSingle::Instance().setCachedConnections(CachedConnections->value());
+
+
+    if (FetchAll->isChecked())
+        toConfigurationSingle::Instance().setInitialFetch(-1);
     else
-        toConfigurationSingle::Instance().setMaxNumber(InitialFetch->value());
+        toConfigurationSingle::Instance().setInitialFetch(InitialFetch->value());
+
     if (UnlimitedContent->isChecked())
-        toConfigurationSingle::Instance().setMaxContent(-1);
+        toConfigurationSingle::Instance().setInitialEditorContent(-1);
     else
     {
         int num = InitialFetch->value();
@@ -404,19 +412,20 @@ void toDatabaseSetting::saveSetting(void)
                                       tr("Doesn't make sense to have max content less than initial\n"
                                          "fetch size. Will adjust value to be higher."),
                                       tr("&Ok"));
-        toConfigurationSingle::Instance().setMaxContent(maxnum);
+        toConfigurationSingle::Instance().setInitialEditorContent(maxnum);
     }
-    toConfigurationSingle::Instance().setAutoCommit(AutoCommit->isChecked());
-    toConfigurationSingle::Instance().setCachedConnections(CachedConnections->value());
+
+    toConfigurationSingle::Instance().setMaxColDisp(MaxColDisp->value());
+
 //     toConfigurationSingle::Instance().setDontReread(DontReread->isChecked());
-    toConfigurationSingle::Instance().setObjectCache((toConfiguration::ObjectCache)ObjectCache->currentIndex());
+
 //     toConfigurationSingle::Instance().setBkgndConnect(BkgndConnect->isChecked());
 //     toConfigurationSingle::Instance().setAutoLong(AutoLong->isChecked() ? MoveAfter->value() : 0);
     toConfigurationSingle::Instance().setIndicateEmpty(IndicateEmpty->isChecked());
     toConfigurationSingle::Instance().setIndicateEmptyColor(IndicateEmptyColor->palette().color(IndicateEmptyColor->backgroundRole()).name());
 //     toConfigurationSingle::Instance().setKeepAlive(KeepAlive->isChecked() ? DEFAULT_KEEP_ALIVE : -1); //FIXME: there was ""
-    toConfigurationSingle::Instance().setFirewallMode(FirewallMode->isChecked());
-    toConfigurationSingle::Instance().setConnTestInterval(ConnTestInterval->value());
+
+
 
     toConfigurationSingle::Instance().setNumberFormat(NumberFormat->currentIndex());
     toConfigurationSingle::Instance().setNumberDecimals(Decimals->value());

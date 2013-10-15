@@ -26,6 +26,11 @@ class TORA_EXPORT toConfiguration: public QObject
 {
 	Q_OBJECT;
 
+    /* This enum represents various states from ObjectCache comboBox
+     * database settings gui(see todatabasesettingui.ui).
+     */
+	Q_ENUMS(ObjectCacheEnum)
+
 	// Global Settings
 	//  Paths
 	Q_PROPERTY(QString CustomSQL         READ customSQL           WRITE setCustomSQL)
@@ -79,18 +84,22 @@ class TORA_EXPORT toConfiguration: public QObject
 	//  everything is disabled ATM on the Syntax tab
 
 	// Database settings
+	Q_PROPERTY(toConfiguration::ObjectCacheEnum ObjectCache READ objectCache WRITE setObjectCache)
 	Q_PROPERTY(bool    AutoCommit        READ autoCommit          WRITE setAutoCommit)
+	Q_PROPERTY(bool    FirewallMode      READ firewallMode        WRITE setFirewallMode)
+	Q_PROPERTY(int     ConnTestInterval  READ connTestInterval    WRITE setConnTestInterval)
 	Q_PROPERTY(int     CachedConnections READ cachedConnections   WRITE setCachedConnections)
-
-	Q_ENUMS(ObjectCache)
+	Q_PROPERTY(int     InitialFetch      READ initialFetch        WRITE setInitialFetch)
+	Q_PROPERTY(int     InitialEditorContent READ initialEditorContent WRITE setInitialEditorContent)
+	Q_PROPERTY(bool    IndicateEmpty     READ indicateEmpty       WRITE setIndicateEmpty)
+	Q_PROPERTY(QString IndicateEmptyColor READ indicateEmptyColor WRITE setIndicateEmptyColor)
+	Q_PROPERTY(int     NumberFormat      READ numberFormat        WRITE setNumberFormat)
+	Q_PROPERTY(int     NumberDecimals    READ numberDecimals      WRITE setNumberDecimals)
 public:
     toConfiguration(QObject *parent = 0);
     ~toConfiguration();
 
-    /* This enum represents various states from ObjectCache comboBox
-     * database settings gui(see todatabasesettingui.ui).
-     */
-    enum ObjectCache
+    enum ObjectCacheEnum
     {
         WHEN_NEEDED = 0,
         ON_CONNECT = 1,
@@ -134,8 +143,8 @@ public:
     int cachedConnections();
     void setCachedConnections(int v);
 
-    int maxNumber();
-    void setMaxNumber(int v);
+    int initialFetch();
+    void setInitialFetch(int v);
 
     int maxColDisp();
     void setMaxColDisp(int v);
@@ -227,8 +236,8 @@ public:
     ConnectionColors connectionColors();
     void setConnectionColors(const ConnectionColors & v);
 
-    ObjectCache objectCache();
-    void setObjectCache(ObjectCache v);
+    ObjectCacheEnum objectCache();
+    void setObjectCache(ObjectCacheEnum v);
 
     bool firewallMode();
     void setFirewallMode(bool v);
@@ -236,8 +245,8 @@ public:
     int connTestInterval();
     void setConnTestInterval(int v);
 
-    int maxContent();
-    void setMaxContent(int v);
+    int initialEditorContent();
+    void setInitialEditorContent(int v);
 
     bool restoreSession();
     void setRestoreSession(bool v);

@@ -61,6 +61,8 @@ public:
     QString m_textFontName;
     QString m_codeFontName;
     QString m_listFontName;
+    QString m_extensions;
+
     //  Syntax
     QString m_syntaxDefault;
     QString m_syntaxComment;
@@ -74,59 +76,75 @@ public:
     QString m_syntaxStaticBg;
 
     // Database
+    toConfiguration::ObjectCacheEnum m_objectCache;
     bool    m_autoCommit;
+    bool    m_firewallMode;
+    int     m_connTestInterval;
     int     m_cachedConnections;
-
-    int     m_maxNumber;
+    int     m_initialFetch;
+    int     m_initialEditorContent;
     int     m_maxColDisp;
+    bool    m_indicateEmpty;
+    QString m_indicateEmptyColor;
+    int     m_numberFormat;
+    int     m_numberDecimals;
+    // Database
+    //  Oracle
+    QString m_dateFormat;
+    QString m_timestampFormat;
+    int m_maxLong;
+    bool    m_keepPlans;
+    bool    m_vsqlPlans;
+    bool    m_sharedPlan;
+    // Extractor. Controls the method used to produce database object extracts
+    // as well as extraction settings (which information should be extracted).
+    bool m_extractorUseDbmsMetadata;
+    bool m_extractorIncludeSotrage;
+    bool m_extractorSkipOrgMonInformation;
+    bool m_extractorSkipStorageExceptTablespaces;
+    bool m_extractorIncludeParallel;
+    bool m_extractorIncludePartition;
+    bool m_extractorIncludeCode;
+    bool m_extractorIncludeHeader;
+    bool m_extractorIncludePrompt;
+
+
     QString m_planTable;
     QString m_planCheckpoint;
 
-    QString m_dateFormat;
-    QString m_timestampFormat;
-    mutable QDir    m_applicationDir;
+
 
 
 
     QString m_defaultTool;
 
 
-    bool    m_editDragDrop;
+
 
 
 
     bool    m_dontReread;
 
-    toConfiguration::ObjectCache m_objectCache;
-    bool    m_firewallMode;
-    int     m_connTestInterval;
-    int     m_maxContent;
-    bool    m_keepPlans;
-    bool    m_vsqlPlans;
-    bool    m_sharedPlan;
 
+    // toEditExtensions (moved into obsolete ATM)
+    bool    m_editDragDrop;
     bool    m_autoIndentRo;
-    bool    m_indicateEmpty;
-    QString m_indicateEmptyColor;
-    QString m_extensions;
+    bool    m_commaBefore;
+    bool    m_blockOpenLine;
+    bool    m_operatorSpace;
+    bool    m_rightSeparator;
+    bool    m_endBlockNewline;
+    int     m_commentColumn;
+
     int     m_recentMax;
-    QString m_lastDir;
-    int     m_keepAlive;
-    int     m_numberFormat;
-    int     m_numberDecimals;
+
+
     int     m_cacheTimeout;
 
-    int     m_connectionTestTimeout; // after how many seconds connection should be tested
     QString m_encoding;
     QString m_forcelineend; // force line end type (win, linux, mac) when saving text files
 
-    // tooracleconnection
-    int m_openCursors;
-    int m_maxLong;
-
     // toqsqlconnection
-
-
     bool m_onlyForward;
     int  m_createAction;
 
@@ -136,6 +154,12 @@ public:
     QByteArray  m_leftDockbarState;
     QByteArray  m_rightDockbarState;
     QStringList m_recentFiles;
+    mutable QDir    m_applicationDir;
+    QString m_lastDir;
+
+    // mainwindow size
+    QByteArray m_mainWindowGeometry;
+    QByteArray m_mainWindowState;
 
     // tools
     ToolsMap m_tools;
@@ -143,14 +167,6 @@ public:
     // toresultlistformat
     QString m_csvSeparator;
     QString m_csvDelimiter;
-
-    // toeditextensions
-    bool m_commaBefore;
-    bool m_blockOpenLine;
-    bool m_operatorSpace;
-    bool m_rightSeparator;
-    bool m_endBlockNewline;
-    int  m_commentColumn;
 
     // tobrowser
     bool    m_filterIgnoreCase;
@@ -161,6 +177,7 @@ public:
 
     // tohelp
     HelpsMap m_additionalHelp;
+
 
     // tochartmanager
     ChartsMap m_chartFiles;
@@ -212,22 +229,6 @@ public:
     bool m_wsHistory;
     bool m_wsExecLog;
     bool m_wsToplevelDescribe;
-
-    // mainwindow size
-    QByteArray m_mainWindowGeometry;
-    QByteArray m_mainWindowState;
-
-    // Extractor. Controls the method used to produce database object extracts
-    // as well as extraction settings (which information should be extracted).
-    bool m_extractorUseDbmsMetadata;
-    bool m_extractorIncludeSotrage;
-    bool m_extractorSkipOrgMonInformation;
-    bool m_extractorSkipStorageExceptTablespaces;
-    bool m_extractorIncludeParallel;
-    bool m_extractorIncludePartition;
-    bool m_extractorIncludeCode;
-    bool m_extractorIncludeHeader;
-    bool m_extractorIncludePrompt;
 
     toConfigurationPrivate(QObject *parent = 0);
 

@@ -281,15 +281,15 @@ void toConfiguration::setCachedConnections(int v)
     d->m_cachedConnections = v;
 }
 
-int toConfiguration::maxNumber()
+int toConfiguration::initialFetch()
 {
 	Q_D(toConfiguration);
-    return d->m_maxNumber;
+    return d->m_initialFetch;
 }
-void toConfiguration::setMaxNumber(int v)
+void toConfiguration::setInitialFetch(int v)
 {
 	Q_D(toConfiguration);
-    d->m_maxNumber = v;
+    d->m_initialFetch = v;
 }
 
 int toConfiguration::maxColDisp()
@@ -636,12 +636,12 @@ void toConfiguration::setConnectionColors(const ConnectionColors & v)
     d->m_connectionColors = v;
 }
 
-toConfiguration::ObjectCache toConfiguration::objectCache()
+toConfiguration::ObjectCacheEnum toConfiguration::objectCache()
 {
 	Q_D(toConfiguration);
     return d->m_objectCache;
 }
-void toConfiguration::setObjectCache(toConfiguration::ObjectCache v)
+void toConfiguration::setObjectCache(toConfiguration::ObjectCacheEnum v)
 {
 	Q_D(toConfiguration);
     d->m_objectCache = v;
@@ -669,15 +669,15 @@ void toConfiguration::setConnTestInterval(int v)
     d->m_connTestInterval = v;
 }
 
-int toConfiguration::maxContent()
+int toConfiguration::initialEditorContent()
 {
 	Q_D(toConfiguration);
-    return d->m_maxContent;
+    return d->m_initialEditorContent;
 }
-void toConfiguration::setMaxContent(int v)
+void toConfiguration::setInitialEditorContent(int v)
 {
 	Q_D(toConfiguration);
-    d->m_maxContent = v;
+    d->m_initialEditorContent = v;
 }
 
 bool toConfiguration::keepPlans()
@@ -806,17 +806,6 @@ void toConfiguration::setTranslation(const QString & v)
 {
 	Q_D(toConfiguration);
     d->m_translation = v;
-}
-
-int toConfiguration::keepAlive()
-{
-	Q_D(toConfiguration);
-    return d->m_keepAlive;
-}
-void toConfiguration::setKeepAlive(int v)
-{
-	Q_D(toConfiguration);
-    d->m_keepAlive = v;
 }
 
 int toConfiguration::numberFormat()
@@ -1579,18 +1568,6 @@ void toConfiguration::setMaxTextWidthMark(int v)
 {
 	Q_D(toConfiguration);
     d->m_maxTextWidthMark = v;
-}
-
-int toConfiguration::connectionTestTimeout()
-{
-	Q_D(toConfiguration);
-    return d->m_connectionTestTimeout;
-}
-
-void toConfiguration::setConnectionTestTimeout(int v)
-{
-	Q_D(toConfiguration);
-    d->m_connectionTestTimeout = v;
 }
 
 QByteArray toConfiguration::mainWindowGeometry()

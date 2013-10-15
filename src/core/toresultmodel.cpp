@@ -66,7 +66,7 @@ toResultModel::toResultModel(toEventQuery *query,
     ReadAll         = false;
     SortedOnColumn  = -1;
     
-    MaxRead = MaxNumber = toConfigurationSingle::Instance().maxNumber();
+    MaxRead = MaxNumber = toConfigurationSingle::Instance().initialFetch();
 
     CurrRowKey = 1;
 
@@ -117,7 +117,7 @@ toResultModel::toResultModel(const QString &owner,
 
     Query = NULL;
 
-    MaxRead = MaxNumber = toConfigurationSingle::Instance().maxNumber();
+    MaxRead = MaxNumber = toConfigurationSingle::Instance().initialFetch();
 
     setSupportedDragActions(Qt::CopyAction);
 

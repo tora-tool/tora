@@ -118,7 +118,7 @@ void toConfigurationPrivate::loadConfig()
 	m_style = s.value(CONF_STYLE, DEFAULT_STYLE).toString();
 	m_translation = s.value(CONF_LOCALE, QLocale().name()).toString();
 
-	m_maxNumber = s.value(CONF_MAX_NUMBER, DEFAULT_MAX_NUMBER).toInt();
+	m_initialFetch = s.value(CONF_MAX_NUMBER, DEFAULT_MAX_NUMBER).toInt();
 	m_maxColDisp = s.value(CONF_MAX_COL_DISP, DEFAULT_MAX_COL_DISP).toInt();
 	m_planTable = s.value(CONF_PLAN_TABLE, DEFAULT_PLAN_TABLE).toString();
 	m_planCheckpoint = s.value(CONF_PLAN_CHECKPOINT, DEFAULT_PLAN_CHECKPOINT).toString();
@@ -143,10 +143,10 @@ void toConfigurationPrivate::loadConfig()
 	m_autoIndent = s.value(CONF_AUTO_INDENT, true).toBool();
 	m_dontReread = s.value(CONF_DONT_REREAD, true).toBool();
 
-	m_objectCache = (toConfiguration::ObjectCache)s.value(CONF_OBJECT_CACHE, DEFAULT_OBJECT_CACHE).toInt();
+	m_objectCache = (toConfiguration::ObjectCacheEnum)s.value(CONF_OBJECT_CACHE, DEFAULT_OBJECT_CACHE).toInt();
 	m_firewallMode = s.value(CONF_FIREWALL_MODE, false).toBool();
 	m_connTestInterval = s.value(CONF_CONN_TEST_INTERVAL, DEFAULT_CONN_TEST_INTERVAL).toInt();
-	m_maxContent = s.value(CONF_MAX_CONTENT, DEFAULT_MAX_CONTENT).toInt();
+	m_initialEditorContent = s.value(CONF_MAX_CONTENT, DEFAULT_MAX_CONTENT).toInt();
 	m_keepPlans = s.value(CONF_KEEP_PLANS, false).toBool();
 	m_vsqlPlans = s.value(CONF_VSQL_PLANS, true).toBool();
 	m_sharedPlan = s.value(CONF_SHARED_PLAN, false).toBool();
@@ -159,7 +159,6 @@ void toConfigurationPrivate::loadConfig()
 	m_recentFiles = s.value(CONF_RECENT_FILES, QStringList()).toStringList();
 	m_recentMax = s.value(CONF_RECENT_MAX, DEFAULT_RECENT_MAX).toInt();
 	m_lastDir = s.value(CONF_LAST_DIR, "").toString();
-	m_keepAlive = s.value(CONF_KEEP_ALIVE, DEFAULT_KEEP_ALIVE).toInt();
 	m_numberFormat = s.value(CONF_NUMBER_FORMAT, DEFAULT_NUMBER_FORMAT).toInt();
 	m_numberDecimals = s.value(CONF_NUMBER_DECIMALS, DEFAULT_NUMBER_DECIMALS).toInt();
 	m_cacheTimeout = s.value(CONF_CACHE_TIMEOUT, DEFAULT_CACHE_TIMEOUT).toInt();
@@ -280,7 +279,6 @@ void toConfigurationPrivate::loadConfig()
 	m_syntaxStaticBg = s.value("SyntaxStaticBg", "darkblue").toString();
 	m_useMaxTextWidthMark = s.value("useMaxTextWidthMark", false).toBool();
 	m_maxTextWidthMark = s.value("maxTextWidthMark", 75).toInt();
-	m_connectionTestTimeout = s.value(CONF_CONNECTION_TEST_TIMEOUT, DEFAULT_CONNECTION_TEST_TIMEOUT).toInt();
 	m_encoding = s.value(CONF_ENCODING, DEFAULT_ENCODING).toString();
 	m_forcelineend = s.value(CONF_FORCELINEEND, DEFAULT_FORCELINEEND).toString();
 	s.endGroup();
@@ -366,13 +364,19 @@ void toConfigurationPrivate::saveConfig()
 	s.setValue(CONF_STYLE, m_style);
 	s.setValue(CONF_LOCALE, m_translation);
 
-	s.setValue(CONF_MAX_NUMBER, m_maxNumber);
-	s.setValue(CONF_MAX_COL_DISP, m_maxColDisp);
-	s.setValue(CONF_PLAN_TABLE, m_planTable);
-	s.setValue(CONF_PLAN_CHECKPOINT, m_planCheckpoint);
+	// Editor setting
 	s.setValue(CONF_TEXT, m_textFontName);
 	s.setValue(CONF_CODE, m_codeFontName);
 	s.setValue(CONF_LIST, m_listFontName);
+
+	// Database settings
+	s.setValue(CONF_OBJECT_CACHE, m_objectCache);
+	s.setValue(CONF_AUTO_COMMIT, m_autoCommit);
+	s.setValue(CONF_FIREWALL_MODE, m_firewallMode);
+	s.setValue(CONF_MAX_NUMBER, m_initialFetch);
+	s.setValue(CONF_MAX_COL_DISP, m_maxColDisp);
+	s.setValue(CONF_PLAN_TABLE, m_planTable);
+	s.setValue(CONF_PLAN_CHECKPOINT, m_planCheckpoint);
 	s.setValue(CONF_DATE_FORMAT, m_dateFormat);
 	s.setValue(CONF_TIMESTAMP_FORMAT, m_timestampFormat);
 
@@ -380,7 +384,7 @@ void toConfigurationPrivate::saveConfig()
 	s.setValue(CONF_KEYWORD_UPPER, m_keywordUpper);
 	s.setValue(CONF_OBJECT_NAMES_UPPER, m_objectNamesUpper);
 
-	s.setValue(CONF_AUTO_COMMIT, m_autoCommit);
+
 	s.setValue(CONF_DEFAULT_TOOL, m_defaultTool);
 	s.setValue(CONF_CODE_COMPLETION, m_codeCompletion);
 	s.setValue(CONF_COMPLETION_SORT, m_completionSort);
@@ -388,10 +392,8 @@ void toConfigurationPrivate::saveConfig()
 	s.setValue(CONF_DONT_REREAD, m_dontReread);
 
 
-	s.setValue(CONF_OBJECT_CACHE, m_objectCache);
-	s.setValue(CONF_FIREWALL_MODE, m_firewallMode);
 	s.setValue(CONF_CONN_TEST_INTERVAL, m_connTestInterval);
-	s.setValue(CONF_MAX_CONTENT, m_maxContent);
+	s.setValue(CONF_MAX_CONTENT, m_initialEditorContent);
 	s.setValue(CONF_KEEP_PLANS, m_keepPlans);
 	s.setValue(CONF_VSQL_PLANS, m_vsqlPlans);
 	s.setValue(CONF_SHARED_PLAN, m_sharedPlan);
@@ -404,7 +406,6 @@ void toConfigurationPrivate::saveConfig()
 	s.setValue(CONF_RECENT_MAX, m_recentMax);
 	s.setValue(CONF_LAST_DIR, m_lastDir);
 
-	s.setValue(CONF_KEEP_ALIVE, m_keepAlive);
 	s.setValue(CONF_NUMBER_FORMAT, m_numberFormat);
 	s.setValue(CONF_NUMBER_DECIMALS, m_numberDecimals);
 	s.setValue(CONF_CACHE_TIMEOUT, m_cacheTimeout);
@@ -534,7 +535,6 @@ void toConfigurationPrivate::saveConfig()
 	s.setValue("SyntaxStaticBg", m_syntaxStaticBg);
 	s.setValue("useMaxTextWidthMark", m_useMaxTextWidthMark);
 	s.setValue("maxTextWidthMark", m_maxTextWidthMark);
-	s.setValue(CONF_CONNECTION_TEST_TIMEOUT, m_connectionTestTimeout);
 	s.setValue(CONF_ENCODING, m_encoding);
 	s.setValue(CONF_FORCELINEEND, m_forcelineend);
 	s.endGroup();

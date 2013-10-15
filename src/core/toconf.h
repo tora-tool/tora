@@ -128,8 +128,6 @@
 #define DEFAULT_RECENT_MAX 25
 #define CONF_LAST_DIR  "LastDir"
 #define CONF_LOCALE  "Locale"
-#define CONF_KEEP_ALIVE  "KeepAlive"
-#define DEFAULT_KEEP_ALIVE 300
 #define CONF_NUMBER_FORMAT "NumberFormat"
 #define DEFAULT_NUMBER_FORMAT 0
 #define CONF_NUMBER_DECIMALS "NumberDecimals"
@@ -154,9 +152,6 @@
 #define CONF_FORCELINEEND "ForceLineEnd"
 #define DEFAULT_FORCELINEEND "Default"
 
-// connection (general)
-#define CONF_CONNECTION_TEST_TIMEOUT "ConnectionTestTimeout"
-#define DEFAULT_CONNECTION_TEST_TIMEOUT 0
 // tooracleconnection.cpp
 #define CONF_ORACLE_HOME "ORACLE_HOME"
 #define CONF_MAX_LONG  "MaxLong"

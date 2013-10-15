@@ -1328,7 +1328,7 @@ void toResultView::query(const QString &sql, toQueryParams const& param)
         else
             setSorting(Query->columns());
 
-        int MaxNumber = toConfigurationSingle::Instance().maxNumber();
+        int MaxNumber = toConfigurationSingle::Instance().initialFetch();
         for (int j = 0; j < MaxNumber && !Query->eof(); j++)
             slotAddItem();
         if (ReadAll || MaxNumber < 0)

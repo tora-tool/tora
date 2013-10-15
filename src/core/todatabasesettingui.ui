@@ -74,6 +74,9 @@
       </item>
       <item row="2" column="1">
        <widget class="QSpinBox" name="MaxColDisp">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
           <horstretch>1</horstretch>
@@ -87,6 +90,9 @@
       </item>
       <item row="1" column="1">
        <widget class="QSpinBox" name="MaxContent">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
           <horstretch>1</horstretch>
@@ -148,13 +154,16 @@
       </item>
       <item row="1" column="2">
        <widget class="QCheckBox" name="UnlimitedContent">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="text">
          <string>&amp;All</string>
         </property>
        </widget>
       </item>
       <item row="0" column="2">
-       <widget class="QCheckBox" name="ReadAll">
+       <widget class="QCheckBox" name="FetchAll">
         <property name="text">
          <string>&amp;All</string>
         </property>
@@ -295,7 +304,7 @@
        </widget>
       </item>
       <item row="2" column="0">
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="ConnTestIntervalLabel">
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -315,6 +324,9 @@
       </item>
       <item row="2" column="1">
        <widget class="QSpinBox" name="ConnTestInterval">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
           <horstretch>1</horstretch>
@@ -363,13 +375,6 @@
        </widget>
       </item>
      </layout>
-     <zorder>FirewallMode</zorder>
-     <zorder>FirewallMode</zorder>
-     <zorder>label</zorder>
-     <zorder>ConnTestInterval</zorder>
-     <zorder>CachedConnections_2</zorder>
-     <zorder>CachedConnections</zorder>
-     <zorder>AutoCommit</zorder>
     </widget>
    </item>
   </layout>
@@ -377,7 +382,7 @@
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
   <tabstop>ObjectCache</tabstop>
-  <tabstop>ReadAll</tabstop>
+  <tabstop>FetchAll</tabstop>
   <tabstop>UnlimitedContent</tabstop>
   <tabstop>IndicateEmpty</tabstop>
   <tabstop>NumberFormat</tabstop>
