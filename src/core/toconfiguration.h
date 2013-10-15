@@ -408,12 +408,14 @@ public:
     HelpsMap additionalHelp();
     void setAdditionalHelp(HelpsMap v);
 
+#ifdef TORA3_CHARTS
     // tochartmanager
     ChartsMap chartFiles();
     void setChartFiles(ChartsMap v);
 
     ChartsMap chartAlarms();
     void setChartAlarms(ChartsMap v);
+#endif
 
     // toooutput
     QString polling();

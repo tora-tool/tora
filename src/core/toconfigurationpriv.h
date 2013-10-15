@@ -93,6 +93,7 @@ public:
     QString m_dateFormat;
     QString m_timestampFormat;
     int m_maxLong;
+    QString m_planTable;
     bool    m_keepPlans;
     bool    m_vsqlPlans;
     bool    m_sharedPlan;
@@ -108,24 +109,6 @@ public:
     bool m_extractorIncludeHeader;
     bool m_extractorIncludePrompt;
 
-
-    QString m_planTable;
-    QString m_planCheckpoint;
-
-
-
-
-
-    QString m_defaultTool;
-
-
-
-
-
-
-    bool    m_dontReread;
-
-
     // toEditExtensions (moved into obsolete ATM)
     bool    m_editDragDrop;
     bool    m_autoIndentRo;
@@ -136,11 +119,9 @@ public:
     bool    m_endBlockNewline;
     int     m_commentColumn;
 
-    int     m_recentMax;
-
-
+    // TODO these attributes can be useful but can not be set from GUI
+    bool    m_dontReread;
     int     m_cacheTimeout;
-
     QString m_encoding;
     QString m_forcelineend; // force line end type (win, linux, mac) when saving text files
 
@@ -154,6 +135,7 @@ public:
     QByteArray  m_leftDockbarState;
     QByteArray  m_rightDockbarState;
     QStringList m_recentFiles;
+    int         m_recentMax;
     mutable QDir    m_applicationDir;
     QString m_lastDir;
 
@@ -163,6 +145,7 @@ public:
 
     // tools
     ToolsMap m_tools;
+    QString m_defaultTool;
 
     // toresultlistformat
     QString m_csvSeparator;
@@ -178,10 +161,11 @@ public:
     // tohelp
     HelpsMap m_additionalHelp;
 
-
+#ifdef TORA3_CHARTS
     // tochartmanager
     ChartsMap m_chartFiles;
     ChartsMap m_chartAlarms;
+#endif
 
     // tooutput
     QString m_polling;

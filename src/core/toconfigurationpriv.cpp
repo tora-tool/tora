@@ -121,7 +121,6 @@ void toConfigurationPrivate::loadConfig()
 	m_initialFetch = s.value(CONF_MAX_NUMBER, DEFAULT_MAX_NUMBER).toInt();
 	m_maxColDisp = s.value(CONF_MAX_COL_DISP, DEFAULT_MAX_COL_DISP).toInt();
 	m_planTable = s.value(CONF_PLAN_TABLE, DEFAULT_PLAN_TABLE).toString();
-	m_planCheckpoint = s.value(CONF_PLAN_CHECKPOINT, DEFAULT_PLAN_CHECKPOINT).toString();
 	m_textFontName = s.value(CONF_TEXT, "").toString();
 	m_codeFontName = s.value(CONF_CODE, "").toString();
 	m_listFontName = s.value(CONF_LIST, "").toString();
@@ -206,6 +205,8 @@ void toConfigurationPrivate::loadConfig()
 		m_additionalHelp[s.value("HelpName").toString()] = s.value("Path").toString();
 	}
 	s.endArray();
+
+#ifdef TORA3_CHARTS
 	// tochartmanager
 	cnt = s.beginReadArray("ChartFiles");
 	for (int i = 0; i < cnt; ++i)
@@ -221,6 +222,8 @@ void toConfigurationPrivate::loadConfig()
 		m_chartAlarms[s.value("Name").toString()] = s.value("Spec").toString();
 	}
 	s.endArray();
+#endif
+
 	// tooutput
 	m_polling = s.value(CONF_POLLING, DEFAULT_POLLING).toString();
 	m_logType = s.value(CONF_LOG_TYPE, DEFAULT_LOG_TYPE).toInt();
@@ -365,43 +368,49 @@ void toConfigurationPrivate::saveConfig()
 	s.setValue(CONF_LOCALE, m_translation);
 
 	// Editor setting
+	s.setValue(CONF_HIGHLIGHT, m_syntaxHighlighting);
+
 	s.setValue(CONF_TEXT, m_textFontName);
 	s.setValue(CONF_CODE, m_codeFontName);
 	s.setValue(CONF_LIST, m_listFontName);
+
+	s.setValue(CONF_KEYWORD_UPPER, m_keywordUpper);
+	s.setValue(CONF_OBJECT_NAMES_UPPER, m_objectNamesUpper);
+	s.setValue(CONF_CODE_COMPLETION, m_codeCompletion);
+	s.setValue(CONF_COMPLETION_SORT, m_completionSort);
+	s.setValue(CONF_AUTO_INDENT, m_autoIndent);
+	s.setValue("useMaxTextWidthMark", m_useMaxTextWidthMark);
+	s.setValue("maxTextWidthMark", m_maxTextWidthMark);
+	s.setValue(CONF_EXTENSIONS, m_extensions);
+	s.setValue(CONF_ENCODING, m_encoding);
+	s.setValue(CONF_FORCELINEEND, m_forcelineend);
+	s.setValue(CONF_TAB_STOP, m_tabStop);
+	s.setValue(CONF_TAB_SPACES, m_useSpacesForIndent);
 
 	// Database settings
 	s.setValue(CONF_OBJECT_CACHE, m_objectCache);
 	s.setValue(CONF_AUTO_COMMIT, m_autoCommit);
 	s.setValue(CONF_FIREWALL_MODE, m_firewallMode);
+	s.setValue(CONF_CONN_TEST_INTERVAL, m_connTestInterval);
 	s.setValue(CONF_MAX_NUMBER, m_initialFetch);
+	s.setValue(CONF_MAX_CONTENT, m_initialEditorContent);
 	s.setValue(CONF_MAX_COL_DISP, m_maxColDisp);
 	s.setValue(CONF_PLAN_TABLE, m_planTable);
-	s.setValue(CONF_PLAN_CHECKPOINT, m_planCheckpoint);
-	s.setValue(CONF_DATE_FORMAT, m_dateFormat);
-	s.setValue(CONF_TIMESTAMP_FORMAT, m_timestampFormat);
-
-	s.setValue(CONF_HIGHLIGHT, m_syntaxHighlighting);
-	s.setValue(CONF_KEYWORD_UPPER, m_keywordUpper);
-	s.setValue(CONF_OBJECT_NAMES_UPPER, m_objectNamesUpper);
-
-
-	s.setValue(CONF_DEFAULT_TOOL, m_defaultTool);
-	s.setValue(CONF_CODE_COMPLETION, m_codeCompletion);
-	s.setValue(CONF_COMPLETION_SORT, m_completionSort);
-	s.setValue(CONF_AUTO_INDENT, m_autoIndent);
-	s.setValue(CONF_DONT_REREAD, m_dontReread);
-
-
-	s.setValue(CONF_CONN_TEST_INTERVAL, m_connTestInterval);
-	s.setValue(CONF_MAX_CONTENT, m_initialEditorContent);
+	//  Oracle
 	s.setValue(CONF_KEEP_PLANS, m_keepPlans);
 	s.setValue(CONF_VSQL_PLANS, m_vsqlPlans);
 	s.setValue(CONF_SHARED_PLAN, m_sharedPlan);
+	s.setValue(CONF_DATE_FORMAT, m_dateFormat);
+	s.setValue(CONF_TIMESTAMP_FORMAT, m_timestampFormat);
+
+
+	s.setValue(CONF_DEFAULT_TOOL, m_defaultTool);
+	s.setValue(CONF_DONT_REREAD, m_dontReread);
 
 	s.setValue(CONF_AUTO_INDENT_RO, m_autoIndentRo);
 	s.setValue(CONF_INDICATE_EMPTY, m_indicateEmpty);
 	s.setValue(CONF_INDICATE_EMPTY_COLOR, m_indicateEmptyColor);
-	s.setValue(CONF_EXTENSIONS, m_extensions);
+
 	s.setValue(CONF_RECENT_FILES, m_recentFiles);
 	s.setValue(CONF_RECENT_MAX, m_recentMax);
 	s.setValue(CONF_LAST_DIR, m_lastDir);
@@ -409,19 +418,18 @@ void toConfigurationPrivate::saveConfig()
 	s.setValue(CONF_NUMBER_FORMAT, m_numberFormat);
 	s.setValue(CONF_NUMBER_DECIMALS, m_numberDecimals);
 	s.setValue(CONF_CACHE_TIMEOUT, m_cacheTimeout);
-	s.setValue(CONF_TAB_STOP, m_tabStop);
-	s.setValue(CONF_TAB_SPACES, m_useSpacesForIndent);
 	s.setValue(CONF_EDIT_DRAG_DROP, m_editDragDrop);
 
 	// tooracleconnection
-
 	s.setValue(CONF_MAX_LONG, m_maxLong);
+
 	// toqsqlconnection
 	s.setValue(CONF_ONLY_FORWARD, m_onlyForward);
 	s.setValue(CONF_CREATE_ACTION, m_createAction);
 	// main.cpp
 	s.setValue(CONF_LAST_VERSION, m_lastVersion);
 	s.setValue(CONF_FIRST_INSTALL, m_firstInstall);
+
 	// tools
 	s.beginWriteArray(CONF_TOOLS);
 	for (int i = 0; i < m_tools.count(); ++i)
@@ -432,6 +440,7 @@ void toConfigurationPrivate::saveConfig()
 		s.setValue("Enabled", m_tools[key]);
 	}
 	s.endArray();
+
 	// toresultlistformat
 	s.setValue(CONF_CSV_SEPARATOR, m_csvSeparator);
 	s.setValue(CONF_CSV_DELIMITER, m_csvDelimiter);
@@ -458,6 +467,8 @@ void toConfigurationPrivate::saveConfig()
 		s.setValue("Path", m_additionalHelp[key]);
 	}
 	s.endArray();
+
+#ifdef TORA3_CHARTS
 	// tochartmanager
 	s.beginWriteArray("ChartFiles");
 	for (int i = 0; i < m_chartFiles.count(); ++i)
@@ -477,6 +488,8 @@ void toConfigurationPrivate::saveConfig()
 		s.setValue("Spec", m_chartAlarms[key]);
 	}
 	s.endArray();
+#endif
+
 	// tooutput
 	s.setValue(CONF_POLLING, m_polling);
 	s.setValue(CONF_LOG_TYPE, m_logType);
@@ -533,10 +546,6 @@ void toConfigurationPrivate::saveConfig()
 	s.setValue("SyntaxDebugBg", m_syntaxDebugBg);
 	s.setValue("SyntaxCurrentLineMarker", m_syntaxCurrentLineMarker);
 	s.setValue("SyntaxStaticBg", m_syntaxStaticBg);
-	s.setValue("useMaxTextWidthMark", m_useMaxTextWidthMark);
-	s.setValue("maxTextWidthMark", m_maxTextWidthMark);
-	s.setValue(CONF_ENCODING, m_encoding);
-	s.setValue(CONF_FORCELINEEND, m_forcelineend);
 	s.endGroup();
 
 	// main window

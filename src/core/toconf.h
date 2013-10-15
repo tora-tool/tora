@@ -53,8 +53,6 @@
 #define DEFAULT_MAX_COL_DISP 300
 #define CONF_PLAN_TABLE  "PlanTable"
 #define DEFAULT_PLAN_TABLE "PLAN_TABLE"
-#define CONF_PLAN_CHECKPOINT "PlanCheckpoint"
-#define DEFAULT_PLAN_CHECKPOINT "TORA_CHECKPOINT"
 #define CONF_TEXT  "ConfText"
 #define CONF_CODE  "ConfCode"
 #define CONF_LIST  "ListText"

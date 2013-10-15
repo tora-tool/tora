@@ -1153,6 +1153,7 @@ void toConfiguration::setAdditionalHelp(HelpsMap v)
     d->m_additionalHelp = v;
 }
 
+#ifdef TORA3_CHARTS
 // tochartmanager
 ChartsMap toConfiguration::chartFiles()
 {
@@ -1175,6 +1176,7 @@ void toConfiguration::setChartAlarms(ChartsMap v)
 	Q_D(toConfiguration);
     d->m_chartAlarms = v;
 }
+#endif
 
 // toooutput
 QString toConfiguration::polling()
