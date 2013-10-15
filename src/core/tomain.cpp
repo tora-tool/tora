@@ -1243,7 +1243,7 @@ void toMain::showMessageImpl(QString str, bool save, bool log)
 
 void toMain::slotActiveToolChaged(toToolWidget *tool)
 {
-	setNeedCommit(tool, tool->hasTransaction());
+	setNeedCommit(tool, tool ? tool->hasTransaction() : false);
 }
 
 void toMain::checkCaching(void)
