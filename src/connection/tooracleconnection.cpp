@@ -289,13 +289,14 @@ void toOracleConnectionImpl::closeConnection(toConnectionSub *)
 toOracleConnectionSub::toOracleConnectionSub(::trotl::OciConnection *conn, ::trotl::OciLogin *login)
     : _conn(conn)
     , _login(login)
-	, _hasTrans(new ::trotl::SqlStatement(*_conn, "select nvl2(dbms_transaction.local_transaction_id, 1, 0) from dual"))
+	, _hasTransactionStat(new ::trotl::SqlStatement(*_conn, "select nvl2(dbms_transaction.local_transaction_id, 1, 0) from dual"))
+	, _hasTransaction(NO_TRANSACTION)
 {
 }
 
 toOracleConnectionSub::~toOracleConnectionSub()
 {
-	delete _hasTrans;
+	delete _hasTransactionStat;
 }
 
 void toOracleConnectionSub::cancel()
@@ -317,11 +318,13 @@ void toOracleConnectionSub::close()
 void toOracleConnectionSub::commit()
 {
 	_conn->commit();
+	_hasTransaction = NO_TRANSACTION;
 }
 
 void toOracleConnectionSub::rollback()
 {
 	_conn->rollback();
+	_hasTransaction = NO_TRANSACTION;
 }
 
 QString toOracleConnectionSub::version()
@@ -341,10 +344,13 @@ QString toOracleConnectionSub::sessionId()
 bool toOracleConnectionSub::hasTransaction()
 {
 	// NOTE: do not use OCI_ATTR_TRANSACTION_IN_PROGRESS, it is Oracle 12c feature
+	if (_hasTransaction != DIRTY_FLAG)
+		return _hasTransaction;
 	try
 	{
 		int i;
-		*_hasTrans >> i;
+		*_hasTransactionStat >> i;
+		_hasTransaction = i ? HAS_TRANSACTION : NO_TRANSACTION;
 		return i;
 	} catch (const ::trotl::OciException &exc) {
 		ReThrowException(exc);
@@ -353,7 +359,8 @@ bool toOracleConnectionSub::hasTransaction()
 
 queryImpl * toOracleConnectionSub::createQuery(toQuery *query)
 {
-    return new oracleQuery(query, this);
+	_hasTransaction = DIRTY_FLAG;
+	return new oracleQuery(query, this);
 }
 
 toQAdditionalDescriptions* toOracleConnectionSub::decribe(toCache::ObjectRef const& objectName)

@@ -78,6 +78,7 @@ void oracleQuery::execute(void)
 
         Query = new oracleQuery::trotlQuery(*conn->_conn, ::std::string(sql.toUtf8().constData()));
         TLOG(0, toDecorator, __HERE__) << "SQL(conn=" << conn->_conn << ", this=" << Query << "): " << ::std::string(sql.toUtf8().constData()) << std::endl;
+        conn->_hasTransaction = toOracleConnectionSub::DIRTY_FLAG;
         // TODO autocommit ??
         // Query->set_commit(0);
     }

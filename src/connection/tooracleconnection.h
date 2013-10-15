@@ -105,9 +105,15 @@ public:
     virtual toQAdditionalDescriptions* decribe(toCache::ObjectRef const&);
 
 private:
+    enum TransactionFlagStateEnum { // three state boolean NO/YES/DUNNO
+    	NO_TRANSACTION,
+    	HAS_TRANSACTION,
+    	DIRTY_FLAG
+    };
     ::trotl::OciConnection *_conn;
     ::trotl::OciLogin *_login;
-    ::trotl::SqlStatement *_hasTrans;
+    ::trotl::SqlStatement *_hasTransactionStat;
+    mutable TransactionFlagStateEnum _hasTransaction; // cache calls to hasTransaction()
 };
 
 
