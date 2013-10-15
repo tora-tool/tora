@@ -2160,8 +2160,8 @@ void toWorksheet::unlockConnection()
 			switch (TOMessageBox::warning(this,
 					tr("Commit work?"),
 					str,
-					tr("&Yes"),
-					tr("&No"),
+					tr("&Commit"),
+					tr("&Rollback"),
 					tr("Cancel")))
 			{
 			case 0:
@@ -2171,6 +2171,10 @@ void toWorksheet::unlockConnection()
 				(*LockedConnection)->rollback();
 				break;
 			case 2:
+				bool oldVal = lockConnectionAct->blockSignals(true);
+				lockConnectionAct->setChecked(true);
+				lockConnectionAct->blockSignals(oldVal);
+				Utils::toStatusMessage(str);
 				return;
 			}
 		}
