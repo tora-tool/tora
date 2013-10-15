@@ -182,6 +182,18 @@ class toConnectionRegistry;
 //
 //} // namespace utils
 
+// Copied form _Noreturn.h
+#if !defined _Noreturn && __STDC_VERSION__ < 201112
+# if (3 <= __GNUC__ || (__GNUC__ == 2 && 8 <= __GNUC_MINOR__) \
+      || 0x5110 <= __SUNPRO_C)
+#  define _Noreturn __attribute__ ((__noreturn__))
+# elif 1200 <= _MSC_VER
+#  define _Noreturn __declspec (noreturn)
+# else
+#  define _Noreturn
+# endif
+#endif
+
 #define QTRANS(x,y) (qApp?qApp->translate(x,y):QString::fromLatin1(y))
 
 // Source http://blog.qt.digia.com/blog/2008/10/09/coding-tip-pretty-printing-enum-values/

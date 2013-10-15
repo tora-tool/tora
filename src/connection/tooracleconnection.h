@@ -51,6 +51,7 @@
 
 #include "core/toconnection.h"
 #include "core/toconnectionsub.h"
+#include "core/utils.h"
 
 class toOracleProvider;
 
@@ -66,7 +67,7 @@ class SqlStatement;
 /** re-throw an exception while converting it from @ref trotl::OciException
 * into @ref toConnection::exception
 */
-void ThrowException(const ::trotl::OciException &exc);
+_Noreturn void ThrowException(const ::trotl::OciException &exc);
 
 class toOracleConnectionImpl: public toConnection::connectionImpl
 {

@@ -49,7 +49,6 @@
 #include "connection/tooracleconnection.h"
 #include "connection/tooraclequery.h"
 
-#include "core/tomainwindow.h"
 #include "core/toconf.h"       // TOAPPNAME
 #include "core/toraversion.h"
 #include "core/tologger.h"
@@ -65,7 +64,7 @@
 #include <QtGui/QApplication>
 #include <iomanip>
 
-void ThrowException(const ::trotl::OciException &exc)
+_Noreturn void ThrowException(const ::trotl::OciException &exc)
 {
     TLOG(5, toDecorator, __HERE__)
             << "Exception thrown, what:" << exc.what() << std::endl
