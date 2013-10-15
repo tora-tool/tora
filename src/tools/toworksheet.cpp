@@ -2146,6 +2146,31 @@ void toWorksheet::lockConnection()
 
 void toWorksheet::unlockConnection()
 {
+	if ((*LockedConnection)->hasTransaction())
+	{
+		try
+		{
+			QString str = tr("Commit work in session?");
+			switch (TOMessageBox::warning(this,
+					tr("Commit work?"),
+					str,
+					tr("&Yes"),
+					tr("&No"),
+					tr("Cancel")))
+			{
+			case 0:
+				(*LockedConnection)->commit();
+				break;
+			case 1:
+				(*LockedConnection)->rollback();
+				break;
+			case 2:
+				return;
+			}
+		}
+		TOCATCH
+	}
+
 	this->LockedConnection.clear();
 	lockConnectionActClicked = false;
 	bool oldVal = lockConnectionAct->blockSignals(true);
