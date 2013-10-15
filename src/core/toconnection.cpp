@@ -517,6 +517,8 @@ void toConnection::putBackSub(toConnectionSub *conn)
     if(conn->isBroken())
     {
     	delete conn;
+    } else if(Connections.size() >= toConfigurationSingle::Instance().cachedConnections()) {
+    	delete conn;
     }
     else
     	Connections.insert(conn);
