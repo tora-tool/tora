@@ -70,7 +70,7 @@ toCustomLexer::toCustomLexer(QObject *parent)
 #elif defined(Q_OS_MAC)
 	mono = QFont("Courier", 12);
 #else
-	mono = QFont(Utils::toStringToFont(toConfigurationSingle::Instance().codeFont()));
+	mono = QFont(Utils::toStringToFont(toConfigurationSingle::Instance().codeFontName()));
 #endif
 
 	styleStack = QList<int>();

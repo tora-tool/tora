@@ -6,6 +6,7 @@
 #include <loki/Singleton.h>
 #include <QtCore/QStringList>
 #include <QtCore/QMap>
+#include <QtCore/QVariant>
 #include <QtGui/QApplication>
 
 typedef QMap<QString, bool> ToolsMap;
