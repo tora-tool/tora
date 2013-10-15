@@ -515,8 +515,12 @@ void toConnection::putBackSub(toConnectionSub *conn)
     Q_ASSERT_X( !Connections.contains(conn) , qPrintable(__QHERE__), "Invalid use of toConnectionSubLoan");
     LoanCnt.deref();
 
-    if(conn->hasTransaction())
-    	conn->rollback();
+    try
+    {
+    	if(conn->hasTransaction())
+    		conn->rollback();
+    }
+    TOCATCH
 
     if(conn->isBroken())
     {

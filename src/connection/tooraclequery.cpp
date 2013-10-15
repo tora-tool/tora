@@ -88,7 +88,7 @@ void oracleQuery::execute(void)
         Running = false;
 		if(exc.is_critical())
 			conn->Broken = true;
-        ThrowException(exc);
+        ReThrowException(exc);
     }
     try
     {
@@ -177,7 +177,7 @@ void oracleQuery::execute(void)
         Running = false;
 		if(exc.is_critical())
 			conn->Broken = true;
-        ThrowException(exc);
+        ReThrowException(exc);
     }
 }
 
@@ -209,7 +209,7 @@ void oracleQuery::execute(QString const& sql)
         Running = false;
 		if(exc.is_critical())
 			conn->Broken = true;
-        ThrowException(exc);
+        ReThrowException(exc);
     }
 }
 
@@ -228,7 +228,7 @@ toQValue oracleQuery::readValue(void)
 		Running = false;
 		if(exc.is_critical())
 			conn->Broken = true;
-		ThrowException(exc);
+		ReThrowException(exc);
 	}
 }
 
@@ -278,7 +278,7 @@ bool oracleQuery::eof(void)
     		{
     			if(exc.is_critical())
     				conn->Broken = true;
-    			ThrowException(exc);
+    			ReThrowException(exc);
     		}
     	}
     	return true;

@@ -64,7 +64,7 @@
 #include <QtGui/QApplication>
 #include <iomanip>
 
-_Noreturn void ThrowException(const ::trotl::OciException &exc)
+_Noreturn void ReThrowException(const ::trotl::OciException &exc)
 {
     TLOG(5, toDecorator, __HERE__)
             << "Exception thrown, what:" << exc.what() << std::endl
@@ -204,7 +204,7 @@ toConnectionSub* toOracleConnectionImpl::createConnection(void)
                 qputenv("ORACLE_SID", oldSid.toLatin1());
         }
         delete conn;
-        ThrowException(exc);
+        ReThrowException(exc);
     }
     if (!sqlNet)
     {
@@ -221,7 +221,7 @@ toConnectionSub* toOracleConnectionImpl::createConnection(void)
         QString alterSessionSQL = QString::fromLatin1("ALTER SESSION SET NLS_DATE_FORMAT = '");
         alterSessionSQL += toConfigurationSingle::Instance().dateFormat();
         alterSessionSQL += QString::fromLatin1("'");
-	oracleQuery::trotlQuery date(*conn, qPrintable(alterSessionSQL));
+        oracleQuery::trotlQuery date(*conn, qPrintable(alterSessionSQL));
     }
     catch (...)
     {
@@ -304,7 +304,7 @@ void toOracleConnectionSub::cancel()
 		_conn->cancel();
 		_conn->reset();
 	}   catch (const ::trotl::OciException &exc)  {
-		ThrowException(exc);
+		ReThrowException(exc);
     }
 
     TLOG(0, toDecorator, __HERE__) << ":oracleConn::cancel(conn=" <<_conn << ", this=" << Query << ")" << std::endl;
@@ -340,10 +340,15 @@ QString toOracleConnectionSub::sessionId()
 
 bool toOracleConnectionSub::hasTransaction()
 {
-	// NOTE: do not use OCI_ATTR_TRANSACTION_IN_PROGRESS, it Oracle 12c feature
-	int i;
-	*_hasTrans >> i;
-	return i;
+	// NOTE: do not use OCI_ATTR_TRANSACTION_IN_PROGRESS, it is Oracle 12c feature
+	try
+	{
+		int i;
+		*_hasTrans >> i;
+		return i;
+	} catch (const ::trotl::OciException &exc) {
+		ReThrowException(exc);
+	}
 }
 
 queryImpl * toOracleConnectionSub::createQuery(toQuery *query)

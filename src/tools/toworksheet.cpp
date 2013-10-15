@@ -2125,11 +2125,11 @@ void toWorksheet::lockConnection()
 	if (LockedConnection) // Do not lock connection twice
 		return;
 
-	QSharedPointer<toConnectionSubLoan> conn(new toConnectionSubLoan(connection(), toConnectionSubLoan::INIT_SESSION));
-	this->LockedConnection = conn;
-
 	try
 	{
+		QSharedPointer<toConnectionSubLoan> conn(new toConnectionSubLoan(connection(), toConnectionSubLoan::INIT_SESSION));
+		this->LockedConnection = conn;
+
 		Utils::toBusy busy;
 		toQuery schema(*LockedConnection, toSQL::string("Global:CurrentSchema", connection()), toQueryParams());
 		QString value = schema.readValue();
@@ -2141,14 +2141,20 @@ void toWorksheet::lockConnection()
 	    lockConnectionAct->setChecked(true);
 	    lockConnectionAct->blockSignals(oldVal);
 	}
-	TOCATCH
+    catch (const QString &str) {
+		bool oldVal = lockConnectionAct->blockSignals(true);
+		lockConnectionAct->setChecked(false);
+	    lockConnectionAct->blockSignals(oldVal);
+    	Utils::toStatusMessage(str);
+    }
+
 }
 
 void toWorksheet::unlockConnection()
 {
-	if ((*LockedConnection)->hasTransaction())
+	try
 	{
-		try
+		if (LockedConnection && (*LockedConnection)->hasTransaction())
 		{
 			QString str = tr("Commit work in session?");
 			switch (TOMessageBox::warning(this,
@@ -2168,8 +2174,8 @@ void toWorksheet::unlockConnection()
 				return;
 			}
 		}
-		TOCATCH
 	}
+	TOCATCH
 
 	this->LockedConnection.clear();
 	lockConnectionActClicked = false;

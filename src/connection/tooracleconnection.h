@@ -67,7 +67,7 @@ class SqlStatement;
 /** re-throw an exception while converting it from @ref trotl::OciException
 * into @ref toConnection::exception
 */
-_Noreturn void ThrowException(const ::trotl::OciException &exc);
+_Noreturn void ReThrowException(const ::trotl::OciException &exc);
 
 class toOracleConnectionImpl: public toConnection::connectionImpl
 {
