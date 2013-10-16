@@ -149,11 +149,11 @@ toConnection& toConnectionRegistry::connection(const toConnectionOptions &opt)
     throw tr("Couldn't find specified connectionts (%1)").arg(opt.toString());
 }
 
-void toConnectionRegistry::currentIndexChanged(int idx)
+void toConnectionRegistry::slotCurrentIndexChanged(int idx)
 {
 	if (idx == -1)
 	{
-		m_currentConnection = toConnectionOptions();
+		m_currentConnection = s_noConnection;
 		return; // No connection
 	}
 	Q_ASSERT_X(idx < m_ConnectionsList.size(), qPrintable(__QHERE__), qPrintable(QString("Connection index out of range: %1").arg(idx)));
@@ -169,3 +169,6 @@ QList<toConnection*> const& toConnectionRegistry::connections(void) const
 {
     return m_ConnectionsList;
 }
+
+toConnectionOptions toConnectionRegistry::s_noConnection = toConnectionOptions();
+

@@ -463,7 +463,7 @@ void toMain::createToolbars()
     ConnectionSelection->setModel(&toConnectionRegistrySing::Instance());
     //connect(ConnectionSelection, SIGNAL(activated(int)), this, SLOT(connectionSelectionChanged()));
     connect(ConnectionSelection, SIGNAL(currentIndexChanged(QString)), this, SLOT(connectionSelectionChanged()));
-    connect(ConnectionSelection, SIGNAL(currentIndexChanged(int)), &toConnectionRegistrySing::Instance(), SLOT(currentIndexChanged(int)));
+    connect(ConnectionSelection, SIGNAL(currentIndexChanged(int)), &toConnectionRegistrySing::Instance(), SLOT(slotCurrentIndexChanged(int)));
 
 
     addToolBarBreak();

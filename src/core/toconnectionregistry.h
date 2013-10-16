@@ -92,12 +92,18 @@ public:
     // QAbstractListModel interface
     int rowCount(const QModelIndex &) const;
     QVariant data(const QModelIndex &,int) const;
-public slots:
-    void currentIndexChanged(int);
+
+signals:
+    void activeConnectionChanged(QModelIndex);
+
+private slots:
+    void slotCurrentIndexChanged(int);
+
 private:
     toConnectionOptions m_currentConnection;
-	QMap<toConnectionOptions, toConnection *> m_ConnectionsMap;
-	QList<toConnection *> m_ConnectionsList;
+    QMap<toConnectionOptions, toConnection *> m_ConnectionsMap;
+    QList<toConnection *> m_ConnectionsList;
+    static toConnectionOptions s_noConnection;
 };
 
 typedef Loki::SingletonHolder<toConnectionRegistry> toConnectionRegistrySing;
