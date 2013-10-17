@@ -65,7 +65,7 @@ public:
      */
 	// TODO - duno how to implement this
 	// see void toChangeConnection::changeConnection(QAction *act)
-	void changeConnection(const toConnectionOptions &);
+	//void changeConnection(const toConnectionOptions &);
 
     /**
      * Get a list of currently open connections.
@@ -97,13 +97,12 @@ signals:
     void activeConnectionChanged(QModelIndex);
 
 private slots:
-    void slotCurrentIndexChanged(int);
+    void slotViewIndexChanged(int);
 
 private:
-    toConnectionOptions m_currentConnection;
+    QModelIndex m_currentConnection;
     QMap<toConnectionOptions, toConnection *> m_ConnectionsMap;
     QList<toConnection *> m_ConnectionsList;
-    static toConnectionOptions s_noConnection;
 };
 
 typedef Loki::SingletonHolder<toConnectionRegistry> toConnectionRegistrySing;
