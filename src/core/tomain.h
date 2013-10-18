@@ -68,6 +68,7 @@ class toMarkedEditor;
 class toMessage;
 class toTool;
 class toToolWidget;
+class toToolWidget;
 class toTreeWidget;
 class toTreeWidgetItem;
 class toWorkSpace;
@@ -86,7 +87,7 @@ class toMain : public toMainWindow , public toEditWidget::editHandler
     /**
      * enable or disable buttons that need an active connection
      */
-    void enableConnectionActions(bool enabled);
+    //    void enableConnectionActions(bool enabled);
 
     void createActions();
     void createMenus();
@@ -334,6 +335,8 @@ private:
     QAction *windowCloseAct, *windowCloseAllAct;
 
     QPlainTextEdit &loggingWidget;
+
+    toToolWidget *lastToolWidget;
 };
 
 #endif

@@ -89,6 +89,7 @@ toMain::toMain()
 	, Workspace(toWorkSpaceSingle::Instance())
 	, Poll()
 	, Connections(toConnectionRegistrySing::Instance())
+	, lastToolWidget(NULL)
 {
     loggingWidget.setMaximumBlockCount(2000);
     loggingWidget.setCenterOnScroll(true);
@@ -121,7 +122,7 @@ toMain::toMain()
     restoreGeometry(toConfigurationSingle::Instance().mainWindowGeometry());
     restoreState(toConfigurationSingle::Instance().mainWindowState());
 
-    enableConnectionActions(false);
+    //enableConnectionActions(false);
 
     QString defName(toConfigurationSingle::Instance().defaultTool());
     for (ToolsRegistrySing::ObjectType::iterator k = ToolsRegistrySing::Instance().begin();
@@ -461,10 +462,9 @@ void toMain::createToolbars()
     ConnectionSelection->setFocusPolicy(Qt::NoFocus);
     connectionToolbar->addWidget(ConnectionSelection);
     ConnectionSelection->setModel(&toConnectionRegistrySing::Instance());
-    //connect(ConnectionSelection, SIGNAL(activated(int)), this, SLOT(connectionSelectionChanged()));
-    connect(ConnectionSelection, SIGNAL(currentIndexChanged(QString)), this, SLOT(connectionSelectionChanged()));
     connect(ConnectionSelection, SIGNAL(currentIndexChanged(int)), &toConnectionRegistrySing::Instance(), SLOT(slotViewIndexChanged(int)));
-
+    connect(&toConnectionRegistrySing::Instance(), SIGNAL(activeConnectionChanged(int)), ConnectionSelection, SLOT(setCurrentIndex(int)));
+    connect(&toConnectionRegistrySing::Instance(), SIGNAL(activeConnectionChanged(QModelIndex)), this, SLOT(connectionSelectionChanged()));
 
     addToolBarBreak();
 
@@ -947,13 +947,7 @@ void toMain::addConnection(void)
 void toMain::addConnection(toConnection *newconn)
 {
     Connections.addConnection(newconn);
-    ConnectionSelection->setCurrentIndex(ConnectionSelection->count() - 1);
 
-    if (ConnectionSelection->count() == 1)
-        enableConnectionActions(true);
-
-    checkCaching();
-    connectionSelectionChanged();
     // New connection was added - create a default tool for it
     createDefault();
 }
@@ -1013,62 +1007,8 @@ bool toMain::delCurrentConnection(void)
     	return false;
 
     Connections.removeConnection(&conn);
-
-    int pos = ConnectionSelection->currentIndex();
-    if (ConnectionSelection->count())
-    	ConnectionSelection->setCurrentIndex((std::max)(pos - 1, 0));
-
-    if (ConnectionSelection->count() == 0)
-        enableConnectionActions(false);
-    else
-    	connectionSelectionChanged();
     return true;
 }
-
-void toMain::enableConnectionActions(bool enabled)
-{
-    // now, loop through tools and enable/disable
-    try
-    {
-    	stopAct->setEnabled(false);
-    	closeConn->setEnabled(enabled);
-    	refreshAct->setEnabled(enabled);
-    	openAct->setEnabled(enabled);
-    	recentMenu->setEnabled(enabled);
-
-    	// Handle situation when there are no connections open
-    	if(toConnectionRegistrySing::Instance().isEmpty())
-    	{
-        	for (ToolsRegistrySing::ObjectType::iterator i = ToolsRegistrySing::Instance().begin(); i != ToolsRegistrySing::Instance().end(); ++i)
-        	{
-        		toTool *pTool = i.value();
-        		pTool->enableAction(false);
-        	}
-        	return;
-    	}
-
-    	toConnection &conn = toConnectionRegistrySing::Instance().currentConnection();
-    	commitAct->setEnabled(conn.needCommit());
-    	rollbackAct->setEnabled(conn.needCommit());
-
-    	for (ToolsRegistrySing::ObjectType::iterator i = ToolsRegistrySing::Instance().begin(); i != ToolsRegistrySing::Instance().end(); ++i)
-    	{
-    		toTool *pTool = i.value();
-    		if (!pTool)
-    			continue;
-
-    		if (!enabled)
-    			pTool->enableAction(false);
-    		else
-    			pTool->enableAction(conn);
-    	}
-    } catch(QString const& e) {
-		TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << e << std::endl;
-	}  catch(...) {
-        TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
-    }
-}
-
 
 void toMain::closeEvent(QCloseEvent *event)
 {
@@ -1169,7 +1109,24 @@ void toMain::updateStatusMenu(void)
 
 void toMain::connectionSelectionChanged(void)
 {
-    enableConnectionActions(true);
+	// Handle the situation when there are no connections open
+	if(toConnectionRegistrySing::Instance().isEmpty())
+	{
+    	for (ToolsRegistrySing::ObjectType::iterator i = ToolsRegistrySing::Instance().begin(); i != ToolsRegistrySing::Instance().end(); ++i)
+    	{
+    		(*i)->enableAction(false);
+    	}
+    	closeConn->setDisabled(true);
+    	return;
+	}
+
+	closeConn->setEnabled(true);
+
+	toConnection const& conn = toConnectionRegistrySing::Instance().currentConnection();
+	for (ToolsRegistrySing::ObjectType::iterator i = ToolsRegistrySing::Instance().begin(); i != ToolsRegistrySing::Instance().end(); ++i)
+	{
+		(*i)->enableAction(conn);
+	}
 }
 
 void toMain::editOpenFile(const QString &file)
@@ -1244,6 +1201,7 @@ void toMain::showMessageImpl(QString str, bool save, bool log)
 void toMain::slotActiveToolChaged(toToolWidget *tool)
 {
 	setNeedCommit(tool, tool ? tool->hasTransaction() : false);
+	lastToolWidget = tool;
 }
 
 void toMain::checkCaching(void)

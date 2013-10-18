@@ -57,13 +57,20 @@ bool toConnectionRegistry::isEmpty() const
 	return m_ConnectionsList.empty();
 }
 
-//void toConnectionRegistry::changeConnection(const toConnectionOptions &opts)
-//{
-//	if( m_ConnectionsMap.contains(opts))
-//		m_currentConnection = opts;
-//	else
-//		throw QString("Unregistered connection(change): %1").arg(opts.toString());
-//}
+void toConnectionRegistry::changeConnection(toConnection &conn)
+{
+	Q_ASSERT_X(m_ConnectionsMap.contains(conn.connectionOptions())
+			, qPrintable(__QHERE__)
+			, qPrintable(QString("Unregistered connection(change): %1").arg(conn.connectionOptions().toString())));
+
+	int oldIdx = m_currentConnection.row();
+	m_currentConnection = index(m_ConnectionsList.indexOf(&conn));
+	if (oldIdx != m_currentConnection.row())
+	{
+		emit activeConnectionChanged(m_currentConnection);
+		emit activeConnectionChanged(m_currentConnection.row());
+	}
+}
 
 int toConnectionRegistry::rowCount(const QModelIndex &) const
 {
@@ -87,8 +94,10 @@ void toConnectionRegistry::addConnection(toConnection *conn)
 	beginInsertRows(QModelIndex(), m_ConnectionsList.size(), m_ConnectionsList.size());
 	m_ConnectionsMap.insert(conn->connectionOptions(), conn);
 	m_ConnectionsList.append(conn);
-	m_currentConnection = index(m_ConnectionsList.size()-1, 0);
+	m_currentConnection = index(m_ConnectionsList.size()-1);
 	endInsertRows();
+	emit activeConnectionChanged(m_currentConnection);
+	emit activeConnectionChanged(m_currentConnection.row());
 }
 
 void toConnectionRegistry::removeConnection(toConnection *conn)
@@ -113,8 +122,10 @@ void toConnectionRegistry::removeConnection(toConnection *conn)
 	beginRemoveRows(QModelIndex(), pos, pos);
 	int mRemoved = m_ConnectionsMap.remove(conns.at(0));
 	m_ConnectionsList.removeAt(pos);
-	m_currentConnection = index(m_ConnectionsList.size()-1, 0);
+	m_currentConnection = index((std::min)(pos, m_ConnectionsList.size()-1));
 	endRemoveRows();
+	emit activeConnectionChanged(m_currentConnection);
+	emit activeConnectionChanged(m_currentConnection.row());
 }
 
 QVariant toConnectionRegistry::data(const QModelIndex &idx, int role) const
@@ -141,7 +152,7 @@ QVariant toConnectionRegistry::data(const QModelIndex &idx, int role) const
 
 toConnection& toConnectionRegistry::currentConnection()
 {
-	if (m_ConnectionsList.empty())
+	if (m_ConnectionsList.empty() || m_currentConnection.row() == -1)
 		throw tr("Can't find active connection");
 	return *m_ConnectionsList.at(m_currentConnection.row());
 }
@@ -155,18 +166,27 @@ toConnection& toConnectionRegistry::connection(const toConnectionOptions &opt)
 
 void toConnectionRegistry::slotViewIndexChanged(int idx)
 {
+	Q_ASSERT_X(idx < m_ConnectionsList.size(), qPrintable(__QHERE__), qPrintable(QString("Connection index out of range: %1").arg(idx)));
+
+	int oldIdx = m_currentConnection.row();
 	if (idx == -1)
 	{
 		m_currentConnection = QModelIndex();
-		return; // No connection
+		Q_ASSERT_X(m_ConnectionsMap.empty() && m_ConnectionsList.empty()
+				, qPrintable(__QHERE__)
+				, "Dangling connection found");
+	} else {
+		m_currentConnection = index(idx);
+		Q_ASSERT_X(m_ConnectionsMap.contains(data(m_currentConnection, Qt::UserRole).value<toConnectionOptions>())
+				, qPrintable(__QHERE__)
+				, "Can't find active connection");
 	}
-	Q_ASSERT_X(idx < m_ConnectionsList.size(), qPrintable(__QHERE__), qPrintable(QString("Connection index out of range: %1").arg(idx)));
-	QModelIndex i = index(idx, 0);
-	QVariant val = data(i, Qt::UserRole);
-	if (m_ConnectionsMap.contains(val.value<toConnectionOptions>()))
-		m_currentConnection = i;
-	else
-		throw tr("Can't find active connection");
+
+	if (oldIdx != idx)
+	{
+		emit activeConnectionChanged(m_currentConnection);
+		emit activeConnectionChanged(m_currentConnection.row());
+	}
 }
 
 QList<toConnection*> const& toConnectionRegistry::connections(void) const

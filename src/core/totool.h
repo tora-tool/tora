@@ -205,7 +205,7 @@ public:
     /**
      * Enable/disable tool's QAction if tool can support conn.
      */
-    void enableAction(toConnection &conn);
+    void enableAction(toConnection const& conn);
 
     /**
      * Set action visibility if tool can support toConnection

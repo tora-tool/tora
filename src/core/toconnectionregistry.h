@@ -63,9 +63,8 @@ public:
 
     /** Change current connection
      */
-	// TODO - duno how to implement this
 	// see void toChangeConnection::changeConnection(QAction *act)
-	//void changeConnection(const toConnectionOptions &);
+	void changeConnection(toConnection &);
 
     /**
      * Get a list of currently open connections.
@@ -95,6 +94,7 @@ public:
 
 signals:
     void activeConnectionChanged(QModelIndex);
+    void activeConnectionChanged(int);
 
 private slots:
     void slotViewIndexChanged(int);

@@ -96,6 +96,8 @@ void toConnectionWidget::setConnection(toConnection &conn)
     Connection = &conn;               // 1st change "registration" to toConnection
 	oldConnection->delWidget(Widget); // then notify old connection about the change
     Connection->addWidget(Widget);
+    if (toConfigurationSingle::Instance().changeConnection())
+    	toConnectionRegistrySing::Instance().changeConnection(conn);
 }
 
 toConnectionWidget::~toConnectionWidget()
@@ -404,7 +406,7 @@ void toTool::enableAction(bool en)
     getAction()->setEnabled(en);
 }
 
-void toTool::enableAction(toConnection &conn)
+void toTool::enableAction(toConnection const& conn)
 {
     enableAction(canHandle(conn));
 }
