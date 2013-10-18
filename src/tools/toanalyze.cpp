@@ -625,21 +625,21 @@ void toAnalyze::slotStop(void)
     Pending.clear();
     Stop->setEnabled(false);
     Current->setText(QString::null);
-    if (!connection().needCommit())
-    {
-        try
-        {
-            try
-            {
-                connection().rollback();
-            }
-            catch (...)
-            {
-                TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
-            }
-        }
-        catch (...) { }
-    }
+    //    if (!connection().needCommit())
+    //    {
+    //        try
+    //        {
+    //            try
+    //            {
+    //                connection().rollback();
+    //            }
+    //            catch (...)
+    //            {
+    //                TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
+    //            }
+    //        }
+    //        catch (...) { }
+    //    }
 } // stop
 
 void toAnalyze::slotRefresh(void)

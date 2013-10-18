@@ -561,21 +561,6 @@ void toWorksheet::setup(bool autoLoad)
     connect(&Poll, SIGNAL(timeout()), this, SLOT(slotPoll()));
     connect(this, SIGNAL(connectionChange()), this, SLOT(slotChangeConnection()));
 
-    connect(&toGlobalEventSingle::Instance(),
-            SIGNAL(s_commitRequested(toConnection &)),
-            this,
-            SLOT(slotCommitChanges(toConnection &)));
-
-    connect(&toGlobalEventSingle::Instance(),
-            SIGNAL(s_rollbackRequested(toConnection &)),
-            this,
-            SLOT(slotRollbackChanges(toConnection &)));
-
-    connect(&toGlobalEventSingle::Instance(),
-            SIGNAL(s_stopRequested(toConnection &)),
-            this,
-            SLOT(slotStop()));
-
     ///setFocusProxy(Editor);
 
     // don't show results yet
@@ -1368,22 +1353,6 @@ void toWorksheet::slotUnhideResults()
     // move splitter if currently hidden
     if (EditSplitter->sizes()[1] == 0)
         EditSplitter->setSizes(EditSplitterSizes);
-}
-
-void toWorksheet::slotCommitChanges(toConnection &conn)
-{
-	if( &this->connection() != &conn)
-		return;
-
-	conn.commit();
-}
-
-void toWorksheet::slotRollbackChanges(toConnection &conn)
-{
-	if( &this->connection() != &conn)
-		return;
-
-	conn.rollback();
 }
 
 void toWorksheet::slotExecute()

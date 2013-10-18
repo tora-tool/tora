@@ -974,34 +974,32 @@ void toMain::setNeedCommit(toToolWidget *tool, bool needCommit)
 
     commitAct->setEnabled(needCommit);
     rollbackAct->setEnabled(needCommit);
-
-    conn.setNeedCommit(needCommit);
 }
 
 bool toMain::delCurrentConnection(void)
 {
     toConnection &conn = Connections.currentConnection();
-    if (conn.needCommit())
-    {
-    	QString str = tr("Commit work in session to %1 before "
-    			"closing it?").arg(conn.description());
-    	switch (TOMessageBox::warning(this,
-    			tr("Commit work?"),
-    			str,
-    			tr("&Yes"),
-    			tr("&No"),
-    			tr("Cancel")))
-    	{
-    	case 0:
-    		conn.commit();
-    		break;
-    	case 1:
-    		conn.rollback();
-    		break;
-    	case 2:
-    		return false;
-    	}
-    }
+    //    if (conn.needCommit())
+    //    {
+    //    	QString str = tr("Commit work in session to %1 before "
+    //    			"closing it?").arg(conn.description());
+    //    	switch (TOMessageBox::warning(this,
+    //    			tr("Commit work?"),
+    //    			str,
+    //    			tr("&Yes"),
+    //    			tr("&No"),
+    //    			tr("Cancel")))
+    //    	{
+    //    	case 0:
+    //    		conn.commit();
+    //    		break;
+    //    	case 1:
+    //    		conn.rollback();
+    //    		break;
+    //    	case 2:
+    //    		return false;
+    //    	}
+    //    }
 
     if (!conn.closeWidgets())
     	return false;

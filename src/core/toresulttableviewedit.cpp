@@ -568,22 +568,23 @@ bool toResultTableViewEdit::commitChanges(bool status)
     }
     else
     {
-        try
-        {
-            Model->commitChanges(conn, updated, added, deleted);
-            if (toConfigurationSingle::Instance().autoCommit())
-                conn.commit();
-            else
-            {
-    			throw QString("Not implemented yet. %1").arg(__QHERE__);
-            	///toGlobalEventSingle::Instance().setNeedCommit(conn);
-            }
-        }
-        catch(...)
-        {
-            conn.rollback();
-            throw;
-        }
+		throw QString("Not implemented yet. %1").arg(__QHERE__);
+		//        try
+		//        {
+		//            Model->commitChanges(conn, updated, added, deleted);
+		//            if (toConfigurationSingle::Instance().autoCommit())
+		//                conn.commit();
+		//            else
+		//            {
+		//    			throw QString("Not implemented yet. %1").arg(__QHERE__);
+		//            	///toGlobalEventSingle::Instance().setNeedCommit(conn);
+		//            }
+		//        }
+		//        catch(...)
+		//        {
+		//            conn.rollback();
+		//            throw;
+		//        }
     }
 
     Utils::toStatusMessage(tr("Saved %1 changes(updated %2, added %3, deleted %4)")

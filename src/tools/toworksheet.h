@@ -176,9 +176,6 @@ private slots:
     void slotUnhideResults(const QString &, const toConnection::exception &, bool);
     void slotUnhideResults(void);
 
-    void slotCommitChanges(toConnection &);
-    void slotRollbackChanges(toConnection &);
-
 private:
 
     class BatchExecException : public std::exception

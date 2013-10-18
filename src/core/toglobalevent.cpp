@@ -107,18 +107,3 @@ void toGlobalEvent::setNeedCommit(toToolWidget *tool, bool needCommit)
 {
 	emit s_setNeedCommit(tool, needCommit);
 }
-
-void toGlobalEvent::commitRequested(toConnection &conn)
-{
-	emit s_commitRequested(conn);
-}
-
-void toGlobalEvent::rollbackRequested(toConnection &conn)
-{
-	emit s_rollbackRequested(conn);
-}
-
-void toGlobalEvent::stopRequested(toConnection &conn)
-{
-	emit s_stopRequested(conn);
-}

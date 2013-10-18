@@ -71,7 +71,6 @@ toConnection::toConnection(const QString &provider,
     , pConnectionImpl(NULL)
     , pCache(NULL)
     , pTrait(NULL)
-    , NeedCommit(false)
     , Abort(false)
     , LoanCnt(0)
 	, ConnectionOptions(provider, host, database, user, password, schema, color , 0, options)
@@ -107,7 +106,6 @@ toConnection::toConnection(const toConnectionOptions &opts)
     , pConnectionImpl(NULL)
     , pCache(NULL)
     , pTrait(NULL)
-    , NeedCommit(false)
     , Abort(false)
     , LoanCnt(0)
 	, ConnectionOptions(opts)
@@ -145,7 +143,6 @@ toConnection::toConnection(const toConnection &other)
     , pConnectionImpl(NULL)
     , pCache(NULL)
     , pTrait(other.pTrait)
-    , NeedCommit(other.NeedCommit)
     , Abort(other.Abort)
     , LoanCnt(0)
 	, ConnectionOptions(other.ConnectionOptions)
@@ -267,26 +264,12 @@ void toConnection::commit(void)
     {
     	conn->commit();
     }
-    setNeedCommit(false);
 }
 
 void toConnection::rollback(toConnectionSub *sub)
 {
     Utils::toBusy busy;
     sub->rollback();
-}
-
-void toConnection::rollback(void)
-{
-    QMutexLocker clock(&ConnectionLock);
-    if((int)LoanCnt)
-    	throw qApp->translate("toConnection::commit", "Couldn't commit, while connection is active");
-
-    Q_FOREACH(toConnectionSub *conn, Connections)
-    {
-    	conn->rollback();
-    }
-    setNeedCommit(false);
 }
 
 void toConnection::delWidget(QWidget *widget)

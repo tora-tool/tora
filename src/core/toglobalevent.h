@@ -131,10 +131,6 @@ public:
      */
     void setNeedCommit(toToolWidget *tool, bool needCommit = true);
 
-    void commitRequested(toConnection &conn);
-    void rollbackRequested(toConnection &conn);
-    void stopRequested(toConnection &conn);
-
 signals:
 	void s_checkCaching(void);
     void s_editOpenFile(const QString &filename);
@@ -148,10 +144,6 @@ signals:
     void s_showMessage(QString str, bool save, bool log);
     void s_addConnection(toConnection *conn, bool def);
     void s_setNeedCommit(toToolWidget *tool, bool needCommit);
-
-    void s_commitRequested(toConnection &conn);
-    void s_rollbackRequested(toConnection &conn);
-    void s_stopRequested(toConnection &conn);
 };
 
 typedef Loki::SingletonHolder<toGlobalEvent> toGlobalEventSingle;

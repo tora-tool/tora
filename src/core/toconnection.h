@@ -188,15 +188,6 @@ public:
     /** Get a list of the current init strings. */
     QList<QString> initStrings() const;
 
-    /**
-     * Get information about if the connection has uncommitted data.
-     * @return Whether uncommitted data is available.
-     */
-    inline bool needCommit(void) const
-    {
-        return NeedCommit;
-    }
-
     /** Get a list of currently running SQLs */
     QList<QString> running(void) const;
 
@@ -238,12 +229,6 @@ public:
         Color = color;
     }
 
-    /** Set if this connection needs to be committed. */
-    void setNeedCommit(bool needCommit = true)
-    {
-        NeedCommit = needCommit;
-    }
-
     // ACTIONS
     /** Execute a statement without caring about the result.
      * @param sql SQL to execute
@@ -260,9 +245,6 @@ public:
 
     /** Rollback connection implementation */
     void rollback(toConnectionSub *rollback);
-
-    /** Rollback all connections. */
-    void rollback(void);
 
     /** Try to close all the widgets associated with this connection.
      * @return True if all widgets agreed to close.
@@ -417,10 +399,7 @@ private:
     toConnectionOptions ConnectionOptions;
     toCache *pCache;
     QAtomicInt LoanCnt;
-
     QSet<QAction*> ConnectionActions;
-
-    bool NeedCommit;
 }; // toConnection
 
 Q_DECLARE_METATYPE(toConnection::exception);
