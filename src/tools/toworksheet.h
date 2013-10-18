@@ -211,6 +211,7 @@ private:
     void queryStarted(const toSyntaxAnalyzer::statement &stat);
     void lockConnection();
     void unlockConnection();
+    bool checkUnlockConnection();
 
     toWorksheetEditor *Editor;
     toTabWidget       *ResultTab;

@@ -790,13 +790,16 @@ bool toWorksheet::slotClose()
         Statistics = NULL;
     }
 
-    if (checkSave())
-    {
-        Result->slotStop();
-        return toToolWidget::close();
-    }
+    if (!checkSave())
+    	return false;
 
-    return false;
+	Result->slotStop();
+    unlockConnection();
+    if (!LockedConnection)
+    {
+    	return toToolWidget::close();
+    } else
+    	return false;
 }
 
 void toWorksheet::closeEvent(QCloseEvent *event)
@@ -2163,33 +2166,13 @@ void toWorksheet::lockConnection()
 
 void toWorksheet::unlockConnection()
 {
-	try
+	if (!checkUnlockConnection())
 	{
-		if (this->hasTransaction())
-		{
-			QString str = tr("Commit work in session?");
-			switch (TOMessageBox::warning(this,
-					tr("Commit work?"),
-					str,
-					tr("&Commit"),
-					tr("&Rollback"),
-					tr("Cancel")))
-			{
-			case 0:
-				(*LockedConnection)->commit();
-				break;
-			case 1:
-				(*LockedConnection)->rollback();
-				break;
-			case 2:
-				bool oldVal = lockConnectionAct->blockSignals(true);
-				lockConnectionAct->setChecked(true);
-				lockConnectionAct->blockSignals(oldVal);
-				return;
-			}
-		}
+		bool oldVal = lockConnectionAct->blockSignals(true);
+		lockConnectionAct->setChecked(true);
+		lockConnectionAct->blockSignals(oldVal);
+		return;
 	}
-	TOCATCH
 
 	this->LockedConnection.clear();
 	lockConnectionActClicked = false;
@@ -2199,6 +2182,35 @@ void toWorksheet::unlockConnection()
 	lockConnectionAct->blockSignals(oldVal);
 
 	toGlobalEventSingle::Instance().setNeedCommit(this, false);
+}
+
+bool toWorksheet::checkUnlockConnection()
+{
+	try
+	{
+		if (!this->hasTransaction())
+			return true;
+
+		QString str = tr("Commit work in session?");
+		switch (TOMessageBox::warning(this,
+				tr("Commit work?"),
+				str,
+				tr("&Commit"),
+				tr("&Rollback"),
+				tr("Cancel")))
+		{
+		case 0:
+			(*LockedConnection)->commit();
+			return true;
+		case 1:
+			(*LockedConnection)->rollback();
+			return true;
+		case 2:
+			return false;
+		}
+	}
+	TOCATCH
+	return false;
 }
 
 void toWorksheet::addLog(const QString &result)
