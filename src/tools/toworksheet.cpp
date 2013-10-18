@@ -824,6 +824,26 @@ bool toWorksheet::hasTransaction() const
 	return false;
 }
 
+void toWorksheet::commitChanges()
+{
+	Q_ASSERT_X(LockedConnection, qPrintable(__QHERE__), "No connection for commit");
+	(*LockedConnection)->commit();
+	if (!lockConnectionActClicked)
+		unlockConnection();
+	else
+		toGlobalEventSingle::Instance().setNeedCommit(this, this->hasTransaction());
+}
+
+void toWorksheet::rollbackChanges()
+{
+	Q_ASSERT_X(LockedConnection, qPrintable(__QHERE__), "No connection for rollback");
+	(*LockedConnection)->commit();
+	if (!lockConnectionActClicked)
+		unlockConnection();
+	else
+		toGlobalEventSingle::Instance().setNeedCommit(this, this->hasTransaction());
+}
+
 toHighlightedEditor* toWorksheet::editor(void)
 {
     return Editor;

@@ -90,8 +90,6 @@ public:
 
     toHighlightedEditor *editor(void);
 
-    bool describe(toSyntaxAnalyzer::statement const&);
-
     virtual bool canHandle(const toConnection &);
 
 #ifdef TORA3_GRAPH
@@ -101,6 +99,8 @@ public:
 
     static toToolWidget* fileWorksheet(const QString &file);
 
+    void commitChanges();
+    void rollbackChanges();
 
     enum execTypeEnum
     {
@@ -181,6 +181,8 @@ private:
     class BatchExecException : public std::exception
     {
     };
+
+    bool describe(toSyntaxAnalyzer::statement const&);
 
     toSyntaxAnalyzer::statement currentStatement() const;
 

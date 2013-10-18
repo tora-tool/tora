@@ -836,10 +836,9 @@ void toMain::commandCallback(QAction *action)
     {
         try
         {
-        	throw QString("Not implemented yet. %1").arg(__QHERE__);
-//            toConnection &conn = toConnectionRegistrySing::Instance().currentConnection();
-//            toGlobalEventSingle::Instance().commitRequested(conn);
-//            setNeedCommit(conn, false);
+        	toWorksheet *w = dynamic_cast<toWorksheet*>(lastToolWidget);
+        	Q_ASSERT_X(w, qPrintable(__QHERE__), "Commit on wrong tool");
+        	w->commitChanges();
         }
         TOCATCH;
     }
@@ -847,10 +846,9 @@ void toMain::commandCallback(QAction *action)
     {
         try
         {
-        	throw QString("Not implemented yet. %1").arg(__QHERE__);
-//            toConnection &conn = toConnectionRegistrySing::Instance().currentConnection();
-//            toGlobalEventSingle::Instance().rollbackRequested(conn);
-//            setNeedCommit(conn, false);
+        	toWorksheet *w = dynamic_cast<toWorksheet*>(lastToolWidget);
+        	Q_ASSERT_X(w, qPrintable(__QHERE__), "Rollback on wrong tool");
+        	w->rollbackChanges();
         }
         TOCATCH;
     }
