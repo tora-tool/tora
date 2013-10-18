@@ -423,6 +423,7 @@ protected:
 private slots:
     void parentConnection(void);
     virtual void slotWindowActivated(toToolWidget*) = 0;
+    void toolActivated(toToolWidget*);
 private:
     toTimer *Timer;
     toTool &Tool;

@@ -141,8 +141,8 @@ toToolWidget::toToolWidget(toTool &tool, const QString &ctx, QWidget *parent, to
 
     Timer = NULL;
 
-    toWorkSpace &ws = toWorkSpaceSingle::Instance();
-    connect(&ws, SIGNAL(activeToolChaged(toToolWidget*)), this, SLOT(slotWindowActivated(toToolWidget*)));
+    connect(&toWorkSpaceSingle::Instance(), SIGNAL(activeToolChaged(toToolWidget*)), this, SLOT(slotWindowActivated(toToolWidget*)));
+    connect(&toWorkSpaceSingle::Instance(), SIGNAL(activeToolChaged(toToolWidget*)), this, SLOT(toolActivated(toToolWidget*)));
 
     if (parent)
     {
@@ -309,6 +309,12 @@ void toToolWidget::setVisible(bool visible)
 	QWidget::setVisible(visible);
 }
 #endif
+
+void toToolWidget::toolActivated(toToolWidget *tool)
+{
+	if (tool == this && toConfigurationSingle::Instance().changeConnection())
+		toConnectionRegistrySing::Instance().changeConnection(connection());
+}
 
 toToolWidget* toToolWidget::currentTool(QObject *cur)
 {
