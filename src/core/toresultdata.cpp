@@ -229,7 +229,7 @@ void toResultData::query(const QString &, toQueryParams const& params)
         SQL += Order[FilterName];
     }
 
-    Edit->query(SQL, toQueryParams());
+    Edit->query(SQL, toQueryParams() << Owner << Table);
 }
 
 void toResultData::clearData()
