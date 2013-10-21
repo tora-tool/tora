@@ -555,6 +555,13 @@ void toOracleFinder::load(ConnectionProvirerParams const &params)
 
 void toOracleFinder::loadLib(ConnectionProvirerParams const &params)
 {
+#ifdef Q_OS_LINUX
+    QDir toraHome(QDir::homePath() + QDir::separator() + QChar('.') + QString::fromAscii(TOAPPNAME));
+    QString providerPath(toraHome.absolutePath() + QDir::separator() + QString::fromAscii("poracle"));
+    if( !QDir::setCurrent(providerPath))
+	    throw QString("Could change cwd: %1").arg(toraHome.absolutePath());
+#endif
+
     QFileInfo libPath(params.value("LIBPATH").toString());
     TLOG(5, toNoDecorator, __HERE__) << "Loading:" << libPath.absoluteFilePath() << std::endl;
     Utils::toLibrary::LHandle hmoduleOCI = Utils::toLibrary::loadLibrary(libPath);
@@ -572,6 +579,11 @@ void toOracleFinder::loadLib(ConnectionProvirerParams const &params)
     	TLOG(5, toNoDecorator, __HERE__) << "OK" << std::endl;
     else
     	TLOG(5, toNoDecorator, __HERE__) << "Failed" << std::endl;
+
+#ifdef Q_OS_LINUX
+    if( !QDir::setCurrent(toraHome.absolutePath()))
+    	throw QString("Could change cwd: %1").arg(toraHome.absolutePath());
+#endif
 }
 
 Util::RegisterInFactory<toOracleFinder, ConnectionProviderFinderFactory> regToOracleFind(ORACLE_TNSCLIENT);
