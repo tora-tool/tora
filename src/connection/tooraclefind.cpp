@@ -555,13 +555,7 @@ void toOracleFinder::load(ConnectionProvirerParams const &params)
 
 void toOracleFinder::loadLib(ConnectionProvirerParams const &params)
 {
-#ifdef Q_OS_LINUX
-    QDir toraHome(QDir::homePath() + QDir::separator() + QChar('.') + QString::fromAscii(TOAPPNAME));
-    QString providerPath(toraHome.absolutePath() + QDir::separator() + QString::fromAscii("poracle"));
-    if( !QDir::setCurrent(providerPath))
-	    throw QString("Could change cwd: %1").arg(toraHome.absolutePath());
-#endif
-
+#ifdef Q_OS_WIN32
     QFileInfo libPath(params.value("LIBPATH").toString());
     TLOG(5, toNoDecorator, __HERE__) << "Loading:" << libPath.absoluteFilePath() << std::endl;
     Utils::toLibrary::LHandle hmoduleOCI = Utils::toLibrary::loadLibrary(libPath);
@@ -574,15 +568,29 @@ void toOracleFinder::loadLib(ConnectionProvirerParams const &params)
         TLOG(5, toNoDecorator, __HERE__) << "OK" << std::endl;
 
     TLOG(5, toNoDecorator, __HERE__) << "Loading: " PROVIDER_LIB << std::endl;
-    Utils::toLibrary::LHandle hmodulePOracle = Utils::toLibrary::loadLibrary(QFileInfo(PROVIDER_LIB));
+    Utils::toLibrary::LHandle hmodulePOracle = Utils::toLibrary::loadLibrary(QFileInfo(QDir(PROVIDERS_PATH), PROVIDER_LIB));
     if ( hmodulePOracle)
     	TLOG(5, toNoDecorator, __HERE__) << "OK" << std::endl;
     else
     	TLOG(5, toNoDecorator, __HERE__) << "Failed" << std::endl;
+#else
+    QFileInfo libPath(params.value("LIBPATH").toString());
+    TLOG(5, toNoDecorator, __HERE__) << "Loading:" << libPath.absoluteFilePath() << std::endl;
+    Utils::toLibrary::LHandle hmoduleOCI = Utils::toLibrary::loadLibrary(libPath);
+    if ( hmoduleOCI)
+        TLOG(5, toNoDecorator, __HERE__) << "OK" << std::endl;
 
-#ifdef Q_OS_LINUX
-    if( !QDir::setCurrent(toraHome.absolutePath()))
-    	throw QString("Could change cwd: %1").arg(toraHome.absolutePath());
+    TLOG(5, toNoDecorator, __HERE__) << "Loading: " TROTL_LIB  << std::endl;
+    Utils::toLibrary::LHandle hmoduleTrotl = Utils::toLibrary::loadLibrary(QFileInfo(PROVIDERS_PATH "/../" TROTL_LIB));
+    if ( hmoduleTrotl)
+        TLOG(5, toNoDecorator, __HERE__) << "OK" << std::endl;
+
+    TLOG(5, toNoDecorator, __HERE__) << "Loading: " PROVIDER_LIB << std::endl;
+    Utils::toLibrary::LHandle hmodulePOracle = Utils::toLibrary::loadLibrary(QFileInfo(QDir(PROVIDERS_PATH), PROVIDER_LIB));
+    if ( hmodulePOracle)
+    	TLOG(5, toNoDecorator, __HERE__) << "OK" << std::endl;
+    else
+    	TLOG(5, toNoDecorator, __HERE__) << "Failed" << std::endl;
 #endif
 }
 
