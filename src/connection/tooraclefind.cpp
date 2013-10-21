@@ -434,6 +434,7 @@ public:
        Load connection providers library
     */
     virtual void load(ConnectionProvirerParams const&);
+    void loadLib(ConnectionProvirerParams const &params);
 };
 
 QList<toConnectionProviderFinder::ConnectionProvirerParams> toOracleFinder::find()
@@ -454,6 +455,21 @@ QList<toConnectionProviderFinder::ConnectionProvirerParams> toOracleFinder::find
     		continue;
     	TLOG(5, toNoDecorator, __HERE__) << "searching: " << dHome.absolutePath()  << std::endl;
     	possibleOracleHomes.insert(dHome.absolutePath());
+    }
+    while(false);
+
+    do
+    {
+    	QString sHome = qgetenv("ORACLE_HOME");
+        if( sHome.isEmpty())
+            continue;
+        QDir dHome(sHome);
+        if( !dHome.exists())
+            continue;
+        if( possibleOracleHomes.contains(dHome.absolutePath()))
+            continue;
+        TLOG(5, toNoDecorator, __HERE__) << "searching: " << dHome.absolutePath()  << std::endl;
+        possibleOracleHomes.insert(dHome.absolutePath());
     }
     while(false);
 
@@ -496,6 +512,36 @@ QList<toConnectionProviderFinder::ConnectionProvirerParams> toOracleFinder::find
     }
 #endif
 
+    foreach( QString s, possibleOracleHomes)
+    {
+    	QDir ohDir(s);
+    	QDir ohLibDir(s + QDir::separator() + QString::fromAscii("lib"));
+    	QStringList sLibraries = ohLibDir.entryList( m_libname);
+    	QString version;
+    	foreach( QString sLibrary, sLibraries)
+    	{
+    		QString sLibPath = QDir::toNativeSeparators(ohLibDir.canonicalPath()) + QDir::separator() + sLibrary;
+
+    		if(!Utils::toLibrary::isValidLibrary(sLibPath))
+    		{
+    			TLOG(5, toNoDecorator, __HERE__) << "skipping: " << sLibPath << std::endl;
+    			continue;
+    		}
+
+    		//version = clientVersion(sLibPath);
+    		TLOG(5, toNoDecorator, __HERE__) << "adding: " << sLibPath << ':' << version << std::endl;
+    		ohome.insert("PATH", QDir::toNativeSeparators(ohDir.canonicalPath()));
+    		ohome.insert("ORACLE_HOME", QDir::toNativeSeparators(ohDir.canonicalPath()));
+    		ohome.insert("LIBPATH", sLibPath);
+    		ohome.insert("VERSION", version);
+    		ohome.insert("KEY", name());
+    		ohome.insert("IS INSTANT", false);
+    		ohome.insert("PROVIDER", ORACLE_PROVIDER);
+    		retval.append(ohome);
+    		ohome.clear();
+    	}
+    }
+
     return retval;
 }
 
@@ -505,6 +551,27 @@ void toOracleFinder::load(ConnectionProvirerParams const &params)
     setEnv(params);
     loadLib(params);
     m_OCILoaded = true;
+}
+
+void toOracleFinder::loadLib(ConnectionProvirerParams const &params)
+{
+    QFileInfo libPath(params.value("LIBPATH").toString());
+    TLOG(5, toNoDecorator, __HERE__) << "Loading:" << libPath.absoluteFilePath() << std::endl;
+    Utils::toLibrary::LHandle hmoduleOCI = Utils::toLibrary::loadLibrary(libPath);
+    if ( hmoduleOCI)
+        TLOG(5, toNoDecorator, __HERE__) << "OK" << std::endl;
+
+    TLOG(5, toNoDecorator, __HERE__) << "Loading: " TROTL_LIB  << std::endl;
+    Utils::toLibrary::LHandle hmoduleTrotl = Utils::toLibrary::loadLibrary(QFileInfo(TROTL_LIB));
+    if ( hmoduleTrotl)
+        TLOG(5, toNoDecorator, __HERE__) << "OK" << std::endl;
+
+    TLOG(5, toNoDecorator, __HERE__) << "Loading: " PROVIDER_LIB << std::endl;
+    Utils::toLibrary::LHandle hmodulePOracle = Utils::toLibrary::loadLibrary(QFileInfo(PROVIDER_LIB));
+    if ( hmodulePOracle)
+    	TLOG(5, toNoDecorator, __HERE__) << "OK" << std::endl;
+    else
+    	TLOG(5, toNoDecorator, __HERE__) << "Failed" << std::endl;
 }
 
 Util::RegisterInFactory<toOracleFinder, ConnectionProviderFinderFactory> regToOracleFind(ORACLE_TNSCLIENT);
