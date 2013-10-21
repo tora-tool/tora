@@ -1,19 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <!-- Product name as you want it to appear in Add/Remove Programs-->
+  <?define Platform = x64 ?>
+  <?if $(var.Platform) = x64 ?>
+  <?define ProductName = "Tora (64 bit)" ?>
+  <?define Win64 = "yes" ?>
+  <?define PlatformProgramFilesFolder = "ProgramFiles64Folder" ?>
+  <?else ?>
+  <?define ProductName = "Tora" ?>
+  <?define Win64 = "no" ?>
+  <?define PlatformProgramFilesFolder = "ProgramFilesFolder" ?>
+  <?endif ?>
   <?define ProductVersion="2.9.9.4" ?>
   <?define UpgradeCode="BAAA2F25-E626-4CC5-BC37-86477A2409AC"?>
   <Product Id="8D1E5566-5E9D-4915-947F-E2F7EFCE0E66" 
-	   Name="Tora" Language="1033" 
+	   Name="$(var.ProductName)" Language="1033" 
 	   Version="$(var.ProductVersion)"
 	   Manufacturer="TOra" 
 	   UpgradeCode="$(var.UpgradeCode)">
-    <Package Description="Test file in a Product" Comments="Tora tool for Oracle" InstallerVersion="200" Compressed="yes" />
+    <Package Description="$(var.ProductName)"
+	     Comments="Tora tool for Oracle" 
+	     InstallScope="perMachine" 
+	     Platform="$(var.Platform)"
+	     InstallerVersion="200" Compressed="yes" />
     <Media Id="1" Cabinet="Tora.cab" EmbedCab="yes" />
     <Icon Id="tora.ico" SourceFile="..\tora.ico" />
     <Property Id="ARPPRODUCTICON" Value="tora.ico" />
     <Property Id="ARPHELPLINK" Value="http://torasql.com" />
     <Property Id="ARPURLINFOABOUT" Value="http://torasql.com" />
     <Property Id="ARPNOREPAIR" Value="1" />
+    <Property Id="INSTALLLOCATION">
+      <RegistrySearch Id="RegistrySearch" Type="raw" Root="HKLM" Win64="$(var.Win64)"
+		      Key="Software\TOra\TOra" Name="InstallLocation" />
+    </Property>
     
     <WixVariable Id="WixUIBannerBmp" Value="largelogo.bmp" />
 
@@ -25,44 +44,44 @@
 	  Property="PREVIOUSFOUND" />
     </Upgrade>
     <!--
-    <Condition Message="A newer version of this software is already installed.">
-      NOT NEWERVERSIONDETECTED
-    </Condition>
+	<Condition Message="A newer version of this software is already installed.">
+	NOT NEWERVERSIONDETECTED
+	</Condition>
     -->
 
     <Directory Id="TARGETDIR" Name="SourceDir">
-      <Directory Id="ProgramFilesFolder">
+      <Directory Id="ProgramFiles64Folder">
 	<Directory Id="INSTALLDIR" Name="Tora">
-	  <Component Id="PORACLE.DLL" DiskId="1" Guid="D864C985-6F7C-44ED-9417-3E4C274E351D">
-	    <File Id="PORACLE.DLL" Name="poracle.dll" Source="..\..\RelWithDebInfo\poracle.dll" />
+	  <Component Id="PORACLE.DLL" DiskId="1" Win64="$(var.Win64)" Guid="D864C985-6F7C-44ED-9417-3E4C274E351D">
+	    <File Id="PORACLE.DLL" Name="poracle.dll" Source="..\..\Release\poracle.dll" />
 	  </Component>
-	  <Component Id="QTCORE4.DLL" DiskId="1" Guid="A06ADCBB-EFAD-4DBA-9BC9-B871CE8B728C">
-	    <File Id="QTCORE4.DLL" Name="QtCore4.dll" Source="..\..\RelWithDebInfo\QtCore4.dll" />
+	  <Component Id="QTCORE4.DLL" DiskId="1" Win64="$(var.Win64)" Guid="A06ADCBB-EFAD-4DBA-9BC9-B871CE8B728C">
+	    <File Id="QTCORE4.DLL" Name="QtCore4.dll" Source="..\..\Release\QtCore4.dll" />
 	  </Component>
-	  <Component Id="QTGUI4.DLL" DiskId="1" Guid="B0A31CA7-A416-4265-982B-E626C187C06E">
-	    <File Id="QTGUI4.DLL" Name="QtGui4.dll" Source="..\..\RelWithDebInfo\QtGui4.dll" />
+	  <Component Id="QTGUI4.DLL" DiskId="1" Win64="$(var.Win64)" Guid="B0A31CA7-A416-4265-982B-E626C187C06E">
+	    <File Id="QTGUI4.DLL" Name="QtGui4.dll" Source="..\..\Release\QtGui4.dll" />
 	  </Component>
-	  <Component Id="QTNETWORK4.DLL" DiskId="1" Guid="57BF565A-7EFC-4C7D-B282-5F98B969650E">
-	    <File Id="QTNETWORK4.DLL" Name="QtNetwork4.dll" Source="..\..\RelWithDebInfo\QtNetwork4.dll" />
+	  <Component Id="QTNETWORK4.DLL" DiskId="1" Win64="$(var.Win64)" Guid="57BF565A-7EFC-4C7D-B282-5F98B969650E">
+	    <File Id="QTNETWORK4.DLL" Name="QtNetwork4.dll" Source="..\..\Release\QtNetwork4.dll" />
 	  </Component>
-	  <Component Id="QTSQL4.DLL" DiskId="1" Guid="CB86B8BB-39B6-4747-B969-9FA1D5688FCD">
-	    <File Id="QTSQL4.DLL" Name="QtSql4.dll" Source="..\..\RelWithDebInfo\QtSql4.dll" />
+	  <Component Id="QTSQL4.DLL" DiskId="1" Win64="$(var.Win64)" Guid="CB86B8BB-39B6-4747-B969-9FA1D5688FCD">
+	    <File Id="QTSQL4.DLL" Name="QtSql4.dll" Source="..\..\Release\QtSql4.dll" />
 	  </Component>
-	  <Component Id="QTXML4.DLL" DiskId="1" Guid="F158986A-1C1B-4956-A376-FB000310FAB7">
-	    <File Id="QTXML4.DLL" Name="QtXml4.dll" Source="..\..\RelWithDebInfo\QtXml4.dll" />
+	  <Component Id="QTXML4.DLL" DiskId="1" Win64="$(var.Win64)" Guid="F158986A-1C1B-4956-A376-FB000310FAB7">
+	    <File Id="QTXML4.DLL" Name="QtXml4.dll" Source="..\..\Release\QtXml4.dll" />
 	  </Component>
-	  <Component Id="TORA.EXE" DiskId="1" Guid="DB3855D1-FD03-4AAE-A220-D81071E3635B">
-	    <File Id="TORA.EXE" Name="tora.exe" Source="..\..\RelWithDebInfo\tora.exe" />
+	  <Component Id="TORA.EXE" DiskId="1" Win64="$(var.Win64)" Guid="DB3855D1-FD03-4AAE-A220-D81071E3635B">
+	    <File Id="TORA.EXE" Name="tora.exe" Source="..\..\Release\tora.exe" />
 	  </Component>
-	  <Component Id="TROTL.DLL" DiskId="1" Guid="3D149B9C-D59C-4B68-979D-BE132671F00D">
-	    <File Id="TROTL.DLL" Name="trotl.dll" Source="..\..\RelWithDebInfo\trotl.dll" />
+	  <Component Id="TROTL.DLL" DiskId="1" Win64="$(var.Win64)" Guid="3D149B9C-D59C-4B68-979D-BE132671F00D">
+	    <File Id="TROTL.DLL" Name="trotl.dll" Source="..\..\Release\trotl.dll" />
 	  </Component>
 	  <Directory Id="PLUGINS" Name="plugins">
-	    <Component Id="QSQLMYSQL4.DLL" DiskId="1" Guid="7FEC6332-E4CC-4F2F-B2C0-29A2744AFD7D">
-	      <File Id="QSQLMYSQL4.DLL" Name="qsqlmysql4.dll" Source="..\..\RelWithDebInfo\plugins\qsqlmysql4.dll" />
+	    <Component Id="QSQLMYSQL4.DLL" Win64="$(var.Win64)" DiskId="1" Guid="7FEC6332-E4CC-4F2F-B2C0-29A2744AFD7D">
+	      <File Id="QSQLMYSQL4.DLL" Name="qsqlmysql4.dll" Source="..\..\Release\plugins\qsqlmysql4.dll" />
 	    </Component>
-	    <Component Id="QSQLODBC4.DLL" DiskId="1" Guid="1BB8D019-7313-4159-BB55-8810F25A7C48">
-	      <File Id="QSQLODBC4.DLL" Name="qsqlodbc4.dll" Source="..\..\RelWithDebInfo\plugins\qsqlodbc4.dll" />
+	    <Component Id="QSQLODBC4.DLL" Win64="$(var.Win64)" DiskId="1" Guid="1BB8D019-7313-4159-BB55-8810F25A7C48">
+	      <File Id="QSQLODBC4.DLL" Name="qsqlodbc4.dll" Source="..\..\Release\plugins\qsqlodbc4.dll" />
 	    </Component>
 	  </Directory>
 	</Directory>
@@ -120,82 +139,82 @@
     <UIRef Id="MyWixUI_InstallDir" />
   </Product>
 
-    <Fragment>
-        <UI Id="MyWixUI_InstallDir">
-            <TextStyle Id="WixUI_Font_Normal" FaceName="Tahoma" Size="8" />
-            <TextStyle Id="WixUI_Font_Bigger" FaceName="Tahoma" Size="12" />
-            <TextStyle Id="WixUI_Font_Title" FaceName="Tahoma" Size="9" Bold="yes" />
+  <Fragment>
+    <UI Id="MyWixUI_InstallDir">
+      <TextStyle Id="WixUI_Font_Normal" FaceName="Tahoma" Size="8" />
+      <TextStyle Id="WixUI_Font_Bigger" FaceName="Tahoma" Size="12" />
+      <TextStyle Id="WixUI_Font_Title" FaceName="Tahoma" Size="9" Bold="yes" />
 
-            <Property Id="DefaultUIFont" Value="WixUI_Font_Normal" />
-            <Property Id="WixUI_Mode" Value="InstallDir" />
+      <Property Id="DefaultUIFont" Value="WixUI_Font_Normal" />
+      <Property Id="WixUI_Mode" Value="InstallDir" />
 
-            <DialogRef Id="BrowseDlg" />
-            <DialogRef Id="DiskCostDlg" />
-            <DialogRef Id="ErrorDlg" />
-            <DialogRef Id="FatalError" />
-            <DialogRef Id="FilesInUse" />
-            <DialogRef Id="MsiRMFilesInUse" />
-            <DialogRef Id="PrepareDlg" />
-            <DialogRef Id="ProgressDlg" />
-            <DialogRef Id="ResumeDlg" />
-            <DialogRef Id="UserExit" />
-            
-            <Publish Dialog="BrowseDlg" Control="OK" Event="DoAction" Value="WixUIValidatePath" Order="3">1</Publish>
-            <Publish Dialog="BrowseDlg" Control="OK" Event="SpawnDialog" Value="InvalidDirDlg" Order="4"><![CDATA[WIXUI_INSTALLDIR_VALID<>"1"]]></Publish>
+      <DialogRef Id="BrowseDlg" />
+      <DialogRef Id="DiskCostDlg" />
+      <DialogRef Id="ErrorDlg" />
+      <DialogRef Id="FatalError" />
+      <DialogRef Id="FilesInUse" />
+      <DialogRef Id="MsiRMFilesInUse" />
+      <DialogRef Id="PrepareDlg" />
+      <DialogRef Id="ProgressDlg" />
+      <DialogRef Id="ResumeDlg" />
+      <DialogRef Id="UserExit" />
+      
+      <Publish Dialog="BrowseDlg" Control="OK" Event="DoAction" Value="WixUIValidatePath" Order="3">1</Publish>
+      <Publish Dialog="BrowseDlg" Control="OK" Event="SpawnDialog" Value="InvalidDirDlg" Order="4"><![CDATA[WIXUI_INSTALLDIR_VALID<>"1"]]></Publish>
 
-            <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
+      <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
 
-            <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="MyInstallDirDlg">NOT Installed</Publish>
-            <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg">Installed AND PATCH</Publish>
+      <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="MyInstallDirDlg">NOT Installed</Publish>
+      <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg">Installed AND PATCH</Publish>
 
-            <Publish Dialog="MyInstallDirDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
-            <Publish Dialog="MyInstallDirDlg" Control="Next" Event="SetTargetPath" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
-            <Publish Dialog="MyInstallDirDlg" Control="Next" Event="DoAction" Value="WixUIValidatePath" Order="2">NOT WIXUI_DONTVALIDATEPATH</Publish>
-            <Publish Dialog="MyInstallDirDlg" Control="Next" Event="SpawnDialog" Value="InvalidDirDlg" Order="3"><![CDATA[NOT WIXUI_DONTVALIDATEPATH AND WIXUI_INSTALLDIR_VALID<>"1"]]></Publish>
-            <Publish Dialog="MyInstallDirDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg" Order="4">WIXUI_DONTVALIDATEPATH OR WIXUI_INSTALLDIR_VALID="1"</Publish>
-            <Publish Dialog="MyInstallDirDlg" Control="ChangeFolder" Property="_BrowseProperty" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
-            <Publish Dialog="MyInstallDirDlg" Control="ChangeFolder" Event="SpawnDialog" Value="BrowseDlg" Order="2">1</Publish>
-            
-            <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="MyInstallDirDlg" Order="1">NOT Installed</Publish>
-            <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="MaintenanceTypeDlg" Order="2">Installed AND NOT PATCH</Publish>
-            <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="2">Installed AND PATCH</Publish>
+      <Publish Dialog="MyInstallDirDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
+      <Publish Dialog="MyInstallDirDlg" Control="Next" Event="SetTargetPath" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
+      <Publish Dialog="MyInstallDirDlg" Control="Next" Event="DoAction" Value="WixUIValidatePath" Order="2">NOT WIXUI_DONTVALIDATEPATH</Publish>
+      <Publish Dialog="MyInstallDirDlg" Control="Next" Event="SpawnDialog" Value="InvalidDirDlg" Order="3"><![CDATA[NOT WIXUI_DONTVALIDATEPATH AND WIXUI_INSTALLDIR_VALID<>"1"]]></Publish>
+      <Publish Dialog="MyInstallDirDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg" Order="4">WIXUI_DONTVALIDATEPATH OR WIXUI_INSTALLDIR_VALID="1"</Publish>
+      <Publish Dialog="MyInstallDirDlg" Control="ChangeFolder" Property="_BrowseProperty" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
+      <Publish Dialog="MyInstallDirDlg" Control="ChangeFolder" Event="SpawnDialog" Value="BrowseDlg" Order="2">1</Publish>
+      
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="MyInstallDirDlg" Order="1">NOT Installed</Publish>
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="MaintenanceTypeDlg" Order="2">Installed AND NOT PATCH</Publish>
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="2">Installed AND PATCH</Publish>
 
-            <Publish Dialog="MaintenanceWelcomeDlg" Control="Next" Event="NewDialog" Value="MaintenanceTypeDlg">1</Publish>
+      <Publish Dialog="MaintenanceWelcomeDlg" Control="Next" Event="NewDialog" Value="MaintenanceTypeDlg">1</Publish>
 
-            <Publish Dialog="MaintenanceTypeDlg" Control="RepairButton" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
-            <Publish Dialog="MaintenanceTypeDlg" Control="RemoveButton" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
-            <Publish Dialog="MaintenanceTypeDlg" Control="Back" Event="NewDialog" Value="MaintenanceWelcomeDlg">1</Publish>
+      <Publish Dialog="MaintenanceTypeDlg" Control="RepairButton" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
+      <Publish Dialog="MaintenanceTypeDlg" Control="RemoveButton" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
+      <Publish Dialog="MaintenanceTypeDlg" Control="Back" Event="NewDialog" Value="MaintenanceWelcomeDlg">1</Publish>
 
-            <!--<Property Id="ARPNOMODIFY" Value="1" />-->
-        </UI>
+      <!--<Property Id="ARPNOMODIFY" Value="1" />-->
+    </UI>
 
-        <UIRef Id="WixUI_Common" />
-    </Fragment>
+    <UIRef Id="WixUI_Common" />
+  </Fragment>
 
-    <Fragment>
-        <UI>
-            <Dialog Id="MyInstallDirDlg" Width="370" Height="270" Title="!(loc.InstallDirDlg_Title)">
-                <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.WixUINext)" />
-                <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)" />
-                <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
-                    <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
-                </Control>
+  <Fragment>
+    <UI>
+      <Dialog Id="MyInstallDirDlg" Width="370" Height="270" Title="!(loc.InstallDirDlg_Title)">
+	<Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.WixUINext)" />
+	<Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)" />
+	<Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
+	  <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
+	</Control>
 
-                <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.InstallDirDlgDescription)" />
-                <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.InstallDirDlgTitle)" />
-                <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="!(loc.InstallDirDlgBannerBitmap)" />
-                <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
-                <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+	<Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.InstallDirDlgDescription)" />
+	<Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.InstallDirDlgTitle)" />
+	<Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="!(loc.InstallDirDlgBannerBitmap)" />
+	<Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+	<Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
 
-                <Control Id="FolderLabel" Type="Text" X="20" Y="60" Width="290" Height="30" NoPrefix="yes" Text="!(loc.InstallDirDlgFolderLabel)" />
-                <Control Id="Folder" Type="PathEdit" X="20" Y="100" Width="320" Height="18" Property="WIXUI_INSTALLDIR" Indirect="yes" />
-                <Control Id="ChangeFolder" Type="PushButton" X="20" Y="120" Width="56" Height="17" Text="!(loc.InstallDirDlgChange)" />
-<!-- TODO does not work ATM
-		<Control Id="DesktopShortcutCheckBox" Type="CheckBox" X="20" Y="160" Width="290" Height="17" Property="INSTALLDESKTOPSHORTCUT" CheckBoxValue="1" Text="Create a shortcut for this program on the desktop." />
--->
-            </Dialog>
-        </UI>
-    </Fragment>
+	<Control Id="FolderLabel" Type="Text" X="20" Y="60" Width="290" Height="30" NoPrefix="yes" Text="!(loc.InstallDirDlgFolderLabel)" />
+	<Control Id="Folder" Type="PathEdit" X="20" Y="100" Width="320" Height="18" Property="WIXUI_INSTALLDIR" Indirect="yes" />
+	<Control Id="ChangeFolder" Type="PushButton" X="20" Y="120" Width="56" Height="17" Text="!(loc.InstallDirDlgChange)" />
+	<!-- TODO does not work ATM
+	     <Control Id="DesktopShortcutCheckBox" Type="CheckBox" X="20" Y="160" Width="290" Height="17" Property="INSTALLDESKTOPSHORTCUT" CheckBoxValue="1" Text="Create a shortcut for this program on the desktop." />
+	-->
+      </Dialog>
+    </UI>
+  </Fragment>
 
 </Wix>
 

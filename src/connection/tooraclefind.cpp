@@ -568,7 +568,7 @@ void toOracleFinder::loadLib(ConnectionProvirerParams const &params)
         TLOG(5, toNoDecorator, __HERE__) << "OK" << std::endl;
 
     TLOG(5, toNoDecorator, __HERE__) << "Loading: " PROVIDER_LIB << std::endl;
-    Utils::toLibrary::LHandle hmodulePOracle = Utils::toLibrary::loadLibrary(QFileInfo(QDir(PROVIDERS_PATH), PROVIDER_LIB));
+    Utils::toLibrary::LHandle hmodulePOracle = Utils::toLibrary::loadLibrary(QFileInfo(PROVIDER_LIB));
     if ( hmodulePOracle)
     	TLOG(5, toNoDecorator, __HERE__) << "OK" << std::endl;
     else
