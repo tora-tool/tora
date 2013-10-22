@@ -1,0 +1,12 @@
+[Desktop Entry]
+GenericName=Toolkit for Oracle, MySQL, Postgresql
+Categories=Office;Database;
+Exec=tora
+Name=Toolkit for Oracle
+Comment=Toolkit for Oracle and other databases administration and development
+X-KDE-StartupNotify=true
+MimeType=application/x-tora;
+Icon=tora
+Terminal=false
+Type=Application
+
