@@ -221,14 +221,17 @@ void toGlobalSetting::mysqlBrowse(void)
     QString str = TOFileDialog::getExistingDirectory(this, tr("MySQL client installation"), MysqlHome->text());
     if (str.isEmpty())
     	return;
-    QFileInfo libmysql(str + QDir::separator() + "lib" + QDir::separator() + "opt", "libmysql.dll");
-    if( Utils::toLibrary::isValidLibrary(libmysql))
+    QFileInfo libmysqlopt(str + QDir::separator() + "lib" + QDir::separator() + "opt", "libmysql.dll");
+    QFileInfo libmysql(str + QDir::separator() + "lib", "libmysql.dll");
+    if( Utils::toLibrary::isValidLibrary(libmysqlopt))
+    	MysqlHome->setText(libmysqlopt.absolutePath());
+    else if( Utils::toLibrary::isValidLibrary(libmysql))
     	MysqlHome->setText(libmysql.absolutePath());
     else
         TOMessageBox::warning(
         		Utils::toQMainWindow(),
         		QT_TRANSLATE_NOOP("toLibraryErrorA", "Library error"),
-        		QT_TRANSLATE_NOOP("toLibraryErrorA", QString("Couldn't validate library file: %1").arg(libmysql.absoluteFilePath()))
+        		QT_TRANSLATE_NOOP("toLibraryErrorA", QString("Couldn't validate library file: %1").arg(libmysqlopt.absoluteFilePath()))
         		);
 }
 
