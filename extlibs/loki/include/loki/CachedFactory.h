@@ -20,7 +20,7 @@
 #ifndef LOKI_CACHEDFACTORY_INC_
 #define LOKI_CACHEDFACTORY_INC_
 
-// $Id: CachedFactory.h 810 2007-02-25 14:36:28Z syntheticpp $
+// $Id: CachedFactory.h 950 2009-01-26 19:45:54Z syntheticpp $
 
 #include <functional>
 #include <algorithm>
@@ -37,7 +37,7 @@
 	#define D( x ) ;
 #endif
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER)  || defined(__CYGWIN__)
 #include <time.h>
 #endif
 
@@ -151,7 +151,7 @@ namespace Loki
      * 
      * This implementation will prevent from Creating more than maxCreation objects
      * within byTime ms by throwing an exception.
-     * Could be useful to detect prevent loads (http connection for instance).
+     * Could be usefull to detect prevent loads (http connection for instance).
      * Use the setRate method to set the rate parameters.
      * default is 10 objects in a second.
      */
@@ -491,7 +491,7 @@ namespace Loki
 
     protected:
     
-     	virtual ~EvictRandom(){};
+     	virtual ~EvictRandom(){}
      	
     	void onCreate(const DT&){
     	}
@@ -516,7 +516,7 @@ namespace Loki
     	{
     		if(m_vKeys.empty())
     		    throw EvictionException();
-    		size_type random = static_cast<size_type>((m_vKeys.size()*rand())/int(RAND_MAX + 1));
+    		size_type random = static_cast<size_type>((m_vKeys.size()*rand())/(static_cast<size_type>(RAND_MAX) + 1));
     		remove(*(m_vKeys.begin()+random));
     	}
         const char* name(){return "random";}
@@ -662,7 +662,7 @@ namespace Loki
             public CreationPolicy, public StatisticPolicy, EvictionPolicy< AbstractProduct * , unsigned >
 	 {
      private:
-        typedef Factory< AbstractProduct, IdentifierType, CreatorParmTList, FactoryErrorPolicy> Factory;
+        typedef Factory< AbstractProduct, IdentifierType, CreatorParmTList, FactoryErrorPolicy> MyFactory;
         typedef FactoryImpl< AbstractProduct, IdentifierType, CreatorParmTList > Impl;
         typedef Functor< AbstractProduct* , CreatorParmTList > ProductCreator;
         typedef EncapsulationPolicy<AbstractProduct> NP;
@@ -689,16 +689,16 @@ namespace Loki
      public:
         typedef typename NP::ProductReturn ProductReturn;
      private:
-        typedef Key< Impl, IdentifierType > Key;
-        typedef std::map< Key, ObjVector >  KeyToObjVectorMap;
-        typedef std::map< AbstractProduct*, Key >  FetchedObjToKeyMap;
+        typedef Key< Impl, IdentifierType > MyKey;
+        typedef std::map< MyKey, ObjVector >  KeyToObjVectorMap;
+        typedef std::map< AbstractProduct*, MyKey >  FetchedObjToKeyMap;
         
-        Factory             factory;
+        MyFactory			factory;
         KeyToObjVectorMap   fromKeyToObjVector;
         FetchedObjToKeyMap  providedObjects;
         unsigned            outObjects;
 
-        ObjVector& getContainerFromKey(Key key){
+        ObjVector& getContainerFromKey(MyKey key){
             return fromKeyToObjVector[key];
         }
 
@@ -864,7 +864,7 @@ namespace Loki
 
         ProductReturn CreateObject(const IdentifierType& id)
         {
-            Key key(id);
+            MyKey key(id);
             AbstractProduct *pProduct(getPointerToObjectInContainer(getContainerFromKey(key)));
             if(shouldCreateObject(pProduct))
             {
@@ -879,7 +879,7 @@ namespace Loki
         ProductReturn CreateObject(const IdentifierType& id,
 				    Parm1 p1)
         {
-            Key key(id,p1);
+            MyKey key(id,p1);
             AbstractProduct *pProduct(getPointerToObjectInContainer(getContainerFromKey(key)));
             if(shouldCreateObject(pProduct))
             {
@@ -894,7 +894,7 @@ namespace Loki
         ProductReturn CreateObject(const IdentifierType& id,
 				    Parm1 p1, Parm2 p2)
         {
-            Key key(id,p1,p2);
+            MyKey key(id,p1,p2);
             AbstractProduct *pProduct(getPointerToObjectInContainer(getContainerFromKey(key)));
             if(shouldCreateObject(pProduct))
             {
@@ -909,7 +909,7 @@ namespace Loki
         ProductReturn CreateObject(const IdentifierType& id,
 				    Parm1 p1, Parm2 p2, Parm3 p3)
         {
-            Key key(id,p1,p2,p3);
+            MyKey key(id,p1,p2,p3);
             AbstractProduct *pProduct(getPointerToObjectInContainer(getContainerFromKey(key)));
             if(shouldCreateObject(pProduct))
             {
@@ -924,7 +924,7 @@ namespace Loki
         ProductReturn CreateObject(const IdentifierType& id,
 				    Parm1 p1, Parm2 p2, Parm3 p3, Parm4 p4)
         {
-            Key key(id,p1,p2,p3,p4);
+            MyKey key(id,p1,p2,p3,p4);
             AbstractProduct *pProduct(getPointerToObjectInContainer(getContainerFromKey(key)));
             if(shouldCreateObject(pProduct))
             {
@@ -940,7 +940,7 @@ namespace Loki
         ProductReturn CreateObject(const IdentifierType& id,
 				    Parm1 p1, Parm2 p2, Parm3 p3, Parm4 p4, Parm5 p5)
         {
-            Key key(id,p1,p2,p3,p4,p5);
+            MyKey key(id,p1,p2,p3,p4,p5);
             AbstractProduct *pProduct(getPointerToObjectInContainer(getContainerFromKey(key)));
             if(shouldCreateObject(pProduct))
             {
@@ -957,7 +957,7 @@ namespace Loki
 				    Parm1 p1, Parm2 p2, Parm3 p3, Parm4 p4, Parm5 p5,
 				    Parm6 p6)
         {
-            Key key(id,p1,p2,p3,p4,p5,p6);
+            MyKey key(id,p1,p2,p3,p4,p5,p6);
             AbstractProduct *pProduct(getPointerToObjectInContainer(getContainerFromKey(key)));
             if(shouldCreateObject(pProduct))
             {
@@ -974,7 +974,7 @@ namespace Loki
 				    Parm1 p1, Parm2 p2, Parm3 p3, Parm4 p4, Parm5 p5,
 				    Parm6 p6, Parm7 p7 )
         {
-            Key key(id,p1,p2,p3,p4,p5,p6,p7);
+            MyKey key(id,p1,p2,p3,p4,p5,p6,p7);
             AbstractProduct *pProduct(getPointerToObjectInContainer(getContainerFromKey(key)));
             if(shouldCreateObject(pProduct))
             {
@@ -991,7 +991,7 @@ namespace Loki
 				    Parm1 p1, Parm2 p2, Parm3 p3, Parm4 p4, Parm5 p5,
 				    Parm6 p6, Parm7 p7, Parm8 p8)
         {
-            Key key(id,p1,p2,p3,p4,p5,p6,p7,p8);
+            MyKey key(id,p1,p2,p3,p4,p5,p6,p7,p8);
             AbstractProduct *pProduct(getPointerToObjectInContainer(getContainerFromKey(key)));
             if(shouldCreateObject(pProduct))
             {
@@ -1008,7 +1008,7 @@ namespace Loki
 				    Parm1 p1, Parm2 p2, Parm3 p3, Parm4 p4, Parm5 p5,
 				    Parm6 p6, Parm7 p7, Parm8 p8, Parm9 p9)
         {
-            Key key(id,p1,p2,p3,p4,p5,p6,p7,p8,p9);
+            MyKey key(id,p1,p2,p3,p4,p5,p6,p7,p8,p9);
             AbstractProduct *pProduct(getPointerToObjectInContainer(getContainerFromKey(key)));
             if(shouldCreateObject(pProduct))
             {
@@ -1025,7 +1025,7 @@ namespace Loki
 				    Parm1 p1, Parm2 p2, Parm3 p3, Parm4 p4, Parm5 p5,
 				    Parm6 p6, Parm7 p7, Parm8 p8, Parm9 p9,Parm10 p10)
         {
-            Key key(id,p1,p2,p3,p4,p5,p6,p7,p8,p9,p10);
+            MyKey key(id,p1,p2,p3,p4,p5,p6,p7,p8,p9,p10);
             AbstractProduct *pProduct(getPointerToObjectInContainer(getContainerFromKey(key)));
             if(shouldCreateObject(pProduct))
             {
@@ -1043,7 +1043,7 @@ namespace Loki
 				    Parm6  p6, Parm7 p7, Parm8 p8, Parm9 p9, Parm10 p10,
 				    Parm11 p11)
         {
-            Key key(id,p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11);
+            MyKey key(id,p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11);
             AbstractProduct *pProduct(getPointerToObjectInContainer(getContainerFromKey(key)));
             if(shouldCreateObject(pProduct))
             {
@@ -1061,7 +1061,7 @@ namespace Loki
 				    Parm6  p6,  Parm7  p7, Parm8 p8, Parm9 p9, Parm10 p10,
 				    Parm11 p11, Parm12 p12)
         {
-            Key key(id,p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12);
+            MyKey key(id,p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12);
             AbstractProduct *pProduct(getPointerToObjectInContainer(getContainerFromKey(key)));
             if(shouldCreateObject(pProduct))
             {
@@ -1079,7 +1079,7 @@ namespace Loki
 				    Parm6  p6,  Parm7  p7,  Parm8  p8, Parm9 p9, Parm10 p10,
 				    Parm11 p11, Parm12 p12, Parm13 p13)
         {
-            Key key(id,p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13);
+            MyKey key(id,p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13);
             AbstractProduct *pProduct(getPointerToObjectInContainer(getContainerFromKey(key)));
             if(shouldCreateObject(pProduct))
             {
@@ -1098,7 +1098,7 @@ namespace Loki
 				    Parm6  p6,  Parm7  p7,  Parm8  p8,  Parm9  p9, Parm10 p10,
 				    Parm11 p11, Parm12 p12, Parm13 p13, Parm14 p14)
         {
-            Key key(id,p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14);
+            MyKey key(id,p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14);
             AbstractProduct *pProduct(getPointerToObjectInContainer(getContainerFromKey(key)));
             if(shouldCreateObject(pProduct))
             {
@@ -1117,7 +1117,7 @@ namespace Loki
 				    Parm6  p6,  Parm7  p7,  Parm8  p8,  Parm9  p9,  Parm10 p10,
 				    Parm11 p11, Parm12 p12, Parm13 p13, Parm14 p14, Parm15 p15)
         {
-            Key key(id,p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15);
+            MyKey key(id,p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12,p13,p14,p15);
             AbstractProduct *pProduct(getPointerToObjectInContainer(getContainerFromKey(key)));
             if(shouldCreateObject(pProduct))
             {

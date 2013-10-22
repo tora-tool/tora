@@ -3,18 +3,18 @@
 // Copyright (c) 2006 Rich Sposato
 // The copyright on this file is protected under the terms of the MIT license.
 //
-// Permission to use, copy, modify, distribute and sell this software for any 
-//     purpose is hereby granted without fee, provided that the above copyright 
-//     notice appear in all copies and that both that copyright notice and this 
+// Permission to use, copy, modify, distribute and sell this software for any
+//     purpose is hereby granted without fee, provided that the above copyright
+//     notice appear in all copies and that both that copyright notice and this
 //     permission notice appear in supporting documentation.
-// The author makes no representations about the 
-//     suitability of this software for any purpose. It is provided "as is" 
+// The author makes no representations about the
+//     suitability of this software for any purpose. It is provided "as is"
 //     without express or implied warranty.
 ////////////////////////////////////////////////////////////////////////////////
 #ifndef LOKI_STRONG_PTR_INC_
 #define LOKI_STRONG_PTR_INC_
 
-// $Id: StrongPtr.h 807 2007-02-25 12:49:19Z syntheticpp $
+// $Id: StrongPtr.h 914 2008-12-19 00:39:29Z rich_sposato $
 
 
 #include <loki/SmartPtr.h>
@@ -117,7 +117,7 @@ namespace Loki
 ////////////////////////////////////////////////////////////////////////////////
 ///  \class DeleteUsingFree
 ///
-///  \ingroup  StrongPointerDeleteGroup 
+///  \ingroup  StrongPointerDeleteGroup
 ///  Implementation of the DeletePolicy used by StrongPtr.  Uses explicit call
 ///   to T's destructor followed by call to free.  This policy is useful for
 ///   managing the lifetime of pointers to structs returned by C functions.
@@ -148,7 +148,7 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 ///  \class DeleteNothing
 ///
-///  \ingroup  StrongPointerDeleteGroup 
+///  \ingroup  StrongPointerDeleteGroup
 ///  Implementation of the DeletePolicy used by StrongPtr.  This will never
 ///   delete anything.  You can use this policy with pointers to an undefined
 ///   type or a pure interface class with a protected destructor.
@@ -174,7 +174,7 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 ///  \class DeleteSingle
 ///
-///  \ingroup  StrongPointerDeleteGroup 
+///  \ingroup  StrongPointerDeleteGroup
 ///  Implementation of the DeletePolicy used by StrongPtr.  This deletes just
 ///   one shared object.  This is the default class for the DeletePolicy.
 ////////////////////////////////////////////////////////////////////////////////
@@ -205,7 +205,7 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 ///  \class DeleteArray
 ///
-///  \ingroup  StrongPointerDeleteGroup 
+///  \ingroup  StrongPointerDeleteGroup
 ///  Implementation of the DeletePolicy used by StrongPtr.  This deletes an
 ///   array of shared objects.
 ////////////////////////////////////////////////////////////////////////////////
@@ -236,7 +236,7 @@ public:
 ////////////////////////////////////////////////////////////////////////////////
 ///  \class CantResetWithStrong
 ///
-///  \ingroup  StrongPointerResetGroup 
+///  \ingroup  StrongPointerResetGroup
 ///  Implementation of the ResetPolicy used by StrongPtr.  This is the default
 ///   ResetPolicy for StrongPtr.  It forbids reset and release only if a strong
 ///   copointer exists.
@@ -259,7 +259,7 @@ struct CantResetWithStrong
 ////////////////////////////////////////////////////////////////////////////////
 ///  \class AllowReset
 ///
-///  \ingroup  StrongPointerResetGroup 
+///  \ingroup  StrongPointerResetGroup
 ///  Implementation of the ResetPolicy used by StrongPtr.  It allows reset and
 ///   release under any circumstance.
 ////////////////////////////////////////////////////////////////////////////////
@@ -280,7 +280,7 @@ struct AllowReset
 ////////////////////////////////////////////////////////////////////////////////
 ///  \class NeverReset
 ///
-///  \ingroup  StrongPointerResetGroup 
+///  \ingroup  StrongPointerResetGroup
 ///  Implementation of the ResetPolicy used by StrongPtr.  It forbids reset and
 ///   release under any circumstance.
 ////////////////////////////////////////////////////////////////////////////////
@@ -359,10 +359,12 @@ public:
         ++m_weakCount;
     }
 
-    inline void DecStrongCount( void )
+    inline bool DecStrongCount( void )
     {
         assert( 0 < m_strongCount );
         --m_strongCount;
+        const bool isZero = ( 0 == m_strongCount );
+        return isZero;
     }
 
     inline void DecWeakCount( void )
@@ -483,11 +485,12 @@ public:
         m_Mutex.Unlock();
     }
 
-    inline void DecStrongCount( void )
+    inline bool DecStrongCount( void )
     {
         m_Mutex.Lock();
-        TwoRefCountInfo::DecStrongCount();
+        const bool isZero = TwoRefCountInfo::DecStrongCount();
         m_Mutex.Unlock();
+        return isZero;
     }
 
     inline void DecWeakCount( void )
@@ -561,14 +564,16 @@ protected:
         Increment( strong );
     }
 
+    /** The destructor does not need to do anything since the call to
+     ZapPointer inside StrongPtr::~StrongPtr will do the cleanup which
+     this dtor would have done.
+     */
+    inline ~TwoRefCounts( void ) {}
+
     inline bool Release( bool strong )
     {
         return Decrement( strong );
     }
-
-    void Increment( bool strong );
-
-    bool Decrement( bool strong );
 
     bool HasStrongPointer( void ) const
     {
@@ -597,6 +602,10 @@ protected:
 private:
     TwoRefCounts( void );
     TwoRefCounts & operator = ( const TwoRefCounts & );
+
+    void Increment( bool strong );
+
+    bool Decrement( bool strong );
 
     /// Pointer to all shared data.
     Loki::Private::TwoRefCountInfo * m_counts;
@@ -655,6 +664,12 @@ protected:
         Increment( strong );
     }
 
+    /** The destructor does not need to do anything since the call to
+     ZapPointer inside StrongPtr::~StrongPtr will do the cleanup which
+     this dtor would have done.
+     */
+    inline ~LockableTwoRefCounts( void ) {}
+
     inline void Lock( void ) const
     {
         m_counts->Lock();
@@ -684,15 +699,17 @@ protected:
 
     bool Decrement( bool strong )
     {
+        bool noStrongPointers = false;
         if ( strong )
         {
-            m_counts->DecStrongCount();
+            noStrongPointers = m_counts->DecStrongCount();
         }
         else
         {
             m_counts->DecWeakCount();
+            noStrongPointers = !m_counts->HasStrongPointer();
         }
-        return !m_counts->HasStrongPointer();
+        return noStrongPointers;
     }
 
     bool HasStrongPointer( void ) const
@@ -820,7 +837,7 @@ private:
 ////////////////////////////////////////////////////////////////////////////////
 ///  \class StrongPtr
 ///
-///  \ingroup SmartPointerGroup 
+///  \ingroup SmartPointerGroup
 ///
 ///  \param Strong           default = true,
 ///  \param OwnershipPolicy  default = TwoRefCounts,
@@ -1007,9 +1024,9 @@ public:
             // undefined behavior.  Therefore, this must get pointer before
             // zapping it, and then delete the temp pointer.
             T * p = GetPointer();
+            OP::ZapPointer();
             if ( p != 0 )
             {
-                OP::ZapPointer();
                 DP::Delete( p );
             }
         }
@@ -1047,7 +1064,7 @@ public:
     }
 
 #else
-  
+
     template
     <
         typename T1,
@@ -1061,7 +1078,7 @@ public:
     >
     friend bool ReleaseAll( StrongPtr< T1, S1, OP1, CP1, KP1, RP1, DP1, CNP1 > & sp,
         typename StrongPtr< T1, S1, OP1, CP1, KP1, RP1, DP1, CNP1 >::StoredType & p );
- 
+
 
     template
     <
@@ -1308,7 +1325,7 @@ private:
         Tester(int) {}
         void dummy() {}
     };
-    
+
     typedef void (Tester::*unspecified_boolean_type_)();
 
     typedef typename Select< CP::allow, Tester, unspecified_boolean_type_ >::Result
@@ -1327,11 +1344,11 @@ private:
     {
         Insipid(PointerType) {}
     };
-    
+
     typedef typename Select< CP::allow, PointerType, Insipid >::Result
         AutomaticConversionResult;
 
-public:        
+public:
     operator AutomaticConversionResult() const
     {
         return GetPointer();

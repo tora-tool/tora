@@ -13,7 +13,7 @@
 #ifndef COW_STRING_OPT_INC_
 #define COW_STRING_OPT_INC_
 
-// $Id: cowstringopt.h 754 2006-10-17 19:59:11Z syntheticpp $
+// $Id: cowstringopt.h 836 2007-09-20 15:51:37Z aandrei $
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -131,6 +131,8 @@ private:
             Align align_;
         } temp;
 
+	--(*Data().begin()); // Harmut Kaiser fix:
+			     // decrement the use count of the remaining object
         new(buf_) Storage(
             *new(temp.buf_) Storage(Data()), 
             flex_string_details::Shallow());

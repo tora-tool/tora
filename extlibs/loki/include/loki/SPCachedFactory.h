@@ -18,7 +18,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-// $Id: SPCachedFactory.h 810 2007-02-25 14:36:28Z syntheticpp $
+// $Id: SPCachedFactory.h 896 2008-08-08 22:20:05Z syntheticpp $
 
 #ifndef SPCACHEDFACTORY_H_
 #define SPCACHEDFACTORY_H_
@@ -171,7 +171,7 @@ namespace Loki
      protected:           
            typedef CallBackSP ProductReturn;
            SmartPointer() : fun(this, &SmartPointer::smartPointerCallbackFunction) {}
-           virtual ~SmartPointer(){};
+           virtual ~SmartPointer(){}
            
            ProductReturn encapsulate(AbstractProduct* pProduct)
            {

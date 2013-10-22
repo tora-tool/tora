@@ -13,7 +13,7 @@
 #ifndef SMALL_STRING_OPT_INC_
 #define SMALL_STRING_OPT_INC_
 
-// $Id: smallstringopt.h 754 2006-10-17 19:59:11Z syntheticpp $
+// $Id: smallstringopt.h 836 2007-09-20 15:51:37Z aandrei $
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -180,15 +180,44 @@ public:
         }
     }
     
+    // Fix suggested by Andrew Barnert on 07/03/2007
     SmallStringOpt& operator=(const SmallStringOpt& rhs)
     {
-        if (&rhs != this)
-        {
-            reserve(rhs.size());
-            resize(0, 0);
-            append(rhs.data(), rhs.data() + rhs.size());
+      if (&rhs == this) return *this;
+      const size_t rhss = rhs.size();
+      // Will we use this' allocated buffer?
+      if (rhss > maxSmallString && capacity() > rhss) {
+        const size_t s = size();
+        if (s >= rhss) {
+          // shrink
+          resize(rhss, 0);
+          std::copy(rhs.begin(), rhs.end(), begin());
+        } else {
+          // grow
+          std::copy(rhs.begin(), rhs.begin() + s, begin());
+          append(rhs.begin() + s, rhs.end());
         }
-        return *this;
+      } else {
+        // this' buffer is useless
+        if (rhs.Small()) {
+          // Just destroy and copy over (ugly but efficient)
+          // Works because construction of a small string can't fail
+          if (!Small()) this->~SmallStringOpt();
+          new(this) SmallStringOpt(rhs);
+        } else {
+          SmallStringOpt copy(rhs);
+          if (Small()) {
+            // no need to swap, just destructively read copy into this
+            // ugly but efficient again
+            memcpy(this, &copy, sizeof(*this));
+            copy.buf_[maxSmallString] = maxSmallString; // clear the copy
+          } else {
+            // Use the swap trick
+            copy.swap(*this);
+          }
+        }
+      }
+      return *this;
     }
 
     ~SmallStringOpt()
@@ -282,7 +311,7 @@ public:
             else
             {
                 std::copy(b, e, buf_ + maxSmallString - buf_[maxSmallString]);
-                buf_[maxSmallString] = buf_[maxSmallString] - value_type(sz);
+                buf_[maxSmallString] -= value_type(sz);
             }
         }
     }
@@ -327,8 +356,18 @@ public:
                 // Big string resized to small string
                 // 11-17=2001: bug fix in the assertion below
                 assert(capacity() > n);
-                SmallStringOpt newObj(data(), n, get_allocator());
-                newObj.swap(*this);
+                // The following two commented-out lines were fixed by
+                // Jean-Francois Bastien, 07/26/2007
+                //SmallStringOpt newObj(data(), n, get_allocator());
+                // newObj.swap(*this);
+                if (n <= size()) {
+                  SmallStringOpt newObj(data(), n, get_allocator());
+                  newObj.swap(*this);
+                } else {
+                  SmallStringOpt newObj(data(), size(), get_allocator());
+                  newObj.resize(n, c); // invoke this function recursively
+                  newObj.swap(*this);
+                }
             }
         }
     }

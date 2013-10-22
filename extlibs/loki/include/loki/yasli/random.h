@@ -3,7 +3,7 @@
 
 // $Id: random.h 754 2006-10-17 19:59:11Z syntheticpp $
 
-
+#include <limits.h>
 #include <ctime>
 
 class Random 

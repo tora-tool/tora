@@ -13,7 +13,7 @@
 #ifndef FLEX_STRING_SHELL_INC_
 #define FLEX_STRING_SHELL_INC_
 
-// $Id: flex_string_shell.h 754 2006-10-17 19:59:11Z syntheticpp $
+// $Id: flex_string_shell.h 948 2009-01-26 01:55:50Z rich_sposato $
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -890,7 +890,9 @@ public:
     
     size_type find (const value_type* s, size_type pos, size_type n) const
     {
-        for (; pos <= size(); ++pos)
+        if (n + pos > size())
+            return npos;
+        for (; pos + n <= size(); ++pos)
         {
             if (traits_type::compare(data() + pos, s, n) == 0)
             {
@@ -1079,13 +1081,10 @@ public:
         const value_type* s, size_type n2) const
     {
         Enforce(pos1 <= size(), static_cast<std::out_of_range*>(0), "");
-        Procust(n1, size() - pos1);
-        const int r = traits_type::compare(data(), s, Min(n1, n2));
-        return 
-            r != 0 ? r :
-            n1 > n2 ? 1 :
-            n1 < n2 ? -1 :
-            0;
+	Procust(n1, size() - pos1);
+	// The line below fixed by Jean-Francois Bastien, 04-23-2007. Thanks!
+	const int r = traits_type::compare(pos1 + data(), s, Min(n1, n2));
+	return r != 0 ? r : n1 > n2 ? 1 : n1 < n2 ? -1 : 0;
     }
     
     int compare(size_type pos1, size_type n1,
@@ -1096,9 +1095,14 @@ public:
         return compare(pos1, n1, str.data() + pos2, Min(n2, str.size() - pos2));
     }
 
+    // Code from Jean-Francois Bastien (03/26/2007)
     int compare(const value_type* s) const
-    { 
-        return traits_type::compare(data(), s, Max(length(),traits_type::length(s))); 
+    {
+      // Could forward to compare(0, size(), s, traits_type::length(s))
+      // but that does two extra checks
+      const size_type n1(size()), n2(traits_type::length(s));
+      const int r = traits_type::compare(data(), s, Min(n1, n2));
+      return r != 0 ? r : n1 > n2 ? 1 : n1 < n2 ? -1 : 0;
     }
 };
 
@@ -1260,7 +1264,7 @@ std::basic_istream<typename flex_string<E, T, A, S>::value_type,
     typename flex_string<E, T, A, S>::traits_type>&
 operator>>(
     std::basic_istream<typename flex_string<E, T, A, S>::value_type, 
-        typename flex_string<E, T, A, S>::traits_type>& is,
+		typename flex_string<E, T, A, S>::traits_type>& is,
     flex_string<E, T, A, S>& str);
 
 template <typename E, class T, class A, class S>
@@ -1268,7 +1272,7 @@ std::basic_ostream<typename flex_string<E, T, A, S>::value_type,
     typename flex_string<E, T, A, S>::traits_type>&
 operator<<(
     std::basic_ostream<typename flex_string<E, T, A, S>::value_type, 
-        typename flex_string<E, T, A, S>::traits_type>& os,
+		typename flex_string<E, T, A, S>::traits_type>& os,
     const flex_string<E, T, A, S>& str)
 { return os << str.c_str(); }
 

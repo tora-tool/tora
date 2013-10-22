@@ -15,7 +15,7 @@
 #ifndef LOKI_SINGLETON_INC_
 #define LOKI_SINGLETON_INC_
 
-// $Id: Singleton.h 747 2006-10-17 19:48:40Z syntheticpp $
+// $Id: Singleton.h 834 2007-08-02 19:36:10Z syntheticpp $
 
 
 #include "LokiExport.h"
@@ -759,7 +759,7 @@ namespace Loki
         class X
     >
     typename SingletonHolder<T, C, L, M, X>::PtrInstanceType
-        SingletonHolder<T, C, L, M, X>::pInstance_;
+        SingletonHolder<T, C, L, M, X>::pInstance_ = 0;
 
     template
     <
@@ -769,7 +769,7 @@ namespace Loki
         template <class, class> class M,
         class X
     >
-    bool SingletonHolder<T, C, L, M, X>::destroyed_;
+    bool SingletonHolder<T, C, L, M, X>::destroyed_ = false;
 
     ////////////////////////////////////////////////////////////////////////////////
     // SingletonHolder::Instance

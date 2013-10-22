@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Copyright (c) 2005 by Andrei Alexandrescu
-// Copyright (c) 2006 Peter Kï¿½mmel
+// Copyright (c) 2006 Peter Kümmel
 // Permission to use, copy, modify, distribute, and sell this software for any
 //     purpose is hereby granted without fee, provided that the above copyright
 //     notice appear in all copies and that both that copyright notice and this
@@ -12,7 +12,7 @@
 #ifndef LOKI_SAFEFORMAT_INC_
 #define LOKI_SAFEFORMAT_INC_
 
-// $Id: SafeFormat.h 747 2006-10-17 19:48:40Z syntheticpp $
+// $Id: SafeFormat.h 911 2008-12-15 20:55:24Z syntheticpp $
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -21,12 +21,10 @@
 // See Alexandrescu, Andrei: Type-safe Formatting, C/C++ Users Journal, Aug 2005
 ////////////////////////////////////////////////////////////////////////////////
 
-// patch to compile with gcc4.3 - petr
-#include <climits>
-#include <cstring>
-
 #include <cstdio>
+#include <climits>
 #include <string>
+#include <cstring>
 #include <stdexcept>
 #include <utility>
 #include <cassert>
@@ -209,7 +207,7 @@ namespace Loki
                 result_ = -1;
                 return *this;
             }
-            const size_t len = std::min(strlen(s), prec_);
+			const size_t len = std::min(std::strlen(s), prec_);
             if (width_ > len) {
                 if (LeftJustify()) {
                     Write(s, s + len);
@@ -399,15 +397,8 @@ namespace Loki
             const Char hex1st = uppercase ? 'A' : 'a';
             for (;;) {
                 const LOKI_SAFEFORMAT_UNSIGNED_LONG next = n / base;
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable: 4244)
-#endif
-                Char c = n - next * base;
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-                c += (c <= 9) ? '0' : hex1st - 10;
+                Char c = static_cast<Char>(n - next * base);
+                c = static_cast<Char>(c + (c <= 9 ? '0' : static_cast<Char>(hex1st - 10)));
                 *bufLast = c;
                 n = next;
                 if (n == 0) break;

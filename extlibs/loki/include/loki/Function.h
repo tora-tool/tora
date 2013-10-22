@@ -12,10 +12,12 @@
 #ifndef LOKI_FUNCTION_INC_
 #define LOKI_FUNCTION_INC_
 
-// $Id: Function.h 750 2006-10-17 19:50:02Z syntheticpp $
+// $Id: Function.h 841 2008-03-24 23:58:28Z rich_sposato $
 
 
 #define LOKI_ENABLE_FUNCTION
+
+#include <stdexcept>
 
 #include <loki/Functor.h>
 #include <loki/Sequence.h>
@@ -309,7 +311,7 @@ namespace Loki
         template<class R2,    class Q01,class Q02, class Q03,class Q04,class Q05,
                             class Q06,class Q07, class Q08,class Q09,class Q10,
                             class Q11,class Q12>
-        Function(Function<R2(Q01,Q02,Q03,Q04,Q05,Q06,Q07,Q08,Q09,Q10,Q11)> func) 
+        Function(Function<R2(Q01,Q02,Q03,Q04,Q05,Q06,Q07,Q08,Q09,Q10,Q11,Q12)> func) 
             LOKI_FUNCTION_R2_CTOR_BODY
 
         LOKI_FUNCTION_BODY

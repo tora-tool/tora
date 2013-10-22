@@ -7,15 +7,24 @@
 //     for You" by Alexandrescu, Andrei.
 //     Published in the February 2001 issue of the C/C++ Users Journal.
 //     http://www.cuj.com/documents/s=7998/cujcexp1902alexandr/
+// Permission to use, copy, modify, distribute and sell this software for any 
+//     purpose is hereby granted without fee, provided that the above copyright 
+//     notice appear in all copies and that both that copyright notice and this 
+//     permission notice appear in supporting documentation.
+// The author makes no representations about the 
+//     suitability of this software for any purpose. It is provided "as is" 
+//     without express or implied warranty.
 // Prepared for Loki library by Richard Sposato
 ////////////////////////////////////////////////////////////////////////////////
 #ifndef LOKI_LOCKING_PTR_INC_
 #define LOKI_LOCKING_PTR_INC_
 
-// $Id: LockingPtr.h 748 2006-10-17 19:49:08Z syntheticpp $
+// $Id: LockingPtr.h 840 2008-03-19 19:44:38Z rich_sposato $
 
 
 #include <loki/ConstPolicy.h>
+#include <loki/Threads.h>
+
 
 namespace Loki
 {
