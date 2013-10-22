@@ -44,6 +44,19 @@
 
 #include <string.h>
 
+namespace Loki
+{
+	template<> struct IsCustomUnsignedInt<unsigned long long>
+	{
+		enum { value = 1 };
+	};
+
+	template<> struct IsCustomSignedInt<long long>
+	{
+		enum { value = 1 };
+	};
+}
+
 namespace trotl
 {
 
