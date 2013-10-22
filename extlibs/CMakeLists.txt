@@ -16,7 +16,7 @@ IF(WANT_INTERNAL_QSCINTILLA)
   ADD_SUBDIRECTORY(qscintilla2)
 ENDIF(WANT_INTERNAL_QSCINTILLA)
 
-ADD_SUBDIRECTORY(libantlr3c-3.3)
+#ADD_SUBDIRECTORY(libantlr3c-3.3)
 
 # Disabled, partially moved into src/parsing
 # ADD_SUBDIRECTORY(parsing) 
