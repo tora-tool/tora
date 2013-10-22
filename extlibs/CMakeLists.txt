@@ -6,11 +6,10 @@ IF (TORA_DEBUG)
 ENDIF (TORA_DEBUG)
 
 # loki library
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/extlibs/loki/include)
-ADD_SUBDIRECTORY(loki)
-
-# trotl library
-ADD_SUBDIRECTORY(trotl)
+IF(WANT_INTERNAL_LOKI)
+  SET (TORA_LOKI_LIB tora_loki_lib)
+  ADD_SUBDIRECTORY(loki)
+ENDIF(WANT_INTERNAL_LOKI)
 
 IF(WANT_INTERNAL_QSCINTILLA)
   SET (TORA_QSCINTILLA_LIB tora_qscintilla2_lib)
@@ -26,6 +25,6 @@ IF (graphviz_FOUND)
   ADD_SUBDIRECTORY(libermodel)
 ENDIF(graphviz_FOUND)
 
-
-
+# trotl library
+ADD_SUBDIRECTORY(trotl)
   

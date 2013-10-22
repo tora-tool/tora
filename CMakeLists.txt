@@ -11,6 +11,7 @@ ENDIF()
 
 # options available for user's input
 OPTION(WANT_INTERNAL_QSCINTILLA "Use internal/bundled QScintilla2 source" OFF)
+OPTION(WANT_INTERNAL_LOKI "Use internal/bundled Loki source" OFF)
 OPTION(ENABLE_ORACLE "Enable/Disable Oracle support at all. Including detection" ON)
 OPTION(ENABLE_PGSQL "Enable/Disable PostgreSQL support. Including detection" ON)
 OPTION(ENABLE_DB2 "Enable/Disable DB2 support. Including detection" ON)
@@ -127,6 +128,15 @@ ELSE (MSVC)
   SET (CXX_WARNINGS "-Wall")
 ENDIF (MSVC)
 
+
+IF (WANT_INTERNAL_LOKI)
+  SET(TORA_LOKI_LIB "tora_loki_lib")
+  INCLUDE_DIRECTORIES(BEFORE "${CMAKE_SOURCE_DIR}/extlibs/loki/include")
+ELSE (WANT_INTERNAL_LOKI)
+  FIND_PACKAGE(Loki REQUIRED)
+  INCLUDE_DIRECTORIES(BEFORE "${LOKI_INCLUDE_DIRS}")
+ENDIF (WANT_INTERNAL_LOKI)
+INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/extlibs/loki-extra/include)
 
 # Required for win when there is used an external qscintilla lib
 IF (WIN32 AND NOT DEFINED WANT_INTERNAL_QSCINTILLA)
@@ -262,7 +272,6 @@ CONFIGURE_FILE(
 ADD_CUSTOM_TARGET(uninstall
   "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
 
-SET(TORA_LOKI_LIB "tora_loki_lib")
 SET(TROTL_DLL_DEFINES    -DLOKI_STATIC -DEXPLICIT_EXPORT -DTROTL_MAKE_DLL)
 SET(TROTL_CLIENT_DEFINES -DLOKI_STATIC -DEXPLICIT_EXPORT -DTROTL_DLL)
 SET(PARSING_DLL_DEFINES    -DLOKI_STATIC -DEXPLICIT_EXPORT -DTSQLPARSER_MAKE_DLL)

@@ -82,21 +82,4 @@ ELSE(ORACLE_HAS_XML)
     MESSAGE(STATUS "-- No Oracle XDK found: ignoring")
 ENDIF(ORACLE_HAS_XML)
 
-
-# SET (QT_MT_REQUIRED true)
-# SET (QT_MIN_VERSION "4.4.0")
-# FIND_PACKAGE(Qt4 REQUIRED)
-# INCLUDE( ${QT_USE_FILE} )
-# IF (QT_FOUND)
-#     MESSAGE("-- Qt4 Found OK")
-#     #Add our Qt definitions
-#     ADD_DEFINITIONS(
-#         ${QT_DEFINITIONS}
-#         -DQT_CORE_LIB
-#         -DQT_THREAD_LIB
-#     )
-# ELSE(QT_FOUND)
-#     MESSAGE(STATUS "-- No Qt4 found")
-# ENDIF(QT_FOUND)
-
 ADD_SUBDIRECTORY(src)

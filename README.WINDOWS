@@ -33,7 +33,7 @@ Content:
   
   5. Download and unzip Boost headers. The is no need to compile anything. Only few headers are needed.
 
-  6. Download and unzip Qt4 source version for Windows. (Version 4.8.4)
+  6. Download and unzip Qt4 source version for Windows. (Version 4.8.5)
   6a. Build OpenSSL as described here: http://qt-project.org/wiki/Building_Qt_Desktop_for_Windows_with_MSVC
   6b. Configure QT: configure.exe -debug-and-release -fast -openssl -webkit -nomake examples -nomake demos -system-proxies -stl
   6c. Compile QT: nmake (and wait)
@@ -88,6 +88,7 @@ Content:
                     Value: D:/DEVEL/TortoiseSVN/bin/svn.exe
          Do not use SVN provided by cygwin		    
        - Toggle WANT_INTERNAL_QSCINTILLA to Y.       
+       - Toggle WANT_INTERNAL_LOKI to Y. 
        - Click Configure/Generate, set generator to Visual Studio 10 (or Visual Studio 10 64bit)
   13b. Open Visual Studio 2010 and import solution tora.sln
   13c. Compile projects tora poracle
@@ -95,7 +96,7 @@ Content:
   14. Compile Tora in command prompt  
       mkdir d:\devel\tora3\debug
       cd d:\devel\tora3\debug
-      cmake -DBOOST_ROOT=D:/DEVEL/boost_1_46_1 -DWANT_INTERNAL_QSCINTILLA=1 -DCMAKE_BUILD_TYPE=Debug -G "NMake Makefiles" ..
+      cmake -DBOOST_ROOT=D:/DEVEL/boost_1_46_1 -DWANT_INTERNAL_QSCINTILLA=1 -DWANT_INTERNAL_LOKI=1 -DCMAKE_BUILD_TYPE=Debug -G "NMake Makefiles" ..
       nmake
 
 #
@@ -103,16 +104,14 @@ Content:
 #
 Above build will generate into the tora-build\RELEASE dir. Copy the various dll files from Qt, Postgres, MySQL 
 installs into that dir as well:
-MSVC 2010 Runtime libs:
+MSVC 2010 Runtime libs(optional)
 	msvcp100.dll
 	msvcr100.dll 
 QT Libs:
-	qsqlmysqld4.dll
-	qsqlpsql4.dll
-	QtCore4.dll QtGui4.dll QtHelp4.dll QtNetwork4.dll QtSql4.dll QtXml4.dll 
+	QtCore4.dll QtGui4.dll QtHelp4.dll QtNetwork4.dll QtSql4.dll QtXml4.dll (put into root)
+	qsqlmysqld4.dll qsqlpsql4.dll qsqlodbc4.dll (put into plugins subdir)
+
 Tora Libs:
-	antlr3c.dll
-	parsing.dll
 	poracle.dll
 	trotl.dll
 Then you should be able to run tora.exe from that dir. This can be used to test prior to packaging.
@@ -120,7 +119,15 @@ Then you should be able to run tora.exe from that dir. This can be used to test 
 #
 # Building Windows installer.
 #
+MSI
+    1. Download and install Wix from
+       http://wixtoolset.org/
 
+    2. Execute the packager
+       cd src/windows/installer
+       make_msi.bat (resp. make_msi64.bat)
+
+NSIS (Obsolete)
     1. Obtain and install NSIS installer software from 
         http://nsis.sourceforge.net
 

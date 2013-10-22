@@ -226,10 +226,10 @@
 #include <memory>
 #include <vector>
 
-#include "Typelist.h"
-#include "Singleton.h"
-#include "TypeTraits.h"
-#include "TypelistMacros.h"
+#include "loki/Typelist.h"
+#include "loki/Singleton.h"
+#include "loki/TypeTraits.h"
+#include "loki/TypelistMacros.h"
 
 namespace Util {
   namespace Private {
