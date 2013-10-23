@@ -1,7 +1,7 @@
 @ECHO OFF
      
 set DEV=D:\DEVEL
-set QTDIR=%DEV%\qt-everywhere-opensource-src-4.8.4
+set QTDIR=%DEV%\qt-everywhere-opensource-src-4.8.5
 set PATH=%SystemRoot%;%SystemRoot%\system32;d:\devel\TortoiseSVN\bin;D:\DEVEL\CMake2.8\bin;%QTDIR%\bin;D:\devel\doxygen\bin
      
 echo Setting OpenSSL Env.
@@ -42,6 +42,6 @@ set PATH=%LIBPATH%;%PATH%;D:\Perl\bin
      
 echo Env. ready.
      
-title Qt Framework 4.8.4 Development Kit.
+title Qt Framework 4.8.5 Development Kit.
      
 cd %DEV%
