@@ -112,7 +112,7 @@ toToolWidget* toBrowserTool::toolWindow(QWidget *parent, toConnection &connectio
 
 bool toBrowserTool::canHandle(const toConnection &conn)
 {
-    return conn.providerIs("Oracle") || conn.providerIs("QMYSQL") || conn.providerIs("PostgreSQL") || conn.providerIs("SapDB") || conn.providerIs("Teradata");
+    return conn.providerIs("Oracle") || conn.providerIs("QMYSQL") || conn.providerIs("QPSQL") || conn.providerIs("SapDB") || conn.providerIs("Teradata");
 }
 
 void toBrowserTool::customSetup()
@@ -704,7 +704,7 @@ static toSQL SQLListTablesPgSQL("toBrowser:ListTables",
                                 " ORDER BY \"Table Name\"",
                                 "",
                                 "7.1",
-                                "PostgreSQL");
+                                "QPSQL");
 static toSQL SQLListTablesSapDB("toBrowser:ListTables",
                                 "SELECT tablename \"Table Name\"\n"
                                 " FROM tables \n"
@@ -730,7 +730,7 @@ static toSQL SQLListViewPgSQL("toBrowser:ListView",
                               " ORDER BY View_Name",
                               "List the available views in a schema",
                               "7.1",
-                              "PostgreSQL");
+                              "QPSQL");
 static toSQL SQLListView("toBrowser:ListView",
                          "SELECT View_Name FROM SYS.ALL_VIEWS WHERE OWNER = :f1<char[101]>\n"
                          "   AND UPPER(VIEW_NAME) LIKE :f2<char[101]>\n"
@@ -781,7 +781,7 @@ static toSQL SQLListIndexPgSQL("toBrowser:ListIndex",
                                "ORDER BY \"Index Name\"",
                                "",
                                "7.1",
-                               "PostgreSQL");
+                               "QPSQL");
 static toSQL SQLListIndexSapDb("toBrowser:ListIndex",
                                "SELECT IndexName \"Index Name\"\n"
                                " FROM indexes \n"
@@ -797,7 +797,7 @@ static toSQL SQLListSequencePgSQL("toBrowser:ListSequence",
                                   " ORDER BY \"Sequence Name\"",
                                   "List the available sequences in a schema",
                                   "7.1",
-                                  "PostgreSQL");
+                                  "QPSQL");
 static toSQL SQLListSequence("toBrowser:ListSequence",
                              "SELECT Sequence_Name FROM SYS.ALL_SEQUENCES\n"
                              " WHERE SEQUENCE_OWNER = :f1<char[101]>\n"
@@ -1445,7 +1445,7 @@ void toBrowser::changeConnection(void)
 		addTab(tableSplitter, tr("T&ables"), true);
 		addTab(viewSplitter, tr("&Views"), !connection().providerIs("QMYSQL"));
 		addTab(indexSplitter, tr("Inde&xes"), true);
-		addTab(sequenceSplitter, tr("Se&quences"), connection().providerIs("Oracle") || connection().providerIs("PostgreSQL"));
+		addTab(sequenceSplitter, tr("Se&quences"), connection().providerIs("Oracle") || connection().providerIs("QPSQL"));
 		addTab(synonymSplitter, tr("S&ynonyms"), connection().providerIs("Oracle"));
 
 		// 2010-03-31
@@ -1453,7 +1453,7 @@ void toBrowser::changeConnection(void)
 		// If TOra is used a lot with older versions of MySQL the "true" parameter
 		// should be enhanced with a check for MySQL version
 		addTab(codeSplitter, tr("Cod&e"), true);
-		addTab(triggerSplitter, tr("Tri&ggers"), !connection().providerIs("QMYSQL") && !connection().providerIs("PostgreSQL"));
+		addTab(triggerSplitter, tr("Tri&ggers"), !connection().providerIs("QMYSQL") && !connection().providerIs("QPSQL"));
 		addTab(dblinkSplitter, tr("DBLinks"), connection().providerIs("Oracle"));
 		addTab(directoriesSplitter, tr("Directories"), connection().providerIs("Oracle"));
 		addTab(accessSplitter, tr("Access"), connection().providerIs("QMYSQL"));
@@ -1585,7 +1585,7 @@ void toBrowser::defineFilter(void)
 bool toBrowser::canHandle(const toConnection &conn)
 {
     return conn.providerIs("Oracle") ||
-           conn.providerIs("PostgreSQL") ||
+           conn.providerIs("QPSQL") ||
            conn.providerIs("QMYSQL") ||
            conn.providerIs("SapDB");
 }
@@ -2580,7 +2580,7 @@ void toBrowser::fixIndexCols(void)
 //
 //             if (providerIs("Oracle")(connection()) ||
 //                     toIsSapDB(connection()) ||
-//                     connection().providerIs("PostgreSQL"))
+//                     connection().providerIs("QPSQL"))
 //             {
 //                 (new toTemplateSchemaList(connection(),
 //                                           item,
@@ -2592,7 +2592,7 @@ void toBrowser::fixIndexCols(void)
 //                                           toSQL::string(SQLListIndex, connection())))->setPixmap(0, index);
 //             }
 //
-//             if (providerIs("Oracle")(connection()) || connection().providerIs("PostgreSQL"))
+//             if (providerIs("Oracle")(connection()) || connection().providerIs("QPSQL"))
 //             {
 //                 (new toTemplateSchemaList(connection(),
 //                                           item,

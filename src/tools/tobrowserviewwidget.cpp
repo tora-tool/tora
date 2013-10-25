@@ -51,7 +51,7 @@ static toSQL SQLViewSQLPgSQL("toBrowser:ViewSQL",
                              "   AND c.relkind = 'v' AND c.relname = :f2",
                              "Display SQL of a specified view",
                              "7.1",
-                             "PostgreSQL");
+                             "QPSQL");
 static toSQL SQLViewSQL("toBrowser:ViewSQL",
                         "SELECT Text SQL\n"
                         "  FROM SYS.ALL_Views\n"
@@ -114,7 +114,7 @@ void toBrowserViewWidget::changeConnection()
 
     addTab(columnsWidget, "&Columns");
 
-    if (c.providerIs("Oracle") || c.providerIs("SapDB") || c.providerIs("PostgreSQL"))
+    if (c.providerIs("Oracle") || c.providerIs("SapDB") || c.providerIs("QPSQL"))
         addTab(resultField, "SQL");
     else
         resultField->hide();

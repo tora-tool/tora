@@ -74,7 +74,7 @@ static toSQL SQLBackendSql(
     "SELECT pg_stat_get_backend_activity ( :backend<int> )",
     "Get the backend's SQL statement.",
     "",
-    "PostgreSQL");
+    "QPSQL");
 
 toSGAStatement::toSGAStatement(QWidget *parent)
     : QTabWidget(parent)
@@ -113,7 +113,7 @@ void toSGAStatement::changeTab(int index)
 
                 if (conn.providerIs("Oracle"))
                     sql = Utils::toSQLString(conn, Address);
-                else if (conn.providerIs("PostgreSQL"))
+                else if (conn.providerIs("QPSQL"))
                 {
                     toQList vals = toQuery::readQuery(conn, SQLBackendSql, toQueryParams() << Address);
 

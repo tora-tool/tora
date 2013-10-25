@@ -355,7 +355,7 @@ static toSQL SQLUserNamesPgSQL(toSQL::TOSQL_USERLIST,
                                "SELECT nspname AS UserName FROM pg_namespace ORDER BY nspname",
                                "",
                                "7.1",
-                               "PostgreSQL");
+                               "QPSQL");
 
 static toSQL SQLUserNamesSapDB(toSQL::TOSQL_USERLIST,
                                "SELECT username \"UserName\" FROM users ORDER BY username",
@@ -525,7 +525,7 @@ static toSQL SQLNowPgSQL("Global:Now",
                          "SELECT now()",
                          "",
                          "7.1",
-                         "PostgreSQL");
+                         "QPSQL");
 
 static toSQL SQLNowTD("Global:Now",
                       "SELECT CURRENT_DATE",

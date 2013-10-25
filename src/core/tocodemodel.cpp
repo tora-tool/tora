@@ -111,7 +111,7 @@ static toSQL SQLListObjectsPgSQL("toCodeModel:ListObjects",
                                  "ORDER BY Object_Name",
                                  "",
                                  "7.1",
-                                 "PostgreSQL");
+                                 "QPSQL");
 
 static toSQL SQLListObjectsMySQL("toCodeModel:ListObjects",
                                  "select r.routine_name object_name,\n"

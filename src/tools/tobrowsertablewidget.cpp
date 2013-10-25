@@ -103,7 +103,7 @@ static toSQL SQLTableIndexPG("toBrowserTableWidget:TableIndex",
                              "   AND i.indexrelid = c2.OID",
                              "",
                              "",
-                             "PostgreSQL");
+                             "QPSQL");
 
 static toSQL SQLTableIndexMySQL3("toBrowserTableWidget:TableIndex",
                                  "SHOW INDEX FROM `:f1<noquote>`.`:tab<noquote>`",
@@ -214,7 +214,7 @@ static toSQL SQLTableConstraintPG(
     " ORDER BY 1",
     "",
     "",
-    "PostgreSQL");
+    "QPSQL");
 
 static toSQL SQLTableReferences(
     "toBrowser:TableReferences",
@@ -299,7 +299,7 @@ static toSQL SQLTableTriggerPG("toBrowser:TableTrigger",
                                "  ORDER BY 1\n",
                                "",
                                "",
-                               "PostgreSQL");
+                               "QPSQL");
 static toSQL SQLTableTriggerMysql("toBrowser:TableTrigger",
                                   "SELECT * FROM INFORMATION_SCHEMA.TRIGGERS\n"
                                   "   WHERE event_object_schema = :f1<char[101]>\n"
@@ -326,7 +326,7 @@ static toSQL SQLTableInfoPgSQL("toBrowser:TableInformation",
                                "   AND c.relname = :f2",
                                "",
                                "7.1",
-                               "PostgreSQL");
+                               "QPSQL");
 static toSQL SQLTableInfoSapDB("toBrowser:TableInformation",
                                "SELECT TABLENAME,PRIVILEGES,CREATEDATE,CREATETIME,UPDSTATDATE,UPDSTATTIME,ALTERDATE,ALTERTIME,TABLEID \n"
                                " FROM tables \n"
@@ -468,7 +468,7 @@ void toBrowserTableWidget::changeConnection()
     addTab(columnsWidget, "&Columns");
     addTab(indexView, "&Indexes");
 
-    if (c.providerIs("Oracle") || c.providerIs("PostgreSQL"))
+    if (c.providerIs("Oracle") || c.providerIs("QPSQL"))
         addTab(constraintsView, "C&onstraints");
     else
         constraintsView->hide();

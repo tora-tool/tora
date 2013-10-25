@@ -74,7 +74,7 @@
 //    "   AND NOT a.attisdropped",
 //    "",
 //    "7.1",
-//    "PostgreSQL");
+//    "QPSQL");
 
 //static toSQL SQLCommentTD(
 //    "toResultCols:Comments",
@@ -127,7 +127,7 @@ static toSQL SQLTableCommentPG(
     "   AND d.objsubid = 0",
     "",
     "7.1",
-    "PostgreSQL");
+    "QPSQL");
 
 static toSQL SQLTableColumns(
     "toResultCols:ListCols",
@@ -380,7 +380,7 @@ static toSQL SQLTableColumnsPG(
     " ORDER BY a.attnum",
     "",
     "7.1",
-    "PostgreSQL");
+    "QPSQL");
 
 static toSQL SQLTableColumnsTD(
     "toResultCols:ListCols",

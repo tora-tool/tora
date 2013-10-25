@@ -34,6 +34,7 @@
 
 #include "connection/toqpsqlprovider.h"
 #include "connection/toqpsqlsetting.h"
+#include "connection/toqpsqlconnection.h"
 
 #define QT_DRIVER_NAME "QPSQL"
 
@@ -53,39 +54,7 @@ QWidget* toQPSqlProvider::configurationTab(QWidget *parent)
 #endif
 }
 
-/*
-bool toQMySqlProvider::initialize()
+toConnection::connectionImpl* toQPSqlProvider::createConnectionImpl(toConnection &conn)
 {
-	return true;
+	return new toQPSqlConnectionImpl(conn);
 }
-
-QList<QString> toQMySqlProvider::hosts()
-{
-    QList<QString> ret = QList<QString>() << QString::null << "(TBD) hosts";
-    return ret;
-}
-
-QList<QString> toQMySqlProvider::databases(const QString &host, const QString &user, const QString &pwd)
-{
-	QList<QString> ret;
-	ret << "TBD databases";
-	return ret;
-}
-
-QList<QString> toQMySqlProvider::options()
-{
-	QList<QString> ret;
-	ret << "TBD options";
-	return ret;
-}
-
-toConnection::connectionImpl* toQMySqlProvider::createConnectionImpl(toConnection &con)
-{
-	return NULL;
-}
-
-toConnectionTraits* toQMySqlProvider::createConnectionTrait(void)
-{
-	return NULL;
-}
-*/

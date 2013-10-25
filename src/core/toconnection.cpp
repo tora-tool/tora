@@ -426,7 +426,7 @@ void toConnection::setSchema(QString const & schema)
         setInit("SCHEMA", CHANGE_CURRENT_SCHEMA.arg(schema));
     else if (providerIs("QMYSQL"))
         setInit("SCHEMA", CHANGE_CURRENT_SCHEMA_MY.arg(schema));
-    else if (providerIs("PostgreSQL"))
+    else if (providerIs("QPSQL"))
     	setInit("SCHEMA", CHANGE_CURRENT_SCHEMA_PG.arg(schema));
     else if (providerIs("Teradata"))
     	setInit("SCHEMA", CHANGE_CURRENT_SCHEMA_TD.arg(schema));

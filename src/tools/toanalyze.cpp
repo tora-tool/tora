@@ -76,7 +76,7 @@ public:
     }
     virtual bool canHandle(const toConnection &conn)
     {
-        return conn.providerIs("Oracle") || conn.providerIs("QMYSQL") || conn.providerIs("PostgreSQL");
+        return conn.providerIs("Oracle") || conn.providerIs("QMYSQL") || conn.providerIs("QPSQL");
     }
 };
 
@@ -141,7 +141,7 @@ static toSQL SQLListTablesPg(
     "          2",
     "",
     "7.2",
-    "PostgreSQL");
+    "QPSQL");
 
 static toSQL SQLListIndex("toAnalyze:ListIndex",
                           "SELECT 'INDEX' \"Type\",\n"
@@ -177,7 +177,7 @@ static toSQL SQLListIndexPg(
     "          2",
     "",
     "7.2",
-    "PostgreSQL");
+    "QPSQL");
 
 static toSQL SQLListPlans("toAnalyze:ListPlans",
                           "SELECT DISTINCT\n"
@@ -269,7 +269,7 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
         Sample->setEnabled(false);
         toolbar->addWidget(Sample);
     }
-    else if (connection.providerIs("PostgreSQL"))
+    else if (connection.providerIs("QPSQL"))
     {
         Type = new QComboBox(toolbar);
         Type->addItem(tr("Tables"));
@@ -487,7 +487,7 @@ QStringList toAnalyze::getSQL(void)
                     .arg(Statistics->model()->data((*it).row(), 1).toString()));
 
             }
-            else if (connection().providerIs("PostgreSQL"))
+            else if (connection().providerIs("QPSQL"))
             {
                 QString sql;
 
@@ -651,7 +651,7 @@ void toAnalyze::slotRefresh(void)
             par.insert(par.end(), Schema->selected());
             if (connection().providerIs("Oracle"))
                 sql += "\n   AND owner = :own<char[100]>";
-            else if (connection().providerIs("PostgreSQL"))
+            else if (connection().providerIs("QPSQL"))
             {
                 sql =
                     QString(" SELECT * FROM ( %1 ) sub\n"

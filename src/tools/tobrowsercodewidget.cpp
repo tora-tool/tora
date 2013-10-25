@@ -53,7 +53,7 @@ static toSQL SQLSQLHeadPgSQL("toBrowser:CodeHead",
                              "  AND p.proname = :f2\n",
                              "Declaration of object",
                              "7.1",
-                             "PostgreSQL");
+                             "QPSQL");
 static toSQL SQLSQLHead("toBrowser:CodeHead",
                         "SELECT Text FROM SYS.ALL_SOURCE\n"
                         " WHERE Owner = :f1<char[101]> AND Name = :f2<char[101]>\n"
@@ -76,7 +76,7 @@ static toSQL SQLSQLBodyPgSQL("toBrowser:CodeBody",
                              "   AND p.proname = :f2",
                              "Implementation of object",
                              "7.1",
-                             "PostgreSQL");
+                             "QPSQL");
 static toSQL SQLSQLBody("toBrowser:CodeBody",
                         "SELECT Text FROM SYS.ALL_SOURCE\n"
                         " WHERE Owner = :f1<char[101]> AND Name = :f2<char[101]>\n"

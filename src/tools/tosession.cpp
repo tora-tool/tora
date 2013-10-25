@@ -82,7 +82,7 @@ public:
 
     virtual toToolWidget* toolWindow(QWidget *parent, toConnection &connection)
     {
-        if (connection.providerIs("Oracle") || connection.providerIs("PostgreSQL"))
+        if (connection.providerIs("Oracle") || connection.providerIs("QPSQL"))
             return new toSession(parent, connection);
 
         return NULL;
@@ -90,7 +90,7 @@ public:
 
     virtual bool canHandle(const toConnection &conn)
     {
-        return conn.providerIs("Oracle") || conn.providerIs("PostgreSQL");
+        return conn.providerIs("Oracle") || conn.providerIs("QPSQL");
     }
 
     virtual void closeWindow(toConnection &connection) {};
@@ -195,7 +195,7 @@ static toSQL SQLLockedObjectPg(
     "   AND l.pid = :f1<int>",
     "",
     "",
-    "PostgreSQL");
+    "QPSQL");
 
 static toSQL SQLOpenCursors(
     "toSession:OpenCursor",
@@ -350,7 +350,7 @@ static toSQL SQLSessionsPg(
     "  FROM ( SELECT pg_stat_get_backend_idset ( ) AS backendid ) AS s",
     "",
     "",
-    "PostgreSQL");
+    "QPSQL");
 
 toSession::toSession(QWidget *main, toConnection &connection)
     : toToolWidget(SessionTool,
@@ -613,9 +613,8 @@ toSession::~toSession()
 
 bool toSession::canHandle(const toConnection &conn)
 {
-    return conn.providerIs("Oracle") || conn.providerIs("PostgreSQL");
+    return conn.providerIs("Oracle") || conn.providerIs("QPSQL");
 }
-
 
 void toSession::slotSelectAll()
 {

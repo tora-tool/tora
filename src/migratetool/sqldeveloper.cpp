@@ -121,7 +121,7 @@ QMap<int, toConnectionOptions> sqlDeveloper(QWidget * parent)
                     if (val == "mysql")
                         opt.provider = "QMYSQL";
                     else if (val == "posgtresql")
-                        opt.provider = "PostgreSQL";
+                        opt.provider = "QPSQL";
                     else
                         opt.provider = "Oracle";
 //                     qDebug() << "subtype" << val;

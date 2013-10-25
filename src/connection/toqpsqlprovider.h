@@ -72,12 +72,11 @@ public:
     /** see: @ref toConnectionProvider::configurationTab() */
     virtual QWidget *configurationTab(QWidget *parent);
 
-    /** see: @ref toConnection *
+    /** see: @ref toConnection */
     virtual toConnection::connectionImpl* createConnectionImpl(toConnection&);
 
-    //** see: @ref toConnection *
-    virtual toConnectionTraits* createConnectionTrait(void);
-    */
+    //** see: @ref toConnection */
+    ////virtual toConnectionTraits* createConnectionTrait(void);
     
 private:
     static QString m_name, m_displayName;

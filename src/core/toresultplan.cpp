@@ -110,7 +110,7 @@ bool toResultPlan::canHandle(const toConnection &conn)
     return
         conn.providerIs("Oracle") ||
         conn.providerIs("QMYSQL")  ||
-        conn.providerIs("PostgreSQL");
+        conn.providerIs("QPSQL");
 }
 
 void toResultPlan::oracleSetup(void)

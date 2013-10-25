@@ -82,7 +82,7 @@ static toSQL SQLVersionPgSQL("toQSqlConnection:Version",
                              "SELECT SUBSTR(version(), STRPOS(version(), ' ') + 1, STRPOS(version(), 'on') - STRPOS(version(), ' ') - 2)",
                              "",
                              "7.1",
-                             "PostgreSQL");
+                             "QPSQL");
 
 static toSQL SQLListDatabases("toQSqlConnection:ListDatabases",
                               "show databases where `Database` = :f1<quote> or :f1<quote> = ''",
@@ -121,7 +121,7 @@ static toSQL SQLListObjectsPgSQL("toQSqlConnection:ListObjects",
                                  " ORDER BY \"Tablename\"",
                                  "",
                                  "7.1",
-                                 "PostgreSQL");
+                                 "QPSQL");
 
 static toSQL SQLListSynonymsSapDb("toQSqlConnection:ListSynonyms",
                                   "SELECT synonymname \"Synonym\", owner \"Schema\", tablename \"Object\"\n"
@@ -138,7 +138,7 @@ static toSQL SQLListSynonyms("toQSqlConnection:ListSynonyms",
                              " ORDER BY n.nspname, c.relname",
                              "",
                              "7.1",
-                             "PostgreSQL");
+                             "QPSQL");
 
 static toSQL SQLColumnComments("toQSqlConnection:ColumnComments",
                                "select a.attname,b.description\n"
@@ -154,7 +154,7 @@ static toSQL SQLColumnComments("toQSqlConnection:ColumnComments",
                                "Get the available comments on columns of a table, "
                                "must have same binds and columns",
                                "7.1",
-                               "PostgreSQL");
+                               "QPSQL");
 
 static toSQL SQLColumnComments72("toQSqlConnection:ColumnComments",
                                  "select a.attname,b.description\n"
@@ -170,7 +170,7 @@ static toSQL SQLColumnComments72("toQSqlConnection:ColumnComments",
                                  "  and c.relname=:table",
                                  "",
                                  "7.2",
-                                 "PostgreSQL");
+                                 "QPSQL");
 
 static toSQL SQLConnectionID("toQSqlConnection:ConnectionID",
                              "SELECT connection_id()",
@@ -182,7 +182,7 @@ static toSQL SQLConnectionIDPg("toQSqlConnection:ConnectionID",
                                "SELECT pg_backend_pid()",
                                "",
                                "",
-                               "PostgreSQL");
+                               "QPSQL");
 
 static toSQL SQLCancel("toQSqlConnection:Cancel",
                        "KILL :f1",
@@ -208,7 +208,7 @@ static toSQL SQLCancelPg("toQSqlConnection:Cancel",
                          "SELECT pg_cancel_backend(:pid)",
                          "",
                          "8.0",
-                         "PostgreSQL");
+                         "QPSQL");
 #endif
 
 // seems to be the only way for < 8.0 to not get pg_cancel_backend
@@ -216,7 +216,7 @@ static toSQL SQLCancelPgOld("toQSqlConnection:Cancel",
                             "native",
                             "",
                             "",
-                            "PostgreSQL");
+                            "QPSQL");
 
 
 void native_cancel(QSqlDriver *driver)
@@ -658,7 +658,7 @@ static toQColumnDescriptionList Describe(const QString &type, QSqlRecord record,
                 break;
             }
         }
-        else if (type == "PostgreSQL")
+        else if (type == "QPSQL")
         {
             switch (info.typeID())
             {
@@ -1104,7 +1104,7 @@ public:
         if (driv == QString::fromLatin1("QMYSQL"))
             return "MySQL";
         else if (driv == QString::fromLatin1("QPSQL"))
-            return "PostgreSQL";
+            return "QPSQL";
         else if (driv == QString::fromLatin1("QTDS"))
             return "Microsoft SQL/TDS";
         else if (driv == QString::fromLatin1("QSAPDB"))
@@ -1117,7 +1117,7 @@ public:
     {
         if (driv == "MySQL")
             return QString::fromLatin1("QMYSQL");
-        else if (driv == "PostgreSQL")
+        else if (driv == "QPSQL")
             return QString::fromLatin1("QPSQL");
         else if (driv == "Microsoft SQL/TDS")
             return QString::fromLatin1("QTDS");
@@ -1504,7 +1504,7 @@ public:
 
         virtual QString quote(const QString &name)
         {
-            if (connection().provider() == "PostgreSQL")
+            if (connection().provider() == "QPSQL")
             {
                 bool ok = true;
                 for (int i = 0; i < name.length(); i++)
@@ -1520,7 +1520,7 @@ public:
 
         virtual QString unQuote(const QString &name)
         {
-            if (connection().provider() == "PostgreSQL")
+            if (connection().provider() == "QPSQL")
             {
                 if (name.at(0).toLatin1() == '\"' && name.at(name.length() - 1).toLatin1() == '\"')
                     return name.left(name.length() - 1).right(name.length() - 2);
@@ -1650,7 +1650,7 @@ public:
         ///       try
         ///       {
         ///           toQDescList desc;
-        ///           if (connection().provider() == "PostgreSQL")
+        ///           if (connection().provider() == "QPSQL")
         ///           {
         ///               toQuery query(connection(), toQuery::Normal);
         ///               qSqlSub *sub = dynamic_cast<qSqlSub *>(query.connectionSub());
@@ -1821,7 +1821,7 @@ public:
         ret.insert(ret.end(), "localhost");
         if (provider == "MySQL")
             ret.insert(ret.end(), ":3306");
-        else if (provider == "PostgreSQL")
+        else if (provider == "QPSQL")
             ret.insert(ret.end(), ":5432");
         return ret;
     }

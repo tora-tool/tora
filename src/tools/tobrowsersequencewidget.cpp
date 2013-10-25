@@ -45,7 +45,7 @@ static toSQL SQLSequenceInfoPgSQL("toBrowser:SequenceInformation",
                                   "SELECT *, substr(:f1,1) as \"Owner\" FROM :f2<noquote>",
                                   "Display information about a sequence",
                                   "7.1",
-                                  "PostgreSQL");
+                                  "QPSQL");
 static toSQL SQLSequenceInfo("toBrowser:SequenceInformation",
                              "SELECT * FROM SYS.ALL_SEQUENCES\n"
                              " WHERE Sequence_Owner = :f1<char[101]>\n"
@@ -82,7 +82,7 @@ void toBrowserSequenceWidget::changeConnection()
 
     toConnection & c = toConnection::currentConnection(this);
 
-    if (c.providerIs("Oracle") || c.providerIs("PostgreSQL"))
+    if (c.providerIs("Oracle") || c.providerIs("QPSQL"))
         addTab(resultInfo, "Info");
     else
         resultInfo->hide();
