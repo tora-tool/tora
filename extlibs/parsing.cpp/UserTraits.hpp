@@ -187,6 +187,11 @@ namespace Antlr3Impl {
 #  include "UserTraitsBoost.hpp"
 #elif defined(USETBB)
 #  include "UserTraitsTBB.hpp"
+#else
+namespace Antlr3Impl
+{
+   typedef antlr3::Traits<PLSQLLexer, PLSQLParser> PLSQLTraits;
+};
 #endif
 
 namespace Antlr3Impl
@@ -195,7 +200,7 @@ namespace Antlr3Impl
 	typedef antlr3::Traits<OraclePLSQLLexer, OraclePLSQLParser, UserTraits> OraclePLSQLLexerTraits;
 	typedef antlr3::Traits<OraclePLSQLLexer, OraclePLSQLParser, UserTraits> OraclePLSQLParserTraits;
 	
-	typedef antlr3::Traits<PLSQLLexer, PLSQLParser> PLSQLTraits;
+
 
 	typedef antlr3::Traits<MySQLLexer, EmptyParser> MySQLLexerTraits;
 
