@@ -23,7 +23,7 @@ options {
     language=Cpp;
     backtrack=true;
 	memoize=true;
-    output=AST;
+    //output=AST;
     //TokenLabelType=CommonTokenTypeCTT;
 }
 
@@ -123,14 +123,14 @@ tokens {
 
 @lexer::includes 
 {
-#include "UserGuiTraits.hpp"
+#include "UserTraits.hpp"
 #include <vector>
+#include <memory>            
 }
 
-@lexer::namespace 
-{ Antlr3Impl }
+@lexer::namespace{ Antlr3Impl }
 
-@lexer::members {
+@lexer::context {
 
   void advanceInput()
   {
@@ -142,17 +142,14 @@ tokens {
 }
         
 @parser::includes {
-#include "UserGuiTraits.hpp"
+#include "UserTraits.hpp"
 #include "OraclePLSQLLexer.hpp"
 #include <vector>
 }
 
-@parser::namespace 
-{ Antlr3Impl }
+@parser::namespace { Antlr3Impl }
         
-@members {
-            void perserMember();
-}
+@members { void perserMember(); }
 
 // @members {
 

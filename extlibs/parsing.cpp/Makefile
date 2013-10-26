@@ -18,7 +18,7 @@ CXXFLAGS=-ggdb3 -O0 -fno-inline -Wno-parentheses-equality
 
 TOBJS= utils.o
 
-all: t0 t1 t2 t4 m0 p0 s0 s1 s2
+all: t0 t1 t2 t4 m0 m1 p0 s0 s1 s2
 
 $(ANTLR): org/antlr/codegen/templates/Cpp/Cpp.stg \
 	org/antlr/codegen/templates/Cpp/AST.stg \
@@ -41,6 +41,9 @@ t4:	t4.cpp PLSQLLexer.tokens PLSQLParser.tokens t4.cpp $(TOBJS) $(PSOURCES) $(PO
 m0:	m0.cpp MySQLGuiLexer.tokens $(TOBJS) MySQLGuiLexer.o Makefile UserGuiTraits.hpp
 	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(TOBJS) m0.cpp MySQLGuiLexer.o $(LIBS) -o $@
 
+m1:	m1.cpp MySQLLexer.tokens $(TOBJS) MySQLLexer.o Makefile UserTraits.hpp
+	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(TOBJS) $@.cpp MySQLLexer.o $(LIBS) -o $@
+
 p0:	p0.cpp OraclePLSQL.tokens $(TOBJS) OraclePLSQLLexer.o OraclePLSQLParser.o Makefile UserGuiTraits.hpp
 	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(TOBJS) p0.cpp OraclePLSQLLexer.o OraclePLSQLParser.o -o $@
 
@@ -57,7 +60,7 @@ s3:	s3.cpp S3.tokens $(TOBJS) Makefile UserMiniTraits.hpp
 	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(TOBJS) s3.cpp S3Lexer.cpp S3Parser.cpp $(LIBS) -o $@
 
 clean:
-	rm -f *.o *Lexer*.[ch]pp *Parser.[ch]pp t0 t1 t2 t3 t4 m0 s0 s1 s2 *.tokens
+	rm -f *.o *Lexer*.[ch]pp *Parser.[ch]pp t0 t1 t2 t3 t4 m0 m1 s0 s1 s2 *.tokens
 
 install:
 	cp PLSQLGuiLexer.cpp ../../src/parsing/PLSQLGuiLexer.cc

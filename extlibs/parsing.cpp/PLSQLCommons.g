@@ -22,10 +22,7 @@ parser grammar PLSQLCommons;
         #include "UserTraits.hpp"
 }
 
-@namespace
-{
-        User
-}
+@namespace{ Antlr3Impl }
 
 // $<Common SQL PL/SQL Clauses/Parts
 

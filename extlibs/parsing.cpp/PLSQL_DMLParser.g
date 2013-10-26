@@ -29,7 +29,7 @@ parser grammar PLSQL_DMLParser;
 	#include "UserTraits.hpp"
 	#include "PLSQLLexer.hpp"
 }
-@parser::namespace { User }
+@parser::namespace { Antlr3Impl }
 
 //SHOULD BE OVERRIDEN!
 compilation_unit

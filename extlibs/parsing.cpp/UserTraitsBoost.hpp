@@ -1,7 +1,7 @@
 
 #include <boost/pool/pool_alloc.hpp>
 
-namespace User {
+namespace Antlr3Impl {
 
 	class BoostAllocPolicy
 	{
