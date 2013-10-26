@@ -507,7 +507,6 @@ SET(TORA_SOURCES
   migratetool/squirrelsql.cpp
   migratetool/tora3.cpp
 
-  connection/tooraclefind.cpp
   connection/tooraclesql.cpp
   connection/tooracleextract.cpp
   connection/toteradatafind.cpp
@@ -631,7 +630,7 @@ IF (PCH_DEFINED)
 ENDIF (PCH_DEFINED)
 
 IF(ORACLE_FOUND)
-  LIST(APPEND TORA_SOURCES connection/tooraclesetting.cpp)
+  LIST(APPEND TORA_SOURCES connection/tooraclesetting.cpp connection/tooraclefind.cpp)
 ENDIF(ORACLE_FOUND)
 
 IF (USE_EXPERIMENTAL)
@@ -1116,7 +1115,7 @@ IF(TERADATA_FOUND)
   IF(DEFINED TORA_LIB)
     ADD_DEPENDENCIES(${PROVIDER_TERADATA} ${TORA_LIB})
   ELSE()
-    ADD_DEPENDENCIES(${PROVIDER_ORACLE} ${EXE_NAME})
+    ADD_DEPENDENCIES(${PROVIDER_TERADATA} ${EXE_NAME})
   ENDIF()
 ENDIF (TERADATA_FOUND)
 

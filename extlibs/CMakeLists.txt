@@ -26,5 +26,8 @@ IF (graphviz_FOUND)
 ENDIF(graphviz_FOUND)
 
 # trotl library
-ADD_SUBDIRECTORY(trotl)
+IF (ORACLE_FOUND)
+  ADD_SUBDIRECTORY(trotl)
+ENDIF(ORACLE_FOUND)
+
   
