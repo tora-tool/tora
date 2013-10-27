@@ -39,8 +39,7 @@ tokens {
 #include <vector>
 }
 
-@lexer::namespace 
-{ Antlr3Impl }
+@lexer::namespace{ Antlr3GuiImpl }
 
 @header {
 /*

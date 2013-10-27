@@ -33,8 +33,7 @@ options {
 #include <vector>
 }
 
-@lexer::namespace 
-{ Antlr3Impl }
+@lexer::namespace{ Antlr3BackendImpl }
 
 /* ================================================================================
    Oracle reserved words

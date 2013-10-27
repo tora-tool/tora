@@ -19,16 +19,14 @@ scope GlobalOne {
 {
 #include "UserMiniTraits.hpp"
 }
-@lexer::namespace 
-{ Antlr3Mini }
+@lexer::namespace{ Antlr3Mini }
 
 @parser::includes {
 #include "UserMiniTraits.hpp"
 #include "S2Lexer.hpp"
 #include <string>
 }
-@parser::namespace 
-{ Antlr3Mini }
+@parser::namespace{ Antlr3Mini }
 
 
 start_rule

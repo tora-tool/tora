@@ -13,12 +13,12 @@ ANTLR = antlr-complete-3.5.2-SNAPSHOT.jar
 
 INCLUDES= -I. -I../libantlr3cpp-3.5.1/include/ -I../../../boost_1_46_1/
 
-CXXFLAGS=-ggdb3 -O0 -fno-inline -Wno-parentheses-equality
+CXXFLAGS=-ggdb3 -O0 -fno-inline
 ##CXXFLAGS=-ggdb3 -Os
 
 TOBJS= utils.o
 
-all: t0 t1 t2 t4 m0 m1 p0 s0 s1 s2
+all: t0 t1 t4 m0 m1 p0 s0 s1 s2
 
 $(ANTLR): org/antlr/codegen/templates/Cpp/Cpp.stg \
 	org/antlr/codegen/templates/Cpp/AST.stg \
@@ -60,7 +60,7 @@ s3:	s3.cpp S3.tokens $(TOBJS) Makefile UserMiniTraits.hpp
 	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(TOBJS) s3.cpp S3Lexer.cpp S3Parser.cpp $(LIBS) -o $@
 
 clean:
-	rm -f *.o *Lexer*.[ch]pp *Parser.[ch]pp t0 t1 t2 t3 t4 m0 m1 s0 s1 s2 *.tokens
+	rm -f *.o *Lexer*.[ch]pp *Parser.[ch]pp t0 t1 t2 t3 t4 m0 m1 s0 s1 s2 p0 *.tokens
 
 install:
 	cp PLSQLGuiLexer.cpp ../../src/parsing/PLSQLGuiLexer.cc
@@ -73,11 +73,15 @@ install:
 	cp PLSQLParser_PLSQL_DMLParser.cpp ../../src/parsing/PLSQLParser_PLSQL_DMLParser.cc
 	cp PLSQLParser_PLSQLKeys.cpp       ../../src/parsing/PLSQLParser_PLSQLKeys.cc
 	cp PLSQLParser_SQLPLUSParser.cpp   ../../src/parsing/PLSQLParser_SQLPLUSParser.cc
-	cp PLSQLParser.hpp   ../../src/parsing/PLSQLParser.hpp
+	cp PLSQLParser.hpp                 ../../src/parsing/PLSQLParser.hpp
 	cp PLSQLParser_PLSQLCommons.hpp    ../../src/parsing/PLSQLParser_PLSQLCommons.hpp
 	cp PLSQLParser_PLSQL_DMLParser.hpp ../../src/parsing/PLSQLParser_PLSQL_DMLParser.hpp
 	cp PLSQLParser_PLSQLKeys.hpp       ../../src/parsing/PLSQLParser_PLSQLKeys.hpp
 	cp PLSQLParser_SQLPLUSParser.hpp   ../../src/parsing/PLSQLParser_SQLPLUSParser.hpp
+	cp MySQLLexer.cpp                  ../../src/parsing/MySQLLexer.cc
+	cp MySQLLexer.hpp                  ../../src/parsing/MySQLLexer.hpp
+	cp MySQLGuiLexer.cpp               ../../src/parsing/MySQLGuiLexer.cc
+	cp MySQLGuiLexer.hpp               ../../src/parsing/MySQLGuiLexer.hpp
 
 %.u: %.g
 	@echo "Bulding dependencies for "$<

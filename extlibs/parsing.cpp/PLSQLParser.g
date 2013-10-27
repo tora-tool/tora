@@ -31,7 +31,7 @@ import PLSQLKeys, PLSQLCommons, PLSQL_DMLParser, SQLPLUSParser;
 	#include "UserTraits.hpp"
 	#include "PLSQLLexer.hpp"
 }
-@parser::namespace { Antlr3Impl }
+@parser::namespace { Antlr3BackendImpl }
 
 @header {
 /**

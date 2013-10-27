@@ -15,15 +15,13 @@ tokens {
 {
 #include "UserMiniTraits.hpp"
 }
-@lexer::namespace 
-{ Antlr3Mini }
+@lexer::namespace{ Antlr3Mini }
 
 @parser::includes {
 #include "UserMiniTraits.hpp"
 #include "S3Lexer.hpp"
 }
-@parser::namespace 
-{ Antlr3Mini }
+@parser::namespace{ Antlr3Mini }
 @parser::members {
 	class Evaluator {
         public:

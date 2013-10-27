@@ -534,6 +534,7 @@ SET(TORA_SOURCES
   parsing/tsqllexeroracle2.cc  
   parsing/MySQLGuiLexer.cc
   parsing/tsqllexermysql.cc
+  parsing/MySQLLexer.cc
   
   docklets/toviewconnections.cpp
   docklets/toviewdirectory.cpp

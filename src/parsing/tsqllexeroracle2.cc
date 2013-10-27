@@ -1,7 +1,7 @@
 
 #include "parsing/PLSQLGuiLexer.hpp"
-#include "parsing/PLSQLLexer.hpp"
-#include "parsing/PLSQLParser.hpp"
+//#include "parsing/PLSQLLexer.hpp"
+//#include "parsing/PLSQLParser.hpp"
 #include "parsing/tsqllexer.h"
 
 #include <QVector>
@@ -9,7 +9,7 @@
 namespace SQLLexer
 {
 
-using namespace Antlr3Impl;
+using namespace Antlr3GuiImpl;
 
 class OracleGuiLexer : public Lexer
 {
@@ -37,9 +37,9 @@ private:
 	QByteArray QBAinput;
 	QByteArray QBAname;
 
-	Antlr3Impl::PLSQLGuiLexerTraits::InputStreamType*    input;
-	Antlr3Impl::PLSQLGuiLexer *lxr;
-	Antlr3Impl::PLSQLGuiLexerTraits::TokenStreamType* tstream;
+	Antlr3GuiImpl::PLSQLGuiLexerTraits::InputStreamType*    input;
+	Antlr3GuiImpl::PLSQLGuiLexer *lxr;
+	Antlr3GuiImpl::PLSQLGuiLexerTraits::TokenStreamType* tstream;
 	
 	unsigned lastLine, lastColumn, lastIndex;
 

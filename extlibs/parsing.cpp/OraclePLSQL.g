@@ -128,7 +128,7 @@ tokens {
 #include <memory>            
 }
 
-@lexer::namespace{ Antlr3Impl }
+@lexer::namespace{ Antlr3BackendImpl }
 
 @lexer::context {
 
@@ -147,7 +147,7 @@ tokens {
 #include <vector>
 }
 
-@parser::namespace { Antlr3Impl }
+@parser::namespace{ Antlr3BackendImpl }
         
 @members { void perserMember(); }
 

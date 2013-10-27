@@ -14,12 +14,13 @@
 #include <algorithm>
 #include <memory>
 #include <queue>
-#include <TokenAttr.hpp>
 #include <boost/algorithm/string/predicate.hpp>
+
+#include "TokenAttr.hpp"
 
 using namespace SQLLexer;
 
-namespace Antlr3Impl {
+namespace Antlr3BackendImpl {
 	class OraclePLSQLLexer;
 	class OraclePLSQLParser;
 	
@@ -188,20 +189,18 @@ namespace Antlr3Impl {
 #elif defined(USETBB)
 #  include "UserTraitsTBB.hpp"
 #else
-namespace Antlr3Impl
+namespace Antlr3BackendImpl
 {
    typedef antlr3::Traits<PLSQLLexer, PLSQLParser> PLSQLTraits;
 };
 #endif
 
-namespace Antlr3Impl
+namespace Antlr3BackendImpl
 {
 	// p0
 	typedef antlr3::Traits<OraclePLSQLLexer, OraclePLSQLParser, UserTraits> OraclePLSQLLexerTraits;
 	typedef antlr3::Traits<OraclePLSQLLexer, OraclePLSQLParser, UserTraits> OraclePLSQLParserTraits;
 	
-
-
 	typedef antlr3::Traits<MySQLLexer, EmptyParser> MySQLLexerTraits;
 
 	typedef PLSQLTraits PLSQLLexerTraits;

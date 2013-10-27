@@ -22,7 +22,7 @@ parser grammar PLSQLKeys;
  	#include "UserTraits.hpp"
 // 	#include "PLSQLLexer.hpp"            
 }
-@namespace{ Antlr3Impl }
+@namespace{ Antlr3BackendImpl }
 
         
 // @members{

@@ -13,51 +13,19 @@
 #include <antlr3.hpp>
 #include <algorithm>
 #include <memory>
+#include <queue>
 #include <boost/algorithm/string/predicate.hpp>
 
-namespace User {
+#include "TokenAttr.hpp"
+
+namespace Antlr3BackendImpl {
 	class PLSQLLexer;
 	class PLSQLParser;
-};
+	class MySQLLexer;
 
-#if defined(USEBOOST)
-#  include "UserTraitsBoost.hpp"
-#elif defined(USETBB)
-#  include "UserTraitsTBB.hpp"  
-#else // STL
-namespace User {
-	typedef antlr3::Traits<PLSQLLexer, PLSQLParser> PLSQLTraits;
-};
-#endif
-
-/*
-//code for overriding
-template<class ImplTraits>
-class UserTraits : public antlr3::CustomTraitsBase<ImplTraits>
-{
-public:
-	//for using the token stream which deleted the tokens, once it is reduced to a rule
-	//but it leaves the start and stop tokens. So they can be accessed as usual
-	static const bool TOKENS_ACCESSED_FROM_OWNING_RULE = true;
-
-	//Similarly, if you want to override the nextToken function. write a class that 
-	//derives from antlr3::TokenSource and override the nextToken function. But name the class
-	//as TokenSourceType
-	class TokenSourceType : public antlr3::TokenSource<ImplTraits>
-	{
-		public:
-			TokenType*  nextToken()
-			{
-			   ..your version...
-			}
-	};
-};
-
-typedef antlr3::Traits< JavaLexer, JavaParser, UserTraits > PLSQLTraits;
-*/
-
-namespace User
-{
+	class EmptyParser {};
+       
+  	typedef antlr3::Traits<PLSQLLexer, PLSQLParser> PLSQLTraits;
 	typedef PLSQLTraits PLSQLLexerTraits;
 	typedef PLSQLTraits PLSQLParserTraits;
 	typedef PLSQLTraits PLSQLParser_PLSQLKeysTraits;
@@ -66,7 +34,9 @@ namespace User
 	typedef PLSQLTraits PLSQLParser_SQLPLUSParserTraits;	
 	typedef PLSQLTraits PLSQLParser_PLSQL_DMLParser_PLSQLKeysTraits;
 	typedef PLSQLTraits PLSQLParser_PLSQL_DMLParser_PLSQLCommonsTraits;
-	
+
+  	typedef antlr3::Traits<MySQLLexer, EmptyParser> MySQLLexerTraits;
+
 	template<class CommonTokenType>
 	inline bool isTableAlias(CommonTokenType *LT1, CommonTokenType *LT2) {
 		static const std::string wPARTITION("PARTITION");

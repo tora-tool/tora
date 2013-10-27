@@ -22,8 +22,7 @@ tokens
 #include "UserMiniTraits.hpp"
 }
 
-@lexer::namespace 
-{ Antlr3Mini }
+@lexer::namespace{ Antlr3Mini }
 
 @lexer::members {
 
@@ -41,8 +40,7 @@ tokens
 #include "SQLMiniLexer.hpp"
 }
 
-@parser::namespace 
-{ Antlr3Mini }
+@parser::namespace{ Antlr3Mini }
         
 @members {
             void perserMember();

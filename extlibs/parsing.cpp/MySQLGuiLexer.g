@@ -11,8 +11,7 @@ options
 #include <vector>
 }
 
-@lexer::namespace 
-{ Antlr3Impl }
+@lexer::namespace{ Antlr3GuiImpl }
 
 MYSQL_RESERVED:
 	  'ACCESSIBLE' 			// fragment ACCESSIBLE_SYM:

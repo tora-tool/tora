@@ -4,7 +4,7 @@
 namespace SQLLexer
 {
 
-using namespace Antlr3Impl;
+using namespace Antlr3GuiImpl;
 
 class mySQLGuiLexer : public Lexer
 {
@@ -29,9 +29,9 @@ private:
     QByteArray QBAinput;
     QByteArray QBAname;
 
-    Antlr3Impl::MySQLGuiLexerTraits::InputStreamType*    input;
-    Antlr3Impl::MySQLGuiLexer *lxr;
-    Antlr3Impl::MySQLGuiLexerTraits::TokenStreamType* tstream;
+    Antlr3GuiImpl::MySQLGuiLexerTraits::InputStreamType*    input;
+    Antlr3GuiImpl::MySQLGuiLexer *lxr;
+    Antlr3GuiImpl::MySQLGuiLexerTraits::TokenStreamType* tstream;
 
     unsigned lastLine, lastColumn, lastIndex;
 

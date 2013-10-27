@@ -1,7 +1,7 @@
 #define TBB_PREVIEW_MEMORY_POOL 1
 #include "tbb/memory_pool.h"
 
-namespace Antlr3Impl {
+namespace Antlr3BackendImpl {
   
 	extern char buf[];
 	extern tbb::fixed_pool interim_pool;

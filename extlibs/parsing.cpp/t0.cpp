@@ -8,7 +8,7 @@
 #include <sstream>
 #include <fstream>
 
-using namespace Antlr3Impl;
+using namespace Antlr3GuiImpl;
 using namespace std;
 
 static    PLSQLGuiLexer*		    lxr;

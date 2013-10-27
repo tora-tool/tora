@@ -15,15 +15,13 @@ tokens {
 {
 #include "UserMiniTraits.hpp"
 }
-@lexer::namespace 
-{ Antlr3Mini }
+@lexer::namespace{ Antlr3Mini }
 
 @parser::includes {
 #include "UserMiniTraits.hpp"
 #include "S1Lexer.hpp"
 }
-@parser::namespace 
-{ Antlr3Mini }
+@parser::namespace{ Antlr3Mini }
 
 start_rule : if_statement;
 

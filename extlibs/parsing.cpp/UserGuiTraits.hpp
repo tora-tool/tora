@@ -11,7 +11,7 @@
 
 #include "TokenAttr.hpp"
 
-namespace Antlr3Impl {
+namespace Antlr3GuiImpl {
 	class PLSQLGuiLexer;
 	class MySQLGuiLexer;
 	class OraclePLSQLLexer;
@@ -20,7 +20,7 @@ namespace Antlr3Impl {
 
 using namespace SQLLexer;
 
-namespace Antlr3Impl {
+namespace Antlr3GuiImpl {
 //code for overriding
 template<class ImplTraits>
 class UserTraits : public antlr3::CustomTraitsBase<ImplTraits>
