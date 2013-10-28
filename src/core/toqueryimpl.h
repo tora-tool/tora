@@ -38,14 +38,16 @@
 #include "core/tocache.h"
 #include "core/toqvalue.h"
 
+#include <QtCore/QObject>
+
 class toQuery;
 
 /** Abstract parent of implementations of a query for a database provider
  * (See @ref toConnection::connectionImpl and @ref toConnectionProvider)
  */
-class queryImpl
+class queryImpl : public QObject
 {
-    toQuery *Parent;
+	Q_OBJECT;
 public:
     ///typedef toCacheNew::ColumnDescription ColumnDescription;
 
@@ -63,7 +65,8 @@ public:
      * @param query Parent query object.
      */
     queryImpl(toQuery *query)
-        : Parent(query)
+    	: QObject()
+        , Parent(query)
     { }
     /** Destroy query implementation.
      */
@@ -100,7 +103,8 @@ public:
      * thread than is executing the query.
      */
     virtual void cancel(void) = 0;
-
+private:
+    toQuery *Parent;
 protected:
 };
 

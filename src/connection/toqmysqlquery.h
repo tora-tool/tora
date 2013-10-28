@@ -75,8 +75,6 @@ public:
 
         virtual void cancel(void);
 
-        QString parseReorder(const QString &str);
-
         virtual toQValue readValue(void);
 
         virtual bool eof(void);
@@ -87,18 +85,15 @@ public:
 
         virtual toQColumnDescriptionList describe(void);
 private:
-        static toQColumnDescriptionList Describe(const QString &type, QSqlRecord record, int *order, unsigned int orderSize);
-        static QString QueryParam(const QString &in, toQueryParams const &params, QList<QString> &extradata);
+        toQColumnDescriptionList describe(QSqlRecord record);
+        QString bindParam(const QString &in, toQueryParams const &params);
 
         QSqlQuery *Query;
         QSqlRecord Record;
         toQMySqlConnectionSub *Connection;
-        QString CurrentExtra;
-        QList<QString> ExtraData;
+        toQColumnDescriptionList ColumnDescriptions;
+        unsigned CurrentColumn;
         bool EOQ;
-        unsigned int Column;
-        unsigned int ColumnOrderSize;
-        int *ColumnOrder;
 
         void checkQuery(void);
 

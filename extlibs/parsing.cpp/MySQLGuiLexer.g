@@ -5,6 +5,10 @@ options
 	language=Cpp;
 }
 
+tokens {
+    BIND_VAR_WITH_PARAMS;
+}
+
 @lexer::includes 
 {
 #include "UserGuiTraits.hpp"
@@ -1030,7 +1034,7 @@ SHIFT_RIGHT                     : '>>' ;
 ALL_FIELDS                      : '.*' ;
 
 SEMI                            : ';' ;
-COLON                           : ':' ;
+//COLON                           : ':' ;
 DOT                             : '.' ;
 COMMA                           : ',' ;
 ASTERISK                        : '*' ;
@@ -1113,6 +1117,16 @@ COMMENT_ML_PART
 COMMENT_ML_END
     :    '*/'
     ;
+
+// -----------------------------------------------------------------------------
+// Bind variables
+BIND_VAR
+	:	('?'|':')
+		ID?
+        (
+            LTH (ID|CHAR) (LBRACK UNSIGNED_INTEGER RBRACK)? GTH { $type = BIND_VAR_WITH_PARAMS; }
+        )?
+;
 
 // Last resort rule matches any character. This lexer should never fail.
 TOKEN_FAILURE : . ;

@@ -66,6 +66,8 @@ namespace SQLLexer
 			// Leaf node
 			, L_RESERVED               // Reserved word
 			, L_IDENTIFIER
+			, L_BIND_VAR
+			, L_BIND_VAR_WITH_PARAMS   // Tora(otl) specific bind variable :n<int>
 			, L_BUILDIN                // Buildin function name
 			, L_STRING                 // single/double quoted string
 			, L_LPAREN                 // '('

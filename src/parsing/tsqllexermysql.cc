@@ -139,6 +139,7 @@ int mySQLGuiLexer::size() const
 	else
 		return 0;
 }
+
 const Token& mySQLGuiLexer::LA(int pos) const
 {
 	if ( pos <= 0 || pos > size())
@@ -196,12 +197,19 @@ const Token& mySQLGuiLexer::LA(int pos) const
 		case MySQLGuiLexer::WHITE:
 			type = Token::X_WHITE; 
 			break;
+		case MySQLGuiLexer::BIND_VAR:
+			type = Token::L_BIND_VAR;
+			break;
+		case MySQLGuiLexer::BIND_VAR_WITH_PARAMS:
+			type = Token::L_BIND_VAR_WITH_PARAMS;
+			break;			
 		default:
 			type = Token::X_UNASSIGNED;
 			break;
 		}		
 
 	    retvalLA = Token(Position(line, column), length, token->getType(), type);
+		retvalLA.setText(QString::fromUtf8(token->getText().c_str()));
 	    return retvalLA;
 	} else
 		throw Exception();

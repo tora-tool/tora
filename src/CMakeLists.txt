@@ -200,6 +200,7 @@ SET(TORA_MOC_CLASSES
   core/tohelpsetup.h
   core/totool.h
   core/toquery.h
+  core/toqueryimpl.h
   core/toeventquery.h
   core/toeventqueryworker.h
   #obsolete core/torunnable.h

@@ -1,0 +1,19 @@
+SELECT 1+1;     # This comment continues to the end of line
+SELECT 1+1;     -- This comment continues to the end of line
+SELECT 1 /* this is an in-line comment */ + 1;
+SELECT 1+
+/*
+this is a
+multiple-line comment
+*/
+1;
+
+SET @t1=1, @t2=2, @t3:=4;
+
+SELECT @t1, @t2, @t3, @t4 := @t1+@t2+@t3;
+
+?
+?<int>
+?<char[0]>
+:f1<char[101]>
+-- :f1<char[101]>

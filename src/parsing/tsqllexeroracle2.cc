@@ -249,6 +249,9 @@ const Token& OracleGuiLexer::LA(int pos) const
 		case PLSQLGuiLexer::RIGHT_PAREN:
 			type = Token::L_RPAREN;
 			break;
+		case PLSQLGuiLexer::BINDVAR:
+			type = Token::L_BIND_VAR;
+			break;
 		default:
 			type = Token::X_UNASSIGNED;
 			break;
