@@ -86,7 +86,7 @@ public:
         virtual toQColumnDescriptionList describe(void);
 private:
         toQColumnDescriptionList describe(QSqlRecord record);
-        QString bindParam(const QString &in, toQueryParams const &params);
+        QString bindParam(QSqlQuery *q, const QString &in, toQueryParams const &params);
 
         QSqlQuery *Query;
         QSqlRecord Record;

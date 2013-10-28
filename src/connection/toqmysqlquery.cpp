@@ -86,7 +86,7 @@ QSqlQuery* mysqlQuery::createQuery(const QString &sql)
 
     if (!query()->params().empty())
     {
-    	QString s = bindParam(query()->sql(), query()->params());
+    	QString s = bindParam(ret, query()->sql(), query()->params());
     	ret->exec(s);
     } else {
     	ret->exec(sql);
@@ -344,7 +344,7 @@ toQColumnDescriptionList mysqlQuery::describe(QSqlRecord record)
 	return ColumnDescriptions;
 }
 
-QString mysqlQuery::bindParam(const QString &in, toQueryParams const &params)
+QString mysqlQuery::bindParam(QSqlQuery *q, const QString &in, toQueryParams const &params)
 {
 	int pos = 0;
     QString retval;
@@ -358,15 +358,25 @@ QString mysqlQuery::bindParam(const QString &in, toQueryParams const &params)
     	switch(start->getTokenType())
     	{
     	case SQLLexer::Token::L_BIND_VAR:
+    		retval += start->getText();
+    		q->bindValue(pos, params.at(pos).toQVariant());
+    		pos++;
+    		break;
     	case SQLLexer::Token::L_BIND_VAR_WITH_PARAMS:
     	{
+    		QStringList l = start->getText().split(QChar('<'));
+    		retval += l.at(0);
+    		//retval += '?';
+    		//q->bindValue(pos, params.at(pos).toQVariant());
+    		q->bindValue(l.at(0), params.at(pos).toQVariant());
+    		pos++;
     		// TODO use bindvars here
     		//retval += QString::fromAscii("?").leftJustified(start->getLength(), ' ');
-    		toQValue val = params.at(pos++);
-    		if (val.isString())
-    			retval += QString::fromAscii("\'%1\'").arg((QString)val);
-    		else
-    			retval += val.editData();
+    		//    		toQValue val = params.at(pos++);
+    		//    		if (val.isString())
+    		//    			retval += QString::fromAscii("\'%1\'").arg((QString)val);
+    		//    		else
+    		//    			retval += val.editData();
     	}
     	break;
     	default:
