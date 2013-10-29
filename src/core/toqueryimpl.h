@@ -35,6 +35,7 @@
 #ifndef TOQUERYIMPL_H
 #define TOQUERYIMPL_H
 
+#include "core/tora_export.h"
 #include "core/tocache.h"
 #include "core/toqvalue.h"
 
@@ -45,7 +46,7 @@ class toQuery;
 /** Abstract parent of implementations of a query for a database provider
  * (See @ref toConnection::connectionImpl and @ref toConnectionProvider)
  */
-class queryImpl : public QObject
+class TORA_EXPORT queryImpl : public QObject
 {
 	Q_OBJECT;
 public:
