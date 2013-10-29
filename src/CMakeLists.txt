@@ -862,6 +862,7 @@ SET(TEST4_SOURCES
   core/utils_part.cpp
   core/tomainwindow.cpp
   core/topushbutton.cpp
+  #core/tocache.cpp
   editor/tocustomlexer.cpp
   editor/tohighlightedtext.cpp
   editor/tomarkedtext.cpp
@@ -879,6 +880,7 @@ SET(TEST4_MOC_SOURCES
   core/moc_tomainwindow.cxx
   core/moc_toglobalevent.cxx
   core/moc_topushbutton.cxx
+  #core/moc_tocache.cxx
   parsing/moc_tolexeroracle.cxx
   parsing/moc_tsqllexer.cxx
   parsing/moc_tosyntaxanalyzer.cxx  

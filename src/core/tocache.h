@@ -153,8 +153,8 @@ public:
         TRIGGER,
         DATABASE, // used by MySQL
         ANY, // used for querying purposes only
-        TORA_SCHEMA_LIST, // courious object type - used internaly by TORA, if present browser knows that that schema was read from DB
-        //TORA_USER_LIST, // courious object type - used internaly by TORA purpose unknown so far.
+        TORA_SCHEMA_LIST, // Curious object type - used internally by TORA, if present browser knows that that schema was read from DB
+        //TORA_USER_LIST, // Curious object type - used internally by TORA purpose unknown so far.
         USER,
         OTHER
     };
