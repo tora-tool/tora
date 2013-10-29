@@ -64,6 +64,7 @@ CriticalErrorList::CriticalErrorList()
 	insert(3114);  // ORA-03114: not connected to ORACLE - this one is returned for 2nd try on broken conn
 	insert(3135);  // ORA-03135: connection lost contact
 	insert(7445);  // ORA-07445: exception encountered
+	insert(12151); // ORA-12151: TNS:received bad packet type from network layer
 	insert(12154); // ORA-12154: TNS:could not resolve the connect identifier specified
 	insert(12157); // ORA-12157: TNS:internal network communication error
 	insert(12500); // ORA-12500: TNS:listener failed to start a dedicated server process
