@@ -715,6 +715,7 @@ SET(TORA_LIBS
   ${QT_LIBRARIES}               # dynamic
   ${QSCINTILLA_LIBRARIES}       # dynamic
   ${TORA_LOKI_LIB} 		# static
+  ${POSTGRESQL_LIBRARIES}
   )
 
 IF (POPPLER_QT4_FOUND)

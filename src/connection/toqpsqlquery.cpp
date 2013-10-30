@@ -40,6 +40,11 @@
 #include "core/tocache.h"
 #include "core/utils.h"
 
+#ifdef HAVE_POSTGRESQL_LIBPQ_FE_H
+#include <libpq-fe.h>
+#include <QtSql/QSqlDriver>
+#endif
+
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlField>
 #include <QtSql/QSqlError>
