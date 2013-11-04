@@ -40,12 +40,12 @@
 
 #include "ui_tooraclesettingui.h"
 
-/** Instance of this class is returnded by dll class toOracleProvider.
+/** Instance of this class is returned by dll class toOracleProvider.
   * But even though this class is part of the main program
   *
   * NOTE: therefore we can not set ::trotl::g_OCIPL_MAX_LONG from this class.
   * the class toOracleProvider is not visible from this context.
-  * Whole aplication must be restarted to aply the changes.
+  * Whole application must be restarted to apply the changes.
   */
 class TORA_EXPORT toOracleSetting 
     : public QWidget
@@ -59,7 +59,7 @@ public:
 
 public slots:
     virtual void saveSetting(void);
-    virtual void createPlanTable(void);
+    void createPlanTable(void);
 
     void dbmsMetadataClicked(bool);
 };

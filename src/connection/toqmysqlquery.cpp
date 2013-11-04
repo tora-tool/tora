@@ -81,8 +81,7 @@ QSqlQuery* mysqlQuery::createQuery(const QString &sql)
 	LockingPtr<QSqlDatabase> ptr(Connection->Connection, Connection->Lock);
 	
 	QSqlQuery *ret = new QSqlQuery(*ptr);
-	if (toQMySqlProvider::OnlyForward)
-		ret->setForwardOnly(true);
+	ret->setForwardOnly(true);
 
     if (!query()->params().empty())
     {

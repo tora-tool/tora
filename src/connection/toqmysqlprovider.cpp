@@ -93,4 +93,4 @@ toConnectionTraits* toQMySqlProvider::createConnectionTrait(void)
 	return t;
 }
 
-bool toQMySqlProvider::OnlyForward = false;
+bool toQMySqlProvider::OnlyForward = true;

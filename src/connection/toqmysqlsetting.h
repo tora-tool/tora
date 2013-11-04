@@ -51,7 +51,6 @@ public:
 
 	virtual void saveSetting(void);
 private:
-	QCheckBox *OnlyForward;
 	QLabel    *CreateLabel;
 	QComboBox *BeforeCreateAction;
 };
