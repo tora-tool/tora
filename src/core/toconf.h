@@ -153,8 +153,6 @@
 // tosqlconnection
 #define CONF_MYSQL_HOME "MYSQL_HOME"
 #define CONF_PGSQL_HOME "PGSQL_HOME"
-#define CONF_ONLY_FORWARD "OnlyForward"
-#define DEFAULT_ONLY_FORWARD true
 #define CONF_CREATE_ACTION "BeforeCreateAction"
 #define DEFAULT_CREATE_ACTION 0
 // main.cpp
