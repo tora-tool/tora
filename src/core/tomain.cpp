@@ -1189,7 +1189,9 @@ void toMain::showMessageImpl(QString str, bool save, bool log)
 
 void toMain::slotActiveToolChaged(toToolWidget *tool)
 {
-	setNeedCommit(tool, tool ? tool->hasTransaction() : false);
+	// NOTE: a call to hasTransaction gets blocked until bg query finishes
+	// TODO: implement non-blocking version of hasTransaction
+	//setNeedCommit(tool, tool ? tool->hasTransaction() : false);
 	lastToolWidget = tool;
 }
 
