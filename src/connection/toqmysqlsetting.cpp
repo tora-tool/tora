@@ -45,51 +45,13 @@
 toQMySqlSetting::toQMySqlSetting(QWidget *parent) 
 	: QWidget(parent)
 	, toSettingTab("database.html#qsql")
-	, CreateLabel(NULL)
-	, BeforeCreateAction(NULL)
-{		
-	QVBoxLayout *vbox = new QVBoxLayout;
-	this->setLayout(vbox);
-	vbox->setSpacing(0);
-	vbox->setContentsMargins(0, 0, 0, 0);
-
-	QGroupBox *box = new QGroupBox(this);
-	box->setSizePolicy(QSizePolicy::Expanding,
-			   QSizePolicy::Expanding);
-	vbox->addWidget(box);
-
-	vbox = new QVBoxLayout;
-	vbox->setSpacing(6);
-	vbox->setContentsMargins(11, 11, 11, 11);
-
-	CreateLabel = new QLabel(
-		qApp->translate("qSqlSetting", "When calling create routine statement in worksheet"),
-		box);
-	vbox->addWidget(CreateLabel);
-
-	BeforeCreateAction = new QComboBox(box);
-	BeforeCreateAction->clear();
-	BeforeCreateAction->insertItems(0, QStringList()
-					<< qApp->translate("qSqlSetting", "Do nothing")
-					<< qApp->translate("qSqlSetting", "Drop before creating")
-					<< qApp->translate("qSqlSetting", "Drop before creating (if exists)")
-					<< qApp->translate("qSqlSetting", "Ask")
-					<< qApp->translate("qSqlSetting", "Ask (if exists)"));
-	BeforeCreateAction->setCurrentIndex(toConfigurationSingle::Instance().createAction());
-	vbox->addWidget(BeforeCreateAction);
-
-	QSpacerItem *spacer = new QSpacerItem(
-		20,
-		20,
-		QSizePolicy::Minimum,
-		QSizePolicy::Expanding);
-	vbox->addItem(spacer);
-
-	box->setLayout(vbox);
+{
+    setupUi(this);
+	BeforeCreateAction->setCurrentIndex(toConfigurationSingle::Instance().beforeCreateAction());
 }
 
 void toQMySqlSetting::saveSetting(void)
 {
-	toConfigurationSingle::Instance().setCreateAction(BeforeCreateAction->currentIndex());
+	toConfigurationSingle::Instance().setBeforeCreateAction(BeforeCreateAction->currentIndex());
 }
 

@@ -163,7 +163,7 @@ void toConfigurationPrivate::loadConfig()
 	m_maxLong = s.value(CONF_MAX_LONG, DEFAULT_MAX_LONG).toInt();
 	// toqsqlconnection
 	m_onlyForward = s.value(CONF_ONLY_FORWARD, DEFAULT_ONLY_FORWARD).toBool();
-	m_createAction = s.value(CONF_CREATE_ACTION, DEFAULT_CREATE_ACTION).toInt();
+	m_beforeCreateAction = s.value(CONF_CREATE_ACTION, DEFAULT_CREATE_ACTION).toInt();
 	// main.cpp
 	m_lastVersion = s.value(CONF_LAST_VERSION, "").toString();
 	m_firstInstall = s.value(CONF_FIRST_INSTALL, "").toString();
@@ -419,7 +419,7 @@ void toConfigurationPrivate::saveConfig()
 
 	// toqsqlconnection
 	s.setValue(CONF_ONLY_FORWARD, m_onlyForward);
-	s.setValue(CONF_CREATE_ACTION, m_createAction);
+	s.setValue(CONF_CREATE_ACTION, m_beforeCreateAction);
 	// main.cpp
 	s.setValue(CONF_LAST_VERSION, m_lastVersion);
 	s.setValue(CONF_FIRST_INSTALL, m_firstInstall);

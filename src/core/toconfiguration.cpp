@@ -932,16 +932,16 @@ void toConfiguration::setPgsqlHome(QString const &v)
 	d->m_pgsqlHome = v;
 }
 
-int toConfiguration::createAction()
+int toConfiguration::beforeCreateAction()
 {
 	Q_D(toConfiguration);
-    return d->m_createAction;
+    return d->m_beforeCreateAction;
 }
 
-void toConfiguration::setCreateAction(int v)
+void toConfiguration::setBeforeCreateAction(int v)
 {
 	Q_D(toConfiguration);
-    d->m_createAction = v;
+    d->m_beforeCreateAction = v;
 }
 
 // main.cpp

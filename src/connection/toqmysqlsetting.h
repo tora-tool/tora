@@ -37,12 +37,11 @@
 
 #include "core/totool.h"
 
-class QCheckBox;
-class QLabel;
-class QComboBox;
+#include "ui_toqmysqlsettingui.h"
 
 class toQMySqlSetting 
 	: public QWidget
+	, public Ui::toMySQLSettingUI
 	, public toSettingTab
 {
 	Q_OBJECT;
@@ -51,8 +50,6 @@ public:
 
 	virtual void saveSetting(void);
 private:
-	QLabel    *CreateLabel;
-	QComboBox *BeforeCreateAction;
 };
 
 #endif

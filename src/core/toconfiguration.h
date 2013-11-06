@@ -338,8 +338,8 @@ public:
     QString pgsqlHome();
     void setPgsqlHome(QString const&);
 
-    int createAction();
-    void setCreateAction(int v);
+    int beforeCreateAction();
+    void setBeforeCreateAction(int v);
 
     // main.cpp
     QString lastVersion();

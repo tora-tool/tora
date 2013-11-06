@@ -1079,7 +1079,7 @@ public:
                                             << qApp->translate("qSqlSetting", "Drop before creating (if exists)")
                                             << qApp->translate("qSqlSetting", "Ask")
                                             << qApp->translate("qSqlSetting", "Ask (if exists)"));
-            BeforeCreateAction->setCurrentIndex(toConfigurationSingle::Instance().createAction());
+            BeforeCreateAction->setCurrentIndex(toConfigurationSingle::Instance().beforeCreateAction());
             vbox->addWidget(BeforeCreateAction);
 
             QSpacerItem *spacer = new QSpacerItem(
@@ -1095,7 +1095,7 @@ public:
         {
             toConfigurationSingle::Instance().setOnlyForward(OnlyForward->isChecked());
             toQSqlProvider::OnlyForward = OnlyForward->isChecked();
-            toConfigurationSingle::Instance().setCreateAction(BeforeCreateAction->currentIndex());
+            toConfigurationSingle::Instance().setBeforeCreateAction(BeforeCreateAction->currentIndex());
         }
     };
 

@@ -126,8 +126,7 @@ public:
     QString m_forcelineend; // force line end type (win, linux, mac) when saving text files
 
     // toqsqlconnection
-    bool m_onlyForward;
-    int  m_createAction;
+    int  m_beforeCreateAction;
 
     // main.cpp
     QString     m_lastVersion;
