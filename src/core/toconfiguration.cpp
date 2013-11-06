@@ -932,17 +932,6 @@ void toConfiguration::setPgsqlHome(QString const &v)
 	d->m_pgsqlHome = v;
 }
 
-bool toConfiguration::onlyForward()
-{
-	Q_D(toConfiguration);
-    return d->m_onlyForward;
-}
-void toConfiguration::setOnlyForward(bool v)
-{
-	Q_D(toConfiguration);
-    d->m_onlyForward = v;
-}
-
 int toConfiguration::createAction()
 {
 	Q_D(toConfiguration);

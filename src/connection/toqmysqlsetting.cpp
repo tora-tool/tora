@@ -45,7 +45,6 @@
 toQMySqlSetting::toQMySqlSetting(QWidget *parent) 
 	: QWidget(parent)
 	, toSettingTab("database.html#qsql")
-	, OnlyForward(NULL)
 	, CreateLabel(NULL)
 	, BeforeCreateAction(NULL)
 {		
@@ -62,14 +61,6 @@ toQMySqlSetting::toQMySqlSetting(QWidget *parent)
 	vbox = new QVBoxLayout;
 	vbox->setSpacing(6);
 	vbox->setContentsMargins(11, 11, 11, 11);
-
-	OnlyForward = new QCheckBox(
-		qApp->translate(
-			"qSqlSetting",
-			"Posibility to break MySQL queries (Can require more connections)"),
-		box);
-	OnlyForward->setChecked(toConfigurationSingle::Instance().onlyForward());
-	vbox->addWidget(OnlyForward);
 
 	CreateLabel = new QLabel(
 		qApp->translate("qSqlSetting", "When calling create routine statement in worksheet"),
@@ -99,8 +90,6 @@ toQMySqlSetting::toQMySqlSetting(QWidget *parent)
 
 void toQMySqlSetting::saveSetting(void)
 {
-	toConfigurationSingle::Instance().setOnlyForward(OnlyForward->isChecked());
-	toQMySqlProvider::OnlyForward = OnlyForward->isChecked();
 	toConfigurationSingle::Instance().setCreateAction(BeforeCreateAction->currentIndex());
 }
 

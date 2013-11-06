@@ -338,9 +338,6 @@ public:
     QString pgsqlHome();
     void setPgsqlHome(QString const&);
 
-    bool onlyForward();
-    void setOnlyForward(bool v);
-
     int createAction();
     void setCreateAction(int v);
 
