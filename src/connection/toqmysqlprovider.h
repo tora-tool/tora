@@ -79,8 +79,6 @@ public:
 
     /** see: @ref toConnection */
     virtual toConnectionTraits* createConnectionTrait(void);
-    
-    static bool OnlyForward;
 
 private:
     static QString m_name, m_displayName;

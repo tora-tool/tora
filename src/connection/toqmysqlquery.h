@@ -86,10 +86,12 @@ public:
         virtual toQColumnDescriptionList describe(void);
 private:
         toQColumnDescriptionList describe(QSqlRecord record);
-        QString bindParam(QSqlQuery *q, const QString &in, toQueryParams const &params);
+        QString stripBinds(const QString &in);
+        void bindParam(QSqlQuery *q, toQueryParams const &params);
 
         QSqlQuery *Query;
         QSqlRecord Record;
+        QStringList BindParams;
         toQMySqlConnectionSub *Connection;
         toQColumnDescriptionList ColumnDescriptions;
         unsigned CurrentColumn;

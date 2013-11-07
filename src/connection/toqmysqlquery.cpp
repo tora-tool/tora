@@ -85,10 +85,12 @@ QSqlQuery* mysqlQuery::createQuery(const QString &sql)
 
     if (!query()->params().empty())
     {
-    	QString s = bindParam(ret, query()->sql(), query()->params());
-    	ret->exec(s);
+    	QString s = stripBinds(query()->sql());
+    	bool prepared = ret->prepare(s);
+    	bindParam(ret, query()->params());
+    	bool executed = ret->exec();
     } else {
-    	ret->exec(sql);
+        bool executed = ret->exec(sql);
     }
 	return ret;
 }
@@ -109,7 +111,6 @@ mysqlQuery::~mysqlQuery()
 
 void mysqlQuery::execute(void)
 {
-	//QString sql = mysqlQuery::QueryParam(query()->sql(), query()->params());
 	Query = createQuery(query()->sql());
 	checkQuery();
 }
@@ -221,7 +222,7 @@ void mysqlQuery::checkQuery(void) // Must *not* call while locked
     if (!Query->isActive())
     {
     	QString msg = QString::fromLatin1("Query not active ");
-    	msg += query()->sql();
+    	msg += Query->lastQuery();
     	throw toConnection::exception(toQMySqlConnectionSub::ErrorString(Query->lastError(), msg));
     }
 
@@ -343,45 +344,47 @@ toQColumnDescriptionList mysqlQuery::describe(QSqlRecord record)
 	return ColumnDescriptions;
 }
 
-QString mysqlQuery::bindParam(QSqlQuery *q, const QString &in, toQueryParams const &params)
+QString mysqlQuery::stripBinds(const QString &in)
 {
-	int pos = 0;
-    QString retval;
-    std::auto_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("mySQLGuiLexer", "", "toCustomLexer");
-    toQueryParams::const_iterator cpar = params.constBegin();
-    lexer->setStatement(in);
+	BindParams.clear();
+	QString retval;
+	std::auto_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("mySQLGuiLexer", "", "toCustomLexer");
+	lexer->setStatement(in);
 
-    SQLLexer::Lexer::token_const_iterator start = lexer->begin();
-    while(start->getTokenType() != SQLLexer::Token::X_EOF)
-    {
-    	switch(start->getTokenType())
-    	{
-    	case SQLLexer::Token::L_BIND_VAR:
-    		retval += start->getText();
-    		q->bindValue(pos, params.at(pos).toQVariant());
-    		pos++;
-    		break;
-    	case SQLLexer::Token::L_BIND_VAR_WITH_PARAMS:
-    	{
-    		QStringList l = start->getText().split(QChar('<'));
-    		retval += l.at(0);
-    		//retval += '?';
-    		//q->bindValue(pos, params.at(pos).toQVariant());
-    		q->bindValue(l.at(0), params.at(pos).toQVariant());
-    		pos++;
-    		// TODO use bindvars here
-    		//retval += QString::fromAscii("?").leftJustified(start->getLength(), ' ');
-    		//    		toQValue val = params.at(pos++);
-    		//    		if (val.isString())
-    		//    			retval += QString::fromAscii("\'%1\'").arg((QString)val);
-    		//    		else
-    		//    			retval += val.editData();
-    	}
-    	break;
-    	default:
-        	retval += start->getText();
-    	}
-    	start++;
-    }
-    return retval;
+	SQLLexer::Lexer::token_const_iterator start = lexer->begin();
+	while(start->getTokenType() != SQLLexer::Token::X_EOF)
+	{
+		switch(start->getTokenType())
+		{
+		case SQLLexer::Token::L_BIND_VAR:
+			retval += start->getText();
+			BindParams << start->getText();
+			break;
+		case SQLLexer::Token::L_BIND_VAR_WITH_PARAMS:
+		{
+			QString l1 = start->getText();
+			QString l2 = l1.left( l1.indexOf('<'));
+			QString l3 = l2.leftJustified( l1.length(), ' ');
+			BindParams << l2;
+			retval += l3;
+		}
+		break;
+		default:
+			retval += start->getText();
+		}
+		start++;
+	}
+	return retval;
+}
+
+void mysqlQuery::bindParam(QSqlQuery *q, toQueryParams const &params)
+{
+	Q_ASSERT_X(BindParams.size() <= params.size()
+			, qPrintable(__QHERE__)
+			, qPrintable(QString("Bind variables mismatch: %1 vs. %2").arg(BindParams.size()).arg(params.size())));
+	for (int i = 0; i < BindParams.size(); i++)
+	{
+		q->bindValue(BindParams.at(i), params.at(i).displayData());
+		TLOG(6, toDecorator, __HERE__) << "	Binding " << BindParams.at(i) << " <= " << params.at(i).displayData() << std::endl;
+	}
 }
