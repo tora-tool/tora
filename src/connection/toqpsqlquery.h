@@ -125,8 +125,6 @@ public:
 
         virtual void cancel(void);
 
-        QString parseReorder(const QString &str);
-
         virtual toQValue readValue(void);
 
         virtual bool eof(void);
@@ -137,24 +135,25 @@ public:
 
         virtual toQColumnDescriptionList describe(void);
 private:
-        static toQColumnDescriptionList Describe(const QString &type, QSqlRecord record, int *order, unsigned int orderSize);
+        toQColumnDescriptionList describe(QSqlRecord record);
+        QString stripBinds(const QString &in);
+        void bindParam(QSqlQuery *q, toQueryParams const &params);
+
         static QString QueryParam(const QString &in, toQueryParams const &params, QList<QString> &extradata);
 
         QSqlQuery *Query;
         QSqlRecord Record;
+        QStringList BindParams;
         toQPSqlConnectionSub *Connection;
-        QString CurrentExtra;
-        QList<QString> ExtraData;
+        toQColumnDescriptionList ColumnDescriptions;
+        unsigned CurrentColumn;
         bool EOQ;
-        unsigned int Column;
-        unsigned int ColumnOrderSize;
-        int *ColumnOrder;
 
         void checkQuery(void);
 
         //QList<QString> extraData(const toQSqlProviderAggregate &aggr);
 
-        QSqlQuery *createQuery(const QString &query);
+        QSqlQuery *createQuery(const QString &sql);
 };
 
 #endif

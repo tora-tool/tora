@@ -39,6 +39,7 @@
 #include "core/tosql.h"
 #include "core/tocache.h"
 #include "core/utils.h"
+#include "parsing/tsqllexer.h"
 
 #ifdef HAVE_POSTGRESQL_LIBPQ_FE_H
 #include <libpq-fe.h>
@@ -94,95 +95,52 @@ void native_cancel(QSqlDriver *driver)
 }
 #endif
 
-/*
-QList<QString> psqlQuery::extraData(const toQSqlProviderAggregate &aggr)
-{
-	QList<QString> ret;
-	const QList<toCache::CacheEntry const*> &objects = query()->connection().getCache().entries(false);
-	for (QList<toCache::CacheEntry const*>::const_iterator i = objects.begin(); i != objects.end(); i++)
-	{
-		if ((*i)->type == toCache::DATABASE && aggr.Type == toQSqlProviderAggregate::AllDatabases)
-		{
-			ret << (*i)->name.first;
-		}
-		else if ((*i)->type == toCache::TABLE)
-		{
-			if (aggr.Type == toQSqlProviderAggregate::AllTables ||
-			    (aggr.Type == toQSqlProviderAggregate::CurrentDatabase && (*i)->name.first == query()->connection().user()) ||
-			    (aggr.Type == toQSqlProviderAggregate::SpecifiedDatabase && (*i)->name.first == aggr.Data))
-				ret << ((*i)->name.first + "." + (*i)->name.second);
-		}
-	}
-	return ret;
-}
-*/
-
-QSqlQuery* psqlQuery::createQuery(const QString &query)
+QSqlQuery* psqlQuery::createQuery(const QString &sql)
 {
 	LockingPtr<QSqlDatabase> ptr(Connection->Connection, Connection->Lock);
-	
-	QSqlQuery *ret;
-	ret = new QSqlQuery(*ptr);
-	//	if (toQMySqlProvider::OnlyForward)
-	//		ret->setForwardOnly(true);
-	ret->exec(query);
+
+	QSqlQuery *ret = new QSqlQuery(*ptr);
+	ret->setForwardOnly(true);
+
+    if (!query()->params().empty())
+    {
+    	QString s = stripBinds(query()->sql());
+    	bool prepared = ret->prepare(s);
+    	bindParam(ret, query()->params());
+    	bool executed = ret->exec();
+    } else {
+        bool executed = ret->exec(sql);
+    }
 	return ret;
 }
 
 psqlQuery::psqlQuery(toQuery *query, toQPSqlConnectionSub *conn)
 	: queryImpl(query)
+	, Query(NULL)
 	, Connection(conn)
-	, ColumnOrderSize(0)
+	, CurrentColumn(0)
+	, EOQ(true)
+
 {
-	Column = 0;
-	ColumnOrder = NULL;
-	EOQ = true;
-	Query = NULL;
 }
 
 psqlQuery::~psqlQuery()
 {
 	delete Query;
-	delete[] ColumnOrder;
 }
 
 void psqlQuery::execute(void)
 {
-    Query = NULL;
-    //    try
-    {
-    	// TODO psqlQuery::QueryParam may delete contens of the 3rd parameter
-    	QList<QString> empty;
-    	QString sql = psqlQuery::QueryParam(parseReorder(query()->sql()), query()->params(), empty);
-    	Query = createQuery(sql);
-    }
-    //    catch (const toQSqlProviderAggregate &aggr)
-    //    {
-    //        ExtraData = extraData(aggr);
-    //        if (ExtraData.begin() != ExtraData.end())
-    //            CurrentExtra = *ExtraData.begin();
-    //
-    //        QString t = QueryParam(parseReorder(query()->sql()), query()->params(), ExtraData);
-    //        if (t.isEmpty())
-    //        {
-    //            Utils::toStatusMessage("Nothing to send to aggregate query");
-    //            Query = NULL;
-    //            EOQ = true;
-    //            return;
-    //        }
-    //        else
-    //            Query = createQuery(t);
-    //    }
-
-    checkQuery();
+	Query = createQuery(query()->sql());
+	checkQuery();
 }
 
 void psqlQuery::execute(QString const& sql)
 {
-    QList<QString> empty;
-    Query = createQuery(sql);
-    checkQuery();
+	Query = createQuery(query()->sql());
+	checkQuery();
 }
+
 void psqlQuery::cancel(void)
 {
 	if (!Connection->ConnectionID.isEmpty())
@@ -211,136 +169,34 @@ void psqlQuery::cancel(void)
 	}
 }
 
-QString psqlQuery::parseReorder(const QString &str)
-{
-	//if (str.toUpper().startsWith("TOAD"))
-	//{
-	//	std::list<int> order;
-	//	int num = -1;
-	//	int i;
-	//	for (i = 4; i < str.length(); i++)
-	//	{
-	//		char c = str.at(i).toAscii();
-	//		if (isspace(c))
-	//			;
-	//		else if (isdigit(c))
-	//		{
-	//			if (num < 0)
-	//				num = 0;
-	//			num *= 10;
-	//			num += c - '0';
-	//		}
-	//		else if (c == '*')
-	//		{
-	//			if (num >= 0)
-	//				throw QString("Invalid column selection, number before *");
-	//			if (c == '*')
-	//			{
-	//				order.insert(order.end(), -1);
-	//				do
-	//				{
-	//					i++;
-	//				}
-	//				while (str.at(i).isSpace());
-	//				break;
-	//			}
-	//		}
-	//		else
-	//		{
-	//			if (num < 0)
-	//				throw QString("Invalid column selection, number missing");
-	//			order.insert(order.end(), num);
-	//			num = -1;
-	//			if (c != ',')
-	//				break;
-	//		}
-	//	}
-	//	ColumnOrderSize = order.size();
-	//	if (ColumnOrderSize == 0)
-	//		throw QString("Missing column selection");
-	//	delete[] ColumnOrder;
-	//	ColumnOrder = new int[ColumnOrderSize];
-	//	int pos = 0;
-	//	for (std::list<int>::iterator j = order.begin(); j != order.end(); j++, pos++)
-	//		ColumnOrder[pos] = *j;
-
-	//	return str.mid(i);
-	//}
-	//else
-		return str;
-}
-
 toQValue psqlQuery::readValue(void)
 {
 	if (!Query)
-		throw QString::fromLatin1("Fetching from unexecuted query");
+		throw toConnection::exception(QString::fromLatin1("Fetching from not executed query"));
 	if (EOQ)
-		throw QString::fromLatin1("Tried to read past end of query");
+		throw toConnection::exception(QString::fromLatin1("Tried to read past end of query"));
 
 	LockingPtr<QSqlDatabase> ptr(Connection->Connection, Connection->Lock);
-	QVariant val;
-	bool fixEmpty = false;
-	if (ColumnOrder)
+	QVariant retval;
 	{
-		int col = ColumnOrder[Column];
-		if (col >= 1)
-		{
-			val = Query->value(col - 1);
-			if (Query->isNull(col - 1))
-				val.clear();
-			else if ((val.type() == QVariant::Date || val.type() == QVariant::DateTime) && val.isNull())
-				fixEmpty = true;
-		}
-		else if (col == 0)
-		{
-			val = CurrentExtra;
-		}
-	}
-	else
-	{
-		val = Query->value(Column);
-		if (Query->isNull(Column))
-			val.clear();
-		else if ((val.type() == QVariant::Date || val.type() == QVariant::DateTime) && val.isNull())
-			fixEmpty = true;
-	}
-	if (fixEmpty)
-	{
-		switch (val.type())
-		{
-		case QVariant::Date:
-			val = QVariant(QString("0000-00-00"));
-			break;
-		case QVariant::DateTime:
-			val = QVariant(QString("0000-00-00T00:00:00"));
-			break;
-		default:
-			break;
-			// Do nothing
-		}
+		retval = Query->value(CurrentColumn);
+		if (Query->isNull(CurrentColumn))
+			retval.clear();
 	}
 
-	// sapdb marks value as invalid on some views
-	// for example tables,indexes etc, so ignore this check
-	Column++;
-	if ((ColumnOrder && Column == ColumnOrderSize) || (!ColumnOrder && Column == (unsigned int) Record.count()))
+	CurrentColumn++;
+	if (CurrentColumn == (unsigned int) Record.count())
 	{
-		Column = 0;
+		CurrentColumn = 0;
 		EOQ = !Query->next();
 	}
-	if (EOQ && ExtraData.begin() != ExtraData.end())
+	if (EOQ)
 	{
 		delete Query;
 		Query = NULL;
-		CurrentExtra = *ExtraData.begin();
-
-		ptr.unlock();
-		Query = createQuery(QueryParam(parseReorder(query()->sql()), query()->params(), ExtraData));
-		checkQuery();
-		ptr.lock();
 	}
 
-	return toQValue::fromVariant(val);
+	return toQValue::fromVariant(retval);
 }
 
 bool psqlQuery::eof(void)
@@ -367,11 +223,7 @@ unsigned long psqlQuery::rowsProcessed(void)
 unsigned psqlQuery::columns(void)
 {
 	LockingPtr<QSqlDatabase> ptr(Connection->Connection, Connection->Lock);
-	unsigned ret = Record.count();
-	if (ColumnOrder)
-		ret = ColumnOrderSize;
-
-	return ret;
+	return Record.count();
 }
 
 toQColumnDescriptionList psqlQuery::describe(void)
@@ -380,9 +232,7 @@ toQColumnDescriptionList psqlQuery::describe(void)
 	toQColumnDescriptionList ret;
 	if (Query && Query->isSelect())
 	{
-		QString provider = query()->connection().provider();
-		QSqlRecord rec = Query->record();
-		ret = Describe(provider, rec, ColumnOrder, ColumnOrderSize);
+		ret = describe(Query->record());
 	}
 	return ret;
 }
@@ -390,85 +240,85 @@ toQColumnDescriptionList psqlQuery::describe(void)
 void psqlQuery::checkQuery(void) // Must *not* call while locked
 {
     LockingPtr<QSqlDatabase> ptr(Connection->Connection, Connection->Lock);
-
-    do
+    if (!Query->isActive())
     {
-        if (!Query->isActive())
-        {
-            QString msg = QString::fromLatin1("Query not active ");
-            msg += query()->sql();
-            throw toQPSqlConnectionSub::ErrorString(Query->lastError(), msg);
-        }
-
-        if (Query->isSelect())
-        {
-            Record = Query->record();
-            if (ColumnOrder && ColumnOrder[ColumnOrderSize - 1] == -1)
-            {
-                unsigned int newsize = ColumnOrderSize + Record.count() - 1;
-                int *newalloc = new int[newsize];
-                unsigned int i;
-                for (i = 0; i < ColumnOrderSize - 1; i++)
-                    newalloc[i] = ColumnOrder[i];
-                for (int colnum = 1; i < newsize; i++, colnum++)
-                    newalloc[i] = colnum;
-                delete[] ColumnOrder;
-                ColumnOrder = newalloc;
-                ColumnOrderSize = newsize;
-            }
-            EOQ = !Query->next();
-            Column = 0;
-        }
-        else
-        {
-            EOQ = true;
-        }
-        if (EOQ && ExtraData.begin() != ExtraData.end())
-        {
-            delete Query;
-            Query = NULL;
-
-            ptr.unlock();
-            Query = createQuery(QueryParam(parseReorder(query()->sql()), query()->params(), ExtraData));
-            ptr.lock();
-        }
+    	QString msg = QString::fromLatin1("Query not active ");
+    	msg += Query->lastQuery();
+    	throw toConnection::exception(toQPSqlConnectionSub::ErrorString(Query->lastError(), msg));
     }
-    while (ExtraData.begin() != ExtraData.end() && EOQ);
+
+    if (Query->isSelect())
+    {
+    	Record = Query->record();
+    	EOQ = !Query->next();
+    	CurrentColumn = 0;
+    }
+    else
+    {
+    	EOQ = true;
+    }
 }
 
-toQColumnDescriptionList psqlQuery::Describe(const QString &type, QSqlRecord record, int *order, unsigned int orderSize)
+toQColumnDescriptionList psqlQuery::describe(QSqlRecord record)
 {
-	toQColumnDescriptionList ret;
-	unsigned int count = record.count();
-	if (order)
-	{
-		count = orderSize;
-	}
-	for (unsigned int i = 0; i < count; i++)
+	ColumnDescriptions.clear();
+	for (unsigned int i = 0; i < record.count(); i++)
 	{
 		toCache::ColumnDescription desc;
+		desc.Name = record.fieldName(i);
 		desc.AlignRight = false;
-		int col = i;
-		if (order)
-			col = order[i] - 1;
-		if (col == -1)
-		{
-			desc.Name = "Database";
-			desc.Datatype = "STRING";
-			desc.Null = false;
-			desc.AlignRight = false;
-			ret.insert(ret.end(), desc);
-			continue;
-		}
-		desc.Name = record.fieldName(col);
-		desc.AlignRight = false;
-
 		int size = 1;
 
 		QSqlField info = record.field(desc.Name);
-
-		info.typeID();
 		desc.Datatype = QString::fromLatin1("TBD(DATATYPE)");
+		switch (info.typeID())
+		{
+		case BOOLOID: 			    desc.Datatype = QString::fromLatin1("BOOLOID"); break;
+		case BYTEAOID: 			    desc.Datatype = QString::fromLatin1("BYTEAOID"); break;
+		case CHAROID: 			    desc.Datatype = QString::fromLatin1("CHAROID"); break;
+		case NAMEOID: 			    desc.Datatype = QString::fromLatin1("NAMEOID"); break;
+		case INT8OID: 			    desc.Datatype = QString::fromLatin1("INT8OID"); break;
+		case INT2OID: 			    desc.Datatype = QString::fromLatin1("INT2OID"); break;
+		case INT2VECTOROID: 		desc.Datatype = QString::fromLatin1("INT2VECTOROID"); break;
+		case INT4OID: 			    desc.Datatype = QString::fromLatin1("INT4OID"); break;
+		case REGPROCOID: 		    desc.Datatype = QString::fromLatin1("REGPROCOID"); break;
+		case TEXTOID: 			    desc.Datatype = QString::fromLatin1("TEXTOID"); break;
+		case OIDOID: 			    desc.Datatype = QString::fromLatin1("OIDOID"); break;
+		case TIDOID: 			    desc.Datatype = QString::fromLatin1("TIDOID"); break;
+		case XIDOID: 			    desc.Datatype = QString::fromLatin1("XIDOID"); break;
+		case CIDOID: 			    desc.Datatype = QString::fromLatin1("CIDOID"); break;
+		case OIDVECTOROID: 		    desc.Datatype = QString::fromLatin1("OIDVECTOROID"); break;
+		case POINTOID: 			    desc.Datatype = QString::fromLatin1("POINTOID"); break;
+		case LSEGOID: 			    desc.Datatype = QString::fromLatin1("LSEGOID"); break;
+		case PATHOID: 			    desc.Datatype = QString::fromLatin1("PATHOID"); break;
+		case BOXOID: 			    desc.Datatype = QString::fromLatin1("BOXOID"); break;
+		case POLYGONOID: 		    desc.Datatype = QString::fromLatin1("POLYGONOID"); break;
+		case LINEOID: 			    desc.Datatype = QString::fromLatin1("LINEOID"); break;
+		case FLOAT4OID: 		    desc.Datatype = QString::fromLatin1("FLOAT4OID"); break;
+		case FLOAT8OID: 		    desc.Datatype = QString::fromLatin1("FLOAT8OID"); break;
+		case ABSTIMEOID: 		    desc.Datatype = QString::fromLatin1("ABSTIMEOID"); break;
+		case RELTIMEOID: 		    desc.Datatype = QString::fromLatin1("RELTIMEOID"); break;
+		case TINTERVALOID: 		    desc.Datatype = QString::fromLatin1("TINTERVALOID"); break;
+		case UNKNOWNOID: 		    desc.Datatype = QString::fromLatin1("UNKNOWNOID"); break;
+		case CIRCLEOID: 		    desc.Datatype = QString::fromLatin1("CIRCLEOID"); break;
+		case CASHOID: 			    desc.Datatype = QString::fromLatin1("CASHOID"); break;
+		case MACADDROID: 		    desc.Datatype = QString::fromLatin1("MACADDROID"); break;
+		case INETOID: 			    desc.Datatype = QString::fromLatin1("INETOID"); break;
+		case CIDROID: 			    desc.Datatype = QString::fromLatin1("CIDROID"); break;
+		case BPCHAROID: 		    desc.Datatype = QString::fromLatin1("BPCHAROID"); break;
+		case VARCHAROID: 		    desc.Datatype = QString::fromLatin1("VARCHAROID"); break;
+		case DATEOID: 			    desc.Datatype = QString::fromLatin1("DATEOID"); break;
+		case TIMEOID: 			    desc.Datatype = QString::fromLatin1("TIMEOID"); break;
+		case TIMESTAMPOID: 		    desc.Datatype = QString::fromLatin1("TIMESTAMPOID"); break;
+		case TIMESTAMPTZOID: 		desc.Datatype = QString::fromLatin1("TIMESTAMPTZOID"); break;
+		case INTERVALOID: 		    desc.Datatype = QString::fromLatin1("INTERVALOID"); break;
+		case TIMETZOID: 		    desc.Datatype = QString::fromLatin1("TIMETZOID"); break;
+		case BITOID: 			    desc.Datatype = QString::fromLatin1("BITOID"); break;
+		case VARBITOID: 		    desc.Datatype = QString::fromLatin1("VARBITOID"); break;
+		case NUMERICOID: 		    desc.Datatype = QString::fromLatin1("NUMERICOID"); break;
+		case REFCURSOROID: 		    desc.Datatype = QString::fromLatin1("REFCURSOROID"); break;
+		default:                    desc.Datatype = QString::fromLatin1("UNKNOWN(%1)").arg(info.typeID()); break;
+		}
 
 		if (info.length() > size)
 		{
@@ -485,176 +335,54 @@ toQColumnDescriptionList psqlQuery::Describe(const QString &type, QSqlRecord rec
 			desc.Datatype += QString::fromLatin1(")");
 		}
 		desc.Null = !info.requiredStatus();
-
-		ret.insert(ret.end(), desc);
+		ColumnDescriptions.append(desc);
 	}
-	return ret;
+	return ColumnDescriptions;
 }
 
-QString psqlQuery::QueryParam(const QString &in, toQueryParams const &params, QList<QString> &extradata)
+QString psqlQuery::stripBinds(const QString &in)
 {
-    QString ret;
-    bool inString = false;
-    toQueryParams::const_iterator cpar = params.constBegin();
-    QString query = QString(in);
+	BindParams.clear();
+	QString retval;
+	// TODO: no PostgreSQL Lexer ATM
+	std::auto_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("mySQLGuiLexer", "", "toCustomLexer");
+	lexer->setStatement(in);
 
-    std::map<QString, QString> binds;
-
-    for (int i = 0; i < query.length(); i++)
-    {
-        QChar rc = query.at(i);
-        char  c  = rc.toLatin1();
-
-        char nc = 0;
-        if (i + 1 < query.length())
-            nc = query.at(i + 1).toLatin1();
-
-        switch (c)
-        {
-        case '\\':
-            ret += rc;
-            ret += query.at(++i);
-            break;
-        case '\'':
-            inString = !inString;
-            ret += rc;
-            break;
-        case ':':
-            // mostly for postgres-style casts, ignore ::
-            if (nc == ':')
-            {
-                ret += rc;
-                ret += nc;
-                i++;
-                break;
-            }
-
-            if (!inString)
-            {
-                QString nam;
-                for (i++; i < query.length(); i++)
-                {
-                    rc = query.at(i);
-                    if (!rc.isLetterOrNumber())
-                        break;
-                    nam += rc;
-                }
-                c = rc.toLatin1();
-                QString in;
-                if (c == '<')
-                {
-                    for (i++; i < query.length(); i++)
-                    {
-                        rc = query.at(i);
-                        c = rc.toLatin1();
-                        if (c == '>')
-                        {
-                            i++;
-                            break;
-                        }
-                        in += rc;
-                    }
-                }
-                i--;
-
-//                toQSqlProviderAggregate aggr;
-//                if (in == "alldatabases")
-//                    aggr = toQSqlProviderAggregate(toQSqlProviderAggregate::AllDatabases);
-//                else if (in == "alltables")
-//                    aggr = toQSqlProviderAggregate(toQSqlProviderAggregate::AllTables);
-//                else if (in == "currenttables")
-//                    aggr = toQSqlProviderAggregate(toQSqlProviderAggregate::CurrentDatabase);
-//                else if (in == "database")
-//                    aggr = toQSqlProviderAggregate(toQSqlProviderAggregate::SpecifiedDatabase);
-
-                QString str;
-                QString tmp;
-//                if (aggr.Type == toQSqlProviderAggregate::None || aggr.Type == toQSqlProviderAggregate::SpecifiedDatabase)
-                {
-                    if (nam.isEmpty())
-                        break;
-
-                    if (binds.find(nam) != binds.end())
-                    {
-                        ret += binds[nam];
-                        break;
-                    }
-                    if (cpar == params.end())
-                        throw toConnection::exception(QString::fromLatin1("Not all bind variables supplied"), i);
-                    if ((*cpar).isNull())
-                    {
-                        str = QString::fromLatin1("NULL");
-                    }
-                    else if ((*cpar).isInt() || (*cpar).isDouble())
-                    {
-                        str = QString(*cpar);
-                    }
-                    tmp = (*cpar);
-                    cpar++;
-                }
-                if (str.isNull())
-                {
-//                    if (aggr.Type != toQSqlProviderAggregate::None)
-//                    {
-//                        if (!extradata.isEmpty())
-//                        {
-////                            WTF?
-////                            if ( extradata->empty() )
-////                                return QString::null;
-//                        	tmp = extradata.first();
-//                        	extradata.removeFirst();
-//                        }
-//                        else
-//                        {
-//                            aggr.Data = tmp;
-//                            throw aggr;
-//                        }
-//                    }
-//                    else
-                    {
-                        if (in != QString::fromLatin1("noquote"))
-                            str += QString::fromLatin1("'");
-                    }
-                    for (int j = 0; j < tmp.length(); j++)
-                    {
-                        QChar d = tmp.at(j);
-                        switch (d.toLatin1())
-                        {
-                        case 0:
-                            str += QString::fromLatin1("\\0");
-                            break;
-                        case '\n':
-                            str += QString::fromLatin1("\\n");
-                            break;
-                        case '\t':
-                            str += QString::fromLatin1("\\t");
-                            break;
-                        case '\r':
-                            str += QString::fromLatin1("\\r");
-                            break;
-                        case '\'':
-                            str += QString::fromLatin1("\\\'");
-                            break;
-                        case '\"':
-                            str += QString::fromLatin1("\\\"");
-                            break;
-                        case '\\':
-                            str += QString::fromLatin1("\\\\");
-                            break;
-                        default:
-                            str += d;
-                        }
-                    }
-//                    if (in != QString::fromLatin1("noquote") && aggr.Type == toQSqlProviderAggregate::None)
-                        str += QString::fromLatin1("'");
-                }
-                binds[nam] = str;
-                ret += str;
-                break;
-            }
-        default:
-            ret += rc;
-        }
-    }
-    return ret;
+	SQLLexer::Lexer::token_const_iterator start = lexer->begin();
+	while(start->getTokenType() != SQLLexer::Token::X_EOF)
+	{
+		switch(start->getTokenType())
+		{
+		case SQLLexer::Token::L_BIND_VAR:
+			retval += start->getText();
+			BindParams << start->getText();
+			break;
+		case SQLLexer::Token::L_BIND_VAR_WITH_PARAMS:
+		{
+			QString l1 = start->getText();
+			QString l2 = l1.left( l1.indexOf('<'));
+			QString l3 = l2.leftJustified( l1.length(), ' ');
+			BindParams << l2;
+			retval += l3;
+		}
+		break;
+		default:
+			retval += start->getText();
+		}
+		start++;
+	}
+	return retval;
 }
+
+void psqlQuery::bindParam(QSqlQuery *q, toQueryParams const &params)
+{
+	Q_ASSERT_X(BindParams.size() <= params.size()
+			, qPrintable(__QHERE__)
+			, qPrintable(QString("Bind variables mismatch: %1 vs. %2").arg(BindParams.size()).arg(params.size())));
+	for (int i = 0; i < BindParams.size(); i++)
+	{
+		q->bindValue(BindParams.at(i), params.at(i).displayData());
+		TLOG(6, toDecorator, __HERE__) << "	Binding " << BindParams.at(i) << " <= " << params.at(i).displayData() << std::endl;
+	}
+}
+
