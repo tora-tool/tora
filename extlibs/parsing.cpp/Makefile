@@ -59,6 +59,9 @@ s2:	s2.cpp S2.tokens $(TOBJS) Makefile UserMiniTraits.hpp
 s3:	s3.cpp S3.tokens $(TOBJS) Makefile UserMiniTraits.hpp
 	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(TOBJS) s3.cpp S3Lexer.cpp S3Parser.cpp $(LIBS) -o $@
 
+p1:	p1.cpp PostgreSQLGuiLexer.tokens $(TOBJS) PostgreSQLGuiLexer.g.o Makefile UserGuiTraits.hpp
+	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(TOBJS) p1.cpp PostgreSQLGuiLexer.o $(LIBS) -o $@
+
 clean:
 	rm -f *.o *Lexer*.[ch]pp *Parser.[ch]pp t0 t1 t2 t3 t4 m0 m1 s0 s1 s2 p0 *.tokens
 
