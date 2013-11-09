@@ -136,11 +136,12 @@ int main(int argc, char **argv)
 			QDir pgsqlHomeDir(pgsqlHome);
 			if (!pgsqlHome.isEmpty() && pgsqlHomeDir.exists()) {
 				QCoreApplication::addLibraryPath(pgsqlHome + QDir::separator() + "bin"); // libeay32.dll
-				QCoreApplication::addLibraryPath(pgsqlHome + QDir::separator() + "lib");  // libpg.dll
+				QCoreApplication::addLibraryPath(pgsqlHome + QDir::separator() + "lib");  // libpq.dll
 				plugins << pgsqlHome + QDir::separator() + "bin" + QDir::separator() + "LIBICONV-2.DLL";
 				plugins << pgsqlHome + QDir::separator() + "bin" + QDir::separator() + "LIBINTL-8.DLL";
 				plugins << pgsqlHome + QDir::separator() + "bin" + QDir::separator() + "libeay32.dll";
 				plugins << pgsqlHome + QDir::separator() + "bin" + QDir::separator() + "ssleay32.dll";
+				plugins << pgsqlHome + QDir::separator() + "bin" + QDir::separator() + "libpq.dll";
 				plugins << pgsqlHome + QDir::separator() + "lib" + QDir::separator() + "libpq.dll";
 			}
 #endif
