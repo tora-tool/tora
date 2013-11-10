@@ -125,6 +125,7 @@ toCache::toCache(toConnection &parentConnection, QString const &description)
 {
 	m_threadWorker->setObjectName("toCacheWorker thread");
 	m_cacheWorker->moveToThread(m_threadWorker);
+	connect(this, SIGNAL(refreshCache()), m_cacheWorker, SLOT(process()));
 }
 
 toCache::~toCache()
@@ -460,11 +461,10 @@ void toCache::readCache() {
 	try {
 		setCacheState(toCache::READING_STARTED);
 		QMutexLocker bLock(&backgroundThreadLock);
-		if(m_threadWorker->isRunning())
+		if(!m_threadWorker->isRunning())
 			m_threadWorker->start();
-		/// TODO toTask and toThread are obsolete
-		///toTask *t = new toCacheWorker(parentConn);
 		///(new toThread(t))->start();
+		emit refreshCache();
 	} catch (...) {
 		state = FAILED;
 		return;
