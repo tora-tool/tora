@@ -43,12 +43,12 @@ tora/
    |    +--help                  <--- symlinks to doc/help
    |         +--images
    |    +--tests
-   |    +--obsolete              Various not-converted tools, components, classes
    |         +--dummyoci
    |    +--result   
    |
    +--utils/
-        +--qscintilla/
+   |    +--qscintilla/
+   +--obsolete/                  Various not-converted(Tora 2.x) tools, components, classes
 
 
 What goes in which directory ?
