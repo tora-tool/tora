@@ -75,6 +75,8 @@ private slots:
 
     // refreshes user list from connections cache, no query is executed
     void slotUsersFromCache(void);
+
+    void slotQueryDone(); // Overridden but NOT virtual
 private:
     void init(toConnection &conn);
 

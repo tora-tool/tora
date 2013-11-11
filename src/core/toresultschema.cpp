@@ -128,7 +128,23 @@ void toResultSchema::slotUsersFromCache(void)
 			SelectedFound = true;
 		}
 	}
-	slotQueryDone();
+	toResultCombo::slotQueryDone(); // Combo list changed => do select the right field
+}
+
+void toResultSchema::slotQueryDone(void)
+{
+	QAbstractItemModel const* m = model();
+	QList<toCache::CacheEntry*> users;
+
+	for(int i = 0; i < m->rowCount(); i++)
+	{
+		QModelIndex idx = m->index(i, 0);
+		QString s = m->data(idx).toString();
+		if (Additional.contains(s))
+			continue;
+		users << new toCacheEntryUser(s);
+	}
+	connection().getCache().upsertUserList(users);
 }
 
 void toResultSchema::refresh(void)
