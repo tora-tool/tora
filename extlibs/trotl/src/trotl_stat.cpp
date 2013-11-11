@@ -461,6 +461,7 @@ bool SqlStatement::execute_internal(ub4 rows, ub4 mode)
 		break;
 	default:
 		throw_oci_exception(OciException(__TROTL_HERE__, "Unknown statement type: %d\n%s").arg(get_stmt_type()).arg(_parsed_stmt));
+		//no break here
 	};
 
 	if(!_bound && _out_cnt)
@@ -507,6 +508,7 @@ bool SqlStatement::execute_internal(ub4 rows, ub4 mode)
 	case OCI_ERROR:
 		_state |= STMT_ERROR;
 		throw_oci_exception(OciException(__TROTL_HERE__, *this));
+		//no break here
 	default:
 		if (rows > 0)
 			_state |= EXECUTED;
@@ -574,6 +576,7 @@ void SqlStatement::fetch(ub4 rows/*=-1*/)
 	case OCI_NO_DATA:
 		_state |= EOF_DATA;
 		_state &= ~EXECUTED;
+		//no break here
 	case OCI_SUCCESS:
 		_state |= FETCHED;
 		break;
@@ -583,6 +586,7 @@ void SqlStatement::fetch(ub4 rows/*=-1*/)
 		_state |= EOF_DATA;
 		_state |= EOF_QUERY;
 		_state &= ~EXECUTED;
+		//no break here
 	default:
 		oci_check_error(__TROTL_HERE__, _errh, res);
 		break;

@@ -342,6 +342,7 @@ tstring SqlCollection::str() const
 				                                 "Collection to string convertorsion - Not implemented yet: %d")
 				                    .arg(_collection_data_type)
 				                   );
+				// no break here
 			}
 		}
 	}

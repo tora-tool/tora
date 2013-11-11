@@ -124,6 +124,7 @@ OciException::OciException(tstring where, OCIEnv* envh) :
 		break;
 	default:
 		_sql_error_code.push_back(0);
+		//no break here
 	}
 
 #ifdef DEBUG
@@ -169,6 +170,7 @@ OciException::OciException(tstring where, OCIError* errh) :
 		s << res;
 		_mess.append(s.str());
 	}
+	// no break here
 	}
 
 #ifdef DEBUG

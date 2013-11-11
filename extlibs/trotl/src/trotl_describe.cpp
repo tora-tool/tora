@@ -113,8 +113,10 @@ Describe* Describe::createDescription(OciConnection &con, const tstring &objectN
 	case OCI_PTYPE_DATABASE: // - database
 	case OCI_PTYPE_UNK: // - unknown schema object
 		throw_oci_exception(OciException(__TROTL_HERE__, "Error describing object: %d\n").arg(obj_type));
+		//no break here
 	default:
 		throw_oci_exception(OciException(__TROTL_HERE__, "Error describing object: %d\n").arg(obj_type));
+		//no break here
 	}
 };
 
@@ -190,8 +192,10 @@ Describe::objectType TROTL_EXPORT Describe::getObjectType(OciConnection &con, co
 	case OCI_PTYPE_DATABASE: // - database
 	case OCI_PTYPE_UNK: // - unknown schema object
 		throw_oci_exception(OciException(__TROTL_HERE__, "Error describing object: %d\n").arg(obj_type));
+		//no break here
 	default:
 		throw_oci_exception(OciException(__TROTL_HERE__, "Error describing object: %d\n").arg(obj_type));
+		//no break here
 	}
 };
 
