@@ -368,6 +368,7 @@ QString psqlQuery::stripBinds(const QString &in)
 		break;
 		default:
 			retval += start->getText();
+			//no break here
 		}
 		start++;
 	}

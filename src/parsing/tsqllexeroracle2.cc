@@ -366,6 +366,7 @@ Lexer::token_const_iterator OracleGuiLexer::findStartToken( Lexer::token_const_i
 					return j;         // otherwise return position of the DML Token
 				default:
 					exitLoop = true;  // SELECT was not found => exit the loop;
+					//no break here
 				}
 			}
 			i = j; // Advance position of the outer loop iterator - continue looping
