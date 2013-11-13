@@ -278,6 +278,7 @@ Lexer::token_const_iterator mySQLGuiLexer::findStartToken( Lexer::token_const_it
 	QSet<SQLLexer::Token::TokenType> INTRODUCERS = QSet<SQLLexer::Token::TokenType>()
 		<< SQLLexer::Token::L_SELECT_INTRODUCER
 		<< SQLLexer::Token::L_DML_INTRODUCER
+		<< SQLLexer::Token::L_DDL_INTRODUCER
 		<< SQLLexer::Token::L_PL_INTRODUCER
 		<< SQLLexer::Token::L_OTHER_INTRODUCER
 		<< SQLLexer::Token::L_LPAREN
@@ -295,6 +296,7 @@ Lexer::token_const_iterator mySQLGuiLexer::findEndToken( Lexer::token_const_iter
 	{
 	case Token::L_SELECT_INTRODUCER:
 	case Token::L_DML_INTRODUCER:
+	case Token::L_DDL_INTRODUCER:
 	case Token::L_PL_INTRODUCER:
 	case Token::L_OTHER_INTRODUCER:
 		while(true)

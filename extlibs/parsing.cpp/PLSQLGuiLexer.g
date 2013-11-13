@@ -93,7 +93,11 @@ DML_COMMAND_INTRODUCER:
         'SAVEPOINT'                     |
         'LOCK'                          |
         'DELETE';
-    
+
+DDL_COMMAND_INTRODUCER:
+        c='CREATE'    { $c->setBlockContext(BlkCtx::CREATE);    $c->set_type(DDL_COMMAND_INTRODUCER); get_tokSource()->enqueueToken($c); skip(); }
+    	;
+
 PLSQL_COMMAND_INTRODUCER:
         (
         c='CALL'                        | // TODO hande call in the TRIGGER declaration
@@ -103,7 +107,7 @@ PLSQL_COMMAND_INTRODUCER:
         t='TYPE'      { $t->setBlockContext(BlkCtx::PROCEDURE); $t->set_type(PLSQL_COMMAND_INTRODUCER); get_tokSource()->enqueueToken($t); } |            
         f='FUNCTION'  { $f->setBlockContext(BlkCtx::PROCEDURE); $f->set_type(PLSQL_COMMAND_INTRODUCER); get_tokSource()->enqueueToken($f); } |
         t='TRIGGER'   { $t->setBlockContext(BlkCtx::PROCEDURE); $t->set_type(PLSQL_COMMAND_INTRODUCER); get_tokSource()->enqueueToken($t); } |
-        c='CREATE'    { $c->setBlockContext(BlkCtx::CREATE);    $c->set_type(PLSQL_COMMAND_INTRODUCER); get_tokSource()->enqueueToken($c); } |
+        //c='CREATE'    { $c->setBlockContext(BlkCtx::CREATE);    $c->set_type(PLSQL_COMMAND_INTRODUCER); get_tokSource()->enqueueToken($c); } |
         p='PACKAGE'   { $p->setBlockContext(BlkCtx::PACKAGE);   $p->set_type(PLSQL_COMMAND_INTRODUCER); get_tokSource()->enqueueToken($p); }
         )
         { skip(); }//{ $channel = HIDDEN; }

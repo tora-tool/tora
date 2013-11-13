@@ -208,6 +208,7 @@ void toLexerOracle::styleText(int start, int end)
 			break;
 		case SQLLexer::Token::L_SELECT_INTRODUCER:
 		case SQLLexer::Token::L_DML_INTRODUCER:
+		case SQLLexer::Token::L_DDL_INTRODUCER:
 		case SQLLexer::Token::L_PL_INTRODUCER:
 		case SQLLexer::Token::L_OTHER_INTRODUCER:
 		case SQLLexer::Token::L_RESERVED:

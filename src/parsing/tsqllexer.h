@@ -74,6 +74,7 @@ namespace SQLLexer
 			, L_RPAREN                 // ')'
 			, L_SELECT_INTRODUCER      // SELECT, WITH
 			, L_DML_INTRODUCER         // INSERT, UPDATE
+			, L_DDL_INTRODUCER         // CREATE, ALTER
 			, L_PL_INTRODUCER          // DECLARE, BEGIN, CREATE, PACKAGE, PROCEDURE
 			, L_OTHER_INTRODUCER       // ALTER, EXPLAIN, ...
 		};
@@ -148,6 +149,7 @@ namespace SQLLexer
 
 			inline token_const_iterator consumeUntil(unsigned);
 			inline token_const_iterator consumeUntil(QSet<unsigned>);
+			inline token_const_iterator consumeWS();
 
 			token_const_iterator& operator=(const token_const_iterator& other);
 

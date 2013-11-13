@@ -1,7 +1,7 @@
 #include "ts_log/ts_log_utils.h"
 
-#include <QObject>
-#include <QSet>
+#include <QtCore/QObject>
+#include <QtCore/QSet>
 
 namespace SQLLexer
 {
@@ -249,6 +249,32 @@ namespace SQLLexer
 			retval++;
 		}
 		return retval;
+	}
+
+	inline Lexer::token_const_iterator Lexer::token_const_iterator::consumeWS()
+	{
+		Lexer::token_const_iterator retval(*this);
+		bool spaceMatched = false; // if pointing onto non-WS consume until next non-WS
+		while(true)
+		{
+			switch (retval->getTokenType())
+			{
+			case Token::X_EOL:
+			case Token::X_WHITE:
+			case Token::X_COMMENT:
+			case Token::X_COMMENT_ML:
+			case Token::X_COMMENT_ML_END:
+				retval++;
+				continue;
+			default:
+				if (spaceMatched)
+					return retval;
+				else
+					retval++;
+			}
+			spaceMatched = true;
+		}
+		return retval; // never reached
 	}
 
 	inline Lexer::token_const_iterator& Lexer::token_const_iterator::operator=(const token_const_iterator& other)
