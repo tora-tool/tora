@@ -42,9 +42,11 @@
 #include "core/toqvalue.h"
 #include "core/toquery.h"
 
+#include <QtCore/QTextCodec>
+#include <QtCore/QThread>
+#include <QtGui/QApplication>
 #include <QtGui/QComboBox>
 #include <QtGui/QFileDialog>
-#include <QtCore/QTextCodec>
 #include <QtGui/QToolBar>
 #include <QtGui/QStyleFactory>
 #include <QtGui/QPixmapCache>
@@ -760,18 +762,21 @@ QKeySequence toKeySequence(const QString &key)
 
 toBusy::toBusy()
 {
-	if (m_busyCount.fetchAndAddAcquire(1) == 0 && m_enabled)
+	if (m_mainThread == NULL)
+		m_mainThread = qApp->thread();
+	if (m_mainThread == QThread::currentThread() && m_busyCount.fetchAndAddAcquire(1) == 0 && m_enabled)
 		qApp->setOverrideCursor(Qt::WaitCursor);
 }
 
 toBusy::~toBusy()
 {
-	if (m_busyCount.deref() == false)
+	if (m_mainThread == QThread::currentThread() && m_busyCount.deref() == false)
 		qApp->restoreOverrideCursor();
 }
 
 bool toBusy::m_enabled(true);
 QAtomicInt toBusy::m_busyCount(0);
+QThread *toBusy::m_mainThread(NULL);
 
 QToolBar *toAllocBar(QWidget *parent, const QString &str)
 {

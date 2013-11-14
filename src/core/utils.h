@@ -307,6 +307,7 @@ protected:
     static bool m_enabled; // disabled when main application window is already closed
 private:
     static QAtomicInt m_busyCount;
+    static QThread* m_mainThread; // no nothing if instantiated from bg thread
 };
 
 /** Display a message in the statusbar of the main window.
