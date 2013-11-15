@@ -37,6 +37,7 @@
 #include "core/toconnectiontraits.h"
 #include "core/toconfiguration.h"
 #include "core/tologger.h"
+#include "core/utils.h"
 
 #include <QtCore/QtDebug>
 #include <QtGui/QListWidget>
@@ -436,7 +437,27 @@ void toHighlightedText::setHighlighter(HighlighterTypeEnum h)
 		m_worker->setAnalyzer(NULL);
 		setLexer(m_currentAnalyzer ? m_currentAnalyzer->createLexer(this) : NULL);
 	}
+#ifdef QT_DEBUG
+	QString txt = QLatin1String(ENUM_NAME(toHighlightedText, HighlighterTypeEnum , highlighterType));
+	TLOG(8, toDecorator, __HERE__) << " Lexer: " << txt << std::endl;
 
+	QMetaEnum m_enum = toSyntaxAnalyzer::staticMetaObject.enumerator(toSyntaxAnalyzer::staticMetaObject.indexOfEnumerator("wordClassEnum"));
+	for(int idx = 0; idx < m_enum.keyCount(); idx++)
+	{
+		unsigned ival = m_enum.value(idx);
+		QString  sval = m_enum.key(idx);
+		TLOG(8, toNoDecorator, __HERE__) << "  Analyzer:" << sval << '(' << ival << ')' <<std::endl;
+		if (super::lexer() == NULL)
+			break;
+		QColor c = super::lexer()->color(ival);
+		QColor p = super::lexer()->paper(ival);
+		QFont  f = super::lexer()->font(ival);
+		TLOG(8, toNoDecorator, __HERE__) << "  Style:" << sval << std::endl
+				<< "   Fore:" << c.name() << '(' << c.red() << ' ' << c.green() << ' ' << c.blue() << ' ' << c.alpha() << ')' << std::endl
+				<< "   Back:" << p.name() << '(' << p.red() << ' ' << p.green() << ' ' << p.blue() << ' ' << p.alpha() << ')' << std::endl
+				<< "   Font:" << f.toString() << std::endl;
+	}
+#endif
 
 	if(lexer) // delete the "old" lexer - if any
 		delete lexer;

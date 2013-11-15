@@ -97,10 +97,10 @@ public:
     	SingleQuotedString = QsciLexerSQL::SingleQuotedString,
 
     	//! An SQL*Plus keyword.
-    	PlusKeyword = 8,
+    	PlusKeyword = QsciLexerSQL::PlusKeyword,
 
     	//! An SQL*Plus prompt.
-    	PlusPrompt = 9,
+    	PlusPrompt = QsciLexerSQL::PlusPrompt,
 
     	//! An operator.
     	Operator = QsciLexerSQL::Operator,
@@ -137,7 +137,7 @@ public:
     	////KeywordSet8 = 22,
 
     	//! A quoted identifier.
-    	QuotedIdentifier = 23
+    	QuotedIdentifier = QsciLexerSQL::QuotedIdentifier
     };
 
     /* statements is represented only by lines range */
