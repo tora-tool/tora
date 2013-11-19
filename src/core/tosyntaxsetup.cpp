@@ -48,7 +48,7 @@
 toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
     : QWidget(parent)
     , toSettingTab("fonts.html")
-	, ColorsEnum(ENUM_REF(toSyntaxAnalyzer,wordClassEnum))
+	, ColorsEnum(ENUM_REF(toSyntaxAnalyzer,WordClassEnum))
 	, Current(NULL)
 {
 
@@ -106,10 +106,8 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
     	QFont  fo = l->font((int)ColorsEnum.value(idx));
 
     	QString colorName = ColorsEnum.key(idx);
-    	int colorNameE = ColorsEnum.value(idx);
-    	FGColors.insert(colorNameE, fg);
-    	BGColors.insert(colorNameE, bg);
-    	Fonts.insert(colorNameE, fo);
+    	int colorNameEnum = ColorsEnum.value(idx);
+    	Styles.insert(colorNameEnum, toStyle(fg, bg, fo));
     	SyntaxComponent->addItem(colorName);
     }
     //Example->setAnalyzer(Analyzer);
@@ -218,26 +216,26 @@ void toSyntaxSetup::changeLine(QListWidgetItem *item)
     Current = item;
     if (Current)
     {
-    	toSyntaxAnalyzer::wordClassEnum wc = (toSyntaxAnalyzer::wordClassEnum) wordClass();
+    	toSyntaxAnalyzer::WordClassEnum wc = (toSyntaxAnalyzer::WordClassEnum) wordClass();
     	QPalette palette = ExampleColor->palette();
-        palette.setColor(QPalette::Background, BGColors[wc]);
-        palette.setColor(QPalette::Foreground, FGColors[wc]);
+        palette.setColor(QPalette::Background, Styles.value(wc).BGColor);
+        palette.setColor(QPalette::Foreground, Styles.value(wc).FGColor);
         ExampleColor->setPalette(palette);
         //ExampleColor->setAutoFillBackground(true);
         //ExampleColor->setText("What ever text");
 
         palette = FGSample->palette();
-        palette.setColor(QPalette::Background, FGColors[wc]);
+        palette.setColor(QPalette::Background, Styles.value(wc).FGColor);
         FGSample->setPalette(palette);
 
         palette = BGSample->palette();
-        palette.setColor(QPalette::Background, BGColors[wc]);
+        palette.setColor(QPalette::Background, Styles.value(wc).BGColor);
         BGSample->setPalette(palette);
 
         palette = FontSample->palette();
-        palette.setColor(QPalette::Background, BGColors[wc]);
-        palette.setColor(QPalette::Foreground, FGColors[wc]);
-        FontSample->setFont(Fonts[wc]);
+        palette.setColor(QPalette::Background, Styles.value(wc).BGColor);
+        palette.setColor(QPalette::Foreground, Styles.value(wc).FGColor);
+        FontSample->setFont(Styles.value(wc).Font);
         FontSample->setPalette(palette);
     }
 }
@@ -249,10 +247,10 @@ void toSyntaxSetup::selectColor(void)
         if (Current)
         {
             int coleng = wordClass();
-            QColor col = QColorDialog::getColor(FGColors[coleng]);
+            QColor col = QColorDialog::getColor(Styles.value(coleng).FGColor);
             if (col.isValid())
             {
-                FGColors[coleng] = col;
+                Styles[coleng].FGColor = col;
 
                 QPalette palette = ExampleColor->palette();
                 palette.setColor(QPalette::Background, col);

@@ -85,7 +85,7 @@ toSyntaxAnalyzer::toSyntaxAnalyzer(toHighlightedText *parent)
 //	Colors[StaticBg] = toConfigurationSingle::Instance().syntaxStaticBg();
 }
 
-QColor toSyntaxAnalyzer::getColor(toSyntaxAnalyzer::wordClassEnum type) const
+QColor toSyntaxAnalyzer::getColor(toSyntaxAnalyzer::WordClassEnum type) const
 {
 	if (Colors.contains(type))
 		return Colors[type];

@@ -539,7 +539,7 @@
   </connection>
   <connection>
    <sender>SyntaxComponent</sender>
-   <signal>itemClicked(QListWidgetItem*)</signal>
+   <signal>currentItemChanged(QListWidgetItem*,QListWidgetItem*)</signal>
    <receiver>toSyntaxSetupUI</receiver>
    <slot>changeLine(QListWidgetItem*)</slot>
    <hints>

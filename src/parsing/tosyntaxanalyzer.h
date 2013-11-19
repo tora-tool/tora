@@ -51,7 +51,7 @@ class toSyntaxAnalyzer : public QObject
 {
 	Q_OBJECT;
 	Q_ENUMS(statementClassEnum);
-	Q_ENUMS(wordClassEnum);
+	Q_ENUMS(WordClassEnum);
 	friend class toHighlightedText;
 public:
     /** Indicates type of statement - DDL/DML or PLSQL block
@@ -71,7 +71,7 @@ public:
 
     //! This enum defines the meanings of the different styles used by the
     //! SQL lexer. This enum is copied from QsciLexerSQL
-    enum wordClassEnum {
+    enum WordClassEnum {
     	//! The default.  - not used at all - or used for whitespace only
     	Default = QsciLexerSQL::Default,
 
@@ -158,7 +158,7 @@ public:
     toSyntaxAnalyzer(toHighlightedText *parent);
     virtual ~toSyntaxAnalyzer();
 
-    QColor getColor(wordClassEnum type) const;
+    QColor getColor(WordClassEnum type) const;
 
     /*
      * this method should be "stateless" can be called from "both" threads
@@ -173,7 +173,7 @@ public:
 private:
     /** Colors allocated for the different @ref wordClass values.
      */
-    QMap<wordClassEnum, QColor> Colors;
+    QMap<WordClassEnum, QColor> Colors;
 
 };
 
