@@ -137,6 +137,7 @@
 #define DEFAULT_DISPLAY_GRIDLINES true
 #define DEFAULT_EXTENSIONS "SQL (*.sql *.pkg *.pkb), Text (*.txt), All (*)"
 #define CONF_STYLE  "Style"
+#define CONF_EDIT_STYLE  "EditStyle"
 #define DEFAULT_STYLE "" //"Cleanlooks"
 #define CONF_ENCODING "Encoding"
 #define DEFAULT_ENCODING "Default"

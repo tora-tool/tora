@@ -38,51 +38,13 @@
 
 #include "ui_tosyntaxsetupui.h"
 #include "core/totool.h"
-
-#include <map>
+#include "editor/tostyle.h"
 
 #include <QtCore/QString>
 #include <QtCore/QMetaEnum>
-#include <QtGui/QFont>
-#include <QtGui/QColor>
 
 class QListWidgetItem;
 class toSyntaxAnalyzer;
-
-class toStyle : public QObject
-{
-	Q_OBJECT;
-public:
-	toStyle() // make QMap happy
-	: QObject(NULL)
-	{}
-
-	toStyle(const toStyle &other)
-	: QObject(NULL)
-	, FGColor(other.FGColor)
-	, BGColor(other.BGColor)
-	, Font(other.Font)
-	{}
-
-	toStyle& operator =(const toStyle &other)
-	{
-		FGColor = other.FGColor;
-		BGColor = other.BGColor;
-		Font =other.Font;
-		return *this;
-	}
-
-	toStyle(QColor const& fg, QColor const& bg, QFont const& fo)
-	: QObject(NULL)
-	, FGColor(fg)
-	, BGColor(bg)
-	, Font(fo)
-	{}
-
-	QColor FGColor;
-	QColor BGColor;
-	QFont Font;
-};
 
 class toSyntaxSetup : public QWidget
     , public Ui::toSyntaxSetupUI
@@ -94,7 +56,7 @@ class toSyntaxSetup : public QWidget
     QString ListFontName;
     QListWidgetItem *Current;
     QMetaEnum ColorsEnum;
-    QMap<int, toStyle> Styles;  // enum toSyntaxAnalyzer::WordClass => toStyle
+    toStylesMap Styles;  // QMap<enum toSyntaxAnalyzer::WordClass, toStyle> => toStyle
     toSyntaxAnalyzer* Analyzer;
 public:
     toSyntaxSetup(QWidget *parent = 0, const char *name = 0, Qt::WFlags fl = 0);

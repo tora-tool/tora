@@ -50,6 +50,7 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
     , toSettingTab("fonts.html")
 	, ColorsEnum(ENUM_REF(toSyntaxAnalyzer,WordClassEnum))
 	, Current(NULL)
+	, Styles(toConfigurationSingle::Instance().styles())
 {
 
     if (name)
@@ -98,16 +99,9 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
         ResultExample->setFont(font);
     }
 
-    QsciLexerSQL *l = new QsciLexerSQL(this);
     for (int idx = 0; idx < ColorsEnum.keyCount(); idx++)
     {
-    	QColor fg = l->color((int)ColorsEnum.value(idx));
-    	QColor bg = l->paper((int)ColorsEnum.value(idx));
-    	QFont  fo = l->font((int)ColorsEnum.value(idx));
-
     	QString colorName = ColorsEnum.key(idx);
-    	int colorNameEnum = ColorsEnum.value(idx);
-    	Styles.insert(colorNameEnum, toStyle(fg, bg, fo));
     	SyntaxComponent->addItem(colorName);
     }
     //Example->setAnalyzer(Analyzer);
@@ -130,24 +124,6 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
     Errors[2] = tr("Unknown variable");
     Example->setErrors(Errors);
 }
-
-//void toSyntaxAnalyzer::readColor(const QColor &def, infoType typ)
-//{
-//#define CONF_COLOR  "KeywordColor"
-//	QString conf(CONF_COLOR ":");
-//	conf += typeString(typ);
-//	QString res = toConfigurationSingle::Instance().globalConfig(conf, "");
-//
-//	if (res.isEmpty())
-//		Colors[typ] = def;
-//	else {
-//		int r, g, b;
-//		if (sscanf(res.toAscii().constData(), "%d,%d,%d", &r, &g, &b) != 3)
-//			throw qApp->translate("toSyntaxAnalyzer", "Wrong format of color in setings");
-//		QColor col(r, g, b);
-//		Colors[typ] = col;
-//	}
-//}
 
 void toSyntaxSetup::checkFixedWidth(const QFont &fnt)
 {
@@ -255,9 +231,6 @@ void toSyntaxSetup::selectColor(void)
                 QPalette palette = ExampleColor->palette();
                 palette.setColor(QPalette::Background, col);
                 ExampleColor->setPalette(palette);
-
-                // Example->analyzer().Colors[toSyntaxAnalyzer::typeString(coleng)] = col;
-                // Example->updateSyntaxColor(toSyntaxAnalyzer::typeString(coleng));
                 Example->update();
             }
         }
@@ -282,31 +255,14 @@ void toSyntaxSetup::saveSetting(void)
     toConfigurationSingle::Instance().setAutoIndent(AutoIndent->isChecked());
     toConfigurationSingle::Instance().setTabStop(TabStop->value());
     toConfigurationSingle::Instance().setUseSpacesForIndent(UseSpacesForIndent->isChecked());
-    //for (std::map<QString, QColor>::iterator i = Colors.begin(); i != Colors.end(); i++)
-    {
-//    	QString str(CONF_COLOR);
-//         str += ":";
-//         str += (*i).first;
-//         QString res;
-//         res.sprintf("%d,%d,%d",
-//                     (*i).second.red(),
-//                     (*i).second.green(),
-//                     (*i).second.blue());
-//         toConfigurationSingle::Instance().globalSetConfig(str, res);
-    }
+
+    toConfigurationSingle::Instance().setStyles(Styles);
 
 //#define C2T(c) (Colors[Analyzer.typeString((c))])
-//    toConfigurationSingle::Instance().setSyntaxDefault(C2T(toSyntaxAnalyzer::Default));
-//    toConfigurationSingle::Instance().setSyntaxComment(C2T(toSyntaxAnalyzer::Comment));
-//    toConfigurationSingle::Instance().setSyntaxNumber(C2T(toSyntaxAnalyzer::Number));
-//    toConfigurationSingle::Instance().setSyntaxKeyword(C2T(toSyntaxAnalyzer::Keyword));
-//    toConfigurationSingle::Instance().setSyntaxString(C2T(toSyntaxAnalyzer::String));
 //    toConfigurationSingle::Instance().setSyntaxDefaultBg(C2T(toSyntaxAnalyzer::DefaultBg));
 //    toConfigurationSingle::Instance().setSyntaxDebugBg(C2T(toSyntaxAnalyzer::DebugBg));
 //    toConfigurationSingle::Instance().setSyntaxErrorBg(C2T(toSyntaxAnalyzer::ErrorBg));
 //    toConfigurationSingle::Instance().setSyntaxCurrentLineMarker(C2T(toSyntaxAnalyzer::CurrentLineMarker));
 //    toConfigurationSingle::Instance().setSyntaxStaticBg(C2T(toSyntaxAnalyzer::StaticBg));
-    //
-    //    toSyntaxAnalyzer::defaultAnalyzer().updateSettings();
     toConfigurationSingle::Instance().setExtensions(Extensions->text());
 }

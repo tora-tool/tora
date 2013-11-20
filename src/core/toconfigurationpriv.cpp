@@ -34,10 +34,15 @@
 
 #include "core/toconfigurationpriv.h"
 #include "core/toconf.h"
+#include "editor/tostyle.h"
+#include "parsing/tosyntaxanalyzer.h"
+
+#include <Qsci/qscilexersql.h>
 
 #include <QtCore/QString>
 #include <QtCore/QSettings>
 #include <QtCore/QLocale>
+#include <QtCore/QMetaEnum>
 #include <QtGui/QApplication>
 
 // A little magic to get lrefresh to work and get a check on qApp
@@ -262,17 +267,44 @@ void toConfigurationPrivate::loadConfig()
 	m_wsExecLog = s.value(CONF_EXEC_LOG, false).toBool();
 	m_wsToplevelDescribe = s.value(CONF_TOPLEVEL_DESCRIBE, true).toBool();
 	// tosyntaxsetup
-	const QPalette cg = qApp->palette();
-	m_syntaxDefault = s.value("SyntaxDefault", cg.color(QPalette::Base).name()).toString();
-	m_syntaxComment = s.value("SyntaxComment", "darkgray").toString();
-	m_syntaxNumber = s.value("SyntaxNumber", "limegreen").toString();
-	m_syntaxKeyword = s.value("SyntaxKeyword", "navy").toString();
-	m_syntaxString = s.value("SyntaxString", "red").toString();
-	m_syntaxDefaultBg = s.value("SyntaxDefaultBg", cg.color(QPalette::Text).name()).toString();
-	m_syntaxErrorBg = s.value("SyntaxErrorBg", "darkred").toString();
-	m_syntaxDebugBg = s.value("SyntaxDebugBg", "darkgreen").toString();
-	m_syntaxCurrentLineMarker = s.value("SyntaxCurrentLineMarker", "whitesmoke").toString();
-	m_syntaxStaticBg = s.value("SyntaxStaticBg", "darkblue").toString();
+	//  const QPalette cg = qApp->palette();
+	//	m_syntaxDefaultBg = s.value("SyntaxDefaultBg", cg.color(QPalette::Text).name()).toString();
+	//	m_syntaxErrorBg = s.value("SyntaxErrorBg", "darkred").toString();
+	//	m_syntaxDebugBg = s.value("SyntaxDebugBg", "darkgreen").toString();
+	//	m_syntaxCurrentLineMarker = s.value("SyntaxCurrentLineMarker", "whitesmoke").toString();
+	//	m_syntaxStaticBg = s.value("SyntaxStaticBg", "darkblue").toString();
+	{
+		QMetaEnum StyleNameEnum(ENUM_REF(toSyntaxAnalyzer,WordClassEnum));
+		QsciLexerSQL *l = new QsciLexerSQL(NULL);
+		for (int idx = 0; idx < StyleNameEnum.keyCount(); idx++)
+		{
+			QString keyNameFg = QString::fromAscii(CONF_EDIT_STYLE) + StyleNameEnum.key(idx) + "Fg";
+			QString keyNameBg = QString::fromAscii(CONF_EDIT_STYLE) + StyleNameEnum.key(idx) + "Bg";
+			QString keyNameFo = QString::fromAscii(CONF_EDIT_STYLE) + StyleNameEnum.key(idx) + "Fo";
+			QColor fg, bg;
+			QFont fo;
+			if (s.contains(keyNameFg) && QColor::isValidColor(s.value(keyNameFg).toString()))
+				fg = QColor(s.value(keyNameFg).toString());
+			else
+				fg = l->color((int)StyleNameEnum.value(idx));
+
+			if (s.contains(keyNameBg) && QColor::isValidColor(s.value(keyNameBg).toString()))
+				bg = QColor(s.value(keyNameBg).toString());
+			else
+				bg = l->paper((int)StyleNameEnum.value(idx));
+
+			if (s.contains(keyNameFo) && QFont(s.value(keyNameFo).toString()).exactMatch())
+				fo = QFont(s.value(keyNameFo).toString());
+			else
+				fo = QFont(m_codeFontName);
+
+			QString styleName = StyleNameEnum.key(idx);
+			int styleNameEnum = StyleNameEnum.value(idx);
+			m_styles.insert(styleNameEnum, toStyle(fg, bg, fo));
+		}
+		delete l;
+	}
+
 	m_useMaxTextWidthMark = s.value("useMaxTextWidthMark", false).toBool();
 	m_maxTextWidthMark = s.value("maxTextWidthMark", 75).toInt();
 	m_encoding = s.value(CONF_ENCODING, DEFAULT_ENCODING).toString();
@@ -528,16 +560,26 @@ void toConfigurationPrivate::saveConfig()
 	s.setValue(CONF_EXEC_LOG, m_wsExecLog);
 	s.setValue(CONF_TOPLEVEL_DESCRIBE, m_wsToplevelDescribe);
 	// tosyntaxsetup
-	s.setValue("SyntaxDefault", m_syntaxDefault);
-	s.setValue("SyntaxComment", m_syntaxComment);
-	s.setValue("SyntaxNumber", m_syntaxNumber);
-	s.setValue("SyntaxKeyword", m_syntaxKeyword);
-	s.setValue("SyntaxString", m_syntaxString);
-	s.setValue("SyntaxDefaultBg", m_syntaxDefaultBg);
-	s.setValue("SyntaxErrorBg", m_syntaxErrorBg);
-	s.setValue("SyntaxDebugBg", m_syntaxDebugBg);
-	s.setValue("SyntaxCurrentLineMarker", m_syntaxCurrentLineMarker);
-	s.setValue("SyntaxStaticBg", m_syntaxStaticBg);
+	//	s.setValue("SyntaxDefaultBg", m_syntaxDefaultBg);
+	//	s.setValue("SyntaxErrorBg", m_syntaxErrorBg);
+	//	s.setValue("SyntaxDebugBg", m_syntaxDebugBg);
+	//	s.setValue("SyntaxCurrentLineMarker", m_syntaxCurrentLineMarker);
+	//	s.setValue("SyntaxStaticBg", m_syntaxStaticBg);
+	QMetaEnum StyleNameEnum(ENUM_REF(toSyntaxAnalyzer,WordClassEnum));
+	QsciLexerSQL *l = new QsciLexerSQL(NULL);
+	for (int idx = 0; idx < StyleNameEnum.keyCount(); idx++)
+	{
+		QString keyNameFg = QString::fromAscii(CONF_EDIT_STYLE) + StyleNameEnum.key(idx) + "Fg";
+		QString keyNameBg = QString::fromAscii(CONF_EDIT_STYLE) + StyleNameEnum.key(idx) + "Bg";
+		QString keyNameFo = QString::fromAscii(CONF_EDIT_STYLE) + StyleNameEnum.key(idx) + "Fo";
+		int styleNameEnum = StyleNameEnum.value(idx);
+		if (m_styles.contains(styleNameEnum))
+		{
+			s.setValue(keyNameFg, m_styles[styleNameEnum].FGColor.name());
+			s.setValue(keyNameBg, m_styles[styleNameEnum].BGColor.name());
+			s.setValue(keyNameFo, m_styles[styleNameEnum].Font.toString());
+		}
+	}
 	s.endGroup();
 
 	// main window

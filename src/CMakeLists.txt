@@ -265,6 +265,7 @@ SET(TORA_MOC_CLASSES
   editor/todebugeditor.h
   editor/tocomplpopup.h
   editor/tosearchreplace.h
+  editor/tostyle.h
   editor/tocustomlexer.h
   parsing/tolexeroracle.h
 
@@ -495,6 +496,7 @@ SET(TORA_SOURCES
   editor/todebugeditor.cpp
   editor/tocomplpopup.cpp
   editor/tosearchreplace.cpp
+  editor/tostyle.cpp
   editor/tocustomlexer.cpp
   parsing/tolexeroracle.cpp
 

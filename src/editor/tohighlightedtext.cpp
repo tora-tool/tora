@@ -441,7 +441,7 @@ void toHighlightedText::setHighlighter(HighlighterTypeEnum h)
 	QString txt = QLatin1String(ENUM_NAME(toHighlightedText, HighlighterTypeEnum , highlighterType));
 	TLOG(8, toDecorator, __HERE__) << " Lexer: " << txt << std::endl;
 
-	QMetaEnum m_enum = toSyntaxAnalyzer::staticMetaObject.enumerator(toSyntaxAnalyzer::staticMetaObject.indexOfEnumerator("wordClassEnum"));
+	QMetaEnum m_enum = toSyntaxAnalyzer::staticMetaObject.enumerator(toSyntaxAnalyzer::staticMetaObject.indexOfEnumerator("WordClassEnum"));
 	for(int idx = 0; idx < m_enum.keyCount(); idx++)
 	{
 		unsigned ival = m_enum.value(idx);

@@ -67,28 +67,32 @@ toLexerOracle::toLexerOracle(QObject *parent)
 #endif
 
 	declareStyle(Default,
-			QColor(0x0, 0x0, 0x0),
-			QColor("white"),
+			toConfigurationSingle::Instance().styleFgColor(Default),
+			toConfigurationSingle::Instance().styleBgColor(Default),
 			mono);
 	declareStyle(Comment,
-			QColor(0x0, 0x80, 0x0),
-			QColor("white"),
+			toConfigurationSingle::Instance().styleFgColor(Comment),
+			toConfigurationSingle::Instance().styleBgColor(Comment),
 			mono);
 	declareStyle(CommentMultiline,
-			QColor(0x0, 0x80, 0x0),
-			QColor("white"),
+			toConfigurationSingle::Instance().styleFgColor(Comment),
+			toConfigurationSingle::Instance().styleBgColor(Comment),
 			mono);
 	declareStyle(Reserved,
-			QColor(0x80, 0x0, 0x0),
-			QColor("white"),
+			toConfigurationSingle::Instance().styleFgColor(Reserved),
+			toConfigurationSingle::Instance().styleBgColor(Reserved),
 			mono);
 	declareStyle(Builtin,
-			QColor(Qt::green),
-			QColor("white"),
+			toConfigurationSingle::Instance().styleFgColor(toSyntaxAnalyzer::KeywordSet5),
+			toConfigurationSingle::Instance().styleBgColor(toSyntaxAnalyzer::KeywordSet5),
 			mono);
 	declareStyle(Identifier,
-			QColor(Qt::darkBlue),
-			QColor("white"),
+			toConfigurationSingle::Instance().styleFgColor(Identifier),
+			toConfigurationSingle::Instance().styleBgColor(Identifier),
+			mono);
+	declareStyle(OneLine,
+			toConfigurationSingle::Instance().styleFgColor(OneLine),
+			toConfigurationSingle::Instance().styleBgColor(OneLine),
 			mono);
 	declareStyle(Failure,
 			QColor(Qt::black),

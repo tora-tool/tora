@@ -2,6 +2,7 @@
 #define TOCONFIGURATION_H
 
 #include "core/tora_export.h"
+#include "editor/tostyle.h"
 
 #include <loki/Singleton.h>
 #include <QtCore/QStringList>
@@ -515,29 +516,13 @@ public:
     bool wsToplevelDescribe();
     void setWsToplevelDescribe(bool v);
 
-#ifdef TORA3_SYNTAX_SETUP
+
     // tosyntaxsetup
-    QColor syntaxDefault();
-    void setSyntaxDefault(QColor v);
-    QColor syntaxComment();
-    void setSyntaxComment(QColor v);
-    QColor syntaxNumber();
-    void setSyntaxNumber(QColor v);
-    QColor syntaxKeyword();
-    void setSyntaxKeyword(QColor v);
-    QColor syntaxString();
-    void setSyntaxString(QColor v);
-    QColor syntaxDefaultBg();
-    void setSyntaxDefaultBg(QColor v);
-    QColor syntaxDebugBg();
-    void setSyntaxDebugBg(QColor v);
-    QColor syntaxErrorBg();
-    void setSyntaxErrorBg(QColor v);
-    QColor syntaxCurrentLineMarker();
-    void setSyntaxCurrentLineMarker(QColor v);
-    QColor syntaxStaticBg();
-    void setSyntaxStaticBg(QColor v);
-#endif
+    QColor styleFgColor(int);
+    QColor styleBgColor(int);
+    QFont styleFont(int);
+    const toStylesMap& styles();
+    void setStyles(const toStylesMap & styles);
 
     bool useMaxTextWidthMark();
     void setUseMaxTextWidthMark(bool v);

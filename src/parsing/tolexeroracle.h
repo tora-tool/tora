@@ -36,6 +36,7 @@
 #define TOLEXERORACLE_H_
 
 #include "parsing/tsqllexer.h"
+#include "parsing/tosyntaxanalyzer.h"
 
 #include <QtCore/QObject>
 #include <Qsci/qscilexercustom.h>
@@ -47,13 +48,13 @@ class toLexerOracle : public QsciLexerCustom {
         Q_OBJECT;
 public:
         enum Style {
-                Default    = QsciLexerSQL::Default,     // white spaces only
-                Comment    = QsciLexerSQL::Comment,
-                Reserved   = QsciLexerSQL::Keyword,
-                Builtin    = QsciLexerSQL::KeywordSet5,
-                Identifier = QsciLexerSQL::Identifier,
-                OneLine    = QsciLexerSQL::PlusPrompt,
-                CommentMultiline,
+                Default    = toSyntaxAnalyzer::Default,     // white spaces only
+                Comment    = toSyntaxAnalyzer::Comment,
+                Reserved   = toSyntaxAnalyzer::Keyword,
+                Builtin    = toSyntaxAnalyzer::KeywordSet5,
+                Identifier = toSyntaxAnalyzer::Identifier,
+                OneLine    = toSyntaxAnalyzer::PlusPrompt,
+                CommentMultiline = toSyntaxAnalyzer::QuotedIdentifier + 1,
                 Failure,
                 MaxStyle
         };

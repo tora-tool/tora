@@ -121,138 +121,6 @@ bool toConfiguration::saveMap(const QString &file, std::map<QString, QString> &p
     return d->saveMap(file, pairs);
 }
 
-#if TORA3_SYNTAX_SETUP
-QColor toConfiguration::syntaxDefault()
-{
-	Q_D(toConfiguration);
-    QColor c;
-    c.setNamedColor(d->m_syntaxDefault);
-    return c;
-}
-void toConfiguration::setSyntaxDefault(QColor v)
-{
-	Q_D(toConfiguration);
-    d->m_syntaxDefault = v.name();
-}
-
-QColor toConfiguration::syntaxComment()
-{
-	Q_D(toConfiguration);
-    QColor c;
-    c.setNamedColor(d->m_syntaxComment);
-    return c;
-}
-void toConfiguration::setSyntaxComment(QColor v)
-{
-	Q_D(toConfiguration);
-    d->m_syntaxComment = v.name();
-}
-
-QColor toConfiguration::syntaxNumber()
-{
-	Q_D(toConfiguration);
-    QColor c;
-    c.setNamedColor(d->m_syntaxNumber);
-    return c;
-}
-void toConfiguration::setSyntaxNumber(QColor v)
-{
-	Q_D(toConfiguration);
-    d->m_syntaxNumber = v.name();
-}
-
-QColor toConfiguration::syntaxKeyword()
-{
-	Q_D(toConfiguration);
-    QColor c;
-    c.setNamedColor(d->m_syntaxKeyword);
-    return c;
-}
-void toConfiguration::setSyntaxKeyword(QColor v)
-{
-	Q_D(toConfiguration);
-    d->m_syntaxKeyword = v.name();
-}
-
-QColor toConfiguration::syntaxString()
-{
-	Q_D(toConfiguration);
-    QColor c;
-    c.setNamedColor(d->m_syntaxString);
-    return c;
-}
-void toConfiguration::setSyntaxString(QColor v)
-{
-	Q_D(toConfiguration);
-    d->m_syntaxString = v.name();
-}
-
-QColor toConfiguration::syntaxDefaultBg()
-{
-	Q_D(toConfiguration);
-    QColor c;
-    c.setNamedColor(d->m_syntaxDefaultBg);
-    return c;
-}
-void toConfiguration::setSyntaxDefaultBg(QColor v)
-{
-	Q_D(toConfiguration);
-    d->m_syntaxDefaultBg = v.name();
-}
-
-QColor toConfiguration::syntaxDebugBg()
-{
-	Q_D(toConfiguration);
-    QColor c;
-    c.setNamedColor(d->m_syntaxDebugBg);
-    return c;
-}
-void toConfiguration::setSyntaxDebugBg(QColor v)
-{
-	Q_D(toConfiguration);
-    d->m_syntaxDebugBg = v.name();
-}
-
-QColor toConfiguration::syntaxErrorBg()
-{
-	Q_D(toConfiguration);
-    QColor c;
-    c.setNamedColor(d->m_syntaxErrorBg);
-    return c;
-}
-void toConfiguration::setSyntaxErrorBg(QColor v)
-{
-	Q_D(toConfiguration);
-    d->m_syntaxErrorBg = v.name();
-}
-
-QColor toConfiguration::syntaxCurrentLineMarker()
-{
-	Q_D(toConfiguration);
-    QColor c;
-    c.setNamedColor(d->m_syntaxCurrentLineMarker);
-    return c;
-}
-void toConfiguration::setSyntaxCurrentLineMarker(QColor v)
-{
-	Q_D(toConfiguration);
-    d->m_syntaxCurrentLineMarker = v.name();
-}
-
-QColor toConfiguration::syntaxStaticBg()
-{
-	Q_D(toConfiguration);
-    QColor c;
-    c.setNamedColor(d->m_syntaxStaticBg);
-    return c;
-}
-void toConfiguration::setSyntaxStaticBg(QColor v)
-{
-	Q_D(toConfiguration);
-    d->m_syntaxStaticBg = v.name();
-}
-#endif
-
 bool toConfiguration::savePassword()
 {
 	Q_D(toConfiguration);
@@ -1529,6 +1397,36 @@ void toConfiguration::setEditorShortcuts(const EditorShortcutsMap & v)
 {
 	Q_D(toConfiguration);
     d->m_editorShortcuts = v;
+}
+
+QColor toConfiguration::styleFgColor(int style)
+{
+	Q_D(toConfiguration);
+    return d->m_styles[style].FGColor;
+}
+
+QColor toConfiguration::styleBgColor(int style)
+{
+	Q_D(toConfiguration);
+    return d->m_styles[style].BGColor;
+}
+
+QFont  toConfiguration::styleFont(int style)
+{
+	Q_D(toConfiguration);
+    return d->m_styles[style].Font;
+}
+
+const toStylesMap& toConfiguration::styles()
+{
+	Q_D(toConfiguration);
+    return d->m_styles;
+}
+
+void toConfiguration::setStyles(const toStylesMap & styles)
+{
+	Q_D(toConfiguration);
+    d->m_styles = styles;
 }
 
 bool toConfiguration::useMaxTextWidthMark()

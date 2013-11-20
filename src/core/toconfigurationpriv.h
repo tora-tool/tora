@@ -4,6 +4,7 @@
 #include "core/tora_export.h"
 #include "core/toconfiguration.h"
 #include "core/utils.h"
+#include "editor/tostyle.h"
 
 #include <QtCore/QDir>
 #include <QtCore/QVariant>
@@ -64,16 +65,12 @@ public:
     QString m_extensions;
 
     //  Syntax
-    QString m_syntaxDefault;
-    QString m_syntaxComment;
-    QString m_syntaxNumber;
-    QString m_syntaxKeyword;
-    QString m_syntaxString;
-    QString m_syntaxDefaultBg;
-    QString m_syntaxErrorBg;
-    QString m_syntaxDebugBg;
-    QString m_syntaxCurrentLineMarker;
-    QString m_syntaxStaticBg;
+    toStylesMap m_styles;
+    //    QString m_syntaxDefaultBg;
+    //    QString m_syntaxErrorBg;
+    //    QString m_syntaxDebugBg;
+    //    QString m_syntaxCurrentLineMarker;
+    //    QString m_syntaxStaticBg;
 
     // Database
     toConfiguration::ObjectCacheEnum m_objectCache;
@@ -224,8 +221,8 @@ public:
 
     void saveConfig();
 
-    void loadMap(const QString &filename, std::map<QString, QString> &pairs);
-    bool saveMap(const QString &file, std::map<QString, QString> &pairs);
+    static void loadMap(const QString &filename, std::map<QString, QString> &pairs);
+    static bool saveMap(const QString &file, std::map<QString, QString> &pairs);
 };
 
 #endif
