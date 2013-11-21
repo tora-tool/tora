@@ -299,6 +299,8 @@ void toWorksheet::setup(bool autoLoad)
     workToolbar->addAction(executeAct);
     workToolbar->addAction(executeStepAct);
     workToolbar->addAction(executeAllAct);
+    workToolbar->addAction(stopAct);
+    workToolbar->addAction(lockConnectionAct);
 
     workToolbar->addSeparator();
     workToolbar->addAction(refreshAct);
@@ -307,8 +309,6 @@ void toWorksheet::setup(bool autoLoad)
     workToolbar->addAction(describeAct);
     workToolbar->addAction(describeActNew);
     workToolbar->addAction(explainAct);
-    workToolbar->addAction(stopAct);
-    workToolbar->addAction(lockConnectionAct);
 
     workToolbar->addSeparator();
     workToolbar->addAction(eraseAct);
@@ -610,6 +610,10 @@ void toWorksheet::slotWindowActivated(toToolWidget *widget)
             ToolMenu->addAction(executeAct);
             ToolMenu->addAction(executeStepAct);
             ToolMenu->addAction(executeAllAct);
+            ToolMenu->addAction(stopAct);
+
+            ToolMenu->addSeparator();
+
             ToolMenu->addAction(refreshAct);
             ToolMenu->addAction(parseAct);
 
@@ -619,7 +623,6 @@ void toWorksheet::slotWindowActivated(toToolWidget *widget)
             ToolMenu->addAction(describeActNew);
             ToolMenu->addAction(explainAct);
             ToolMenu->addAction(statisticAct);
-            ToolMenu->addAction(stopAct);
 
             ToolMenu->addSeparator();
 
