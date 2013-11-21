@@ -58,6 +58,8 @@ toResultTableViewEdit::toResultTableViewEdit(bool readable,
 
     setSelectionBehavior(QAbstractItemView::SelectItems);
     setSelectionMode(QAbstractItemView::ContiguousSelection);
+    viewport()->setAcceptDrops(true);
+    setDragDropMode(QAbstractItemView::DragDrop);
 }
 
 
@@ -86,9 +88,6 @@ void toResultTableViewEdit::query(const QString &SQL, toQueryParams const& param
 
     if (!Model)
         return;                 // error
-
-    Model->setOwner(Owner);
-    Model->setTable(Table);
 
     // must be reconnected after every query
     connect(Model,
@@ -123,6 +122,24 @@ void toResultTableViewEdit::query(const QString &SQL, toQueryParams const& param
     verticalHeader()->setVisible(true);
 }
 
+toResultModel* toResultTableViewEdit::allocModel(toEventQuery *query)
+{
+	toResultModelEdit *m = new toResultModelEdit(query, PriKeys, this, ReadableColumns);
+    m->setOwner(Owner);
+    m->setTable(Table);
+	return m;
+}
+
+toResultModelEdit* toResultTableViewEdit::editModel()
+{
+	return dynamic_cast<toResultModelEdit *>(Model.data());
+}
+
+
+void toResultTableViewEdit::slotHandleDoubleClick(const QModelIndex &)
+{
+	// do nothing, when editable toResultTableView was clicked
+}
 
 void toResultTableViewEdit::recordChange(const QModelIndex &index,
         const toQValue &newValue,
@@ -504,7 +521,7 @@ bool toResultTableViewEdit::commitChanges(bool status)
 	if (!Model)
 		return false;
 
-    if (Changes.size() < 1 && Model->getPriKeys().size() == 0)
+    if (Changes.size() < 1 && editModel()->getPriKeys().size() == 0)
     {
         if (status)
             Utils::toStatusMessage(tr("No changes made"), false, false);
@@ -521,7 +538,7 @@ bool toResultTableViewEdit::commitChanges(bool status)
 
     bool error = false;
     unsigned updated = 0, added = 0, deleted = 0;
-    if(Model->getPriKeys().size() == 0)
+    if(editModel()->getPriKeys().size() == 0)
     {
         // No primary keys
         for (int changeIndex = 0; changeIndex < Changes.size(); changeIndex++)
@@ -607,7 +624,8 @@ void toResultTableViewEdit::commitChanges(toConnection &conn)
     	connection().commit();  // make sure to commit connection
     	// where our changes are.
     	// some cleanup work
-    	if (success) Model->clearStatus();
+    	if (success)
+    		editModel()->clearStatus();
     }
     TOCATCH
 }
@@ -630,7 +648,6 @@ void toResultTableViewEdit::revertChanges()
     emit changed(changed());
 }
 
-
 void toResultTableViewEdit::handleNewRows(const QModelIndex &parent,
         int start,
         int end)
@@ -651,13 +668,13 @@ void toResultTableViewEdit::handleNewRows(const QModelIndex &parent,
 
 void toResultTableViewEdit::addRecord(void)
 {
-    Model->addRow(selectionModel()->currentIndex(), false);
+	editModel()->addRow(selectionModel()->currentIndex(), false);
 }
 
 
 void toResultTableViewEdit::duplicateRecord(void)
 {
-    Model->addRow(selectionModel()->currentIndex(), true);
+	editModel()->addRow(selectionModel()->currentIndex(), true);
 }
 
 
@@ -668,5 +685,5 @@ void toResultTableViewEdit::deleteRecord(void)
 
     QModelIndex ind = selectionModel()->currentIndex();
     if (ind.isValid())
-        Model->deleteRow(ind);
+    	editModel()->deleteRow(ind);
 }

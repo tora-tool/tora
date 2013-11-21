@@ -210,7 +210,9 @@ SET(TORA_MOC_CLASSES
   core/tomemoeditor.h
   core/totabwidget.h
   core/toresultmodel.h
+  core/toresultmodeledit.h
   core/toresulttableview.h  
+  core/toresulttableviewedit.h  
   core/tochangeconnection.h
   core/toparamget.h
   core/tomodeleditor.h
@@ -228,7 +230,6 @@ SET(TORA_MOC_CLASSES
   core/toresultstats.h
   core/todescribe.h
   core/toresultdata.h
-  core/toresulttableviewedit.h
   core/toresultcode.h
   core/toresultfield.h
   core/toresultgrants.h
@@ -445,6 +446,7 @@ SET(TORA_SOURCES
   core/tolistviewformattertabdel.cpp
   core/tolistviewformattertext.cpp
   core/toresultmodel.cpp
+  core/toresultmodeledit.cpp
   core/toresulttableview.cpp
   core/tochangeconnection.cpp 
   core/toparamget.cpp

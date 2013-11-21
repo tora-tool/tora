@@ -101,7 +101,6 @@ void toResultTableView::setup(bool readable, bool numberColumn, bool editable)
 {
     Statistics      = NULL;
     Menu            = NULL;
-    Editable        = editable;
     ReadAll         = false;
     Filter          = NULL;
     VisibleColumns  = 0;
@@ -136,16 +135,10 @@ void toResultTableView::setup(bool readable, bool numberColumn, bool editable)
             SLOT(slotHandleDoubleClick(const QModelIndex &)));
 
     setDragEnabled(true);
-    if(Editable)
-        viewport()->setAcceptDrops(true);
     setDropIndicatorShown(true);
-
-    if(Editable)
-        setDragDropMode(QAbstractItemView::DragDrop);
 
     // this is my dirty hack to prevent fetchMore being called on the
     // model during a horizontal scroll.
-
     // this would be one great way to fix it, but as of this time it's
     // prioritized low and not scheduled for a fix:
     // https://bugreports.qt-project.org/browse/QTBUG-9988
@@ -197,11 +190,7 @@ void toResultTableView::query(const QString &sql, toQueryParams const& param, co
 					       );
 
         PriKeys = priKeys;
-        Model = new toResultModel(query,
-                                  priKeys,
-                                  this,
-                                  Editable,
-                                  ReadableColumns);
+        Model = allocModel(query);
         setModel(Model);
 
         connect(Model, SIGNAL(done()), this, SLOT(slotHandleDone()));
@@ -271,11 +260,7 @@ void toResultTableView::querySub(QSharedPointer<toConnectionSubLoan> &con, const
 					       );
 
         PriKeys = std::list<QString>();
-        Model = new toResultModel(query,
-        						  std::list<QString>(),
-                                  this,
-                                  Editable,
-                                  ReadableColumns);
+        Model = allocModel(query);
         setModel(Model);
 
         connect(Model, SIGNAL(done()), this, SLOT(slotHandleDone()));
@@ -309,6 +294,11 @@ void toResultTableView::querySub(QSharedPointer<toConnectionSubLoan> &con, const
 
     // when a new model is created the column sizes are lost
     ColumnsResized = false;
+}
+
+toResultModel* toResultTableView::allocModel(toEventQuery *query)
+{
+	return new toResultModel(query,	PriKeys, this, ReadableColumns);
 }
 
 void toResultTableView::clearData()
@@ -601,9 +591,6 @@ void toResultTableView::slotHandleFirst(const toConnection::exception &res,
 
 void toResultTableView::slotHandleDoubleClick(const QModelIndex &index)
 {
-    if (Editable)
-        return;
-
     QVariant data = model()->data(index, Qt::EditRole);
     toModelEditor *ed = new toModelEditor(this, model(), index);
     ed->exec();
@@ -705,8 +692,9 @@ QString toResultTableView::exportAsText(toExportSettings settings)
 
     std::auto_ptr<toListViewFormatter> pFormatter(
         toListViewFormatterFactory::Instance().CreateObject(settings.type));
-    settings.owner = Owner;
-    settings.objectName = Table;
+    // TODO WTF? Owner and Table are now defined in the sub-class toResultTableViewEdit
+    //    settings.owner = Owner;
+    //    settings.objectName = Table;
     return pFormatter->getFormattedString(settings, model());
 }
 

@@ -47,26 +47,21 @@
 toResultModel::toResultModel(toEventQuery *query,
                              std::list<QString> priKeys,
                              QObject *parent,
-                             bool edit,
                              bool read)
     : QAbstractTableModel(parent)
     , SortedOrder(Qt::AscendingOrder)
+	, PriKeys(priKeys)
+	, ReadableColumns(read)
+	, HeadersRead(false)
+	, First(true)
+	, ReadAll(false)
+	, SortedOnColumn(-1)
+	, CurrRowKey(1)
 {
-    ReadableColumns = read;
-    HeadersRead     = false;
-    First           = true;
-    Editable        = edit;
-    ReadAll         = false;
-    SortedOnColumn  = -1;
-    
     MaxRead = MaxNumber = toConfigurationSingle::Instance().initialFetch();
-
-    CurrRowKey = 1;
 
     Query = query;
     Query->setParent(this); // this will satisfy QObject's disposal
-
-    PriKeys = priKeys;
 
     connect(query,
             SIGNAL(descriptionAvailable(toEventQuery*)),
@@ -86,10 +81,7 @@ toResultModel::toResultModel(toEventQuery *query,
             this,
             SLOT(slotFetchMore(toEventQuery*)));
 
-    if(Editable)
-        setSupportedDragActions(Qt::CopyAction | Qt::MoveAction);
-    else
-        setSupportedDragActions(Qt::CopyAction);
+    setSupportedDragActions(Qt::CopyAction);
 }
 
 toResultModel::toResultModel(const QString &owner,
@@ -98,18 +90,14 @@ toResultModel::toResultModel(const QString &owner,
                              bool read)
     : QAbstractTableModel(parent)
     , SortedOrder(Qt::AscendingOrder)
+	, ReadableColumns(read)
+	, HeadersRead(false)
+	, First(true)
+	, ReadAll(false)
+	, SortedOnColumn(-1)
+	, Query(NULL)
+	, CurrRowKey(1)
 {
-    ReadableColumns = read;
-    HeadersRead     = false;
-    First           = true;
-    Editable        = false;
-    ReadAll         = false;
-    SortedOnColumn  = -1;
-    
-    CurrRowKey = 1;
-
-    Query = NULL;
-
     MaxRead = MaxNumber = toConfigurationSingle::Instance().initialFetch();
 
     setSupportedDragActions(Qt::CopyAction);
@@ -308,106 +296,6 @@ void toResultModel::slotReadData()
     }
 }
 
-int toResultModel::addRow(QModelIndex ind, bool duplicate)
-{
-    if (!Editable)
-        return -1;
-
-    int newRowPos;
-    if (ind.isValid())
-        newRowPos = ind.row() + 1; // new row is inserted right after the current one
-    else
-    {
-        if (!duplicate || Rows.size() > 0)
-            newRowPos = Rows.size() + 1; // new row is appended at the end
-        else
-            return -1; // unable to duplicate a record if there are no records
-    }
-    beginInsertRows(QModelIndex(), newRowPos, newRowPos);
-
-    toQuery::Row row;
-    toRowDesc rowDesc;
-    rowDesc.key = CurrRowKey++;
-    rowDesc.status = ADDED;
-
-    if (duplicate)
-    {
-        // Create a duplicate of current row
-        row = Rows[ind.row()];
-        // Reset a 0'th column
-        row[0] = rowDesc;
-    }
-    else
-    {
-        // Create a new empty row
-        row.append(toQValue(rowDesc));
-
-        // null out the rest of the row
-        int cols = Headers.size();
-        for (int j = 1; j < cols; j++)
-            row.append(toQValue());
-    }
-
-    Rows.insert(newRowPos, row);
-    endInsertRows();
-    emit rowAdded(row);
-    return newRowPos;
-} // addRow
-
-
-void toResultModel::deleteRow(QModelIndex index)
-{
-    if (!Editable)
-        return;
-
-    if (!index.isValid() || index.row() >= Rows.size())
-        return;
-
-    toQuery::Row deleted = Rows[index.row()];
-    toRowDesc rowDesc = deleted[0].getRowDesc();
-
-    if(rowDesc.status == REMOVED)
-    {
-        //Make sure removed row can't be removed twice
-        return;
-    }
-    else if(rowDesc.status == ADDED)
-    {
-        //Newly added record can be removed regularly
-        beginRemoveRows(QModelIndex(), index.row(), index.row());
-        Rows.takeAt(index.row());
-        endRemoveRows();
-    }
-    else  //Existed and Modified
-    {
-        rowDesc.status = REMOVED;
-        Rows[index.row()][0] = toQValue(rowDesc);
-    }
-    emit rowDeleted(deleted);
-}
-
-void toResultModel::clearStatus()
-{
-    // Go through all records and set their status to be existed
-    for(toQuery::RowList::iterator ite = Rows.begin(); ite != Rows.end(); ite++)
-    {
-        toRowDesc rowDesc = ite->at(0).getRowDesc();
-        if(rowDesc.status == REMOVED)
-        {
-            ite = Rows.erase(ite);
-            if(ite == Rows.end())
-                break;
-        }
-        else if(rowDesc.status != EXISTED)
-        {
-            rowDesc.status = EXISTED;
-            (*ite)[0] = toQValue(rowDesc);
-        }
-    }
-    emit headerDataChanged(Qt::Vertical, 0, Rows.size() - 1);
-}
-
-
 QStringList toResultModel::mimeTypes() const
 {
     QStringList types;
@@ -488,7 +376,7 @@ QMimeData* toResultModel::mimeData(const QModelIndexList &indexes) const
     return mimeData;
 }
 
-
+/*
 bool toResultModel::dropMimeData(const QMimeData *data,
                                  Qt::DropAction action,
                                  int row,
@@ -588,13 +476,11 @@ bool toResultModel::dropMimeData(const QMimeData *data,
 
     return false;
 }
-
+*/
 
 Qt::DropActions toResultModel::supportedDropActions() const
 {
-    if(Editable)
-        return Qt::CopyAction | Qt::MoveAction;
-    return Qt::IgnoreAction;
+	return Qt::IgnoreAction;
 }
 
 
@@ -678,54 +564,6 @@ QVariant toResultModel::data(const QModelIndex &index, int role) const
     }
     return QVariant();
 }
-
-
-bool toResultModel::setData(const QModelIndex &index,
-                            const QVariant &_value,
-                            int role)
-{
-    if (!Editable)
-        return false;
-
-    if (role != Qt::EditRole)
-        return false;
-
-    if (index.column() == 0)
-        return false;           // can't change number column
-
-    if (index.row() > Rows.size() - 1 || index.column() > Headers.size() - PriKeys.size() - 1)
-        return false;
-
-    toQuery::Row &row = Rows[index.row()];
-    toQValue newValue = toQValue::fromVariant(_value);
-    toRowDesc rowDesc = Rows.at(index.row())[0].getRowDesc();
-    if (rowDesc.status == EXISTED && !(row[index.column()] == newValue))
-    {
-        // leave row that's added as in status added
-        rowDesc.status = MODIFIED;
-        Rows[index.row()][0] = toQValue(rowDesc);
-    }
-    if(PriKeys.size() == 0)
-    {
-        // If no prikey is used, data is recorded in change list
-    	toQuery::Row oldRow = row;           // keep old version
-        row[index.column() + PriKeys.size()] = newValue;
-        // for writing to the database
-        emit columnChanged(index, newValue, oldRow);
-    }
-    else
-    {
-        if(!row[index.column() + PriKeys.size()].updateNewValue(newValue))
-            return false;
-        qDebug() << "Value is changed from " << row[index.column() + PriKeys.size()] << " to " << newValue << "At " << index;
-    }
-
-    // for the view
-    emit dataChanged(index, index);
-
-    return true;
-}
-
 
 QVariant toResultModel::data(int row, int column) const
 {
@@ -934,10 +772,7 @@ Qt::ItemFlags toResultModel::flags(const QModelIndex &index) const
 
     if (!index.isValid() || index.row() >= Rows.size())
     {
-        if(Editable)
-            return Qt::ItemIsDropEnabled | defaultFlags;
-        else
-            return defaultFlags;
+    	return defaultFlags;
     }
 
     toQuery::Row const& row = Rows.at(index.row());
@@ -950,10 +785,7 @@ Qt::ItemFlags toResultModel::flags(const QModelIndex &index) const
         return ( defaultFlags | fl ) & ~Qt::ItemIsEditable;
     }
 
-    if (Editable)
-        fl |= defaultFlags | Qt::ItemIsEditable | Qt::ItemIsDropEnabled;
-    else
-        fl |= defaultFlags;
+    fl |= defaultFlags;
 
     //Check the status of current record
     toRowDesc rowDesc = row.at(0).getRowDesc();
@@ -1033,161 +865,4 @@ toQuery::RowList toResultModel::merge(toQuery::RowList &left,
 toQuery::RowList &toResultModel::getRawData(void)
 {
     return Rows;
-}
-
-void toResultModel::commitUpdate(toConnection &conn, const toQuery::Row &row, unsigned int &updated)
-{
-    QString sql = QString("UPDATE %1.%2 SET ").arg(conn.getTraits().quote(Owner)).arg(conn.getTraits().quote(Table));
-    int num = 0;
-    toQueryParams args;
-    for (int i = PriKeys.size() + 1; i < Headers.size(); i++)
-    {
-        if (row[i].isModified())
-        {
-            // Only append columns that is not null
-            if (num > 0)
-            {
-                sql += ',';
-            }
-            num++;
-            // Construct place holder
-            sql += conn.getTraits().quote(Headers[i].name) + "=:f" + QString::number(num);
-
-            if (row[i].isBinary())
-            {
-                if (Headers[i].datatype.toUpper().contains("LOB"))
-                    sql += ("<blob,in>");
-                else
-                    sql += ("<raw_long,in>");
-            }
-            else
-            {
-                if (Headers[i].datatype.toUpper().contains("LOB"))
-                    sql += ("<varchar_long,in>");
-                else
-                    sql += ("<char[4000],in>");
-            }
-            // Construct value list
-            args << row[i];
-        }
-    }
-    sql += " WHERE ";
-    std::list<QString>::iterator ite;
-    int i;
-    for (i = 1, ite = PriKeys.begin(); ite != PriKeys.end(); ite++, i++)
-    {
-        if(i > 1)
-        {
-            sql += " AND ";
-        }
-        sql += *ite + "=:k" + QString::number(i);
-        sql += "<char[4000],in>";
-        args << row[i];
-    }
-    qDebug() << sql;
-	{
-		    	toConnectionSubLoan c(conn);
-				toQuery q(c, sql, args);
-				updated += q.rowsProcessed();
-	}
-}
-void toResultModel::commitAdd(toConnection &conn, const toQuery::Row &row, unsigned int &added)
-{
-    QString sql = QString("INSERT INTO %1.%2 (").arg(conn.getTraits().quote(Owner)).arg(conn.getTraits().quote(Table));
-    QString sqlColumns, sqlValuePlaceHolders;
-    int num = 0;
-    toQueryParams args;
-    for (int i = PriKeys.size() + 1; i < Headers.size(); i++)
-    {
-        if (!row[i].isNull())
-        {
-            // Only append columns that is not null
-            if (num > 0)
-            {
-                sqlColumns += ',';
-                sqlValuePlaceHolders += ',';
-            }
-            num++;
-            sqlColumns += conn.getTraits().quote(Headers[i].name);
-            // Construct place holder
-            sqlValuePlaceHolders += (":f");
-            sqlValuePlaceHolders += QString::number(num);
-
-            if (row[i].isBinary())
-            {
-                if (Headers[i].datatype.toUpper().contains("LOB"))
-                    sqlValuePlaceHolders += ("<blob,in>");
-                else
-                    sqlValuePlaceHolders += ("<raw_long,in>");
-            }
-            else
-            {
-                if (Headers[i].datatype.toUpper().contains("LOB"))
-                    sqlValuePlaceHolders += ("<varchar_long,in>");
-                else
-                    sqlValuePlaceHolders += ("<char[4000],in>");
-            }
-            // Construct value list
-            args << row[i];
-        }
-    }
-    sql = sql + sqlColumns + ") VALUES (" + sqlValuePlaceHolders + ")";
-    qDebug() << sql;
-    {
-    	toConnectionSubLoan c(conn);
-    	toQuery q(c, sql, args);
-    	added += q.rowsProcessed();
-    }
-}
-void toResultModel::commitDelete(toConnection &conn, const toQuery::Row &row, unsigned int &deleted)
-{
-    QString sql = QString("DELETE FROM %1.%2 WHERE ").arg(conn.getTraits().quote(Owner)).arg(conn.getTraits().quote(Table));
-    std::list<QString>::iterator ite;
-    int num = 0;
-    toQueryParams args;
-
-    for(ite = PriKeys.begin(); ite != PriKeys.end(); ite++)
-    {
-        if(num > 0)
-        {
-            sql += " AND ";
-        }
-        num++;
-        sql += *ite + "=:v" + QString::number(num);
-        sql += "<char[4000],in>";
-        args << row[num];
-    }
-    qDebug() << sql;
-    {
-    	toConnectionSubLoan c(conn);
-    	toQuery q(c, sql, args);
-    	deleted += q.rowsProcessed();
-    }
-}
-void toResultModel::commitChanges(toConnection &conn, unsigned int &updated, unsigned int &added, unsigned int &deleted)
-{
-	toQuery::RowList::const_iterator ite;
-    for(ite = Rows.constBegin(); ite != Rows.constEnd(); ite++)
-    {
-        //Scan the whole row and commit change when necessary
-        const toQuery::Row &row = *ite;
-        const toRowDesc &rowDesc = row[0].getRowDesc();
-        switch(rowDesc.status)
-        {
-        case MODIFIED:
-            commitUpdate(conn, row, updated);
-            break;
-        case ADDED:
-            commitAdd(conn, row, added);
-            break;
-        case REMOVED:
-            commitDelete(conn, row, deleted);
-            break;
-        case EXISTED:
-            break;
-        default:
-            qDebug() << "Undefined row type " << rowDesc.status;
-            break;
-        }
-    }
 }

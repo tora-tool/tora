@@ -62,14 +62,14 @@ class toSearchReplace;
 
 class toResultTableView : public QTableView, public toResult, public toEditWidget
 {
-private:
     Q_OBJECT;
+
+protected:
+    // pointer to model
+    QPointer<toResultModel> Model;
 
     // Widget to store query statistics to.
     toResultStats *Statistics;
-
-    // if edit delegate should be created
-    bool Editable;
 
     // if all records should be read
     bool ReadAll;
@@ -132,7 +132,7 @@ protected slots:
     void slotHandleReset(void);
     void slotHandleFirst(const toConnection::exception &res,
                      bool error);
-    void slotHandleDoubleClick(const QModelIndex &);
+    virtual void slotHandleDoubleClick(const QModelIndex &);
     // override parent
     virtual void selectionChanged(const QItemSelection &selected,
                                   const QItemSelection &deselected);
@@ -141,11 +141,6 @@ protected slots:
     void slotApplyColumnRules(void);
 
 protected:
-    // pointer to model
-    QPointer<toResultModel> Model;
-
-    QString Owner;
-    QString Table;
 
     /**
      * overridden from parent.
@@ -177,6 +172,8 @@ protected:
         Copy, etc.
     */
     virtual void keyPressEvent(QKeyEvent * event);
+
+    virtual toResultModel* allocModel(toEventQuery *);
 
 signals:
 

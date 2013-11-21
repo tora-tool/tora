@@ -41,7 +41,6 @@
 #include "core/tosql.h"
 #include "core/toresult.h"
 #include "core/toconnection.h"
-#include "core/toresultmodel.h"
 
 #include <QtCore/QObject>
 #include <QtCore/QAbstractTableModel>
@@ -50,6 +49,9 @@
 #include <QtCore/QList>
 #include <QtGui/QHeaderView>
 #include <QtGui/QMenu>
+
+class toResultModel;
+class toResultModelEdit;
 
 /*! \brief Displays query result as a table and provides functionality to edit it.
   Used in Schema browser tool.
@@ -80,8 +82,7 @@ class toResultTableViewEdit : public toResultTableView
     // this is a fifo -- don't sort or insert. just append.
     QList<struct ChangeSet> Changes;
 
-    //QString Owner; // defined in parent - toResultTableView
-    //QString Table; // defined in parent - toResultTableView
+    QString Owner, Table;
 
     unsigned commitDelete(ChangeSet &change, toConnection &conn);
     unsigned commitAdd(ChangeSet &change, toConnection &conn);
@@ -137,6 +138,9 @@ signals:
      */
     void changed(bool edit);
 
+protected slots:
+	// reimplemented
+	virtual void slotHandleDoubleClick(const QModelIndex &);
 
 private slots:
     /**
@@ -194,6 +198,10 @@ public slots:
      *
      */
     void handleNewRows(const QModelIndex &parent, int start, int end);
+protected:
+    toResultModel* allocModel(toEventQuery *query);
+
+    toResultModelEdit* editModel();
 };
 
 

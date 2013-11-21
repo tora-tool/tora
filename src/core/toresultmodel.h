@@ -66,7 +66,7 @@ public:
 //    typedef QList<Row> RowList;
     typedef QList<HeaderDesc> HeaderList;
 
-private:
+protected:
     toEventQuery *Query;
 
     toQuery::RowList Rows;
@@ -94,9 +94,6 @@ private:
     // when to emit firstResult
     bool First;
 
-    // return editable flag
-    bool Editable;
-
     // headers read already?
     bool HeadersRead;
 
@@ -107,23 +104,16 @@ private:
     toQuery::RowList mergesort(toQuery::RowList&, int, Qt::SortOrder);
     toQuery::RowList merge(toQuery::RowList&, toQuery::RowList&, int, Qt::SortOrder);
 
-    std::list<QString> PriKeys;
-
-    QString Owner, Table;
-
+    std::list<QString> PriKeys; // TODO remove this and override data() in toResultModelEdit
 
 private slots:
-    // destroys query, stops timer, good things.
-    // emits done()
 
-
-    void slotQueryError(toEventQuery*, const toConnection::exception &);
+	void slotQueryError(toEventQuery*, const toConnection::exception &);
 
 public:
     explicit toResultModel(toEventQuery *query,
                            std::list<QString> priKeys,
                            QObject *parent = 0,
-                           bool edit = false,
                            bool read = false);
 
     /** This constructor is used when model has to be filled in
@@ -135,7 +125,6 @@ public:
                   bool read = false);
 
     ~toResultModel();
-
 
     // ------------------------------ overrides ItemModel parent
 
@@ -155,24 +144,6 @@ public:
      * referred to by the index.
      */
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-
-
-    /**
-     * Sets the role data for the item at index to value. Returns true
-     * if successful; otherwise returns false.
-     *
-     * The dataChanged() signal should be emitted if the data was
-     * successfully set.
-     *
-     * The base class implementation returns false. This function and
-     * data() must be reimplemented for editable models. Note that the
-     * dataChanged() signal must be emitted explicitly when
-     * reimplementing this function.
-     *
-     */
-    virtual bool setData(const QModelIndex &,
-                         const QVariant &,
-                         int role = Qt::EditRole);
 
     /**
      * Convience function to return Qt::EditRole data for row and
@@ -273,31 +244,6 @@ public:
     }
 
     /**
-     * Adds a row internally. Emits rowAdded on success.
-     *
-     * This isn't part of any parent api. Qt provides insertRow which
-     * needs a row number and index. This is provided to simply append
-     * a new row.
-     *
-     * @param ind index of a selected cell when this action was called
-     * @param duplicate - should the value of current row be copied/duplicated
-     * @return added row
-     */
-    int addRow(QModelIndex ind = QModelIndex(), bool duplicate = false);
-
-    /**
-     * Mark to delete a row interally. Emits rowDeleted on success.
-     *
-     * This is not an overridden method.
-     */
-    void deleteRow(QModelIndex);
-
-    /**
-     * Clear the status of records.
-     */
-    void clearStatus();
-
-    /**
      * Returns a list of MIME types that can be used to describe a
      * list of model indexes.
      */
@@ -315,34 +261,6 @@ public:
     virtual QMimeData* mimeData(const QModelIndexList &indexes) const;
 
     /**
-     * Handles the data supplied by a drag and drop operation that
-     * ended with the given action. Returns true if the data and
-     * action can be handled by the model; otherwise returns false.
-     *
-     * Although the specified row, column and parent indicate the
-     * location of an item in the model where the operation ended, it
-     * is the responsibility of the view to provide a suitable
-     * location for where the data should be inserted.
-     *
-     * For instance, a drop action on an item in a QTreeView can
-     * result in new items either being inserted as children of the
-     * item specified by row, column, and parent, or as siblings of
-     * the item.
-     *
-     * When row and column are -1 it means that it is up to the model
-     * to decide where to place the data. This can occur in a tree
-     * when data is dropped on a parent. Models will usually append
-     * the data to the parent in this case.
-     *
-     * Returns true if the dropping was successful otherwise false.
-     */
-    virtual bool dropMimeData(const QMimeData *data,
-                              Qt::DropAction action,
-                              int row,
-                              int column,
-                              const QModelIndex &parent);
-
-    /**
      * Returns the drop actions supported by this model.
      *
      * The default implementation returns Qt::CopyAction. Reimplement
@@ -357,35 +275,8 @@ public:
      */
     toQuery::RowList &getRawData(void);
 
-    /**
-     *  Get PriKeys
-     */
-    const std::list<QString> &getPriKeys()
-    {
-        return PriKeys;
-    }
-
-    void setOwner(const QString &owner)
-    {
-        this->Owner = owner;
-    }
-    void setTable(const QString &table)
-    {
-        this->Table = table;
-    }
-    /**
-     * Update data
-     */
-    void commitChanges(toConnection &conn, unsigned int &updated, unsigned int &added, unsigned int &deleted);
-
 protected:
     void cleanup(void);
-
-    void commitUpdate(toConnection &conn, const toQuery::Row &row, unsigned int &updated);
-    void commitAdd(toConnection &conn, const toQuery::Row &row, unsigned int &added);
-    void commitDelete(toConnection &conn, const toQuery::Row &row, unsigned int &deleted);
-
-public:
 
 signals:
 
@@ -393,7 +284,6 @@ signals:
      * Emitted when query is finished.
      */
     void done(void);
-
 
     /**
      * Emitted when the first result is available.
@@ -404,48 +294,14 @@ signals:
     void firstResult(const toConnection::exception &res,
                      bool error);
 
-
-    /**
-     * Emitted when column data in the view changes.
-     */
-    void columnChanged(const QModelIndex &index,
-                       const toQValue &newValue,
-                       const toQuery::Row &row);
-
-
-    /**
-     * Emitted when a row is added to the model. The numbercolumn
-     * passed which will not change over the life of the model.
-     *
-     * Note this is not emitted when query data is added.
-     *
-     */
-    void rowAdded(const toQuery::Row &row);
-
-
-    /**
-     * Emitted when a row is deleted from the model.
-     */
-    void rowDeleted(const toQuery::Row &row);
-
-
-private slots:
-    /**
-     * Load all data into model until end of query
-     */
-    void slotReadAll(void);
-
 public:
     void readAll(void);
 
-public slots:
+protected slots:
     /**
      * Overloaded method. Called when query has data available.
      */
     void slotFetchMore(toEventQuery*);
-
-
-protected slots:
 
     /**
      * reads ands sets up Rows and Columns
@@ -456,6 +312,11 @@ protected slots:
      * reads and sets up Headers
      */
     void slotReadHeaders(toEventQuery*);
+
+    /**
+     * Load all data into model until end of query
+     */
+    void slotReadAll(void);
 };
 
 

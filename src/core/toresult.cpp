@@ -248,8 +248,8 @@ bool toResult::setSqlAndParams(const QString &sql, toQueryParams const& par)
     // Enter the inner loop if and only if the NeedsRefresh was false
     /*
       NOTE: it code is here just to prove that QT's container's iterators are sick
-      result of comparsion between const and non-const iterator is undefined
-      uncomment this is you think that this function gives unpredictible results.
+      result of compassion between const and non-const iterator is undefined
+      uncomment this is you think that this function gives unpredictable results.
     */
     // if (toConfigurationSingle::Instance().dontReread() && force == false)
     // {
