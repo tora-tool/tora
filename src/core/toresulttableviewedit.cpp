@@ -33,9 +33,9 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "core/toresulttableviewedit.h"
+#include "core/toresultmodeledit.h"
 #include "core/utils.h"
 #include "core/toconfiguration.h"
-#include "core/tomainwindow.h"
 #include "core/toconnectiontraits.h"
 #include "core/toconnectionsub.h"
 #include "core/toglobalevent.h"
