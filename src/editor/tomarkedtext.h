@@ -185,7 +185,8 @@ protected:
     virtual void focusInEvent(QFocusEvent *e);
     virtual void focusOutEvent(QFocusEvent *e);
 
-    void contextMenuEvent(QContextMenuEvent *);
+    //! \reimp
+    virtual void contextMenuEvent(QContextMenuEvent *);
 
     /**
      * This function is called to create a right mouse button popup menu
