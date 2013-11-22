@@ -201,7 +201,7 @@ void toResultData::query(const QString &, toQueryParams const& params)
     toConnection &conn = connection();
     //conn std::list<QString> priKeys = conn.primaryKeys();
     SQL = "SELECT ";
-    std::list<QString>::iterator ite;
+    //std::list<QString>::iterator ite;
     //conn for(ite=priKeys.begin();ite!=priKeys.end();ite++)
     //  SQL = SQL + *ite + ",";
     SQL = SQL + "%2.* FROM %1.%2";
@@ -229,20 +229,6 @@ void toResultData::clearData()
 {
     Edit->clearData();
 }
-
-void toResultData::exportData(std::map<QString, QString> &data,
-                              const QString &prefix)
-{
-    ;                           // stub
-}
-
-
-void toResultData::importData(std::map<QString, QString> &data,
-                              const QString &prefix)
-{
-    ;                           // stub
-}
-
 
 void toResultData::closeEvent(QCloseEvent *event)
 {

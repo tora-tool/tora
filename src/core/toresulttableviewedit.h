@@ -84,6 +84,7 @@ class toResultTableViewEdit : public toResultTableView
 
     QString Owner, Table;
 
+    // this code is duplicate to toResultModelEdit
     unsigned commitDelete(ChangeSet &change, toConnection &conn);
     unsigned commitAdd(ChangeSet &change, toConnection &conn);
     unsigned commitUpdate(ChangeSet &change, toConnection &conn);
