@@ -49,6 +49,29 @@ class toEventQuery;
 class toResultModelEdit : public toResultModel
 {
     Q_OBJECT;
+    friend class toResultTableViewEdit;
+protected:
+    enum ChangeKind
+    {
+        Add,
+        Delete,
+        Update
+    };
+
+    struct ChangeSet
+    {
+        ChangeKind         kind;         /* sql change mode */
+        QString            columnName;   /* column name */
+        int                column;       /* the real column number
+                                          * after adjusting for
+                                          * numbercolumn */
+        toQValue           newValue;     /* data after the change */
+        toQuery::Row       row;          /* data before the change */
+    };
+
+    // keep a history of changes to commit.
+    // this is a fifo -- don't sort or insert. just append.
+    QList<struct ChangeSet> Changes;
 
 public:
     toResultModelEdit(toEventQuery *query,
@@ -87,6 +110,11 @@ public:
      * Clear the status of records.
      */
     void clearStatus();
+
+    /**
+     * True if data has been modified. (moved from toResultTableViewEdit)
+     */
+    bool changed(void);
 
     /**
      * Sets the role data for the item at index to value. Returns true
@@ -164,11 +192,37 @@ public:
      */
     void commitChanges(toConnection &conn, unsigned int &updated, unsigned int &added, unsigned int &deleted);
 
+    QList<struct ChangeSet>& changes();
+
+    void revertChanges();
+
 protected:
 
     void commitUpdate(toConnection &conn, const toQuery::Row &row, unsigned int &updated);
     void commitAdd(toConnection &conn, const toQuery::Row &row, unsigned int &added);
     void commitDelete(toConnection &conn, const toQuery::Row &row, unsigned int &deleted);
+
+    // this code is duplicate to toResultModelEdit (moved from toResultTableViewEdit)
+    unsigned commitUpdate(ChangeSet &change, toConnection &conn);
+    unsigned commitAdd(ChangeSet &change, toConnection &conn);
+    unsigned commitDelete(ChangeSet &change, toConnection &conn);
+
+    /**
+     * Append change to Changes
+     */
+    void recordChange(const QModelIndex &,
+                      const toQValue &,
+                      const toQuery::Row &);
+
+    /**
+     * Append a new row to Changes
+     */
+    void recordAdd(const toQuery::Row &);
+
+    /**
+     * Record a deletion in Changes
+     */
+    void recordDelete(const toQuery::Row &);
 
 signals:
 
@@ -191,6 +245,11 @@ signals:
      * Emitted when a row is deleted from the model.
      */
     void rowDeleted(const toQuery::Row &row);
+
+    /**
+     * Parameter is true after changes, false after save or load.
+     */
+    void changed(bool edit);
 
 private:
     //std::list<QString> PriKeys;

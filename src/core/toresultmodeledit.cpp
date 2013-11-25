@@ -150,6 +150,11 @@ void toResultModelEdit::clearStatus()
     emit headerDataChanged(Qt::Vertical, 0, Rows.size() - 1);
 }
 
+bool toResultModelEdit::changed(void)
+{
+    return !Changes.isEmpty();
+}
+
 bool toResultModelEdit::dropMimeData(const QMimeData *data,
                                  Qt::DropAction action,
                                  int row,
@@ -484,4 +489,388 @@ void toResultModelEdit::commitChanges(toConnection &conn, unsigned int &updated,
             break;
         }
     }
+}
+
+QList<struct toResultModelEdit::ChangeSet>& toResultModelEdit::changes()
+{
+	return Changes;
+}
+
+void toResultModelEdit::revertChanges()
+{
+	bool c = changed();
+    Changes.clear();
+    emit changed(changed());
+}
+
+unsigned toResultModelEdit::commitDelete(ChangeSet &change, toConnection &conn)
+{
+    const toResultModel::HeaderList Headers = headers();
+    bool oracle = conn.providerIs("Oracle");
+
+    QString sql = QString("DELETE FROM %1.%2 ").arg(conn.getTraits().quote(Owner)).arg(conn.getTraits().quote(Table));
+    sql += (" WHERE ");
+    int col = 1;
+    bool where = false;
+    for (toQuery::Row::iterator j = change.row.begin() + 1;
+            j != change.row.end();
+            j++, col++)
+    {
+        if ((*j).isComplexType())
+        {
+            Utils::toStatusMessage(tr("This table contains complex/user defined columns "
+                                      "and can not be edited"));
+            return 0;
+        }
+
+        if (!oracle || (!Headers[col].datatype.toUpper().startsWith(("LONG")) &&
+                        !Headers[col].datatype.toUpper().contains(("LOB"))))
+        {
+            if (where)
+                sql += " AND ";
+            else
+                where = true;
+
+            sql += conn.getTraits().quote(Headers[col].name);
+
+            if ((*j).isNull())
+                sql += " IS NULL";
+            else
+            {
+                sql += "= :c";
+                sql += QString::number(col);
+                if ((*j).isBinary())
+                    sql += "<raw_long>";
+                else
+                    sql += "<char[4000]>";
+            }
+        }
+    }
+
+    if (!where)
+    {
+        Utils::toStatusMessage(tr("This table contains only LOB/LONG columns and can not be edited"));
+        return 0;
+    }
+
+    toQueryParams args;
+    for (int i = 1; i < change.row.size(); i++)
+    {
+        if (!change.row[i].isNull() && (!oracle || (!Headers[i].datatype.startsWith(("LONG")) &&
+                                        !Headers[i].datatype.toUpper().contains(("LOB")))))
+        {
+            args << change.row[i];
+        }
+    }
+
+	{
+		toConnectionSubLoan c(conn);
+		toQuery q(c, sql, args);
+
+		if (toConfigurationSingle::Instance().autoCommit())
+			c->commit();
+		else
+		{
+			throw QString("Not implemented yet. %1").arg(__QHERE__);
+			//// TODO toGlobalEventSingle::Instance().setNeedCommit(conn);
+		}
+		return q.rowsProcessed();
+	}
+}
+
+
+unsigned toResultModelEdit::commitAdd(ChangeSet &change, toConnection &conn)
+{
+    const toResultModel::HeaderList Headers = headers();
+
+    QString sql = QString("INSERT INTO %1.%2 (").arg(conn.getTraits().quote(Owner)).arg(conn.getTraits().quote(Table));
+
+    int num = 0;
+    for (int i = 1; i < change.row.size(); i++)
+    {
+        if (num > 0)
+            sql += ",";
+        sql += conn.getTraits().quote(headerData(
+                                          i,
+                                          Qt::Horizontal,
+                                          Qt::DisplayRole).toString());
+        num++;
+    }
+
+    sql += ") VALUES (";
+    int col = 1;
+    for (toQuery::Row::iterator j = change.row.begin() + 1;
+            j != change.row.end();
+            j++, col++)
+    {
+        if ((*j).isComplexType())
+        {
+            Utils::toStatusMessage(tr("This table contains complex/user defined columns "
+                                      "and can not be edited"));
+            return 0;
+        }
+
+        if (col > 1)
+            sql += (",");
+        sql += (":f");
+        sql += QString::number(col);
+
+        if ((*j).isBinary())
+        {
+            if (Headers[col].datatype.toUpper().contains("LOB"))
+                sql += ("<blob,in>");
+            else
+                sql += ("<raw_long,in>");
+        }
+        else
+        {
+            if (Headers[col].datatype.toUpper().contains("LOB"))
+                sql += ("<varchar_long,in>");
+            else
+                sql += ("<char[4000],in>");
+        }
+    }
+
+    sql += (")");
+
+    toQueryParams args;
+    for (int i = 1; i < change.row.size(); i++)
+        args << change.row[i];
+
+	{
+		toConnectionSubLoan c(conn);
+		toQuery q(c, sql, args);
+
+		if (toConfigurationSingle::Instance().autoCommit())
+			c->commit();
+		else
+		{
+			throw QString("Not implemented yet. %1").arg(__QHERE__);
+			//toGlobalEventSingle::Instance().setNeedCommit(conn);
+		}
+		return q.rowsProcessed();
+	}
+}
+
+unsigned toResultModelEdit::commitUpdate(ChangeSet &change, toConnection &conn)
+{
+    const toResultModel::HeaderList Headers = headers();
+    bool oracle = conn.providerIs("Oracle");
+
+    QString sql = QString("UPDATE %1.%2 SET ").arg(conn.getTraits().quote(Owner)).arg(conn.getTraits().quote(Table));
+    sql += conn.getTraits().quote(change.columnName);
+
+    // set new value in update statement
+    if (change.newValue.isNull())
+        sql += (" = NULL");
+    else
+    {
+        sql += ("= :f0");
+
+        if (change.row[change.column].isBinary())
+        {
+            if (Headers[change.column].datatype.toUpper().contains("LOB"))
+                sql += ("<blob,in>");
+            else
+                sql += ("<raw_long,in>");
+        }
+        else
+        {
+            if (Headers[change.column].datatype.toUpper().contains("LOB"))
+                sql += ("<varchar_long,in>");
+            else
+                sql += ("<char[4000],in>");
+        }
+    }
+
+    // set where clause for update statement
+    sql += (" WHERE (");
+    int col = 1;
+    bool where = false;
+
+    for (toQuery::Row::iterator j = change.row.begin() + 1;
+            j != change.row.end();
+            j++, col++)
+    {
+
+        QString columnName = conn.getTraits().quote(headerData(
+                                 col,
+                                 Qt::Horizontal,
+                                 Qt::DisplayRole).toString());
+
+        if ((*j).isComplexType())
+        {
+            Utils::toStatusMessage(tr("This table contains complex/user defined columns "
+                                      "and can not be edited"));
+            return 0;
+        }
+
+        if (!oracle || (!Headers[col].datatype.toUpper().startsWith(("LONG")) &&
+                        !Headers[col].datatype.toUpper().contains(("LOB"))))
+        {
+            if (where)
+                sql += (" AND (");
+            else
+                where = true;
+
+            sql += columnName;
+
+            if ((*j).isNull())
+            {
+                sql += " IS NULL ";
+
+                // QVariant cannot identify the type when value is null therefore
+                // we use the actual database type for this check.
+                if (Headers[col].datatype.startsWith("NUMBER") ||
+                        Headers[col].datatype.startsWith("INT") ||
+                        Headers[col].datatype.startsWith("DATE"))
+                    sql += ")";
+                else
+                {
+                    sql += " OR " + columnName + " = :c";
+                    sql += QString::number(col);
+                    if ((*j).isBinary())
+                        sql += ("<raw_long,in>)");
+                    else
+                        sql += ("<char[4000],in>)");
+                }
+            }
+            else
+            {
+                sql += " = :c";
+                sql += QString::number(col);
+                if ((*j).isBinary())
+                    sql += ("<raw_long,in>)");
+                else
+                    sql += ("<char[4000],in>)");
+            }
+        }
+    }
+
+    if (!where)
+    {
+        Utils::toStatusMessage(tr("This table contains only LOB/LONG "
+                                  "columns and can not be edited"));
+        return 0;
+    }
+
+    toQueryParams args;
+
+    // the "SET = " value
+    if (!change.newValue.isNull())
+        args << change.newValue;
+
+    col = 1;
+    for (toQuery::Row::iterator j = change.row.begin() + 1;
+            j != change.row.end();
+            j++, col++)
+    {
+        if (!oracle || (!Headers[col].datatype.toUpper().startsWith(("LONG")) &&
+                        !Headers[col].datatype.toUpper().contains(("LOB"))))
+        {
+            if ((*j).isNull())
+            {
+                if (!Headers[col].datatype.startsWith("NUMBER") &&
+                        !Headers[col].datatype.startsWith("INT") &&
+                        !Headers[col].datatype.startsWith("DATE"))
+                    args << toQValue(QString(""));
+                // else don't push null for numbers
+            }
+            else
+                args << (*j);
+        }
+    }
+
+	{
+		toConnectionSubLoan c(conn);
+		toQuery q(c, sql, args);
+		if (toConfigurationSingle::Instance().autoCommit())
+			c->commit();
+		else
+		{
+			throw QString("Not implemented yet. %1").arg(__QHERE__);
+			///toGlobalEventSingle::Instance().setNeedCommit(conn);
+		}
+		return q.rowsProcessed();
+	}
+}
+
+void toResultModelEdit::recordChange(const QModelIndex &index,
+        const toQValue &newValue,
+        const toQuery::Row &row)
+{
+    // first, if it was an added row, find and update the ChangeSet so
+    // they all get inserted as one.
+    toQValue rowDesc = row[0];
+    for (int changeIndex = 0; changeIndex < Changes.size(); changeIndex++)
+    {
+        if (Changes[changeIndex].kind == Add && Changes[changeIndex].row[0].getRowDesc().key == rowDesc.getRowDesc().key)
+        {
+            Changes[changeIndex].row[index.column()] = newValue;
+            return;
+        }
+    }
+
+    // don't record if not changed
+    if (newValue == row[index.column()])
+        return;
+
+
+    struct ChangeSet change;
+
+    change.columnName = headerData(index.column(),
+                                            Qt::Horizontal,
+                                            Qt::DisplayRole).toString();
+    change.newValue = newValue;
+    change.row      = row;
+    change.column   = index.column();
+    change.kind     = Update;
+
+    Changes.append(change);
+    emit changed(changed());
+}
+
+
+void toResultModelEdit::recordAdd(const toQuery::Row &row)
+{
+    struct ChangeSet change;
+
+    change.row      = row;
+    change.kind     = Add;
+
+    Changes.append(change);
+    emit changed(changed());
+}
+
+
+void toResultModelEdit::recordDelete(const toQuery::Row &row)
+{
+    // Loop through all previously recorded changes. If there is an insert (add)
+    // statement for the row being deleted - remove it (as there is no point of
+    // trying to insert a possibly bad row and throw exceptions then that row
+    // must be deleted).
+    QMutableListIterator<struct ChangeSet> j(Changes);
+    struct ChangeSet cs;
+    bool insertFound = false;
+    while (j.hasNext() && !insertFound)
+    {
+        cs = j.next();
+        if ((cs.row[0].getRowDesc().key == row[0].getRowDesc().key) &&
+                (cs.kind == Add))
+        {
+            j.remove();
+            insertFound = true;
+        }
+    }
+
+    if (!insertFound)
+    {
+        struct ChangeSet change;
+
+        change.row      = row;
+        change.kind     = Delete;
+
+        Changes.append(change);
+    }
+    emit changed(changed());
 }

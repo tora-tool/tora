@@ -59,7 +59,7 @@ class toResultModelEdit;
 class toResultTableViewEdit : public toResultTableView
 {
     Q_OBJECT;
-
+#if 0
     enum ChangeKind
     {
         Add,
@@ -81,13 +81,14 @@ class toResultTableViewEdit : public toResultTableView
     // keep a history of changes to commit.
     // this is a fifo -- don't sort or insert. just append.
     QList<struct ChangeSet> Changes;
-
+#endif
     QString Owner, Table;
-
+#if 0
     // this code is duplicate to toResultModelEdit
     unsigned commitDelete(ChangeSet &change, toConnection &conn);
     unsigned commitAdd(ChangeSet &change, toConnection &conn);
     unsigned commitUpdate(ChangeSet &change, toConnection &conn);
+#endif
 
 public:
     /**
@@ -115,7 +116,7 @@ public:
     }
 
     virtual void query(const QString &, toQueryParams const& params, const std::list<QString> priKeys);
-
+#if 0
     /**
      * True if data has been modified.
      *
@@ -124,6 +125,7 @@ public:
     {
         return !Changes.isEmpty();
     }
+#endif
 
     /**
      * Writes cached changes to database.
@@ -133,17 +135,22 @@ public:
      */
     bool commitChanges(bool status = true);
 
+    toResultModelEdit* editModel();
+
 signals:
+#if 0
     /**
      * Parameter is true after changes, false after save or load.
      */
     void changed(bool edit);
+#endif
 
 protected slots:
 	// reimplemented
 	virtual void slotHandleDoubleClick(const QModelIndex &);
 
 private slots:
+#if 0
     /**
      * Append change to Changes
      */
@@ -161,7 +168,7 @@ private slots:
      * Record a deletion in Changes
      */
     void recordDelete(const toQuery::Row &);
-
+#endif
 
     /**
      * Handle connection toolbar's commit and rollback.
@@ -201,8 +208,6 @@ public slots:
     void handleNewRows(const QModelIndex &parent, int start, int end);
 protected:
     toResultModel* allocModel(toEventQuery *query);
-
-    toResultModelEdit* editModel();
 };
 
 

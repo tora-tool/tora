@@ -35,8 +35,6 @@
 #ifndef TORESULTDATA_H
 #define TORESULTDATA_H
 
-
-#include "core/toresulttableviewedit.h"
 #include "core/tosql.h"
 #include "core/toresult.h"
 #include "core/toconnection.h"
@@ -48,6 +46,7 @@
 
 class QAction;
 class toResultDataSingle;
+class toResultTableViewEdit;
 class QCloseEvent;
 
 
@@ -156,7 +155,6 @@ public slots:
     void singleRecordForm(bool display);
     void updateForm(void);
     void save(void);
-    void addRecord(void);
     void refreshWarn(void);
 };
 

@@ -33,11 +33,12 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "core/toresultdata.h"
-
 #include "core/utils.h"
 #include "core/toconf.h"
 #include "core/toconfiguration.h"
 #include "core/toresultdatasingle.h"
+#include "core/toresulttableviewedit.h"
+#include "core/toresultmodeledit.h"
 #include "core/toconnectiontraits.h"
 #include "ui_toresultcontentfilterui.h"
 
@@ -118,7 +119,7 @@ toResultData::toResultData(QWidget *parent,
     addAct = toolbar->addAction(
                  QIcon(QPixmap(const_cast<const char**>(addrecord_xpm))),
                  tr("Add a new record"));
-    connect(addAct, SIGNAL(triggered()), this, SLOT(addRecord()));
+    connect(addAct, SIGNAL(triggered()), Edit, SLOT(addRecord()));
 
     duplicateAct = toolbar->addAction(
                        QIcon(QPixmap(const_cast<const char**>(duplicaterecord_xpm))),
@@ -366,7 +367,9 @@ void toResultData::changeFilter(bool checked)
 
 bool toResultData::maybeSave(void)
 {
-    if (!Edit->changed())
+    if (Edit->editModel() == NULL)
+    	return true;
+    if (!Edit->editModel()->changed())
         return true;
     if (!isVisible())
         return true;
@@ -442,18 +445,10 @@ void toResultData::save()
         emit changesSaved();
 }
 
-
-void toResultData::addRecord()
-{
-    Edit->addRecord();
-    // don't navigate here. done by Edit.
-//     navigate(lastAct);
-}
-
-
 void toResultData::refreshWarn()
 {
-    if (Edit->changed())
+
+    if (Edit->editModel() && Edit->editModel()->changed())
     {
         switch (TOMessageBox(
                     QMessageBox::Warning,
