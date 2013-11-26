@@ -96,6 +96,7 @@ CriticalErrorList::CriticalErrorList()
 	insert(12540); // ORA-12540: TNS:internal limit restriction exceeded
 	insert(12541); // ORA-12541: TNS:no listener
 	insert(12543); // ORA-12543: TNS:destination host unreachable
+	insert(12571); // ORA-12571: TNS:packet writer failure
 	insert(24315); // ORA-24315: illegal attribute type
 };
 
