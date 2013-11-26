@@ -47,14 +47,68 @@
 class QAction;
 class toResultDataSingle;
 class toResultTableViewEdit;
+class toResultModel;
+class toResultModelEdit;
 class QCloseEvent;
 
 
 class toResultData : public QWidget, public toResult
 {
     Q_OBJECT;
-private:
 
+public:
+    toResultData(QWidget *parent = 0,
+                 const char *name = 0,
+                 Qt::WindowFlags f = 0);
+
+
+    /**
+     * Reimplemented from toResult. First parameter is ignored.
+     *
+     */
+    virtual void query(const QString &, toQueryParams const& params);
+
+    /** Clear result widget */
+    virtual void clearData();
+
+    /**
+     * Reimplemented from toResult. Can handle all connections.
+     *
+     */
+    virtual bool canHandle(const toConnection &)
+    {
+        return true;
+    }
+
+    /**
+     * Prompt to save if modified.
+     *
+     */
+    bool maybeSave(void);
+
+signals:
+    /**
+     * Emitted when changes are saved.
+     *
+     */
+    void changesSaved(void);
+
+protected:
+    virtual void closeEvent(QCloseEvent *);
+
+protected slots:
+    void navigate(QAction *);
+    void changeFilter(bool);
+    void removeFilter(bool);
+    void setModel(toResultModel*);
+
+public slots:
+    void singleRecordForm(bool display);
+    void updateForm(void);
+    void save(void);
+    void refreshWarn(void);
+
+private:
     // toolbar actions
     QAction *filterAct;
     QAction *removeAct;
@@ -106,56 +160,7 @@ private:
     // should be reset on every query
     bool Discard;
 
-public:
-    toResultData(QWidget *parent = 0,
-                 const char *name = 0,
-                 Qt::WindowFlags f = 0);
-
-
-    /**
-     * Reimplemented from toResult. First parameter is ignored.
-     *
-     */
-    virtual void query(const QString &, toQueryParams const& params);
-
-    /** Clear result widget */
-    virtual void clearData();
-
-    /**
-     * Reimplemented from toResult. Can handle all connections.
-     *
-     */
-    virtual bool canHandle(const toConnection &)
-    {
-        return true;
-    }
-
-    /**
-     * Prompt to save if modified.
-     *
-     */
-    bool maybeSave(void);
-
-signals:
-    /**
-     * Emitted when changes are saved.
-     *
-     */
-    void changesSaved(void);
-
-protected:
-    virtual void closeEvent(QCloseEvent *);
-
-protected slots:
-    void navigate(QAction *);
-    void changeFilter(bool);
-    void removeFilter(bool);
-
-public slots:
-    void singleRecordForm(bool display);
-    void updateForm(void);
-    void save(void);
-    void refreshWarn(void);
+    toResultModelEdit* Model;
 };
 
 

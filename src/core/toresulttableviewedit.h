@@ -59,37 +59,6 @@ class toResultModelEdit;
 class toResultTableViewEdit : public toResultTableView
 {
     Q_OBJECT;
-#if 0
-    enum ChangeKind
-    {
-        Add,
-        Delete,
-        Update
-    };
-
-    struct ChangeSet
-    {
-        ChangeKind         kind;         /* sql change mode */
-        QString            columnName;   /* column name */
-        int                column;       /* the real column number
-                                          * after adjusting for
-                                          * numbercolumn */
-        toQValue           newValue;     /* data after the change */
-        toQuery::Row       row;          /* data before the change */
-    };
-
-    // keep a history of changes to commit.
-    // this is a fifo -- don't sort or insert. just append.
-    QList<struct ChangeSet> Changes;
-#endif
-    QString Owner, Table;
-#if 0
-    // this code is duplicate to toResultModelEdit
-    unsigned commitDelete(ChangeSet &change, toConnection &conn);
-    unsigned commitAdd(ChangeSet &change, toConnection &conn);
-    unsigned commitUpdate(ChangeSet &change, toConnection &conn);
-#endif
-
 public:
     /**
      * Creates a new tableview for editing data
@@ -116,16 +85,6 @@ public:
     }
 
     virtual void query(const QString &, toQueryParams const& params, const std::list<QString> priKeys);
-#if 0
-    /**
-     * True if data has been modified.
-     *
-     */
-    bool changed(void)
-    {
-        return !Changes.isEmpty();
-    }
-#endif
 
     /**
      * Writes cached changes to database.
@@ -136,40 +95,11 @@ public:
     bool commitChanges(bool status = true);
 
     toResultModelEdit* editModel();
-
-signals:
-#if 0
-    /**
-     * Parameter is true after changes, false after save or load.
-     */
-    void changed(bool edit);
-#endif
-
 protected slots:
 	// reimplemented
 	virtual void slotHandleDoubleClick(const QModelIndex &);
 
 private slots:
-#if 0
-    /**
-     * Append change to Changes
-     */
-    void recordChange(const QModelIndex &,
-                      const toQValue &,
-                      const toQuery::Row &);
-
-
-    /**
-     * Append a new row to Changes
-     */
-    void recordAdd(const toQuery::Row &);
-
-    /**
-     * Record a deletion in Changes
-     */
-    void recordDelete(const toQuery::Row &);
-#endif
-
     /**
      * Handle connection toolbar's commit and rollback.
      *
@@ -179,8 +109,6 @@ private slots:
     void commitChanges(toConnection &conn);
     void rollbackChanges(toConnection &conn);
 
-
-public slots:
     /**
      * Calls Model to add new record.
      */
@@ -207,7 +135,15 @@ public slots:
      */
     void handleNewRows(const QModelIndex &parent, int start, int end);
 protected:
-    toResultModel* allocModel(toEventQuery *query);
+    /*
+     * Helper function - allocate new instance of model
+     * toResultTableView uses toResultModel
+     * while
+     * toResultTableViewEdit uses toResultModelEdit
+     */
+    virtual toResultModel* allocModel(toEventQuery *query);
+
+    QString Owner, Table;
 };
 
 

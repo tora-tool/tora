@@ -174,6 +174,7 @@ protected:
     virtual void keyPressEvent(QKeyEvent * event);
 
     virtual toResultModel* allocModel(toEventQuery *);
+    virtual void freeModel();
 
 signals:
 
@@ -411,9 +412,11 @@ signals:
 
     /**
      * Emitted when query is finished.
-     *
      */
     void done(void);
+
+    void modelChanged(toResultModel*);
+    //toResultModel
 };
 
 

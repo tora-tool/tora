@@ -67,6 +67,7 @@ toResultData::toResultData(QWidget *parent,
                            const char *name,
                            Qt::WindowFlags f)
     : QWidget(parent, f)
+    , Model(NULL)
 {
     AllFilter = false;
     Discard   = false;
@@ -94,6 +95,8 @@ toResultData::toResultData(QWidget *parent,
                        bool)),
             this,
             SLOT(updateForm()));
+
+    connect(Edit, SIGNAL(modelChanged(toResultModel*)), this, SLOT(setModel(toResultModel*)));
 
     singleRecordForm(false);
 
@@ -239,6 +242,13 @@ void toResultData::closeEvent(QCloseEvent *event)
         event->ignore();
 }
 
+void toResultData::setModel(toResultModel *model)
+{
+	if (model == NULL)
+		Model = NULL;
+	Model = dynamic_cast<toResultModelEdit *>(model);
+	Q_ASSERT_X(Model != NULL, qPrintable(__QHERE__), "Invalid subclass of toResultModel");
+}
 
 void toResultData::navigate(QAction *action)
 {

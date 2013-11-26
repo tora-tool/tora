@@ -151,9 +151,9 @@ void toResultTableView::setup(bool readable, bool numberColumn, bool editable)
 
 toResultTableView::~toResultTableView()
 {
-    if(Model)
-        delete Model;
-    Model = NULL;
+    if (Model && running())
+        Model->stop();
+	freeModel();
 }
 
 void toResultTableView::query(const QString &sql, toQueryParams const& param, const std::list<QString> priKeys)
@@ -165,11 +165,7 @@ void toResultTableView::query(const QString &sql, toQueryParams const& param, co
     {
         if (Model && running())
             Model->stop();
-        if(Model)
-        {
-            delete Model;
-            Model = NULL;
-        }
+        freeModel();
 
         readAllAct->setEnabled(true);
         Ready = false;
@@ -190,8 +186,8 @@ void toResultTableView::query(const QString &sql, toQueryParams const& param, co
 					       );
 
         PriKeys = priKeys;
-        Model = allocModel(query);
-        setModel(Model);
+        toResultModel *model = allocModel(query);
+        setModel(model);
 
         connect(Model, SIGNAL(done()), this, SLOT(slotHandleDone()));
         connect(Model, SIGNAL(modelReset()), this, SLOT(slotHandleReset()));
@@ -235,11 +231,7 @@ void toResultTableView::querySub(QSharedPointer<toConnectionSubLoan> &con, const
     {
         if (Model && running())
             Model->stop();
-        if(Model)
-        {
-            delete Model;
-            Model = NULL;
-        }
+        freeModel();
 
         readAllAct->setEnabled(true);
         Ready = false;
@@ -260,8 +252,8 @@ void toResultTableView::querySub(QSharedPointer<toConnectionSubLoan> &con, const
 					       );
 
         PriKeys = std::list<QString>();
-        Model = allocModel(query);
-        setModel(Model);
+        toResultModel *model = allocModel(query);
+        setModel(model);
 
         connect(Model, SIGNAL(done()), this, SLOT(slotHandleDone()));
         connect(Model, SIGNAL(modelReset()), this, SLOT(slotHandleReset()));
@@ -301,16 +293,22 @@ toResultModel* toResultTableView::allocModel(toEventQuery *query)
 	return new toResultModel(query,	PriKeys, this, ReadableColumns);
 }
 
+void toResultTableView::freeModel()
+{
+    if(Model)
+    {
+        delete Model;
+        Model = NULL;
+        emit modelChanged(NULL);
+    }
+}
+
 void toResultTableView::clearData()
 {
     // Note that destroying data model effectively "clears" QTableView
     if (Model && running())
         Model->stop();
-    if(Model)
-    {
-        delete Model;
-        Model = NULL;
-    }
+    freeModel();
 } // clearData
 
 void toResultTableView::createActions()
@@ -634,6 +632,7 @@ void toResultTableView::setModel(toResultModel *model)
                 SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),
                 this,
                 SLOT(resizeRowsToContents()));
+    emit modelChanged(model);
 }
 
 
@@ -780,21 +779,14 @@ void toResultTableView::refresh()
     toResult::refresh();
 }
 
-bool toResultTableView::queryFromCache(const QString &owner, const QString &type)
+bool toResultTableView::queryFromCache(const QString &owner, const QString &objectType)
 {
     if (Model && running())
         Model->stop();
-    if(Model)
-    {
-        delete Model;
-        Model = NULL;
-    }
+    freeModel();
     //TODO: Pass pri keys
 
-    Model = new toResultModel(owner,
-                              type,
-                              this,
-                              ReadableColumns);
+    toResultModel* model = new toResultModel(owner, objectType, this, ReadableColumns);
     setModel(Model);
 
     this->sortByColumn(0, Qt::AscendingOrder);
