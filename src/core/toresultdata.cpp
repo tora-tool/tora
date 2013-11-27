@@ -62,7 +62,6 @@
 #include "icons/single.xpm"
 #include "icons/trash.xpm"
 
-
 toResultData::toResultData(QWidget *parent,
                            const char *name,
                            Qt::WindowFlags f)
@@ -247,7 +246,7 @@ void toResultData::setModel(toResultModel *model)
 	if (model == NULL)
 		Model = NULL;
 	Model = dynamic_cast<toResultModelEdit *>(model);
-	Q_ASSERT_X(Model != NULL, qPrintable(__QHERE__), "Invalid subclass of toResultModel");
+	Q_ASSERT_X(Model != NULL || model == NULL, qPrintable(__QHERE__), "Invalid subclass of toResultModel");
 }
 
 void toResultData::navigate(QAction *action)

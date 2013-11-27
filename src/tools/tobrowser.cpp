@@ -83,10 +83,8 @@
 #include "icons/tobrowser.xpm"
 #include "icons/view.xpm"
 #include "icons/trash.xpm"
-//#ifndef TO_NO_ORACLE
 #include "icons/offline.xpm"
 #include "icons/online.xpm"
-//#endif
 #ifdef TOEXTENDED_MYSQL
 #include "icons/new.xpm"
 #endif

@@ -64,7 +64,6 @@ public:
 
     /**
      * Reimplemented from toResult. First parameter is ignored.
-     *
      */
     virtual void query(const QString &, toQueryParams const& params);
 
@@ -73,7 +72,6 @@ public:
 
     /**
      * Reimplemented from toResult. Can handle all connections.
-     *
      */
     virtual bool canHandle(const toConnection &)
     {
@@ -82,14 +80,12 @@ public:
 
     /**
      * Prompt to save if modified.
-     *
      */
     bool maybeSave(void);
 
 signals:
     /**
      * Emitted when changes are saved.
-     *
      */
     void changesSaved(void);
 
