@@ -96,7 +96,7 @@ int toResultModelEdit::addRow(QModelIndex ind, bool duplicate)
 
     Rows.insert(newRowPos, row);
     endInsertRows();
-    emit rowAdded(row);
+    recordAdd(row);
     return newRowPos;
 } // addRow
 
@@ -126,7 +126,7 @@ void toResultModelEdit::deleteRow(QModelIndex index)
         rowDesc.status = REMOVED;
         Rows[index.row()][0] = toQValue(rowDesc);
     }
-    emit rowDeleted(deleted);
+    recordDelete(deleted);
 }
 
 void toResultModelEdit::clearStatus()
@@ -287,7 +287,7 @@ bool toResultModelEdit::setData(const QModelIndex &index,
     	toQuery::Row oldRow = row;           // keep old version
         row[index.column() + PriKeys.size()] = newValue;
         // for writing to the database
-        emit columnChanged(index, newValue, oldRow);
+        recordChange(index, newValue, oldRow);
     }
     else
     {

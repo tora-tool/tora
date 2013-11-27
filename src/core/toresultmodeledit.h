@@ -100,7 +100,7 @@ public:
     int addRow(QModelIndex ind = QModelIndex(), bool duplicate = false);
 
     /**
-     * Mark to delete a row interally. Emits rowDeleted on success.
+     * Mark to delete a row internally. Emits rowDeleted on success.
      *
      * This is not an overridden method.
      */
@@ -225,27 +225,6 @@ protected:
     void recordDelete(const toQuery::Row &);
 
 signals:
-
-    /**
-     * Emitted when column data in the view changes.
-     */
-    void columnChanged(const QModelIndex &index,
-                       const toQValue &newValue,
-                       const toQuery::Row &row);
-    /**
-     * Emitted when a row is added to the model. The numbercolumn
-     * passed which will not change over the life of the model.
-     *
-     * Note this is not emitted when query data is added.
-     *
-     */
-    void rowAdded(const toQuery::Row &row);
-
-    /**
-     * Emitted when a row is deleted from the model.
-     */
-    void rowDeleted(const toQuery::Row &row);
-
     /**
      * Parameter is true after changes, false after save or load.
      */

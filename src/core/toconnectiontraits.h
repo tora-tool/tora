@@ -36,7 +36,14 @@
 #define TOCONNECTIONTRAITS_H
 
 #include <QtCore/QString>
+#include <QtCore/QList>
 
+class toConnection;
+
+/**
+ * This class provides various Database specific logic.
+ * Each DB connection provider should subclass this.
+ */
 class toConnectionTraits
 {
 public:
@@ -63,6 +70,12 @@ public:
      *  @return bool return true if db query can be canceled from bg thread
      */
     virtual bool hasAsyncBreak() const = 0;
+
+    /**
+     * Return list of primary key columns for a table
+     * By default return an empty list => table can not be modified using toResultTableViewEdit
+     */
+    virtual QList<QString> primaryKeys(toConnection &, QString const& owner, QString const& table) { return QList<QString>(); };
 
     virtual ~toConnectionTraits() {};
 };

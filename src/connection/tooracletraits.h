@@ -63,4 +63,11 @@ public:
     {
     	return true;
     }
+
+    virtual QList<QString> primaryKeys(toConnection &, QString const& owner, QString const& table)
+	{
+    	static const QString ROWNUM(QString::fromAscii("ROWNUM"));
+    	static const QString ORA_ROWSCN(QString::fromAscii("ORA_ROWSCN"));
+    	return QList<QString>() << ROWNUM << ORA_ROWSCN;
+	}
 };

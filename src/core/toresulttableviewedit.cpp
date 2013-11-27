@@ -90,34 +90,17 @@ void toResultTableViewEdit::query(const QString &SQL, toQueryParams const& param
         return;                 // error
 
     // must be reconnected after every query
-    connect(Model,
-            SIGNAL(columnChanged(const QModelIndex &,
-                                 const toQValue &,
-                                 const toQuery::Row &)),
-            this,
-            SLOT(recordChange(const QModelIndex &,
-                              const toQValue &,
-                              const toQuery::Row &)));
+    toResultModelEdit *model = editModel();
 
-    connect(Model,
-            SIGNAL(rowAdded(const toQuery::Row &)),
-            this,
-            SLOT(recordAdd(const toQuery::Row &)));
-
-    connect(Model,
+    connect(model,
             SIGNAL(rowsInserted(const QModelIndex &, int, int)),
             this,
             SLOT(handleNewRows(const QModelIndex &, int, int)));
 
-    connect(Model,
+    connect(model,
             SIGNAL(modelReset()),
             this,
             SLOT(revertChanges()));
-
-    connect(Model,
-            SIGNAL(rowDeleted(const toQuery::Row &)),
-            this,
-            SLOT(recordDelete(const toQuery::Row &)));
 
     verticalHeader()->setVisible(true);
 }

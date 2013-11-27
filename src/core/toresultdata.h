@@ -85,7 +85,7 @@ public:
 
 signals:
     /**
-     * Emitted when changes are saved.
+     * Emitted when changes are saved. (used to call FLUSH PRIVILEGES - MySQL only?)
      */
     void changesSaved(void);
 
@@ -153,7 +153,7 @@ private:
     QString filterName();
 
     // true if user has elected to discard current changes.
-    // should be reset on every query
+    // should be reset on every query (TODO: write only variable)
     bool Discard;
 
     toResultModelEdit* Model;

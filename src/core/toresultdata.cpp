@@ -67,10 +67,9 @@ toResultData::toResultData(QWidget *parent,
                            Qt::WindowFlags f)
     : QWidget(parent, f)
     , Model(NULL)
+	, AllFilter(false)
+	, Discard(false)
 {
-    AllFilter = false;
-    Discard   = false;
-
     if (name)
         setObjectName(name);
 
@@ -380,8 +379,6 @@ bool toResultData::maybeSave(void)
     	return true;
     if (!Edit->editModel()->changed())
         return true;
-    if (!isVisible())
-        return true;
 
     // grab focus so user can see file and decide to save
     setFocus(Qt::OtherFocusReason);
@@ -394,16 +391,19 @@ bool toResultData::maybeSave(void)
                   QMessageBox::Discard |
                   QMessageBox::Cancel);
 
-    if (ret == QMessageBox::Save)
+    switch(ret)
     {
+    case QMessageBox::Save:
         if (Edit->commitChanges())
             emit changesSaved();
         return true;
-    }
-    else if (ret == QMessageBox::Discard)
-        return Discard = true;
-    else
+    case QMessageBox::Discard:
+    	return Discard = true;
+    case QMessageBox::Cancel:
         return false;
+    }
+	Q_ASSERT_X(false, qPrintable(__QHERE__), "Invalid Message box response");
+	return true; // never reached
 }
 
 
