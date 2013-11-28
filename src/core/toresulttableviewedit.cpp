@@ -68,7 +68,7 @@ toResultTableViewEdit::~toResultTableViewEdit()
 }
 
 
-void toResultTableViewEdit::query(const QString &SQL, toQueryParams const& params, const std::list<QString> priKeys)
+void toResultTableViewEdit::query(const QString &SQL, toQueryParams const& params, const QList<QString> priKeys)
 {
     revertChanges();
 

@@ -164,9 +164,6 @@ protected:
      */
     toTimer *timer(void);
 
-    // Used only in toResultTableViewEdit
-    std::list<QString> PriKeys;
-
     /** Called when connection is changed. Be sure to call the parent if you reimplement this.
      */
     virtual void connectionChanged(void);

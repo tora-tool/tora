@@ -156,7 +156,7 @@ toResultTableView::~toResultTableView()
 	freeModel();
 }
 
-void toResultTableView::query(const QString &sql, toQueryParams const& param, const std::list<QString> priKeys)
+void toResultTableView::query(const QString &sql, toQueryParams const& param, const QList<QString> priKeys)
 {
     setSqlAndParams(sql, param);
 
@@ -185,7 +185,6 @@ void toResultTableView::query(const QString &sql, toQueryParams const& param, co
 					       //, Statistics
 					       );
 
-        PriKeys = priKeys;
         toResultModel *model = allocModel(query);
         setModel(model);
 
@@ -251,7 +250,6 @@ void toResultTableView::querySub(QSharedPointer<toConnectionSubLoan> &con, const
 					       //, Statistics
 					       );
 
-        PriKeys = std::list<QString>();
         toResultModel *model = allocModel(query);
         setModel(model);
 
@@ -290,7 +288,7 @@ void toResultTableView::querySub(QSharedPointer<toConnectionSubLoan> &con, const
 
 toResultModel* toResultTableView::allocModel(toEventQuery *query)
 {
-	return new toResultModel(query,	PriKeys, this, ReadableColumns);
+	return new toResultModel(query, this, ReadableColumns);
 }
 
 void toResultTableView::freeModel()

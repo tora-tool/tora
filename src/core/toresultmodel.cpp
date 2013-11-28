@@ -45,12 +45,10 @@
 #include <QtCore/QMimeData>
 
 toResultModel::toResultModel(toEventQuery *query,
-                             std::list<QString> priKeys,
                              QObject *parent,
                              bool read)
     : QAbstractTableModel(parent)
     , SortedOrder(Qt::AscendingOrder)
-	, PriKeys(priKeys)
 	, ReadableColumns(read)
 	, HeadersRead(false)
 	, First(true)
@@ -502,13 +500,13 @@ QVariant toResultModel::data(const QModelIndex &index, int role) const
     if (!index.isValid())
         return QVariant();
 
-    if (index.row() > Rows.size() - 1 || index.column() > Headers.size() - PriKeys.size() - 1)
+    if (index.row() > Rows.size() - 1 || index.column() > Headers.size() - 1)
         return QVariant();
 
 	toQuery::Row const& row = Rows.at(index.row());
-	if (index.column() + PriKeys.size() >= row.size())
+	if (index.column() >= row.size())
 		return QVariant();
-    toQValue const &data = row.at(index.column() + PriKeys.size());
+    toQValue const &data = row.at(index.column());
 
     toRowDesc rowDesc = row[0].getRowDesc();
     QFont fontRet;
@@ -565,10 +563,10 @@ QVariant toResultModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-QVariant toResultModel::data(int row, int column) const
+QVariant toResultModel::data(int row, int column, int role) const
 {
     QModelIndex ind = index(row, column);
-    return data(ind, Qt::EditRole);
+    return data(ind, role);
 }
 
 
@@ -608,7 +606,7 @@ QVariant toResultModel::headerData(int section,
             return QVariant();
 
         if (role == Qt::DisplayRole)
-            return Headers[section + PriKeys.size()].name;
+            return Headers[section].name;
         else
             return QVariant();
     }
@@ -706,7 +704,7 @@ void toResultModel::slotReadHeaders(toEventQuery*)
 int toResultModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-    return Headers.size() - PriKeys.size();
+    return Headers.size();
 }
 
 
@@ -776,10 +774,10 @@ Qt::ItemFlags toResultModel::flags(const QModelIndex &index) const
     }
 
     toQuery::Row const& row = Rows.at(index.row());
-    if (index.column() + PriKeys.size() >= row.size())
+    if (index.column() >= row.size())
         return defaultFlags;
 
-    toQValue const &data = row.at(index.column() + PriKeys.size());
+    toQValue const &data = row.at(index.column());
     if (data.isComplexType())
     {
         return ( defaultFlags | fl ) & ~Qt::ItemIsEditable;

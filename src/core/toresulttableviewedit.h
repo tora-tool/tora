@@ -84,7 +84,7 @@ public:
         query(sql, param, PriKeys);
     }
 
-    virtual void query(const QString &, toQueryParams const& params, const std::list<QString> priKeys);
+    virtual void query(const QString &, toQueryParams const& params, const QList<QString> priKeys);
 
     /**
      * Writes cached changes to database.
@@ -144,6 +144,8 @@ protected:
     virtual toResultModel* allocModel(toEventQuery *query);
 
     QString Owner, Table;
+
+    QList<QString> PriKeys;
 };
 
 

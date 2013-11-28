@@ -103,16 +103,12 @@ protected:
     // helpers for sort implementation
     toQuery::RowList mergesort(toQuery::RowList&, int, Qt::SortOrder);
     toQuery::RowList merge(toQuery::RowList&, toQuery::RowList&, int, Qt::SortOrder);
-
-    std::list<QString> PriKeys; // TODO remove this and override data() in toResultModelEdit
-
 private slots:
 
 	void slotQueryError(toEventQuery*, const toConnection::exception &);
 
 public:
     explicit toResultModel(toEventQuery *query,
-                           std::list<QString> priKeys,
                            QObject *parent = 0,
                            bool read = false);
 
@@ -149,7 +145,7 @@ public:
      * Convience function to return Qt::EditRole data for row and
      * column.
      */
-    virtual QVariant data(int row, int column) const;
+    virtual QVariant data(int row, int column, int role = Qt::EditRole) const; // TODO change it to Qt::DisplayRole
 
 
     /**

@@ -45,10 +45,10 @@
 #include <QtCore/QMimeData>
 
 toResultModelEdit::toResultModelEdit(toEventQuery *query,
-                             std::list<QString> priKeys,
+                             QList<QString> priKeys,
                              QObject *parent,
                              bool read)
-    : toResultModel(query, priKeys, parent, read)
+    : toResultModel(query, parent, read)
 {
 	setSupportedDragActions(Qt::CopyAction | Qt::MoveAction);
 }
@@ -334,6 +334,37 @@ Qt::ItemFlags toResultModelEdit::flags(const QModelIndex &index) const
     return fl;
 }
 
+/**
+ * Returns the data stored under the given role for the item
+ * referred to by the index.
+ */
+QVariant toResultModelEdit::data(const QModelIndex &index, int role) const
+{
+	return toResultModel::data(index.row(), index.column() + PriKeys.size(), role);
+}
+
+/**
+ * Returns the data for the given role and section in the header
+ * with the specified orientation.
+ */
+QVariant toResultModelEdit::headerData(int section,
+                                   Qt::Orientation orientation,
+                                   int role) const
+{
+	return toResultModel::headerData(section + PriKeys.size(), orientation, role);
+}
+
+/**
+ * Returns the number of columns for the children of the given
+ * parent. When the parent is valid it means that rowCount is
+ * returning the number of children of parent.
+ */
+int toResultModelEdit::columnCount(const QModelIndex &parent) const
+{
+    Q_UNUSED(parent);
+    return Headers.size() - PriKeys.size();
+}
+
 void toResultModelEdit::commitUpdate(toConnection &conn, const toQuery::Row &row, unsigned int &updated)
 {
     QString sql = QString("UPDATE %1.%2 SET ").arg(conn.getTraits().quote(Owner)).arg(conn.getTraits().quote(Table));
@@ -371,9 +402,9 @@ void toResultModelEdit::commitUpdate(toConnection &conn, const toQuery::Row &row
         }
     }
     sql += " WHERE ";
-    std::list<QString>::iterator ite;
+    QList<QString>::const_iterator ite;
     int i;
-    for (i = 1, ite = PriKeys.begin(); ite != PriKeys.end(); ite++, i++)
+    for (i = 1, ite = PriKeys.constBegin(); ite != PriKeys.constEnd(); ite++, i++)
     {
         if(i > 1)
         {
@@ -441,11 +472,11 @@ void toResultModelEdit::commitAdd(toConnection &conn, const toQuery::Row &row, u
 void toResultModelEdit::commitDelete(toConnection &conn, const toQuery::Row &row, unsigned int &deleted)
 {
     QString sql = QString("DELETE FROM %1.%2 WHERE ").arg(conn.getTraits().quote(Owner)).arg(conn.getTraits().quote(Table));
-    std::list<QString>::iterator ite;
+    QList<QString>::const_iterator ite;
     int num = 0;
     toQueryParams args;
 
-    for(ite = PriKeys.begin(); ite != PriKeys.end(); ite++)
+    for(ite = PriKeys.constBegin(); ite != PriKeys.constEnd(); ite++)
     {
         if(num > 0)
         {

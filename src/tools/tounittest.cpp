@@ -302,7 +302,7 @@ void toUnitTest::slotPackageListSelectionChanged()
             delete m_model;
             m_model = 0;
         }
-        m_model = new toResultModel(query,std::list<QString>(), this);
+        m_model = new toResultModel(query,this);
         m_model->readAll();
         connect(m_model, SIGNAL(done()), this, SLOT(slotHandleDone()));
         query->start();

@@ -201,12 +201,13 @@ void toResultData::query(const QString &, toQueryParams const& params)
     filterAct->setChecked(filter);
 
     toConnection &conn = connection();
-    //conn std::list<QString> priKeys = conn.primaryKeys();
+    QList<QString> priKeys = conn.getTraits().primaryKeys(conn, Owner, Table);
     SQL = "SELECT ";
-    //std::list<QString>::iterator ite;
-    //conn for(ite=priKeys.begin();ite!=priKeys.end();ite++)
-    //  SQL = SQL + *ite + ",";
-    SQL = SQL + "%2.* FROM %1.%2";
+    Q_FOREACH(QString c, priKeys)
+    {
+    	SQL += c + ",";
+    }
+    SQL = SQL + " t.* FROM %1.%2 t ";
     SQL = SQL.arg(conn.getTraits().quote(Owner)).arg(conn.getTraits().quote(Table));
 
     bool where = false;
