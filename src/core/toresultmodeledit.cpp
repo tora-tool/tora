@@ -338,9 +338,10 @@ Qt::ItemFlags toResultModelEdit::flags(const QModelIndex &index) const
  * Returns the data stored under the given role for the item
  * referred to by the index.
  */
-QVariant toResultModelEdit::data(const QModelIndex &index, int role) const
+QVariant toResultModelEdit::data(const QModelIndex &ind, int role) const
 {
-	return toResultModel::data(index.row(), index.column() + PriKeys.size(), role);
+	QModelIndex i = index(ind.row(), ind.column() + PriKeys.size());
+	return toResultModel::data(i, role);
 }
 
 /**
