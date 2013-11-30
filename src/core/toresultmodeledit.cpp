@@ -353,7 +353,7 @@ QVariant toResultModelEdit::headerData(int section,
                                    Qt::Orientation orientation,
                                    int role) const
 {
-	return toResultModel::headerData(section + PriKeys.size(), orientation, role);
+	return toResultModel::headerData(section, orientation, role);
 }
 
 /**
@@ -364,6 +364,7 @@ QVariant toResultModelEdit::headerData(int section,
 int toResultModelEdit::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
+	int i = Headers.size() - PriKeys.size();
     return Headers.size() - PriKeys.size();
 }
 

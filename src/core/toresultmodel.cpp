@@ -606,7 +606,7 @@ QVariant toResultModel::headerData(int section,
             return QVariant();
 
         if (role == Qt::DisplayRole)
-            return Headers[section].name;
+            return Headers[section /*+ PriKeys.size() */].name;
         else
             return QVariant();
     }
