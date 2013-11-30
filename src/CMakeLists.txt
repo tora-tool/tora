@@ -775,7 +775,7 @@ IF(PCH_DEFINED)
   ADD_PRECOMPILED_HEADER(${EXE_NAME} ${PCH_HEADER} FORCEINCLUDE)
 ENDIF()
 
-if(TORA_DEBUG)
+if(TORA_DEBUG AND TORA_TESTS)
 # test1
 SET(TEST1_SOURCES
   core/toworkspace.cpp
@@ -789,6 +789,10 @@ SET(TEST1_SOURCES
   core/toconnectionsubloan.cpp
   core/toqvalue.cpp
   core/toglobalevent.cpp
+  editor/tostyle.cpp
+  parsing/tosyntaxanalyzer.cpp
+  parsing/tosyntaxanalyzeroracle.cpp
+  parsing/tosyntaxanalyzernl.cpp
   core/utils.cpp
   core/utils_part.cpp
   core/totimer.cpp
@@ -811,7 +815,9 @@ SET(TEST1_MOC_SOURCES
   core/moc_tocache.cxx
   core/moc_toquery.cxx
   core/moc_totimer.cxx
+  editor/moc_tostyle.cxx
   parsing/moc_tsqllexer.cxx
+  parsing/moc_tosyntaxanalyzer.cxx
   ts_log/moc_toostream.cxx  
   )
 ADD_EXECUTABLE("test1" ${GUI_TYPE}

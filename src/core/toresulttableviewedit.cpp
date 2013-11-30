@@ -68,7 +68,7 @@ toResultTableViewEdit::~toResultTableViewEdit()
 }
 
 
-void toResultTableViewEdit::query(const QString &SQL, toQueryParams const& params, const QList<QString> priKeys)
+void toResultTableViewEdit::query(const QString &SQL, toQueryParams const& params)
 {
     revertChanges();
 
@@ -80,9 +80,10 @@ void toResultTableViewEdit::query(const QString &SQL, toQueryParams const& param
         Owner = *par;
         par++;
         Table = *par;
+        PriKeys = connection().getTraits().primaryKeys(connection(), Owner, Table);
     }
 
-    toResultTableView::query(SQL, toQueryParams(), priKeys);
+    toResultTableView::query(SQL, toQueryParams());
 #if 0
     emit changed(false);
 #endif

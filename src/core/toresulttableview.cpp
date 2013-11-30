@@ -156,7 +156,7 @@ toResultTableView::~toResultTableView()
 	freeModel();
 }
 
-void toResultTableView::query(const QString &sql, toQueryParams const& param, const QList<QString> priKeys)
+void toResultTableView::query(const QString &sql, toQueryParams const& param)
 {
     setSqlAndParams(sql, param);
 

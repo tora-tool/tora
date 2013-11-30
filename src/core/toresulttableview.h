@@ -220,14 +220,7 @@ public:
     /**
      * Reimplemented to create query and new model
      */
-    virtual void query(const QString &sql, toQueryParams const& param)
-    {
-        const static QList<QString> emptyKeys;
-        query(sql, param, emptyKeys);
-    }
-
-    // To be sub-classed by toResultTableViewEdit
-    virtual void query(const QString &sql, toQueryParams const& param, const QList<QString> priKeys);
+    virtual void query(const QString &sql, toQueryParams const& param);
 
     void querySub(QSharedPointer<toConnectionSubLoan> &con, const QString &sql, toQueryParams const& param);
 

@@ -49,6 +49,7 @@ toResultModelEdit::toResultModelEdit(toEventQuery *query,
                              QObject *parent,
                              bool read)
     : toResultModel(query, parent, read)
+    , PriKeys(priKeys)
 {
 	setSupportedDragActions(Qt::CopyAction | Qt::MoveAction);
 }

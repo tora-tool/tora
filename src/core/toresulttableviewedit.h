@@ -79,12 +79,7 @@ public:
      * Reimplemented to create query and new model.
      *
      */
-    virtual void query(const QString &sql, toQueryParams const& param)
-    {
-        query(sql, param, PriKeys);
-    }
-
-    virtual void query(const QString &, toQueryParams const& params, const QList<QString> priKeys);
+    virtual void query(const QString &sql, toQueryParams const& param);
 
     /**
      * Writes cached changes to database.
