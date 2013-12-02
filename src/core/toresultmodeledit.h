@@ -190,7 +190,7 @@ public:
     /**
      * Update data
      */
-    void commitChanges(toConnection &conn, unsigned int &updated, unsigned int &added, unsigned int &deleted);
+    void commitChanges(toConnectionSubLoan &conn, unsigned int &updated, unsigned int &added, unsigned int &deleted);
 
     QList<struct ChangeSet>& changes();
 
@@ -198,14 +198,14 @@ public:
 
 protected:
 
-    void commitUpdate(toConnection &conn, const toQuery::Row &row, unsigned int &updated);
-    void commitAdd(toConnection &conn, const toQuery::Row &row, unsigned int &added);
-    void commitDelete(toConnection &conn, const toQuery::Row &row, unsigned int &deleted);
+    void commitUpdate(toConnectionSubLoan &conn, const toQuery::Row &row, unsigned int &updated);
+    void commitAdd(toConnectionSubLoan &conn, const toQuery::Row &row, unsigned int &added);
+    void commitDelete(toConnectionSubLoan &conn, const toQuery::Row &row, unsigned int &deleted);
 
     // this code is duplicate to toResultModelEdit (moved from toResultTableViewEdit)
-    unsigned commitUpdate(ChangeSet &change, toConnection &conn);
-    unsigned commitAdd(ChangeSet &change, toConnection &conn);
-    unsigned commitDelete(ChangeSet &change, toConnection &conn);
+    unsigned commitUpdate(toConnectionSubLoan &conn, ChangeSet &change);
+    unsigned commitAdd(toConnectionSubLoan &conn, ChangeSet &change);
+    unsigned commitDelete(toConnectionSubLoan &conn, ChangeSet &change);
 
     /**
      * Append change to Changes

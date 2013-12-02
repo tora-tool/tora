@@ -151,8 +151,6 @@ bool toResultTableViewEdit::commitChanges(bool status)
         return false;
     }
 
-    toConnection &conn = connection();
-
     QProgressDialog progress(tr("Performing changes"),
                              tr("Cancel"),
                              0,
@@ -163,6 +161,7 @@ bool toResultTableViewEdit::commitChanges(bool status)
     unsigned updated = 0, added = 0, deleted = 0;
     if(EditModel->getPriKeys().empty())
     {
+    	toConnectionSubLoan conn(connection());
         // No primary keys
         for (int changeIndex = 0; changeIndex < Changes.size(); changeIndex++)
         {
@@ -178,13 +177,13 @@ bool toResultTableViewEdit::commitChanges(bool status)
                 switch (change.kind)
                 {
                 case toResultModelEdit::Delete:
-                    deleted += EditModel->commitDelete(change, conn);
+                    deleted += EditModel->commitDelete(conn, change);
                     break;
                 case toResultModelEdit::Add:
-                    added += EditModel->commitAdd(change, conn);
+                    added += EditModel->commitAdd(conn, change);
                     break;
                 case toResultModelEdit::Update:
-                    updated += EditModel->commitUpdate(change, conn);
+                    updated += EditModel->commitUpdate(conn, change);
                     break;
                 default:
                     Utils::toStatusMessage(tr("Internal error."));
@@ -201,23 +200,24 @@ bool toResultTableViewEdit::commitChanges(bool status)
     }
     else
     {
+    	toConnectionSubLoan conn(connection());
 		throw QString("Not implemented yet. %1").arg(__QHERE__);
-		//        try
-		//        {
-		//            Model->commitChanges(conn, updated, added, deleted);
-		//            if (toConfigurationSingle::Instance().autoCommit())
-		//                conn.commit();
-		//            else
-		//            {
-		//    			throw QString("Not implemented yet. %1").arg(__QHERE__);
-		//            	///toGlobalEventSingle::Instance().setNeedCommit(conn);
-		//            }
-		//        }
-		//        catch(...)
-		//        {
-		//            conn.rollback();
-		//            throw;
-		//        }
+		try
+		{
+			editModel()->commitChanges(conn, updated, added, deleted);
+			if (toConfigurationSingle::Instance().autoCommit())
+				conn->commit();
+			else
+			{
+				throw QString("Not implemented yet. %1").arg(__QHERE__);
+				///toGlobalEventSingle::Instance().setNeedCommit(conn);
+			}
+		}
+		catch(...)
+		{
+			conn->rollback();
+			throw;
+		}
     }
 
     Utils::toStatusMessage(tr("Saved %1 changes(updated %2, added %3, deleted %4)")
