@@ -341,7 +341,7 @@ Qt::ItemFlags toResultModelEdit::flags(const QModelIndex &index) const
  */
 QVariant toResultModelEdit::data(const QModelIndex &ind, int role) const
 {
-	QModelIndex i = index(ind.row(), ind.column() + PriKeys.size());
+	QModelIndex i = createIndex(ind.row(), ind.column() + PriKeys.size(), NULL);
 	return toResultModel::data(i, role);
 }
 
@@ -353,7 +353,10 @@ QVariant toResultModelEdit::headerData(int section,
                                    Qt::Orientation orientation,
                                    int role) const
 {
-	return toResultModel::headerData(section, orientation, role);
+	if (orientation == Qt::Horizontal)
+		return toResultModel::headerData(section + PriKeys.size(), orientation, role);
+	else
+		return toResultModel::headerData(section, orientation, role);
 }
 
 /**
@@ -364,6 +367,8 @@ QVariant toResultModelEdit::headerData(int section,
 int toResultModelEdit::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
+	if (Headers.empty())
+		return 0;
 	int i = Headers.size() - PriKeys.size();
     return Headers.size() - PriKeys.size();
 }
