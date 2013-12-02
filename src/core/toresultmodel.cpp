@@ -835,8 +835,10 @@ toQuery::RowList toResultModel::merge(toQuery::RowList &left,
 
     while(left.size() > 0 && right.size() > 0)
     {
-        if((order == Qt::AscendingOrder && left.at(0).at(column) <= right.at(0).at(column)) ||
-                (order == Qt::DescendingOrder && left.at(0).at(column) >= right.at(0).at(column)))
+    	// 0th column contains row description (including row number)
+    	toQValue lkey = column == 0 ? left.at(0).at(0).getRowDesc().key : left.at(0).at(column);
+    	toQValue rkey = column == 0 ? right.at(0).at(0).getRowDesc().key : right.at(0).at(column);
+    	if ((order == Qt::AscendingOrder && lkey <= rkey) || (order == Qt::DescendingOrder && lkey >= rkey))
             result.append(left.takeAt(0));
         else
             result.append(right.takeAt(0));
