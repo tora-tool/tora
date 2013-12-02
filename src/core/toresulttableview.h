@@ -309,16 +309,6 @@ public:
     virtual QModelIndex selectedIndex(int col = 1);
 
     /**
-     * Returns 1 if number column is displayed or 0 if not.
-     */
-    virtual int numberColumn(void)
-    {
-        if (NumberColumn)
-            return 1;
-        return 0;
-    }
-
-    /**
      * Export list as a string.
      */
     QString exportAsText(toExportSettings settings);
