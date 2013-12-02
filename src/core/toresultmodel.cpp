@@ -536,7 +536,7 @@ QVariant toResultModel::data(const QModelIndex &index, int role) const
             return QVariant(i->displayData());
         }
         if (index.column() == 0)
-            return index.row() + 1;
+        	return QVariant(rowDesc.key);
         return QVariant(data.displayData());
     case Qt::BackgroundRole:
         if (data.isNull() && toConfigurationSingle::Instance().indicateEmpty())
@@ -717,18 +717,7 @@ bool toResultModel::canFetchMore(const QModelIndex &parent) const
     if (First)
         return false;
 
-    try
-    {
-        return Query && Query->hasMore();
-    }
-    catch (...)
-    {
-        TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
-        // will catch later
-        ;
-    }
-
-    return false;
+    return Query && Query->hasMore();
 }
 
 
