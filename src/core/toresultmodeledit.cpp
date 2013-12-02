@@ -282,16 +282,14 @@ bool toResultModelEdit::setData(const QModelIndex &index,
         rowDesc.status = MODIFIED;
         Rows[index.row()][0] = toQValue(rowDesc);
     }
-    if(PriKeys.empty())
+
     {
         // If no prikey is used, data is recorded in change list
     	toQuery::Row oldRow = row;           // keep old version
         row[index.column()] = newValue;
         // for writing to the database
         recordChange(index, newValue, oldRow);
-    }
-    else
-    {
+
         if(!row[index.column()].updateNewValue(newValue))
             return false;
         qDebug() << "Value is changed from " << row[index.column()] << " to " << newValue << "At " << index;

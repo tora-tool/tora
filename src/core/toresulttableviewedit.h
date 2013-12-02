@@ -94,6 +94,8 @@ protected slots:
 	// reimplemented
 	virtual void slotHandleDoubleClick(const QModelIndex &);
 
+	// reimplemented
+	// Hide all "additional" PriKey columns (staring from 1st column)
 	virtual void slotApplyColumnRules(void);
 
 private slots:

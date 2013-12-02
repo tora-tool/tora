@@ -127,6 +127,7 @@ void toResultTableViewEdit::slotHandleDoubleClick(const QModelIndex &)
 void toResultTableViewEdit::slotApplyColumnRules()
 {
 	Q_ASSERT_X(!model()->headers().empty(), qPrintable(__QHERE__), "Headers were not received yet");
+	// Hide all "additional" PriKeys
 	for (int i = 1; i <= PriKeys.size(); i++)
 	{
 		hideColumn(i);
@@ -201,7 +202,6 @@ bool toResultTableViewEdit::commitChanges(bool status)
     else
     {
     	toConnectionSubLoan conn(connection());
-		throw QString("Not implemented yet. %1").arg(__QHERE__);
 		try
 		{
 			editModel()->commitChanges(conn, updated, added, deleted);
@@ -209,7 +209,7 @@ bool toResultTableViewEdit::commitChanges(bool status)
 				conn->commit();
 			else
 			{
-				throw QString("Not implemented yet. %1").arg(__QHERE__);
+				///throw QString("Not implemented yet. %1").arg(__QHERE__);
 				///toGlobalEventSingle::Instance().setNeedCommit(conn);
 			}
 		}
