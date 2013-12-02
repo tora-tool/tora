@@ -270,7 +270,7 @@ bool toResultModelEdit::setData(const QModelIndex &index,
     if (index.column() == 0)
         return false;           // can't change number column
 
-    if (index.row() > Rows.size() - 1 || index.column() > Headers.size() - PriKeys.size() - 1)
+    if (index.row() >= Rows.size() || index.column() >= Headers.size())
         return false;
 
     toQuery::Row &row = Rows[index.row()];
@@ -282,19 +282,19 @@ bool toResultModelEdit::setData(const QModelIndex &index,
         rowDesc.status = MODIFIED;
         Rows[index.row()][0] = toQValue(rowDesc);
     }
-    if(PriKeys.size() == 0)
+    if(PriKeys.empty())
     {
         // If no prikey is used, data is recorded in change list
     	toQuery::Row oldRow = row;           // keep old version
-        row[index.column() + PriKeys.size()] = newValue;
+        row[index.column()] = newValue;
         // for writing to the database
         recordChange(index, newValue, oldRow);
     }
     else
     {
-        if(!row[index.column() + PriKeys.size()].updateNewValue(newValue))
+        if(!row[index.column()].updateNewValue(newValue))
             return false;
-        qDebug() << "Value is changed from " << row[index.column() + PriKeys.size()] << " to " << newValue << "At " << index;
+        qDebug() << "Value is changed from " << row[index.column()] << " to " << newValue << "At " << index;
     }
 
     // for the view
@@ -317,10 +317,10 @@ Qt::ItemFlags toResultModelEdit::flags(const QModelIndex &index) const
     }
 
     toQuery::Row const& row = Rows.at(index.row());
-    if (index.column() + PriKeys.size() >= row.size())
+    if (index.column() >= row.size())
         return defaultFlags;
 
-    toQValue const &data = row.at(index.column() + PriKeys.size());
+    toQValue const &data = row.at(index.column());
     if (data.isComplexType())
     {
         return ( defaultFlags | fl ) & ~Qt::ItemIsEditable;
@@ -333,44 +333,6 @@ Qt::ItemFlags toResultModelEdit::flags(const QModelIndex &index) const
     if (rowDesc.status == REMOVED)
         fl &= ~Qt::ItemIsEditable;
     return fl;
-}
-
-/**
- * Returns the data stored under the given role for the item
- * referred to by the index.
- */
-QVariant toResultModelEdit::data(const QModelIndex &ind, int role) const
-{
-	QModelIndex i = createIndex(ind.row(), ind.column() + PriKeys.size(), NULL);
-	return toResultModel::data(i, role);
-}
-
-/**
- * Returns the data for the given role and section in the header
- * with the specified orientation.
- */
-QVariant toResultModelEdit::headerData(int section,
-                                   Qt::Orientation orientation,
-                                   int role) const
-{
-	if (orientation == Qt::Horizontal)
-		return toResultModel::headerData(section + PriKeys.size(), orientation, role);
-	else
-		return toResultModel::headerData(section, orientation, role);
-}
-
-/**
- * Returns the number of columns for the children of the given
- * parent. When the parent is valid it means that rowCount is
- * returning the number of children of parent.
- */
-int toResultModelEdit::columnCount(const QModelIndex &parent) const
-{
-    Q_UNUSED(parent);
-	if (Headers.empty())
-		return 0;
-	int i = Headers.size() - PriKeys.size();
-    return Headers.size() - PriKeys.size();
 }
 
 void toResultModelEdit::commitUpdate(toConnection &conn, const toQuery::Row &row, unsigned int &updated)

@@ -98,3 +98,11 @@ QString toOracleTraits::unQuote(QString const &name) const
         return name.left(name.length() - 1).right(name.length() - 2);
     return name.toUpper();
 }
+
+QList<QString> toOracleTraits::primaryKeys(toConnection &, QString const& owner, QString const& table) const
+{
+	// Column names begging with a space ' ' are considered to be "hidden" See: toResultTableView::slotApplyColumnRules
+	static const QString ROWID(QString::fromAscii("ROWID"));
+	static const QString ORA_ROWSCN(QString::fromAscii("ORA_ROWSCN"));
+	return QList<QString>() << ROWID << ORA_ROWSCN;
+}

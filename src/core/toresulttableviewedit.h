@@ -94,6 +94,8 @@ protected slots:
 	// reimplemented
 	virtual void slotHandleDoubleClick(const QModelIndex &);
 
+	virtual void slotApplyColumnRules(void);
+
 private slots:
     /**
      * Handle connection toolbar's commit and rollback.

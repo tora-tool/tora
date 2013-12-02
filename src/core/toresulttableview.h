@@ -138,7 +138,7 @@ protected slots:
                                   const QItemSelection &deselected);
 
     // apply column rules, numbercolumn, readable columns
-    void slotApplyColumnRules(void);
+    virtual void slotApplyColumnRules(void);
 
 protected:
 

@@ -124,6 +124,16 @@ void toResultTableViewEdit::slotHandleDoubleClick(const QModelIndex &)
 	// do nothing, when editable toResultTableView was clicked
 }
 
+void toResultTableViewEdit::slotApplyColumnRules()
+{
+	Q_ASSERT_X(!model()->headers().empty(), qPrintable(__QHERE__), "Headers were not received yet");
+	for (int i = 1; i <= PriKeys.size(); i++)
+	{
+		hideColumn(i);
+	}
+	toResultTableView::slotApplyColumnRules();
+}
+
 bool toResultTableViewEdit::commitChanges(bool status)
 {
     // Check to make sure some changes were actually made

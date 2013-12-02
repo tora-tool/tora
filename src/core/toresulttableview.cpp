@@ -415,6 +415,8 @@ void toResultTableView::keyPressEvent(QKeyEvent * event)
 
 void toResultTableView::slotApplyColumnRules()
 {
+	// TODO: call after every model reset
+	// connect(Model, SIGNAL(modelReset()), this, SLOT(slotApplyColumnRules()));
     if (!NumberColumn)
         hideColumn(0);
 
