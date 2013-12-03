@@ -115,7 +115,7 @@ toResultData::toResultData(QWidget *parent,
                   QIcon(QPixmap(const_cast<const char**>(filesave_xpm))),
                   tr("Save changes"));
     connect(saveAct, SIGNAL(triggered()), this, SLOT(save()));
-    connect(Edit, SIGNAL(changed(bool)), saveAct, SLOT(setEnabled(bool)));
+    saveAct->setDisabled(true);
 
     addAct = toolbar->addAction(
                  QIcon(QPixmap(const_cast<const char**>(addrecord_xpm))),
@@ -247,6 +247,7 @@ void toResultData::setModel(toResultModel *model)
 		Model = NULL;
 	Model = dynamic_cast<toResultModelEdit *>(model);
 	Q_ASSERT_X(Model != NULL || model == NULL, qPrintable(__QHERE__), "Invalid subclass of toResultModel");
+	connect(Model, SIGNAL(changed(bool)), saveAct, SLOT(setEnabled(bool)));
 }
 
 void toResultData::navigate(QAction *action)

@@ -787,7 +787,7 @@ bool toResultTableView::queryFromCache(const QString &owner, const QString &obje
     //TODO: Pass pri keys
 
     toResultModel* model = new toResultModel(owner, objectType, this, ReadableColumns);
-    setModel(Model);
+    setModel(model);
 
     this->sortByColumn(0, Qt::AscendingOrder);
     setSortingEnabled(true);
