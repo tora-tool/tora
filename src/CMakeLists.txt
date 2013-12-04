@@ -140,6 +140,8 @@ SET(TORA_UI_SRC
   connection/toqmysqlsettingui.ui  
   connection/toqpsqlsettingui.ui 
   
+  result/toresulttabledataui.ui
+
   #     todebugchangeui.ui
   #     todebugwatch.ui
 
@@ -275,6 +277,7 @@ SET(TORA_MOC_CLASSES
   result/totableview.h
   result/totreemodel.h
   result/totreeview.h
+  result/toresulttabledata.h
 
   ts_log/toostream.h
 
@@ -507,6 +510,7 @@ SET(TORA_SOURCES
   result/totableview.cpp
   result/totreemodel.cpp
   result/totreeview.cpp
+  result/toresulttabledata.cpp
 
   migratetool/sqldeveloper.cpp
   migratetool/squirrelsql.cpp
