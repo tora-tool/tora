@@ -703,10 +703,11 @@ void SqlStatement::define(BindPar &dp)
 
 SqlStatement::~SqlStatement()
 {
-	for(unsigned dpos = 1; dpos <= get_column_count(); ++dpos)
+	std::vector<DescribeColumn*>::iterator it = _columns.begin();
+	for(; it != _columns.end(); ++it)
 	{
-		delete _columns[dpos];
-		_columns[dpos] = 0;
+		delete *it; //_columns[dpos];
+		//_columns[dpos] = 0;
 	}
 	if( get_stmt_type() == STMT_SELECT )
 		delete [] _all_defines;
