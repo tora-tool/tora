@@ -68,16 +68,13 @@ public:
      * @param parent qobject parent
      * @param name sets objectName property
      */
-    toResultTableViewEdit(bool readable,
-                          bool numberColumn,
-                          QWidget *parent,
+    toResultTableViewEdit(QWidget *parent,
                           const char *name = 0);
     virtual ~toResultTableViewEdit(void);
 
 
     /**
      * Reimplemented to create query and new model.
-     *
      */
     virtual void query(const QString &sql, toQueryParams const& param);
 

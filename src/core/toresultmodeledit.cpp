@@ -341,7 +341,7 @@ void toResultModelEdit::commitUpdate(toConnectionSubLoan &conn, const toQuery::R
     toQueryParams args;
     for (int i = PriKeys.size() + 1; i < Headers.size(); i++)
     {
-        if (row[i].isModified())
+        // TODO if (row[i].isModified())
         {
             // Only append columns that is not null
             if (num > 0)

@@ -49,11 +49,8 @@
 #include <QtGui/QFontMetrics>
 #include <QtGui/QProgressDialog>
 
-toResultTableViewEdit::toResultTableViewEdit(bool readable,
-        bool numberColumn,
-        QWidget *parent,
-        const char *name)
-    : toResultTableView(readable, numberColumn, parent, name, true)
+toResultTableViewEdit::toResultTableViewEdit(QWidget *parent, const char *name)
+    : toResultTableView(false, false, parent, name, true)
 {
 
     setSelectionBehavior(QAbstractItemView::SelectItems);

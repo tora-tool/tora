@@ -80,7 +80,7 @@ toResultData::toResultData(QWidget *parent,
     QToolBar *toolbar = Utils::toAllocBar(this, tr("Content editor"));
     vbox->addWidget(toolbar);
 
-    Edit = new toResultTableViewEdit(false, false, this);
+    Edit = new toResultTableViewEdit(this);
     vbox->addWidget(Edit);
 
     Form = new toResultDataSingle(this);
