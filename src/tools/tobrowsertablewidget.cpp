@@ -36,7 +36,6 @@
 #include "core/tobrowserbasewidget.h"
 #include "tools/tostorage.h"
 #include "core/toresultcols.h"
-#include "core/toresultdata.h"
 #include "core/toresultcode.h"
 #include "core/toresultitem.h"
 #include "core/toresulttableview.h"
