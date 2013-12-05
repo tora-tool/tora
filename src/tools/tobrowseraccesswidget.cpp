@@ -33,10 +33,10 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "tools/tobrowseraccesswidget.h"
-#include "core/toresultdata.h"
 #include "core/utils.h"
 #include "core/toconnectionsub.h"
 #include "core/toconnectionsubloan.h"
+#include "result/toresulttabledata.h"
 
 //Util::RegisterInFactory<toBrowserAccessWidget, toBrowserWidgetFactory, toCache::CacheEntryType> regToBrowserAccessWidget(???);
 
@@ -75,7 +75,7 @@ toBrowserAccessWidget::toBrowserAccessWidget(QWidget * parent)
 
 #else
 
-    accessContent = new toResultData(this);
+    accessContent = new toResultTableData(this);
     accessContent->setObjectName("accessContent");
     connect(accessContent, SIGNAL(changesSaved()), this, SLOT(flushPrivs()));
 

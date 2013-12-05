@@ -45,6 +45,7 @@ class toResultExtent;
 class toResultCode;
 class toResultGrants;
 class toResultDrawing;
+class toResultTableData;
 
 /*! \brief Table browser for toBrowser tool.
 See toBrowserBaseWidget for more info.
@@ -61,7 +62,7 @@ class toBrowserTableWidget : public toBrowserBaseWidget
     toResultDrawing *schemaView;
     toResultGrants *grantsView;
     toResultTableView *triggersView;
-    toResultData *resultData;
+    toResultTableData *resultData;
     toResultItem *resultInfo;
     toResultTableView *statisticsView;
     toResultTableView *partitionsView;

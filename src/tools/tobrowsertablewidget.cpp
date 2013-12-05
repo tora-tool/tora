@@ -49,6 +49,8 @@
 #include "core/toconnectiontraits.h"
 #include "core/toconnectionsubloan.h"
 
+#include "result/toresulttabledata.h"
+
 #if defined(GRAPHWIZ_FOUND)
 #include "core/toresultdrawing.h"
 #endif
@@ -430,7 +432,7 @@ toBrowserTableWidget::toBrowserTableWidget(QWidget * parent)
     triggersView->setSQL(SQLTableTrigger);
     triggersView->setReadAll(true);
 
-    resultData = new toResultData(this);
+    resultData = new toResultTableData(this);
     resultData->setObjectName("resultData");
 
     resultInfo = new toResultItem(this);

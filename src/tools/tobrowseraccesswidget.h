@@ -37,7 +37,7 @@
 
 #include "core/tobrowserbasewidget.h"
 
-class toResultData;
+class toResultTableData;
 
 
 /*! \brief MySQL Access browser for toBrowser tool.
@@ -48,7 +48,7 @@ class toBrowserAccessWidget : public toBrowserBaseWidget
 {
     Q_OBJECT
 
-    toResultData * accessContent;
+    toResultTableData * accessContent;
 
 public:
     toBrowserAccessWidget(QWidget * parent);
