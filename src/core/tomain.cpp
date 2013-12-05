@@ -49,6 +49,7 @@
 #include "core/toabout.h"
 #include "core/topreferences.h"
 #include "tools/toworksheet.h"
+#include "tools/tobrowser.h"
 #include "core/toconfiguration.h"
 #include "core/toglobalevent.h"
 #include "core/utils.h"
@@ -830,8 +831,12 @@ void toMain::commandCallback(QAction *action)
         try
         {
         	toWorksheet *w = dynamic_cast<toWorksheet*>(lastToolWidget);
-        	Q_ASSERT_X(w, qPrintable(__QHERE__), "Commit on wrong tool");
-        	w->commitChanges();
+			toBrowser *b = dynamic_cast<toBrowser*>(lastToolWidget);
+        	Q_ASSERT_X(w || b, qPrintable(__QHERE__), "Commit on wrong tool");
+			if (w)
+				w->commitChanges();
+			//else
+			//	b->commitChanges();
         }
         TOCATCH;
     }

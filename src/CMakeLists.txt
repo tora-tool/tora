@@ -231,7 +231,6 @@ SET(TORA_MOC_CLASSES
   core/toresultitem.h
   core/toresultstats.h
   core/todescribe.h
-  core/toresultdata.h
   core/toresultcode.h
   core/toresultfield.h
   core/toresultgrants.h
@@ -466,7 +465,6 @@ SET(TORA_SOURCES
   core/toresultitem.cpp
   core/toresultstats.cpp
   core/todescribe.cpp
-  core/toresultdata.cpp
   core/toresulttableviewedit.cpp
   core/toresultcode.cpp
   core/toresultfield.cpp
@@ -971,7 +969,6 @@ SET(TEST5_SOURCES
   core/toresultcols.cpp
   core/toresultcolscomment.cpp
   core/toresultitem.cpp
-  core/toresultdata.cpp
   core/toresultdatasingle.cpp
   core/toresultcombo.cpp
   core/toresultlistformat.cpp
@@ -1045,7 +1042,6 @@ SET(TEST5_MOC_SOURCES
   core/moc_toresulttableview.cxx
   core/moc_toresulttableviewedit.cxx
   core/moc_toresultdatasingle.cxx
-  core/moc_toresultdata.cxx
   core/moc_toresultcombo.cxx
   core/moc_toresultview.cxx
   core/moc_tosplash.cxx

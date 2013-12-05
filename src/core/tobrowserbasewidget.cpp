@@ -33,8 +33,8 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "core/tobrowserbasewidget.h"
-#include "core/toresultdata.h"
 #include "core/toconnectiontraits.h"
+#include "result/toresulttabledata.h"
 
 #include <QtGui/QApplication>
 
@@ -52,7 +52,7 @@ bool toBrowserBaseWidget::maybeSave()
     bool ret = true;
     foreach (toResult * i, m_tabs.values())
     {
-        toResultData * d = dynamic_cast<toResultData*>(i);
+        toResultTableData * d = dynamic_cast<toResultTableData*>(i);
         if (d)
             ret &= d->maybeSave();
     }

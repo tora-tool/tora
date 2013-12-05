@@ -36,7 +36,7 @@
 #include "core/toresultcols.h"
 #include "core/toresultfield.h"
 #include "core/toresulttableview.h"
-#include "core/toresultdata.h"
+#include "result/toresulttabledata.h"
 #include "core/toresultgrants.h"
 #include "core/toresultdepend.h"
 #include "core/toresultcode.h"
@@ -88,7 +88,7 @@ toBrowserViewWidget::toBrowserViewWidget(QWidget * parent)
     triggersView->setSQL(SQLViewTrigger);
     triggersView->setReadAll(true);
 
-    resultData = new toResultData(this);
+    resultData = new toResultTableData(this);
     resultData->setObjectName("resultData");
 
     grantsView = new toResultGrants(this);

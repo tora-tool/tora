@@ -64,5 +64,5 @@ public:
     	return true;
     }
 
-    virtual QList<QString> primaryKeys(toConnection &, QString const& owner, QString const& table) const;
+    virtual QList<QString> primaryKeys(toConnection &, toCache::ObjectRef const&) const;
 };

@@ -35,6 +35,7 @@
 #include "connection/tooracletraits.h"
 #include "core/utils.h"
 #include "core/toconfiguration.h"
+#include "core/toconnection.h"
 
 /** Return a string representation to address an object.
 *
@@ -99,10 +100,14 @@ QString toOracleTraits::unQuote(QString const &name) const
     return name.toUpper();
 }
 
-QList<QString> toOracleTraits::primaryKeys(toConnection &, QString const& owner, QString const& table) const
+QList<QString> toOracleTraits::primaryKeys(toConnection &conn, toCache::ObjectRef const&obj) const
 {
-	// Column names begging with a space ' ' are considered to be "hidden" See: toResultTableView::slotApplyColumnRules
 	static const QString ROWID(QString::fromAscii("ROWID"));
 	static const QString ORA_ROWSCN(QString::fromAscii("ORA_ROWSCN"));
-	return QList<QString>() << ROWID << ORA_ROWSCN;
+
+	toCache::CacheEntry const* e = conn.getCache().findEntry(obj);
+	if (e->type == toCache::TABLE)
+		return QList<QString>() << ROWID << ORA_ROWSCN;
+	else
+		return QList<QString>(); // no primary keys for views
 }

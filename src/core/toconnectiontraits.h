@@ -35,6 +35,8 @@
 #ifndef TOCONNECTIONTRAITS_H
 #define TOCONNECTIONTRAITS_H
 
+#include "core/tocache.h"
+
 #include <QtCore/QString>
 #include <QtCore/QList>
 
@@ -75,7 +77,7 @@ public:
      * Return list of primary key columns for a table
      * By default return an empty list => table can not be modified using toResultTableViewEdit
      */
-    virtual QList<QString> primaryKeys(toConnection &, QString const& owner, QString const& table) const { return QList<QString>(); };
+    virtual QList<QString> primaryKeys(toConnection &, toCache::ObjectRef const&) const { return QList<QString>(); };
 
     virtual ~toConnectionTraits() {};
 };

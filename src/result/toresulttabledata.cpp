@@ -185,7 +185,7 @@ void toResultTableData::query(const QString &, toQueryParams const& params)
     filterAct->setChecked(filter);
 
     toConnection &conn = connection();
-    QList<QString> priKeys = conn.getTraits().primaryKeys(conn, Owner, Table);
+    QList<QString> priKeys = conn.getTraits().primaryKeys(conn, toCache::ObjectRef(Owner, Table));
     SQL = "SELECT ";
     Q_FOREACH(QString c, priKeys)
     {

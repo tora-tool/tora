@@ -40,7 +40,7 @@
 class toResultCols;
 class toResultTableView;
 class toResultField;
-class toResultData;
+class toResultTableData;
 class toResultGrants;
 class toResultDepend;
 class toResultCode;
@@ -57,7 +57,7 @@ class toBrowserViewWidget : public toBrowserBaseWidget
     toResultCols *columnsWidget;
     toResultField *resultField;
     toResultTableView *triggersView;
-    toResultData *resultData;
+    toResultTableData *resultData;
     toResultGrants *grantsView;
     toResultDepend *resultDependencies;
     toResultCode *extractView;

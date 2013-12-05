@@ -77,7 +77,7 @@ void toResultTableViewEdit::query(const QString &SQL, toQueryParams const& param
         Owner = *par;
         par++;
         Table = *par;
-        PriKeys = connection().getTraits().primaryKeys(connection(), Owner, Table);
+        PriKeys = connection().getTraits().primaryKeys(connection(), toCache::ObjectRef(Owner, Table));
     }
 
     toResultTableView::query(SQL, toQueryParams());
