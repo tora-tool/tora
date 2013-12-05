@@ -46,31 +46,31 @@ static int NumberFormat;
 static int NumberDecimals;
 
 
-toQValue::toQValue(int i): Modified(false)
+toQValue::toQValue(int i)
 {
     Value = i;
 }
 
-toQValue::toQValue(double i): Modified(false)
+toQValue::toQValue(double i)
 {
     Value = i;
 }
 
-toQValue::toQValue(qlonglong d): Modified(false)
+toQValue::toQValue(qlonglong d)
 {
     Value = d;
 }
 
-toQValue::toQValue(qulonglong d): Modified(false)
+toQValue::toQValue(qulonglong d)
 {
     Value = d;
 }
-toQValue::toQValue(toRowDesc d): Modified(false)
+toQValue::toQValue(toRowDesc d)
 {
     Value.setValue(d);
 }
 
-toQValue::toQValue(const toQValue &copy): Value(copy.Value), OldValue(copy.OldValue), Modified(copy.Modified)
+toQValue::toQValue(const toQValue &copy): Value(copy.Value)
 {
     /** Be destructive only if complexType is held
      *  There should be no copying of data read from a query,
@@ -84,8 +84,6 @@ toQValue::toQValue(const toQValue &copy): Value(copy.Value), OldValue(copy.OldVa
 const toQValue &toQValue::operator = (const toQValue & copy)
 {
     Value = copy.Value;
-    OldValue = copy.OldValue;
-    Modified = copy.Modified;
     /** Be destructive only if complexType is held
      *  There should be no copying of data read from a query,
      *  but toQValue is also used for query parameters(toQList and others)
@@ -96,12 +94,12 @@ const toQValue &toQValue::operator = (const toQValue & copy)
     return *this;
 }
 
-toQValue::toQValue(const QString &str): Modified(false)
+toQValue::toQValue(const QString &str)
 {
     Value = str;
 }
 
-toQValue::toQValue(): Modified(false)
+toQValue::toQValue()
 {
 }
 
@@ -463,4 +461,14 @@ QString toQValue::toSIsize() const
     }
 
     return s.arg(size, 0, 'f', 0);
+}
+
+bool toQValue::updateNewValue(toQValue value)
+{
+    if (Value.type() == QVariant::UserType)
+        return false;
+    if(value.isComplexType())
+        return false;
+    Value = value.Value;
+    return true;
 }

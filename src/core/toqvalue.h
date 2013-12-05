@@ -60,9 +60,7 @@ Q_DECLARE_METATYPE(toRowDesc);
  */
 class TORA_EXPORT toQValue
 {
-    QVariant Value, OldValue;
-    bool    Modified;
-
+    QVariant Value;
 public:
     /**
      * This is helper class for visualization of complex types
@@ -218,34 +216,7 @@ public:
 
     QString toSIsize() const;
 
-    int updateNewValue(toQValue value)
-    {
-        if (Value.type() == QVariant::UserType)
-            return false;
-        if(!Modified)
-        {
-            Modified = true;
-            OldValue = Value;
-        }
-        if(value.isComplexType())
-            return false;
-        Value = value.Value;
-        return true;
-    }
-
-    void popOldValue()
-    {
-        if(Modified)
-        {
-            Modified = false;
-            Value = OldValue;
-        }
-    }
-
-    bool isModified() const
-    {
-        return Modified;
-    }
+    bool updateNewValue(toQValue value);
 
     /** Set numberformat.
      * @param format 0 = Default, 1 = Scientific, 2 = Fixed Decimals
