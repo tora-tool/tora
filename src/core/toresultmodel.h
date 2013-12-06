@@ -62,8 +62,6 @@ public:
         Qt::Alignment     align;       /* alignment */
     };
 
-//    typedef QList<toQValue> Row; // NOTE: first (0th) value in a row is a row description (see variable currRowKey)
-//    typedef QList<Row> RowList;
     typedef QList<HeaderDesc> HeaderList;
 
 protected:

@@ -78,14 +78,6 @@ public:
      */
     virtual void query(const QString &sql, toQueryParams const& param);
 
-    /**
-     * Writes cached changes to database.
-     *
-     * @param status Should display a status message.
-     * @return success
-     */
-    bool commitChanges(bool status = true);
-
     toResultModelEdit* editModel();
 protected slots:
 	// reimplemented
@@ -96,14 +88,6 @@ protected slots:
 	virtual void slotApplyColumnRules(void);
 
 private slots:
-    /**
-     * Handle connection toolbar's commit and rollback.
-     *
-     * @param conn Connection that is committed.
-     * @param cmt true for commit, false for rollback
-     */
-    void commitChanges(toConnection &conn);
-    void rollbackChanges(toConnection &conn);
 
     /**
      * Calls Model to add new record.
@@ -140,7 +124,6 @@ protected:
     virtual toResultModel* allocModel(toEventQuery *query);
 
     QString Owner, Table;
-
     QList<QString> PriKeys;
 };
 

@@ -50,7 +50,8 @@ class toResultModelEdit : public toResultModel
 {
     Q_OBJECT;
     friend class toResultTableViewEdit;
-protected:
+    friend class toResultTableData;
+public:
     enum ChangeKind
     {
         Add,
@@ -69,11 +70,6 @@ protected:
         toQuery::Row       row;          /* data before the change */
     };
 
-    // keep a history of changes to commit.
-    // this is a fifo -- don't sort or insert. just append.
-    QList<struct ChangeSet> Changes;
-
-public:
     toResultModelEdit(toEventQuery *query,
     		QList<QString> priKeys,
     		QObject *parent = 0,
@@ -179,34 +175,11 @@ public:
         return PriKeys;
     }
 
-    void setOwner(const QString &owner)
-    {
-        this->Owner = owner;
-    }
-    void setTable(const QString &table)
-    {
-        this->Table = table;
-    }
-    /**
-     * Update data
-     */
-    void commitChanges(toConnectionSubLoan &conn, unsigned int &updated, unsigned int &added, unsigned int &deleted);
-
     QList<struct ChangeSet>& changes();
 
     void revertChanges();
 
 protected:
-
-    void commitUpdate(toConnectionSubLoan &conn, const toQuery::Row &row, unsigned int &updated);
-    void commitAdd(toConnectionSubLoan &conn, const toQuery::Row &row, unsigned int &added);
-    void commitDelete(toConnectionSubLoan &conn, const toQuery::Row &row, unsigned int &deleted);
-
-    // this code is duplicate to toResultModelEdit (moved from toResultTableViewEdit)
-    unsigned commitUpdate(toConnectionSubLoan &conn, ChangeSet &change);
-    unsigned commitAdd(toConnectionSubLoan &conn, ChangeSet &change);
-    unsigned commitDelete(toConnectionSubLoan &conn, ChangeSet &change);
-
     /**
      * Append change to Changes
      */
@@ -231,8 +204,11 @@ signals:
     void changed(bool edit);
 
 private:
-    QString Owner, Table;
-    const QList<QString> PriKeys; // TODO remove this and override data() in toResultModelEdit
+    const QList<QString> PriKeys;
+
+    // keep a history of changes to commit.
+    // this is a fifo -- don't sort or insert. just append.
+    QList<struct ChangeSet> Changes;
 };
 
 #endif

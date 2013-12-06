@@ -35,6 +35,7 @@
 #ifndef TORESULTTABLEDATA_H
 #define TORESULTTABLEDATA_H
 
+#include "core/toresultmodeledit.h"
 #include "ui_toresulttabledataui.h"
 
 #include <QtGui/QWidget>
@@ -44,8 +45,8 @@ class QAction;
 class QCloseEvent;
 class toResultDataSingle;
 class toResultTableViewEdit;
-class toResultModel;
-class toResultModelEdit;
+//class toResultModel;
+//class toResultModelEdit;
 
 class toResultTableData
 	: public QWidget
@@ -100,6 +101,22 @@ public slots:
     void refreshWarn(void);
 
 private:
+    // generate filtername
+    QString filterName();
+
+    bool commitChanges();
+
+    void commitUpdate(toConnectionSubLoan &conn, const toQuery::Row &row, unsigned int &updated);
+    void commitAdd(toConnectionSubLoan &conn, const toQuery::Row &row, unsigned int &added);
+    void commitDelete(toConnectionSubLoan &conn, const toQuery::Row &row, unsigned int &deleted);
+
+    // this code is duplicate to toResultModelEdit (moved from toResultTableViewEdit)
+    unsigned commitUpdate(toConnectionSubLoan &conn, toResultModelEdit::ChangeSet &change);
+    unsigned commitAdd(toConnectionSubLoan &conn, toResultModelEdit::ChangeSet &change);
+    unsigned commitDelete(toConnectionSubLoan &conn, toResultModelEdit::ChangeSet &change);
+
+    toResultModelEdit* Model;
+
     // toolbar actions
     QAction *filterAct;
     QAction *removeAct;
@@ -137,15 +154,6 @@ private:
 
     // Current filter name in map
     QString FilterName;
-
-    // generate filtername
-    QString filterName();
-
-    // true if user has elected to discard current changes.
-    // should be reset on every query (TODO: write only variable)
-    bool Discard;
-
-    toResultModelEdit* Model;
 };
 
 
