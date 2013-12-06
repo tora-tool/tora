@@ -891,11 +891,8 @@ void toResultTableData::commitDelete(toConnectionSubLoan &conn, const toQuery::R
         sql += "<char[4000],in>";
         args << row[num];
     }
-    //qDebug() << sql;
-    {
-    	toQuery q(conn, sql, args);
-    	deleted += q.rowsProcessed();
-    }
+    toQuery q(conn, sql, args);
+    deleted += q.rowsProcessed();
 }
 unsigned toResultTableData::commitDelete(toConnectionSubLoan &conn, toResultModelEdit::ChangeSet &change)
 {
@@ -958,16 +955,8 @@ unsigned toResultTableData::commitDelete(toConnectionSubLoan &conn, toResultMode
         }
     }
 
-	{
-		toQuery q(conn, sql, args);
-
-		if (toConfigurationSingle::Instance().autoCommit())
-			conn->commit();
-		else
-		{
-			throw QString("Not implemented yet. %1").arg(__QHERE__);
-			//// TODO toGlobalEventSingle::Instance().setNeedCommit(conn);
-		}
-		return q.rowsProcessed();
-	}
+    toQuery q(conn, sql, args);
+    if (toConfigurationSingle::Instance().autoCommit())
+    	conn->commit();
+    return q.rowsProcessed();
 }
