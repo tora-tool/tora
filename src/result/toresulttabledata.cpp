@@ -539,205 +539,51 @@ void toResultTableData::refreshWarn()
     refresh();
 }
 
-void toResultTableData::commitUpdate(toConnectionSubLoan &conn, const toQuery::Row &row, unsigned int &updated)
-{
-    toConnectionTraits const& connTraits = conn.ParentConnection.getTraits();
-    QString sql = QString("UPDATE %1.%2 SET ").arg(connTraits.quote(Owner)).arg(connTraits.quote(Table));
-    int num = 0;
-    toQueryParams args;
-    for (int i = Model->PriKeys.size() + 1; i < Model->headers().size(); i++)
-    {
-        // TODO if (row[i].isModified())
-        {
-            // Only append columns that is not null
-            if (num > 0)
-            {
-                sql += ',';
-            }
-            num++;
-            // Construct place holder
-            sql += connTraits.quote(Model->headers()[i].name) + "=:f" + QString::number(num);
-
-            if (row[i].isBinary())
-            {
-                if (Model->headers()[i].datatype.toUpper().contains("LOB"))
-                    sql += ("<blob,in>");
-                else
-                    sql += ("<raw_long,in>");
-            }
-            else
-            {
-                if (Model->headers()[i].datatype.toUpper().contains("LOB"))
-                    sql += ("<varchar_long,in>");
-                else
-                    sql += ("<char[4000],in>");
-            }
-            // Construct value list
-            args << row[i];
-        }
-    }
-    sql += " WHERE ";
-    QList<QString>::const_iterator ite;
-    int i;
-    for (i = 1, ite = Model->getPriKeys().constBegin(); ite != Model->getPriKeys().constEnd(); ite++, i++)
-    {
-        if(i > 1)
-        {
-            sql += " AND ";
-        }
-        sql += *ite + "=:k" + QString::number(i);
-        sql += "<char[4000],in>";
-        args << row[i];
-    }
-    //qDebug() << sql;
-	{
-				toQuery q(conn, sql, args);
-				updated += q.rowsProcessed();
-	}
-}
-
 unsigned toResultTableData::commitUpdate(toConnectionSubLoan &conn, toResultModelEdit::ChangeSet &change)
 {
-    toConnectionTraits const& connTraits = conn.ParentConnection.getTraits();
-    const toResultModel::HeaderList & Headers = Model->headers();
-    bool oracle = conn.ParentConnection.providerIs("Oracle");
+	static const QString UPDATE = QString::fromAscii("UPDATE %1.%2 SET %3 WHERE 1=1 %4");
+	static const QString CONJUNCTION = QString::fromAscii(" AND %1 = %2");
+	static const QString ASSIGNMENT = QString::fromAscii("%1 = %2");
 
-    QString sql = QString("UPDATE %1.%2 SET ").arg(connTraits.quote(Owner)).arg(connTraits.quote(Table));
-    sql += connTraits.quote(change.columnName);
+	if (Model->getPriKeys().empty())
+	{
+        Utils::toStatusMessage(tr("This table has no known primary keys"));
+        return 0;
+	}
+
+    toConnectionTraits const& connTraits = conn.ParentConnection.getTraits();
+    QString sqlValuePlaceHolders, sqlCondPlaceHolders;
 
     // set new value in update statement
     if (change.newValue.isNull())
-        sql += (" = NULL");
+    	sqlValuePlaceHolders = ASSIGNMENT.arg(change.columnName).arg("NULL");
     else
-    {
-        sql += ("= :f0");
+    	sqlValuePlaceHolders = ASSIGNMENT.arg(change.columnName).arg(change.newValue);
 
-        if (change.row[change.column].isBinary())
-        {
-            if (Headers[change.column].datatype.toUpper().contains("LOB"))
-                sql += ("<blob,in>");
-            else
-                sql += ("<raw_long,in>");
-        }
-        else
-        {
-            if (Headers[change.column].datatype.toUpper().contains("LOB"))
-                sql += ("<varchar_long,in>");
-            else
-                sql += ("<char[4000],in>");
-        }
+    for(int i = 1; i < Model->getPriKeys().size() + 1; i++)
+    {
+    	sqlCondPlaceHolders += CONJUNCTION
+    			.arg(connTraits.quote(Model->headerData(
+    					i,
+    					Qt::Horizontal,
+    					Qt::DisplayRole).toString()))
+    	        .arg(connTraits.quoteVarchar(change.row[i].editData()));
     }
 
-    // set where clause for update statement
-    sql += (" WHERE (");
-    int col = 1;
-    bool where = false;
-
-    for (toQuery::Row::iterator j = change.row.begin() + 1;
-            j != change.row.end();
-            j++, col++)
-    {
-
-    	QString columnName = connTraits.quote(Model->headerData(
-    			col,
-    			Qt::Horizontal,
-    			Qt::DisplayRole).toString());
-
-        if ((*j).isComplexType())
-        {
-            Utils::toStatusMessage(tr("This table contains complex/user defined columns "
-                                      "and can not be edited"));
-            return 0;
-        }
-
-        if (!oracle || (!Headers[col].datatype.toUpper().startsWith(("LONG")) &&
-                        !Headers[col].datatype.toUpper().contains(("LOB"))))
-        {
-            if (where)
-                sql += (" AND (");
-            else
-                where = true;
-
-            sql += columnName;
-
-            if ((*j).isNull())
-            {
-                sql += " IS NULL ";
-
-                // QVariant cannot identify the type when value is null therefore
-                // we use the actual database type for this check.
-                if (Headers[col].datatype.startsWith("NUMBER") ||
-                        Headers[col].datatype.startsWith("INT") ||
-                        Headers[col].datatype.startsWith("DATE"))
-                    sql += ")";
-                else
-                {
-                    sql += " OR " + columnName + " = :c";
-                    sql += QString::number(col);
-                    if ((*j).isBinary())
-                        sql += ("<raw_long,in>)");
-                    else
-                        sql += ("<char[4000],in>)");
-                }
-            }
-            else
-            {
-                sql += " = :c";
-                sql += QString::number(col);
-                if ((*j).isBinary())
-                    sql += ("<raw_long,in>)");
-                else
-                    sql += ("<char[4000],in>)");
-            }
-        }
-    }
-
-    if (!where)
-    {
-        Utils::toStatusMessage(tr("This table contains only LOB/LONG "
-                                  "columns and can not be edited"));
-        return 0;
-    }
-
-    toQueryParams args;
-
-    // the "SET = " value
-    if (!change.newValue.isNull())
-        args << change.newValue;
-
-    col = 1;
-    for (toQuery::Row::iterator j = change.row.begin() + 1;
-            j != change.row.end();
-            j++, col++)
-    {
-        if (!oracle || (!Headers[col].datatype.toUpper().startsWith(("LONG")) &&
-                        !Headers[col].datatype.toUpper().contains(("LOB"))))
-        {
-            if ((*j).isNull())
-            {
-                if (!Headers[col].datatype.startsWith("NUMBER") &&
-                        !Headers[col].datatype.startsWith("INT") &&
-                        !Headers[col].datatype.startsWith("DATE"))
-                    args << toQValue(QString(""));
-                // else don't push null for numbers
-            }
-            else
-                args << (*j);
-        }
-    }
-
+    QString sql = UPDATE.arg(connTraits.quote(Owner)).arg(connTraits.quote(Table)).arg(sqlValuePlaceHolders).arg(sqlCondPlaceHolders);
     Logging->appendPlainText(sql);
-	{
-		toQuery q(conn, sql, args);
-		if (toConfigurationSingle::Instance().autoCommit())
-			conn->commit();
-		else
-		{
-			throw QString("Not implemented yet. %1").arg(__QHERE__);
-			///toGlobalEventSingle::Instance().setNeedCommit(conn);
-		}
-		return q.rowsProcessed();
-	}
+    {
+    	toQuery q(conn, sql, toQueryParams());
+		q.eof();
+    	if (q.rowsProcessed() > 1)
+    	{
+    	    Logging->appendPlainText("Rollback;");
+    		conn->rollback();
+    		return 0;
+    	}
+    	conn->commit();
+    	return q.rowsProcessed();
+    }
 }
 
 unsigned toResultTableData::commitAdd(toConnectionSubLoan &conn, toResultModelEdit::ChangeSet &change)
@@ -835,6 +681,12 @@ unsigned toResultTableData::commitDelete(toConnectionSubLoan &conn, toResultMode
     {
     	toQuery q(conn, sql, toQueryParams());
 		q.eof();
+    	if (q.rowsProcessed() > 1)
+    	{
+    	    Logging->appendPlainText("Rollback;");
+    		conn->rollback();
+    		return 0;
+    	}
     	conn->commit();
     	return q.rowsProcessed();
     }
