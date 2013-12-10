@@ -92,8 +92,8 @@ public:
 
     static toToolWidget* fileWorksheet(const QString &file);
 
-    void commitChanges();
-    void rollbackChanges();
+    virtual void commitChanges();
+    virtual void rollbackChanges();
 
     enum execTypeEnum
     {

@@ -107,10 +107,7 @@ private:
     bool commitChanges();
 
     void commitUpdate(toConnectionSubLoan &conn, const toQuery::Row &row, unsigned int &updated);
-    void commitAdd(toConnectionSubLoan &conn, const toQuery::Row &row, unsigned int &added);
-    void commitDelete(toConnectionSubLoan &conn, const toQuery::Row &row, unsigned int &deleted);
 
-    // this code is duplicate to toResultModelEdit (moved from toResultTableViewEdit)
     unsigned commitUpdate(toConnectionSubLoan &conn, toResultModelEdit::ChangeSet &change);
     unsigned commitAdd(toConnectionSubLoan &conn, toResultModelEdit::ChangeSet &change);
     unsigned commitDelete(toConnectionSubLoan &conn, toResultModelEdit::ChangeSet &change);

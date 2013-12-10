@@ -1588,6 +1588,16 @@ bool toBrowser::canHandle(const toConnection &conn)
            conn.providerIs("SapDB");
 }
 
+void toBrowser::commitChanges()
+{
+	//TODO
+}
+
+void toBrowser::rollbackChanges()
+{
+	//TODO
+}
+
 #if TORA3_BROWSER_TOOLS
 void toBrowser::modifyTable(void)
 {

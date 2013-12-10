@@ -202,6 +202,16 @@ toTimer *toToolWidget::timer(void)
     return Timer;
 }
 
+void toToolWidget::commitChanges()
+{
+	Q_ASSERT_X(false, qPrintable(__QHERE__), "Commit button should be disabled when tool does not support it");
+}
+
+void toToolWidget::rollbackChanges()
+{
+	Q_ASSERT_X(false, qPrintable(__QHERE__), "Rollback button should be disabled when tool does not support it");
+}
+
 QAction *toToolWidget::activationAction()
 {
 	if (Action == NULL)

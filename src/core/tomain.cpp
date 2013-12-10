@@ -227,12 +227,14 @@ void toMain::createActions()
                             this);
     commitAct->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_C);
     commitAct->setToolTip(tr("Commit transaction"));
+    commitAct->setDisabled(true);
 
     rollbackAct = new QAction(QPixmap(const_cast<const char**>(rollback_xpm)),
                               tr("&Rollback Connection"),
                               this);
     rollbackAct->setShortcut(Qt::CTRL + Qt::Key_Less);
     rollbackAct->setToolTip(tr("Rollback transaction"));
+    rollbackAct->setDisabled(true);
 
     currentAct = new QAction(tr("&Current Connection"),
                              this);

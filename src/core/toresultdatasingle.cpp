@@ -50,12 +50,10 @@
 
 toResultDataSingle::toResultDataSingle(QWidget *parent)
     : QWidget(parent)
+    , Row(-1)
+    , Container(NULL)
+    , Model(NULL)
 {
-
-    Row       = -1;
-    Container = NULL;
-    Model     = NULL;
-
     setBackgroundRole(QPalette::Window);
 
     // fscking qscrollarea won't resize this is added
@@ -68,7 +66,7 @@ toResultDataSingle::toResultDataSingle(QWidget *parent)
 }
 
 
-void toResultDataSingle::changeSource(toResultModel *model, int _row)
+void toResultDataSingle::changeSource(toResultModelEdit *model, int _row)
 {
     delete Container;
     Container = new QScrollArea(this);
@@ -88,7 +86,7 @@ void toResultDataSingle::changeSource(toResultModel *model, int _row)
 
     const toResultModel::HeaderList Headers = Model->headers();
 
-    int row = 1;
+    int row = 1 + Model->getPriKeys().size();
     int col = 0;
 
     for (; row < Headers.size(); row++, col = 0)
@@ -149,7 +147,7 @@ void toResultDataSingle::changeRow(int row)
     QList<QCheckBox *>::iterator chk = Null.begin();
     QList<QLineEdit *>::iterator val = Value.begin();
 
-    for (int i = 1;
+    for (int i = 1 + Model->getPriKeys().size();
             i < Model->columnCount() && chk != Null.end() && val != Value.end();
             i++, chk++, val++)
     {
@@ -176,7 +174,7 @@ void toResultDataSingle::saveRow()
         return;
 
     QList<QLineEdit *>::iterator val = Value.begin();
-    for (int i = 1; i < Model->columnCount() && val != Value.end(); i++, val++)
+    for (int i = 1 + Model->getPriKeys().size() ; i < Model->columnCount() && val != Value.end(); i++, val++)
     {
         QString v = QString::null;
         if ((*val)->isEnabled())

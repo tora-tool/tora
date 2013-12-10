@@ -145,6 +145,10 @@ public:
 	void addTab(QSplitter * page, const QString & label, bool enable);
 
     virtual bool canHandle(const toConnection &conn);
+
+    void commitChanges();
+    void rollbackChanges();
+
 #ifdef TORA3_SESSION
     virtual void exportData(std::map<QString, QString> &data,
                             const QString &prefix);

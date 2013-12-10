@@ -49,9 +49,8 @@ class toConnection;
 class toConnectionTraits
 {
 public:
-    /** Return a string representation to address an object.
+    /** Return a string representation of the object(table) name
     * @param name The name to be quoted.
-    * @param quoteLowercase Enclose in quotes when identifier has lowercase letters
     * @return String addressing table.
     */
     virtual QString quote(const QString &name) const = 0;
@@ -61,6 +60,12 @@ public:
     * @return String addressing table.
     */
     virtual QString unQuote(const QString &name) const = 0;
+
+    /** Perform the opposite of @ref quote.
+    * @param name The name to be un-quoted.
+    * @return String addressing table.
+    */
+    virtual QString quoteVarchar(const QString &name) const { return QChar('\'') + name + ('\''); };
 
     /** Check if connection provider supports table level comments.
      *  @return bool return true if database supports table level comments

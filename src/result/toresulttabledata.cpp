@@ -214,6 +214,9 @@ void toResultTableData::query(const QString &, toQueryParams const& params)
 void toResultTableData::clearData()
 {
     Edit->clearData();
+    ProgressBar->setHidden(true);
+    Logging->setHidden(true);
+    Logging->clear();
 }
 
 void toResultTableData::closeEvent(QCloseEvent *event)
@@ -393,90 +396,76 @@ bool toResultTableData::maybeSave(void)
 
 bool toResultTableData::commitChanges()
 {
-    // Check to make sure some changes were actually made
+	// Check to make sure some changes were actually made
 	Q_ASSERT_X(Model, qPrintable(__QHERE__), "toResultModelEdit == NULL");
 	if (!Model)
 		return false;
 
 	QList<struct toResultModelEdit::ChangeSet>& Changes = Model->changes();
 
-    if (Changes.empty())
-    {
+	if (Changes.empty())
+	{
 		Utils::toStatusMessage(tr("No changes made"), false, false);
-        return false;
-    }
+		return false;
+	}
 
-    bool error = false;
-    unsigned updated = 0, added = 0, deleted = 0;
-    if(Model->getPriKeys().empty())
-    {
-    	toConnectionSubLoan conn(connection());
-        // No primary keys
-        for (int changeIndex = 0; changeIndex < Changes.size(); changeIndex++)
-        {
-            ProgressBar->setValue(changeIndex);
+	ProgressBar->setVisible(true);
+	ProgressBar->setMaximum(Changes.size());
+	Logging->setVisible(true);
 
-            try
-            {
-                struct toResultModelEdit::ChangeSet &change = Changes[changeIndex];
+	bool error = false;
+	unsigned updated = 0, added = 0, deleted = 0;
 
-                switch (change.kind)
-                {
-                case toResultModelEdit::Delete:
-                    deleted += commitDelete(conn, change);
-                    break;
-                case toResultModelEdit::Add:
-                    added += commitAdd(conn, change);
-                    break;
-                case toResultModelEdit::Update:
-                    updated += commitUpdate(conn, change);
-                    break;
-                default:
-                    Utils::toStatusMessage(tr("Internal error."));
-                    break;
-                }
-            }
-            catch (const QString &str)
-            {
-                Utils::toStatusMessage(str);
-                error = true;
-                break;
-            }
-        }
-    }
-    else
-    {
-    	toConnectionSubLoan conn(connection());
+
+	toConnectionSubLoan conn(connection());
+	// No primary keys
+	for (int changeIndex = 0; changeIndex < Changes.size(); changeIndex++)
+	{
+		ProgressBar->setValue(changeIndex);
+
 		try
 		{
-			//commitChanges(conn, updated, added, deleted);
-			if (toConfigurationSingle::Instance().autoCommit())
-				conn->commit();
-			else
+			struct toResultModelEdit::ChangeSet &change = Changes[changeIndex];
+
+			switch (change.kind)
 			{
-				///throw QString("Not implemented yet. %1").arg(__QHERE__);
-				///toGlobalEventSingle::Instance().setNeedCommit(conn);
+			case toResultModelEdit::Delete:
+				deleted += commitDelete(conn, change);
+				break;
+			case toResultModelEdit::Add:
+				added += commitAdd(conn, change);
+				break;
+			case toResultModelEdit::Update:
+				updated += commitUpdate(conn, change);
+				break;
+			default:
+				Utils::toStatusMessage(tr("Internal error."));
+				break;
 			}
 		}
-		catch(...)
+		catch (const QString &str)
 		{
 			conn->rollback();
-			throw;
+			Utils::toStatusMessage(str);
+			error = true;
+			break;
 		}
-    }
+	}
 
-    Utils::toStatusMessage(tr("Saved %1 changes(updated %2, added %3, deleted %4)")
-                           .arg(Changes.size(), 0, 10)
-                           .arg(updated, 0, 10)
-                           .arg(added, 0, 10)
-                           .arg(deleted, 0, 10)
-                           , false, false);
-    if (!error)
-        Changes.clear();
-#if 0
-    emit changed(changed());
-#endif
-    return !error;
+	if (!error)
+	{
+		ProgressBar->setValue(Changes.size());
+		Changes.clear();
+	}
+
+	Utils::toStatusMessage(tr("Saved %1 changes(updated %2, added %3, deleted %4)")
+			.arg(Changes.size(), 0, 10)
+			.arg(updated, 0, 10)
+			.arg(added, 0, 10)
+			.arg(deleted, 0, 10)
+			, false, false);
+
+	return !error;
 }
 
 void toResultTableData::singleRecordForm(bool display)
@@ -512,10 +501,9 @@ void toResultTableData::singleRecordForm(bool display)
 void toResultTableData::updateForm()
 {
     // update single edit form
-    if (Edit->model())
+    if (Model)
     {
-        Form->changeSource(Edit->model(),
-                           Edit->selectionModel()->currentIndex().row());
+        Form->changeSource(Model, Edit->selectionModel()->currentIndex().row());
     }
 }
 
@@ -547,7 +535,8 @@ void toResultTableData::refreshWarn()
         }
     }
 
-    Edit->refresh();
+    clearData();
+    refresh();
 }
 
 void toResultTableData::commitUpdate(toConnectionSubLoan &conn, const toQuery::Row &row, unsigned int &updated)
@@ -737,6 +726,7 @@ unsigned toResultTableData::commitUpdate(toConnectionSubLoan &conn, toResultMode
         }
     }
 
+    Logging->appendPlainText(sql);
 	{
 		toQuery q(conn, sql, args);
 		if (toConfigurationSingle::Instance().autoCommit())
@@ -750,213 +740,102 @@ unsigned toResultTableData::commitUpdate(toConnectionSubLoan &conn, toResultMode
 	}
 }
 
-void toResultTableData::commitAdd(toConnectionSubLoan &conn, const toQuery::Row &row, unsigned int &added)
-{
-    const toResultModel::HeaderList & Headers = Model->headers();
-    toConnectionTraits const& connTraits = conn.ParentConnection.getTraits();
-    QString sql = QString("INSERT INTO %1.%2 (").arg(connTraits.quote(Owner)).arg(connTraits.quote(Table));
-    QString sqlColumns, sqlValuePlaceHolders;
-    int num = 0;
-    toQueryParams args;
-    for (int i = Model->getPriKeys().size() + 1; i < Headers.size(); i++)
-    {
-        if (!row[i].isNull())
-        {
-            // Only append columns that is not null
-            if (num > 0)
-            {
-                sqlColumns += ',';
-                sqlValuePlaceHolders += ',';
-            }
-            num++;
-            sqlColumns += connTraits.quote(Headers[i].name);
-            // Construct place holder
-            sqlValuePlaceHolders += (":f");
-            sqlValuePlaceHolders += QString::number(num);
-
-            if (row[i].isBinary())
-            {
-                if (Headers[i].datatype.toUpper().contains("LOB"))
-                    sqlValuePlaceHolders += ("<blob,in>");
-                else
-                    sqlValuePlaceHolders += ("<raw_long,in>");
-            }
-            else
-            {
-                if (Headers[i].datatype.toUpper().contains("LOB"))
-                    sqlValuePlaceHolders += ("<varchar_long,in>");
-                else
-                    sqlValuePlaceHolders += ("<char[4000],in>");
-            }
-            // Construct value list
-            args << row[i];
-        }
-    }
-    sql = sql + sqlColumns + ") VALUES (" + sqlValuePlaceHolders + ")";
-    //qDebug() << sql;
-    {
-    	toQuery q(conn, sql, args);
-    	added += q.rowsProcessed();
-    }
-}
-
 unsigned toResultTableData::commitAdd(toConnectionSubLoan &conn, toResultModelEdit::ChangeSet &change)
 {
+	static const QString INSERT = QString("INSERT INTO %1.%2 ( %3 ) VALUES( %4 ) ");
+
     toConnectionTraits const& connTraits = conn.ParentConnection.getTraits();
     const toResultModel::HeaderList & Headers = Model->headers();
-    QString sql = QString("INSERT INTO %1.%2 (").arg(connTraits.quote(Owner)).arg(connTraits.quote(Table));
 
-    int num = 0;
-    for (int i = 1; i < change.row.size(); i++)
+    QString sqlColumns, sqlValuePlaceHolders;
+
+    for (int i = 1 + Model->PriKeys.size(), col = 0; i < change.row.size(); i++, col++)
     {
-        if (num > 0)
-            sql += ",";
-        sql += connTraits.quote(Model->headerData(
+        if (col > 0)
+            sqlColumns += ", ";
+        sqlColumns += connTraits.quote(Model->headerData(
         		i,
         		Qt::Horizontal,
         		Qt::DisplayRole).toString());
-        num++;
-    }
 
-    sql += ") VALUES (";
-    int col = 1;
-    for (toQuery::Row::iterator j = change.row.begin() + 1;
-            j != change.row.end();
-            j++, col++)
-    {
-        if ((*j).isComplexType())
+        toQValue const &val = change.row[i].editData();
+        if (val.isComplexType()) // If it's a complex type then it's not NULL
         {
             Utils::toStatusMessage(tr("This table contains complex/user defined columns "
                                       "and can not be edited"));
             return 0;
         }
 
-        if (col > 1)
-            sql += (",");
-        sql += (":f");
-        sql += QString::number(col);
+        if (col > 0)
+            sqlValuePlaceHolders += (",");
 
-        if ((*j).isBinary())
+        if (val.isBinary())
         {
-            if (Headers[col].datatype.toUpper().contains("LOB"))
-                sql += ("<blob,in>");
-            else
-                sql += ("<raw_long,in>");
+            if (Headers[i].datatype.toUpper().contains("LOB"))
+            {
+            	sqlValuePlaceHolders += ("empty_blob()");
+                continue;
+            }
+
+            Utils::toStatusMessage(QString("Unsupported datatype(%1)").arg(Headers[i].datatype));
+            return 0;
         }
-        else
+
+        // Everything else --> varchar
         {
             if (Headers[col].datatype.toUpper().contains("LOB"))
-                sql += ("<varchar_long,in>");
-            else
-                sql += ("<char[4000],in>");
+            {
+                sqlValuePlaceHolders += ("empty_clob()");
+                continue;
+            }
+            sqlValuePlaceHolders += connTraits.quoteVarchar(val.editData());
+            continue;
         }
     }
 
-    sql += (")");
-
-    toQueryParams args;
-    for (int i = 1; i < change.row.size(); i++)
-        args << change.row[i];
+    QString sql = INSERT.arg(connTraits.quote(Owner)).arg(connTraits.quote(Table)).arg(sqlColumns).arg(sqlValuePlaceHolders);
+    Logging->appendPlainText(sql);
 
 	{
-		toQuery q(conn, sql, args);
-
-		if (toConfigurationSingle::Instance().autoCommit())
-			conn->commit();
-		else
-		{
-			throw QString("Not implemented yet. %1").arg(__QHERE__);
-			//toGlobalEventSingle::Instance().setNeedCommit(conn);
-		}
+    	// TODO use event query
+		toQuery q(conn, sql, toQueryParams());
+		q.eof();
+		//TODO add commit button
+		//if (toConfigurationSingle::Instance().autoCommit())
+		conn->commit();
 		return q.rowsProcessed();
 	}
 }
 
-void toResultTableData::commitDelete(toConnectionSubLoan &conn, const toQuery::Row &row, unsigned int &deleted)
-{
-    toConnectionTraits const& connTraits = conn.ParentConnection.getTraits();
-    QString sql = QString("DELETE FROM %1.%2 WHERE ").arg(connTraits.quote(Owner)).arg(connTraits.quote(Table));
-    QList<QString>::const_iterator ite;
-    int num = 0;
-    toQueryParams args;
-
-    for(ite = Model->getPriKeys().constBegin(); ite != Model->getPriKeys().constEnd(); ite++)
-    {
-        if(num > 0)
-        {
-            sql += " AND ";
-        }
-        num++;
-        sql += *ite + "=:v" + QString::number(num);
-        sql += "<char[4000],in>";
-        args << row[num];
-    }
-    toQuery q(conn, sql, args);
-    deleted += q.rowsProcessed();
-}
 unsigned toResultTableData::commitDelete(toConnectionSubLoan &conn, toResultModelEdit::ChangeSet &change)
 {
-    toConnectionTraits const& connTraits = conn.ParentConnection.getTraits();
-    const toResultModel::HeaderList & Headers = Model->headers();
-    bool oracle = conn.ParentConnection.providerIs("Oracle");
-
-    QString sql = QString("DELETE FROM %1.%2 ").arg(connTraits.quote(Owner)).arg(connTraits.quote(Table));
-    sql += (" WHERE ");
-    int col = 1;
-    bool where = false;
-    for (toQuery::Row::iterator j = change.row.begin() + 1;
-            j != change.row.end();
-            j++, col++)
-    {
-        if ((*j).isComplexType())
-        {
-            Utils::toStatusMessage(tr("This table contains complex/user defined columns "
-                                      "and can not be edited"));
-            return 0;
-        }
-
-        if (!oracle || (!Headers[col].datatype.toUpper().startsWith(("LONG")) &&
-                        !Headers[col].datatype.toUpper().contains(("LOB"))))
-        {
-            if (where)
-                sql += " AND ";
-            else
-                where = true;
-
-            sql += connTraits.quote(Headers[col].name);
-
-            if ((*j).isNull())
-                sql += " IS NULL";
-            else
-            {
-                sql += "= :c";
-                sql += QString::number(col);
-                if ((*j).isBinary())
-                    sql += "<raw_long>";
-                else
-                    sql += "<char[4000]>";
-            }
-        }
-    }
-
-    if (!where)
-    {
-        Utils::toStatusMessage(tr("This table contains only LOB/LONG columns and can not be edited"));
+	static const QString DELETE = QString::fromAscii("DELETE FROM %1.%2 WHERE 1=1 %3");
+	static const QString CONJUNCTION = QString::fromAscii(" AND %1 = %2");
+	if (Model->getPriKeys().empty())
+	{
+        Utils::toStatusMessage(tr("This table has no known primary keys"));
         return 0;
-    }
+	}
 
-    toQueryParams args;
-    for (int i = 1; i < change.row.size(); i++)
+    toConnectionTraits const& connTraits = conn.ParentConnection.getTraits();
+    QString sqlValuePlaceHolders;
+    for(int i = 1; i < Model->getPriKeys().size() + 1; i++)
     {
-        if (!change.row[i].isNull() && (!oracle || (!Headers[i].datatype.startsWith(("LONG")) &&
-                                        !Headers[i].datatype.toUpper().contains(("LOB")))))
-        {
-            args << change.row[i];
-        }
+    	sqlValuePlaceHolders += CONJUNCTION
+    			.arg(connTraits.quote(Model->headerData(
+    					i,
+    					Qt::Horizontal,
+    					Qt::DisplayRole).toString()))
+    	        .arg(connTraits.quoteVarchar(change.row[i].editData()));
     }
 
-    toQuery q(conn, sql, args);
-    if (toConfigurationSingle::Instance().autoCommit())
+    QString sql = DELETE.arg(connTraits.quote(Owner)).arg(connTraits.quote(Table)).arg(sqlValuePlaceHolders);
+    Logging->appendPlainText(sql);
+
+    {
+    	toQuery q(conn, sql, toQueryParams());
+		q.eof();
     	conn->commit();
-    return q.rowsProcessed();
+    	return q.rowsProcessed();
+    }
 }

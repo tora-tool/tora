@@ -36,7 +36,7 @@
 #define TORESULTDATASINGLE_H
 
 
-#include "core/toresultmodel.h"
+#include "core/toresultmodeledit.h"
 
 #include <QtGui/QWidget>
 #include <QtCore/QList>
@@ -46,26 +46,16 @@ class QScrollArea;
 class QCheckBox;
 class QLineEdit;
 
-
 /**
  * This widget is used for single record view in the content editor.
- *
  */
 class toResultDataSingle : public QWidget
 {
     Q_OBJECT;
-
-    int Row;
-    QScrollArea *Container;
-    QList<QCheckBox *> Null;
-    QList<QLineEdit *> Value;
-
-    QPointer<toResultModel> Model;
-
 public:
     toResultDataSingle(QWidget *parent);
 
-    void changeSource(toResultModel *, int row);
+    void changeSource(toResultModelEdit *, int row);
     void changeRow(int row);
 
     inline int currentRow(void) const
@@ -77,6 +67,13 @@ private slots:
     virtual void showMemo(int col);
     void saveRow(void);
     void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
+private:
+    int Row;
+    QScrollArea *Container;
+    QList<QCheckBox *> Null;
+    QList<QLineEdit *> Value;
+
+    QPointer<toResultModelEdit> Model;
 };
 
 #endif

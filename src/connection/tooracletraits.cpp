@@ -100,6 +100,14 @@ QString toOracleTraits::unQuote(QString const &name) const
     return name.toUpper();
 }
 
+QString toOracleTraits::quoteVarchar(const QString &name) const
+{
+	static const QString replacement("\'\'");
+	QString retval(name);
+	retval.replace('\'', QString::fromAscii("\'\'"), Qt::CaseSensitive);
+	return QChar('\'') + retval + ('\'');
+}
+
 QList<QString> toOracleTraits::primaryKeys(toConnection &conn, toCache::ObjectRef const&obj) const
 {
 	static const QString ROWID(QString::fromAscii("ROWID"));

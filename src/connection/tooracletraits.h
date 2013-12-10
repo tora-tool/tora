@@ -50,6 +50,8 @@ public:
     */
     virtual QString unQuote(const QString &name) const;
 
+    virtual QString quoteVarchar(const QString &name) const;
+
     /** Check if connection provider supports table level comments.
      *  @return bool return true if database supports table level comments
      *  See toSQL: toResultCols:TableComment

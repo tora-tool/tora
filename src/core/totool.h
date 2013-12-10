@@ -375,6 +375,9 @@ public:
 	    return Tool.canHandle(conn);
     }
 
+    void commitChanges();
+    void rollbackChanges();
+
     /** Get timer of tool. Used by some results to get update time.
      * @return Pointer to a timer object.
      */
