@@ -63,135 +63,6 @@ class toSearchReplace;
 class toResultTableView : public QTableView, public toResult, public toEditWidget
 {
     Q_OBJECT;
-
-protected:
-    // pointer to model
-    QPointer<toResultModel> Model;
-
-    // Widget to store query statistics to.
-    toResultStats *Statistics;
-
-    // if all records should be read
-    bool ReadAll;
-
-    // if column headers should be modified to be readable
-    bool ReadableColumns;
-
-    // number of visible columns
-    int VisibleColumns;
-
-    // if vertical header should be displayed
-    bool NumberColumn;
-
-    // if user resized columns
-    bool ColumnsResized;
-
-    // filter object if set
-    toViewFilter *Filter;
-
-    // superimposed until model is ready
-    toWorkingWidget *Working;
-
-    // set true when model has signaled
-    bool Ready;
-
-    // set true when model has finished.
-    // helps work around determining when query.eof has been reached.
-    bool Finished;
-
-    /**
-     * context menu items. may be null.
-     *
-     */
-    QMenu   *Menu;
-    QAction *displayAct;
-    QAction *refreshAct;
-    QAction *leftAct;
-    QAction *rightAct;
-    QAction *centerAct;
-    QAction *copyAct;
-    QAction *copyFormatAct;
-    QAction *copyTransAct;
-    QAction *selectAllAct;
-    QAction *exportAct;
-    QAction *editAct;
-    QAction *rowCountAct;
-    QAction *readAllAct;
-
-    void createActions(void);
-
-    /*! \brief Common setup function called from constructors
-    */
-    void setup(bool readable, bool numberColumn, bool editable);
-
-
-protected slots:
-    void slotDisplayMenu(const QPoint &pos);
-    void slotMenuCallback(QAction *action);
-    void slotHandleDone(void);
-    void slotHandleReset(void);
-    void slotHandleFirst(const toConnection::exception &res,
-                     bool error);
-    virtual void slotHandleDoubleClick(const QModelIndex &);
-    // override parent
-    virtual void selectionChanged(const QItemSelection &selected,
-                                  const QItemSelection &deselected);
-
-    // apply column rules, numbercolumn, readable columns
-    virtual void slotApplyColumnRules(void);
-
-protected:
-
-    /**
-     * overridden from parent.
-     *
-     * Controls maximum size (height) of a given row.
-     */
-    virtual int sizeHintForRow(int row) const;
-
-    /**
-     * overridden from parent.
-     *
-     * Controls a maximum size (width) of a given column.
-     */
-    virtual int sizeHintForColumn(int col) const;
-
-    /**
-     * overrides parent to overlay working working message until model
-     * is ready
-     */
-    virtual void paintEvent(QPaintEvent *event);
-
-
-    /**
-     * Overrides QWidget to resize columns when applicable.
-     */
-    virtual void resizeEvent(QResizeEvent *event);
-
-    /*! Catch special keyboard shortcuts.
-        Copy, etc.
-    */
-    virtual void keyPressEvent(QKeyEvent * event);
-
-    virtual toResultModel* allocModel(toEventQuery *);
-    virtual void freeModel();
-
-signals:
-
-    /**
-     * Called before the menu is displayed so that you can add items
-     * to it before it is shown.
-     *
-     * @param menu Pointer to the menu about to be shown.
-     */
-    void displayMenu(QMenu *menu);
-
-
-    /**
-     * Emitted when table's selection changes
-     */
-    void selectionChanged(void);
-
 public:
 
     typedef toTableViewIterator iterator;
@@ -382,6 +253,21 @@ public slots:
     }
 
 signals:
+
+    /**
+     * Called before the menu is displayed so that you can add items
+     * to it before it is shown.
+     *
+     * @param menu Pointer to the menu about to be shown.
+     */
+    void displayMenu(QMenu *menu);
+
+
+    /**
+     * Emitted when table's selection changes
+     */
+    void selectionChanged(void);
+
     /**
      * Emitted when the first result is available.
      *
@@ -390,16 +276,125 @@ signals:
      * @param error Error has occurred.
      */
     void firstResult(const QString &sql,
-                     const toConnection::exception &res,
-                     bool error);
+    		const toConnection::exception &res,
+    		bool error);
 
     /**
      * Emitted when query is finished.
      */
     void done(void);
 
+    /**
+     * Inform upstream controller about the new Model
+     */
     void modelChanged(toResultModel*);
-    //toResultModel
+
+protected slots:
+        void slotDisplayMenu(const QPoint &pos);
+        void slotMenuCallback(QAction *action);
+        void slotHandleDone(void);
+        void slotHandleReset(void);
+        void slotHandleFirst(const toConnection::exception &res,
+                         bool error);
+        virtual void slotHandleDoubleClick(const QModelIndex &);
+        // override parent
+        virtual void selectionChanged(const QItemSelection &selected,
+                                      const QItemSelection &deselected);
+
+        // apply column rules, numbercolumn, readable columns
+        virtual void slotApplyColumnRules(void);
+
+protected:
+    void createActions(void);
+
+    /*! \brief Common setup function called from constructors
+    */
+    void setup(bool readable, bool numberColumn, bool editable);
+
+    /**
+     * overridden from parent.
+     *
+     * Controls maximum size (height) of a given row.
+     */
+    virtual int sizeHintForRow(int row) const;
+
+    /**
+     * overridden from parent.
+     *
+     * Controls a maximum size (width) of a given column.
+     */
+    virtual int sizeHintForColumn(int col) const;
+
+    /**
+     * overrides parent to overlay working working message until model
+     * is ready
+     */
+    virtual void paintEvent(QPaintEvent *event);
+
+    /**
+     * Overrides QWidget to resize columns when applicable.
+     */
+    virtual void resizeEvent(QResizeEvent *event);
+
+    /*! Catch special keyboard shortcuts.
+        Copy, etc.
+    */
+    virtual void keyPressEvent(QKeyEvent * event);
+
+    virtual toResultModel* allocModel(toEventQuery *);
+    void freeModel();
+
+    // pointer to model
+    QPointer<toResultModel> Model;
+
+    // Widget to store query statistics to.
+    toResultStats *Statistics;
+
+    // if all records should be read
+    bool ReadAll;
+
+    // if column headers should be modified to be readable
+    bool ReadableColumns;
+
+    // number of visible columns
+    int VisibleColumns;
+
+    // if vertical header should be displayed
+    bool NumberColumn;
+
+    // if user resized columns
+    bool ColumnsResized;
+
+    // filter object if set
+    toViewFilter *Filter;
+
+    // superimposed until model is ready
+    toWorkingWidget *Working;
+
+    // set true when model has signaled
+    bool Ready;
+
+    // set true when model has finished.
+    // helps work around determining when query.eof has been reached.
+    bool Finished;
+
+    /**
+     * context menu items. may be null
+     */
+    QMenu   *Menu;
+    QAction *displayAct;
+    QAction *refreshAct;
+    QAction *leftAct;
+    QAction *rightAct;
+    QAction *centerAct;
+    QAction *copyAct;
+    QAction *copyFormatAct;
+    QAction *copyTransAct;
+    QAction *selectAllAct;
+    QAction *exportAct;
+    QAction *editAct;
+    QAction *rowCountAct;
+    QAction *readAllAct;
 };
 
 

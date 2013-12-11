@@ -64,51 +64,9 @@ public:
 
     typedef QList<HeaderDesc> HeaderList;
 
-protected:
-    toEventQuery *Query;
-
-    toQuery::RowList Rows;
-    HeaderList Headers;
-
-    // Following two variables hold information on how was data last sorted by sort() function.
-    // This is used by sort() function in order not to waste CPU on resorting.
-    int SortedOnColumn;
-    Qt::SortOrder SortedOrder;
-
-    // max rows to read until
-    int MaxRows;
-
-    // how much to read at a time
-    int MaxRowsToAdd;
-
-    // [0] column of each row contains a row number which is later used for insert/update/delete
-    // operations. This variable is used to generate non repeating row keys (something like
-    // oracle sequence).
-    int CurrRowKey;
-
-    // If column names are to be made more readable.
-    bool ReadableColumns;
-
-    // when to emit firstResult
-    bool First;
-
-    // headers read already?
-    bool HeadersRead;
-
-    // should read all data
-    bool ReadAll;
-
-    // helpers for sort implementation
-    toQuery::RowList mergesort(toQuery::RowList&, int, Qt::SortOrder);
-    toQuery::RowList merge(toQuery::RowList&, toQuery::RowList&, int, Qt::SortOrder);
-private slots:
-
-	void slotQueryError(toEventQuery*, const toConnection::exception &);
-
-public:
-    explicit toResultModel(toEventQuery *query,
-                           QObject *parent = 0,
-                           bool read = false);
+    toResultModel(toEventQuery *query,
+    		QObject *parent = 0,
+    		bool read = false);
 
     /** This constructor is used when model has to be filled in
      * from the cache rather than from the database.
@@ -118,7 +76,7 @@ public:
                   QObject *parent = 0,
                   bool read = false);
 
-    ~toResultModel();
+    virtual ~toResultModel();
 
     // ------------------------------ overrides ItemModel parent
 
@@ -228,9 +186,10 @@ public:
         cleanup();
     }
 
+    void readAll(void);
+
     /**
      * Return the headers used for this query
-     *
      */
     const HeaderList& headers(void) const
     {
@@ -269,9 +228,6 @@ public:
      */
     toQuery::RowList &getRawData(void);
 
-protected:
-    void cleanup(void);
-
 signals:
 
     /**
@@ -285,11 +241,7 @@ signals:
      * @param res String describing result.
      * @param error Error has occurred.
      */
-    void firstResult(const toConnection::exception &res,
-                     bool error);
-
-public:
-    void readAll(void);
+    void firstResult(const toConnection::exception &res, bool error);
 
 protected slots:
     /**
@@ -311,6 +263,48 @@ protected slots:
      * Load all data into model until end of query
      */
     void slotReadAll(void);
+
+	void slotQueryError(toEventQuery*, const toConnection::exception &);
+
+protected:
+    void cleanup(void);
+
+    // helpers for sort implementation
+    toQuery::RowList mergesort(toQuery::RowList&, int, Qt::SortOrder);
+    toQuery::RowList merge(toQuery::RowList&, toQuery::RowList&, int, Qt::SortOrder);
+
+    toEventQuery *Query;
+
+    toQuery::RowList Rows;
+    HeaderList Headers;
+
+    // Following two variables hold information on how was data last sorted by sort() function.
+    // This is used by sort() function in order not to waste CPU on resorting.
+    int SortedOnColumn;
+    Qt::SortOrder SortedOrder;
+
+    // max rows to read until
+    int MaxRows;
+
+    // how much to read at a time
+    int MaxRowsToAdd;
+
+    // [0] column of each row contains a row number which is later used for insert/update/delete
+    // operations. This variable is used to generate non repeating row keys (something like
+    // oracle sequence).
+    int CurrRowKey;
+
+    // If column names are to be made more readable.
+    bool ReadableColumns;
+
+    // when to emit firstResult
+    bool First;
+
+    // headers read already?
+    bool HeadersRead;
+
+    // should read all data
+    bool ReadAll;
 };
 
 
