@@ -655,7 +655,7 @@ unsigned toResultTableData::commitAdd(toConnectionSubLoan &conn, toResultModelEd
 
 unsigned toResultTableData::commitDelete(toConnectionSubLoan &conn, toResultModelEdit::ChangeSet &change)
 {
-	static const QString DELETE = QString::fromAscii("DELETE FROM %1.%2 WHERE 1=1 %3");
+	static const QString DELETESTAT = QString::fromAscii("DELETE FROM %1.%2 WHERE 1=1 %3");
 	static const QString CONJUNCTION = QString::fromAscii(" AND %1 = %2");
 	if (Model->getPriKeys().empty())
 	{
@@ -675,7 +675,7 @@ unsigned toResultTableData::commitDelete(toConnectionSubLoan &conn, toResultMode
     	        .arg(connTraits.quoteVarchar(change.row[i].editData()));
     }
 
-    QString sql = DELETE.arg(connTraits.quote(Owner)).arg(connTraits.quote(Table)).arg(sqlValuePlaceHolders);
+    QString sql = DELETESTAT.arg(connTraits.quote(Owner)).arg(connTraits.quote(Table)).arg(sqlValuePlaceHolders);
     Logging->appendPlainText(sql);
 
     {

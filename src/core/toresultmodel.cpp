@@ -56,7 +56,7 @@ toResultModel::toResultModel(toEventQuery *query,
 	, SortedOnColumn(-1)
 	, CurrRowKey(1)
 {
-    MaxRead = MaxNumber = toConfigurationSingle::Instance().initialFetch();
+    MaxRowsToAdd = MaxRows = toConfigurationSingle::Instance().initialFetch();
 
     Query = query;
     Query->setParent(this); // this will satisfy QObject's disposal
@@ -96,7 +96,7 @@ toResultModel::toResultModel(const QString &owner,
 	, Query(NULL)
 	, CurrRowKey(1)
 {
-    MaxRead = MaxNumber = toConfigurationSingle::Instance().initialFetch();
+    MaxRowsToAdd = MaxRows = toConfigurationSingle::Instance().initialFetch();
 
     setSupportedDragActions(Qt::CopyAction);
 
@@ -213,7 +213,7 @@ void toResultModel::slotReadData()
         int     current = Rows.size();
 
         while(Query->hasMore() &&
-                (MaxNumber < 0 || MaxNumber > current))
+                (MaxRows < 0 || MaxRows > current))
         {
         	toQuery::Row row;
 
@@ -725,10 +725,10 @@ void toResultModel::slotFetchMore(toEventQuery*)
 {
     if(ReadAll)
     {
-        MaxNumber = -1;
+        MaxRows = -1;
         slotReadData();
     }
-    else if(Rows.size() < MaxNumber)
+    else if(Rows.size() < MaxRows)
     {
         QModelIndex ind;
         fetchMore(ind);
@@ -742,8 +742,8 @@ void toResultModel::fetchMore(const QModelIndex &parent)
 
     // sometimes the view calls this before the query has even
     // run. don't actually increase max until we've hit it.
-    if (MaxNumber < 0 || MaxNumber <= Rows.size())
-        MaxNumber += MaxRead;
+    if (MaxRows < 0 || MaxRows <= Rows.size())
+        MaxRows += MaxRowsToAdd;
 
     slotReadData();
 }

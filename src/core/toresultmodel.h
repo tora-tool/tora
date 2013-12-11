@@ -76,10 +76,10 @@ protected:
     Qt::SortOrder SortedOrder;
 
     // max rows to read until
-    int MaxNumber;
+    int MaxRows;
 
     // how much to read at a time
-    int MaxRead;
+    int MaxRowsToAdd;
 
     // [0] column of each row contains a row number which is later used for insert/update/delete
     // operations. This variable is used to generate non repeating row keys (something like
