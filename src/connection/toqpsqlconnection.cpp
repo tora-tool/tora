@@ -39,6 +39,71 @@
 #include <QtSql/QSqlError>
 #include <QtSql/QSqlQuery>
 
+static toSQL SQLListObjectsDatabase("toConnection:ListObjectsInDatabase",
+		"select n.nspname, count(o.oid)                    "
+		"  from pg_namespace n                             "
+		"  left join pg_class o on n.oid=o.relnamespace    "
+		" group by 1                                       "
+		" order by count(o.oid)>0, 1                       ",
+		"",
+		"7.0",
+		"QPSQL");
+
+static toSQL SQLConnectioId("toQSqlConnection:ConnectionID",
+		"select pg_backend_pid()                           ",
+		"Get a connection ID for a session",
+		"7.0",
+		"QPSQL");
+
+
+static toSQL SQLVersionPgSQL("toQSqlConnection:Version",
+		"SELECT SUBSTR(version(), STRPOS(version(), ' ') + 1, STRPOS(version(), 'on') - STRPOS(version(), ' ') - 2)",
+        "Show version of database, "
+        "last value of first return record of result is used.",
+		"7.1",
+		"QPSQL");
+
+static toSQL SQLColumnComments("toQSqlConnection:ColumnComments",
+		"select a.attname,b.description\n"
+		"from\n"
+		"  pg_attribute a,\n"
+		"  pg_description b,\n"
+		"  pg_class c LEFT OUTER JOIN pg_namespace n ON c.relowner=n.oid\n"
+		"where\n"
+		"  a.oid=b.objoid\n"
+		"  and c.oid=a.attrelid\n"
+		"  and (u.nspname = :owner OR u.usesysid IS NULL)\n"
+		"  and c.relname=:table",
+		"Get the available comments on columns of a table, "
+		"must have same binds and columns",
+		"7.1",
+		"QPSQL");
+
+static toSQL SQLColumnComments72("toQSqlConnection:ColumnComments",
+		"select a.attname,b.description\n"
+		"from\n"
+		"  pg_attribute a,\n"
+		"  pg_description b,\n"
+		"  pg_class c LEFT OUTER JOIN pg_namespace n ON c.relowner=n.oid\n"
+		"where\n"
+		"  a.attnum=b.objsubid\n"
+		"  and b.objoid=a.attrelid\n"
+		"  and c.oid=a.attrelid\n"
+		"  and (n.nspname = :owner OR u.usesysid IS NULL)\n"
+		"  and c.relname=:table",
+		"",
+		"7.2",
+		"QPSQL");
+
+// Opening a second connection has drawbacks and can fail to
+// successfully cancel queries if there is any problem getting a
+// second connection, causing crashes.
+static toSQL SQLCancelPg("toQSqlConnection:Cancel",
+                         "SELECT pg_cancel_backend(:pid)",
+                         "",
+                         "8.0",
+                         "QPSQL");
+
 toQPSqlConnectionImpl::toQPSqlConnectionImpl(toConnection &conn)
 	: toQSqlConnectionImpl(conn)
 {
