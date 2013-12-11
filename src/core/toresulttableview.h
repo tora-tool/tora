@@ -344,6 +344,13 @@ protected:
     virtual toResultModel* allocModel(toEventQuery *);
     void freeModel();
 
+    /*! A guessed amount of "visible" rows used as initial fetch size in the model
+     *
+     *  QAbstractItemView call canFetchMore/fetchMore only when scroll bar moves. This should satisfy that
+     *  the first chunk of rows received from toEventQueryWorker will exceed number of visible rows in the view
+     */
+    int visibleRows() const;
+
     // pointer to model
     QPointer<toResultModel> Model;
 

@@ -228,6 +228,7 @@ public:
      */
     toQuery::RowList &getRawData(void);
 
+    void setInitialRows(int);
 signals:
 
     /**

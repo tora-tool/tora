@@ -105,14 +105,9 @@ void toResultTableViewEdit::query(const QString &SQL, toQueryParams const& param
 
 toResultModel* toResultTableViewEdit::allocModel(toEventQuery *query)
 {
-	int h = sizeHintForRow(0);
-	QAbstractItemDelegate *d = itemDelegate();
-	QSize s = d->sizeHint(QStyleOptionViewItem(), QModelIndex());
-	int hh = height();
-	int hhh = s.height();
-	int rows = hh / s.height() + 1;
-	toResultModelEdit *m = new toResultModelEdit(query, PriKeys, this, ReadableColumns);
-	return m;
+	toResultModelEdit *retval = new toResultModelEdit(query, PriKeys, this, ReadableColumns);
+	retval->setInitialRows(visibleRows());
+	return retval;
 }
 
 toResultModelEdit* toResultTableViewEdit::editModel()

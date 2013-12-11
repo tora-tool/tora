@@ -851,7 +851,12 @@ toQuery::RowList toResultModel::merge(toQuery::RowList &left,
     return result;
 }
 
-toQuery::RowList &toResultModel::getRawData(void)
+toQuery::RowList& toResultModel::getRawData(void)
 {
     return Rows;
+}
+
+void toResultModel::setInitialRows(int r)
+{
+	MaxRows = r;
 }

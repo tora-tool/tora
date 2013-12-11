@@ -288,7 +288,9 @@ void toResultTableView::querySub(QSharedPointer<toConnectionSubLoan> &con, const
 
 toResultModel* toResultTableView::allocModel(toEventQuery *query)
 {
-	return new toResultModel(query, this, ReadableColumns);
+	toResultModel *retval = new toResultModel(query, this, ReadableColumns);
+	retval->setInitialRows(visibleRows());
+	return retval;
 }
 
 void toResultTableView::freeModel()
@@ -299,6 +301,21 @@ void toResultTableView::freeModel()
         Model = NULL;
         emit modelChanged(NULL);
     }
+}
+
+int toResultTableView::visibleRows() const
+{
+	// TODO this is ugly hack and needs some validation
+	//this->visibleRegion();
+	int h = sizeHintForRow(0);
+	QAbstractItemDelegate *d = itemDelegate();
+	QSize s = d->sizeHint(QStyleOptionViewItem(), QModelIndex());
+	int hh = height();
+	int hhh = s.height();
+	int rows = hh / s.height() + 1;
+	if (rows < toConfigurationSingle::Instance().initialFetch())
+		return toConfigurationSingle::Instance().initialFetch();
+	return rows;
 }
 
 void toResultTableView::clearData()
