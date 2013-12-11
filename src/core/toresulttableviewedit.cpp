@@ -154,6 +154,15 @@ void toResultTableViewEdit::handleNewRows(const QModelIndex &parent,
     // setCurrentIndex(index);
 }
 
+void toResultTableViewEdit::keyPressEvent(QKeyEvent * event)
+{
+    if (event->matches(QKeySequence::Delete))
+    {
+        deleteRecord();
+        return;
+    }
+    toResultTableView::keyPressEvent(event);
+}
 
 void toResultTableViewEdit::addRecord(void)
 {
@@ -174,10 +183,29 @@ void toResultTableViewEdit::deleteRecord(void)
     if (!selectionModel())
         return;
 
+	Q_ASSERT_X(editModel(), qPrintable(__QHERE__), "deleteRecord into NULL Model");
+
+    if (selectionModel()->hasSelection())
+    {
+    	QSet<QModelIndex> rows;
+    	QItemSelection const sel(selectionModel()->selection());
+    	Q_FOREACH(QItemSelectionRange r, sel)
+    	{
+    		Q_FOREACH(QModelIndex i, r.indexes())
+			{
+    			rows << Model->createIndex(i.row(), 0);
+			}
+    	}
+    	Q_FOREACH(QModelIndex ind, rows)
+    	{
+    		editModel()->deleteRow(ind);
+    	}
+    	return;
+    }
+
     QModelIndex ind = selectionModel()->currentIndex();
     if (ind.isValid())
     {
-    	Q_ASSERT_X(editModel(), qPrintable(__QHERE__), "deleteRecord into NULL Model");
     	editModel()->deleteRow(ind);
     }
 }

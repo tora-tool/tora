@@ -103,18 +103,23 @@ private slots:
      * Calls Model to delete current record
      */
     void deleteRecord(void);
+
     /**
      * Clears Changes
-     *
      */
     void revertChanges(void);
 
     /**
      * Handle signal from model when rows are added
-     *
      */
     void handleNewRows(const QModelIndex &parent, int start, int end);
+
 protected:
+    /**
+     * Reimplemented to handle delete key
+     */
+    virtual void keyPressEvent(QKeyEvent * event);
+
     /*
      * Helper function - allocate new instance of model
      * toResultTableView uses toResultModel
