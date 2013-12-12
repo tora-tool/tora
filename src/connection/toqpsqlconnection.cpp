@@ -39,6 +39,10 @@
 #include <QtSql/QSqlError>
 #include <QtSql/QSqlQuery>
 
+#ifdef HAVE_POSTGRESQL_LIBPQ_FE_H
+#include <libpq-fe.h>
+#endif
+
 static toSQL SQLListObjectsDatabase("toConnection:ListObjectsInDatabase",
 		"select n.nspname, count(o.oid)                    "
 		"  from pg_namespace n                             "
@@ -163,4 +167,18 @@ void toQPSqlConnectionImpl::closeConnection(toConnectionSub *)
 queryImpl* toQPSqlConnectionSub::createQuery(toQuery *query)
 {
 	return new psqlQuery(query, this);
+}
+
+int toQPSqlConnectionSub::nativeVersion()
+{
+    QVariant v = Connection.driver()->handle();
+    if(v.isValid() && v.typeName() == QString("PGconn*"))
+    {
+#ifdef HAVE_POSTGRESQL_LIBPQ_FE_H
+        PGconn *handle = *static_cast<PGconn **>(v.data());
+        if(handle)
+            return PQserverVersion(handle);
+#endif
+    }
+    return 0;
 }

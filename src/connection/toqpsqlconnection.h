@@ -92,6 +92,7 @@ public:
         }
 
 private:
+        int nativeVersion();
 };
 
 #endif
