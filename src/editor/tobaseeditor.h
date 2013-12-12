@@ -105,6 +105,9 @@ public:
 	void getCursorPosition(int *line, int *index) const;
 	void setCursorPosition(int line, int index);
 
+	int positionAfter(int pos, int offset = 1);
+	void gotoPosition(int pos);
+
 	int lines() const;
 	int lineLength(int line) const;
 

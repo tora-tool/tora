@@ -341,11 +341,24 @@ QString toBaseEditor::text() const
 QString toBaseEditor::text(int line) const
 { return m_editor->text(line); }
 
+void toBaseEditor::getCursorPosition(int *line, int *index) const
+{ m_editor->getCursorPosition(line, index); }
+
 void toBaseEditor::setCursorPosition(int line, int index)
 { m_editor->setCursorPosition(line, index); }
 
-void toBaseEditor::getCursorPosition(int *line, int *index) const
-{ m_editor->getCursorPosition(line, index); }
+int toBaseEditor::positionAfter(int pos, int offset)
+{
+	// Allow for multi-byte characters.
+	for(int i = 0; i < offset; i++)
+		pos = m_editor->SendScintilla(QsciScintilla::SCI_POSITIONAFTER, pos);
+	return pos;
+}
+
+void toBaseEditor::gotoPosition(int pos)
+{
+	long i = m_editor->SendScintilla(QsciScintilla::SCI_GOTOPOS, pos);
+}
 
 void toBaseEditor::append(const QString &text)
 { m_editor->append(text); }

@@ -1467,36 +1467,25 @@ void toWorksheet::slotExecuteAll()
 
 void toWorksheet::slotParseAll()
 {
-    Utils::toBusy busy;
-    toSyntaxAnalyzer::statement stat = currentStatement();
-    toSyntaxAnalyzer *analyzer = Editor->editor()->analyzer();
-    analyzer->sanitizeStatement(stat);
+	Utils::toBusy busy;
+	toSyntaxAnalyzer::statement stat = currentStatement();
+	toSyntaxAnalyzer *analyzer = Editor->editor()->analyzer();
+	analyzer->sanitizeStatement(stat);
 
-    if (stat.statementType == toSyntaxAnalyzer::DML || stat.statementType == toSyntaxAnalyzer::SELECT)
-    {
-    	toQList vals = toQuery::readQuery(connection(), SQLParseSql, toQueryParams() << stat.sql);
-    	int parseOffset = vals.front().toInt();
+	if (!connection().providerIs("Oracle")) // so far no support for other DBs
+		return;
+	if (stat.statementType == toSyntaxAnalyzer::DML || stat.statementType == toSyntaxAnalyzer::SELECT)
+	{
+		toQList vals = toQuery::readQuery(connection(), SQLParseSql, toQueryParams() << stat.sql);
+		int parseOffset = vals.front().toInt();
+		if (parseOffset < 0)
+			return;
 
-// TODO use low level QScintilla function to plate the cursor
-#if 0
-    	// Return a position from a line number and an index within the line.
-    	int QsciScintilla::positionFromLineIndex(int line, int index) const
-    	{
-    	    int pos = stat.posFrom; // SendScintilla(SCI_POSITIONFROMLINE, line);
-
-    	    // Allow for multi-byte characters.
-    	    for(int i = 0; i < index; i++)
-    	        pos = SendScintilla(SCI_POSITIONAFTER, pos);
-
-    	    return pos;
-    	}
-    	Editor->m_editor->SendScintilla(SCI_GOTOPOS, pos);
-#endif
-
-    	if (parseOffset >= 0)
-    		Editor->setCursorPosition(stat.lineFrom, parseOffset);
-    	TLOG(1, toDecorator, __HERE__) << "Parse offset:" << parseOffset << std::endl;
-    }
+		int pos = stat.posFrom; // SendScintilla(SCI_POSITIONFROMLINE, line);
+		pos = Editor->positionAfter(pos, parseOffset);
+		Editor->gotoPosition(pos);
+		TLOG(1, toDecorator, __HERE__) << "Parse offset:" << parseOffset << std::endl;
+	}
 }
 
 void toWorksheet::slotEraseLogButton()
