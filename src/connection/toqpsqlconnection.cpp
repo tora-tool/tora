@@ -38,6 +38,7 @@
 
 #include <QtSql/QSqlError>
 #include <QtSql/QSqlQuery>
+#include <QtSql/QSqlDriver>
 
 #ifdef HAVE_POSTGRESQL_LIBPQ_FE_H
 #include <libpq-fe.h>
@@ -164,6 +165,24 @@ void toQPSqlConnectionImpl::closeConnection(toConnectionSub *)
 
 }
 
+QString toQPSqlConnectionSub::version()
+{
+	int ver = nativeVersion();
+	if (ver)
+		return QString::number(ver);
+	else
+		return super::version();
+}
+
+QString toQPSqlConnectionSub::sessionId()
+{
+	int ver = nativeSessionId();
+	if (ver)
+		return QString::number(ver);
+	else
+		return super::sessionId();
+}
+
 queryImpl* toQPSqlConnectionSub::createQuery(toQuery *query)
 {
 	return new psqlQuery(query, this);
@@ -181,4 +200,40 @@ int toQPSqlConnectionSub::nativeVersion()
 #endif
     }
     return 0;
+}
+
+int toQPSqlConnectionSub::nativeSessionId()
+{
+    QVariant v = Connection.driver()->handle();
+    if(v.isValid() && v.typeName() == QString("PGconn*"))
+    {
+#ifdef HAVE_POSTGRESQL_LIBPQ_FE_H
+        PGconn *handle = *static_cast<PGconn **>(v.data());
+        if(handle)
+            return PQbackendPID(handle);
+#endif
+    }
+    return 0;
+}
+
+void toQPSqlConnectionSub::nativeCancel()
+{
+	QVariant v = Connection.driver()->handle();
+	if(v.isValid() && v.typeName() == QString("PGconn*"))
+	{
+#ifdef LIBPQ_DECL_CANCEL
+		PGconn *handle = *static_cast<PGconn **>(v.data());
+		if(!handle)
+			return;
+
+		PGcancel *cancel = PQgetCancel(handle);
+		if(!cancel)
+			return;
+
+		char *errbuf = new char[1024];
+		PQcancel(cancel, errbuf, 1024);
+		PQfreeCancel(cancel);
+		delete[] errbuf;
+#endif
+	}
 }

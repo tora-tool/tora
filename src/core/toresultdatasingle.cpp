@@ -47,6 +47,7 @@
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QGridLayout>
 #include <QtGui/QLabel>
+#include <QtGui/QProgressBar>
 
 toResultDataSingle::toResultDataSingle(QWidget *parent)
     : QWidget(parent)
@@ -57,9 +58,12 @@ toResultDataSingle::toResultDataSingle(QWidget *parent)
     setBackgroundRole(QPalette::Window);
 
     // fscking qscrollarea won't resize this is added
-    QHBoxLayout *h = new QHBoxLayout;
+    QVBoxLayout *h = new QVBoxLayout;
     h->setContentsMargins(0, 0, 0, 0);
     h->setSpacing(0);
+    ProgressBar = new QProgressBar(this);
+    ProgressBar->setFormat("%v / %m");
+    h->addWidget(ProgressBar);
     setLayout(h);
 
     setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
@@ -73,6 +77,8 @@ void toResultDataSingle::changeSource(toResultModelEdit *model, int _row)
     layout()->addWidget(Container);
 
     Model = model;
+    ProgressBar->setMaximum(Model->rowCount());
+    ProgressBar->setValue(_row);
 
     QWidget *ext = new QWidget(Container);
     Container->setWidget(ext);
@@ -143,6 +149,8 @@ void toResultDataSingle::dataChanged(const QModelIndex &topLeft,
 void toResultDataSingle::changeRow(int row)
 {
     bool any = false;
+
+    ProgressBar->setValue(row+1);
 
     QList<QCheckBox *>::iterator chk = Null.begin();
     QList<QLineEdit *>::iterator val = Value.begin();

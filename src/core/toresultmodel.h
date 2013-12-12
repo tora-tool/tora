@@ -179,6 +179,14 @@ public:
     }
 
     /**
+     * override parent to make it traceable
+     */
+    virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const
+    {
+    	return QAbstractTableModel::index(row, column, parent);
+    }
+
+    /**
      * stop running query
      */
     void stop(void)

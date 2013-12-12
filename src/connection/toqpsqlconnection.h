@@ -59,6 +59,7 @@ private:
 class toQPSqlConnectionSub : public toQSqlConnectionSub
 {
 	friend class toQPSqlConnectionImpl;
+	typedef toQSqlConnectionSub super;
 public:
         toQPSqlConnectionSub(toConnection const& parent, QSqlDatabase const& db, QString const& dbname)
 			: toQSqlConnectionSub(parent, db, dbname)
@@ -75,7 +76,7 @@ public:
 
         virtual void cancel(void)
         {
-        	// NOT SUPPORTED ON MYSQL
+        	// NOT SUPPORTED YET
         };
 
         /** Close connection. */
@@ -83,6 +84,9 @@ public:
         {
         	throw QString("Not implemented yet: toQPSqlConnectionSub::close");
         }
+
+        virtual QString version();
+        virtual QString sessionId();
 
         virtual queryImpl* createQuery(toQuery *query);
 
@@ -93,6 +97,8 @@ public:
 
 private:
         int nativeVersion();
+        int nativeSessionId();
+        void nativeCancel();
 };
 
 #endif

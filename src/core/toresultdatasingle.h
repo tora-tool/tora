@@ -45,6 +45,7 @@
 class QScrollArea;
 class QCheckBox;
 class QLineEdit;
+class QProgressBar;
 
 /**
  * This widget is used for single record view in the content editor.
@@ -72,7 +73,7 @@ private:
     QScrollArea *Container;
     QList<QCheckBox *> Null;
     QList<QLineEdit *> Value;
-
+    QProgressBar *ProgressBar;
     QPointer<toResultModelEdit> Model;
 };
 

@@ -62,39 +62,6 @@ static toSQL SQLCancelPg("toQSqlConnection:Cancel",
                          "8.0",
                          "QPSQL");
 
-
-#ifdef HAVE_POSTGRESQL_LIBPQ_FE_H
-// seems to be the only way for < 8.0 to not get pg_cancel_backend
-static toSQL SQLCancelPgOld("toQSqlConnection:Cancel",
-                            "native",
-                            "",
-                            "",
-                            "QPSQL");
-
-
-void native_cancel(QSqlDriver *driver)
-{
-    QVariant v = driver->handle();
-    if(v.isValid() && v.typeName() == QString("PGconn*"))
-    {
-#ifdef LIBPQ_DECL_CANCEL
-        PGconn *handle = *static_cast<PGconn **>(v.data());
-        if(!handle)
-            return;
-
-        PGcancel *cancel = PQgetCancel(handle);
-        if(!cancel)
-            return;
-
-        char *errbuf = new char[1024];
-        PQcancel(cancel, errbuf, 1024);
-        PQfreeCancel(cancel);
-        delete[] errbuf;
-#endif
-    }
-}
-#endif
-
 QSqlQuery* psqlQuery::createQuery(const QString &sql)
 {
 	LockingPtr<QSqlDatabase> ptr(Connection->Connection, Connection->Lock);
