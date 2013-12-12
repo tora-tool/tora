@@ -224,7 +224,7 @@ void toWorksheet::createActions()
 {
     parseAct = new QAction(tr("Check syntax of buffer"), this);
     parseAct->setShortcut(Qt::CTRL + Qt::Key_F9);
-    connect(parseAct, SIGNAL(triggered()), this, SLOT(slotParseAll(void)));
+    connect(parseAct, SIGNAL(triggered()), this, SLOT(slotParse(void)));
 
     executeAct = new QAction(QPixmap(const_cast<const char**>(execute_xpm)),
                              tr("Execute current statement"),
@@ -1465,7 +1465,7 @@ void toWorksheet::slotExecuteAll()
     Editor->setSelection(cline, 0, lastLinePos+1, 0);
 }
 
-void toWorksheet::slotParseAll()
+void toWorksheet::slotParse()
 {
 	Utils::toBusy busy;
 	toSyntaxAnalyzer::statement stat = currentStatement();
@@ -1481,7 +1481,7 @@ void toWorksheet::slotParseAll()
 		if (parseOffset < 0)
 			return;
 
-		int pos = stat.posFrom; // SendScintilla(SCI_POSITIONFROMLINE, line);
+		int pos = stat.posFrom;
 		pos = Editor->positionAfter(pos, parseOffset);
 		Editor->gotoPosition(pos);
 		TLOG(1, toDecorator, __HERE__) << "Parse offset:" << parseOffset << std::endl;

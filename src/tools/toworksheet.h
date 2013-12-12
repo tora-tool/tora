@@ -124,7 +124,7 @@ public slots:
     void slotConnectionChanged(void);
     void slotRefresh();
     void slotExecute();
-    void slotParseAll();
+    void slotParse();
     void slotExecuteAll();
     void slotExecuteStep();
     void slotDescribe();
