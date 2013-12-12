@@ -243,8 +243,8 @@ void toResultTableData::navigate(QAction *action)
         return;
 
     QModelIndex current = Edit->selectionModel()->currentIndex();
-    int row = current.row();
-    int col = current.column();
+    int row = current.isValid() ? current.row() : 0;
+    int col = current.isValid() ? current.column() : 0;
 
     if (col < 1)
         col = 1;                // can't select hidden first column
@@ -252,18 +252,13 @@ void toResultTableData::navigate(QAction *action)
     if (action == firstAct)
         row = 0;
     else if (action == previousAct)
-        row--;
+    	row = (std::max)(--row, 0);
     else if (action == nextAct)
-        row++;
+    	row = (std::min)(++row, Edit->model()->rowCount() - 1);
     else if (action == lastAct)
         row = Edit->model()->rowCount() - 1;
     else
         return;                 // not a nav action
-
-    if (row < 0)
-        row = 0;
-    if (row >= Edit->model()->rowCount())
-        row = Edit->model()->rowCount() - 1;
 
     QModelIndex left = Edit->model()->createIndex(row, col);
     Edit->selectionModel()->select(QItemSelection(left, left),
@@ -454,6 +449,7 @@ bool toResultTableData::commitChanges()
 
 	if (!error)
 	{
+		conn->commit();
 		ProgressBar->setValue(Changes.size());
 		Changes.clear();
 	}
@@ -581,7 +577,6 @@ unsigned toResultTableData::commitUpdate(toConnectionSubLoan &conn, toResultMode
     		conn->rollback();
     		return 0;
     	}
-    	conn->commit();
     	return q.rowsProcessed();
     }
 }
@@ -646,9 +641,6 @@ unsigned toResultTableData::commitAdd(toConnectionSubLoan &conn, toResultModelEd
     	// TODO use event query
 		toQuery q(conn, sql, toQueryParams());
 		q.eof();
-		//TODO add commit button
-		//if (toConfigurationSingle::Instance().autoCommit())
-		conn->commit();
 		return q.rowsProcessed();
 	}
 }
@@ -687,7 +679,6 @@ unsigned toResultTableData::commitDelete(toConnectionSubLoan &conn, toResultMode
     		conn->rollback();
     		return 0;
     	}
-    	conn->commit();
     	return q.rowsProcessed();
     }
 }
