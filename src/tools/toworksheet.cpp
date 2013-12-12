@@ -143,6 +143,23 @@ static toSQL SQLAddress("Global:Address",
                         " WHERE SQL_Text LIKE :f1<char[150]>||'%'",
                         "Get address of an SQL statement");
 
+static toSQL SQLParseSql("toWorksheet:ParseSql",
+		"declare                                                                      "
+		"	 l_cursor number := dbms_sql.open_cursor;                                 "
+		"	 l_offset number := -1 ;                                                  "
+		"begin                                                                        "
+		"    begin                                                                    "
+		"        dbms_sql.parse(  l_cursor, :st<char[32000],in> , dbms_sql.native );  "
+		"    exception when others then                                               "
+		"        l_offset := dbms_sql.last_error_position;                            "
+		"    end;                                                                     "
+		"    dbms_sql.close_cursor( l_cursor );                                       "
+		"    :off<int,out> := l_offset;                                               "
+		"end;                                                                         "
+		, "Parse Oracle SQL query"
+		, "0800"
+		, "Oracle");
+
 static QString toSQLToAddress(toConnection &conn, const QString &sql)
 {
   QString search = Utils::toSQLStripSpecifier(sql);
@@ -1450,56 +1467,36 @@ void toWorksheet::slotExecuteAll()
 
 void toWorksheet::slotParseAll()
 {
-#if 0
-    toSQLParse::editorTokenizer tokens(Editor->editor());
+    Utils::toBusy busy;
+    toSyntaxAnalyzer::statement stat = currentStatement();
+    toSyntaxAnalyzer *analyzer = Editor->editor()->analyzer();
+    analyzer->sanitizeStatement(stat);
 
-    int cpos, cline;
-    Editor->getCursorPosition(&cline, &cpos);
-
-    QProgressDialog dialog(tr("Parsing all statements"),
-                           tr("Cancel"),
-                           0,
-                           Editor->lines(),
-                           this);
-    int line;
-    int pos;
-    bool ignore = true;
-    do
+    if (stat.statementType == toSyntaxAnalyzer::DML || stat.statementType == toSyntaxAnalyzer::SELECT)
     {
-        line = tokens.line();
-        pos = tokens.offset();
-        dialog.setValue(line);
-        qApp->processEvents();
-        if (dialog.wasCanceled())
-            break;
-        toSQLParse::statement st = toSQLParse::parseStatement(tokens);
+    	toQList vals = toQuery::readQuery(connection(), SQLParseSql, toQueryParams() << stat.sql);
+    	int parseOffset = vals.front().toInt();
 
-        if (ignore && (tokens.line() > cline ||
-                       (tokens.line() == cline &&
-                        tokens.offset() >= cpos)))
-        {
-            ignore = false;
-            cline = line;
-            cpos = pos;
-        }
+// TODO use low level QScintilla function to plate the cursor
+#if 0
+    	// Return a position from a line number and an index within the line.
+    	int QsciScintilla::positionFromLineIndex(int line, int index) const
+    	{
+    	    int pos = stat.posFrom; // SendScintilla(SCI_POSITIONFROMLINE, line);
 
-        if (tokens.line() < Editor->lines() && !ignore)
-        {
-            execute(tokens, line, pos, Parse, st.StatementClass);
-            if (Current)
-            {
-                toResultView *last = dynamic_cast<toResultView *>(Current);
-                if (toConfigurationSingle::Instance().wsHistory() &&
-                        last && last->firstChild())
-                    History[LastID] = last;
-            }
-        }
-    }
-    while (tokens.line() < Editor->lines());
+    	    // Allow for multi-byte characters.
+    	    for(int i = 0; i < index; i++)
+    	        pos = SendScintilla(SCI_POSITIONAFTER, pos);
 
-    Editor->setSelection(cline, cpos, tokens.line(), tokens.offset());
+    	    return pos;
+    	}
+    	Editor->m_editor->SendScintilla(SCI_GOTOPOS, pos);
 #endif
-    throw QString("TODO: not implemented yet: %1").arg(__QHERE__);
+
+    	if (parseOffset >= 0)
+    		Editor->setCursorPosition(stat.lineFrom, parseOffset);
+    	TLOG(1, toDecorator, __HERE__) << "Parse offset:" << parseOffset << std::endl;
+    }
 }
 
 void toWorksheet::slotEraseLogButton()
