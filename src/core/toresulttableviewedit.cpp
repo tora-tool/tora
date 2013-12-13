@@ -42,6 +42,7 @@
 
 #include <QtGui/QApplication>
 #include <QtGui/QClipboard>
+#include <QtGui/QKeyEvent>
 #include <QtGui/QScrollBar>
 #include <QtGui/QItemDelegate>
 #include <QtCore/QSize>
