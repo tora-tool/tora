@@ -414,7 +414,7 @@ public:
      * Set connection's current schema
      *
      */
-    inline void setSchema(const QString &schema)
+    inline void setDefaultSchema(const QString &schema)
     {
         Schema = schema;
     }

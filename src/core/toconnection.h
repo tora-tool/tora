@@ -156,7 +156,7 @@ public:
     }
 
     /** Get schema of connection. */
-    inline QString const& schema() const
+    inline QString const& defaultSchema() const
     {
         return Schema;
     }
@@ -213,8 +213,8 @@ public:
         Password = pwd;
     }
 
-    /** Set connection's current schema. */
-    void setSchema(QString const & schema);
+    /** Set connection's current (default) schema. */
+    void setDefaultSchema(QString const & schema);
 
     /** set connections' color */
     inline void setColor(QString const& color)

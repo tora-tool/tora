@@ -75,7 +75,7 @@ toConnection::toConnection(const QString &provider,
     Version = connSub->version();
     Connections.insert(connSub);
 
-    setSchema(schema);
+    setDefaultSchema(schema);
 
     pCache = new toCache(*this, description(false).trimmed());
 
@@ -110,7 +110,7 @@ toConnection::toConnection(const toConnectionOptions &opts)
     Version = connSub->version();
     Connections.insert(connSub);
 
-    setSchema(opts.schema);
+    setDefaultSchema(opts.schema);
 
     pCache = new toCache(*this, description(false).trimmed());
 
@@ -146,7 +146,7 @@ toConnection::toConnection(const toConnection &other)
     //PoolPtr sub(ConnectionPool);
     //Version = Connection->version(*sub);
 
-    setSchema(other.Schema);
+    setDefaultSchema(other.Schema);
 
     {
     	QWriteLocker lock(&pCache->cacheLock);
@@ -405,7 +405,7 @@ QString toConnection::description(bool version) const
 }
 
 /** Set connection's current schema. */
-void toConnection::setSchema(QString const & schema)
+void toConnection::setDefaultSchema(QString const & schema)
 {
 	if(this->Schema == schema)
 		return;

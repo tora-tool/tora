@@ -51,7 +51,7 @@ toResultSchema::toResultSchema(QWidget *parent,
         conn.host() + "-" +
         conn.database();
 
-    QString sel = conn.schema();
+    QString sel = conn.defaultSchema();
 
     if (sel.isEmpty())
     {
@@ -73,7 +73,7 @@ toResultSchema::toResultSchema(QWidget *parent,
 
     setSelected(sel);
     if (SelectedFound)
-    	conn.setSchema(sel);
+    	conn.setDefaultSchema(sel);
     connect(this, SIGNAL(currentIndexChanged(const QString &)),
             this, SLOT(updateLastSchema(const QString &)));
 
@@ -92,7 +92,6 @@ void toResultSchema::query(const QString &sql, toQueryParams const& param)
 	{
 		slotUsersFromCache();
 	} else {
-		//userList.clear();
 		toResultCombo::query(sql, param);
 	}
 }
@@ -104,7 +103,7 @@ void toResultSchema::updateLastSchema(const QString &schema)
     QSettings s;
     s.setValue("schema/" + ConnectionKey, schema);
     if (SelectedFound)
-    	connection().setSchema(schema);
+    	connection().setDefaultSchema(schema);
 }
 
 void toResultSchema::slotUsersFromCache(void)

@@ -130,7 +130,7 @@ void toViewConnections::handleActivated(const QModelIndex &index)
                     conn->provider() == provider &&
                     conn->host() == host &&
                     conn->database() == database &&
-                    (opt.schema.isEmpty() || (conn->schema() == opt.schema)))
+                    (opt.schema.isEmpty() || (conn->defaultSchema() == opt.schema)))
             {
 		toGlobalEventSingle::Instance().createDefaultTool();
                 emit activated();

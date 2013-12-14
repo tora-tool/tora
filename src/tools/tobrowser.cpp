@@ -1419,11 +1419,11 @@ void toBrowser::changeConnection(void)
 	{
 		m_mainTab->blockSignals(true);
 
-		if ( ! connection().schema().isEmpty() )
+		if ( ! connection().defaultSchema().isEmpty() )
 		{
 			// No need to upperize the string. Oracle has it uppercased already,
 			// mysql nad pgsql require it as lowercase.
-			Schema->setSelected(connection().schema());//.toUpper());
+			Schema->setSelected(connection().defaultSchema());//.toUpper());
 		}
 		else if (connection().providerIs("QMYSQL"))
 		{

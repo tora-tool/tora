@@ -42,6 +42,15 @@ toConnectionSubLoan::toConnectionSubLoan(toConnection &con, InitModeEnum i)
 	, Initialized(false)
 {}
 
+toConnectionSubLoan::toConnectionSubLoan(toConnection &con, QString const & schema)
+    : ParentConnection(con)
+    , ConnectionSub(con.borrowSub())
+	, InitMode(INIT_SESSION)
+	, Initialized(false)
+{
+	Initialized = ConnectionSub->schema() == schema;
+}
+
 /** This special kind of constructor is used by @ref toQuery while testing the connections*/
 toConnectionSubLoan::toConnectionSubLoan(toConnection &con, int*)
     : ParentConnection(con)

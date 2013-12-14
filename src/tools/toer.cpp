@@ -170,7 +170,7 @@ void toERSchema::slotExecute(void) {
         Query = new toEventQuery(this
 				 , conn
 				 , toSQL::sql(SQLALLRefs, conn)
-				 , toQueryParams() << conn.schema()
+				 , toQueryParams() << conn.defaultSchema()
 				 , toEventQuery::READ_ALL);
         connect(Query, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(slotPoll(toEventQuery*)));
         connect(Query, SIGNAL(done(toEventQuery*)), this, SLOT(slotQueryDone()));

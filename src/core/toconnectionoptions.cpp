@@ -113,7 +113,7 @@ bool toConnectionOptions::operator==(const toConnection &conn) const
     		&& conn.database() == database
     		&& conn.user() == username
     		&& conn.color() == color
-    		&& (schema.isEmpty() || (conn.schema() == schema));
+    		&& (schema.isEmpty() || (conn.defaultSchema() == schema));
 }
 
 template<> bool qMapLessThanKey<toConnectionOptions>(const toConnectionOptions &key1, const toConnectionOptions &key2)

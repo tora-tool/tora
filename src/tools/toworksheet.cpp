@@ -2119,7 +2119,7 @@ void toWorksheet::lockConnection()
 		QString value = schema.readValue();
 		Schema->setSelected(value);
 		//Schema->refresh();
-		connection().setSchema(value);
+		connection().setDefaultSchema(value);
 
 		bool oldVal = lockConnectionAct->blockSignals(true);
 	    lockConnectionAct->setChecked(true);

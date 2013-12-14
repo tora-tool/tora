@@ -81,9 +81,15 @@ public:
     	return Broken;
     }
 
+    inline QString const& schema() const
+    {
+    	return Schema;
+    }
+
 protected:
     bool Broken;
     toQuery *Query;
+    QString Schema;
     QDateTime LastUsed; // last time this db connection was actually used
 };
 

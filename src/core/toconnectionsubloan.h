@@ -24,6 +24,8 @@ public:
 
     toConnectionSubLoan(toConnection &con, InitModeEnum = NO_INIT_SESSION);
 
+    toConnectionSubLoan(toConnection &con, QString const& schema);
+
     /** This special kind of constructor is used by @ref toQuery while testing the connections*/
     toConnectionSubLoan(toConnection &con, int*);
 
