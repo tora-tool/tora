@@ -33,6 +33,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "core/toconnectionsubloan.h"
+#include "core/toconnectionsub.h"
 #include "core/toconnection.h"
 
 toConnectionSubLoan::toConnectionSubLoan(toConnection &con, InitModeEnum i)
@@ -48,7 +49,7 @@ toConnectionSubLoan::toConnectionSubLoan(toConnection &con, QString const & sche
 	, InitMode(INIT_SESSION)
 	, Initialized(false)
 {
-	Initialized = ConnectionSub->schema() == schema;
+	Initialized = ConnectionSub->schema() == schema && !ConnectionSub->schema().isEmpty();
 }
 
 /** This special kind of constructor is used by @ref toQuery while testing the connections*/
