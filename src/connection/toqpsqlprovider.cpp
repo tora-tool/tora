@@ -35,6 +35,7 @@
 #include "connection/toqpsqlprovider.h"
 #include "connection/toqpsqlsetting.h"
 #include "connection/toqpsqlconnection.h"
+#include "connection/toqpsqltraits.h"
 
 #define QT_DRIVER_NAME "QPSQL"
 
@@ -57,4 +58,10 @@ QWidget* toQPSqlProvider::configurationTab(QWidget *parent)
 toConnection::connectionImpl* toQPSqlProvider::createConnectionImpl(toConnection &conn)
 {
 	return new toQPSqlConnectionImpl(conn);
+}
+
+toConnectionTraits* toQPSqlProvider::createConnectionTrait(void)
+{
+	static toQSqlTraits *t = new toQPSqlTraits();
+	return t;
 }

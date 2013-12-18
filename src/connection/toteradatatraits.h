@@ -50,6 +50,12 @@ public:
     */
     virtual QString unQuote(const QString &name) const;
 
+    /** Generate SQL statement for Schema switch
+     * @param Schema/(Database) name
+     * @return SQL statement
+     */
+    virtual QString schemaSwitchSQL(QString const&) const;
+
     /** Check if connection provider supports table level comments.
      *  @return bool return true if database supports table level comments
      *  See toSQL: toResultCols:TableComment

@@ -102,10 +102,15 @@ QString toOracleTraits::unQuote(QString const &name) const
 
 QString toOracleTraits::quoteVarchar(const QString &name) const
 {
-	static const QString replacement("\'\'");
 	QString retval(name);
 	retval.replace('\'', QString::fromAscii("\'\'"), Qt::CaseSensitive);
 	return QChar('\'') + retval + ('\'');
+}
+
+QString toOracleTraits::schemaSwitchSQL(QString const & schema) const
+{
+	static const QString ALTER_SESSION("ALTER SESSION SET CURRENT_SCHEMA = \"%1\"");
+	return ALTER_SESSION.arg(schema);
 }
 
 QList<QString> toOracleTraits::primaryKeys(toConnection &conn, toCache::ObjectRef const&obj) const

@@ -523,6 +523,7 @@ SET(TORA_SOURCES
   connection/toqmysqlprovider.cpp
   connection/toqmysqlsetting.cpp
   connection/toqmysqltraits.cpp
+  connection/toqpsqltraits.cpp
   connection/toqmysqlconnection.cpp
   connection/toqmysqlquery.cpp
   connection/toqpsqlprovider.cpp

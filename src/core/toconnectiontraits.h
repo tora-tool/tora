@@ -67,6 +67,12 @@ public:
     */
     virtual QString quoteVarchar(const QString &name) const { return QChar('\'') + name + ('\''); };
 
+    /** Generate SQL statement for Schema switch
+     * @param Schema/(Database) name
+     * @return SQL statement
+     */
+    virtual QString schemaSwitchSQL(QString const&) const = 0;
+
     /** Check if connection provider supports table level comments.
      *  @return bool return true if database supports table level comments
      *  See toSQL: toResultCols:TableComment

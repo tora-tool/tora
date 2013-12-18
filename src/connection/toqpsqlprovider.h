@@ -76,7 +76,7 @@ public:
     virtual toConnection::connectionImpl* createConnectionImpl(toConnection&);
 
     //** see: @ref toConnection */
-    ////virtual toConnectionTraits* createConnectionTrait(void);
+    virtual toConnectionTraits* createConnectionTrait(void);
     
 private:
     static QString m_name, m_displayName;

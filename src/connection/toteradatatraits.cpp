@@ -91,3 +91,10 @@ QString toTeradataTraits::unQuote(QString const &str) const
         return str.left(str.length() - 1).right(str.length() - 2);
     return str.toUpper();
 }
+
+QString toTeradataTraits::schemaSwitchSQL(QString const & schema) const
+{
+	static const QString ALTER_SESSION("DATABASE \"%1\"");
+	return ALTER_SESSION.arg(schema);
+}
+

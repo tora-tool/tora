@@ -46,3 +46,9 @@ QString toQMySqlTraits::unQuote(const QString &name) const
 	else
 		return name;
 }
+
+QString toQMySqlTraits::schemaSwitchSQL(const QString &schema) const
+{
+	static const QString USE_DATABASE("USE `%1`");
+	return USE_DATABASE.arg(schema);
+}

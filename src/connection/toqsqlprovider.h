@@ -73,8 +73,10 @@ public:
     /** see: @ref toConnection */
     virtual toConnection::connectionImpl* createConnectionImpl(toConnection&);
 
-    /** see: @ref toConnection */
-    virtual toConnectionTraits* createConnectionTrait(void);
+    /** see: @ref toConnection
+     * TODO used only by toQODBCProvider (implement this in toQODBCProvider)
+     */
+    toConnectionTraits* toQSqlProvider::createConnectionTrait(void);
 };
 
 class toQSqlTraits: public toConnectionTraits
@@ -92,6 +94,8 @@ public:
     * @return String addressing table.
     */
     virtual QString unQuote(const QString &name) const { return name; }
+
+    virtual QString schemaSwitchSQL(QString const&) const { return ""; }
 
     /** Check if connection provider supports table level comments.
      *  @return bool return true if database supports table level comments

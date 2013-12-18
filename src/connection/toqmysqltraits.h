@@ -31,6 +31,8 @@
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
+#ifndef __QMYSQL_TRAITS__
+#define __QMYSQL_TRAITS__
 
 #include "core/toconnectiontraits.h"
 
@@ -50,6 +52,12 @@ public:
     */
     virtual QString unQuote(const QString &name) const;
 
+    /** Generate SQL statement for Schema switch
+     * @param Schema/(Database) name
+     * @return SQL statement
+     */
+    virtual QString schemaSwitchSQL(QString const&) const;
+
     /** Check if connection provider supports table level comments.
      *  @return bool return true if database supports table level comments
      *  See toSql: toResultCols:TableComment
@@ -64,3 +72,5 @@ public:
     	return false;
     }
 };
+
+#endif
