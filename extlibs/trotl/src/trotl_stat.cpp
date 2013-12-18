@@ -622,10 +622,6 @@ ub4 SqlStatement::fetched_rows() const
 	sword res = OCICALL(OCIAttrGet(_handle, get_type_id(), &row_count, &size, OCI_ATTR_ROWS_FETCHED, _errh));
 	oci_check_error(__TROTL_HERE__, _errh, res);
 
-	_fetched_row = row_count;
-
-	// std::cout << "ub4 SqlStatement::fetched_rows() const: " << row_count << std::endl;
-
 	return row_count;
 }
 

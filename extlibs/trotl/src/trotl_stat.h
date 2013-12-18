@@ -354,7 +354,6 @@ public:	//todo delete me - these fields should not be public
 	ub4 _last_row, _last_fetched_row, _in_pos, _out_pos, _iters;
 
 	ub4 _last_buff_row, _buff_size, _fetch_rows; // used in select statements
-	mutable ub4 _fetched_row;
 
 	std::vector<DescribeColumn*> _columns; // TODO move into some SQL-result class
 
