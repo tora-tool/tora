@@ -392,6 +392,9 @@ void toWorksheet::setup(bool autoLoad)
 
     Schema = new toResultSchema(workToolbar);
     workToolbar->addWidget(Schema);
+    connect(Schema, SIGNAL(currentIndexChanged(const QString &)),
+    		this, SLOT(slotSchemaChanged(const QString &)));
+
     Schema->refresh();
 
     new toChangeConnection(workToolbar);
@@ -795,6 +798,15 @@ bool toWorksheet::slotClose()
     	return false;
 }
 
+void toWorksheet::slotSchemaChanged(const QString &)
+{
+	if (LockedConnection)
+	{
+		(*LockedConnection).SchemaInitialized = false;
+		(*LockedConnection).Schema = currentSchema();
+	}
+}
+
 void toWorksheet::closeEvent(QCloseEvent *event)
 {
     QSettings s;
@@ -938,6 +950,11 @@ bool toWorksheet::describe(toSyntaxAnalyzer::statement const& query)
     }
     TOCATCH
     return false;
+}
+
+QString toWorksheet::currentSchema() const
+{
+	return Schema->currentText();
 }
 
 static toSQL SQLCheckMySQLRoutine("toWorksheet:CheckRoutine",
@@ -1121,7 +1138,7 @@ void toWorksheet::query(toSyntaxAnalyzer::statement const& statement, execTypeEn
     		QString buffer;
     		if (!toConfigurationSingle::Instance().wsHistory())
     		{
-    			toConnectionSubLoan conn(connection());
+    			toConnectionSubLoan conn(connection(), currentSchema());
     			toQuery query(conn, statement.sql, toQueryParams());
     			if (query.rowsProcessed() > 0)
     				buffer = tr("%1 rows processed").arg((int)query.rowsProcessed());
@@ -1498,6 +1515,17 @@ void toWorksheet::slotQueryDone(void)
 	timer()->stop();
     stopAct->setDisabled(true);
 
+    // Possibly the toConnectionSub.Schema got changed after ~toQuery
+    // could be possible if something like:
+    //   BEGIN
+    //     EXECUTE IMMEDIATE 'ALTER SESSION SET CURRENT_SCHEMA=ABC';
+    //   END;
+    // was executed
+    if (LockedConnection && !(*LockedConnection)->schema().isEmpty() && (*LockedConnection)->schema() != currentSchema())
+    {
+    		Schema->setSelected((*LockedConnection)->schema());
+    		Schema->refresh();
+    }
     // TODO: LockedConnection.isNull is mandatory here. For some unknown reason slotQueryDone can be called twice for the same query
     if (!lockConnectionActClicked && LockedConnection)
     {
@@ -2099,15 +2127,15 @@ void toWorksheet::lockConnection()
 
 	try
 	{
-		QSharedPointer<toConnectionSubLoan> conn(new toConnectionSubLoan(connection(), toConnectionSubLoan::INIT_SESSION));
+		QSharedPointer<toConnectionSubLoan> conn(new toConnectionSubLoan(connection(), currentSchema()));
 		this->LockedConnection = conn;
 
-		Utils::toBusy busy;
-		toQuery schema(*LockedConnection, toSQL::string("Global:CurrentSchema", connection()), toQueryParams());
-		QString value = schema.readValue();
-		Schema->setSelected(value);
+		//Utils::toBusy busy;
+		//toQuery schema(*LockedConnection, toSQL::string("Global:CurrentSchema", connection()), toQueryParams());
+		//QString value = schema.readValue();
+		//Schema->setSelected(value);
 		//Schema->refresh();
-		connection().setDefaultSchema(value);
+		//connection().setDefaultSchema(value);
 
 		bool oldVal = lockConnectionAct->blockSignals(true);
 	    lockConnectionAct->setChecked(true);

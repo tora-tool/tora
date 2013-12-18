@@ -121,6 +121,7 @@ protected:
 
 public slots:
     bool slotClose();
+    void slotSchemaChanged(const QString &);
     void slotConnectionChanged(void);
     void slotRefresh();
     void slotExecute();
@@ -176,6 +177,8 @@ private:
     };
 
     bool describe(toSyntaxAnalyzer::statement const&);
+
+    QString currentSchema() const;
 
     toSyntaxAnalyzer::statement currentStatement() const;
 

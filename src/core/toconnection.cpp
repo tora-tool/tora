@@ -158,19 +158,6 @@ toConnectionSub* toConnection::addConnection()
 {
     Utils::toBusy busy;
     toConnectionSub *sub = pConnectionImpl->createConnection();
-    //QMutexLocker lock(ConnectionLock); already locked by caller
-
-    toQueryParams params;
-    foreach (QString const & sql, InitStrings)
-    {
-        try
-        {
-    		//toQuery q(sub, sql, toQueryParams());
-    		//q.eof();
-        }
-        TOCATCH
-    }
-
     return sub;
 }
 
@@ -372,7 +359,7 @@ void toConnection::commandCallback(QAction *act)
 	} else if ( Connections.contains(conn)) {
 
 	} else {
-		Q_ASSERT_X(false, qPrintable(__QHERE__), "Unvalid QAction poiting onto unknown toConnectionSub");
+		Q_ASSERT_X(false, qPrintable(__QHERE__), "Invalid QAction pointing onto unknown toConnectionSub");
 	}
 
 }
@@ -407,33 +394,7 @@ QString toConnection::description(bool version) const
 /** Set connection's current schema. */
 void toConnection::setDefaultSchema(QString const & schema)
 {
-	if(this->Schema == schema)
-		return;
-
-#define CHANGE_CURRENT_SCHEMA QString("ALTER SESSION SET CURRENT_SCHEMA = \"%1\"")
-#define CHANGE_CURRENT_SCHEMA_PG QString("SET search_path TO %1,\"$user\",public")
-#define CHANGE_CURRENT_SCHEMA_TD QString("DATABASE \"%1\"")
-#define CHANGE_CURRENT_SCHEMA_MY QString("USE `%1`")
-    Schema = schema;
-
-	if(Schema.isEmpty())
-	{
-		delInit("SCHEMA");
-		return;
-	}
-
-    if (providerIs("Oracle"))
-        setInit("SCHEMA", CHANGE_CURRENT_SCHEMA.arg(schema));
-    else if (providerIs("QMYSQL"))
-        setInit("SCHEMA", CHANGE_CURRENT_SCHEMA_MY.arg(schema));
-    else if (providerIs("QPSQL"))
-    	setInit("SCHEMA", CHANGE_CURRENT_SCHEMA_PG.arg(schema));
-    else if (providerIs("Teradata"))
-    	setInit("SCHEMA", CHANGE_CURRENT_SCHEMA_TD.arg(schema));
-    else
-        throw QString("No support for changing schema for this database");
-
-    allExecute(InitStrings.value("SCHEMA"));
+	Schema = schema;
 }
 
 void toConnection::setInit(const QString &key, const QString &sql)
@@ -509,11 +470,6 @@ void toConnection::putBackSub(toConnectionSub *conn)
     bool removed = LentConnections.remove(conn);
 	Q_ASSERT_X(removed, qPrintable(__QHERE__), "Lent connection not found");
 	Q_ASSERT_X((int)LoanCnt == LentConnections.size(), qPrintable(__QHERE__), "Invalid number of lent toConnectionSub(s)");
-}
-
-void toConnection::allExecute(toSQL const& sql)
-{
-    throw exception("Not implemented yet: void toConnection::allExecute(QString const& sql)");
 }
 
 void toConnection::allExecute(QString const& sql)

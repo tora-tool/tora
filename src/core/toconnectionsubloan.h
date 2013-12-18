@@ -13,16 +13,7 @@ class toConnectionSubLoan
 	friend class toQuery;
 public:
 
-	/* If set to INIT_SESSION
-	 *
-	 */
-	enum InitModeEnum
-	{
-		NO_INIT_SESSION = 0,
-		INIT_SESSION = 1
-	};
-
-    toConnectionSubLoan(toConnection &con, InitModeEnum = NO_INIT_SESSION);
+    toConnectionSubLoan(toConnection &con);
 
     toConnectionSubLoan(toConnection &con, QString const& schema);
 
@@ -56,8 +47,9 @@ public:
     }
 
     toConnection const& ParentConnection;
-    InitModeEnum InitMode;
-    bool Initialized;
+    //InitModeEnum InitMode;
+    bool SchemaInitialized;
+    QString Schema;
 private:
     inline void check() const
     {

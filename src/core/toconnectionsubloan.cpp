@@ -36,28 +36,27 @@
 #include "core/toconnectionsub.h"
 #include "core/toconnection.h"
 
-toConnectionSubLoan::toConnectionSubLoan(toConnection &con, InitModeEnum i)
+toConnectionSubLoan::toConnectionSubLoan(toConnection &con)
     : ParentConnection(con)
     , ConnectionSub(con.borrowSub())
-	, InitMode(i)
-	, Initialized(false)
+	, SchemaInitialized(false)
 {}
 
 toConnectionSubLoan::toConnectionSubLoan(toConnection &con, QString const & schema)
     : ParentConnection(con)
     , ConnectionSub(con.borrowSub())
-	, InitMode(INIT_SESSION)
-	, Initialized(false)
+	, SchemaInitialized(false)
+	, Schema(schema)
 {
-	Initialized = ConnectionSub->schema() == schema && !ConnectionSub->schema().isEmpty();
+	Q_ASSERT_X(!schema.isEmpty(), qPrintable(__QHERE__), "schema is empty");
+	SchemaInitialized = ConnectionSub->schema() == schema;
 }
 
 /** This special kind of constructor is used by @ref toQuery while testing the connections*/
 toConnectionSubLoan::toConnectionSubLoan(toConnection &con, int*)
     : ParentConnection(con)
     , ConnectionSub(NULL)
-	, InitMode(NO_INIT_SESSION)
-	, Initialized(false)
+	, SchemaInitialized(false)
 {}
 
 toConnectionSubLoan::~toConnectionSubLoan()

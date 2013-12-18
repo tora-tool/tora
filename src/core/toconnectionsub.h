@@ -20,7 +20,7 @@ class TORA_EXPORT toConnectionSub
 public:
 
     /** Create connection to database. */
-    toConnectionSub() : Query(NULL), Broken(false) {}
+    toConnectionSub() : Query(NULL), Broken(false), Initialized(false) {}
 
     /** Close connection. */
     virtual ~toConnectionSub() {}
@@ -81,13 +81,28 @@ public:
     	return Broken;
     }
 
+    inline bool isInitialized()
+    {
+    	return Initialized;
+    }
+
+    inline void setInitialized(bool initialized)
+    {
+    	Initialized = initialized;
+    }
+
     inline QString const& schema() const
     {
     	return Schema;
     }
 
+    inline void setSchema(QString const& schema)
+    {
+    	Schema = schema;
+    }
+
 protected:
-    bool Broken;
+    bool Broken, Initialized;
     toQuery *Query;
     QString Schema;
     QDateTime LastUsed; // last time this db connection was actually used

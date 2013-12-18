@@ -228,7 +228,6 @@ public:
      * @param params Parameters to pass to query.
      */
     void allExecute(QString const& sql);
-    void allExecute(toSQL const& sql);
 
     /** Commit connection implementation */
     void commit(toConnectionSub *sub);
