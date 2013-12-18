@@ -67,19 +67,25 @@ void toResultCombo::query(const QString &sql, toQueryParams const& param)
 
     try
     {
-        clear();
         SelectedFound = false;
         blockSignals(true); // Do not emit currentIndexChanged when 1st field is inserted
+        clear();
         addItems(Additional);
         for (int i = 0; i < Additional.count(); i++)
             if (Additional[i] == Selected)
                 setCurrentIndex(i);
         {
-		Q_ASSERT_X(Query == NULL , qPrintable(__QHERE__), "toResultCombo query while BG is running");
-            	Query = new toEventQuery(this, connection(), sql, param, toEventQuery::READ_ALL);
-            	connect(Query, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(slotPoll()));
-            	connect(Query, SIGNAL(done(toEventQuery*)), this, SLOT(slotQueryDone()));
-            	Query->start();
+			//Q_ASSERT_X(Query == NULL , qPrintable(__QHERE__), "toResultCombo query while BG is running");
+			if (Query)
+			{
+				Query->disconnect(this);
+				delete Query;
+				Query = NULL;
+			}
+			Query = new toEventQuery(this, connection(), sql, param, toEventQuery::READ_ALL);
+			connect(Query, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(slotPoll()));
+			connect(Query, SIGNAL(done(toEventQuery*)), this, SLOT(slotQueryDone()));
+			Query->start();
         }
     }
     TOCATCH
@@ -140,10 +146,6 @@ void toResultCombo::slotPoll(void)
                     l.append(v);
                 }
                 addItem(t, QVariant(l));
-//                if (queryingUserlist)
-//                {
-//                    userList.append(new toCacheEntryUser(t));
-//                }
                 if (t == Selected)
                 {
                     setCurrentIndex(count() - 1);
@@ -184,12 +186,6 @@ void toResultCombo::slotQueryDone(void)
     setFont(font()); // Small hack to invalidate size hint of combobox which should resize to needed size.
     updateGeometry();
 
-// If we were querying user list - save it to cache
-//    if (queryingUserlist)
-//    {
-//        connection().getCache().updateUserList(userList, toCache::USERS);
-//        userList.clear();
-//    }
     emit currentIndexChanged(currentText());
     emit done();
     delete Query;

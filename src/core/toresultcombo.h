@@ -110,8 +110,10 @@ public slots:
     virtual void refresh(void);
 
 protected slots:
+    virtual void slotQueryDone(void);
+
+private slots:
     void slotPoll(void);
-    void slotQueryDone(void);
     void slotChangeSelected(void);
 
 protected:

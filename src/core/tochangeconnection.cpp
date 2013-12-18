@@ -108,8 +108,6 @@ void toChangeConnection::changeConnection(QAction *act)
     	if (tool)
     	{
     		tool->setConnection(con);
-#pragma message WARN("TODO/FIXME: deprecated!")
-    		// toConnectionRegistrySing::Instance().changeConnection();
     	} else
     		throw tr("Couldn't find parent connection. Internal error.");
     }

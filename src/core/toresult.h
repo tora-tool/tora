@@ -51,8 +51,6 @@ class toTimer;
 
 /** Used for getting slots into toResult.
  * @internal
- *
- * abstract class
  */
 class toResultObject : public QObject
 {

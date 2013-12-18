@@ -148,7 +148,7 @@ toSGATrace::toSGATrace(QWidget *main, toConnection &connection)
     Schema = new toResultSchema(toolbar);
     Schema->additionalItem(tr("Any"));
     Schema->setSelected(connection.user().toUpper());
-       Schema->refresh();
+    Schema->refresh();
     toolbar->addWidget(Schema);
 
     connect(Schema, SIGNAL(activated(const QString &)), this, SLOT(changeSchema(const QString &)));

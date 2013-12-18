@@ -393,10 +393,6 @@ void toWorksheet::setup(bool autoLoad)
     Schema = new toResultSchema(workToolbar);
     workToolbar->addWidget(Schema);
     Schema->refresh();
-    connect(Schema,
-            SIGNAL(currentIndexChanged(const QString &)),
-            Schema,
-            SLOT(update(const QString &)));
 
     new toChangeConnection(workToolbar);
 
@@ -2082,14 +2078,6 @@ void toWorksheet::slotCreatePopupMenu(const QPoint &pos)
 
 void toWorksheet::slotChangeConnection(void)
 {
-    // Schema->refresh(); - Schema(instance of toResult) has it's own connectionChanged slot
-    if (connection().providerIs("QMYSQL"))
-        Schema->setSelected(connection().database());
-    else if (connection().providerIs("Oracle") || connection().providerIs("SapDB"))
-        Schema->setSelected(connection().user().toUpper());
-    else
-        Schema->setSelected(connection().user());
-
 	if (!lockConnectionActClicked)
 		unlockConnection();
 	lockConnectionAct->setEnabled(true);

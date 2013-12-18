@@ -1,4 +1,3 @@
-
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
@@ -35,7 +34,6 @@
 #ifndef TORESULTSCHEMA_H
 #define TORESULTSCHEMA_H
 
-
 #include "core/toresultcombo.h"
 
 class toConnection;
@@ -44,44 +42,48 @@ class toConnection;
  * This widget displays a list of schemas
  *
  */
-class toResultSchema : public toResultCombo
-{
-    Q_OBJECT;
+class toResultSchema: public toResultCombo {
+Q_OBJECT
+	;
 public:
-    /**
-     * Create the widget.
-     *
-     * @param parent Parent widget.
-     * @param name Name of widget.
-     *
-     * NOTE: this widget does not eneed any reference to toConnection,
-     * whenever queriyng it finds toCurrentConnection
-     */
-    toResultSchema(QWidget *parent, const char *name = NULL);
+	/**
+	 * Create the widget.
+	 *
+	 * @param parent Parent widget.
+	 * @param name Name of widget.
+	 *
+	 * NOTE: this widget does not eneed any reference to toConnection,
+	 * whenever queriyng it finds toCurrentConnection
+	 */
+	toResultSchema(QWidget *parent, const char *name = NULL);
 
-    virtual ~toResultSchema() {};
+	virtual ~toResultSchema() {
+	}
+	;
 
-    /** Reimplemented abstract method
-     */
-    virtual void query(const QString &sql, toQueryParams const& param);
+	/** Reimplemented abstract method
+	 */
+	virtual void query(const QString &sql, toQueryParams const& param);
 
 public slots:
-    virtual void refresh(void);
+	virtual void refresh(void);
+
+protected:
+	virtual void connectionChanged(void);
 
 private slots:
-    // stores last schema selected in qsettings
+	// stores last schema selected in qsettings
 	// also set schema in toConnection
-    void updateLastSchema(const QString &schema);
+	void updateLastSchema(const QString &schema);
 
-    // refreshes user list from connections cache, no query is executed
-    void slotUsersFromCache(void);
+	// refreshes user list from connections cache, no query is executed
+	void slotUsersFromCache(void);
 
-    void slotQueryDone(); // Overridden but NOT virtual
+	virtual void slotQueryDone(); // Overridden
 private:
-    void init(toConnection &conn);
+	void init(toConnection &conn);
 
-    QString ConnectionKey;
-    //QList<toCache::CacheEntry*> userList;
+	QString ConnectionKey;
 };
 
 #endif

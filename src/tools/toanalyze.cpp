@@ -221,8 +221,8 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
     }
 
     Schema = new toResultSchema(toolbar);
-    Schema->setSelected(tr("All"));
     Schema->additionalItem(tr("All"));
+    Schema->setSelected(tr("All"));
     toolbar->addWidget(Schema);
        Schema->refresh();
 

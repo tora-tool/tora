@@ -48,6 +48,7 @@ toResultSchema::toResultSchema(QWidget *parent,
     toConnection &conn = toConnection::currentConnection(parent);
     ConnectionKey =
         conn.provider() + "-" +
+        conn.user() + "-" +
         conn.host() + "-" +
         conn.database();
 
@@ -72,6 +73,7 @@ toResultSchema::toResultSchema(QWidget *parent,
         sel = sel.toUpper();
 
     setSelected(sel);
+	setParams(toQueryParams()); // sets QueryReady = true;
     if (SelectedFound)
     	conn.setDefaultSchema(sel);
     connect(this, SIGNAL(currentIndexChanged(const QString &)),
@@ -108,9 +110,9 @@ void toResultSchema::updateLastSchema(const QString &schema)
 
 void toResultSchema::slotUsersFromCache(void)
 {
-	//userList.clear();
+    SelectedFound = false;
+    blockSignals(true); // Do not emit currentIndexChanged when 1st field is inserted
 	clear();
-	SelectedFound = false;
 	addItems(Additional);
 	for (int i = 0; i < Additional.count(); i++)
 		if (Additional[i] == Selected)
@@ -144,6 +146,25 @@ void toResultSchema::slotQueryDone(void)
 		users << new toCacheEntryUser(s);
 	}
 	connection().getCache().upsertUserList(users);
+	toResultCombo::slotQueryDone();
+}
+
+void toResultSchema::connectionChanged(void)
+{
+	if ( ! connection().defaultSchema().isEmpty() )
+	{
+		// No need to upperize the string. Oracle has it uppercased already,
+		// mysql nad pgsql require it as lowercase.
+		setSelected(connection().defaultSchema());//.toUpper());
+	}
+	else if (connection().providerIs("QMYSQL"))
+        setSelected(connection().database());
+    else if (connection().providerIs("Oracle") || connection().providerIs("SapDB"))
+        setSelected(connection().user().toUpper());
+    else
+        setSelected(connection().user());
+
+	toResultCombo::connectionChanged();
 }
 
 void toResultSchema::refresh(void)

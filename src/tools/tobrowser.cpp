@@ -1419,25 +1419,6 @@ void toBrowser::changeConnection(void)
 	{
 		m_mainTab->blockSignals(true);
 
-		if ( ! connection().defaultSchema().isEmpty() )
-		{
-			// No need to upperize the string. Oracle has it uppercased already,
-			// mysql nad pgsql require it as lowercase.
-			Schema->setSelected(connection().defaultSchema());//.toUpper());
-		}
-		else if (connection().providerIs("QMYSQL"))
-		{
-			Schema->setSelected(connection().database());
-		}
-		else if (connection().providerIs("Oracle") || connection().providerIs("SapDB"))
-		{
-			Schema->setSelected(connection().user().toUpper());
-		}
-		else
-		{
-			Schema->setSelected(connection().user());
-		}
-
 		// enable/disable main tabs depending on DB
 		m_mainTab->clear();
 		addTab(tableSplitter, tr("T&ables"), true);
