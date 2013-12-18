@@ -37,24 +37,29 @@
 #include "core/tologger.h"
 #include "core/toconnection.h"
 #include "core/toconnectionsub.h"
+#include "core/toconnectiontraits.h"
 #include "core/tosql.h"
 
 #include <QtGui/QApplication>
 
 toQuery::toQuery(toConnectionSubLoan &conn, const toSQL &sql, toQueryParams const& params)
-    : m_ConnectionSub(conn)
+    : m_ConnectionSubLoan(conn)
     , m_Params(params)
 	, m_SQL(sql(conn.ParentConnection).toAscii())
     , m_Query(NULL)
+	, m_eof(false)
+	, m_rowsProcessed(0)
 {
 	init();
 }
 
 toQuery::toQuery(toConnectionSubLoan &conn, QString const& sql, toQueryParams const& params)
-    : m_ConnectionSub(conn)
+    : m_ConnectionSubLoan(conn)
     , m_Params(params)
     , m_SQL(sql)
     , m_Query(NULL)
+	, m_eof(false)
+	, m_rowsProcessed(0)
 {
 	init();
 }
@@ -63,25 +68,43 @@ void toQuery::init()
 {
     try
     {
-    	if ( m_ConnectionSub.InitMode == toConnectionSubLoan::INIT_SESSION)
+    	// Try to switch the current db schema
+    	if (m_ConnectionSubLoan.SchemaInitialized == false && !m_ConnectionSubLoan.Schema.isEmpty())
     	{
-    		Q_FOREACH(QString sql, m_ConnectionSub.ParentConnection.initStrings())
-			{
-    	        m_Query = m_ConnectionSub->createQuery(this);
-    	        m_ConnectionSub->setQuery(this);
-    	        m_Query->execute(sql);
-			}
+	        QString sql = m_ConnectionSubLoan.ParentConnection.getTraits().schemaSwitchSQL(m_ConnectionSubLoan.Schema);
+	        if (!sql.isEmpty())
+	        {
+	        	m_Query = m_ConnectionSubLoan->createQuery(this);
+	        	m_ConnectionSubLoan->setQuery(this);
+	        	m_Query->execute(sql);
+	        	delete m_Query;
+	        }
+	        m_ConnectionSubLoan.SchemaInitialized = true;
+	        m_ConnectionSubLoan->setSchema(m_ConnectionSubLoan.Schema); // assign value in toConnectionSub from toConnectionSubLoan
     	}
-		  
-        m_Query = m_ConnectionSub->createQuery(this);
-        m_ConnectionSub->setQuery(this);
+
+    	// Try to switch the current NLS_SETTINGS (not implemented yet)
+    	if( m_ConnectionSubLoan->isInitialized() == false)
+    	{
+    		Q_FOREACH(QString sql, m_ConnectionSubLoan.ParentConnection.initStrings())
+			{
+    	        m_Query = m_ConnectionSubLoan->createQuery(this);
+    	        m_ConnectionSubLoan->setQuery(this);
+    	        m_Query->execute(sql);
+    	        delete m_Query;
+			}
+    		m_ConnectionSubLoan->setInitialized(true);
+    	}
+
+        m_Query = m_ConnectionSubLoan->createQuery(this);
+        m_ConnectionSubLoan->setQuery(this);
         m_Query->execute();
     }
     catch (...)
     {
         if (m_Query)
             delete m_Query;
-        m_ConnectionSub->setQuery(NULL);
+        m_ConnectionSubLoan->setQuery(NULL);
         m_Query = NULL;
         throw;
     }
@@ -89,25 +112,55 @@ void toQuery::init()
 
 toQuery::~toQuery()
 {
-    Utils::toBusy busy;
     if (m_Query)
         delete m_Query;
-    try
-    {
-        if (m_ConnectionSub->query() == this)
-            m_ConnectionSub->setQuery(NULL);
-        //conn if (Mode != Test && Connection && Connection->ConnectionPool)
-        //conn    Connection->ConnectionPool->release(ConnectionSub);
-    }
-    catch (...)
-    {
-        TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
-    }
+
+//    try {
+//		QString sql = toSQL::string("Global:CurrentSchema", connection());
+//		if (!sql.isEmpty())
+//		{
+//			m_Query = m_ConnectionSubLoan->createQuery(this);
+//			m_ConnectionSubLoan->setQuery(this);
+//			m_Query->execute(sql);
+//			QString schema = m_Query->readValue();
+//			m_ConnectionSubLoan->setSchema(schema);
+//			delete m_Query;
+//		}
+//    } catch (...) {
+//    }
+
+    if (m_ConnectionSubLoan->query() == this)
+    	m_ConnectionSubLoan->setQuery(NULL);
 }
 
 bool toQuery::eof(void)
 {
-    return m_Query->eof();
+	bool retval = m_Query ? m_Query->eof() : true;
+
+	// eof value was flip over (do not call this each time)
+	if (retval && !m_eof) //
+	{
+		m_eof = retval;
+	    try {
+			QString sql = toSQL::string("Global:CurrentSchema", connection());
+			if (!sql.isEmpty())
+			{
+				queryImpl* Query = m_ConnectionSubLoan->createQuery(this);
+				//m_ConnectionSubLoan->setQuery(this);
+				Query->execute(sql);
+				QString schema = Query->readValue();
+				m_ConnectionSubLoan->setSchema(schema);
+				delete Query;
+			}
+	    } catch (...) {
+	    }
+	    m_rowsProcessed = m_Query->rowsProcessed();
+	    if (m_Query)
+	    	delete m_Query;
+	    m_Query = NULL;
+	}
+
+    return retval;
 }
 
 toQList toQuery::readQuery(toConnection &conn, toSQL const& sql, toQueryParams const& params)

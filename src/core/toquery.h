@@ -92,18 +92,18 @@ public:
     /** Connection object of this object. */
     inline toConnection const& connection(void)
     {
-        return m_ConnectionSub.ParentConnection;
+        return m_ConnectionSubLoan.ParentConnection;
     }
 
     /** Actual database connection that this query is currently using. */
     inline toConnectionSubLoan& connectionSub(void)
     {
-        return m_ConnectionSub;
+        return m_ConnectionSubLoan;
     }
 
     inline toConnectionSub* connectionSubPtr(void)
     {
-        return m_ConnectionSub.ConnectionSub;
+        return m_ConnectionSubLoan.ConnectionSub;
     }
 
     /** Parameters of the current query. */
@@ -131,7 +131,10 @@ public:
     /** Get the number of rows processed by the query. */
     inline unsigned long rowsProcessed(void)
     {
-        return m_Query->rowsProcessed();
+    	if (m_Query)
+    		return m_Query->rowsProcessed();
+    	else
+    		return m_rowsProcessed;
     }
 
     /** Get a list of descriptions for the columns. This function is relatively slow. */
@@ -169,7 +172,7 @@ public:
 protected:
     toConnectionSub* sub()
     {
-    	return m_ConnectionSub.ConnectionSub;
+    	return m_ConnectionSubLoan.ConnectionSub;
     }
 private:
     /** This class contains a reference onto loaned connection
@@ -183,9 +186,11 @@ private:
 private:
     void init();
 
-    toConnectionSubLoan& m_ConnectionSub;
+    toConnectionSubLoan& m_ConnectionSubLoan;
     toQueryParams m_Params;
     QString m_SQL;
+    bool m_eof;
+    unsigned long m_rowsProcessed;
 
     queryImpl *m_Query;
     toQuery(const toQuery &);
