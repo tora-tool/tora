@@ -76,7 +76,7 @@ public:
     /** see: @ref toConnection
      * TODO used only by toQODBCProvider (implement this in toQODBCProvider)
      */
-    toConnectionTraits* toQSqlProvider::createConnectionTrait(void);
+    toConnectionTraits* createConnectionTrait(void);
 };
 
 class toQSqlTraits: public toConnectionTraits
