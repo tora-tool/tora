@@ -793,14 +793,19 @@ SET(TEST1_SOURCES
   core/toqvalue.cpp
   core/toglobalevent.cpp
   editor/tostyle.cpp
+  editor/tohighlightedtext.cpp
+  editor/tomarkedtext.cpp
+  editor/tocomplpopup.cpp
   parsing/tosyntaxanalyzer.cpp
   parsing/tosyntaxanalyzeroracle.cpp
   parsing/tosyntaxanalyzernl.cpp
+  parsing/tolexeroracle.cpp
   core/utils.cpp
   core/utils_part.cpp
   core/totimer.cpp
   core/tomainwindow.cpp
   core/tocache.cpp
+  core/topushbutton.cpp
   core/tosql.cpp
   core/toquery.cpp
   #disabled parsing/tsqlparse.cpp
@@ -816,12 +821,17 @@ SET(TEST1_MOC_SOURCES
   core/moc_tomainwindow.cxx
   core/moc_toglobalevent.cxx
   core/moc_tocache.cxx
+  core/moc_topushbutton.cxx
   core/moc_toquery.cxx
   core/moc_totimer.cxx
+  editor/moc_tocomplpopup.cxx
   editor/moc_tostyle.cxx
+  editor/moc_tohighlightedtext.cxx
+  editor/moc_tomarkedtext.cxx
   parsing/moc_tsqllexer.cxx
   parsing/moc_tosyntaxanalyzer.cxx
-  ts_log/moc_toostream.cxx  
+  parsing/moc_tolexeroracle.cxx
+  ts_log/moc_toostream.cxx
   )
 ADD_EXECUTABLE("test1" ${GUI_TYPE}
   tests/test1.cpp
@@ -888,7 +898,8 @@ SET(TEST4_SOURCES
   parsing/tosyntaxanalyzer.cpp
   parsing/tosyntaxanalyzernl.cpp
   parsing/tosyntaxanalyzermysql.cpp
-  parsing/tosyntaxanalyzeroracle.cpp  
+  parsing/tosyntaxanalyzeroracle.cpp
+  editor/tostyle.cpp
   )
 SET(TEST4_MOC_SOURCES
   tests/moc_test4window.cxx
@@ -906,6 +917,7 @@ SET(TEST4_MOC_SOURCES
   editor/moc_tohighlightedtext.cxx
   editor/moc_tomarkedtext.cxx
   editor/moc_tocomplpopup.cxx
+  editor/moc_tostyle.cxx
   )
 
 ADD_EXECUTABLE("test4" ${GUI_TYPE}
@@ -1001,6 +1013,7 @@ SET(TEST5_SOURCES
   editor/tomarkededitor.cpp
   editor/tomarkedtext.cpp
   editor/tosearchreplace.cpp
+  editor/tostyle.cpp
   parsing/tolexeroracle.cpp
   parsing/tosyntaxanalyzer.cpp
   parsing/tosyntaxanalyzernl.cpp
@@ -1009,6 +1022,8 @@ SET(TEST5_SOURCES
   #tools/toworksheet.cpp
   tools/toplsqleditor.cpp
   tools/toplsqltext.cpp
+  result/toresulttabledata.cpp
+  core/toresultmodeledit.cpp
   )
 SET(TEST5_MOC_SOURCES
   tests/moc_test5window.cxx
@@ -1054,10 +1069,11 @@ SET(TEST5_MOC_SOURCES
   core/moc_totreewidget.cxx
   core/moc_toresultschema.cxx
   core/moc_utils.cxx
+  core/moc_toqueryimpl.cxx
   connection/moc_tooraclesetting.cxx
   parsing/moc_tolexeroracle.cxx
   parsing/moc_tsqllexer.cxx
-  parsing/moc_tosyntaxanalyzer.cxx  
+  parsing/moc_tosyntaxanalyzer.cxx
   ts_log/moc_toostream.cxx
   #tools/moc_toworksheet.cxx
   editor/moc_tobaseeditor.cxx
@@ -1070,8 +1086,11 @@ SET(TEST5_MOC_SOURCES
   editor/moc_tomarkededitor.cxx
   editor/moc_tomarkedtext.cxx
   editor/moc_tosearchreplace.cxx
+  editor/moc_tostyle.cxx
   tools/moc_toplsqleditor.cxx
   tools/moc_toplsqltext.cxx
+  result/moc_toresulttabledata.cxx
+  core/moc_toresultmodeledit.cxx
   )
 
 ADD_EXECUTABLE("test5" ${GUI_TYPE}
