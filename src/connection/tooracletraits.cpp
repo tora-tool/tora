@@ -119,7 +119,7 @@ QList<QString> toOracleTraits::primaryKeys(toConnection &conn, toCache::ObjectRe
 	static const QString ORA_ROWSCN(QString::fromAscii("ORA_ROWSCN"));
 
 	toCache::CacheEntry const* e = conn.getCache().findEntry(obj);
-	if (e->type == toCache::TABLE)
+	if (e && e->type == toCache::TABLE)
 		return QList<QString>() << ROWID << ORA_ROWSCN;
 	else
 		return QList<QString>(); // no primary keys for views
