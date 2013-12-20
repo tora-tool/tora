@@ -331,8 +331,10 @@ struct TROTL_EXPORT OciLogin : public OciHandle<OCISvcCtx>
 	bool hasTransaction()
 	{
 		boolean t = true;
+#if 0
 #if (OCI_MAJOR_VERSION >= 12)
 		t = _session.get_attribute<boolean>(OCI_ATTR_TRANSACTION_IN_PROGRESS);
+#endif
 #endif
 		return t!=0;
 	}
