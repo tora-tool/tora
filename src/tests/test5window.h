@@ -50,25 +50,6 @@
 class toWorkSpace;
 class toConnection;
 
-// thx to Martin Pejcoch
-class XMdiSubWindow : public QMdiSubWindow
-{
-public:
-    XMdiSubWindow( QWidget * parent = 0
-                , Qt::WindowFlags flags = 0
-                )
-        : QMdiSubWindow( parent, flags )
-    {
-	    //showMaximized();
-    }
-    virtual void showEvent( QShowEvent * event )
-    {
-        QMdiSubWindow::showEvent( event );
-        if( widget() )
-            widget()->show();
-    }
-};
-
 class Test5Window : public toMainWindow
 {
 	Q_OBJECT;
@@ -106,8 +87,6 @@ class Test5Window : public toMainWindow
 
 	toDockbar *leftDockbar,*rightDockbar;
 	
-	QList<toConnection *> Connections;
-
 	QAction * m_describeAction;
 public:
 	Test5Window(QString, QString, QString, QSet<QString>&);
@@ -117,31 +96,6 @@ public:
 	void moveDocklet(toDocklet *let, Qt::DockWidgetArea area);
 
 	virtual void addCustomMenu(QMenu *) {};
-
-	toConnection* addConnection(toConnection *conn)
-	{
-		Connections.insert(Connections.end(), conn);
-		return conn;
-	}
-
-	virtual QList<toConnection*> const& connections(void) const
-	{ 
-		return Connections;
-	};
-
-	virtual toConnection& connection(const QString &) 
-	{ 
-		return *Connections.front(); 
-	}
-
-	virtual toConnection& currentConnection(void)
-	{
-		QList<toConnection *>::iterator i = Connections.begin();
-		if(i != Connections.end())
-			return *(*i);
-		throw tr("Can't find active connection");
-	}
-
 	virtual toDockbar* dockbar(toDocklet *let);
 
 private slots:
@@ -149,39 +103,5 @@ private slots:
 	void addTool();
 };
 
-
-//class MdiChild : public QTextEdit
-//{
-//	Q_OBJECT;
-//public:
-//
-//	MdiChild()
-//	{
-//		setAttribute(Qt::WA_DeleteOnClose);
-//		//    isUntitled = true;
-//	}
-//
-//	// void newFile();
-//	// bool loadFile(const QString &fileName);
-//	// bool save();
-//	// bool saveAs();
-//	// bool saveFile(const QString &fileName);
-//	// QString userFriendlyCurrentFile();
-//	// QString currentFile() { return curFile; }
-//
-//protected:
-//	// void closeEvent(QCloseEvent *event);
-//
-//private slots:
-//	//     void documentWasModified();
-//
-//private:
-//	//     bool maybeSave();
-//	//     void setCurrentFile(const QString &fileName);
-//	//     QString strippedName(const QString &fullFileName);
-//
-//	//     QString curFile;
-//	//     bool isUntitled;
-//};
 
 #endif

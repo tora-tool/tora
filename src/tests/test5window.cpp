@@ -38,6 +38,7 @@
 #include "core/toconf.h"
 #include "core/tologger.h"
 #include "core/toconnection.h"
+#include "core/toconnectionregistry.h"
 #include "core/todocklet.h"
 
 #include "core/toconfiguration.h"
@@ -71,37 +72,11 @@ Test5Window::Test5Window(QString user, QString password, QString connect, QSet<Q
 		options);
 	TLOG(0,toDecorator,__HERE__) << "Version: " 
 				     << oraCon->version().toUtf8().constData() 
-				     << std::endl;	
-	addConnection(oraCon);
+				     << std::endl;
+	toConnectionRegistrySing::Instance().addConnection(oraCon);
 	{
-		//QSplitter *splitter;
-		//splitter = new QSplitter(this);
-		//splitter->setOrientation(Qt::Horizontal);
-		//
-		//QMdiArea *Workspace = new QMdiArea(splitter);
-		//Workspace->setActivationOrder(QMdiArea::CreationOrder);
-		//Workspace->setViewMode(QMdiArea::TabbedView);
-	
-		//toWorksheet *w1 = new toWorksheet(Workspace, *oraCon);
-		//toWorksheet *w2 = new toWorksheet(Workspace, *oraCon);
-		//MdiChild *mc1 = new MdiChild;
-		//MdiChild *mc2 = new MdiChild;
-		//Workspace->addSubWindow(mc1);
-		//Workspace->addSubWindow(mc2);
-		//Workspace->addSubWindow(w1);
-		//Workspace->addSubWindow(w2);
-		
-		//splitter->addWidget(&this->Workspace);
-		
 		m_describeAction = new QAction("&Describe", this);
-		
-		///createDocklets(); // Must be called after Wokspace is initialized
-
-		//this->setCentralWidget(splitter);
 		this->setCentralWidget(&Workspace);
-
-		//statusbar = new QStatusBar(this);
-		//this->setStatusBar(statusbar);
 	    toHighlighterTypeButtonSingle::Instance().setFocusPolicy(Qt::NoFocus);
 	    toHighlighterTypeButtonSingle::Instance().setDisabled(true);
 	    statusBar()->addPermanentWidget(&toHighlighterTypeButtonSingle::Instance());
@@ -109,25 +84,9 @@ Test5Window::Test5Window(QString user, QString password, QString connect, QSet<Q
 		createActions();
 		createMenus();
 		createToolBars();
-		//createStatusBar();		
 	}
 
 	show();
-	
-	///createDockbars();   
-	
-	// for (ToolsRegistrySing::ObjectType::iterator i = ToolsRegistrySing::Instance().begin();
-	//      i != ToolsRegistrySing::Instance().end();
-	//      ++i)
-	// {
-	// 	if(i.value()->name() == "SQL Editor")
-	// 		//if(i.value()->name() == "Security Manager")
-	// 		//if(i.value()->name() == "Schema Browser")
-	// 	{
-	// 		i.value()->customSetup();
-	// 		i.value()->createWindow();
-	// 	}
-	// }
 }
 
 void Test5Window::createDocklets()
@@ -288,8 +247,6 @@ void Test5Window::createMenus()
 	fileMenu->addAction(saveAct);
 	fileMenu->addAction(saveAsAct);
 	fileMenu->addSeparator();
-	QAction *action = fileMenu->addAction(tr("Switch layout direction"));
-	connect(action, SIGNAL(triggered()), this, SLOT(switchLayoutDirection()));
 	fileMenu->addAction(exitAct);
 }
 
@@ -297,16 +254,6 @@ void Test5Window::createToolBars()
 {
 	fileToolBar = addToolBar(tr("File"));
 	fileToolBar->addAction(newAct);
-	// fileToolBar->addAction(openAct);
-	// fileToolBar->addAction(saveAct);
-
-	// editToolBar = addToolBar(tr("Edit"));
-	// editToolBar->addAction(cutAct);
-	// editToolBar->addAction(copyAct);
-	// editToolBar->addAction(pasteAct);
-
-	// toolsToolBar = addToolBar(tr("Tools"));
-	// ToolsRegistrySing::Instance().toolsToolbar(toolsToolBar);
 }
 
 void Test5Window::createStatusBar()
@@ -322,14 +269,8 @@ void Test5Window::newFile()
 
 void Test5Window::addTool()
 {
-	//toWorksheet *w1 = new toWorksheet(&Workspace, *Connections.front());
-	toPLSQL *w1 = new toPLSQL(&Workspace, *Connections.front());
+	toPLSQL *w1 = new toPLSQL(NULL, toConnectionRegistrySing::Instance().currentConnection());
 	w1->showMaximized();
-	//newsub->setWidget(w1);
 	Workspace.addToolWidget(w1);
-
-	//toWorksheet *w1 = new toWorksheet(Workspace, *Connections.front()); 
-	//Workspace->addSubWindow(w1);
-	//newsub->show();
 	w1->show();
 }

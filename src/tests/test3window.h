@@ -105,8 +105,6 @@ class Test3Window : public toMainWindow
 	toWorkSpace &Workspace;
 
 	toDockbar *leftDockbar,*rightDockbar;
-	
-	QList<toConnection *> Connections;
 
 	QAction * m_describeAction;
 public:
@@ -117,30 +115,6 @@ public:
 	void moveDocklet(toDocklet *let, Qt::DockWidgetArea area);
 
 	virtual void addCustomMenu(QMenu *) {};
-
-	toConnection* addConnection(toConnection *conn)
-	{
-		Connections.insert(Connections.end(), conn);
-		return conn;
-	}
-
-	virtual QList<toConnection*> const& connections(void) const
-	{ 
-		return Connections;
-	};
-
-	virtual toConnection& connection(const QString &) 
-	{ 
-		return *Connections.front(); 
-	}
-
-	virtual toConnection& currentConnection(void)
-	{
-		QList<toConnection *>::iterator i = Connections.begin();
-		if(i != Connections.end())
-			return *(*i);
-		throw tr("Can't find active connection");
-	}
 
 	virtual toDockbar* dockbar(toDocklet *let);
 

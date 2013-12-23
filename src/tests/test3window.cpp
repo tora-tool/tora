@@ -37,6 +37,7 @@
 #include "core/toabout.h"
 #include "core/toconf.h"
 #include "core/toconnection.h"
+#include "core/toconnectionregistry.h"
 #include "core/todocklet.h"
 #include "core/toconfiguration.h"
 #include "core/toraversion.h"
@@ -65,8 +66,8 @@ Test3Window::Test3Window(QString user, QString password, QString connect, QSet<Q
 		options);
 	TLOG(0,toDecorator,__HERE__) << "Version: " 
 				     << oraCon->version().toUtf8().constData() 
-				     << std::endl;	
-	addConnection(oraCon);
+				     << std::endl;
+	toConnectionRegistrySing::Instance().addConnection(oraCon);
 	{
 //		QSplitter *splitter;
 //		splitter = new QSplitter(this);
@@ -279,8 +280,6 @@ void Test3Window::createMenus()
 	fileMenu->addAction(saveAct);
 	fileMenu->addAction(saveAsAct);
 	fileMenu->addSeparator();
-	QAction *action = fileMenu->addAction(tr("Switch layout direction"));
-	connect(action, SIGNAL(triggered()), this, SLOT(switchLayoutDirection()));
 	fileMenu->addAction(exitAct);
 }
 
@@ -314,7 +313,7 @@ void Test3Window::newFile()
 void Test3Window::addTool()
 {
 	//XMdiSubWindow *newsub = new XMdiSubWindow(&Workspace);
-	toWorksheet *w1 = new toWorksheet(&Workspace, *Connections.front());
+	toWorksheet *w1 = new toWorksheet(NULL, toConnectionRegistrySing::Instance().currentConnection());
 	w1->showMaximized();
 	//newsub->setWidget(w1);
 	Workspace.addToolWidget(w1);

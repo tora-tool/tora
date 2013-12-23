@@ -91,7 +91,11 @@ void toCacheWorker::process() {
 		}
 	} catch (toConnection::exception const &exc) {
 		parentConnection().getCache().setCacheState(toCache::FAILED);
-		throw exc;
+		TLOG(2, toDecorator, __HERE__) << exc << std::endl;
+		return;
+	} catch (QString const &exc) {
+		parentConnection().getCache().setCacheState(toCache::FAILED);
+		TLOG(2, toDecorator, __HERE__) << exc << std::endl;
 		return;
 	}
 
