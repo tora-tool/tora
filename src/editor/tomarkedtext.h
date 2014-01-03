@@ -114,7 +114,7 @@ public:
     /** Get word at position. This function is now public.
      * re-implemented from QScintilla
      */
-    QString wordAtPosition(int position) const;
+    QString wordAtPosition(int position, bool onlyWordCharacters = true) const;
 
     /** Get word at line and index. This function is now public.
      * re-implemented from QScintilla

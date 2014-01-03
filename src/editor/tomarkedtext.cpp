@@ -116,13 +116,13 @@ toMarkedText::~toMarkedText()
 //	toEditWidget::lostFocus();
 }
 
-QString toMarkedText::wordAtPosition(int position) const
+QString toMarkedText::wordAtPosition(int position, bool onlyWordCharacters /* = true */) const
 {
     if (position < 0)
         return QString();
 
-    long start_pos = SendScintilla(SCI_WORDSTARTPOSITION, position, true);
-    long end_pos = SendScintilla(SCI_WORDENDPOSITION, position, true);
+    long start_pos = SendScintilla(SCI_WORDSTARTPOSITION, position, onlyWordCharacters);
+    long end_pos = SendScintilla(SCI_WORDENDPOSITION, position, onlyWordCharacters);
 
 	int style1 = SendScintilla(QsciScintilla::SCI_GETSTYLEAT, start_pos) & 0x1f;
     int style2 = SendScintilla(QsciScintilla::SCI_GETSTYLEAT, end_pos) & 0x1f;

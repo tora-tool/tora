@@ -46,6 +46,56 @@
 #include <Qsci/qsciapis.h>
 #include <Qsci/qsciabstractapis.h>
 #include <Qsci/qscilexersql.h>
+#include <ScintillaQt.h>
+
+/**
+ * TODO DELETE THIS, IT'S JUST A TEST (to access Scintilla private method NextWordStart)
+ */
+template <class Tag>
+struct stowed
+{
+     static typename Tag::type value;
+};
+template <class Tag>
+typename Tag::type stowed<Tag>::value;
+
+// Generate a static data member whose constructor initializes
+// stowed<Tag>::value.  This type will only be named in an explicit
+// instantiation, where it is legal to pass the address of a private
+// member.
+template <class Tag, typename Tag::type x>
+struct stow_private
+{
+     stow_private() { stowed<Tag>::value = x; }
+     static stow_private instance;
+};
+template <class Tag, typename Tag::type x>
+stow_private<Tag,x> stow_private<Tag,x>::instance;
+
+// ------- Usage -------
+// A demonstration of how to use the library, with explanation
+
+struct A
+{
+     A() : x("proof!") {}
+private:
+     char const* x;
+};
+
+// A tag type for A::x.  Each distinct private member you need to
+// access should have its own tag.  Each tag should contain a
+// nested ::type that is the corresponding pointer-to-member type.
+struct A_x { typedef char const*(A::*type); };
+struct QsciScintillaBase_qsci { typedef QsciScintillaQt*(QsciScintillaBase::*type); };
+
+// Explicit instantiation; the only place where it is legal to pass
+// the address of a private member.  Generates the static ::instance
+// that in turn initializes stowed<Tag>::value.
+template struct stow_private<A_x,&A::x>;
+template struct stow_private<QsciScintillaBase_qsci,&QsciScintillaBase::sci>;
+/**
+ * TODO DELETE THIS, IT'S JUST A TEST
+ */
 
 toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
     : toMarkedText(parent)
@@ -100,7 +150,7 @@ toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
     // This is only required until transparency fixes in QScintilla go into stable release
     QsciScintilla::SendScintilla(QsciScintilla::SCI_SETCARETLINEBACKALPHA, QsciScintilla::SC_ALPHA_NOALPHA);
 #else
-    QsciScintilla::SendScintilla(QsciScintilla::SCI_SETCARETLINEBACKALPHA, 100);
+    QsciScintilla::SendScintilla(/*QsciScintilla::*/SCI_SETCARETLINEBACKALPHA, 100);
 #endif
 
     // handle "max text width" mark
@@ -533,7 +583,88 @@ void toHighlightedText::tableAtCursor(toCache::ObjectRef &table, bool mark)
         int pos = positionFromLineIndex(curline, curcol);
 
         QString word = super::wordAtLineIndex(curline, curcol);
+
         // TODO parse also schema "DOT" ...
+        int pos1 = positionFromLineIndex(curline, 0);
+        int pos2 = SendScintilla(/*QsciScintilla::*/SCI_WORDENDPOSITION, pos1, (long)false);
+        int pos3 = SendScintilla(/*QsciScintilla::*/SCI_WORDENDPOSITION, pos2, (long)false);
+        int pos4 = SendScintilla(/*QsciScintilla::*/SCI_WORDENDPOSITION, pos3, (long)false);
+        int pos5 = SendScintilla(/*QsciScintilla::*/SCI_WORDENDPOSITION, pos4, (long)false);
+
+        int epos1 = SendScintilla(/*QsciScintilla::*/SCI_WORDSTARTPOSITION, pos1, (long)false);
+        int epos2 = SendScintilla(/*QsciScintilla::*/SCI_WORDSTARTPOSITION, pos2, (long)false);
+        int epos3 = SendScintilla(/*QsciScintilla::*/SCI_WORDSTARTPOSITION, pos3, (long)false);
+        int epos4 = SendScintilla(/*QsciScintilla::*/SCI_WORDSTARTPOSITION, pos4, (long)false);
+        int epos5 = SendScintilla(/*QsciScintilla::*/SCI_WORDSTARTPOSITION, pos5, (long)false);
+
+        QString w1 = super::wordAtPosition(pos1, false);
+        QString w2 = super::wordAtPosition(pos2, false);
+        QString w3 = super::wordAtPosition(pos3, false);
+        QString w4 = super::wordAtPosition(pos4, false);
+        QString w5 = super::wordAtPosition(pos5, false);
+
+        QString ew1 = super::wordAtPosition(epos1, false);
+        QString ew2 = super::wordAtPosition(epos2, false);
+        QString ew3 = super::wordAtPosition(epos3, false);
+        QString ew4 = super::wordAtPosition(epos4, false);
+        QString ew5 = super::wordAtPosition(epos5, false);
+
+		int style1 = SendScintilla(/*QsciScintilla::*/SCI_GETSTYLEAT, pos1) & 0x1f;
+		int style2 = SendScintilla(/*QsciScintilla::*/SCI_GETSTYLEAT, pos2) & 0x1f;
+		int style3 = SendScintilla(/*QsciScintilla::*/SCI_GETSTYLEAT, pos3) & 0x1f;
+		int style4 = SendScintilla(/*QsciScintilla::*/SCI_GETSTYLEAT, pos4) & 0x1f;
+		int style5 = SendScintilla(/*QsciScintilla::*/SCI_GETSTYLEAT, pos5) & 0x1f;
+
+        A a;
+        A* pa = &a;
+        // Use the stowed private member pointer
+        const char *s = (*pa).*stowed<A_x>::value;
+
+
+		{
+			QsciScintillaQt *sci = (*this).*stowed<QsciScintillaBase_qsci>::value;
+			if (sci && sci->pdoc)
+			{
+				int i0 = sci->pdoc->NextWordStart(pos1, 0);
+				int i1 = sci->pdoc->NextWordStart(pos1, 1);
+
+				int j0 = sci->pdoc->NextWordStart(i0, 0);
+				int j1 = sci->pdoc->NextWordStart(i1, 1);
+			}
+		}
+
+#if 0
+    	for(int pos = stat.posFrom; pos < stat.posTo; )
+    	{
+    	    long end_pos = editor->SendScintilla(QsciScintilla::SCI_WORDENDPOSITION, pos, (long)false);
+
+    	    int style = editor->SendScintilla(QsciScintilla::SCI_GETSTYLEAT, pos) & 0x1f;
+    	    editor->SendScintilla(QsciScintilla::SCI_GETTEXTRANGE, pos, end_pos, buf);
+
+    	    qDebug() << buf << ':' << style;
+
+    	    switch(style)
+    	    {
+    	    case QsciLexerSQL::Default: // assuming Default=0 is used for white space only
+    	    case QsciLexerSQL::Comment:
+    	    case QsciLexerSQL::CommentLine:
+    	    case QsciLexerSQL::CommentDoc:
+    	    case QsciLexerSQL::PlusComment:
+    	    //case QsciLexerSQL::CommentLineHash: illegal for Oracle
+    	    case  QsciLexerSQL::CommentDocKeyword:
+    	    case  QsciLexerSQL::CommentDocKeywordError:
+    	    	pos = end_pos;
+    	    	continue;
+    	    }
+
+    	    editor->SendScintilla(QsciScintilla::SCI_GETTEXTRANGE, pos, end_pos, buf);
+    	    stat.firstWord = editor->convertTextS2Q(buf);
+    	    wordStyle = style;
+    	    break;
+    	}
+#endif
+
+
         if (mark)
         {
         	//setSelection(tokens.line(), tokens.offset(), lastTokens.line(), lastTokens.offset());
