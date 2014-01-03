@@ -36,6 +36,7 @@
 #include "core/utils.h"
 #include "core/toconf.h"
 #include "core/toconfiguration.h"
+#include "core/tomainwindow.h"
 #include "core/tocache.h"
 #include "core/toqvalue.h"
 
@@ -229,7 +230,7 @@ void toGlobalSetting::mysqlBrowse(void)
     	MysqlHome->setText(libmysql.absolutePath());
     else
         TOMessageBox::warning(
-        		Utils::toQMainWindow(),
+        		toMainWindow::lookup(),
         		QT_TRANSLATE_NOOP("toLibraryErrorA", "Library error"),
         		QT_TRANSLATE_NOOP("toLibraryErrorA", QString("Couldn't validate library file: %1").arg(libmysqlopt.absoluteFilePath()))
         		);
@@ -245,7 +246,7 @@ void toGlobalSetting::pqsqlBrowse(void)
     	PgsqlHome->setText(str);
     else
         TOMessageBox::warning(
-        		Utils::toQMainWindow(),
+        		toMainWindow::lookup(),
         		QT_TRANSLATE_NOOP("toLibraryErrorB", "Library error"),
         		QT_TRANSLATE_NOOP("toLibraryErrorB", QString("Couldn't validate library file: %1").arg(libpq.absoluteFilePath()))
         		);

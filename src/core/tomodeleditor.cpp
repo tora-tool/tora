@@ -73,7 +73,7 @@ void toModelEditor::saveFile()
         if (!file.open(QIODevice::WriteOnly))
         {
             TOMessageBox::warning(
-                Utils::toQMainWindow(),
+                toMainWindow::lookup(),
                 QT_TRANSLATE_NOOP("toWriteFile", "File error"),
                 QT_TRANSLATE_NOOP("toWriteFile", QString("Couldn't open %1 for writing")
                                   .arg(fn).toAscii().constData())); // TODO test this in MSVC

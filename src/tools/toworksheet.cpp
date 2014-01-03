@@ -1596,7 +1596,7 @@ void toWorksheet::slotDescribe(void)
     toCache::ObjectRef table;
     Editor->editor()->tableAtCursor(table);
     if (table.first.isEmpty())
-    	table.first = Schema->currentText();
+    	table.first = currentSchema();
 
     if (toConfigurationSingle::Instance().wsToplevelDescribe())
     {

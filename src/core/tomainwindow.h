@@ -55,8 +55,6 @@ public:
      */
     virtual toDockbar* dockbar(toDocklet *let) = 0;
 
-public slots:
-
     /** Get a pointer to the main window
      * @return Pointer to main window.
      */

@@ -52,4 +52,5 @@ toMainWindow* toMainWindow::lookup()
     }
 
     return NULL;
+    // TODO: throw something here
 }

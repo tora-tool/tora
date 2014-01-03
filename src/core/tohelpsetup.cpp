@@ -37,6 +37,7 @@
 #include "core/utils.h"
 #include "core/tohtml.h"
 #include "core/toconfiguration.h"
+#include "core/tomainwindow.h"
 
 toHelpAddFile::toHelpAddFile(QWidget *parent, const char *name)
     : QDialog(parent)
@@ -179,6 +180,6 @@ void toHelpPrefs::oracleManuals()
     }
     catch (const QString &str)
     {
-        TOMessageBox::warning(Utils::toQMainWindow(), qApp->translate("toHelpPrefs", "File error"), str);
+        TOMessageBox::warning(toMainWindow::lookup(), qApp->translate("toHelpPrefs", "File error"), str);
     }
 }
