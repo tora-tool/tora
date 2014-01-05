@@ -677,3 +677,118 @@ void toMarkedText::insert(const QString &str, bool select)
 
     QsciScintilla::endUndoAction();
 }
+
+/**
+ * Find the start of the next word in either a forward (delta >= 0) or backwards direction
+ * (delta < 0).
+ * This is looking for a transition between character classes although there is also some
+ * additional movement to transit white space.
+ * Used by cursor movement by word commands.
+ */
+int toMarkedText::NextWordStart(int pos, int delta) {
+	int length = text().length(); // get length in chars. (while pure length() return number of bytes)
+	if (delta < 0) {
+		while (pos > 0 && (m_charClasifier.GetClass(getByteAt(pos - 1)) == CharClassify::ccSpace))
+			pos--;
+		if (pos > 0) {
+			CharClassify::cc ccStart = m_charClasifier.GetClass(getByteAt(pos-1));
+			while (pos > 0 && (m_charClasifier.GetClass(getByteAt(pos - 1)) == ccStart)) {
+				pos--;
+			}
+		}
+	} else {
+		CharClassify::cc ccStart = m_charClasifier.GetClass(getByteAt(pos));
+		while (pos < (length) && (m_charClasifier.GetClass(getByteAt(pos)) == ccStart))
+			pos++;
+		while (pos < (length) && (m_charClasifier.GetClass(getByteAt(pos)) == CharClassify::ccSpace))
+			pos++;
+	}
+	return pos;
+}
+
+/**
+ * Find the end of the next word in either a forward (delta >= 0) or backwards direction
+ * (delta < 0).
+ * This is looking for a transition between character classes although there is also some
+ * additional movement to transit white space.
+ * Used by cursor movement by word commands.
+ */
+int toMarkedText::NextWordEnd(int pos, int delta) {
+	int length = text().length(); // get length in chars. (while pure length() return number of bytes)
+	if (delta < 0) {
+		if (pos > 0) {
+			CharClassify::cc ccStart = m_charClasifier.GetClass(getByteAt(pos-1));
+			if (ccStart != CharClassify::ccSpace) {
+				while (pos > 0 && m_charClasifier.GetClass(getByteAt(pos - 1)) == ccStart) {
+					pos--;
+				}
+			}
+			while (pos > 0 && m_charClasifier.GetClass(getByteAt(pos - 1)) == CharClassify::ccSpace) {
+				pos--;
+			}
+		}
+	} else {
+		while (pos < length && m_charClasifier.GetClass(getByteAt(pos)) == CharClassify::ccSpace) {
+			pos++;
+		}
+		if (pos < length) {
+			CharClassify::cc ccStart = m_charClasifier.GetClass(getByteAt(pos));
+			while (pos < length && m_charClasifier.GetClass(getByteAt(pos)) == ccStart) {
+				pos++;
+			}
+		}
+	}
+	return pos;
+}
+
+char toMarkedText::getByteAt(int pos)
+{
+	char ch = SendScintilla(SCI_GETCHARAT, pos);
+	return ch;
+}
+
+toMarkedText::CharClassify toMarkedText::m_charClasifier;
+
+toMarkedText::CharClassify::CharClassify() {
+	SetDefaultCharClasses(true);
+}
+
+void toMarkedText::CharClassify::SetDefaultCharClasses(bool includeWordClass) {
+	// Initialize all char classes to default values
+	for (int ch = 0; ch < 256; ch++) {
+		if (ch == '\r' || ch == '\n')
+			charClass[ch] = ccNewLine;
+		else if (ch < 0x20 || ch == ' ')
+			charClass[ch] = ccSpace;
+		else if (includeWordClass && (ch >= 0x80 || isalnum(ch) || ch == '_'))
+			charClass[ch] = ccWord;
+		else
+			charClass[ch] = ccPunctuation;
+	}
+}
+
+void toMarkedText::CharClassify::SetCharClasses(const unsigned char *chars, cc newCharClass) {
+	// Apply the newCharClass to the specifed chars
+	if (chars) {
+		while (*chars) {
+			charClass[*chars] = static_cast<unsigned char>(newCharClass);
+			chars++;
+		}
+	}
+}
+
+int toMarkedText::CharClassify::GetCharsOfClass(cc characterClass, unsigned char *buffer) {
+	// Get characters belonging to the given char class; return the number
+	// of characters (if the buffer is NULL, don't write to it).
+	int count = 0;
+	for (int ch = maxChar - 1; ch >= 0; --ch) {
+		if (charClass[ch] == characterClass) {
+			++count;
+			if (buffer) {
+				*buffer = static_cast<unsigned char>(ch);
+				buffer++;
+			}
+		}
+	}
+	return count;
+}

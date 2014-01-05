@@ -93,6 +93,24 @@ protected:
     /** Reimplemented for internal reasons.
      */
     virtual void keyPressEvent(QKeyEvent *e);
+
+    // Copied from Scintilla CharClassify.h (does not support UTF8)
+    class CharClassify {
+    public:
+    	CharClassify();
+
+    	enum cc { ccSpace, ccNewLine, ccWord, ccPunctuation };
+    	void SetDefaultCharClasses(bool includeWordClass);
+    	void SetCharClasses(const unsigned char *chars, cc newCharClass);
+    	int GetCharsOfClass(cc charClass, unsigned char *buffer);
+    	cc GetClass(unsigned char ch) const { return static_cast<cc>(charClass[ch]);}
+    	bool IsWord(unsigned char ch) const { return static_cast<cc>(charClass[ch]) == ccWord;}
+
+    private:
+    	enum { maxChar=256 };
+    	unsigned char charClass[maxChar];    // not type cc to save space
+    };
+
 public:
     /** Create an editor.
      * @param parent Parent of this widget.
@@ -139,7 +157,7 @@ public:
 //    virtual void selectAll(bool select = TRUE);
 
 
-#ifdef TORA3_GRAPH
+#ifdef TORA3_SESSION
     /** Export data to a map.
      * @param data A map that can be used to recreate the data of a chart.
      * @param prefix Prefix to add to the map.
@@ -166,6 +184,10 @@ public:
     virtual void insert(const QString &str, bool select = false);
 
     bool findText(const QString &searchText, const QString &replaceText, Search::SearchFlags flags);
+
+    int NextWordStart(int pos, int delta);
+    int NextWordEnd(int pos, int delta);
+    char getByteAt(int pos);
 
 signals:
     void displayMenu(QMenu *);
@@ -225,6 +247,8 @@ private:
 
     //! Original content of the editor for XML format functionality. See setXMLWrap()
     QString m_origContent;
+
+    static CharClassify m_charClasifier;
 };
 
 #endif

@@ -46,7 +46,7 @@
 #include <Qsci/qsciapis.h>
 #include <Qsci/qsciabstractapis.h>
 #include <Qsci/qscilexersql.h>
-#include <ScintillaQt.h>
+//#include <ScintillaQt.h>
 
 /**
  * TODO DELETE THIS, IT'S JUST A TEST (to access Scintilla private method NextWordStart)
@@ -620,7 +620,7 @@ void toHighlightedText::tableAtCursor(toCache::ObjectRef &table, bool mark)
         // Use the stowed private member pointer
         const char *s = (*pa).*stowed<A_x>::value;
 
-
+#if 0
 		{
 			QsciScintillaQt *sci = (*this).*stowed<QsciScintillaBase_qsci>::value;
 			if (sci && sci->pdoc)
@@ -633,7 +633,6 @@ void toHighlightedText::tableAtCursor(toCache::ObjectRef &table, bool mark)
 			}
 		}
 
-#if 0
     	for(int pos = stat.posFrom; pos < stat.posTo; )
     	{
     	    long end_pos = editor->SendScintilla(QsciScintilla::SCI_WORDENDPOSITION, pos, (long)false);
