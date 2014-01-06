@@ -67,6 +67,16 @@ public:
         virtual QString description(int) const;
         virtual void styleText(int start, int end);
 
+        virtual bool caseSensitive() const
+        {
+            return false;
+        }
+
+        virtual const char *wordCharacters() const
+        {
+        	return "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$_#0123456789:.";
+        }
+
 protected:
         char *lineText, *bufferText;
         unsigned lineLength, bufferLength;
