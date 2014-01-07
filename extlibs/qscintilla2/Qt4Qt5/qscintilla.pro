@@ -23,19 +23,23 @@
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 
-# This must be kept in sync with configure.py, Qt4Qt5/application.pro and
-# Qt4Qt5/designer.pro.
-!win32:VERSION = 9.0.2
+# This must be kept in sync with Python/configure.py, Python/configure-old.py,
+# example-Qt4Qt5/application.pro and designer-Qt4Qt5/designer.pro.
+!win32:VERSION = 11.0.0
 
 TEMPLATE = lib
 TARGET = qscintilla2
 CONFIG += qt warn_off release dll thread
 INCLUDEPATH = . ../include ../lexlib ../src
-DEFINES = QSCINTILLA_MAKE_DLL QT SCI_LEXER
+DEFINES = QSCINTILLA_MAKE_DLL SCINTILLA_QT SCI_LEXER
 
 greaterThan(QT_MAJOR_VERSION, 4) {
 	QT += widgets
 	QT += printsupport
+
+    greaterThan(QT_MINOR_VERSION, 1) {
+	    macx:QT += macextras
+    }
 }
 
 # Comment this in if you want the internal Scintilla classes to be placed in a
@@ -127,6 +131,7 @@ HEADERS = \
 	../include/Scintilla.h \
 	../include/ScintillaWidget.h \
 	../lexlib/Accessor.h \
+	../lexlib/CharacterCategory.h \
 	../lexlib/CharacterSet.h \
 	../lexlib/LexAccessor.h \
 	../lexlib/LexerBase.h \
@@ -136,9 +141,12 @@ HEADERS = \
 	../lexlib/OptionSet.h \
 	../lexlib/PropSetSimple.h \
 	../lexlib/StyleContext.h \
+	../lexlib/SubStyles.h \
 	../lexlib/WordList.h \
 	../src/AutoComplete.h \
 	../src/CallTip.h \
+	../src/CaseConvert.h \
+	../src/CaseFolder.h \
 	../src/Catalogue.h \
 	../src/CellBuffer.h \
 	../src/CharClassify.h \
@@ -160,7 +168,7 @@ HEADERS = \
 	../src/Selection.h \
 	../src/SplitVector.h \
 	../src/Style.h \
-	../src/SVector.h \
+	../src/UnicodeFromUTF8.h \
 	../src/UniConversion.h \
 	../src/ViewStyle.h \
 	../src/XPM.h
@@ -212,6 +220,8 @@ SOURCES = \
 	qsciprinter.cpp \
 	qscistyle.cpp \
 	qscistyledtext.cpp \
+    MacPasteboardMime.cpp \
+    InputMethod.cpp \
 	SciClasses.cpp \
 	ListBoxQt.cpp \
 	PlatQt.cpp \
@@ -254,6 +264,8 @@ SOURCES = \
 	../lexers/LexHTML.cpp \
 	../lexers/LexInno.cpp \
 	../lexers/LexKix.cpp \
+	../lexers/LexKVIrc.cpp \
+	../lexers/LexLaTex.cpp \
 	../lexers/LexLisp.cpp \
 	../lexers/LexLout.cpp \
 	../lexers/LexLua.cpp \
@@ -285,6 +297,7 @@ SOURCES = \
 	../lexers/LexR.cpp \
 	../lexers/LexRebol.cpp \
 	../lexers/LexRuby.cpp \
+	../lexers/LexRust.cpp \
 	../lexers/LexScriptol.cpp \
 	../lexers/LexSmalltalk.cpp \
 	../lexers/LexSML.cpp \
@@ -292,6 +305,7 @@ SOURCES = \
 	../lexers/LexSpecman.cpp \
 	../lexers/LexSpice.cpp \
 	../lexers/LexSQL.cpp \
+	../lexers/LexSTTXT.cpp \
 	../lexers/LexTACL.cpp \
 	../lexers/LexTADS3.cpp \
 	../lexers/LexTAL.cpp \
@@ -305,6 +319,7 @@ SOURCES = \
 	../lexers/LexVisualProlog.cpp \
 	../lexers/LexYAML.cpp \
 	../lexlib/Accessor.cpp \
+	../lexlib/CharacterCategory.cpp \
 	../lexlib/CharacterSet.cpp \
 	../lexlib/LexerBase.cpp \
 	../lexlib/LexerModule.cpp \
@@ -315,6 +330,8 @@ SOURCES = \
 	../lexlib/WordList.cpp \
 	../src/AutoComplete.cpp \
 	../src/CallTip.cpp \
+	../src/CaseConvert.cpp \
+	../src/CaseFolder.cpp \
 	../src/Catalogue.cpp \
 	../src/CellBuffer.cpp \
 	../src/CharClassify.cpp \

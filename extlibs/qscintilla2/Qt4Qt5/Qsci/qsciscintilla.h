@@ -279,6 +279,10 @@ public:
         //! A version of SquiggleIndicator that uses a pixmap.  This is quicker
         //! but may be of lower quality.
         SquigglePixmapIndicator = INDIC_SQUIGGLEPIXMAP,
+
+        //! A thick underline typically used during Asian language input
+        //! composition.
+        ThickCompositionIndicator = INDIC_COMPOSITIONTHICK,
     };
 
     //! This enum defines the different margin options.
@@ -1973,8 +1977,6 @@ private slots:
     void delete_selection();
 
 private:
-    typedef QByteArray ScintillaString;
-
     void detachLexer();
 
     enum IndentState {
@@ -2004,8 +2006,6 @@ private:
     void foldExpand(int &line, bool doExpand, bool force = false,
             int visLevels = 0, int level = -1);
     void setFoldMarker(int marknr, int mark = SC_MARK_EMPTY);
-    QString convertTextS2Q(const char *s) const;
-    ScintillaString convertTextQ2S(const QString &q) const;
     void setLexerStyle(int style);
     void setStylesFont(const QFont &f, int style);
 
@@ -2029,7 +2029,7 @@ private:
 
     QString wordAtPosition(int position) const;
 
-    ScintillaString styleText(const QList<QsciStyledText> &styled_text,
+    ScintillaBytes styleText(const QList<QsciStyledText> &styled_text,
             char **styles, int style_offset = 0);
 
     struct FindState

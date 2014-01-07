@@ -51,9 +51,6 @@
 #define KEYWORDSET_MAX  8
 #define MARKER_MAX      31
 
-#define ScintillaStringData(s)      (s).constData()
-#define ScintillaStringLength(s)    (s).size()
-
 // The list separators for auto-completion and user lists.
 const char acSeparator = '\x03';
 const char userSeparator = '\x04';
@@ -674,9 +671,9 @@ void QsciScintilla::startAutoCompletion(AutoCompletionSource acs,
         return;
 
     // Get the last word's raw data and length.
-    ScintillaString s = convertTextQ2S(context.last());
-    const char *last_data = ScintillaStringData(s);
-    int last_len = ScintillaStringLength(s);
+    ScintillaBytes s = textAsBytes(context.last());
+    const char *last_data = ScintillaBytesConstData(s);
+    int last_len = s.length();
 
     if (checkThresh && last_len < acThresh)
         return;
@@ -775,8 +772,8 @@ void QsciScintilla::startAutoCompletion(AutoCompletionSource acs,
     SendScintilla(SCI_AUTOCSETCHOOSESINGLE, choose_single);
     SendScintilla(SCI_AUTOCSETSEPARATOR, acSeparator);
 
-    ScintillaString wlist_s = convertTextQ2S(wlist.join(QChar(acSeparator)));
-    SendScintilla(SCI_AUTOCSHOW, last_len, ScintillaStringData(wlist_s));
+    ScintillaBytes wlist_s = textAsBytes(wlist.join(QChar(acSeparator)));
+    SendScintilla(SCI_AUTOCSHOW, last_len, ScintillaBytesConstData(wlist_s));
 }
 
 
@@ -1819,10 +1816,10 @@ int QsciScintilla::simpleFind()
     SendScintilla(SCI_SETTARGETSTART, findState.startpos);
     SendScintilla(SCI_SETTARGETEND, findState.endpos);
 
-    ScintillaString s = convertTextQ2S(findState.expr);
+    ScintillaBytes s = textAsBytes(findState.expr);
 
-    return SendScintilla(SCI_SEARCHINTARGET, ScintillaStringLength(s),
-            ScintillaStringData(s));
+    return SendScintilla(SCI_SEARCHINTARGET, s.length(),
+            ScintillaBytesConstData(s));
 }
 
 
@@ -1839,8 +1836,8 @@ void QsciScintilla::replace(const QString &replaceStr)
 
     int cmd = (findState.flags & SCFIND_REGEXP) ? SCI_REPLACETARGETRE : SCI_REPLACETARGET;
 
-    ScintillaString s = convertTextQ2S(replaceStr);
-    long len = SendScintilla(cmd, -1, ScintillaStringData(s));
+    ScintillaBytes s = textAsBytes(replaceStr);
+    long len = SendScintilla(cmd, -1, ScintillaBytesConstData(s));
 
     // Reset the selection.
     SendScintilla(SCI_SETSELECTIONSTART, start);
@@ -2059,9 +2056,8 @@ void QsciScintilla::append(const QString &text)
 {
     bool ro = ensureRW();
 
-    ScintillaString s = convertTextQ2S(text);
-    SendScintilla(SCI_APPENDTEXT, ScintillaStringLength(s),
-            ScintillaStringData(s));
+    ScintillaBytes s = textAsBytes(text);
+    SendScintilla(SCI_APPENDTEXT, s.length(), ScintillaBytesConstData(s));
 
     SendScintilla(SCI_EMPTYUNDOBUFFER);
 
@@ -2090,7 +2086,7 @@ void QsciScintilla::insertAtPos(const QString &text, int pos)
 
     SendScintilla(SCI_BEGINUNDOACTION);
     SendScintilla(SCI_INSERTTEXT, pos,
-            ScintillaStringData(convertTextQ2S(text)));
+            ScintillaBytesConstData(textAsBytes(text)));
     SendScintilla(SCI_ENDUNDOACTION);
 
     setReadOnly(ro);
@@ -2185,7 +2181,7 @@ void QsciScintilla::removeSelectedText()
 // Replace any selected text.
 void QsciScintilla::replaceSelectedText(const QString &text)
 {
-    SendScintilla(SCI_REPLACESEL, ScintillaStringData(convertTextQ2S(text)));
+    SendScintilla(SCI_REPLACESEL, ScintillaBytesConstData(textAsBytes(text)));
 }
 
 
@@ -2199,7 +2195,7 @@ QString QsciScintilla::selectedText() const
 
     SendScintilla(SCI_GETSELTEXT, buf);
 
-    QString qs = convertTextS2Q(buf);
+    QString qs = bytesAsText(buf);
     delete[] buf;
 
     return qs;
@@ -2214,7 +2210,7 @@ QString QsciScintilla::text() const
 
     SendScintilla(SCI_GETTEXT, buflen, buf);
 
-    QString qs = convertTextS2Q(buf);
+    QString qs = bytesAsText(buf);
     delete[] buf;
 
     return qs;
@@ -2234,7 +2230,7 @@ QString QsciScintilla::text(int line) const
     SendScintilla(SCI_GETLINE, line, buf);
     buf[line_len] = '\0';
 
-    QString qs = convertTextS2Q(buf);
+    QString qs = bytesAsText(buf);
     delete[] buf;
 
     return qs;
@@ -2246,7 +2242,7 @@ void QsciScintilla::setText(const QString &text)
 {
     bool ro = ensureRW();
 
-    SendScintilla(SCI_SETTEXT, ScintillaStringData(convertTextQ2S(text)));
+    SendScintilla(SCI_SETTEXT, ScintillaBytesConstData(textAsBytes(text)));
     SendScintilla(SCI_EMPTYUNDOBUFFER);
 
     setReadOnly(ro);
@@ -2531,7 +2527,7 @@ void QsciScintilla::setMarginText(int line, const QString &text, int style)
     int style_offset = SendScintilla(SCI_MARGINGETSTYLEOFFSET);
 
     SendScintilla(SCI_MARGINSETTEXT, line,
-            ScintillaStringData(convertTextQ2S(text)));
+            ScintillaBytesConstData(textAsBytes(text)));
 
     SendScintilla(SCI_MARGINSETSTYLE, line, style - style_offset);
 }
@@ -2559,10 +2555,11 @@ void QsciScintilla::setMarginText(int line, const QsciStyledText &text)
 void QsciScintilla::setMarginText(int line, const QList<QsciStyledText> &text)
 {
     char *styles;
-    ScintillaString styled_text = styleText(text, &styles,
+    ScintillaBytes styled_text = styleText(text, &styles,
             SendScintilla(SCI_MARGINGETSTYLEOFFSET));
 
-    SendScintilla(SCI_MARGINSETTEXT, line, ScintillaStringData(styled_text));
+    SendScintilla(SCI_MARGINSETTEXT, line,
+            ScintillaBytesConstData(styled_text));
     SendScintilla(SCI_MARGINSETSTYLES, line, styles);
 
     delete[] styles;
@@ -2630,7 +2627,7 @@ void QsciScintilla::setMarginWidth(int margin, int width)
 void QsciScintilla::setMarginWidth(int margin, const QString &s)
 {
     int width = SendScintilla(SCI_TEXTWIDTH, STYLE_LINENUMBER,
-            ScintillaStringData(convertTextQ2S(s)));
+            ScintillaBytesConstData(textAsBytes(s)));
 
     setMarginWidth(margin, width);
 }
@@ -3556,26 +3553,6 @@ void QsciScintilla::lineIndexFromPosition(int position, int *line, int *index) c
 }
 
 
-// Convert a Scintilla string to a Qt Unicode string.
-QString QsciScintilla::convertTextS2Q(const char *s) const
-{
-    if (isUtf8())
-        return QString::fromUtf8(s);
-
-    return QString::fromLatin1(s);
-}
-
-
-// Convert a Qt Unicode string to a Scintilla string.
-QsciScintilla::ScintillaString QsciScintilla::convertTextQ2S(const QString &q) const
-{
-    if (isUtf8())
-        return q.toUtf8();
-
-    return q.toLatin1();
-}
-
-
 // Set the source of the automatic auto-completion list.
 void QsciScintilla::setAutoCompletionSource(AutoCompletionSource source)
 {
@@ -3855,8 +3832,8 @@ void QsciScintilla::showUserList(int id, const QStringList &list)
 
     SendScintilla(SCI_AUTOCSETSEPARATOR, userSeparator);
 
-    ScintillaString s = convertTextQ2S(list.join(QChar(userSeparator)));
-    SendScintilla(SCI_USERLISTSHOW, id, ScintillaStringData(s));
+    ScintillaBytes s = textAsBytes(list.join(QChar(userSeparator)));
+    SendScintilla(SCI_USERLISTSHOW, id, ScintillaBytesConstData(s));
 }
 
 
@@ -3991,7 +3968,7 @@ QString QsciScintilla::wordAtPosition(int position) const
 
     char *buf = new char[word_len + 1];
     SendScintilla(SCI_GETTEXTRANGE, start_pos, end_pos, buf);
-    QString word = convertTextS2Q(buf);
+    QString word = bytesAsText(buf);
     delete[] buf;
 
     return word;
@@ -4030,9 +4007,9 @@ void QsciScintilla::annotate(int line, const QString &text, int style)
 {
     int style_offset = SendScintilla(SCI_ANNOTATIONGETSTYLEOFFSET);
 
-    ScintillaString s = convertTextQ2S(text);
+    ScintillaBytes s = textAsBytes(text);
 
-    SendScintilla(SCI_ANNOTATIONSETTEXT, line, ScintillaStringData(s));
+    SendScintilla(SCI_ANNOTATIONSETTEXT, line, ScintillaBytesConstData(s));
     SendScintilla(SCI_ANNOTATIONSETSTYLE, line, style - style_offset);
 
     setScrollBars();
@@ -4061,11 +4038,11 @@ void QsciScintilla::annotate(int line, const QsciStyledText &text)
 void QsciScintilla::annotate(int line, const QList<QsciStyledText> &text)
 {
     char *styles;
-    ScintillaString styled_text = styleText(text, &styles,
+    ScintillaBytes styled_text = styleText(text, &styles,
             SendScintilla(SCI_ANNOTATIONGETSTYLEOFFSET));
 
     SendScintilla(SCI_ANNOTATIONSETTEXT, line,
-            ScintillaStringData(styled_text));
+            ScintillaBytesConstData(styled_text));
     SendScintilla(SCI_ANNOTATIONSETSTYLES, line, styles);
 
     delete[] styles;
@@ -4079,7 +4056,7 @@ QString QsciScintilla::annotation(int line) const
 
     buf[SendScintilla(SCI_ANNOTATIONGETTEXT, line, buf)] = '\0';
 
-    QString qs = convertTextS2Q(buf);
+    QString qs = bytesAsText(buf);
     delete[] buf;
 
     return qs;
@@ -4087,7 +4064,7 @@ QString QsciScintilla::annotation(int line) const
 
 
 // Convert a list of styled text to the low-level arrays.
-QsciScintilla::ScintillaString QsciScintilla::styleText(const QList<QsciStyledText> &styled_text, char **styles, int style_offset)
+QsciScintillaBase::ScintillaBytes QsciScintilla::styleText(const QList<QsciStyledText> &styled_text, char **styles, int style_offset)
 {
     QString text;
     int i;
@@ -4102,16 +4079,16 @@ QsciScintilla::ScintillaString QsciScintilla::styleText(const QList<QsciStyledTe
         text.append(st.text());
     }
 
-    ScintillaString s = convertTextQ2S(text);
+    ScintillaBytes s = textAsBytes(text);
 
     // There is a style byte for every byte.
-    char *sp = *styles = new char[ScintillaStringLength(s)];
+    char *sp = *styles = new char[s.length()];
 
     for (i = 0; i < styled_text.count(); ++i)
     {
         const QsciStyledText &st = styled_text[i];
-        ScintillaString part = convertTextQ2S(st.text());
-        int part_length = ScintillaStringLength(part);
+        ScintillaBytes part = textAsBytes(st.text());
+        int part_length = part.length();
 
         for (int c = 0; c < part_length; ++c)
             *sp++ = (char)(st.style() - style_offset);

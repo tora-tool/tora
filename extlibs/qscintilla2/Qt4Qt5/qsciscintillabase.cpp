@@ -82,87 +82,19 @@ static QList<QsciScintillaBase *> poolList;
 static const QLatin1String mimeTextPlain("text/plain");
 static const QLatin1String mimeRectangularWin("MSDEVColumnSelect");
 static const QLatin1String mimeRectangular("text/x-qscintilla-rectangular");
-static const QLatin1String utiRectangularMac("com.scintilla.utf16-plain-text.rectangular");
 
-// FIXME: QMacPasteboardMime isn't in Qt v5 yet.
-#if QT_VERSION >= 0x040200 && defined(Q_OS_MAC) && QT_VERSION < 0x050000
-#include <QMacPasteboardMime>
+#if defined(Q_OS_MAC)
+#if (QT_VERSION >= 0x040200 && QT_VERSION < 0x050000) || QT_VERSION >= 0x050200
 
-class RectangularPasteboardMime : public QMacPasteboardMime
-{
-public:
-    RectangularPasteboardMime() : QMacPasteboardMime(MIME_ALL)
-    {
-    }
+extern void initialiseRectangularPasteboardMime();
 
-    bool canConvert(const QString &mime, QString flav)
-    {
-        return mime == mimeRectangular && flav == utiRectangularMac;
-    }
-
-    QList<QByteArray> convertFromMime(const QString &, QVariant data, QString)
-    {
-        QList<QByteArray> converted;
-
-        converted.append(data.toByteArray());
-
-        return converted;
-    }
-
-    QVariant convertToMime(const QString &, QList<QByteArray> data, QString)
-    {
-        QByteArray converted;
-
-        foreach (QByteArray i, data)
-        {
-            converted += i;
-        }
-
-        return QVariant(converted);
-    }
-
-    QString convertorName()
-    {
-        return QString("QScintillaRectangular");
-    }
-
-    QString flavorFor(const QString &mime)
-    {
-        if (mime == mimeRectangular)
-            return QString(utiRectangularMac);
-
-        return QString();
-    }
-
-    QString mimeFor(QString flav)
-    {
-        if (flav == utiRectangularMac)
-            return QString(mimeRectangular);
-
-        return QString();
-    }
-
-    static void initialise()
-    {
-        if (!instance)
-        {
-            instance = new RectangularPasteboardMime();
-
-            qRegisterDraggedTypes(QStringList(utiRectangularMac));
-        }
-    }
-
-private:
-    static RectangularPasteboardMime *instance;
-};
-
-RectangularPasteboardMime *RectangularPasteboardMime::instance;
+#endif
 #endif
 
 
 // The ctor.
 QsciScintillaBase::QsciScintillaBase(QWidget *parent)
-    : QAbstractScrollArea(parent)
+    : QAbstractScrollArea(parent), preeditPos(-1), preeditNrBytes(0)
 {
     connect(verticalScrollBar(), SIGNAL(valueChanged(int)),
             SLOT(handleVSb(int)));
@@ -173,6 +105,7 @@ QsciScintillaBase::QsciScintillaBase(QWidget *parent)
     setAcceptDrops(true);
     setFocusPolicy(Qt::WheelFocus);
     setAttribute(Qt::WA_KeyCompression);
+    setAttribute(Qt::WA_InputMethodEnabled);
 
     viewport()->setBackgroundRole(QPalette::Base);
     viewport()->setMouseTracking(true);
@@ -180,9 +113,10 @@ QsciScintillaBase::QsciScintillaBase(QWidget *parent)
 
     triple_click.setSingleShot(true);
 
-// FIXME: QMacPasteboardMime isn't in Qt v5 yet.
-#if QT_VERSION >= 0x040200 && defined(Q_OS_MAC) && QT_VERSION < 0x050000
-    RectangularPasteboardMime::initialise();
+#if defined(Q_OS_MAC)
+#if (QT_VERSION >= 0x040200 && QT_VERSION < 0x050000) || QT_VERSION >= 0x050200
+    initialiseRectangularPasteboardMime();
+#endif
 #endif
 
     sci = new QsciScintillaQt(this);
@@ -530,23 +464,8 @@ void QsciScintillaBase::keyPressEvent(QKeyEvent *e)
 
     if (!text.isEmpty() && text[0].isPrint())
     {
-        QByteArray enc_text;
-
-        if (sci->IsUnicodeMode())
-        {
-            enc_text = text.toUtf8();
-        }
-        else
-        {
-            static QTextCodec *codec = 0;
-
-            if (!codec)
-                codec = QTextCodec::codecForName("ISO 8859-1");
-
-            enc_text = codec->fromUnicode(text);
-        }
-
-        sci->AddCharUTF(enc_text.data(), enc_text.length());
+        ScintillaBytes bytes = textAsBytes(text);
+        sci->AddCharUTF(bytes.data(), bytes.length());
         e->accept();
     }
     else
@@ -556,14 +475,23 @@ void QsciScintillaBase::keyPressEvent(QKeyEvent *e)
 }
 
 
-// Handle composed characters.  Note that this is the minumum needed to retain
-// the QScintilla v1 functionality.
-void QsciScintillaBase::inputMethodEvent(QInputMethodEvent *e)
+// Encode a QString as bytes.
+QsciScintillaBase::ScintillaBytes QsciScintillaBase::textAsBytes(const QString &text) const
 {
-    QByteArray utf8 = e->commitString().toUtf8();
+    if (sci->IsUnicodeMode())
+        return text.toUtf8();
 
-    sci->AddCharUTF(utf8.data(), utf8.length());
-    e->accept();
+    return text.toLatin1();
+}
+
+
+// Decode bytes as a QString.
+QString QsciScintillaBase::bytesAsText(const char *bytes) const
+{
+    if (sci->IsUnicodeMode())
+        return QString::fromUtf8(bytes);
+
+    return QString::fromLatin1(bytes);
 }
 
 
@@ -747,12 +675,11 @@ void QsciScintillaBase::dropEvent(QDropEvent *e)
     len = text.length();
     s = text.data();
 
-    s = QSCI_SCI_NAMESPACE(Document)::TransformLineEnds(&len, s, len,
+    std::string dest = QSCI_SCI_NAMESPACE(Document)::TransformLineEnds(s, len,
                 sci->pdoc->eolMode);
 
-    sci->DropAt(sci->posDrop, s, moving, rectangular);
-
-    delete[] s;
+    sci->DropAt(sci->posDrop, dest.c_str(), dest.length(), moving,
+            rectangular);
 
     sci->Redraw();
 }

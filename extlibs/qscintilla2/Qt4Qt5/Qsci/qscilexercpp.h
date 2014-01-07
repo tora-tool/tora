@@ -144,6 +144,10 @@ public:
         //! A pre-processor stream comment.
         PreProcessorComment = 23,
         InactivePreProcessorComment = PreProcessorComment + 23,
+
+        //! A JavaDoc/Doxygen style pre-processor comment.
+        PreProcessorCommentLineDoc = 24,
+        InactivePreProcessorCommentLineDoc = PreProcessorCommentLineDoc + 64,
     };
 
     //! Construct a QsciLexerCPP with parent \a parent.  \a parent is typically
