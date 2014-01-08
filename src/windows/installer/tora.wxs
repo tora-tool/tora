@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <!-- Product name as you want it to appear in Add/Remove Programs-->
-  <?define Platform = x64 ?>
+  <!--<?define Platform = x64 ?>-->
+  <?define Platform = $(env.BUILD_ARCH) ?>
   <?if $(var.Platform) = x64 ?>
   <?define ProductName = "Tora (64 bit)" ?>
   <?define Win64 = "yes" ?>
@@ -13,7 +14,7 @@
   <?define PlatformProgramFilesFolder = "ProgramFilesFolder" ?>
   <?define PlatformSystemFolder = "SystemFolder" ?>
   <?endif ?>
-  <?define ProductVersion="2.9.9.5" ?>
+  <?define ProductVersion="2.9.9.6" ?>
   <?define UpgradeCode="BAAA2F25-E626-4CC5-BC37-86477A2409AC"?>
   <?define BuildType = "RelWithDebInfo" ?>
   <Product Id="8D1E5566-5E9D-4915-947F-E2F7EFCE0E66" 
