@@ -60,8 +60,13 @@ class toModelEditor;
 
 /**
  * Long story short - QScintilla::paint emits cursorPositionChanged
- * If it's handler displays QMessageBox QScintilla::paint gets recursively called
- * And Tora segfaults.
+ * If it's handler displays QMessageBox(via calling Utils::toStatusMessage) QScintilla::paint gets recursively called
+ * And Tora segfaults
+ *
+ * A sequence of:
+ *  message.text = err.value();
+ *  QTimer::singleShot(0, &message, SLOT(notify()));
+ * Will display an error message AFTER QScintilla::paint finishes
  */
 class QSciMessage : public QObject
 {
