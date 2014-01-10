@@ -223,6 +223,7 @@ protected:
      */
     virtual QMenu *createPopupMenu(const QPoint& pos);
 
+    static CharClassify m_charClasifier;
 private slots:
 
     //! \brief Handle line numbers in the editor on text change
@@ -252,8 +253,6 @@ private:
 
     //! Original content of the editor for XML format functionality. See setXMLWrap()
     QString m_origContent;
-
-    static CharClassify m_charClasifier;
 };
 
 #endif

@@ -45,57 +45,7 @@
 
 #include <Qsci/qsciapis.h>
 #include <Qsci/qsciabstractapis.h>
-#include <Qsci/qscilexersql.h>
-//#include <ScintillaQt.h>
-
-/**
- * TODO DELETE THIS, IT'S JUST A TEST (to access Scintilla private method NextWordStart)
- */
-template <class Tag>
-struct stowed
-{
-     static typename Tag::type value;
-};
-template <class Tag>
-typename Tag::type stowed<Tag>::value;
-
-// Generate a static data member whose constructor initializes
-// stowed<Tag>::value.  This type will only be named in an explicit
-// instantiation, where it is legal to pass the address of a private
-// member.
-template <class Tag, typename Tag::type x>
-struct stow_private
-{
-     stow_private() { stowed<Tag>::value = x; }
-     static stow_private instance;
-};
-template <class Tag, typename Tag::type x>
-stow_private<Tag,x> stow_private<Tag,x>::instance;
-
-// ------- Usage -------
-// A demonstration of how to use the library, with explanation
-
-struct A
-{
-     A() : x("proof!") {}
-private:
-     char const* x;
-};
-
-// A tag type for A::x.  Each distinct private member you need to
-// access should have its own tag.  Each tag should contain a
-// nested ::type that is the corresponding pointer-to-member type.
-struct A_x { typedef char const*(A::*type); };
-struct QsciScintillaBase_qsci { typedef QsciScintillaQt*(QsciScintillaBase::*type); };
-
-// Explicit instantiation; the only place where it is legal to pass
-// the address of a private member.  Generates the static ::instance
-// that in turn initializes stowed<Tag>::value.
-template struct stow_private<A_x,&A::x>;
-template struct stow_private<QsciScintillaBase_qsci,&QsciScintillaBase::sci>;
-/**
- * TODO DELETE THIS, IT'S JUST A TEST
- */
+//#include <Qsci/qscilexersql.h>
 
 toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
     : toMarkedText(parent)
@@ -581,94 +531,80 @@ void toHighlightedText::tableAtCursor(toCache::ObjectRef &table, bool mark)
         int curline, curcol;
         getCursorPosition (&curline, &curcol);
         int pos = positionFromLineIndex(curline, curcol);
+    	int line_end = SendScintilla(QsciScintilla::SCI_GETLINEENDPOSITION, curline);
+        int line_start = positionFromLineIndex(curline, 0);
 
-        QString word = super::wordAtLineIndex(curline, curcol);
+        {
+        	// NextWordStart, SCI_WORDENDPOSITION, SCI_WORDSTARTPOSITION
+        	char *buf = new char[line_end - line_start + 1];
+        	int p = line_start, r = line_start, idx = -1;
+        	CharClassify::cc cls =	m_charClasifier.GetClass(getByteAt(line_start));
+			QStringList words; words << QString::null << QString::null;
+        	while(true)
+        	{
+        		CharClassify::cc new_cls =	m_charClasifier.GetClass(getByteAt(p));
+        		if (new_cls != CharClassify::ccWord)
+        		{
+        			int style = SendScintilla(QsciScintilla::SCI_GETSTYLEAT, p) & 0x1f;
+        			if( style == QsciLexerSQL::DoubleQuotedString || style == QsciLexerSQL::SingleQuotedString)
+        				new_cls = CharClassify::ccWord; // override character class if it's quoted
+        		}
 
-        // TODO parse also schema "DOT" ...
-        int pos1 = positionFromLineIndex(curline, 0);
-        int pos2 = SendScintilla(/*QsciScintilla::*/SCI_WORDENDPOSITION, pos1, (long)false);
-        int pos3 = SendScintilla(/*QsciScintilla::*/SCI_WORDENDPOSITION, pos2, (long)false);
-        int pos4 = SendScintilla(/*QsciScintilla::*/SCI_WORDENDPOSITION, pos3, (long)false);
-        int pos5 = SendScintilla(/*QsciScintilla::*/SCI_WORDENDPOSITION, pos4, (long)false);
-
-        int epos1 = SendScintilla(/*QsciScintilla::*/SCI_WORDSTARTPOSITION, pos1, (long)false);
-        int epos2 = SendScintilla(/*QsciScintilla::*/SCI_WORDSTARTPOSITION, pos2, (long)false);
-        int epos3 = SendScintilla(/*QsciScintilla::*/SCI_WORDSTARTPOSITION, pos3, (long)false);
-        int epos4 = SendScintilla(/*QsciScintilla::*/SCI_WORDSTARTPOSITION, pos4, (long)false);
-        int epos5 = SendScintilla(/*QsciScintilla::*/SCI_WORDSTARTPOSITION, pos5, (long)false);
-
-        QString w1 = super::wordAtPosition(pos1, false);
-        QString w2 = super::wordAtPosition(pos2, false);
-        QString w3 = super::wordAtPosition(pos3, false);
-        QString w4 = super::wordAtPosition(pos4, false);
-        QString w5 = super::wordAtPosition(pos5, false);
-
-        QString ew1 = super::wordAtPosition(epos1, false);
-        QString ew2 = super::wordAtPosition(epos2, false);
-        QString ew3 = super::wordAtPosition(epos3, false);
-        QString ew4 = super::wordAtPosition(epos4, false);
-        QString ew5 = super::wordAtPosition(epos5, false);
-
-		int style1 = SendScintilla(/*QsciScintilla::*/SCI_GETSTYLEAT, pos1) & 0x1f;
-		int style2 = SendScintilla(/*QsciScintilla::*/SCI_GETSTYLEAT, pos2) & 0x1f;
-		int style3 = SendScintilla(/*QsciScintilla::*/SCI_GETSTYLEAT, pos3) & 0x1f;
-		int style4 = SendScintilla(/*QsciScintilla::*/SCI_GETSTYLEAT, pos4) & 0x1f;
-		int style5 = SendScintilla(/*QsciScintilla::*/SCI_GETSTYLEAT, pos5) & 0x1f;
-
-        A a;
-        A* pa = &a;
-        // Use the stowed private member pointer
-        const char *s = (*pa).*stowed<A_x>::value;
-
-#if 0
-		{
-			QsciScintillaQt *sci = (*this).*stowed<QsciScintillaBase_qsci>::value;
-			if (sci && sci->pdoc)
-			{
-				int i0 = sci->pdoc->NextWordStart(pos1, 0);
-				int i1 = sci->pdoc->NextWordStart(pos1, 1);
-
-				int j0 = sci->pdoc->NextWordStart(i0, 0);
-				int j1 = sci->pdoc->NextWordStart(i1, 1);
-			}
-		}
-
-    	for(int pos = stat.posFrom; pos < stat.posTo; )
-    	{
-    	    long end_pos = editor->SendScintilla(QsciScintilla::SCI_WORDENDPOSITION, pos, (long)false);
-
-    	    int style = editor->SendScintilla(QsciScintilla::SCI_GETSTYLEAT, pos) & 0x1f;
-    	    editor->SendScintilla(QsciScintilla::SCI_GETTEXTRANGE, pos, end_pos, buf);
-
-    	    qDebug() << buf << ':' << style;
-
-    	    switch(style)
-    	    {
-    	    case QsciLexerSQL::Default: // assuming Default=0 is used for white space only
-    	    case QsciLexerSQL::Comment:
-    	    case QsciLexerSQL::CommentLine:
-    	    case QsciLexerSQL::CommentDoc:
-    	    case QsciLexerSQL::PlusComment:
-    	    //case QsciLexerSQL::CommentLineHash: illegal for Oracle
-    	    case  QsciLexerSQL::CommentDocKeyword:
-    	    case  QsciLexerSQL::CommentDocKeywordError:
-    	    	pos = end_pos;
-    	    	continue;
-    	    }
-
-    	    editor->SendScintilla(QsciScintilla::SCI_GETTEXTRANGE, pos, end_pos, buf);
-    	    stat.firstWord = editor->convertTextS2Q(buf);
-    	    wordStyle = style;
-    	    break;
-    	}
-#endif
-
+        		if ( new_cls != cls)
+        		{
+        			// new tokes starts
+            	    SendScintilla(QsciScintilla::SCI_GETTEXTRANGE, r, p, buf);
+        			QString s = convertTextS2Q(buf);
+        			r = p;
+        			if (cls == CharClassify::ccPunctuation || cls == CharClassify::ccWord)
+        			{
+        				words << s;
+        				if (p >= pos && idx == -1)
+        					idx = words.size() -1;
+        			}
+        			cls = new_cls;
+        		}
+        		p = SendScintilla(QsciScintilla::SCI_POSITIONAFTER, p);
+				if (p >= line_end)
+				{
+					if (cls == CharClassify::ccPunctuation || cls == CharClassify::ccWord)
+					{
+						SendScintilla(QsciScintilla::SCI_GETTEXTRANGE, r, p, buf);
+						QString s = convertTextS2Q(buf);
+						words << s;
+						if (p >= pos && idx == -1)
+							idx = words.size() -1;
+					}
+					break;
+				}
+        	}
+        	delete []buf;
+        	words << QString::null << QString::null;
+            QString sa = words.at((std::max)(idx-2, 0));
+            QString sb = words.at((std::max)(idx-1, 0));
+            QString sc = words.at((std::max)(idx, 0));
+            QString sd = words.at((std::min)(idx+1, words.size() -1));
+            QString se = words.at((std::min)(idx+2, words.size() -1));
+            if ( sc == ".")
+            {
+            	table.first  = sb;
+            	table.second = sd;
+            } else if ( sb == "." && !sa.isEmpty()) {
+            	table.first  = sa;
+            	table.second = sc;
+            } else if ( sd == "." && !se.isEmpty()) {
+            	table.first  = sc;
+            	table.second = se;
+            } else {
+            	table.second = sc;
+            }
+        }
 
         if (mark)
         {
         	//setSelection(tokens.line(), tokens.offset(), lastTokens.line(), lastTokens.offset());
         }
-        table.second = word;
+        //table.second = word;
     }
     catch (...)
     {
