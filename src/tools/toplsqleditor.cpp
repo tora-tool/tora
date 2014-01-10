@@ -822,8 +822,8 @@ void toPLSQLWidget::changeContent(toTreeWidgetItem *ci)
     {
         while (ci->parent())
             ci = ci->parent();
+        m_editor->setCursorPosition(item->Line, 0);
     }
-    m_editor->setCursorPosition(item->Line, 0);
     m_editor->setFocus(Qt::OtherFocusReason);
 #ifdef AUTOEXPAND
     else

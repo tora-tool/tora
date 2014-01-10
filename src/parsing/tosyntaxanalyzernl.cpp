@@ -274,7 +274,7 @@ void toSyntaxAnalyzerNL::sanitizeStatement(statement &stat)
 
     editor->SendScintilla(QsciScintilla::SCI_GETTEXTRANGE, stat.posFrom, stat.posTo, buf);
     stat.sql = editor->convertTextS2Q(buf);
-    delete buf;
+    delete []buf;
 }
 
 QSet<QString> toSyntaxAnalyzerNL:: SELECT_INTRODUCERS = QSet<QString>()
