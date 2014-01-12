@@ -525,6 +525,16 @@ void toHighlightedText::setFont (const QFont & font)
 
 void toHighlightedText::tableAtCursor(toCache::ObjectRef &table, bool mark)
 {
+	/**
+	 * Theoretically I could use here SQLLexer::Lexer API if it was implemented for current database.
+	 * QScintilla API can not be used:
+	 *   - SCI_WORDENDPOSITION, SCI_WORDENDPOSITION do ignore punctuation chars like ('.')
+	 *   - Also toMarkedText::wordAtPosition() can not be used as string tokenizer
+	 *   - The closest implementation is Scintilla's MoveNextWordStart/MoveNextWordEnd but these methods are not accessible
+	 *
+	 *   This code loops over chars in the line buffer and queries the char-class and style for each char.
+	 *   If the class changes a new word is emitted into "words" buffer. The word under cursor is pointed by "idx"
+	 */
     try
     {
     	//toConnection const& conn = toConnection::currentConnection(this);
@@ -535,13 +545,17 @@ void toHighlightedText::tableAtCursor(toCache::ObjectRef &table, bool mark)
         int line_start = positionFromLineIndex(curline, 0);
 
         {
-        	// NextWordStart, SCI_WORDENDPOSITION, SCI_WORDSTARTPOSITION
+        	// Line buffer
         	char *buf = new char[line_end - line_start + 1];
-        	int p = line_start, r = line_start, idx = -1;
-        	CharClassify::cc cls =	m_charClasifier.GetClass(getByteAt(line_start));
+        	// Buffer markers, r = word start, p = word end
+        	int p = line_start, r = line_start;
 			QStringList words; words << QString::null << QString::null;
+        	// pointer onto "current" word in the words list;
+        	int idx = -1;
+        	CharClassify::cc cls =	m_charClasifier.GetClass(getByteAt(line_start));
         	while(true)
         	{
+        		// Query character class
         		CharClassify::cc new_cls =	m_charClasifier.GetClass(getByteAt(p));
         		if (new_cls != CharClassify::ccWord)
         		{
@@ -549,7 +563,7 @@ void toHighlightedText::tableAtCursor(toCache::ObjectRef &table, bool mark)
         			if( style == QsciLexerSQL::DoubleQuotedString || style == QsciLexerSQL::SingleQuotedString)
         				new_cls = CharClassify::ccWord; // override character class if it's quoted
         		}
-
+        		// Check class change
         		if ( new_cls != cls)
         		{
         			// new tokes starts
@@ -564,9 +578,12 @@ void toHighlightedText::tableAtCursor(toCache::ObjectRef &table, bool mark)
         			}
         			cls = new_cls;
         		}
+        		// Advance to next char
         		p = SendScintilla(QsciScintilla::SCI_POSITIONAFTER, p);
+        		// Check line end
 				if (p >= line_end)
 				{
+					// possibly emit the last word in the buffer
 					if (cls == CharClassify::ccPunctuation || cls == CharClassify::ccWord)
 					{
 						SendScintilla(QsciScintilla::SCI_GETTEXTRANGE, r, p, buf);
@@ -581,9 +598,9 @@ void toHighlightedText::tableAtCursor(toCache::ObjectRef &table, bool mark)
         	delete []buf;
         	words << QString::null << QString::null;
             QString sa = words.at((std::max)(idx-2, 0));
-            QString sb = words.at((std::max)(idx-1, 0));
-            QString sc = words.at((std::max)(idx, 0));
-            QString sd = words.at((std::min)(idx+1, words.size() -1));
+            QString sb = words.at((std::max)(idx-1, 0)); // prev word
+            QString sc = words.at((std::max)(idx, 0));  // "current" word
+            QString sd = words.at((std::min)(idx+1, words.size() -1)); // next word
             QString se = words.at((std::min)(idx+2, words.size() -1));
             if ( sc == ".")
             {
