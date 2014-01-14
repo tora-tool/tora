@@ -422,7 +422,7 @@ toCache::ObjectRef toOracleConnectionSub::resolve(toCache::ObjectRef const& obje
 	retval.context = objectName.context;
 	try
 	{
-		// TODO set contex as current schema
+		// TODO set context as current schema
 		toQAdditionalDescriptions *descr = new toQAdditionalDescriptions();
 		::trotl::Describe *d = ::trotl::Describe::createDescription(*_conn, qPrintable(objectName.toString()));
 		switch (d->whatIsThis()) {
