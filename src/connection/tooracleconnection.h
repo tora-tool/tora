@@ -97,6 +97,7 @@ public:
     virtual queryImpl* createQuery(toQuery *query);
 
     virtual toQAdditionalDescriptions* decribe(toCache::ObjectRef const&);
+    virtual toCache::ObjectRef resolve(toCache::ObjectRef const& objectName);
 
 private:
     enum TransactionFlagStateEnum { // three state boolean NO/YES/DUNNO

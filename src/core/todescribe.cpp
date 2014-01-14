@@ -62,13 +62,14 @@ void toDescribe::hideEvent(QHideEvent * event)
     event->accept();
 }
 
-void toDescribe::changeParams(const QString & owner, const QString & object)
+void toDescribe::changeParams(const toCache::ObjectRef &obj)
 {
     if (widget)
     {
         delete widget;
         widget = NULL;
     }
+    QString schema(obj.first), object(obj.second);
 
     toCache::CacheEntryType objectType = toCache::OTHER;
     toCache::CacheEntry const* cacheEntry; // was object found in cache?
@@ -77,12 +78,17 @@ void toDescribe::changeParams(const QString & owner, const QString & object)
     {
         // Get a cached list of objects and then search in it without querying
         // the database in order to improve performance
-        cacheEntry = toConnection::currentConnection(this).getCache().findEntry(toCache::ObjectRef(owner, object));
+        cacheEntry = toConnection::currentConnection(this).getCache().findEntry(obj);
         if( cacheEntry)
+        {
+        	// Possibly toCache did call toConnectionSub::resolve and object name was re-resolved (was synonym)
+        	schema = cacheEntry->name.first;
+        	object = cacheEntry->name.second;
             objectType = cacheEntry->type;
+        }
         else
         	objectType = toCache::TABLE;
-        // TODO
+        // TODO emit signal to request object description (if it was not found)
         // if ( !cacheEntry) // only check if object was not found in already cached list
         // {
         // // If object was not found in cache, then try updating the cache
@@ -102,11 +108,11 @@ void toDescribe::changeParams(const QString & owner, const QString & object)
     	}
 
         QMessageBox::information(this, "Describe",
-                                 tr("Object %1.%2 (%3) cannot be described").arg(owner, object).arg(objectTypeStr));
+                                 tr("Object %1.%2 (%3) cannot be described").arg(obj.first, obj.second).arg(objectTypeStr));
         return;
     }
 
     layout()->addWidget(widget);
-    widget->changeParams(owner, object);
+    widget->changeParams(schema, object);
     show();
 }

@@ -230,10 +230,10 @@ DescribeSynonym::DescribeSynonym(OciConnection &con, OciDescribe &desc, const ts
 	_objid = param.get_attribute<ub4>(OCI_ATTR_OBJID);
 
 	// OCI_ATTR_SCHEMA_NAME A string containing the schema name of the synonym translation OraText *
-	_name = param.get_attribute<tstring>(OCI_ATTR_SCHEMA_NAME);
+	_schema = param.get_attribute<tstring>(OCI_ATTR_SCHEMA_NAME);
 
 	// OCI_ATTR_NAME A NULL-terminated string containing the object name of the synonym translation OraText *
-	_schema = param.get_attribute<tstring>(OCI_ATTR_NAME);
+	_name = param.get_attribute<tstring>(OCI_ATTR_NAME);
 
 	// OCI_ATTR_LINK A NULL-terminated string containing the database link name of the synonym translation OraText *
 	_link = param.get_attribute<tstring>(OCI_ATTR_LINK);

@@ -605,12 +605,13 @@ void toPLSQL::closeEditor(toPLSQLWidget* &editor)
 void toPLSQL::describe()
 {
     toCache::ObjectRef table;
+    table.context = currentSchema();
     toPLSQLEditor *marked = currentEditor()->editor();
     marked->editor()->tableAtCursor(table);
     if (table.first.isEmpty())
     	table.first = Schema->selected();
     toDescribe * d = new toDescribe(this);
-    d->changeParams(table.first, table.second);
+    d->changeParams(table);
 }
 
 /* Purpose: should find and return object containing another part of package.

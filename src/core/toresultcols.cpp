@@ -587,7 +587,7 @@ void toResultCols::query(const QString &sql, toQueryParams const& param)
     // }
 
     Title->setToolTip(""); // Clear previous tooltip 1st
-    toCache::CacheEntry const*e =  conn.getCache().findEntry(toCache::ObjectRef(Owner, Name));
+    toCache::CacheEntry const*e =  conn.getCache().findEntry(toCache::ObjectRef(Owner, Name, Owner));
     if(e)
     {
 		// TODO this is sync db request evaluated in the main (UI) thread - no async approach yet

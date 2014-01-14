@@ -66,7 +66,11 @@ public:
 
     virtual queryImpl* createQuery(toQuery *query) = 0;
 
+    /** get additional details about db object */
     virtual toQAdditionalDescriptions* decribe(toCache::ObjectRef const&) = 0;
+
+    /** resolve object name (synonym) */
+    virtual toCache::ObjectRef resolve(toCache::ObjectRef const& objectName) { return objectName; };
 
     void execute(QString const& SQL);
 

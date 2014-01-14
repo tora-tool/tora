@@ -51,8 +51,6 @@ toEventQueryObserverObject::~toEventQueryObserverObject()
 
 void toEventQueryObserverObject::setQuery(toEventQuery *query)
 {
-	bool retval;
-
 	if( m_eventQuery != NULL && m_eventQuery->parent() == this)
 	{
 		delete m_eventQuery;

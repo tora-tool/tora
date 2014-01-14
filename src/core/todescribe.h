@@ -36,10 +36,10 @@
 #define TODESCRIBE_H
 
 #include "ui_todescribeui.h"
-
+#include "core/tocache.h"
 
 /*! \brief Enhanced "key F4 describe table" dialog.
-It tries to find object by its name. It uses descibe
+It tries to find object by its name. It uses describe
 widget based on name's type.
 */
 class toDescribe : public QDialog, public Ui::toDescribe
@@ -52,7 +52,7 @@ public:
     by its name. It shows the dialog itself - so there
     is no need to call show() explicitly.
     */
-    void changeParams(const QString & owner, const QString & object);
+    void changeParams(const toCache::ObjectRef &object);
 
 protected:
     //! Save the prefs

@@ -411,7 +411,43 @@ toQAdditionalDescriptions* toOracleConnectionSub::decribe(toCache::ObjectRef con
 	default:
 		break;
 	}
-	if(d != NULL)
+
+	delete d;
+	return retval;
+}
+
+toCache::ObjectRef toOracleConnectionSub::resolve(toCache::ObjectRef const& objectName)
+{
+	toCache::ObjectRef retval;
+	retval.context = objectName.context;
+	try
+	{
+		// TODO set contex as current schema
+		toQAdditionalDescriptions *descr = new toQAdditionalDescriptions();
+		::trotl::Describe *d = ::trotl::Describe::createDescription(*_conn, qPrintable(objectName.toString()));
+		switch (d->whatIsThis()) {
+		case ::trotl::Describe::O_SYNONYM:
+		case ::trotl::Describe::O_PUBLIC_SYNONYM:
+		{
+			trotl::DescribeSynonym *s = static_cast<trotl::DescribeSynonym*>(d);
+			retval.first = s->_schema.c_str();
+			retval.second= s->_name.c_str();
+			if (!s->_link.empty())
+			{
+				retval.second += "@";
+				retval.second += s->_link.c_str();
+			}
+		}
+		break;
+		default:
+			break;
+		}
 		delete d;
+	} catch (trotl::OciException const &exc)
+	{
+		// ignore OCI exception here (object to be described does not exist)
+		if(exc.is_critical())
+			Broken = true;
+	}
 	return retval;
 }

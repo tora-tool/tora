@@ -121,16 +121,21 @@ public:
     	typedef QPair<QString, QString> super;
     public:
     	ObjectRef() : super() {};
-    	ObjectRef(const super::first_type &t1, const super::second_type &t2) : super(t1, t2) {};
+    	ObjectRef(const super::first_type &t1, const super::second_type &t2, QString const& ctx) : super(t1, t2), context(ctx) {};
 
     	ObjectRef &operator=(const QPair<super::second_type, super::second_type> &other)
         { first = other.first; second = other.second; return *this; }
+
+    	ObjectRef &operator=(const ObjectRef &other)
+        { first = other.first; second = other.second; context = other.context; return *this; }
 
     	/** convert object reference into a string */
     	QString toString() const;
 
     	/** convert object reference into a string, use connection traits quoting mechanism*/
     	////QString toString(toConnection &con) const;
+
+    	QString context; // tool's active schema
     };
 
     /** Nested class type

@@ -73,7 +73,7 @@ void toBrowserSchemaTableView::refreshWithParams(const QString & schema, const Q
         else
             sch = schema;
 
-        if (toConnection::currentConnection(this).getCache().findEntry(toCache::ObjectRef(sch, ObjectType))) // search for entry of type TORA_SCHEMA_LIST
+        if (toConnection::currentConnection(this).getCache().findEntry(toCache::ObjectRef(sch, ObjectType, ""))) // search for entry of type TORA_SCHEMA_LIST
         {
             this->queryFromCache(sch, ObjectType);
             return;

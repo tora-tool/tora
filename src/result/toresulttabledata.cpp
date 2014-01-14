@@ -184,7 +184,7 @@ void toResultTableData::query(const QString &, toQueryParams const& params)
     filterAct->setChecked(filter);
 
     toConnection &conn = connection();
-    QList<QString> priKeys = conn.getTraits().primaryKeys(conn, toCache::ObjectRef(Owner, Table));
+    QList<QString> priKeys = conn.getTraits().primaryKeys(conn, toCache::ObjectRef(Owner, Table, Owner));
     SQL = "SELECT ";
     Q_FOREACH(QString c, priKeys)
     {
@@ -335,7 +335,7 @@ void toResultTableData::changeFilter(bool checked)
     filter.Order->setText(Order[FilterName]);
     filter.Criteria->setText(Criteria[FilterName]);
 
-	filter.Columns->changeObject(toCache::ObjectRef(Owner, Table));
+	filter.Columns->changeObject(toCache::ObjectRef(Owner, Table, Owner));
 
     if (dialog.exec())
     {

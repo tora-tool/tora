@@ -201,6 +201,17 @@ toCache::ObjectRef toCache::translateName(ObjectRef const& n) const
 toCache::CacheEntry const* toCache::findEntry(toCache::ObjectRef const& o) const
 {
 	QReadLocker lock(&cacheLock);
+	if (o.first.isEmpty())
+	{
+		// Object owner was not specified - try to use objects "context" (default schema)
+		toCache::CacheEntry const* retval = entryMap.value(o, NULL);
+		if (retval)
+			return retval;
+
+		toConnectionSubLoan conn(parentConn);
+		ObjectRef objRef = conn->resolve(o);
+		return entryMap.value(objRef, NULL);
+	}
 	return entryMap.value(o, NULL);
 }
 
@@ -755,17 +766,17 @@ bool toCache::cacheRefreshRunning() const {
 
 toCache::CacheEntry::CacheEntry(const QString &owner, const QString &objName,
 		const QString &objType, const QString &objComment) :
-		name(ObjectRef(owner, objName)), type(cacheEntryType(objType)), comment(
+		name(ObjectRef(owner, objName, owner)), type(cacheEntryType(objType)), comment(
 				objComment), timestamp(QDate::currentDate()), described(false) {
 	if (type == OTHER)
 		throw QString("toCache: Unknown object type %1").arg(objType);
 }
 ;
 
-/** TODO delete this - this is courious constructor used to hold TORAs internal cache intries */
+/** TODO delete this - this is curious constructor used to hold TORAs internal cache entries (like SCHEMA_LIST) */
 toCache::CacheEntry::CacheEntry(const QString &owner, const QString &objName,
 		toCache::CacheEntryType objType, const QString &objComment) :
-		name(ObjectRef(owner, objName)), type(objType), comment(objComment), timestamp(
+		name(ObjectRef(owner, objName, owner)), type(objType), comment(objComment), timestamp(
 				QDate::currentDate()), described(false) {
 	if (type == OTHER)
 		throw QString("toCache: Unknown object type %1").arg((quint8) objType);

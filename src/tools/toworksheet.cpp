@@ -924,11 +924,11 @@ bool toWorksheet::describe(toSyntaxAnalyzer::statement const& query)
             {
                 if (parts.count() == 2)
                 {
-                	Columns->changeObject(toCache::ObjectRef(Schema->selected(), unQuote(parts[1])));
+                	Columns->changeObject(toCache::ObjectRef(currentSchema(), unQuote(parts[1]), currentSchema()));
                 }
                 else if (parts.count() == 3)
                 {
-                	Columns->changeObject(toCache::ObjectRef(unQuote(parts[1]), unQuote(parts[2])));
+                	Columns->changeObject(toCache::ObjectRef(unQuote(parts[1]), unQuote(parts[2]), currentSchema()));
                 }
                 else
                     throw tr("Wrong number of parameters for describe");
@@ -937,7 +937,7 @@ bool toWorksheet::describe(toSyntaxAnalyzer::statement const& query)
             {
                 if (parts.count() == 2)
                 {
-                    Columns->changeObject(toCache::ObjectRef(Schema->selected(), parts[1]));
+                    Columns->changeObject(toCache::ObjectRef(currentSchema(), parts[1], currentSchema()));
                 }
                 else
                     throw tr("Wrong number of parameters for describe");
@@ -1594,14 +1594,13 @@ void toWorksheet::slotEnableStatistic(bool ena)
 void toWorksheet::slotDescribe(void)
 {
     toCache::ObjectRef table;
+    table.context = currentSchema();
     Editor->editor()->tableAtCursor(table);
-    if (table.first.isEmpty())
-    	table.first = currentSchema();
 
     if (toConfigurationSingle::Instance().wsToplevelDescribe())
     {
         toDescribe * d = new toDescribe(this);
-        d->changeParams(table.first, table.second); // this also calls QWidget::show()
+        d->changeParams(table); // this also calls QWidget::show()
     }
     else
     {
