@@ -96,11 +96,22 @@ toSyntaxAnalyzer::statement toSyntaxAnalyzerOracle::getStatementAt(unsigned line
 		while(start->getTokenType() != SQLLexer::Token::X_EOF)
 		{
 			SQLLexer::Lexer::token_const_iterator end = lexer->findEndToken(start);
+			SQLLexer::Lexer::token_const_iterator nextStart = lexer->findStartToken(end);
+			if(nextStart->getPosition().getLine() <= line)
+			{
+				start = nextStart;
+				continue;
+			}
+
+			// The statement was found - setup retval
+			toHighlightedText *editor = qobject_cast<toHighlightedText *>(parent());
 			retval = statement(
 					start->getPosition().getLine(),
 					end->getPosition().getLine());
-			start = lexer->findStartToken(end);
 
+			retval.firstWord = start->getText();
+			retval.posFrom = editor->positionFromLineIndex(start->getPosition().getLine(), start->getPosition().getLinePos());
+			retval.posTo   = editor->positionFromLineIndex(end->getPosition().getLine(), end->getPosition().getLinePos() + end->getLength());
 			switch(start->getTokenType())
 			{
 			case SQLLexer::Token::L_LPAREN:
@@ -119,13 +130,14 @@ toSyntaxAnalyzer::statement toSyntaxAnalyzerOracle::getStatementAt(unsigned line
 			case SQLLexer::Token::X_ONE_LINE:
 				retval.statementType = SQLPLUS;
 				break;
-//	        DDL,        // CREATE
-//	        OTHER,      // ALTER SESSION ..., ANALYZE, SET ROLE, EXPLAIN
-//	        SQLPLUS		// sqlplus command
+			default:
+				//	        DDL,        // CREATE
+				//	        OTHER,      // ALTER SESSION ..., ANALYZE, SET ROLE, EXPLAIN
+				//	        SQLPLUS		// sqlplus command
+				retval.statementType = UNKNOWN;
+				break;
 			}
-
-			if(start->getPosition().getLine() > line)
-				return retval;
+			return retval;
 		}
 	} catch(std::exception const &e) {
 		std::string s(e.what());
@@ -147,6 +159,8 @@ QsciLexer* toSyntaxAnalyzerOracle::createLexer(QObject* parent)
 void toSyntaxAnalyzerOracle::sanitizeStatement(statement& stat)
 {
 	toHighlightedText *editor = qobject_cast<toHighlightedText *>(parent());
-	stat.posFrom = editor->SendScintilla(QsciScintilla::SCI_POSITIONFROMLINE, stat.lineFrom);
-	stat.posTo = editor->SendScintilla(QsciScintilla::SCI_GETLINEENDPOSITION, stat.lineTo);
+	char *buf = new char[stat.posTo - stat.posFrom + 1];
+    editor->SendScintilla(QsciScintilla::SCI_GETTEXTRANGE, stat.posFrom, stat.posTo, buf);
+    stat.sql = editor->convertTextS2Q(buf);
+    delete []buf;
 }

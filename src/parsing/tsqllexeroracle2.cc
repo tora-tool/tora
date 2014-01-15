@@ -667,10 +667,11 @@ Lexer::token_const_iterator OracleGuiLexer::findEndTokenDML( Lexer::token_const_
 	bool mergeFound = start->getText().compare("MERGE", Qt::CaseInsensitive) == 0;
 	bool explainFound = start->getText().compare("EXPLAIN", Qt::CaseInsensitive) == 0;
 	bool forFound = false;
+	bool errorsFound = false; // insert into a(x)values (b) LOG ERRORS REJECT LIMIT UNLIMITED with y as (select 1 from dual) select * from y;
 	while(i->getOrigTokenType() != PLSQLGuiLexer::EOF_TOKEN)
 	{
 		i++;
-		QString txt = i->getText();
+		const QString TXT(i->getText().toUpper());
 		switch( i->getOrigTokenType())
 		{
 		case PLSQLGuiLexer::LEFT_PAREN:
@@ -679,21 +680,21 @@ Lexer::token_const_iterator OracleGuiLexer::findEndTokenDML( Lexer::token_const_
 			break;
 		case PLSQLGuiLexer::SELECT_COMMAND_INTRODUCER:
 		case PLSQLGuiLexer::DML_COMMAND_INTRODUCER:
-			if( forFound && i->getText().compare("UPDATE", Qt::CaseInsensitive) == 0) // FOR UPDATE continue parsing
+			if( forFound && TXT == "UPDATE")                                          // FOR UPDATE continue parsing
 				break;
-			else if( !parenFound && !mergeFound)                                      // No PARENS no MERGE but 'SELECT' was found
+			else if( !parenFound && !mergeFound && !errorsFound)                      // No PARENS no MERGE but 'SELECT' was found
 				goto exitLoop;
-			else if( i->getText().compare("MERGE", Qt::CaseInsensitive) == 0)         // New MERGE statement begins
+			else if( TXT == "MERGE")                                                  // New MERGE statement begins
 				goto exitLoop;
 			break;
 		case PLSQLGuiLexer::PLSQL_RESERVED:
-			if( i->getText().compare("FOR", Qt::CaseInsensitive) == 0)
+			if( TXT == "FOR")
 				forFound = true;
-			if( i->getText().compare("UNION", Qt::CaseInsensitive) == 0
-					||	i->getText().compare("INTERSECT", Qt::CaseInsensitive) == 0
-					||	i->getText().compare("MINUS", Qt::CaseInsensitive) == 0)
+			if( TXT == "ERRORS")
+				errorsFound = true;
+			if( TXT == "UNION" || TXT == "INTERSECT" || TXT == "MINUS")
 				parenFound = true;
-			else if( parenFound && i->getText().compare("ALL", Qt::CaseInsensitive) == 0)
+			else if( parenFound && TXT == "ALL") // ((select * from dual) union all select * from dual
 				parenFound = true;
 			else
 				parenFound = false;
@@ -716,7 +717,10 @@ Lexer::token_const_iterator OracleGuiLexer::findEndTokenDML( Lexer::token_const_
 		case PLSQLGuiLexer::PLSQL_COMMAND_INTRODUCER: // DECLARE, BEGIN, CREATE, SET, ...
 			// SET starts SQLPLUS command(SET LINE), also starts OTHER sql command(SET ROLE)
 			// but also can be present in UPDATE statement
-			if(i->getText().compare("SET", Qt::CaseInsensitive) == 0)
+			if( TXT == "SET")
+				break;
+			// "TYPE" can be "anything" column name, variable, reserver word, ...
+			if( TXT == "TYPE")
 				break;
 			// no break here
 		case PLSQLGuiLexer::EOF_TOKEN:
