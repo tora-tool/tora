@@ -97,7 +97,7 @@ toSyntaxAnalyzer::statement toSyntaxAnalyzerOracle::getStatementAt(unsigned line
 		{
 			SQLLexer::Lexer::token_const_iterator end = lexer->findEndToken(start);
 			SQLLexer::Lexer::token_const_iterator nextStart = lexer->findStartToken(end);
-			if(nextStart->getPosition().getLine() <= line)
+			if(end->getPosition().getLine() < line)
 			{
 				start = nextStart;
 				continue;
@@ -110,8 +110,10 @@ toSyntaxAnalyzer::statement toSyntaxAnalyzerOracle::getStatementAt(unsigned line
 					end->getPosition().getLine());
 
 			retval.firstWord = start->getText();
-			retval.posFrom = editor->positionFromLineIndex(start->getPosition().getLine(), start->getPosition().getLinePos());
-			retval.posTo   = editor->positionFromLineIndex(end->getPosition().getLine(), end->getPosition().getLinePos() + end->getLength());
+			retval.posFrom = editor->positionFromLineIndex(start->getPosition().getLine()
+					, start->getPosition().getLinePos());
+			retval.posTo   = editor->positionFromLineIndex(end->getPosition().getLine()
+					, end->getPosition().getLinePos() + ( end->getTokenType() == SQLLexer::Token::X_EOL ? 0 : end->getLength()));
 			switch(start->getTokenType())
 			{
 			case SQLLexer::Token::L_LPAREN:

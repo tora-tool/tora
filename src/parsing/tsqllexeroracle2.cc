@@ -454,6 +454,8 @@ Lexer::token_const_iterator OracleGuiLexer::findEndToken( Lexer::token_const_ite
 		throw Exception();
 	}
 
+	if (i->getOrigTokenType() == PLSQLGuiLexer::EOF_TOKEN)
+		i--;
 	if( i == start) // If the statement contains only one token advance forward. (Never return the same token)
 		i++;
 	return i;
