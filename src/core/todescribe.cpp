@@ -76,6 +76,7 @@ void toDescribe::changeParams(const toCache::ObjectRef &obj)
     bool addedNewObject = false; // did we actually add new objects to cache during rereading?
 
     {
+		Utils::toBusy busy;
         // Get a cached list of objects and then search in it without querying
         // the database in order to improve performance
         cacheEntry = toConnection::currentConnection(this).getCache().findEntry(obj);

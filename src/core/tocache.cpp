@@ -204,13 +204,15 @@ toCache::CacheEntry const* toCache::findEntry(toCache::ObjectRef const& o) const
 	if (o.first.isEmpty())
 	{
 		// Object owner was not specified - try to use objects "context" (default schema)
-		toCache::CacheEntry const* retval = entryMap.value(o, NULL);
+		ObjectRef objRef1(o);
+		objRef1.first = o.context;
+		toCache::CacheEntry const* retval = entryMap.value(objRef1, NULL);
 		if (retval)
 			return retval;
 
 		toConnectionSubLoan conn(parentConn);
-		ObjectRef objRef = conn->resolve(o);
-		return entryMap.value(objRef, NULL);
+		ObjectRef objRef2 = conn->resolve(o);
+		return entryMap.value(objRef2, NULL);
 	}
 	return entryMap.value(o, NULL);
 }

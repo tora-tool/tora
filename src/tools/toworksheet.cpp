@@ -44,6 +44,7 @@
 #include "core/tochangeconnection.h"
 #include "core/toconf.h"
 #include "core/toconnectionsub.h"
+#include "core/toconnectiontraits.h"
 #include "core/toparamget.h"
 ////obsolete #include "core/toresultbar.h"
 #include "core/toresultschema.h"
@@ -1594,8 +1595,10 @@ void toWorksheet::slotEnableStatistic(bool ena)
 void toWorksheet::slotDescribe(void)
 {
     toCache::ObjectRef table;
-    table.context = currentSchema();
     Editor->editor()->tableAtCursor(table);
+    table.context = currentSchema();
+    table.first = connection().getTraits().unQuote(table.first);
+    table.second = connection().getTraits().unQuote(table.second);
 
     if (toConfigurationSingle::Instance().wsToplevelDescribe())
     {
