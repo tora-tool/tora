@@ -147,8 +147,27 @@ const Token& mySQLGuiLexer::LA(int pos) const
 
 	if( pos == size())
 	{
+		// Requesting EOF_TOKEN
+		if (pos == 1)
+		{
+			// The buffer is empty - Only EOF_TOKEN is "present"
+			Token::TokenType type = Token::X_EOF;
+			retvalLA = Token(Position(0, 0), 0, MySQLGuiLexer::EOF_TOKEN, type);
+			retvalLA.setText("EOF");
+			retvalLA.setBlockContext(NONE);
+			return retvalLA;
+		}
+
+		CommonTokenType const* token = tstream->get(pos-2);
+		if (!token)
+			throw Exception();
+
+		int line = token->get_line() - 1;
+		int column = token->get_charPositionInLine();
+		unsigned length = token->get_stopIndex() - token->get_startIndex() + 1;
+		QString txt = QString::fromUtf8(token->getText().c_str());
 		Token::TokenType type = Token::X_EOF;
-		retvalLA = Token(Position(0, 0), 0, MySQLGuiLexer::EOF_TOKEN, type);
+		retvalLA = Token(Position(line, column+length+1), 0, MySQLGuiLexer::EOF_TOKEN, type);
 		retvalLA.setText("EOF");
 		retvalLA.setBlockContext(NONE);
 		return retvalLA;
@@ -312,6 +331,8 @@ Lexer::token_const_iterator mySQLGuiLexer::findEndToken( Lexer::token_const_iter
 		throw new Exception();
 	}
 
+ 	if( i == start) // If the statement contains only one token advance forward. (Never return the same token)
+ 		i++;
 	return i;
 }
 
