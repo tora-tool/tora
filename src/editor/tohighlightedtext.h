@@ -147,6 +147,7 @@ public slots:
     void gotoPrevBookmark();
     void gotoNextBookmark();
 
+    // Override QScintilla
     virtual void autoCompleteFromAPIs();
 
     void positionChanged(int row, int col);

@@ -158,7 +158,7 @@ toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
 void toHighlightedText::keyPressEvent(QKeyEvent * e)
 {
     // handle editor shortcuts with TAB
-    // It uses qscintilla lowlevel API to handle "word unde cursor"
+    // It uses qscintilla lowlevel API to handle "word under cursor"
     // This code is taken from sqliteman.com
     if (toConfigurationSingle::Instance().useEditorShortcuts()
             && e->key() == Qt::Key_Tab)
@@ -201,15 +201,20 @@ toHighlightedText::~toHighlightedText()
 
 void toHighlightedText::positionChanged(int row, int col)
 {
-    if (col > 0 && this->text(row)[col - 1] == '.')
-    {
-        complTimer->start(500);
-    }
-    else
-    {
-        if (complTimer->isActive())
-            complTimer->stop();
-    }
+	if (col > 0)
+	{
+		int position = this->SendScintilla(SCI_GETCURRENTPOS);
+		position = SendScintilla(QsciScintilla::SCI_POSITIONBEFORE, position);
+		char c = getByteAt(position);
+		// TODO use getWCharAt and handle multibyte characters here
+		if (c == '.')
+			complTimer->start(500);
+	}
+	else
+	{
+		if (complTimer->isActive())
+			complTimer->stop();
+	}
 // FIXME: disabled due repainting issues
     // current line marker (margin arrow)
 //    markerDeleteAll(m_currentLineMarginHandle);
@@ -566,7 +571,7 @@ void toHighlightedText::tableAtCursor(toCache::ObjectRef &table, bool mark)
         		// Check class change
         		if ( new_cls != cls)
         		{
-        			// new tokes starts
+        			// new token starts
             	    SendScintilla(QsciScintilla::SCI_GETTEXTRANGE, r, p, buf);
         			QString s = convertTextS2Q(buf);
         			r = p;
