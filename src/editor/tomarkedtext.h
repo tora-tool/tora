@@ -193,6 +193,7 @@ public:
     int NextWordStart(int pos, int delta);
     int NextWordEnd(int pos, int delta);
     char getByteAt(int pos);
+    wchar_t getWCharAt(int pos);
 
 signals:
     void displayMenu(QMenu *);

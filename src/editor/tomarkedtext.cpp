@@ -747,6 +747,130 @@ char toMarkedText::getByteAt(int pos)
 	return ch;
 }
 
+wchar_t toMarkedText::getWCharAt(int pos) {
+	//http://vacuproj.googlecode.com/svn/trunk/npscimoz/npscimoz/oldsrc/trunk.nsSciMoz.cxx
+	char _retval[4];
+    /*
+     * This assumes that Scintilla is using an utf-8 byte-addressed buffer.
+     *
+     * Return the character that is represented by the utf-8 sequence at
+     * the requested position (we could be in the middle of the sequence).
+     */
+    int byte, byte2, byte3;
+
+    /*
+     * Unroll 1 to 3 byte UTF-8 sequences.  See reference data at:
+     * http://www.cl.cam.ac.uk/~mgk25/unicode.html
+     * http://www.cl.cam.ac.uk/~mgk25/ucs/examples/UTF-8-test.txt
+     *
+     * SendEditor must always be cast to return an unsigned char.
+     */
+
+    byte = (unsigned char) SendScintilla(SCI_GETCHARAT, pos);
+    if (byte < 0x80) {
+    	/*
+    	 * Characters in the ASCII charset.
+    	 * Also treats \0 as a valid characters representing itself.
+    	 */
+    	return byte;
+    }
+
+    while ((byte < 0xC0) && (byte >= 0x80) && (pos > 0)) {
+    	/*
+    	 * Naked trail byte.  We asked for an index in the middle of
+    	 * a UTF-8 char sequence.  Back up to the beginning.  We should
+    	 * end up with a start byte >= 0xC0 and <= 0xFD, but check against
+    	 * 0x80 still in case we have a screwy buffer.
+    	 *
+    	 * We could store bytes as we walk backwards, but this shouldn't
+    	 * be the common case.
+    	 */
+    	byte = (unsigned char) SendScintilla(SCI_GETCHARAT, --pos);
+    }
+
+    if (byte < 0xC0) {
+    	/*
+    	 * Handles properly formed UTF-8 characters between 0x01 and 0x7F.
+    	 * Also treats \0 and naked trail bytes 0x80 to 0xBF as valid
+    	 * characters representing themselves.
+    	 */
+    } else if (byte < 0xE0) {
+    	byte2 = (unsigned char) SendScintilla(SCI_GETCHARAT, pos+1);
+    	if ((byte2 & 0xC0) == 0x80) {
+    		/*
+    		 * Two-byte-character lead-byte followed by a trail-byte.
+    		 */
+    		byte = (((byte & 0x1F) << 6) | (byte2 & 0x3F));
+    	}
+    	/*
+    	 * A two-byte-character lead-byte not followed by trail-byte
+    	 * represents itself.
+    	 */
+    } else if (byte < 0xF0) {
+    	byte2 = (unsigned char) SendScintilla(SCI_GETCHARAT, pos+1);
+    	byte3 = (unsigned char) SendScintilla(SCI_GETCHARAT, pos+2);
+    	if (((byte2 & 0xC0) == 0x80) && ((byte3 & 0xC0) == 0x80)) {
+    		/*
+    		 * Three-byte-character lead byte followed by two trail bytes.
+    		 */
+
+    		byte = (((byte & 0x0F) << 12)
+    				| ((byte2 & 0x3F) << 6) | (byte3 & 0x3F));
+    	}
+    	/*
+    	 * A three-byte-character lead-byte not followed by two trail-bytes
+    	 * represents itself.
+    	 */
+    }
+#if 0
+    /*
+     * Byte represents a 4-6 byte sequence.  The rest of Komodo currently
+     * won't support this, which makes this code very hard to test.
+     * Leave it commented out until we have better 4-6 byte UTF-8 support.
+     */
+    else {
+	/*
+	 * This is the general loop construct for building up Unicode
+	 * from UTF-8, and could be used for 1-6 byte len sequences.
+	 *
+	 * The following structure is used for mapping current UTF-8 byte
+	 * to number of bytes trail bytes.  It doesn't backtrack from
+	 * the middle of a UTF-8 sequence.
+	 */
+	static const unsigned char totalBytes[256] = {
+	    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+	    2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+	    3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,5,5,5,5,6,6,6,6
+	};
+	int ch, trail;
+
+	trail = totalBytes[byte] - 1; // expected number of trail bytes
+	if (trail > 0) {
+	    ch = byte & (0x3F >> trail);
+	    do {
+		byte2 = (unsigned char) SendEditor(SCI_GETCHARAT, ++pos, 0);
+		if ((byte2 & 0xC0) != 0x80) {
+		    *_retval = (PRUnichar) byte;
+		    return NS_OK;
+		}
+		ch <<= 6;
+		ch |= (byte2 & 0x3F);
+		trail--;
+	    } while (trail > 0);
+	    *_retval = (PRUnichar) ch;
+	    return NS_OK;
+	}
+    }
+#endif
+
+    return byte;
+}
+
 toMarkedText::CharClassify toMarkedText::m_charClasifier;
 
 toMarkedText::CharClassify::CharClassify() {
