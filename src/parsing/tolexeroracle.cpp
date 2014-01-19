@@ -244,3 +244,8 @@ void toLexerOracle::styleText(int start, int end)
 //	startStyling(start, 0x1f);
 //	setStyling(len, getStyle());
 }
+
+QsciAbstractAPIs *toLexerOracle::apis() const
+{
+	return NULL;
+}

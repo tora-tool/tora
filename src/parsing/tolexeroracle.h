@@ -43,6 +43,7 @@
 #include <Qsci/qscilexersql.h>
 
 class QsciStyle;
+class QsciAbstractAPIs;
 
 class toLexerOracle : public QsciLexerCustom {
         Q_OBJECT;
@@ -66,6 +67,9 @@ public:
         virtual const char *language() const;
         virtual QString description(int) const;
         virtual void styleText(int start, int end);
+
+        /* override - reimplemented from QsciLexer */
+        QsciAbstractAPIs *apis() const;
 
         virtual bool caseSensitive() const
         {

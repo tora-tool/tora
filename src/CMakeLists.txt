@@ -257,7 +257,8 @@ SET(TORA_MOC_CLASSES
   core/toresultline.h
   parsing/tsqllexer.h
   parsing/tosyntaxanalyzer.h
- 
+  parsing/tolexeroracleapis.h 
+
   editor/tobaseeditor.h
   editor/tomarkededitor.h
   editor/tomarkedtext.h
@@ -268,7 +269,6 @@ SET(TORA_MOC_CLASSES
   editor/tocomplpopup.h
   editor/tosearchreplace.h
   editor/tostyle.h
-  editor/tocustomlexer.h
   parsing/tolexeroracle.h
 
   result/toproviderobserver.h
@@ -353,6 +353,9 @@ SET(TORA_MOC_CLASSES
 
   templates/tosqledit.h  
   templates/totemplate.h
+
+  #tests/tocustomlexer.h
+
   #     toproject.h
   
   #TODO tools/toalert.h
@@ -387,7 +390,7 @@ IF(graphviz_FOUND)
 ENDIF(graphviz_FOUND)
 
 IF(TORA_DEBUG)
-  LIST(APPEND TORA_MOC_CLASSES tests/test3window.h tests/test4window.h tests/test5window.h)
+  LIST(APPEND TORA_MOC_CLASSES tests/test3window.h tests/test5window.h)
   LIST(APPEND TORA_MOC_CLASSES docklets/tologging.h)
 ENDIF()
 
@@ -500,7 +503,6 @@ SET(TORA_SOURCES
   editor/tocomplpopup.cpp
   editor/tosearchreplace.cpp
   editor/tostyle.cpp
-  editor/tocustomlexer.cpp
   parsing/tolexeroracle.cpp
 
   result/toproviderobserver.cpp
@@ -543,6 +545,7 @@ SET(TORA_SOURCES
   parsing/MySQLGuiLexer.cc
   parsing/tsqllexermysql.cc
   parsing/MySQLLexer.cc
+  parsing/tolexeroracleapis.cpp
   
   docklets/toviewconnections.cpp
   docklets/toviewdirectory.cpp
@@ -658,7 +661,7 @@ IF(POPPLER_QT4_FOUND)
 ENDIF (POPPLER_QT4_FOUND)
 
 IF(TORA_DEBUG)
-  LIST(APPEND TORA_SOURCES tests/test3window.cpp tests/test4window.cpp tests/test5window.cpp)
+  LIST(APPEND TORA_SOURCES tests/test3window.cpp tests/test5window.cpp)
   LIST(APPEND TORA_SOURCES docklets/tologging.cpp)  
 ENDIF()
 
@@ -890,7 +893,7 @@ SET(TEST4_SOURCES
   core/tomainwindow.cpp
   core/topushbutton.cpp
   #core/tocache.cpp
-  editor/tocustomlexer.cpp
+  tests/tocustomlexer.cpp
   editor/tohighlightedtext.cpp
   editor/tomarkedtext.cpp
   editor/tocomplpopup.cpp
@@ -913,7 +916,7 @@ SET(TEST4_MOC_SOURCES
   parsing/moc_tsqllexer.cxx
   parsing/moc_tosyntaxanalyzer.cxx  
   ts_log/moc_toostream.cxx
-  editor/moc_tocustomlexer.cxx
+  tests/moc_tocustomlexer.cxx
   editor/moc_tohighlightedtext.cxx
   editor/moc_tomarkedtext.cxx
   editor/moc_tocomplpopup.cxx
@@ -1004,7 +1007,6 @@ SET(TEST5_SOURCES
   connection/tooraclesetting.cpp
   editor/tobaseeditor.cpp
   editor/tocomplpopup.cpp
-  editor/tocustomlexer.cpp
   editor/todebugeditor.cpp
   editor/todebugeditor.cpp
   editor/todebugtext.cpp
@@ -1078,7 +1080,6 @@ SET(TEST5_MOC_SOURCES
   #tools/moc_toworksheet.cxx
   editor/moc_tobaseeditor.cxx
   editor/moc_tocomplpopup.cxx
-  editor/moc_tocustomlexer.cxx
   editor/moc_todebugeditor.cxx
   editor/moc_todebugtext.cxx  
   editor/moc_tohighlightededitor.cxx

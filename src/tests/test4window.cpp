@@ -34,7 +34,7 @@
 
 #include "tests/test4window.h"
 #include "editor/tohighlightedtext.h"
-#include "editor/tocustomlexer.h"
+#include "tests/tocustomlexer.h"
 
 #include <QtGui/QStatusBar>
 #include <QtGui/QScrollArea>
