@@ -178,8 +178,6 @@ protected:
     */
     QStringList getCompletionList(QString &partial);
 
-    void completeWithText(QString itemText);
-
     virtual void focusInEvent(QFocusEvent *e);
     virtual void focusOutEvent(QFocusEvent *e);
 

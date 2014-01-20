@@ -140,7 +140,6 @@ public:
     QString wordAtPosition(int position, bool onlyWordCharacters = true) const;
 
     /** Get word at line and index. This function is now public.
-     * re-implemented from QScintilla
      */
     QString wordAtLineIndex(int line, int index) const;
 
@@ -189,6 +188,7 @@ public:
     virtual void insert(const QString &str, bool select = false);
 
     bool findText(const QString &searchText, const QString &replaceText, Search::SearchFlags flags);
+    void findStop();
 
     int NextWordStart(int pos, int delta);
     int NextWordEnd(int pos, int delta);

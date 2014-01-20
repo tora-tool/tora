@@ -323,6 +323,7 @@ void toBaseEditor::setCoordinates(int line, int column)
 
 void toBaseEditor::setEditorFocus()
 {
+	m_editor->findStop();
     m_editor->setFocus(Qt::OtherFocusReason);
 }
 

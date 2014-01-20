@@ -632,44 +632,6 @@ QStringList toHighlightedText::getCompletionList(QString &partial)
     return toReturn;
 }
 
-void toHighlightedText::completeWithText(QString itemText)
-{
-    int curline, curcol, start, end;
-    getCursorPosition (&curline, &curcol);
-    QString line = text(curline);
-
-	throw QString("void toHighlightedTextEditor::completeWithText ... not implemented yet.");
-    //toSQLParse::editorTokenizer tokens(this, curcol, curline);
-    //if (line[curcol - 1] != '.')
-    //{
-    //    tokens.getToken(false);
-    //    start = tokens.offset();
-    //}
-    //else
-    //{
-    //    start = curcol;
-    //}
-    //if (line[curcol].isSpace())
-    //{
-    //    end = curcol;
-    //}
-    //else
-    //{
-    //    tokens.getToken(true);
-    //    if (tokens.line() != curline)
-    //        end = line.length();
-    //    else
-    //        end = tokens.offset();
-    //}
-
-    disconnect(this, SIGNAL(cursorPositionChanged(int, int)), this, SLOT(positionChanged(int, int)));
-    setSelection(curline, start, curline, end);
-    this->removeSelectedText();
-    this->insert(itemText);
-    this->setCursorPosition(curline, start + itemText.length());
-    connect (this, SIGNAL(cursorPositionChanged(int, int)), this, SLOT(positionChanged(int, int)));
-}
-
 void toHighlightedText::focusInEvent(QFocusEvent *e)
 {
 #ifdef QT_DEBUG

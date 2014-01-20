@@ -535,6 +535,11 @@ bool toMarkedText::findText(const QString &searchText, const QString &replaceTex
     return found; // TODO/FIXME: what to do with a retval?
 }
 
+void toMarkedText::findStop()
+{
+	clearIndicatorRange(0, 0, lines(), lineLength(lines()-1), m_searchIndicator);
+}
+
 #if 0
 // TODO: this part is waiting for QScintilla backend feature (yet unimplemented).
 void toMarkedText::setSelectionType(int aType)
