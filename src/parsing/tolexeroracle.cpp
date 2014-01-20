@@ -58,7 +58,7 @@ toLexerOracle::toLexerOracle(QObject *parent)
 		, lineText(NULL)
 		, bufferText(NULL)
 {
-	lexerApis = new toLexerOracleAPIs(this);
+	setAPIs(new toLexerOracleAPIs(this));
 
 	QFont mono;
 #if defined(Q_OS_WIN)
@@ -246,9 +246,4 @@ void toLexerOracle::styleText(int start, int end)
 
 //	startStyling(start, 0x1f);
 //	setStyling(len, getStyle());
-}
-
-QsciAbstractAPIs *toLexerOracle::apis() const
-{
-	return NULL;
 }

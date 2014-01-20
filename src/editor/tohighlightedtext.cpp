@@ -61,6 +61,7 @@ toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
 	, m_parserTimer(new QTimer(this))
 	, m_parserThread(new QThread(this))
 	, m_haveFocus(true)
+	, m_complAPI(NULL)
 {
 #if defined(Q_OS_WIN)
 	mono = QFont("Courier New", 10);
@@ -131,7 +132,6 @@ toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
 	connect(m_parserThread, SIGNAL(finished()),  m_parserThread, SLOT(deleteLater()));
 
     // Connect signals&slots
-	complAPI = lexer()->apis();
     connect(this, SIGNAL(cursorPositionChanged(int, int)), this, SLOT(setStatusMessage(void )));
     connect (this, SIGNAL(cursorPositionChanged(int, int)), this, SLOT(positionChanged(int, int)));
     complTimer = new QTimer(this);
@@ -205,13 +205,13 @@ void toHighlightedText::positionChanged(int row, int col)
 		position = SendScintilla(QsciScintilla::SCI_POSITIONBEFORE, position);
 		char c = getByteAt(position);
 		// TODO use getWCharAt and handle multibyte characters here
-		if (c == '.')
-			complTimer->start(500);
+//		if (c == '.')
+//			complTimer->start(500);
 	}
 	else
 	{
-		if (complTimer->isActive())
-			complTimer->stop();
+//		if (complTimer->isActive())
+//			complTimer->stop();
 	}
 // FIXME: disabled due repainting issues
     // current line marker (margin arrow)
@@ -479,6 +479,9 @@ void toHighlightedText::setHighlighter(HighlighterTypeEnum h)
 				QColor(Qt::black),
 				QColor(toHighlightedText::lightMagenta),
 				mono);
+		m_complAPI = super::lexer()->apis();
+	} else {
+		m_complAPI = NULL;
 	}
 	setFont(Utils::toStringToFont(toConfigurationSingle::Instance().codeFontName()));
 	//update(); gets called by setFont

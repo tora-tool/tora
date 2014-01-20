@@ -33,6 +33,9 @@ public:
     virtual void updateAutoCompletionList(const QStringList &context,
             QStringList &list);
 
+    QStringList callTips(const QStringList &context, int commas,
+            QsciScintilla::CallTipsStyle style,
+            QList<int> &shifts);
 private:
 
     toLexerOracleAPIs(const toLexerOracleAPIs &);

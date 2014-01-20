@@ -49,7 +49,7 @@
 #include <QtGui/QWidget>
 
 class QListWidgetItem;
-class QsciAPIs;
+class QsciAbstractAPIs;
 
 class toComplPopup;
 class toHighlightedTextWorker;
@@ -196,7 +196,7 @@ private:
     table/view structure to use.
     See getCompletionList() */
     QStringList defaultCompletion;
-    QsciAPIs* complAPI; // TODO this variable is never used
+    QsciAbstractAPIs* m_complAPI;
     QTimer* complTimer;
 
     toSyntaxAnalyzer *m_analyzerNL, *m_analyzerOracle, *m_currentAnalyzer;
