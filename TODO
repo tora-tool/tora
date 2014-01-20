@@ -14,7 +14,7 @@ QSscintilla port:
   - fix insert(str, select). see toMarkedText::insert
 
 * Finish implementation of syntax colouring editor component (toHighlightedText class)
-    Code completion in SQL editor (using QextScintillaAPIs class), better integration 
+    Code completion in SQL editor (using QsciAbstractAPIs class), better integration 
     with lexer class (QextScintillaLexer). We also probably need to override 
     QextScintillaLexerSQL to better suit TOra purposes.
     
@@ -30,7 +30,8 @@ QSscintilla port:
 * PL/SQL debugging (toDebugText class)
     This has to be updated to use marker facilities provided by QextScintilla 
     
-    
+* check QScintilla alternative qodeedit (https://github.com/pasnox/qodeedit)
+
 Previous TODO:
 
 
