@@ -255,7 +255,6 @@
         <file>icons/replace_all.png</file>
         <file>icons/replace_next.png</file>
 
-        <file>templates/completion.api</file>
         <file>templates/hints.tpl</file>
         <file>templates/log4plsql.tpl</file>
         <file>templates/sqlfunctions.tpl</file>

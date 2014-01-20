@@ -134,10 +134,9 @@ public:
 
     /** Get the tablename currently under the cursor.
      * @param owner Filled with owner or table or QString::null if no owner specified.
-     * @param table Filled with tablename.
-     * @param highlight If true mark the extracted tablename
+     * @param table Filled with tablename
      */
-    void tableAtCursor(toCache::ObjectRef &table, bool highlight = false);
+    void tableAtCursor(toCache::ObjectRef &table);
 
     toSyntaxAnalyzer* analyzer();
 
@@ -151,8 +150,6 @@ public slots:
     virtual void autoCompleteFromAPIs();
 
     void positionChanged(int row, int col);
-
-    virtual void completeFromAPI(QListWidgetItem * item);
 
 private slots:
     void setHighlighter(int);
@@ -191,11 +188,6 @@ protected:
 private:
     HighlighterTypeEnum highlighterType;
 
-    /*! List of default keywords/functions/whatever to use in
-    the code completion when the SQL parser doesn't find any
-    table/view structure to use.
-    See getCompletionList() */
-    QStringList defaultCompletion;
     QsciAbstractAPIs* m_complAPI;
     QTimer* complTimer;
 
@@ -218,9 +210,6 @@ private:
     int m_bookmarkMarginHandle;
     //! \brief Bookrmarks handler list used for navigation (next/prev)
     QList<int> m_bookmarks;
-
-    toComplPopup* popup;
-
 };
 
 Q_DECLARE_METATYPE(toHighlightedText::HighlighterTypeEnum)

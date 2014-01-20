@@ -266,7 +266,6 @@ SET(TORA_MOC_CLASSES
   editor/tohighlightedtext.h
   editor/todebugtext.h
   editor/todebugeditor.h
-  editor/tocomplpopup.h
   editor/tosearchreplace.h
   editor/tostyle.h
   parsing/tolexeroracle.h
@@ -500,7 +499,6 @@ SET(TORA_SOURCES
   editor/tohighlightedtext.cpp
   editor/todebugtext.cpp
   editor/todebugeditor.cpp
-  editor/tocomplpopup.cpp
   editor/tosearchreplace.cpp
   editor/tostyle.cpp
   parsing/tolexeroracle.cpp
@@ -798,7 +796,6 @@ SET(TEST1_SOURCES
   editor/tostyle.cpp
   editor/tohighlightedtext.cpp
   editor/tomarkedtext.cpp
-  editor/tocomplpopup.cpp
   parsing/tosyntaxanalyzer.cpp
   parsing/tosyntaxanalyzeroracle.cpp
   parsing/tosyntaxanalyzernl.cpp
@@ -827,7 +824,6 @@ SET(TEST1_MOC_SOURCES
   core/moc_topushbutton.cxx
   core/moc_toquery.cxx
   core/moc_totimer.cxx
-  editor/moc_tocomplpopup.cxx
   editor/moc_tostyle.cxx
   editor/moc_tohighlightedtext.cxx
   editor/moc_tomarkedtext.cxx
@@ -896,7 +892,6 @@ SET(TEST4_SOURCES
   tests/tocustomlexer.cpp
   editor/tohighlightedtext.cpp
   editor/tomarkedtext.cpp
-  editor/tocomplpopup.cpp
   parsing/tolexeroracle.cpp
   parsing/tosyntaxanalyzer.cpp
   parsing/tosyntaxanalyzernl.cpp
@@ -919,7 +914,6 @@ SET(TEST4_MOC_SOURCES
   tests/moc_tocustomlexer.cxx
   editor/moc_tohighlightedtext.cxx
   editor/moc_tomarkedtext.cxx
-  editor/moc_tocomplpopup.cxx
   editor/moc_tostyle.cxx
   )
 
@@ -1006,7 +1000,6 @@ SET(TEST5_SOURCES
   connection/tooraclefind.cpp
   connection/tooraclesetting.cpp
   editor/tobaseeditor.cpp
-  editor/tocomplpopup.cpp
   editor/todebugeditor.cpp
   editor/todebugeditor.cpp
   editor/todebugtext.cpp
@@ -1079,7 +1072,6 @@ SET(TEST5_MOC_SOURCES
   ts_log/moc_toostream.cxx
   #tools/moc_toworksheet.cxx
   editor/moc_tobaseeditor.cxx
-  editor/moc_tocomplpopup.cxx
   editor/moc_todebugeditor.cxx
   editor/moc_todebugtext.cxx  
   editor/moc_tohighlightededitor.cxx

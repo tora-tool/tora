@@ -33,7 +33,6 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "editor/tohighlightedtext.h"
-#include "editor/tocomplpopup.h"
 #include "core/toconnectiontraits.h"
 #include "core/toconfiguration.h"
 #include "core/tologger.h"
@@ -55,7 +54,6 @@ toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
 	//, m_currentLineMarginHandle(QsciScintilla::markerDefine(QsciScintilla::RightArrow))
 	, m_bookmarkMarginHandle(QsciScintilla::markerDefine(QsciScintilla::RightTriangle))
 	, m_bookmarkHandle(QsciScintilla::markerDefine(QsciScintilla::Background))
-	, defaultCompletion()
 	, m_analyzerNL(NULL)
 	, m_analyzerOracle(NULL)
 	, m_parserTimer(new QTimer(this))
@@ -63,8 +61,6 @@ toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
 	, m_haveFocus(true)
 	, m_complAPI(NULL)
 {
-	setAutoCompletionThreshold(1);
-	setAutoCompletionSource(QsciScintilla::AcsAPIs);
 
 #if defined(Q_OS_WIN)
 	mono = QFont("Courier New", 10);
@@ -74,28 +70,10 @@ toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
 	mono = QFont(Utils::toStringToFont(toConfigurationSingle::Instance().codeFontName()));
 #endif
 
-    // set default keywords for code completion
-    QFile api(":/templates/completion.api");
-    if (!api.open(QIODevice::ReadOnly | QIODevice::Text))
-        QMessageBox::warning(this, tr("Init error"),
-                             tr("Cannot read code completion API from %1").arg(api.fileName()));
-    else
-    {
-        while (!api.atEnd())
-        {
-            QString s(api.readLine());
-            defaultCompletion.append(s.trimmed());
-        }
-    }
-
     // Setup QsciScintilla stuff
     QsciScintilla::setFolding(QsciScintilla::BoxedFoldStyle);
-    // enable syntax coloring if "Syntax highlighting" is on in editor preferences
-    //setSyntaxColoring(toConfigurationSingle::Instance().highlight());
-    //    updateSyntaxColor(toSyntaxAnalyzer::DebugBg);
-    //    updateSyntaxColor(toSyntaxAnalyzer::ErrorBg);
-    //    updateSyntaxColor(toSyntaxAnalyzer::CurrentLineMarker);
-    //    updateSyntaxColor(toSyntaxAnalyzer::StaticBg);
+    QsciScintilla::setAutoCompletionThreshold(1);
+    QsciScintilla::setAutoCompletionSource(QsciScintilla::AcsAPIs);
 
     // highlight caret line
     QsciScintilla::setCaretLineVisible(true);
@@ -139,16 +117,6 @@ toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
     connect (this, SIGNAL(cursorPositionChanged(int, int)), this, SLOT(positionChanged(int, int)));
     complTimer = new QTimer(this);
     connect( complTimer, SIGNAL(timeout()), this, SLOT(autoCompleteFromAPIs()) );
-    popup = new toComplPopup(this);
-    popup->hide();
-    connect(popup->list(),
-            SIGNAL(itemClicked(QListWidgetItem*)),
-            this,
-            SLOT(completeFromAPI(QListWidgetItem*)));
-    connect(popup->list(),
-            SIGNAL(itemActivated(QListWidgetItem*)),
-            this,
-            SLOT(completeFromAPI(QListWidgetItem*)));
 	connect(&toHighlighterTypeButtonSingle::Instance(),
 			SIGNAL(toggled(int)),
 			this,
@@ -196,8 +164,6 @@ toHighlightedText::~toHighlightedText()
 	m_parserThread->quit();
 	m_parserThread->wait();
 	delete m_parserThread;
-    if (popup)
-        delete popup;
 }
 
 void toHighlightedText::positionChanged(int row, int col)
@@ -222,181 +188,14 @@ void toHighlightedText::positionChanged(int row, int col)
 //    markerAdd(row, m_currentLineMarginHandle);
 }
 
-//static QString UpperIdent(const QString &str)
-//{
-//    if (str.length() > 0 && str[0] == '\"')
-//        return str;
-//    else
-//        return str.toUpper();
-//}
-
 void toHighlightedText::autoCompleteFromAPIs()
 {
-//	{
-//		toMarkedText::autoCompleteFromAPIs();
-//		return;
-//	}
     complTimer->stop(); // it's a must to prevent infinite reopening
-
-    QListWidget *list = popup->list();
-    QString partial;
-    QStringList compleList = this->getCompletionList(partial);
-
-    if (compleList.count() == 0)
-        return;
-
-    if (compleList.count() == 1 && compleList.first() == partial)
-        this->completeWithText(compleList.first());
-    else
-    {
-        long position, posx, posy;
-        int curCol, curRow;
-        this->getCursorPosition(&curRow, &curCol);
-        position = this->SendScintilla(SCI_GETCURRENTPOS);
-        posx = this->SendScintilla(SCI_POINTXFROMPOSITION, 0, position);
-        posy = this->SendScintilla(SCI_POINTYFROMPOSITION, 0, position) +
-               this->SendScintilla(SCI_TEXTHEIGHT, curRow);
-        QPoint p(posx, posy);
-        p = mapToGlobal(p);
-        popup->move(p);
-        list->clear();
-        list->addItems(compleList);
-        if (!partial.isNull() && partial.length() > 0)
-        {
-            int i;
-            for (i = 0; i < list->model()->rowCount(); i++)
-            {
-                if (list->item(i)->text().indexOf(partial) == 0)
-                {
-                    list->item(i)->setSelected(true);
-                    list->setCurrentItem(list->item(i));
-                    break;
-                }
-            }
-        }
-
-        // if there's no current selection, select the first
-        // item. that way arrow keys work as intended.
-        QList<QListWidgetItem *> selected = list->selectedItems();
-        if (selected.size() < 1 && list->count() > 0)
-        {
-            list->item(0)->setSelected(true);
-            list->setCurrentItem(list->item(0));
-        }
-
-        popup->show();
-        popup->setFocus();
-    }
+	{
+		toMarkedText::autoCompleteFromAPIs();
+		return;
+	}
 }
-
-//bool toHighlightedTextEditor::invalidToken(int line, int col)
-//{
-//    bool ident = true;
-//    if (line < 0)
-//    {
-//        line = 0;
-//        col = 0;
-//    }
-//    while (line < lines())
-//    {
-//        QString cl = text(line);
-//        while (col < int(cl.length()))
-//        {
-//            QChar c = cl[col];
-//            if (!Utils::toIsIdent(c))
-//                ident = false;
-//            if (!ident && !c.isSpace())
-//                return c == '.';
-//            col++;
-//        }
-//        line++;
-//        col = 0;
-//    }
-//    return false;
-//}
-
-/**
- * Sets the syntax colouring flag.
- */
-//void toHighlightedTextEditor::setSyntaxColoring(bool val)
-//{
-//    syntaxColoring = val;
-//    if (syntaxColoring)
-//    {
-//        QsciScintilla::setLexer(lexer);
-//        //        updateSyntaxColor(toSyntaxAnalyzer::Default);
-//        //        updateSyntaxColor(toSyntaxAnalyzer::Comment);
-//        //        updateSyntaxColor(toSyntaxAnalyzer::Number);
-//        //        updateSyntaxColor(toSyntaxAnalyzer::Keyword);
-//        //        updateSyntaxColor(toSyntaxAnalyzer::String);
-//        //        updateSyntaxColor(toSyntaxAnalyzer::DefaultBg);
-//        //        updateSyntaxColor(toSyntaxAnalyzer::CurrentLineMarker);
-//
-//        update();
-//    }
-//    else
-//    {
-//        QsciScintilla::setLexer(NULL);
-//    }
-//}
-
-/**
- * Sets the syntax colours for given type
- */
-//void toHighlightedTextEditor::updateSyntaxColor(toSyntaxAnalyzer::infoType t)
-//{
-//    QColor col = DefaultAnalyzer.getColor(t);
-//
-//    switch (t)
-//    {
-//    case toSyntaxAnalyzer::Default:
-//        lexer->setColor(col, QsciLexerSQL::Default);
-//        //lexer->setColor(col, QsciLexerSQL::CommentLineHash);
-//        break;
-//    case toSyntaxAnalyzer::Comment:
-//        lexer->setColor(col, QsciLexerSQL::Comment);
-//        lexer->setColor(col, QsciLexerSQL::CommentLine);
-//        lexer->setColor(col, QsciLexerSQL::PlusPrompt);
-//        lexer->setColor(col, QsciLexerSQL::PlusComment);
-//        lexer->setColor(col, QsciLexerSQL::CommentDoc);
-//        lexer->setColor(col, QsciLexerSQL::CommentDocKeyword);
-//        break;
-//    case toSyntaxAnalyzer::Number:
-//        lexer->setColor(col, QsciLexerSQL::Number);
-//        break;
-//    case toSyntaxAnalyzer::Keyword:
-//        lexer->setColor(col, QsciLexerSQL::Keyword);
-//        lexer->setColor(col, QsciLexerSQL::PlusKeyword);
-//        lexer->setColor(col, QsciLexerSQL::Operator);
-//        break;
-//    case toSyntaxAnalyzer::String:
-//        lexer->setColor(col, QsciLexerSQL::DoubleQuotedString);
-//        lexer->setColor(col, QsciLexerSQL::SingleQuotedString);
-//        break;
-//    case toSyntaxAnalyzer::DefaultBg:
-//        lexer->setPaper(col);
-//        //lexer->setPaper(col, QsciLexerSQL::Default);
-//        break;
-//    case toSyntaxAnalyzer::ErrorBg:
-//        setMarkerBackgroundColor(col, m_errorHandle);
-//        break;
-//    case toSyntaxAnalyzer::DebugBg:
-//        setMarkerBackgroundColor(col, m_debugHandle);
-//        break;
-//    case toSyntaxAnalyzer::StaticBg:
-//        setMarkerBackgroundColor(col, m_staticHandle);
-//        break;
-//    case toSyntaxAnalyzer::CurrentLineMarker:
-////         setMarkerBackgroundColor(col, m_currentLineMarginHandle);
-//        // TODO/FIXME?: make it configurable - color.
-//        setMarkerBackgroundColor(DefaultAnalyzer.getColor(toSyntaxAnalyzer::CurrentLineMarker).lighter(100),
-//                                 m_bookmarkHandle);
-//        break;
-//    default:
-//        break;
-//    }
-//}
-
 
 void toHighlightedText::openFilename(const QString & file)
 {
@@ -536,7 +335,7 @@ void toHighlightedText::setFont (const QFont & font)
     super::setFont(font);
 }
 
-void toHighlightedText::tableAtCursor(toCache::ObjectRef &table, bool mark)
+void toHighlightedText::tableAtCursor(toCache::ObjectRef &table)
 {
 	/**
 	 * Theoretically I could use here SQLLexer::Lexer API if it was implemented for current database.
@@ -629,12 +428,6 @@ void toHighlightedText::tableAtCursor(toCache::ObjectRef &table, bool mark)
             	table.second = sc;
             }
         }
-
-        if (mark)
-        {
-        	//setSelection(tokens.line(), tokens.offset(), lastTokens.line(), lastTokens.offset());
-        }
-        //table.second = word;
     }
     catch (...)
     {
@@ -704,11 +497,12 @@ void toHighlightedText::gotoNextBookmark()
 
 QStringList toHighlightedText::getCompletionList(QString &partial)
 {
+    QStringList toReturn;
+#if 0
     int curline, curcol;
     // used as a flag to prevent completion popup when there is
     // an orphan comma. In short - be less agressive on popup.
     bool showDefault = false;
-    QStringList toReturn;
     getCursorPosition (&curline, &curcol);
 
     QString line = text(curline);
@@ -718,110 +512,110 @@ QStringList toHighlightedText::getCompletionList(QString &partial)
 
     //throw QString("QStringList toHighlightedTextEditor::getCompletionList ... not implemented yet.");
 
-    //toSQLParse::editorTokenizer tokens(this, curcol, curline);
-    //if (curcol > 0 && line[curcol - 1] != '.')
-    //{
-    //    partial = tokens.getToken(false);
-    //    showDefault = true;
-    //}
-    //else
-    //{
-    //    partial = "";
-    //}
+    toSQLParse::editorTokenizer tokens(this, curcol, curline);
+    if (curcol > 0 && line[curcol - 1] != '.')
+    {
+        partial = tokens.getToken(false);
+        showDefault = true;
+    }
+    else
+    {
+        partial = "";
+    }
 
-    //QString name = tokens.getToken(false);
-    //QString owner;
-    //if (name == ".")
-    //{
-    //    name = tokens.getToken(false);
-    //}
+    QString name = tokens.getToken(false);
+    QString owner;
+    if (name == ".")
+    {
+        name = tokens.getToken(false);
+    }
 
-    //QString token = tokens.getToken(false);
+    QString token = tokens.getToken(false);
 
-    //if (token == ".")
-    //    owner = tokens.getToken(false);
-    //else
-    //{
-    //    QString cmp = UpperIdent(name);
-    //    QString lastToken;
-    //    while ((invalidToken(tokens.line(), tokens.offset() + token.length()) || UpperIdent(token) != cmp || lastToken == ".") && token != ";" && token != "~~~" && !token.isEmpty())
-    //    {
-    //        lastToken = token;
-    //        token = tokens.getToken(false);
-    //    }
+    if (token == ".")
+        owner = tokens.getToken(false);
+    else
+    {
+        QString cmp = UpperIdent(name);
+        QString lastToken;
+        while ((invalidToken(tokens.line(), tokens.offset() + token.length()) || UpperIdent(token) != cmp || lastToken == ".") && token != ";" && token != "~~~" && !token.isEmpty())
+        {
+            lastToken = token;
+            token = tokens.getToken(false);
+        }
 
-    //    if (token == ";" || token.isEmpty())
-    //    {
-    //        tokens.setLine(curline);
-    //        tokens.setOffset(curcol);
-    //        token = tokens.getToken();
-    //        while ((invalidToken(tokens.line(), tokens.offset()) || (UpperIdent(token) != cmp && lastToken != ".")) && token != ";" && !token.isEmpty())
-    //            token = tokens.getToken();
-    //        lastToken = token;
-    //        tokens.getToken(false);
-    //    }
-    //    if (token != ";" && !token.isEmpty())
-    //    {
-    //        token = tokens.getToken(false);
-    //        if (token != "TABLE" && token != "UPDATE" && token != "FROM" && token != "INTO" && (Utils::toIsIdent(token[0]) || token[0] == '\"'))
-    //        {
-    //            name = token;
-    //            token = tokens.getToken(false);
-    //            if (token == ".")
-    //                owner = tokens.getToken(false);
-    //        }
-    //        else if (token == ")")
-    //            return toReturn;
-    //    }
-    //}
-    //if (!owner.isEmpty())
-    //{
-    //    name = owner + QString::fromLatin1(".") + name;
-    //}
-    //if (!name.isEmpty())
-    //{
-    //    try
-    //    {
-    //        toConnection &conn = toConnection::currentConnection(this);
-    //        ///toConnection::objectName object = conn.realName(name, false);
-    //        ///if(object.Type == "DATABASE")
-    //        ///{
-    //        ///    std::list<toConnection::objectName> list = conn.tables(object);
-    //        ///    Q_FOREACH(toConnection::objectName table, list)
-    //        ///    {
-    //        ///        QString t = conn.quote(table.Name, false);
-    //        ///        if(t.indexOf(*partial) == 0)
-    //        ///            toReturn.append(t);
-    //        ///    }
-    //        ///}
-    //        ///else
-    //        ///{
-    //        ///    ///const toQDescList &desc = conn.columns(object);
-    //        ///    for (toQDescList::const_iterator i = desc.begin(); i != desc.end(); i++)
-    //        ///    {
-    //        ///        QString t;
-    //        ///        int ind = (*i).Name.indexOf("(");
-    //        ///        if (ind < 0)
-    //        ///            ind = (*i).Name.indexOf("RETURNING") - 1; //it could be a function or procedure without parameters. -1 to remove the space
-    //        ///        if (ind >= 0)
-    //        ///            t = conn.quote((*i).Name.mid(0, ind), false) + (*i).Name.mid(ind);
-    //        ///        else
-    //        ///            t = conn.quote((*i).Name, false);
-    //        ///        if (t.indexOf(*partial) == 0)
-    //        ///            toReturn.append(t);
-    //        ///    }
-    //        ///}
-    //    }
-    //    catch (QString const &e)
-    //    {
-    //        TLOG(2, toDecorator, __HERE__) << "toHighlightedTextEditor::getCompletionList:" << e << std::endl;
-    //    }
-    //    catch (...)
-    //    {
-    //        TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
-    //        TLOG(2, toDecorator, __HERE__) << "toHighlightedTextEditor::getCompletionList: Unknown error.";
-    //    }
-    //}
+        if (token == ";" || token.isEmpty())
+        {
+            tokens.setLine(curline);
+            tokens.setOffset(curcol);
+            token = tokens.getToken();
+            while ((invalidToken(tokens.line(), tokens.offset()) || (UpperIdent(token) != cmp && lastToken != ".")) && token != ";" && !token.isEmpty())
+                token = tokens.getToken();
+            lastToken = token;
+            tokens.getToken(false);
+        }
+        if (token != ";" && !token.isEmpty())
+        {
+            token = tokens.getToken(false);
+            if (token != "TABLE" && token != "UPDATE" && token != "FROM" && token != "INTO" && (Utils::toIsIdent(token[0]) || token[0] == '\"'))
+            {
+                name = token;
+                token = tokens.getToken(false);
+                if (token == ".")
+                    owner = tokens.getToken(false);
+            }
+            else if (token == ")")
+                return toReturn;
+        }
+    }
+    if (!owner.isEmpty())
+    {
+        name = owner + QString::fromLatin1(".") + name;
+    }
+    if (!name.isEmpty())
+    {
+        try
+        {
+            toConnection &conn = toConnection::currentConnection(this);
+            toConnection::objectName object = conn.realName(name, false);
+            if(object.Type == "DATABASE")
+            {
+                std::list<toConnection::objectName> list = conn.tables(object);
+                Q_FOREACH(toConnection::objectName table, list)
+                {
+                    QString t = conn.quote(table.Name, false);
+                    if(t.indexOf(*partial) == 0)
+                        toReturn.append(t);
+                }
+            }
+            else
+            {
+                ///const toQDescList &desc = conn.columns(object);
+                for (toQDescList::const_iterator i = desc.begin(); i != desc.end(); i++)
+                {
+                    QString t;
+                    int ind = (*i).Name.indexOf("(");
+                    if (ind < 0)
+                        ind = (*i).Name.indexOf("RETURNING") - 1; //it could be a function or procedure without parameters. -1 to remove the space
+                    if (ind >= 0)
+                        t = conn.quote((*i).Name.mid(0, ind), false) + (*i).Name.mid(ind);
+                    else
+                        t = conn.quote((*i).Name, false);
+                    if (t.indexOf(*partial) == 0)
+                        toReturn.append(t);
+                }
+            }
+        }
+        catch (QString const &e)
+        {
+            TLOG(2, toDecorator, __HERE__) << "toHighlightedTextEditor::getCompletionList:" << e << std::endl;
+        }
+        catch (...)
+        {
+            TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
+            TLOG(2, toDecorator, __HERE__) << "toHighlightedTextEditor::getCompletionList: Unknown error.";
+        }
+    }
 
     // if is toReturn empty fill it with keywords...
     if (showDefault && toReturn.count() == 0)
@@ -834,6 +628,7 @@ QStringList toHighlightedText::getCompletionList(QString &partial)
     }
 
     toReturn.sort();
+#endif
     return toReturn;
 }
 
@@ -875,13 +670,6 @@ void toHighlightedText::completeWithText(QString itemText)
     connect (this, SIGNAL(cursorPositionChanged(int, int)), this, SLOT(positionChanged(int, int)));
 }
 
-void toHighlightedText::completeFromAPI(QListWidgetItem* item)
-{
-    if (item)
-        this->completeWithText(item->text());
-    popup->hide();
-}
-
 void toHighlightedText::focusInEvent(QFocusEvent *e)
 {
 #ifdef QT_DEBUG
@@ -919,16 +707,6 @@ void toHighlightedText::unScheduleParsing()
 
 void toHighlightedText::process()
 {
-	//emit parsingStarted();
-	//	int len = editor()->length();
-	//	if(bufferLength < len)
-	//	{
-	//		bufferLength = Utils::toNextPowerOfTwo(len);
-	//		bufferText = (char*) realloc(bufferText, bufferLength);
-	//	}
-	//	editor()->SendScintilla(QsciScintillaBase::SCI_GETTEXT, bufferLength, bufferText);
-	//	bufferText[len] = '\0';
-	//  emit parsingRequested(bufferText, len);
 	emit parsingRequested(text());
 }
 
