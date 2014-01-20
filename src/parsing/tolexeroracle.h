@@ -88,6 +88,7 @@ protected:
         QMap<int,QString> styleNames;
     	QList<int> styleStack;
     	std::auto_ptr <SQLLexer::Lexer> lexer;
+    	QsciAPIs *lexerApis;
 };
 
 #endif /* TOLEXERORACLE_H_ */

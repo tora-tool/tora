@@ -131,8 +131,8 @@ toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
 	connect(m_parserThread, SIGNAL(finished()),  m_parserThread, SLOT(deleteLater()));
 
     // Connect signals&slots
+	complAPI = lexer()->apis();
     connect(this, SIGNAL(cursorPositionChanged(int, int)), this, SLOT(setStatusMessage(void )));
-    //complAPI = new QsciAPIs(lexer);
     connect (this, SIGNAL(cursorPositionChanged(int, int)), this, SLOT(positionChanged(int, int)));
     complTimer = new QTimer(this);
     connect( complTimer, SIGNAL(timeout()), this, SLOT(autoCompleteFromAPIs()) );
@@ -193,8 +193,6 @@ toHighlightedText::~toHighlightedText()
 	m_parserThread->quit();
 	m_parserThread->wait();
 	delete m_parserThread;
-	//    if (complAPI)
-	//delete complAPI;
     if (popup)
         delete popup;
 }
@@ -231,6 +229,10 @@ void toHighlightedText::positionChanged(int row, int col)
 
 void toHighlightedText::autoCompleteFromAPIs()
 {
+	{
+		toMarkedText::autoCompleteFromAPIs();
+		return;
+	}
     complTimer->stop(); // it's a must to prevent infinite reopening
 
     QListWidget *list = popup->list();

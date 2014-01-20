@@ -33,6 +33,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "parsing/tolexeroracle.h"
+#include "parsing/tolexeroracleapis.h"
 #include "core/utils.h"
 #include "core/toconfiguration.h"
 
@@ -57,6 +58,8 @@ toLexerOracle::toLexerOracle(QObject *parent)
 		, lineText(NULL)
 		, bufferText(NULL)
 {
+	lexerApis = new toLexerOracleAPIs(this);
+
 	QFont mono;
 #if defined(Q_OS_WIN)
 	mono = QFont("Courier New", 10);
