@@ -63,6 +63,9 @@ toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
 	, m_haveFocus(true)
 	, m_complAPI(NULL)
 {
+	setAutoCompletionThreshold(1);
+	setAutoCompletionSource(QsciScintilla::AcsAPIs);
+
 #if defined(Q_OS_WIN)
 	mono = QFont("Courier New", 10);
 #elif defined(Q_OS_MAC)
