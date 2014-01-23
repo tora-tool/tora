@@ -205,6 +205,12 @@ toMain::toMain()
         TOCATCH;
     }
 
+#ifdef QT_DEBUG
+    reportTimer = new QTimer(this);
+    reportTimer->setInterval(5000);
+    connect(reportTimer, SIGNAL(timeout ()), this, SLOT(reportFocus()));
+    reportTimer->start();
+#endif
 }
 
 void toMain::createActions()
@@ -977,27 +983,6 @@ void toMain::setNeedCommit(toToolWidget *tool, bool needCommit)
 bool toMain::delCurrentConnection(void)
 {
     toConnection &conn = Connections.currentConnection();
-    //    if (conn.needCommit())
-    //    {
-    //    	QString str = tr("Commit work in session to %1 before "
-    //    			"closing it?").arg(conn.description());
-    //    	switch (TOMessageBox::warning(this,
-    //    			tr("Commit work?"),
-    //    			str,
-    //    			tr("&Yes"),
-    //    			tr("&No"),
-    //    			tr("Cancel")))
-    //    	{
-    //    	case 0:
-    //    		conn.commit();
-    //    		break;
-    //    	case 1:
-    //    		conn.rollback();
-    //    		break;
-    //    	case 2:
-    //    		return false;
-    //    	}
-    //    }
 
     if (!conn.closeWidgets())
     	return false;
@@ -1201,6 +1186,16 @@ void toMain::slotActiveToolChaged(toToolWidget *tool)
 	//setNeedCommit(tool, tool ? tool->hasTransaction() : false);
 	lastToolWidget = tool;
 }
+
+#ifdef QT_DEBUG
+void toMain::reportFocus()
+{
+	QWidget *focus = qApp->focusWidget();
+	TLOG(9, toDecorator, __HERE__) << (focus ? focus->metaObject()->className() : QString("NULL"))
+			<< '(' << (focus ? focus->objectName() : QString("NULL")) << ')'
+			<< std::endl;
+}
+#endif
 
 void toMain::checkCaching(void)
 {

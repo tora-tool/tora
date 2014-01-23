@@ -86,6 +86,7 @@ toBaseEditor::toBaseEditor(toMarkedText *editor, QWidget *parent)
     		this, SLOT(handleSearching(Search::SearchFlags)));
     connect(m_search, SIGNAL(windowClosed()),
             this, SLOT(setEditorFocus()));
+    setFocusProxy(m_editor);
 }
 
 QString toBaseEditor::editText()

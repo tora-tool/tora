@@ -49,6 +49,7 @@ class QLabel;
 class QPlainTextEdit;
 class QToolBar;
 class QToolButton;
+class QTimer;
 class toBackgroundLabel;
 class toConnection;
 class toConnectionRegistry;
@@ -267,6 +268,11 @@ protected slots:
 
     void slotActiveToolChaged(toToolWidget*);
 
+#ifdef QT_DEBUG
+    // This function should diagnose focus "stealing"
+    void reportFocus();
+#endif
+
 protected:
     /** intercept close event from parent */
     void closeEvent(QCloseEvent *event);
@@ -330,6 +336,10 @@ private:
     QPlainTextEdit &loggingWidget;
 
     toToolWidget *lastToolWidget;
+
+#ifdef QT_DEBUG
+    QTimer *reportTimer;
+#endif
 };
 
 #endif
