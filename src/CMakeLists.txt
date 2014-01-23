@@ -166,10 +166,6 @@ IF (POPPLER_QT4_FOUND)
   #    LIST(APPEND TORA_UI_SRC pdfview/pdfviewwidget.ui)
 ENDIF (POPPLER_QT4_FOUND)
 
-IF(TORA_DEBUG)  
-  LIST (APPEND TORA_UI_SRC tests/test4ui.ui)
-ENDIF()
-
 ################################################################################
 #                           QObject sub-classes(moc)                           #
 ################################################################################
@@ -353,8 +349,6 @@ SET(TORA_MOC_CLASSES
   templates/tosqledit.h  
   templates/totemplate.h
 
-  #tests/tocustomlexer.h
-
   #     toproject.h
   
   #TODO tools/toalert.h
@@ -389,7 +383,6 @@ IF(graphviz_FOUND)
 ENDIF(graphviz_FOUND)
 
 IF(TORA_DEBUG)
-  LIST(APPEND TORA_MOC_CLASSES tests/test3window.h tests/test5window.h)
   LIST(APPEND TORA_MOC_CLASSES docklets/tologging.h)
 ENDIF()
 
@@ -659,7 +652,6 @@ IF(POPPLER_QT4_FOUND)
 ENDIF (POPPLER_QT4_FOUND)
 
 IF(TORA_DEBUG)
-  LIST(APPEND TORA_SOURCES tests/test3window.cpp tests/test5window.cpp)
   LIST(APPEND TORA_SOURCES docklets/tologging.cpp)  
 ENDIF()
 
@@ -800,6 +792,7 @@ SET(TEST1_SOURCES
   parsing/tosyntaxanalyzeroracle.cpp
   parsing/tosyntaxanalyzernl.cpp
   parsing/tolexeroracle.cpp
+  parsing/tolexeroracleapis.cpp
   core/utils.cpp
   core/utils_part.cpp
   core/totimer.cpp
@@ -830,6 +823,7 @@ SET(TEST1_MOC_SOURCES
   parsing/moc_tsqllexer.cxx
   parsing/moc_tosyntaxanalyzer.cxx
   parsing/moc_tolexeroracle.cxx
+  parsing/moc_tolexeroracleapis.cxx
   ts_log/moc_toostream.cxx
   )
 ADD_EXECUTABLE("test1" ${GUI_TYPE}
@@ -864,8 +858,13 @@ IF(PCH_DEFINED)
 ENDIF(PCH_DEFINED)
 
 # test3
+SET(TEST3_MOC_CLASSES  tests/test3window.h)
+QT4_WRAP_CPP(TEST3_MOC_SOURCES ${TEST3_MOC_CLASSES})
+
 ADD_EXECUTABLE("test3" ${GUI_TYPE}
   tests/test3.cpp
+  tests/test3window.cpp
+  ${TEST3_MOC_SOURCES}
   ${TORA_UI_SOURCES}  
   ${TORA_I18N_QM}
   ${TORA_MOC_SOURCES}
@@ -882,55 +881,55 @@ ENDIF(PCH_DEFINED)
 
 # test4
 SET(TEST4_SOURCES
+  tests/test4.cpp
+  tests/test4window.cpp
+  core/moc_toconfiguration.cxx
+  core/moc_toconfigurationpriv.cxx    
+  core/moc_toglobalevent.cxx
+  core/moc_tomainwindow.cxx
+  core/moc_topushbutton.cxx
   core/toconfiguration.cpp
   core/toconfigurationpriv.cpp
   core/toglobalevent.cpp
-  core/utils_part.cpp
   core/tomainwindow.cpp
   core/topushbutton.cpp
-  #core/tocache.cpp
-  tests/tocustomlexer.cpp
-  editor/tohighlightedtext.cpp
-  editor/tomarkedtext.cpp
-  parsing/tolexeroracle.cpp
-  parsing/tosyntaxanalyzer.cpp
-  parsing/tosyntaxanalyzernl.cpp
-  parsing/tosyntaxanalyzermysql.cpp
-  parsing/tosyntaxanalyzeroracle.cpp
-  editor/tostyle.cpp
-  )
-SET(TEST4_MOC_SOURCES
-  tests/moc_test4window.cxx
-  core/moc_toconfiguration.cxx
-  core/moc_toconfigurationpriv.cxx    
-  core/moc_tomainwindow.cxx
-  core/moc_toglobalevent.cxx
-  core/moc_topushbutton.cxx
-  #core/moc_tocache.cxx
-  parsing/moc_tolexeroracle.cxx
-  parsing/moc_tsqllexer.cxx
-  parsing/moc_tosyntaxanalyzer.cxx  
-  ts_log/moc_toostream.cxx
-  tests/moc_tocustomlexer.cxx
+  core/utils_part.cpp
   editor/moc_tohighlightedtext.cxx
   editor/moc_tomarkedtext.cxx
   editor/moc_tostyle.cxx
+  editor/tohighlightedtext.cpp
+  editor/tomarkedtext.cpp
+  editor/tostyle.cpp
+  parsing/MySQLGuiLexer.cc
+  parsing/PLSQLGuiLexer.cc
+  parsing/moc_tolexeroracle.cxx
+  parsing/moc_tolexeroracleapis.cxx
+  parsing/moc_tosyntaxanalyzer.cxx  
+  parsing/moc_tsqllexer.cxx
+  parsing/tolexeroracle.cpp
+  parsing/tolexeroracleapis.cpp
+  parsing/tosyntaxanalyzer.cpp
+  parsing/tosyntaxanalyzermysql.cpp
+  parsing/tosyntaxanalyzernl.cpp
+  parsing/tosyntaxanalyzeroracle.cpp
+  parsing/tsqllexermysql.cc
+  parsing/tsqllexeroracle2.cc  
+  ts_log/moc_toostream.cxx
   )
+SET(TEST4_MOC_CLASSES  tests/test4window.h)
+
+QT4_WRAP_UI(TEST4_UI_SOURCES tests/test4ui.ui)
+QT4_WRAP_CPP(TEST4_MOC_SOURCES ${TEST4_MOC_CLASSES})
 
 ADD_EXECUTABLE("test4" ${GUI_TYPE}
-  tests/test4.cpp
-  tests/test4window.cpp
-  parsing/PLSQLGuiLexer.cc
-  parsing/tsqllexeroracle2.cc  
-  parsing/MySQLGuiLexer.cc
-  parsing/tsqllexermysql.cc
   # parsing/PLSQLLexer.cc
   # parsing/PLSQLParser.cc
   # parsing/PLSQLParser_PLSQL_DMLParser.cc
   # parsing/PLSQLParser_PLSQLCommons.cc
   # parsing/PLSQLParser_PLSQLKeys.cc
   # parsing/PLSQLParser_SQLPLUSParser.cc
-  ${TORA_UI_SOURCES}  
+  # ${TORA_UI_SOURCES}
+  ${TEST4_UI_SOURCES}
   ${TEST4_MOC_SOURCES}
   ${TEST4_SOURCES}
   ${TORA_RCC_SRCS}
@@ -946,6 +945,53 @@ ENDIF(PCH_DEFINED)
 
 # test5
 SET(TEST5_SOURCES
+  connection/moc_tooraclesetting.cxx
+  connection/tooraclefind.cpp
+  connection/tooraclesetting.cpp
+  core/moc_tobrowserbasewidget.cxx
+  core/moc_tocache.cxx
+  core/moc_tocodemodel.cxx
+  core/moc_toconfiguration.cxx  
+  core/moc_toconfigurationpriv.cxx
+  core/moc_toconnection.cxx
+  core/moc_toconnectionregistry.cxx
+  core/moc_todescribe.cxx
+  core/moc_todockbar.cxx
+  core/moc_todocklet.cxx
+  core/moc_toeditmenu.cxx
+  core/moc_toeventquery.cxx
+  core/moc_toeventqueryworker.cxx
+  core/moc_toglobalevent.cxx
+  core/moc_tohelp.cxx
+  core/moc_tohelpsetup.cxx
+  core/moc_tomainwindow.cxx
+  core/moc_tomemoeditor.cxx
+  core/moc_tomodeleditor.cxx
+  core/moc_toparamget.cxx
+  core/moc_topushbutton.cxx
+  core/moc_toquery.cxx
+  core/moc_toqueryimpl.cxx
+  core/moc_toresult.cxx
+  core/moc_toresultcols.cxx
+  core/moc_toresultcolscomment.cxx
+  core/moc_toresultcombo.cxx
+  core/moc_toresultdatasingle.cxx
+  core/moc_toresultitem.cxx
+  core/moc_toresultlistformat.cxx
+  core/moc_toresultmodel.cxx
+  core/moc_toresultmodeledit.cxx
+  core/moc_toresultschema.cxx
+  core/moc_toresulttableview.cxx
+  core/moc_toresulttableviewedit.cxx
+  core/moc_toresultview.cxx
+  core/moc_tosplash.cxx
+  core/moc_totabwidget.cxx
+  core/moc_totimer.cxx
+  core/moc_totool.cxx
+  core/moc_totreewidget.cxx
+  core/moc_toworkingwidget.cxx
+  core/moc_toworkspace.cxx
+  core/moc_utils.cxx
   core/tobrowserbasewidget.cpp
   core/tocache.cpp
   core/tocodemodel.cpp
@@ -968,21 +1014,22 @@ SET(TEST5_SOURCES
   core/tohelp.cpp
   core/tohelpsetup.cpp
   core/tohtml.cpp
-  core/tomodeleditor.cpp
-  core/tomemoeditor.cpp
   core/tomainwindow.cpp
+  core/tomemoeditor.cpp
+  core/tomodeleditor.cpp
+  core/toparamget.cpp
   core/topushbutton.cpp
   core/toquery.cpp
   core/toqvalue.cpp
-  core/toparamget.cpp
   core/toresult.cpp
   core/toresultcols.cpp
   core/toresultcolscomment.cpp
-  core/toresultitem.cpp
-  core/toresultdatasingle.cpp
   core/toresultcombo.cpp
+  core/toresultdatasingle.cpp
+  core/toresultitem.cpp
   core/toresultlistformat.cpp
   core/toresultmodel.cpp
+  core/toresultmodeledit.cpp
   core/toresultschema.cpp
   core/toresulttableview.cpp
   core/toresulttableviewedit.cpp
@@ -997,8 +1044,15 @@ SET(TEST5_SOURCES
   core/toworkspace.cpp
   core/utils.cpp
   core/utils_part.cpp
-  connection/tooraclefind.cpp
-  connection/tooraclesetting.cpp
+  editor/moc_tobaseeditor.cxx
+  editor/moc_todebugeditor.cxx
+  editor/moc_todebugtext.cxx  
+  editor/moc_tohighlightededitor.cxx
+  editor/moc_tohighlightedtext.cxx
+  editor/moc_tomarkededitor.cxx
+  editor/moc_tomarkedtext.cxx
+  editor/moc_tosearchreplace.cxx
+  editor/moc_tostyle.cxx
   editor/tobaseeditor.cpp
   editor/todebugeditor.cpp
   editor/todebugeditor.cpp
@@ -1009,82 +1063,28 @@ SET(TEST5_SOURCES
   editor/tomarkedtext.cpp
   editor/tosearchreplace.cpp
   editor/tostyle.cpp
-  parsing/tolexeroracle.cpp
-  parsing/tosyntaxanalyzer.cpp
-  parsing/tosyntaxanalyzernl.cpp
-  parsing/tosyntaxanalyzermysql.cpp
-  parsing/tosyntaxanalyzeroracle.cpp
-  #tools/toworksheet.cpp
-  tools/toplsqleditor.cpp
-  tools/toplsqltext.cpp
-  result/toresulttabledata.cpp
-  core/toresultmodeledit.cpp
-  )
-SET(TEST5_MOC_SOURCES
-  tests/moc_test5window.cxx
-  core/moc_tobrowserbasewidget.cxx
-  core/moc_tocache.cxx
-  core/moc_tocodemodel.cxx
-  core/moc_toconfiguration.cxx  
-  core/moc_toconfigurationpriv.cxx
-  core/moc_toconnection.cxx
-  core/moc_toconnectionregistry.cxx
-  core/moc_todescribe.cxx
-  core/moc_todockbar.cxx
-  core/moc_todocklet.cxx
-  core/moc_toeditmenu.cxx
-  core/moc_toeventquery.cxx
-  core/moc_toeventqueryworker.cxx
-  core/moc_toglobalevent.cxx
-  core/moc_tohelp.cxx
-  core/moc_tohelpsetup.cxx
-  core/moc_tomainwindow.cxx
-  core/moc_tomemoeditor.cxx
-  core/moc_tomodeleditor.cxx
-  core/moc_topushbutton.cxx
-  core/moc_toquery.cxx
-  core/moc_toparamget.cxx
-  core/moc_toresult.cxx
-  core/moc_toresultcols.cxx
-  core/moc_toresultcolscomment.cxx
-  core/moc_toresultitem.cxx
-  core/moc_toresultmodel.cxx
-  core/moc_toresultlistformat.cxx
-  core/moc_toresulttableview.cxx
-  core/moc_toresulttableviewedit.cxx
-  core/moc_toresultdatasingle.cxx
-  core/moc_toresultcombo.cxx
-  core/moc_toresultview.cxx
-  core/moc_tosplash.cxx
-  core/moc_totabwidget.cxx
-  core/moc_totimer.cxx
-  core/moc_totool.cxx
-  core/moc_toworkspace.cxx
-  core/moc_toworkingwidget.cxx
-  core/moc_totreewidget.cxx
-  core/moc_toresultschema.cxx
-  core/moc_utils.cxx
-  core/moc_toqueryimpl.cxx
-  connection/moc_tooraclesetting.cxx
   parsing/moc_tolexeroracle.cxx
-  parsing/moc_tsqllexer.cxx
+  parsing/moc_tolexeroracleapis.cxx
   parsing/moc_tosyntaxanalyzer.cxx
-  ts_log/moc_toostream.cxx
-  #tools/moc_toworksheet.cxx
-  editor/moc_tobaseeditor.cxx
-  editor/moc_todebugeditor.cxx
-  editor/moc_todebugtext.cxx  
-  editor/moc_tohighlightededitor.cxx
-  editor/moc_tohighlightedtext.cxx
-  editor/moc_tomarkededitor.cxx
-  editor/moc_tomarkedtext.cxx
-  editor/moc_tosearchreplace.cxx
-  editor/moc_tostyle.cxx
+  parsing/moc_tsqllexer.cxx
+  parsing/tolexeroracle.cpp
+  parsing/tolexeroracleapis.cpp
+  parsing/tosyntaxanalyzer.cpp
+  parsing/tosyntaxanalyzermysql.cpp
+  parsing/tosyntaxanalyzernl.cpp
+  parsing/tosyntaxanalyzeroracle.cpp
+  result/moc_toresulttabledata.cxx
+  result/toresulttabledata.cpp
+  tests/moc_test5window.cxx
   tools/moc_toplsqleditor.cxx
   tools/moc_toplsqltext.cxx
-  result/moc_toresulttabledata.cxx
-  core/moc_toresultmodeledit.cxx
+  tools/toplsqleditor.cpp
+  tools/toplsqltext.cpp
+  ts_log/moc_toostream.cxx
   )
+
+SET(TEST5_MOC_CLASSES  tests/test5window.h)
+QT4_WRAP_CPP(TEST5_MOC_SOURCES ${TEST5_MOC_CLASSES})
 
 ADD_EXECUTABLE("test5" ${GUI_TYPE}
   tests/test5.cpp

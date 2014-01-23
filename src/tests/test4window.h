@@ -52,8 +52,6 @@ public:
 	virtual ~Test4Window() {};
 
 public slots:
-	void parsingStarted();
-	void parsingFinished();
 	void load();
 
 private slots:

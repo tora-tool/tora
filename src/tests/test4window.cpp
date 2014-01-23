@@ -34,7 +34,6 @@
 
 #include "tests/test4window.h"
 #include "editor/tohighlightedtext.h"
-#include "tests/tocustomlexer.h"
 
 #include <QtGui/QStatusBar>
 #include <QtGui/QScrollArea>
@@ -66,40 +65,25 @@ Test4Window::Test4Window(const QString &sql)
 	mysql->setActionGroup(group);
 	menuGrammar->addAction(oracle);
 	menuGrammar->addAction(mysql);
-
-	toCustomLexer *customLexer = new toCustomLexer(this);
 	
 	editorLeft = new toHighlightedText(this);
 	leftVerticalLayout->addWidget(editorLeft);
 	editorLeft->setText(sql);
 
 	editorRight = new toHighlightedText(this);
-	editorRight->setLexer(customLexer);
+	editorRight->setHighlighter(toHighlightedText::Oracle);
 	rightVerticalLayout->addWidget(editorRight);
 	editorRight->setText(sql);
 	editorRight->setMarginType(2, QsciScintilla::TextMarginRightJustified);
 	editorRight->setMarginWidth(2, QString::fromAscii("009"));
 
-	connect(oracle, SIGNAL(triggered()), customLexer, SLOT(setOracle()));
-	connect(mysql, SIGNAL(triggered()), customLexer, SLOT(setMySQL()));
-
-	connect(customLexer, SIGNAL(parsingStarted()), this, SLOT(parsingStarted()));
-	connect(customLexer, SIGNAL(parsingFinished()), this, SLOT(parsingFinished()));
+	connect(oracle, SIGNAL(triggered()), this, SLOT(setOracle()));
+	connect(mysql, SIGNAL(triggered()), this, SLOT(setMySQL()));
 
 	connect(actionLoad, SIGNAL(triggered()), this, SLOT(load()));
 	connect(actionQuit, SIGNAL(triggered()), this, SLOT(close()));
 
 	QMainWindow::show();
-}
-
-void Test4Window::parsingStarted()
-{
-	statusbar->showMessage("Parsing started", 2000);
-}
-
-void Test4Window::parsingFinished()
-{
-	statusbar->showMessage("Parsing finished", 2000);
 }
 
 void Test4Window::load()
@@ -116,23 +100,22 @@ void Test4Window::load()
 void Test4Window::setLexer()
 {
 	QString txt = pushButton->text();
-	toCustomLexer *lexer = this->findChild<toCustomLexer *>();
 	if(txt == "Oracle")
 	{
-		lexer->setOracle();
+		editorRight->setHighlighter(toHighlightedText::Oracle);
 		pushButton->setText("Mysql");
 	} else {
-		lexer->setMySQL();
+		editorRight->setHighlighter(toHighlightedText::Mysql);
 		pushButton->setText("Oracle");
 	}
 }
 
 void Test4Window::closeEvent(QCloseEvent *event)
 {
-	toCustomLexer *lexer = this->findChild<toCustomLexer *>();
-	if( lexer)
-	{
-		delete lexer;
-	}
+	//	toCustomLexer *lexer = this->findChild<toCustomLexer *>();
+	//	if( lexer)
+	//	{
+	//		delete lexer;
+	//	}
 	QMainWindow::closeEvent(event);
 }
