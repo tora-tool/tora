@@ -844,7 +844,7 @@ SET_TARGET_PROPERTIES("test1" PROPERTIES ENABLE_EXPORTS ON)
 ADD_DEPENDENCIES("test1" revisiontag) # explicitly say that the executable depends on the svnheader
 IF(PCH_DEFINED)
   ADD_PRECOMPILED_HEADER("test1" ${PCH_HEADER} FORCEINCLUDE)
-ENDIF()
+ENDIF(PCH_DEFINED)
 
 # test2
 ADD_EXECUTABLE("test2" ${GUI_TYPE}
@@ -861,7 +861,7 @@ SET_TARGET_PROPERTIES("test2" PROPERTIES ENABLE_EXPORTS ON)
 ADD_DEPENDENCIES("test2" revisiontag) # explicitly say that the executable depends on the svnheader
 IF(PCH_DEFINED)
   ADD_PRECOMPILED_HEADER("test2" ${PCH_HEADER} FORCEINCLUDE)
-ENDIF()
+ENDIF(PCH_DEFINED)
 
 # test3
 ADD_EXECUTABLE("test3" ${GUI_TYPE}
@@ -878,7 +878,7 @@ SET_TARGET_PROPERTIES("test3" PROPERTIES ENABLE_EXPORTS ON)
 ADD_DEPENDENCIES("test3" revisiontag) # explicitly say that the executable depends on the svnheader
 IF(PCH_DEFINED)
   ADD_PRECOMPILED_HEADER("test3" ${PCH_HEADER} FORCEINCLUDE)
-ENDIF()
+ENDIF(PCH_DEFINED)
 
 # test4
 SET(TEST4_SOURCES
@@ -942,7 +942,7 @@ SET_TARGET_PROPERTIES("test4" PROPERTIES ENABLE_EXPORTS ON)
 ADD_DEPENDENCIES("test4" revisiontag) # explicitly say that the executable depends on the svnheader
 IF(PCH_DEFINED)
   ADD_PRECOMPILED_HEADER("test4" ${PCH_HEADER} FORCEINCLUDE)
-ENDIF()
+ENDIF(PCH_DEFINED)
 
 # test5
 SET(TEST5_SOURCES
@@ -1111,9 +1111,9 @@ SET_TARGET_PROPERTIES("test5" PROPERTIES ENABLE_EXPORTS ON)
 ADD_DEPENDENCIES("test5" revisiontag) # explicitly say that the executable depends on the svnheader
 IF(PCH_DEFINED)
   ADD_PRECOMPILED_HEADER("test5" ${PCH_HEADER} FORCEINCLUDE)
-ENDIF()
+ENDIF(PCH_DEFINED)
 
-ENDIF(TORA_DEBUG)
+ENDIF(TORA_DEBUG AND TORA_TESTS)
 
 ################################################################################
 #                       Connection provider libraries                          #
