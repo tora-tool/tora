@@ -132,7 +132,7 @@ DOCKLET_LOG(5);   // connection provider finder
 DISABLE_LOG(6);   //
 DOCKLET_LOG(7);   //
 DOCKLET_LOG(8);   //
-//DISABLE_LOG(9);   // report focus
+DISABLE_LOG(9);   // report focus
 
 ////////////////////////////////////////////////////////////////////////////////
 // EXAMPLE USAGE
