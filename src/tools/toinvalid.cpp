@@ -219,7 +219,7 @@ void toInvalid::recompileSelected(void)
             while (l >= 0 && (sql.at(l) == ';' || sql.at(l).isSpace()))
                 l--;
 
-            TLOG(2, toDecorator, __HERE__) << "statement=" << sql.mid(0, l + 1);
+            TLOG(2, toDecorator, __HERE__) << "statement=" << sql.mid(0, l + 1) << std::endl;
 
             if (l >= 0)
             {
