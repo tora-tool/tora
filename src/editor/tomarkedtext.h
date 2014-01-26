@@ -160,6 +160,9 @@ public:
      */
 //    virtual void selectAll(bool select = TRUE);
 
+    /** Reimplemented from QsciScintilla
+     */
+    virtual void copy();
 
 #ifdef TORA3_SESSION
     /** Export data to a map.
@@ -193,6 +196,8 @@ public:
     int NextWordStart(int pos, int delta);
     int NextWordEnd(int pos, int delta);
     char getByteAt(int pos);
+    int getStyleAt(int pos);
+    int getLevelAt(int line);
     wchar_t getWCharAt(int pos);
 
 signals:
@@ -223,6 +228,9 @@ protected:
      * of the popup menu is transferred to the caller.
      */
     virtual QMenu *createPopupMenu(const QPoint& pos);
+
+    QString getHTML();
+    QString getRTF();
 
     static CharClassify m_charClasifier;
 private slots:

@@ -44,6 +44,7 @@
 #include <QtGui/QShortcut>
 #include <QtCore/QtDebug>
 #include <QtGui/QMenu>
+#include <QtGui/QClipboard>
 
 #include <Qsci/qsciprinter.h>
 #include <Qsci/qscilexersql.h>
@@ -253,6 +254,22 @@ void toMarkedText::print(const QString  &fname)
     setMarginLineNumbers(0, false);
     printer.printRange(this);
     setMarginLineNumbers(0, true);
+}
+
+void toMarkedText::copy()
+{
+	QsciScintilla::copy();
+	QMimeData *md = new QMimeData();
+	QString txt = QApplication::clipboard()->mimeData()->text();
+	QString html = getHTML();
+	//md->setText(txt);
+#ifdef Q_OS_MAC
+    md->setData(QLatin1String("text/html"), html.toUtf8());
+#else
+    md->setHtml(html);
+#endif
+    QApplication::clipboard()->setMimeData(md, QClipboard::Clipboard);
+	TLOG(0, toDecorator, __HERE__) << "html:" << html << std::endl;
 }
 
 void toMarkedText::newLine(void)
@@ -654,6 +671,526 @@ QMenu *toMarkedText::createPopupMenu(const QPoint& pos)
     return popup;
 }
 
+QString toMarkedText::getHTML()
+{
+	// TODO check this:
+	// <span style="color: rgb(192,192,192); background: rgb(0,0,0); font-weight: normal; font-style: normal; font-decoration: normal"> Achaea's IP address is 69.65.42.66<br /></span>
+	//static const QString SPAN_CLASS = QString::fromAscii("<span class=\"S%1\">");
+	static const QString SPAN_CLASS = QString::fromAscii("<span style=\"color: rgb(192,192,192); background: rgb(0,0,0); font-weight: normal; font-style: normal; font-decoration: normal\">");
+
+	clearIndicatorRange(0, 0, lines(), lineLength(lines()-1), m_searchIndicator);
+	recolor();
+	int tabSize = 4;
+	int wysiwyg = 1;
+	int tabs = 0;
+	int onlyStylesUsed = 1;
+	int titleFullPath = 0;
+
+	int startPos = SendScintilla(SCI_GETSELECTIONSTART);
+	int endPos = SendScintilla(SCI_GETSELECTIONEND);
+
+	bool styleIsUsed[STYLE_MAX + 1];
+	if (onlyStylesUsed) {
+		int i;
+		for (i = 0; i <= STYLE_MAX; i++) {
+			styleIsUsed[i] = false;
+		}
+		// check the used styles
+		for (i = startPos; i < endPos; i++) {
+			styleIsUsed[getStyleAt(i) & 0x7F] = true;
+		}
+	} else {
+		for (int i = 0; i <= STYLE_MAX; i++) {
+			styleIsUsed[i] = true;
+		}
+	}
+	styleIsUsed[STYLE_DEFAULT] = true;
+
+	QString retval;
+	retval += "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n";
+	retval += "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n";
+	retval += "<head>\n";
+	//retval += "<title>%s</title>\n"; //static_cast<const char *>(filePath.Name().AsUTF8().c_str()));
+
+	// Probably not used by robots, but making a little advertisement for those looking
+	// at the source code doesn't hurt...
+	retval += "<meta name=\"Generator\" content=\"SciTE - www.Scintilla.org\" />\n";
+	retval += "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n";
+	retval += "<style type=\"text/css\">\n";
+
+	QString bgColour;
+//#if 0
+	QFont sdmono;
+#if defined(Q_OS_WIN)
+	sdmono = QFont("Verdana",9);
+#elif defined(Q_OS_MAC)
+	sdmono = QFont("Verdana", 12);
+#else
+	sdmono = QFont("Bitstream Vera Sans",8);
+#endif
+
+	QMap<int, QString> styles;
+	for (int istyle = 0; istyle <= STYLE_MAX; istyle++) {
+		if ((istyle > STYLE_DEFAULT) && (istyle <= STYLE_LASTPREDEFINED))
+			continue;
+		if (styleIsUsed[istyle]) {
+			QFont font = lexer()->font(istyle);
+			int size = font.pointSize();
+			bool italics = font.italic();
+			int weight = font.weight();
+			bool bold = font.bold();
+			QString family = font.family();
+			QColor fore = lexer()->color(istyle);
+			QColor back = lexer()->paper(istyle);
+			QString styledSpan = "<span style=\"";
+			//			if (CurrentBuffer()->useMonoFont && sd.font.length() && sdmono.font.length()) {
+			//				sd.font = sdmono.font;
+			//				sd.size = sdmono.size;
+			//				sd.italics = sdmono.italics;
+			//				sd.weight = sdmono.weight;
+			//			}
+
+			if (istyle == STYLE_DEFAULT) {
+				retval += "span {\n";
+			} else {
+				retval += QString(".S%1 {\n").arg(istyle);
+			}
+
+			if (italics) {
+				retval += "\tfont-style: italic;\n";
+				styledSpan += "font-style: italic; ";
+			}
+
+			if (bold) {
+				retval += "\tfont-weight: bold;\n";
+				styledSpan += "font-weight: bold; ";
+			}
+			if (wysiwyg && !family.isEmpty()) {
+				retval += QString("\tfont-family: '%1';\n").arg(family);
+				styledSpan += QString("font-family: '%1'; ").arg(family);
+			}
+			if (fore.isValid()) {
+				retval += QString("\tcolor: %1;\n").arg(fore.name());
+				styledSpan += QString("color: rgb(%1,%2,%3); ").arg(fore.red()).arg(fore.green()).arg(fore.blue());
+			} else if (istyle == STYLE_DEFAULT) {
+				retval += "\tcolor: #000000;\n";
+				styledSpan += QString("color: rgb(0,0,0); ");
+			}
+			if (back.isValid() &&  istyle != STYLE_DEFAULT) {
+				retval += QString("\tbackground: %1;\n").arg(back.name());
+				retval += QString("\ttext-decoration: inherit;\n");
+				styledSpan += QString("background: rgb(%1,%2,%3); ").arg(back.red()).arg(back.green()).arg(back.blue());
+			}
+			if (wysiwyg && size) {
+				retval += QString("\tfont-size: %1pt;\n").arg(size);
+				styledSpan += QString("font-size: %1pt").arg(size);
+			}
+			retval += "}\n";
+			styledSpan += "\">";
+			styles.insert(istyle, styledSpan);
+		}
+	}
+
+	retval += "</style>\n";
+	retval += "</head>\n";
+
+	if (!bgColour.isEmpty())
+		retval += QString("<body bgcolor=\"%s\">\n").arg(bgColour);
+	else
+		retval += "<body>\n";
+
+	//int line = acc.GetLine(0);
+	int level = (getLevelAt(0) & SC_FOLDLEVELNUMBERMASK) - SC_FOLDLEVELBASE;
+	int newLevel;
+	int styleCurrent = getStyleAt(0);
+	bool inStyleSpan = false;
+	bool inFoldSpan = false;
+	// Global span for default attributes
+	if (wysiwyg) {
+		retval += "<span>";
+	} else {
+		retval += "<pre>";
+	}
+
+	if (styleIsUsed[styleCurrent]) {
+		if (styles.contains(styleCurrent))
+			retval += styles.value(styleCurrent);
+		else
+			retval += SPAN_CLASS.arg(styleCurrent);
+		inStyleSpan = true;
+	}
+	// Else, this style has no definition (beside default one):
+	// no span for it, except the global one
+
+	int column = 0;
+	for (int i = startPos; i < endPos; i++)
+	{
+		char ch = getByteAt(i);
+		int style = getStyleAt(i);
+
+		if (style != styleCurrent) {
+			if (inStyleSpan) {
+				retval += "</span>";
+				inStyleSpan = false;
+			}
+			if (ch != '\r' && ch != '\n') {	// No need of a span for the EOL
+				if (styleIsUsed[style]) {
+					if (styles.contains(style))
+						retval += styles.value(style);
+					else
+						retval += SPAN_CLASS.arg(style);
+					inStyleSpan = true;
+				}
+				styleCurrent = style;
+			}
+		}
+		switch (ch)
+		{
+		case ' ':
+		{
+			if (wysiwyg) {
+				char prevCh = '\0';
+				if (column == 0) {	// At start of line, must put a &nbsp; because regular space will be collapsed
+					prevCh = ' ';
+				}
+				while (i < endPos && getByteAt(i) == ' ') {
+					if (prevCh != ' ') {
+						retval += ' ';
+					} else {
+						retval += "&nbsp;";
+					}
+					prevCh = getByteAt(i);
+					i++;
+					column++;
+				}
+				i--; // the last incrementation will be done by the for loop
+			} else {
+				retval += ' ';
+				column++;
+			}
+		}
+		break;
+		case '\t':
+		{
+			int ts = tabSize - (column % tabSize);
+			if (wysiwyg) {
+				for (int itab = 0; itab < ts; itab++) {
+					if (itab % 2) {
+						retval += ' ';
+					} else {
+						retval += "&nbsp;";
+					}
+				}
+				column += ts;
+			} else {
+				if (tabs) {
+					retval += ch;
+					column++;
+				} else {
+					for (int itab = 0; itab < ts; itab++) {
+						retval += ' ';
+					}
+					column += ts;
+				}
+			}
+		}
+		break;
+		case '\r':
+		case '\n':
+		{
+			if (inStyleSpan) {
+				retval += "</span>";
+				inStyleSpan = false;
+			}
+			if (inFoldSpan) {
+				retval += "</span>";
+				inFoldSpan = false;
+			}
+			if (ch == '\r' && getByteAt(i + 1) == '\n') {
+				i++;	// CR+LF line ending, skip the "extra" EOL char
+			}
+			column = 0;
+			if (wysiwyg) {
+				retval += "<br />";
+			}
+
+			styleCurrent = getStyleAt(i + 1);
+			retval += '\n';
+
+			if (styleIsUsed[styleCurrent] && getByteAt(i + 1) != '\r' && getByteAt(i + 1) != '\n') {
+				// We know it's the correct next style,
+				// but no (empty) span for an empty line
+				if (styles.contains(styleCurrent))
+					retval += styles.value(styleCurrent);
+				else
+					retval += SPAN_CLASS.arg(styleCurrent);
+				inStyleSpan = true;
+			}
+		}
+		break;
+		case '<':
+			retval += "&lt;";
+			column++;
+			break;
+		case '>':
+			retval += "&gt;";
+			column++;
+			break;
+		case '&':
+			retval += "&amp;";
+			column++;
+			break;
+		default:
+			retval += ch;
+			column++;
+		}
+	}
+
+	if (inStyleSpan) {
+		retval += "</span>";
+	}
+
+	if (!wysiwyg) {
+		retval += "</pre>";
+	} else {
+		retval += "</span>";
+	}
+
+	retval += "\n</body>\n</html>\n";
+	return retval;
+}
+
+QString toMarkedText::getRTF()
+{
+	static const QString RTF_HEADEROPEN = "{\\rtf1\\ansi\\deff0\\deftab720";
+	static const QString RTF_FONTDEFOPEN = "{\\fonttbl";
+	static const QString RTF_FONTDEF = "{\\f%d\\fnil\\fcharset%u %s;}";
+	static const QString RTF_FONTDEFCLOSE = "}";
+	static const QString RTF_COLORDEFOPEN = "{\\colortbl";
+	static const QString RTF_COLORDEF = "\\red%d\\green%d\\blue%d;";
+	static const QString RTF_COLORDEFCLOSE = "}";
+	static const QString RTF_HEADERCLOSE = "\n";
+	static const QString RTF_BODYOPEN = "";
+	static const QString RTF_BODYCLOSE = "}";
+
+	static const QString RTF_SETFONTFACE = "\\f";
+	static const QString RTF_SETFONTSIZE = "\\fs";
+	static const QString RTF_SETCOLOR = "\\cf";
+	static const QString RTF_SETBACKGROUND = "\\highlight";
+	static const QString RTF_BOLD_ON = "\\b";
+	static const QString RTF_BOLD_OFF = "\\b0";
+	static const QString RTF_ITALIC_ON = "\\i";
+	static const QString RTF_ITALIC_OFF = "\\i0";
+	static const QString RTF_UNDERLINE_ON = "\\ul";
+	static const QString RTF_UNDERLINE_OFF = "\\ulnone";
+	static const QString RTF_STRIKE_ON = "\\i";
+	static const QString RTF_STRIKE_OFF = "\\strike0";
+
+	static const QString RTF_EOLN = "\\par\n";
+	static const QString RTF_TAB = "\\tab ";
+
+	static const int MAX_STYLEDEF = 128;
+	static const int MAX_FONTDEF  = 64;
+	static const int MAX_COLORDEF = 8;
+	static const QString RTF_FONTFACE = "Courier New";
+	static const QString RTF_COLOR = "#000000";
+
+	QString fp;
+	int startPos = SendScintilla(SCI_GETSELECTIONSTART);
+	int endPos = SendScintilla(SCI_GETSELECTIONEND);
+
+	clearIndicatorRange(0, 0, lines(), lineLength(lines()-1), m_searchIndicator);
+	recolor();
+
+#if 0
+	// Read the default settings
+	char key[200];
+	sprintf(key, "style.*.%0d", STYLE_DEFAULT);
+	char *valdefDefault = StringDup(props.GetExpanded(key).c_str());
+	sprintf(key, "style.%s.%0d", language.c_str(), STYLE_DEFAULT);
+	char *valDefault = StringDup(props.GetExpanded(key).c_str());
+
+	StyleDefinition defaultStyle(valdefDefault);
+	defaultStyle.ParseStyleDefinition(valDefault);
+
+	delete []valDefault;
+	delete []valdefDefault;
+
+	bool tabs = true;
+	int tabSize = 4;
+	int wysiwyg = 1;
+
+	QFont sdmono;
+#if defined(Q_OS_WIN)
+	sdmono = QFont("Verdana",9);
+#elif defined(Q_OS_MAC)
+	sdmono = QFont("Verdana", 12);
+#else
+	sdmono = QFont("Bitstream Vera Sans",8);
+#endif
+
+	QString fontFace = sdmono.family();
+	if (fontFace.length()) {
+		defaultStyle.font = fontFace;
+	} else if (defaultStyle.font.length() == 0) {
+		defaultStyle.font = RTF_FONTFACE;
+	}
+	int fontSize = sdmono.pointSize();
+	if (fontSize > 0) {
+		defaultStyle.size = fontSize << 1;
+	} else if (defaultStyle.size == 0) {
+		defaultStyle.size = 10 << 1;
+	} else {
+		defaultStyle.size <<= 1;
+	}
+	unsigned int characterset = props.GetInt("character.set", SC_CHARSET_DEFAULT);
+
+	char styles[STYLE_DEFAULT + 1][MAX_STYLEDEF];
+	char fonts[STYLE_DEFAULT + 1][MAX_FONTDEF];
+	char colors[STYLE_DEFAULT + 1][MAX_COLORDEF];
+	char lastStyle[MAX_STYLEDEF], deltaStyle[MAX_STYLEDEF];
+	int fontCount = 1, colorCount = 2, i;
+	fp +=RTF_HEADEROPEN RTF_FONTDEFOPEN;
+	strncpy(fonts[0], defaultStyle.font.c_str(), MAX_FONTDEF);
+	fprintf(fp, RTF_FONTDEF, 0, characterset, defaultStyle.font.c_str());
+	strncpy(colors[0], defaultStyle.fore.c_str(), MAX_COLORDEF);
+	strncpy(colors[1], defaultStyle.back.c_str(), MAX_COLORDEF);
+
+	for (int istyle = 0; istyle < STYLE_DEFAULT; istyle++) {
+		sprintf(key, "style.*.%0d", istyle);
+		char *valdef = StringDup(props.GetExpanded(key).c_str());
+		sprintf(key, "style.%s.%0d", language.c_str(), istyle);
+		char *val = StringDup(props.GetExpanded(key).c_str());
+
+		StyleDefinition sd(valdef);
+		sd.ParseStyleDefinition(val);
+
+		if (sd.specified != StyleDefinition::sdNone) {
+			if (wysiwyg && sd.font.length()) {
+				for (i = 0; i < fontCount; i++)
+					if (EqualCaseInsensitive(sd.font.c_str(), fonts[i]))
+						break;
+				if (i >= fontCount) {
+					strncpy(fonts[fontCount++], sd.font.c_str(), MAX_FONTDEF);
+					fprintf(fp, RTF_FONTDEF, i, characterset, sd.font.c_str());
+				}
+				sprintf(lastStyle, RTF_SETFONTFACE "%d", i);
+			} else {
+				strcpy(lastStyle, RTF_SETFONTFACE "0");
+			}
+
+			sprintf(lastStyle + strlen(lastStyle), RTF_SETFONTSIZE "%d",
+					wysiwyg && sd.size ? sd.size << 1 : defaultStyle.size);
+
+			if (sd.specified & StyleDefinition::sdFore) {
+				for (i = 0; i < colorCount; i++)
+					if (EqualCaseInsensitive(sd.fore.c_str(), colors[i]))
+						break;
+				if (i >= colorCount)
+					strncpy(colors[colorCount++], sd.fore.c_str(), MAX_COLORDEF);
+				sprintf(lastStyle + strlen(lastStyle), RTF_SETCOLOR "%d", i);
+			} else {
+				strcat(lastStyle, RTF_SETCOLOR "0");	// Default fore
+			}
+
+			// PL: highlights doesn't seems to follow a distinct table, at least with WordPad and Word 97
+			// Perhaps it is different for Word 6?
+			//				sprintf(lastStyle + strlen(lastStyle), RTF_SETBACKGROUND "%d",
+			//				        sd.back.length() ? GetRTFHighlight(sd.back.c_str()) : 0);
+			if (sd.specified & StyleDefinition::sdBack) {
+				for (i = 0; i < colorCount; i++)
+					if (EqualCaseInsensitive(sd.back.c_str(), colors[i]))
+						break;
+				if (i >= colorCount)
+					strncpy(colors[colorCount++], sd.back.c_str(), MAX_COLORDEF);
+				sprintf(lastStyle + strlen(lastStyle), RTF_SETBACKGROUND "%d", i);
+			} else {
+				strcat(lastStyle, RTF_SETBACKGROUND "1");	// Default back
+			}
+			if (sd.specified & StyleDefinition::sdWeight) {
+				strcat(lastStyle, sd.IsBold() ? RTF_BOLD_ON : RTF_BOLD_OFF);
+			} else {
+				strcat(lastStyle, defaultStyle.IsBold() ? RTF_BOLD_ON : RTF_BOLD_OFF);
+			}
+			if (sd.specified & StyleDefinition::sdItalics) {
+				strcat(lastStyle, sd.italics ? RTF_ITALIC_ON : RTF_ITALIC_OFF);
+			} else {
+				strcat(lastStyle, defaultStyle.italics ? RTF_ITALIC_ON : RTF_ITALIC_OFF);
+			}
+			strncpy(styles[istyle], lastStyle, MAX_STYLEDEF);
+		} else {
+			sprintf(styles[istyle], RTF_SETFONTFACE "0" RTF_SETFONTSIZE "%d"
+					RTF_SETCOLOR "0" RTF_SETBACKGROUND "1"
+					RTF_BOLD_OFF RTF_ITALIC_OFF, defaultStyle.size);
+		}
+		delete []val;
+		delete []valdef;
+	}
+
+	fp +=RTF_FONTDEFCLOSE RTF_COLORDEFOPEN;
+	for (i = 0; i < colorCount; i++) {
+		fprintf(fp, RTF_COLORDEF, IntFromHexByte(colors[i] + 1),
+				IntFromHexByte(colors[i] + 3), IntFromHexByte(colors[i] + 5));
+	}
+	fprintf(fp, RTF_COLORDEFCLOSE RTF_HEADERCLOSE RTF_BODYOPEN RTF_SETFONTFACE "0"
+			RTF_SETFONTSIZE "%d" RTF_SETCOLOR "0 ", defaultStyle.size);
+	sprintf(lastStyle, RTF_SETFONTFACE "0" RTF_SETFONTSIZE "%d"
+			RTF_SETCOLOR "0" RTF_SETBACKGROUND "1"
+			RTF_BOLD_OFF RTF_ITALIC_OFF, defaultStyle.size);
+	bool prevCR = false;
+	int styleCurrent = -1;
+	int column = 0;
+	for (i = startPos; i < endPos; i++) {
+		char ch = getByteAt(i);
+		int style = getStyleAt(i);
+		if (style > STYLE_DEFAULT)
+			style = 0;
+		if (style != styleCurrent) {
+			GetRTFStyleChange(deltaStyle, lastStyle, styles[style]);
+			if (*deltaStyle)
+				fp +=deltaStyle;
+			styleCurrent = style;
+		}
+		switch (ch)
+		{
+		case '{':
+			fp +="\\{"; break;
+		case '}':
+			fp +="\\}"; break;
+		case '\\':
+			fp +="\\\\"; break;
+		case '\t':
+			if (tabs) {
+				fp +=RTF_TAB;
+			} else {
+				int ts = tabSize - (column % tabSize);
+				for (int itab = 0; itab < ts; itab++) {
+					fp += ' ';
+				}
+				column += ts - 1;
+			}
+			break;
+		case '\n':
+			if (!prevCR) {
+				fp +=RTF_EOLN;
+				column = -1;
+			}
+			break;
+		case '\r':
+			fp +=RTF_EOLN;
+			column = -1;
+			break;
+		default:
+			fp + ch;
+		}
+		column++;
+		prevCR = ch == '\r';
+	}
+	fp +=RTF_BODYCLOSE;
+#endif
+	return fp;
+}
+
 void toMarkedText::insert(const QString &str, bool select)
 {
     int lineFrom;
@@ -750,6 +1287,18 @@ char toMarkedText::getByteAt(int pos)
 {
 	char ch = SendScintilla(SCI_GETCHARAT, pos);
 	return ch;
+}
+
+int toMarkedText::getStyleAt(int pos)
+{
+	int style = SendScintilla(QsciScintilla::SCI_GETSTYLEAT, pos);
+	return style;
+}
+
+int toMarkedText::getLevelAt(int line)
+{
+	int level = SendScintilla(QsciScintilla::SCI_GETFOLDLEVEL, line);
+	return level;
 }
 
 wchar_t toMarkedText::getWCharAt(int pos) {
