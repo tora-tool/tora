@@ -262,17 +262,21 @@ void toMarkedText::copy()
 #ifdef QT_DEBUG
 	QMimeData *md = new QMimeData();
 	QString txt = QApplication::clipboard()->mimeData()->text();
+	md->setText(txt);
+
 	QString html = getHTML();
-	QString rtf = getRTF();
-#ifdef Q_OS_MAC
+#if defined(Q_OS_MAC)
     md->setData(QLatin1String("text/html"), html.toUtf8());
-#else
+#elif defined(Q_OS_LINUX)
     md->setHtml(html);
-#endif
-    md->setData(QLatin1String("text/rtf"), rtf.toUtf8());
-    QApplication::clipboard()->setMimeData(md, QClipboard::Clipboard);
 	TLOG(0, toDecorator, __HERE__) << "html:" << html << std::endl;
+#else
+	QString rtf = getRTF();
+    md->setData(QLatin1String("text/rtf"), rtf.toUtf8());
+    md->setData(QLatin1String("Rich Text Format"), rtf.toUtf8());
 	TLOG(0, toDecorator, __HERE__) << "rtf:" << rtf << std::endl;
+#endif
+    QApplication::clipboard()->setMimeData(md, QClipboard::Clipboard);
 #endif
 }
 
@@ -692,10 +696,7 @@ QMenu *toMarkedText::createPopupMenu(const QPoint& pos)
 
 QString toMarkedText::getHTML()
 {
-	// TODO check this:
-	// <span style="color: rgb(192,192,192); background: rgb(0,0,0); font-weight: normal; font-style: normal; font-decoration: normal"> Achaea's IP address is 69.65.42.66<br /></span>
-	//static const QString SPAN_CLASS = QString::fromAscii("<span class=\"S%1\">");
-	static const QString SPAN_CLASS = QString::fromAscii("<span style=\"color: rgb(192,192,192); background: rgb(0,0,0); font-weight: normal; font-style: normal; font-decoration: normal\">");
+	static const QString SPAN_CLASS = QString::fromAscii("<span class=\"S%1\">");
 
 	clearIndicatorRange(0, 0, lines(), lineLength(lines()-1), m_searchIndicator);
 	recolor();
@@ -729,16 +730,14 @@ QString toMarkedText::getHTML()
 	retval += "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n";
 	retval += "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n";
 	retval += "<head>\n";
-	//retval += "<title>%s</title>\n"; //static_cast<const char *>(filePath.Name().AsUTF8().c_str()));
+	retval += "<title></title>\n"; //static_cast<const char *>(filePath.Name().AsUTF8().c_str()));
 
 	// Probably not used by robots, but making a little advertisement for those looking
 	// at the source code doesn't hurt...
 	retval += "<meta name=\"Generator\" content=\"SciTE - www.Scintilla.org\" />\n";
 	retval += "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n";
-	retval += "<style type=\"text/css\">\n";
+	//retval += "<style type=\"text/css\">\n";
 
-	QString bgColour;
-//#if 0
 	QFont sdmono;
 #if defined(Q_OS_WIN)
 	sdmono = QFont("Verdana",9);
@@ -748,7 +747,9 @@ QString toMarkedText::getHTML()
 	sdmono = QFont("Bitstream Vera Sans",8);
 #endif
 
+
 	QMap<int, QString> styles;
+
 	for (int istyle = 0; istyle <= STYLE_MAX; istyle++) {
 		if ((istyle > STYLE_DEFAULT) && (istyle <= STYLE_LASTPREDEFINED))
 			continue;
@@ -770,41 +771,41 @@ QString toMarkedText::getHTML()
 			//			}
 
 			if (istyle == STYLE_DEFAULT) {
-				retval += "span {\n";
+//				retval += "span {\n";
 			} else {
-				retval += QString(".S%1 {\n").arg(istyle);
+//				retval += QString(".S%1 {\n").arg(istyle);
 			}
 
 			if (italics) {
-				retval += "\tfont-style: italic;\n";
+//				retval += "\tfont-style: italic;\n";
 				styledSpan += "font-style: italic; ";
 			}
 
 			if (bold) {
-				retval += "\tfont-weight: bold;\n";
+//				retval += "\tfont-weight: bold;\n";
 				styledSpan += "font-weight: bold; ";
 			}
 			if (wysiwyg && !family.isEmpty()) {
-				retval += QString("\tfont-family: '%1';\n").arg(family);
+//				retval += QString("\tfont-family: '%1';\n").arg(family);
 				styledSpan += QString("font-family: '%1'; ").arg(family);
 			}
 			if (fore.isValid()) {
-				retval += QString("\tcolor: %1;\n").arg(fore.name());
+//				retval += QString("\tcolor: %1;\n").arg(fore.name());
 				styledSpan += QString("color: rgb(%1,%2,%3); ").arg(fore.red()).arg(fore.green()).arg(fore.blue());
 			} else if (istyle == STYLE_DEFAULT) {
-				retval += "\tcolor: #000000;\n";
+//				retval += "\tcolor: #000000;\n";
 				styledSpan += QString("color: rgb(0,0,0); ");
 			}
 			if (back.isValid() &&  istyle != STYLE_DEFAULT) {
-				retval += QString("\tbackground: %1;\n").arg(back.name());
-				retval += QString("\ttext-decoration: inherit;\n");
+//				retval += QString("\tbackground: %1;\n").arg(back.name());
+//				retval += QString("\ttext-decoration: inherit;\n");
 				styledSpan += QString("background: rgb(%1,%2,%3); ").arg(back.red()).arg(back.green()).arg(back.blue());
 			}
 			if (wysiwyg && size) {
-				retval += QString("\tfont-size: %1pt;\n").arg(size);
+//				retval += QString("\tfont-size: %1pt;\n").arg(size);
 				styledSpan += QString("font-size: %1pt").arg(size);
 			}
-			retval += "}\n";
+//			retval += "}\n";
 			styledSpan += "\">";
 			styles.insert(istyle, styledSpan);
 		}
@@ -813,12 +814,11 @@ QString toMarkedText::getHTML()
 	retval += "</style>\n";
 	retval += "</head>\n";
 
-	if (!bgColour.isEmpty())
-		retval += QString("<body bgcolor=\"%s\">\n").arg(bgColour);
-	else
-		retval += "<body>\n";
+	//	if (!bgColour.isEmpty())
+	//		retval += QString("<body bgcolor=\"%1\">\n").arg(bgColour);
+	//	else
+	retval += "<body>\n";
 
-	//int line = acc.GetLine(0);
 	int level = (getLevelAt(0) & SC_FOLDLEVELNUMBERMASK) - SC_FOLDLEVELBASE;
 	int newLevel;
 	int styleCurrent = getStyleAt(0);
@@ -983,8 +983,8 @@ QString toMarkedText::getHTML()
 static QString  GetRTFStyleChange(QString const& last, QString const& current)
 {   // \f0\fs20\cf0\highlight0\b0\i0
 	QString delta;
-	QStringList lastL = last.split('\\');
-	QStringList currentL = current.split('\\');
+	QStringList lastL = last.split('\\', QString::SkipEmptyParts);
+	QStringList currentL = current.split('\\', QString::SkipEmptyParts);
 
 	// font face, size, color, background, bold, italic
 	for (int i = 0; i < 6; i++) {
@@ -993,7 +993,7 @@ static QString  GetRTFStyleChange(QString const& last, QString const& current)
 			delta += currentL.at(i);
 		}
 	}
-	if (delta.isEmpty())
+	if (!delta.isEmpty())
 		delta += " ";
 	return delta;
 }
@@ -1011,7 +1011,7 @@ QString toMarkedText::getRTF()
 	static const QString RTF_BODYOPEN = "";
 	static const QString RTF_BODYCLOSE = "}";
 
-	static const QString RTF_SETFONTFACE = "\\f";
+	static const QString RTF_SETFONTFACE = "\\f%1";
 	static const QString RTF_SETFONTSIZE = "\\fs%1";
 	static const QString RTF_SETCOLOR = "\\cf%1";
 	static const QString RTF_SETBACKGROUND = "\\highlight%1";
@@ -1113,7 +1113,7 @@ QString toMarkedText::getRTF()
 				fonts[fontCount++] = sd.font;
 				fp += RTF_FONTDEF.arg(i).arg(characterset).arg(sd.font.family());
 			}
-			lastStyle + RTF_SETFONTFACE + i;
+			lastStyle += RTF_SETFONTFACE.arg(i);
 			//lastStyle += RTF_SETFONTFACE + "0";
 
 			lastStyle += RTF_SETFONTSIZE.arg( sd.size ? sd.size << 1 : defaultStyle.size);
@@ -1139,8 +1139,9 @@ QString toMarkedText::getRTF()
 			lastStyle += sd.italics ? RTF_ITALIC_ON : RTF_ITALIC_OFF;
 
 			styles[istyle] = lastStyle;
+			lastStyle.truncate(0);
 		}
-		styles[STYLE_DEFAULT] = RTF_SETFONTFACE + "0"
+		styles[STYLE_DEFAULT] = RTF_SETFONTFACE.arg("0")
 				+ RTF_SETFONTSIZE.arg(defaultStyle.size)
 				+ RTF_SETCOLOR.arg("0")
 				+ RTF_SETBACKGROUND.arg("1")
@@ -1159,7 +1160,7 @@ QString toMarkedText::getRTF()
 	fp += RTF_HEADERCLOSE;
 
 	fp += RTF_BODYOPEN
-			+ RTF_SETFONTFACE + "0"
+			+ RTF_SETFONTFACE.arg("0")
 			+ RTF_SETFONTSIZE.arg(defaultStyle.size)
 			+ RTF_SETCOLOR.arg("0 ");
 	lastStyle = styles[STYLE_DEFAULT];
