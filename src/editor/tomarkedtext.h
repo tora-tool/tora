@@ -164,6 +164,10 @@ public:
      */
     virtual void copy();
 
+    /** Reimplemented from QsciScintilla
+     */
+    virtual void paste();
+
 #ifdef TORA3_SESSION
     /** Export data to a map.
      * @param data A map that can be used to recreate the data of a chart.
@@ -262,6 +266,17 @@ private:
 
     //! Original content of the editor for XML format functionality. See setXMLWrap()
     QString m_origContent;
+
+    struct StyleDefinition
+    {
+    	QFont font;
+    	int size;
+    	QColor fore;
+    	QColor back;
+    	int weight;
+    	bool italics;
+    	bool bold;
+    };
 };
 
 #endif

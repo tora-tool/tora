@@ -259,17 +259,36 @@ void toMarkedText::print(const QString  &fname)
 void toMarkedText::copy()
 {
 	QsciScintilla::copy();
+#ifdef QT_DEBUG
 	QMimeData *md = new QMimeData();
 	QString txt = QApplication::clipboard()->mimeData()->text();
 	QString html = getHTML();
-	//md->setText(txt);
+	QString rtf = getRTF();
 #ifdef Q_OS_MAC
     md->setData(QLatin1String("text/html"), html.toUtf8());
 #else
     md->setHtml(html);
 #endif
+    md->setData(QLatin1String("text/rtf"), rtf.toUtf8());
     QApplication::clipboard()->setMimeData(md, QClipboard::Clipboard);
 	TLOG(0, toDecorator, __HERE__) << "html:" << html << std::endl;
+	TLOG(0, toDecorator, __HERE__) << "rtf:" << rtf << std::endl;
+#endif
+}
+
+void toMarkedText::paste()
+{
+#ifdef QT_DEBUG
+	QMimeData const *md = QApplication::clipboard()->mimeData();
+	TLOG(0, toDecorator, __HERE__) << md->formats().join("'") << std::endl;
+	Q_FOREACH(QString format, md->formats())
+	{
+		QByteArray ba = md->data(format);
+		TLOG(0, toNoDecorator, __HERE__) << format << std::endl
+				<< ba.data() << std::endl;
+	}
+#endif
+	QsciScintilla::paste();
 }
 
 void toMarkedText::newLine(void)
@@ -960,23 +979,42 @@ QString toMarkedText::getHTML()
 	return retval;
 }
 
+// extracts control words that are different between two styles
+static QString  GetRTFStyleChange(QString const& last, QString const& current)
+{   // \f0\fs20\cf0\highlight0\b0\i0
+	QString delta;
+	QStringList lastL = last.split('\\');
+	QStringList currentL = current.split('\\');
+
+	// font face, size, color, background, bold, italic
+	for (int i = 0; i < 6; i++) {
+		if ( lastL.at(i) != currentL.at(i)) { // changed
+			delta += '\\';
+			delta += currentL.at(i);
+		}
+	}
+	if (delta.isEmpty())
+		delta += " ";
+	return delta;
+}
+
 QString toMarkedText::getRTF()
 {
 	static const QString RTF_HEADEROPEN = "{\\rtf1\\ansi\\deff0\\deftab720";
 	static const QString RTF_FONTDEFOPEN = "{\\fonttbl";
-	static const QString RTF_FONTDEF = "{\\f%d\\fnil\\fcharset%u %s;}";
+	static const QString RTF_FONTDEF = "{\\f%1\\fnil\\fcharset%2 %3;}";
 	static const QString RTF_FONTDEFCLOSE = "}";
 	static const QString RTF_COLORDEFOPEN = "{\\colortbl";
-	static const QString RTF_COLORDEF = "\\red%d\\green%d\\blue%d;";
+	static const QString RTF_COLORDEF = "\\red%1\\green%2\\blue%3;";
 	static const QString RTF_COLORDEFCLOSE = "}";
 	static const QString RTF_HEADERCLOSE = "\n";
 	static const QString RTF_BODYOPEN = "";
 	static const QString RTF_BODYCLOSE = "}";
 
 	static const QString RTF_SETFONTFACE = "\\f";
-	static const QString RTF_SETFONTSIZE = "\\fs";
-	static const QString RTF_SETCOLOR = "\\cf";
-	static const QString RTF_SETBACKGROUND = "\\highlight";
+	static const QString RTF_SETFONTSIZE = "\\fs%1";
+	static const QString RTF_SETCOLOR = "\\cf%1";
+	static const QString RTF_SETBACKGROUND = "\\highlight%1";
 	static const QString RTF_BOLD_ON = "\\b";
 	static const QString RTF_BOLD_OFF = "\\b0";
 	static const QString RTF_ITALIC_ON = "\\i";
@@ -1002,19 +1040,15 @@ QString toMarkedText::getRTF()
 	clearIndicatorRange(0, 0, lines(), lineLength(lines()-1), m_searchIndicator);
 	recolor();
 
-#if 0
 	// Read the default settings
-	char key[200];
-	sprintf(key, "style.*.%0d", STYLE_DEFAULT);
-	char *valdefDefault = StringDup(props.GetExpanded(key).c_str());
-	sprintf(key, "style.%s.%0d", language.c_str(), STYLE_DEFAULT);
-	char *valDefault = StringDup(props.GetExpanded(key).c_str());
-
-	StyleDefinition defaultStyle(valdefDefault);
-	defaultStyle.ParseStyleDefinition(valDefault);
-
-	delete []valDefault;
-	delete []valdefDefault;
+	StyleDefinition defaultStyle;
+	defaultStyle.font = lexer()->font(STYLE_DEFAULT);
+	defaultStyle.size = lexer()->font(STYLE_DEFAULT).pointSize();
+	defaultStyle.fore = lexer()->color(STYLE_DEFAULT);
+	defaultStyle.back = lexer()->paper(STYLE_DEFAULT);
+	defaultStyle.weight = lexer()->font(STYLE_DEFAULT).weight();
+	defaultStyle.italics = lexer()->font(STYLE_DEFAULT).italic();
+	defaultStyle.bold= lexer()->font(STYLE_DEFAULT).bold();
 
 	bool tabs = true;
 	int tabSize = 4;
@@ -1032,7 +1066,7 @@ QString toMarkedText::getRTF()
 	QString fontFace = sdmono.family();
 	if (fontFace.length()) {
 		defaultStyle.font = fontFace;
-	} else if (defaultStyle.font.length() == 0) {
+	} else if (defaultStyle.font.family().isEmpty()) {
 		defaultStyle.font = RTF_FONTFACE;
 	}
 	int fontSize = sdmono.pointSize();
@@ -1043,100 +1077,92 @@ QString toMarkedText::getRTF()
 	} else {
 		defaultStyle.size <<= 1;
 	}
-	unsigned int characterset = props.GetInt("character.set", SC_CHARSET_DEFAULT);
 
-	char styles[STYLE_DEFAULT + 1][MAX_STYLEDEF];
-	char fonts[STYLE_DEFAULT + 1][MAX_FONTDEF];
-	char colors[STYLE_DEFAULT + 1][MAX_COLORDEF];
-	char lastStyle[MAX_STYLEDEF], deltaStyle[MAX_STYLEDEF];
+	QString styles[STYLE_DEFAULT + 1];
+	QFont fonts[STYLE_DEFAULT + 1];
+	QColor colors[STYLE_DEFAULT + 1];
+	QString lastStyle, deltaStyle;
 	int fontCount = 1, colorCount = 2, i;
-	fp +=RTF_HEADEROPEN RTF_FONTDEFOPEN;
-	strncpy(fonts[0], defaultStyle.font.c_str(), MAX_FONTDEF);
-	fprintf(fp, RTF_FONTDEF, 0, characterset, defaultStyle.font.c_str());
-	strncpy(colors[0], defaultStyle.fore.c_str(), MAX_COLORDEF);
-	strncpy(colors[1], defaultStyle.back.c_str(), MAX_COLORDEF);
 
-	for (int istyle = 0; istyle < STYLE_DEFAULT; istyle++) {
-		sprintf(key, "style.*.%0d", istyle);
-		char *valdef = StringDup(props.GetExpanded(key).c_str());
-		sprintf(key, "style.%s.%0d", language.c_str(), istyle);
-		char *val = StringDup(props.GetExpanded(key).c_str());
+	fp += RTF_HEADEROPEN;
+	{ // fonts definitions
+		fp += RTF_FONTDEFOPEN;
 
-		StyleDefinition sd(valdef);
-		sd.ParseStyleDefinition(val);
+		fonts[0] = defaultStyle.font;
 
-		if (sd.specified != StyleDefinition::sdNone) {
-			if (wysiwyg && sd.font.length()) {
-				for (i = 0; i < fontCount; i++)
-					if (EqualCaseInsensitive(sd.font.c_str(), fonts[i]))
-						break;
-				if (i >= fontCount) {
-					strncpy(fonts[fontCount++], sd.font.c_str(), MAX_FONTDEF);
-					fprintf(fp, RTF_FONTDEF, i, characterset, sd.font.c_str());
-				}
-				sprintf(lastStyle, RTF_SETFONTFACE "%d", i);
-			} else {
-				strcpy(lastStyle, RTF_SETFONTFACE "0");
+		unsigned int characterset = 1; //props.GetInt("character.set", SC_CHARSET_DEFAULT);
+		fp += RTF_FONTDEF.arg(0).arg(characterset).arg(defaultStyle.font.family());
+
+		colors[0] = defaultStyle.fore;
+		colors[1] = defaultStyle.back;
+
+		for (int istyle = 0; istyle < STYLE_DEFAULT; istyle++) {
+			StyleDefinition sd;
+			sd.font = lexer()->font(istyle);
+			sd.size = lexer()->font(istyle).pointSize();
+			sd.fore = lexer()->color(istyle);
+			sd.back = lexer()->paper(istyle);
+			sd.weight = lexer()->font(istyle).weight();
+			sd.italics = lexer()->font(istyle).italic();
+			sd.bold= lexer()->font(istyle).bold();
+
+			for (i = 0; i < fontCount; i++)
+				if (sd.font == fonts[i])
+					break;
+			if (i >= fontCount) {
+				fonts[fontCount++] = sd.font;
+				fp += RTF_FONTDEF.arg(i).arg(characterset).arg(sd.font.family());
 			}
+			lastStyle + RTF_SETFONTFACE + i;
+			//lastStyle += RTF_SETFONTFACE + "0";
 
-			sprintf(lastStyle + strlen(lastStyle), RTF_SETFONTSIZE "%d",
-					wysiwyg && sd.size ? sd.size << 1 : defaultStyle.size);
+			lastStyle += RTF_SETFONTSIZE.arg( sd.size ? sd.size << 1 : defaultStyle.size);
 
-			if (sd.specified & StyleDefinition::sdFore) {
-				for (i = 0; i < colorCount; i++)
-					if (EqualCaseInsensitive(sd.fore.c_str(), colors[i]))
-						break;
-				if (i >= colorCount)
-					strncpy(colors[colorCount++], sd.fore.c_str(), MAX_COLORDEF);
-				sprintf(lastStyle + strlen(lastStyle), RTF_SETCOLOR "%d", i);
-			} else {
-				strcat(lastStyle, RTF_SETCOLOR "0");	// Default fore
-			}
+			for (i = 0; i < colorCount; i++)
+				if (sd.fore == colors[i])
+					break;
+			if (i >= colorCount)
+				colors[colorCount++] = sd.fore;
+			lastStyle += RTF_SETCOLOR.arg(i);
+			//lastStyle += RTF_SETCOLOR "0";	// Default fore
 
-			// PL: highlights doesn't seems to follow a distinct table, at least with WordPad and Word 97
-			// Perhaps it is different for Word 6?
-			//				sprintf(lastStyle + strlen(lastStyle), RTF_SETBACKGROUND "%d",
-			//				        sd.back.length() ? GetRTFHighlight(sd.back.c_str()) : 0);
-			if (sd.specified & StyleDefinition::sdBack) {
-				for (i = 0; i < colorCount; i++)
-					if (EqualCaseInsensitive(sd.back.c_str(), colors[i]))
-						break;
-				if (i >= colorCount)
-					strncpy(colors[colorCount++], sd.back.c_str(), MAX_COLORDEF);
-				sprintf(lastStyle + strlen(lastStyle), RTF_SETBACKGROUND "%d", i);
-			} else {
-				strcat(lastStyle, RTF_SETBACKGROUND "1");	// Default back
-			}
-			if (sd.specified & StyleDefinition::sdWeight) {
-				strcat(lastStyle, sd.IsBold() ? RTF_BOLD_ON : RTF_BOLD_OFF);
-			} else {
-				strcat(lastStyle, defaultStyle.IsBold() ? RTF_BOLD_ON : RTF_BOLD_OFF);
-			}
-			if (sd.specified & StyleDefinition::sdItalics) {
-				strcat(lastStyle, sd.italics ? RTF_ITALIC_ON : RTF_ITALIC_OFF);
-			} else {
-				strcat(lastStyle, defaultStyle.italics ? RTF_ITALIC_ON : RTF_ITALIC_OFF);
-			}
-			strncpy(styles[istyle], lastStyle, MAX_STYLEDEF);
-		} else {
-			sprintf(styles[istyle], RTF_SETFONTFACE "0" RTF_SETFONTSIZE "%d"
-					RTF_SETCOLOR "0" RTF_SETBACKGROUND "1"
-					RTF_BOLD_OFF RTF_ITALIC_OFF, defaultStyle.size);
+			for (i = 0; i < colorCount; i++)
+				if (sd.back == colors[i])
+					break;
+			if (i >= colorCount)
+				colors[colorCount++] = sd.back;
+			lastStyle += RTF_SETBACKGROUND.arg(i);
+			//lastStyle += RTF_SETBACKGROUND + "1";	// Default back (use only one default background)
+
+
+			lastStyle += sd.bold ? RTF_BOLD_ON : RTF_BOLD_OFF;
+			lastStyle += sd.italics ? RTF_ITALIC_ON : RTF_ITALIC_OFF;
+
+			styles[istyle] = lastStyle;
 		}
-		delete []val;
-		delete []valdef;
+		styles[STYLE_DEFAULT] = RTF_SETFONTFACE + "0"
+				+ RTF_SETFONTSIZE.arg(defaultStyle.size)
+				+ RTF_SETCOLOR.arg("0")
+				+ RTF_SETBACKGROUND.arg("1")
+				+ RTF_BOLD_OFF
+				+ RTF_ITALIC_OFF;
+		fp += RTF_FONTDEFCLOSE;
 	}
 
-	fp +=RTF_FONTDEFCLOSE RTF_COLORDEFOPEN;
-	for (i = 0; i < colorCount; i++) {
-		fprintf(fp, RTF_COLORDEF, IntFromHexByte(colors[i] + 1),
-				IntFromHexByte(colors[i] + 3), IntFromHexByte(colors[i] + 5));
+	fp += RTF_COLORDEFOPEN;
+	for (i = 0; i < colorCount; i++)
+	{
+		fp += RTF_COLORDEF.arg(colors[i].red()).arg(colors[i].green()).arg(colors[i].blue());
 	}
-	fprintf(fp, RTF_COLORDEFCLOSE RTF_HEADERCLOSE RTF_BODYOPEN RTF_SETFONTFACE "0"
-			RTF_SETFONTSIZE "%d" RTF_SETCOLOR "0 ", defaultStyle.size);
-	sprintf(lastStyle, RTF_SETFONTFACE "0" RTF_SETFONTSIZE "%d"
-			RTF_SETCOLOR "0" RTF_SETBACKGROUND "1"
-			RTF_BOLD_OFF RTF_ITALIC_OFF, defaultStyle.size);
+	fp += RTF_COLORDEFCLOSE;
+
+	fp += RTF_HEADERCLOSE;
+
+	fp += RTF_BODYOPEN
+			+ RTF_SETFONTFACE + "0"
+			+ RTF_SETFONTSIZE.arg(defaultStyle.size)
+			+ RTF_SETCOLOR.arg("0 ");
+	lastStyle = styles[STYLE_DEFAULT];
 	bool prevCR = false;
 	int styleCurrent = -1;
 	int column = 0;
@@ -1146,9 +1172,9 @@ QString toMarkedText::getRTF()
 		if (style > STYLE_DEFAULT)
 			style = 0;
 		if (style != styleCurrent) {
-			GetRTFStyleChange(deltaStyle, lastStyle, styles[style]);
-			if (*deltaStyle)
-				fp +=deltaStyle;
+			deltaStyle = GetRTFStyleChange(lastStyle, styles[style]);
+			fp += deltaStyle;
+			lastStyle = styles[style];
 			styleCurrent = style;
 		}
 		switch (ch)
@@ -1181,13 +1207,13 @@ QString toMarkedText::getRTF()
 			column = -1;
 			break;
 		default:
-			fp + ch;
+			fp += ch;
 		}
 		column++;
 		prevCR = ch == '\r';
 	}
-	fp +=RTF_BODYCLOSE;
-#endif
+	fp += RTF_BODYCLOSE;
+
 	return fp;
 }
 
