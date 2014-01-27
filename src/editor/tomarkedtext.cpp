@@ -259,7 +259,6 @@ void toMarkedText::print(const QString  &fname)
 void toMarkedText::copy()
 {
 	QsciScintilla::copy();
-#ifdef QT_DEBUG
 	QMimeData *md = new QMimeData();
 	QString txt = QApplication::clipboard()->mimeData()->text();
 	md->setText(txt);
@@ -277,7 +276,6 @@ void toMarkedText::copy()
 	TLOG(0, toDecorator, __HERE__) << "rtf:" << rtf << std::endl;
 #endif
     QApplication::clipboard()->setMimeData(md, QClipboard::Clipboard);
-#endif
 }
 
 void toMarkedText::paste()
@@ -426,6 +424,13 @@ void toMarkedText::keyPressEvent(QKeyEvent *e)
 //            Utils::toStatusMessage(QString::null);
 //        }
 //    }
+	if (e->matches(QKeySequence::Copy))
+	{
+		// "Override" scintilla's default copy behavior
+		copy();
+		e->accept();
+		return;
+	}
     QsciScintilla::keyPressEvent(e);
 }
 
