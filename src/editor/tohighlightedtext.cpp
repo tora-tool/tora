@@ -72,7 +72,7 @@ toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
 
     // Setup QsciScintilla stuff
     QsciScintilla::setFolding(QsciScintilla::BoxedFoldStyle);
-    QsciScintilla::setAutoCompletionThreshold(1);
+    QsciScintilla::setAutoCompletionThreshold(0);
     QsciScintilla::setAutoCompletionSource(QsciScintilla::AcsAPIs);
 
     // highlight caret line

@@ -3,6 +3,8 @@
 
 #include <Qsci/qsciabstractapis.h>
 
+class toLexerOracle;
+
 //! \brief The QsciAbstractAPIs class represents the interface to the textual
 //! API information used in call tips and for auto-completion.  A sub-class
 //! will provide the actual implementation of the interface.
@@ -23,7 +25,7 @@ public:
     virtual ~toLexerOracleAPIs();
 
     //! Return the lexer that the instance is attached to.
-    QsciLexer *lexer() const;
+    toLexerOracle *lexer() const;
 
     //! Update the list \a list with API entries derived from \a context.  \a
     //! context is the list of words in the text preceding the cursor position.

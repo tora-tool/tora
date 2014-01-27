@@ -254,7 +254,7 @@ SET(TORA_MOC_CLASSES
   parsing/tsqllexer.h
   parsing/tosyntaxanalyzer.h
   parsing/tolexeroracleapis.h 
-
+  
   editor/tobaseeditor.h
   editor/tomarkededitor.h
   editor/tomarkedtext.h
@@ -537,6 +537,7 @@ SET(TORA_SOURCES
   parsing/tsqllexermysql.cc
   parsing/MySQLLexer.cc
   parsing/tolexeroracleapis.cpp
+  parsing/persistenttrie.cpp
   
   docklets/toviewconnections.cpp
   docklets/toviewdirectory.cpp
@@ -913,7 +914,8 @@ SET(TEST4_SOURCES
   parsing/tosyntaxanalyzernl.cpp
   parsing/tosyntaxanalyzeroracle.cpp
   parsing/tsqllexermysql.cc
-  parsing/tsqllexeroracle2.cc  
+  parsing/tsqllexeroracle2.cc
+  parsing/persistenttrie.cpp
   ts_log/moc_toostream.cxx
   )
 SET(TEST4_MOC_CLASSES  tests/test4window.h)
