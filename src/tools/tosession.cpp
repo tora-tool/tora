@@ -39,6 +39,7 @@
 #include "core/toconf.h"
 #include "core/toresultschema.h"
 #include "core/toresultlock.h"
+#include "core/toresultitem.h"
 #include "core/toresultstats.h"
 #include "tools/tosgastatement.h"
 #include "tools/tosgatrace.h"
@@ -242,6 +243,22 @@ static toSQL SQLSessionIO(
     "       sum(consistent_changes) \"Consistent changes\"\n"
     "  from v$sess_io where sid in (select b.sid from v$session a,v$session b where a.sid = :f1<char[101]> and a.audsid = b.audsid)",
     "Display chart of session generated I/O");
+
+static toSQL SQLSessionTXN(
+    TO_SESSION_TXN,
+    "SELECT TO_CHAR(s.sid)||','||TO_CHAR(s.serial#) sid_serial,                                     \n"
+    "           NVL(s.username, 'None') OraUser,                                                    \n"
+    "           s.program,                                                                          \n"
+    "           case when t.used_ublk is not null then t.used_ublk * TO_NUMBER(x.value)/1024||'K'   \n"
+    "	        else null end as \"Undo\",                                                          \n"
+    "	   t.*                                                                                      \n"
+    "      FROM sys.v_$session     s,                                                               \n"
+    "           sys.v_$transaction t,                                                               \n"
+    "           sys.v_$parameter   x                                                                \n"
+    "     WHERE s.taddr = t.addr(+)                                                                 \n"
+    "       AND x.name  = 'db_block_size'                                                           \n"
+    "       AND SID = :f1<char[101]> AND SERIAL# = :f2<char[101]>                                   \n",
+    "Display transaction details");
 
 static toSQL SQLAccessedObjects(
     "toSession:AccessedObjects",
@@ -492,6 +509,13 @@ toSession::toSession(QWidget *main, toConnection &connection)
 
     if (connection.providerIs("Oracle"))
     {
+        PreviousStatement = new toSGAStatement(ResultTab);
+        ResultTab->addTab(PreviousStatement, tr("Previous Statement"));
+
+        Transaction = new toResultItem(2, true, ResultTab, "SessionTXN");
+        Transaction->setSQL(SQLSessionTXN);
+        ResultTab->addTab(Transaction, tr("Transaction"));
+
         QString sql = toSQL::string(TOSQL_LONGOPS, connection);
         sql += " AND b.sid = :sid<char[101]> AND b.serial# = :ser<char[101]> order by b.start_time desc";
         LongOps = new toResultLong(true, false, ResultTab);
@@ -530,9 +554,6 @@ toSession::toSession(QWidget *main, toConnection &connection)
         AccessedObjects = new toResultTableView(false, false, ResultTab);
         AccessedObjects->setSQL(SQLAccessedObjects);
         ResultTab->addTab(AccessedObjects, tr("Accessing"));
-
-        PreviousStatement = new toSGAStatement(ResultTab);
-        ResultTab->addTab(PreviousStatement, tr("Previous Statement"));
 
         OpenSplitter = new QSplitter(Qt::Horizontal, ResultTab);
         ResultTab->addTab(OpenSplitter, tr("Open Cursors"));
@@ -840,6 +861,9 @@ void toSession::slotChangeTab(int index)
             QModelIndex sindex = Sessions->model()->index(item.row(), Sessions->model()->columnCount() - 1);
             if(sindex.isValid())
                 PreviousStatement->changeAddress(sindex.data().toString());
+        } else if (CurrentTab == Transaction)
+        {
+        	Transaction->refreshWithParams(toQueryParams() << connectionId << serial);
         }
     }
 }

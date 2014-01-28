@@ -53,6 +53,7 @@ class toConnection;
 class toMain;
 class toResultBar;
 class toResultSchema;
+class toResultItem;
 class toResultLock;
 class toResultStats;
 class toResultTableView;
@@ -63,6 +64,7 @@ class toWaitEvents;
 
 #define TO_SESSION_WAIT "toSession:SessionWait"
 #define TO_SESSION_IO   "toSession:SessionIO"
+#define TO_SESSION_TXN   "toSession:SessionTXN"
 
 class toSession : public toToolWidget
 {
@@ -92,6 +94,7 @@ class toSession : public toToolWidget
     QSplitter         *StatisticSplitter;
     toSGAStatement    *OpenStatement;
     toResultTableView *OpenCursors;
+    toResultItem      *Transaction;
     QString            LastSession;
     QMenu             *ToolMenu;
     QComboBox         *Refresh;
