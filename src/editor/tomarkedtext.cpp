@@ -261,20 +261,28 @@ void toMarkedText::copy()
 	QsciScintilla::copy();
 	QMimeData *md = new QMimeData();
 	QString txt = QApplication::clipboard()->mimeData()->text();
+	QString mime;
 	md->setText(txt);
 
-	QString html = getHTML();
-#if defined(Q_OS_MAC)
-    md->setData(QLatin1String("text/html"), html.toUtf8());
-#elif defined(Q_OS_LINUX)
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
+	mime = getHTML();
+#else defined(Q_OS_WIN)
+	mime = getRTF();
+#endif
+
+	if (mime.isEmpty())
+		return;
+
+#if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
+	// md->setData(QLatin1String("text/html"), html.toUtf8()); MAC?
     md->setHtml(html);
 	TLOG(0, toDecorator, __HERE__) << "html:" << html << std::endl;
-#else
-	QString rtf = getRTF();
-    md->setData(QLatin1String("text/rtf"), rtf.toUtf8());
-    md->setData(QLatin1String("Rich Text Format"), rtf.toUtf8());
-	TLOG(0, toDecorator, __HERE__) << "rtf:" << rtf << std::endl;
+#else defined(Q_OS_WIN)
+    md->setData(QLatin1String("text/rtf"), mime.toUtf8());
+    md->setData(QLatin1String("Rich Text Format"), mime.toUtf8());
+	TLOG(0, toDecorator, __HERE__) << "rtf:" << mime << std::endl;
 #endif
+
     QApplication::clipboard()->setMimeData(md, QClipboard::Clipboard);
 }
 
@@ -701,6 +709,9 @@ QMenu *toMarkedText::createPopupMenu(const QPoint& pos)
 
 QString toMarkedText::getHTML()
 {
+	if (lexer() == NULL)
+		return QString::null;
+
 	static const QString SPAN_CLASS = QString::fromAscii("<span class=\"S%1\">");
 
 	clearIndicatorRange(0, 0, lines(), lineLength(lines()-1), m_searchIndicator);
@@ -1005,6 +1016,9 @@ static QString  GetRTFStyleChange(QString const& last, QString const& current)
 
 QString toMarkedText::getRTF()
 {
+	if (lexer() == NULL)
+		return QString::null;
+
 	static const QString RTF_HEADEROPEN = "{\\rtf1\\ansi\\deff0\\deftab720";
 	static const QString RTF_FONTDEFOPEN = "{\\fonttbl";
 	static const QString RTF_FONTDEF = "{\\f%1\\fnil\\fcharset%2 %3;}";
