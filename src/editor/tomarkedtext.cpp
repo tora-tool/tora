@@ -275,8 +275,8 @@ void toMarkedText::copy()
 
 #if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
 	// md->setData(QLatin1String("text/html"), html.toUtf8()); MAC?
-    md->setHtml(html);
-	TLOG(0, toDecorator, __HERE__) << "html:" << html << std::endl;
+    md->setHtml(mime);
+	TLOG(0, toDecorator, __HERE__) << "html:" << mime << std::endl;
 #else defined(Q_OS_WIN)
     md->setData(QLatin1String("text/rtf"), mime.toUtf8());
     md->setData(QLatin1String("Rich Text Format"), mime.toUtf8());
