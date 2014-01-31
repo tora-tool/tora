@@ -36,6 +36,7 @@
 #include "core/tonewconnection.h"
 #include "core/toconfiguration.h"
 #include "core/utils.h"
+#include "core/tooracleconst.h"
 
 #include <QtCore/QSettings>
 
@@ -77,7 +78,7 @@ void toConnectionModel::readConfig()
         QString schema   = Settings.value("schema", "").toString();
         QString color    = Settings.value("color", "").toString();
 
-        if (provider.startsWith("Oracle"))
+        if (provider == ORACLE_TNSCLIENT)
             host = "";
 
         Settings.beginGroup("options");

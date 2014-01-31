@@ -58,7 +58,7 @@
          <item>
           <widget class="QLabel" name="label">
            <property name="text">
-            <string>Se&amp;arch:</string>
+            <string>&amp;Search:</string>
            </property>
            <property name="buddy">
             <cstring>searchEdit</cstring>
@@ -272,20 +272,20 @@
            </property>
           </widget>
          </item>
-         <item>
-          <widget class="QSpinBox" name="Port">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="maximum">
-            <number>65535</number>
-           </property>
-          </widget>
-         </item>
         </layout>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="Port">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="maximum">
+          <number>65535</number>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QLabel" name="SchemaLabel">
@@ -506,19 +506,23 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
-  <tabstop>Previous</tabstop>
-  <tabstop>Provider</tabstop>
   <tabstop>Username</tabstop>
   <tabstop>Password</tabstop>
   <tabstop>Host</tabstop>
-  <tabstop>Schema</tabstop>
   <tabstop>Port</tabstop>
+  <tabstop>Schema</tabstop>
   <tabstop>Database</tabstop>
   <tabstop>SqlNet</tabstop>
   <tabstop>SysDba</tabstop>
   <tabstop>SysOper</tabstop>
-  <tabstop>ButtonBox</tabstop>
+  <tabstop>colorComboBox</tabstop>
+  <tabstop>testConnectionButton</tabstop>
+  <tabstop>saveConnectionButton</tabstop>
   <tabstop>ImportButton</tabstop>
+  <tabstop>ButtonBox</tabstop>
+  <tabstop>Previous</tabstop>
+  <tabstop>searchEdit</tabstop>
+  <tabstop>Provider</tabstop>
  </tabstops>
  <resources/>
  <connections>

@@ -249,7 +249,7 @@ static toSQL SQLSessionTXN(
     "SELECT TO_CHAR(s.sid)||','||TO_CHAR(s.serial#) sid_serial,                                     \n"
     "           NVL(s.username, 'None') OraUser,                                                    \n"
     "           s.program,                                                                          \n"
-    "           case when t.used_ublk is not null then t.used_ublk * TO_NUMBER(x.value)/1024||'K'   \n"
+    "           case when t.used_ublk is not null then t.used_ublk * TO_NUMBER(x.value)/1024/1024||'M'   \n"
     "	        else null end as \"Undo\",                                                          \n"
     "	   t.*                                                                                      \n"
     "      FROM sys.v_$session     s,                                                               \n"
