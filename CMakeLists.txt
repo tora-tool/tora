@@ -19,6 +19,11 @@ OPTION(ENABLE_TERADATA "Enable/Disable Teradata support." ON)
 OPTION(WANT_RPM "Enable additional RPM related stuff. Additional make package_rpm target" OFF)
 OPTION(USE_PCH "Use percompiled headers" OFF)
 OPTION(USE_EXPERIMENTAL "Use experimental code" OFF)
+OPTION(TEST_APP1 "Simple lexer test" OFF)
+OPTION(TEST_APP2 "toConnection/toQuery test" OFF)
+OPTION(TEST_APP3 "simple application - execute toWorksheet in a separate application" OFF)
+OPTION(TEST_APP4 "simple application - execute toHighlightedText in separate application" OFF)
+OPTION(TEST_APP5 "simple application - single tool(tabbed)" OFF)
 
 #Set our CMake minimum version
 #Require 2.4.2 for Qt finding
@@ -261,6 +266,7 @@ IF (USE_EXPERIMENTAL)
   FIND_PACKAGE(GraphViz)
 ENDIF(USE_EXPERIMENTAL)
 
+MESSAGE(STATUS "graphviz_FOUND: ${graphviz_FOUND}")
 
 ################################################################################
 ##########                    Uninstall Setup                         ##########

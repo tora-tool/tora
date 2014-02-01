@@ -45,6 +45,7 @@
 
 //#include "parsing/tsqlparse.h"
 #include "parsing/tsqllexer.h"
+#include "parsing/persistenttrie.h"
 
 #include <QtCore/QDateTime>
 #include <QtGui/QApplication>
@@ -54,8 +55,11 @@
 #include <QtCore/QTranslator>
 #include <QtGui/QStyleFactory>
 #include <QtCore/QLibrary>
+#include <QtCore/QDebug>
 
 #include <memory>
+
+using namespace QmlJS::PersistentTrie;
 
 int main(int argc, char **argv)
 {
@@ -74,21 +78,45 @@ int main(int argc, char **argv)
 
 	try
 	{
-		QLibrary parsing("parsing");
-		parsing.load();
-		
-		std::auto_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("OracleSQL", "a b c", "");
+		const char input[] = "a b c aaa ab abc";
+		qDebug() << "Lexer input:" << input;
+
+		std::auto_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("OracleGuiLexer", input, "");
+		QmlJS::PersistentTrie::Trie trie;
 
 		for(int i = 0; i <= 10; i++)
 		{
 			std::cout << lexer->wordAt(SQLLexer::Position(0, i)) << std::endl;
 		}
 		
-		for(int i = 10; i >= 0; i--)
+		SQLLexer::Lexer::token_const_iterator i = lexer->begin();
+		while( i != lexer->end())
 		{
-			std::cout << lexer->wordAt(SQLLexer::Position(0, i)) << std::endl;
+			std::cout << '\'' << qPrintable(i->getText()) << '\'' << std::endl;
+			trie.insert(i->getText());
+			i++;
 		}
 
+		qDebug() << "Empty string completions";
+		QStringList completions1 = trie.complete("", "", LookupFlags(CaseInsensitive));
+		Q_FOREACH(QString s, completions1)
+		{
+			qDebug() << s;
+		}
+
+		qDebug() << "Completions for 'a'";
+		QStringList completions2 = trie.complete("a", ".", LookupFlags(CaseInsensitive));
+		Q_FOREACH(QString s, completions2)
+		{
+			qDebug() << s;
+		}
+
+		qDebug() << "Completions for 'ab'";
+		QStringList completions3 = trie.complete("ab", ".", LookupFlags(CaseInsensitive));
+		Q_FOREACH(QString s, completions3)
+		{
+			qDebug() << s;
+		}
 	}
 	catch (const QString &str)
 	{

@@ -1,5 +1,3 @@
-MESSAGE(STATUS "graphviz_FOUND: ${graphviz_FOUND}")
-
 # Precompiled headers
 IF(USE_PCH AND WIN32 AND MSVC)
   INCLUDE(PrecompiledHeader)
@@ -772,7 +770,7 @@ IF(PCH_DEFINED)
   ADD_PRECOMPILED_HEADER(${EXE_NAME} ${PCH_HEADER} FORCEINCLUDE)
 ENDIF()
 
-if(TORA_DEBUG AND TORA_TESTS)
+IF(TORA_DEBUG AND TEST_APP1)
 # test1
 SET(TEST1_SOURCES
   core/toworkspace.cpp
@@ -794,6 +792,9 @@ SET(TEST1_SOURCES
   parsing/tosyntaxanalyzernl.cpp
   parsing/tolexeroracle.cpp
   parsing/tolexeroracleapis.cpp
+  parsing/tsqllexeroracle2.cc
+  parsing/PLSQLGuiLexer.cc
+  parsing/persistenttrie.cpp
   core/utils.cpp
   core/utils_part.cpp
   core/totimer.cpp
@@ -840,7 +841,9 @@ ADD_DEPENDENCIES("test1" revisiontag) # explicitly say that the executable depen
 IF(PCH_DEFINED)
   ADD_PRECOMPILED_HEADER("test1" ${PCH_HEADER} FORCEINCLUDE)
 ENDIF(PCH_DEFINED)
+ENDIF(TORA_DEBUG AND TEST_APP1)
 
+IF(TORA_DEBUG AND TEST_APP2)  
 # test2
 ADD_EXECUTABLE("test2" ${GUI_TYPE}
   tests/test2.cpp
@@ -857,7 +860,9 @@ ADD_DEPENDENCIES("test2" revisiontag) # explicitly say that the executable depen
 IF(PCH_DEFINED)
   ADD_PRECOMPILED_HEADER("test2" ${PCH_HEADER} FORCEINCLUDE)
 ENDIF(PCH_DEFINED)
+ENDIF(TORA_DEBUG AND TEST_APP2)
 
+IF(TORA_DEBUG AND TEST_APP3)
 # test3
 SET(TEST3_MOC_CLASSES  tests/test3window.h)
 QT4_WRAP_CPP(TEST3_MOC_SOURCES ${TEST3_MOC_CLASSES})
@@ -879,7 +884,9 @@ ADD_DEPENDENCIES("test3" revisiontag) # explicitly say that the executable depen
 IF(PCH_DEFINED)
   ADD_PRECOMPILED_HEADER("test3" ${PCH_HEADER} FORCEINCLUDE)
 ENDIF(PCH_DEFINED)
+ENDIF(TORA_DEBUG AND TEST_APP3)
 
+IF(TORA_DEBUG AND TEST_APP4)  
 # test4
 SET(TEST4_SOURCES
   tests/test4.cpp
@@ -944,7 +951,9 @@ ADD_DEPENDENCIES("test4" revisiontag) # explicitly say that the executable depen
 IF(PCH_DEFINED)
   ADD_PRECOMPILED_HEADER("test4" ${PCH_HEADER} FORCEINCLUDE)
 ENDIF(PCH_DEFINED)
+ENDIF(TORA_DEBUG AND TEST_APP4)
 
+IF(TORA_DEBUG AND TEST_APP5)
 # test5
 SET(TEST5_SOURCES
   connection/moc_tooraclesetting.cxx
@@ -1075,6 +1084,7 @@ SET(TEST5_SOURCES
   parsing/tosyntaxanalyzermysql.cpp
   parsing/tosyntaxanalyzernl.cpp
   parsing/tosyntaxanalyzeroracle.cpp
+  parsing/persistenttrie.cpp
   result/moc_toresulttabledata.cxx
   result/toresulttabledata.cpp
   tests/moc_test5window.cxx
@@ -1114,8 +1124,7 @@ ADD_DEPENDENCIES("test5" revisiontag) # explicitly say that the executable depen
 IF(PCH_DEFINED)
   ADD_PRECOMPILED_HEADER("test5" ${PCH_HEADER} FORCEINCLUDE)
 ENDIF(PCH_DEFINED)
-
-ENDIF(TORA_DEBUG AND TORA_TESTS)
+ENDIF(TORA_DEBUG AND TEST_APP5)
 
 ################################################################################
 #                       Connection provider libraries                          #
