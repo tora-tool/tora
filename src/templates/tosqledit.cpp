@@ -236,7 +236,7 @@ toSQLEdit::toSQLEdit(QWidget *main, toConnection &connection)
 
     splitter = new QSplitter(Qt::Vertical, vbox);
     vlay->addWidget(splitter);
-    Description = new toMarkedText(splitter);
+    Description = new toScintilla(splitter);
     Worksheet = new toWorksheet(splitter, connection, false);
 
     hlay->setSpacing(0);

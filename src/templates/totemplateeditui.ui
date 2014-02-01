@@ -89,7 +89,7 @@
        <widget class="QLineEdit" name="Name" />
       </item>
       <item row="3" column="0" colspan="3" >
-       <widget class="toMarkedText" native="1" name="Description" >
+       <widget class="toScintilla" native="1" name="Description" >
         <property name="sizePolicy" >
          <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
           <horstretch>0</horstretch>
@@ -255,9 +255,9 @@
    <header>core/totreewidget.h</header>
   </customwidget>
   <customwidget>
-   <class>toMarkedText</class>
+   <class>toScintilla</class>
    <extends>QWidget</extends>
-   <header>editor/tomarkedtext.h</header>
+   <header>editor/toscintilla.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

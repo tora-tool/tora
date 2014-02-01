@@ -351,7 +351,7 @@
     </message>
 </context>
 <context>
-    <name>toMarkedText</name>
+    <name>toScintilla</name>
     <message>
         <source>Ctrl+A</source>
         <comment>Edit|Select All</comment>

@@ -48,7 +48,7 @@
 //#include <Qsci/qscilexersql.h>
 
 toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
-    : toMarkedText(parent)
+    : toScintilla(parent)
 	, highlighterType(QtSql)
     //TODO, syntaxColoring(toConfigurationSingle::Instance().highlightType())
 	// FIXME: disabled due repainting issues
@@ -188,7 +188,7 @@ void toHighlightedText::keyPressEvent(QKeyEvent * e)
         SendScintilla(SCI_SETSELECTIONSTART, pos, true);
         SendScintilla(SCI_SETSELECTIONEND, pos, true);
     }
-    toMarkedText::keyPressEvent(e);
+    toScintilla::keyPressEvent(e);
 }
 
 toHighlightedText::~toHighlightedText()
@@ -233,7 +233,7 @@ void toHighlightedText::positionChanged(int row, int col)
 void toHighlightedText::autoCompleteFromAPIs()
 {
 //	{
-//		toMarkedText::autoCompleteFromAPIs();
+//		toScintilla::autoCompleteFromAPIs();
 //		return;
 //	}
     complTimer->stop(); // it's a must to prevent infinite reopening
@@ -401,7 +401,7 @@ void toHighlightedText::autoCompleteFromAPIs()
 void toHighlightedText::openFilename(const QString & file)
 {
 #pragma message WARN("TODO/FIXME: marks! toHighlightedTextEditor::openFilename")
-//    toMarkedTextEditor::openFilename(file);
+//    toScintillaEditor::openFilename(file);
 //
 //    m_bookmarks.clear();
 //    markerDeleteAll(m_bookmarkHandle);
@@ -542,7 +542,7 @@ void toHighlightedText::tableAtCursor(toCache::ObjectRef &table, bool mark)
 	 * Theoretically I could use here SQLLexer::Lexer API if it was implemented for current database.
 	 * QScintilla API can not be used:
 	 *   - SCI_WORDENDPOSITION, SCI_WORDENDPOSITION do ignore punctuation chars like ('.')
-	 *   - Also toMarkedText::wordAtPosition() can not be used as string tokenizer
+	 *   - Also toScintilla::wordAtPosition() can not be used as string tokenizer
 	 *   - The closest implementation is Scintilla's MoveNextWordStart/MoveNextWordEnd but these methods are not accessible
 	 *
 	 *   This code loops over chars in the line buffer and queries the char-class and style for each char.

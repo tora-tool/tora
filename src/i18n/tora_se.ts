@@ -4823,7 +4823,7 @@ Starta om för att slå på igen. Du har troligtvis för hög updateringsfrekven
     </message>
 </context>
 <context>
-    <name>toMarkedText</name>
+    <name>toScintilla</name>
     <message>
         <source>TOra</source>
         <translation type="obsolete">TOra</translation>

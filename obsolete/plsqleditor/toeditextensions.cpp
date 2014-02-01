@@ -114,7 +114,7 @@ toEditExtensions::toEditExtensions()
 void toEditExtensions::receivedFocus(toEditWidget *widget)
 {
     if (widget)
-        Current = dynamic_cast<toMarkedText *>(widget);
+        Current = dynamic_cast<toScintilla *>(widget);
     else
         Current = NULL;
 
@@ -145,7 +145,7 @@ void toEditExtensions::lostFocus(toEditWidget *widget)
 {
     if (widget)
     {
-        toMarkedText *current = dynamic_cast<toMarkedText *>(widget);
+        toScintilla *current = dynamic_cast<toScintilla *>(widget);
         if (current && Current == current)
             receivedFocus(NULL);
     }
@@ -846,7 +846,7 @@ void toEditExtensionSetup::saveSetting(void)
 
 static toEditExtensionTool EditExtensionTool;
 
-// toEditExtensionGoto::toEditExtensionGoto(toMarkedText *editor)
+// toEditExtensionGoto::toEditExtensionGoto(toScintilla *editor)
 //         : QDialog(editor),
 //         Editor(editor)
 // {

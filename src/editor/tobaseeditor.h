@@ -40,7 +40,7 @@
 
 #include <QtGui/QWidget>
 
-class toMarkedText;
+class toScintilla;
 class QFileSystemWatcher;
 
 class toBaseEditor : public QWidget, public toEditWidget
@@ -48,7 +48,7 @@ class toBaseEditor : public QWidget, public toEditWidget
 	Q_OBJECT;
 
 public:
-	toBaseEditor(toMarkedText* editor, QWidget *parent = 0);
+	toBaseEditor(toScintilla* editor, QWidget *parent = 0);
 
     /** Reimplemented from toEditWidget
      */
@@ -139,7 +139,7 @@ signals:
     void fileSaved(QString file);
 
 protected:
-    toMarkedText *m_editor;
+    toScintilla *m_editor;
 
 private:
     //! Filename of the file in this buffer.

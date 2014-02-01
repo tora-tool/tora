@@ -4645,7 +4645,7 @@ Restart to reenable. You probably have a too high refreshrate in some tool.</sou
     </message>
 </context>
 <context>
-    <name>toMarkedText</name>
+    <name>toScintilla</name>
     <message>
         <source>Printing page %1</source>
         <translation type="unfinished"></translation>

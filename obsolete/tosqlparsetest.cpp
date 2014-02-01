@@ -909,7 +909,7 @@ int main(int argc, char **argv)
     testClass.append(toSQLParse::statement::ddldml);
 
     QApplication test(argc, argv);
-    toMarkedText text(NULL);
+    toScintilla text(NULL);
 
     int n = 1;
     int e = 0; // error count

@@ -33,10 +33,10 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "editor/tomarkededitor.h"
-#include "editor/tomarkedtext.h"
+#include "editor/toscintilla.h"
 
 toMarkedEditor::toMarkedEditor(QWidget *parent, const char *name)
-	: toBaseEditor(new toMarkedText(NULL), parent)
+	: toBaseEditor(new toScintilla(NULL), parent)
 {
 	if (name)
 		setObjectName(name);

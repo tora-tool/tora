@@ -149,7 +149,7 @@ public:
     virtual void editReadAll(void) = 0;
 
     /*! \brief Return all current text
-    This virtual function can be re-implemented subclasses(like toMarkedText).
+    This virtual function can be re-implemented subclasses(like toScintilla).
     So far it is used in toCodeOutline only.
     */
     virtual QString editText() = 0;

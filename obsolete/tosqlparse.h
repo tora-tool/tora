@@ -35,9 +35,7 @@
 #ifndef TOSQLPARSE_H
 #define TOSQLPARSE_H
 
-
-
-#include <QtGui/QString>
+#include <QtCore/QString>
 
 #include <list>
 #include <algorithm>

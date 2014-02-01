@@ -799,7 +799,7 @@ void toMain::commandCallback(QAction *action)
                                 : QsciScintillaBase::SC_SEL_STREAM;
             foreach (QWidget * i, QApplication::allWidgets())
             {
-                toMarkedText * w = qobject_cast<toMarkedText*>(i);
+            	toScintilla * w = qobject_cast<toScintilla*>(i);
                 if (w)
                 {
                     w->setSelectionType(selectionType);

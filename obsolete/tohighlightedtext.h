@@ -35,7 +35,7 @@
 #ifndef TOHIGHLIGHTEDTEXT_H
 #define TOHIGHLIGHTEDTEXT_H
 
-#include "editor/tomarkedtext.h"
+#include "editor/toscintilla.h"
 #include "core/topushbutton.h"
 #include "core/tocache.h"
 #include "parsing/tosyntaxanalyzer.h"
@@ -59,16 +59,16 @@ class toHighlightedTextWorker;
  *
  * This needs to be heavily re-implemented/simplified to use QScintilla syntax
  * coloring. For now it only stubs used API from previous version of
- * toHighlightedTextEditor. The rest of the API comes unchanged from toMarkedText
+ * toHighlightedTextEditor. The rest of the API comes unchanged from toScintilla
  * which is now derived from QScintilla.
  */
-class toHighlightedText : public toMarkedText
+class toHighlightedText : public toScintilla
 {
     Q_OBJECT;
     Q_ENUMS(HighlighterTypeEnum);
 public:
     friend class toComplPopup;
-    typedef toMarkedText super;
+    typedef toScintilla super;
 
     enum HighlighterTypeEnum {
     	None   = 10,
@@ -99,7 +99,7 @@ public:
      */
     virtual ~toHighlightedText();
 
-    /*! \brief Inherited from toMarkedText to clear all required editor
+    /*! \brief Inherited from toScintilla to clear all required editor
     markers;
     */
     virtual void openFilename(const QString &file);

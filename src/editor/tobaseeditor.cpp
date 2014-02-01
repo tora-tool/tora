@@ -33,7 +33,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "editor/tobaseeditor.h"
-#include "editor/tomarkedtext.h"
+#include "editor/toscintilla.h"
 #include "core/toeditmenu.h"
 #include "core/toglobalevent.h"
 #include "core/utils.h"
@@ -44,7 +44,7 @@
 #include <QtCore/QDir>
 #include <QtGui/QVBoxLayout>
 
-toBaseEditor::toBaseEditor(toMarkedText *editor, QWidget *parent)
+toBaseEditor::toBaseEditor(toScintilla *editor, QWidget *parent)
 	: QWidget(parent)
 	, m_editor(editor)
 {

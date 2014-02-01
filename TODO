@@ -5,13 +5,13 @@ Q_INTERFACE macro
 
 QSscintilla port:
 
-* More integrated QScintilla features (toMarkedText class)
-    The toMarkedText class is still using its own version of the search/replace 
+* More integrated QScintilla features (toScintilla class)
+    The toScintilla class is still using its own version of the search/replace 
     functionality from the pre-QScintilla times. Since QextScintilla has powerful 
     search mechanism (regex support etc) - this needs to be integrated and the old 
     one got rid of.
 
-  - fix insert(str, select). see toMarkedText::insert
+  - fix insert(str, select). see toScintilla::insert
 
 * Finish implementation of syntax colouring editor component (toHighlightedText class)
     Code completion in SQL editor (using QsciAbstractAPIs class), better integration 

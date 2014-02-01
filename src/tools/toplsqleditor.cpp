@@ -831,7 +831,7 @@ void toPLSQLWidget::changeContent(toTreeWidgetItem *ci)
 #endif
 }
 
-/* All plsql edit widgets are inherited from toMarkedText which does implement
+/* All plsql edit widgets are inherited from toScintilla which does implement
    save feature. We need to overload it here in order to handle saving of
    package specification and body into one file.
 */

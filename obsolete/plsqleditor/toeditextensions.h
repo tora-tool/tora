@@ -53,14 +53,14 @@
 
 #include <algorithm>
 
-class toMarkedText;
+class toScintilla;
 class toEditExtensionTool;
 
 class toEditExtensions : public QObject, public toEditWidget::editHandler
 {
     Q_OBJECT;
 
-    toMarkedText *Current;
+    toScintilla *Current;
 
     void intIndent(int level);
 
@@ -121,10 +121,10 @@ public slots:
 // {
 //     Q_OBJECT;
 //
-//     toMarkedText *Editor;
+//     toScintilla *Editor;
 //
 // public:
-//     toEditExtensionGoto(toMarkedText *editor);
+//     toEditExtensionGoto(toScintilla *editor);
 //     void gotoLine();
 // };
 

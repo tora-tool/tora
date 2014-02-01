@@ -32,15 +32,16 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOMARKEDTEXT_H
-#define TOMARKEDTEXT_H
+#ifndef TOSCINTILLA_H
+#define TOSCINTILLA_H
+
+#include <Qsci/qsciscintilla.h>
 
 #include "core/utils.h"
 #include "editor/toeditglobals.h"
 
 #include <QtCore/QString>
 #include <QtCore/QTimer>
-#include <Qsci/qsciscintilla.h>
 #include <QtGui/QContextMenuEvent>
 #include <QtCore/QString>
 #include <QtGui/QDropEvent>
@@ -50,7 +51,7 @@
 #include <QtGui/QKeyEvent>
 #include <QtCore/QPoint>
 
-#include <map>
+//#include <map>
 
 class QMenu;
 class QsciPrinter;
@@ -82,7 +83,7 @@ public slots:
  * menus and print support. It is based on QsciScintilla which is API compatible
  * with QTextEdit class. toEditWidget is abstract class representing copy/paste interface.
  */
-class toMarkedText : public QsciScintilla//, public toEditWidget
+class toScintilla: public QsciScintilla//, public toEditWidget
 {
     Q_OBJECT;
 
@@ -121,9 +122,9 @@ public:
      * @param parent Parent of this widget.
      * @param name Name of this widget.
      */
-    toMarkedText(QWidget *parent, const char *name = NULL);
+    toScintilla(QWidget *parent, const char *name = NULL);
 
-    virtual ~toMarkedText();
+    virtual ~toScintilla();
 
     /** Get location of the current selection. This function is now public. See the
      * Qt documentation for more information.

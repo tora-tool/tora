@@ -76,7 +76,7 @@
         </widget>
       </item>
       <item rowspan="1" row="2" column="0" colspan="3" >
-        <widget class="toMarkedText" name="Value" >
+        <widget class="toScintilla" name="Value" >
           <property name="sizePolicy" >
             <sizepolicy>
               <hsizetype>5</hsizetype>
@@ -102,9 +102,9 @@
   </widget>
   <customwidgets>
     <customwidget>
-      <class>toMarkedText</class>
+      <class>toScintilla</class>
       <extends>QWidget</extends>
-      <header location="local" >tomarkedtext.h</header>
+      <header location="local" >toscintilla.h</header>
       <sizehint>
         <width>-1</width>
         <height>-1</height>

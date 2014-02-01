@@ -6059,7 +6059,7 @@ http://tora.sourceforge.net</translation>
     </message>
 </context>
 <context>
-    <name>toMarkedText</name>
+    <name>toScintilla</name>
     <message>
         <location filename="" line="0"/>
         <source>TOra</source>
@@ -6081,104 +6081,104 @@ http://tora.sourceforge.net</translation>
         <translation type="obsolete">Pagina: %1</translation>
     </message>
     <message>
-        <location filename="../tomarkedtext.cpp" line="273"/>
+        <location filename="../toscintilla.cpp" line="273"/>
         <source>File opened successfully</source>
         <translation>File aperto correttamente</translation>
     </message>
     <message>
-        <location filename="../tomarkedtext.cpp" line="281"/>
+        <location filename="../toscintilla.cpp" line="281"/>
         <source>Save changes?</source>
         <translation>Salvare le modifiche?</translation>
     </message>
     <message>
-        <location filename="../tomarkedtext.cpp" line="283"/>
+        <location filename="../toscintilla.cpp" line="283"/>
         <source>The editor has been changed, do you want to save them
 before opening a new file?</source>
         <translation>L&apos;editor è stato cambiato, vuoi salvare le modifiche
 prima di aprire un nuovo file?</translation>
     </message>
     <message>
-        <location filename="../tomarkedtext.cpp" line="284"/>
+        <location filename="../toscintilla.cpp" line="284"/>
         <source>&amp;Yes</source>
         <translation>&amp;Sì</translation>
     </message>
     <message>
-        <location filename="../tomarkedtext.cpp" line="284"/>
+        <location filename="../toscintilla.cpp" line="284"/>
         <source>&amp;No</source>
         <translation>&amp;No</translation>
     </message>
     <message>
-        <location filename="../tomarkedtext.cpp" line="284"/>
+        <location filename="../toscintilla.cpp" line="284"/>
         <source>Cancel</source>
         <translation>Annulla</translation>
     </message>
     <message>
-        <location filename="../tomarkedtext.cpp" line="519"/>
+        <location filename="../toscintilla.cpp" line="519"/>
         <source>Incremental search</source>
         <translation>Ricerca incrementale</translation>
     </message>
     <message>
-        <location filename="../tomarkedtext.cpp" line="242"/>
+        <location filename="../toscintilla.cpp" line="242"/>
         <source>Print %1</source>
         <translation>Stampa %1</translation>
     </message>
     <message>
-        <location filename="../tomarkedtext.cpp" line="249"/>
+        <location filename="../toscintilla.cpp" line="249"/>
         <source>Print Document</source>
         <translation>Stampa Documento</translation>
     </message>
     <message>
-        <location filename="../tomarkedtext.cpp" line="826"/>
+        <location filename="../toscintilla.cpp" line="826"/>
         <source>&amp;Undo</source>
         <translation>Ann&amp;ulla</translation>
     </message>
     <message>
-        <location filename="../tomarkedtext.cpp" line="833"/>
+        <location filename="../toscintilla.cpp" line="833"/>
         <source>&amp;Redo</source>
         <translation>&amp;Ripeti</translation>
     </message>
     <message>
-        <location filename="../tomarkedtext.cpp" line="842"/>
+        <location filename="../toscintilla.cpp" line="842"/>
         <source>Cu&amp;t</source>
         <translation>&amp;Taglia</translation>
     </message>
     <message>
-        <location filename="../tomarkedtext.cpp" line="846"/>
+        <location filename="../toscintilla.cpp" line="846"/>
         <source>Cut to clipboard</source>
         <translation type="unfinished">Taglia</translation>
     </message>
     <message>
-        <location filename="../tomarkedtext.cpp" line="850"/>
+        <location filename="../toscintilla.cpp" line="850"/>
         <source>&amp;Copy</source>
         <translation type="unfinished">&amp;Copia</translation>
     </message>
     <message>
-        <location filename="../tomarkedtext.cpp" line="854"/>
+        <location filename="../toscintilla.cpp" line="854"/>
         <source>Copy to clipboard</source>
         <translation type="unfinished">Copia</translation>
     </message>
     <message>
-        <location filename="../tomarkedtext.cpp" line="858"/>
+        <location filename="../toscintilla.cpp" line="858"/>
         <source>&amp;Paste</source>
         <translation>&amp;Incolla</translation>
     </message>
     <message>
-        <location filename="../tomarkedtext.cpp" line="862"/>
+        <location filename="../toscintilla.cpp" line="862"/>
         <source>Paste from clipboard</source>
         <translation>Incolla dagli appunti</translation>
     </message>
     <message>
-        <location filename="../tomarkedtext.cpp" line="866"/>
+        <location filename="../toscintilla.cpp" line="866"/>
         <source>Clear</source>
         <translation>Pulisci</translation>
     </message>
     <message>
-        <location filename="../tomarkedtext.cpp" line="869"/>
+        <location filename="../toscintilla.cpp" line="869"/>
         <source>Clear editor</source>
         <translation>Pulisci l&apos;editor</translation>
     </message>
     <message>
-        <location filename="../tomarkedtext.cpp" line="875"/>
+        <location filename="../toscintilla.cpp" line="875"/>
         <source>Select &amp;All</source>
         <translation>Seleziona &amp;Tutto</translation>
     </message>

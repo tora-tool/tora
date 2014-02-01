@@ -44,7 +44,7 @@ class QComboBox;
 class QLineEdit;
 class toTreeWidget;
 class QAction;
-class toMarkedText;
+class toScintilla;
 class toWorksheet;
 
 class toSQLEdit : public toToolWidget
@@ -53,7 +53,7 @@ class toSQLEdit : public toToolWidget
 
     toTreeWidget *Statements;
     QLineEdit    *Name;
-    toMarkedText *Description;
+    toScintilla *Description;
     QComboBox    *Version;
     toWorksheet  *Worksheet;
     QAction      *TrashButton;

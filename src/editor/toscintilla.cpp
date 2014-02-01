@@ -32,7 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "editor/tomarkedtext.h"
+#include "editor/toscintilla.h"
 #include "core/toconf.h"
 #include "core/toconfiguration.h"
 #include "core/toglobalevent.h"
@@ -63,7 +63,7 @@ void QSciMessage::notify()
 	Utils::toStatusMessage(text, true);
 }
 
-toMarkedText::toMarkedText(QWidget *parent, const char *name)
+toScintilla::toScintilla(QWidget *parent, const char *name)
 	: QsciScintilla(parent)
 	, DragStart()
 	, m_searchText()
@@ -112,12 +112,12 @@ toMarkedText::toMarkedText(QWidget *parent, const char *name)
     super::setMarginWidth(0, QString::fromAscii("00"));
 }
 
-toMarkedText::~toMarkedText()
+toScintilla::~toScintilla()
 {
 //	toEditWidget::lostFocus();
 }
 
-QString toMarkedText::wordAtPosition(int position, bool onlyWordCharacters /* = true */) const
+QString toScintilla::wordAtPosition(int position, bool onlyWordCharacters /* = true */) const
 {
     if (position < 0)
         return QString();
@@ -162,13 +162,13 @@ QString toMarkedText::wordAtPosition(int position, bool onlyWordCharacters /* = 
 }
 
 // Return the word at the given coordinates.
-QString toMarkedText::wordAtLineIndex(int line, int index) const
+QString toScintilla::wordAtLineIndex(int line, int index) const
 {
     return wordAtPosition(positionFromLineIndex(line, index));
 }
 
 // Convert a Scintilla string to a Qt Unicode string.
-QString toMarkedText::convertTextS2Q(const char *s) const
+QString toScintilla::convertTextS2Q(const char *s) const
 {
     if (isUtf8())
         return QString::fromUtf8(s);
@@ -176,14 +176,14 @@ QString toMarkedText::convertTextS2Q(const char *s) const
     return QString::fromLatin1(s);
 }
 
-void toMarkedText::linesChanged()
+void toScintilla::linesChanged()
 {
     int x = QString::number(lines()).length() + 1;
     setMarginWidth(0, QString().fill('0', x));
 
 }
 
-void toMarkedText::setWordWrap(bool enable)
+void toScintilla::setWordWrap(bool enable)
 {
     if (enable)
     {
@@ -199,7 +199,7 @@ void toMarkedText::setWordWrap(bool enable)
     }
 }
 
-void toMarkedText::setXMLWrap(bool wrap)
+void toScintilla::setXMLWrap(bool wrap)
 {
     if (wrap)
     {
@@ -221,7 +221,7 @@ void toMarkedText::setXMLWrap(bool wrap)
     }
 }
 
-void toMarkedText::print(const QString  &fname)
+void toScintilla::print(const QString  &fname)
 {
     QsciPrinter printer;
 
@@ -256,7 +256,7 @@ void toMarkedText::print(const QString  &fname)
     setMarginLineNumbers(0, true);
 }
 
-void toMarkedText::copy()
+void toScintilla::copy()
 {
 	QsciScintilla::copy();
 	QMimeData *md = new QMimeData();
@@ -286,7 +286,7 @@ void toMarkedText::copy()
     QApplication::clipboard()->setMimeData(md, QClipboard::Clipboard);
 }
 
-void toMarkedText::paste()
+void toScintilla::paste()
 {
 #ifdef QT_DEBUG
 	QMimeData const *md = QApplication::clipboard()->mimeData();
@@ -301,7 +301,7 @@ void toMarkedText::paste()
 	QsciScintilla::paste();
 }
 
-void toMarkedText::newLine(void)
+void toScintilla::newLine(void)
 {
     // new line
     switch (eolMode())
@@ -336,7 +336,7 @@ void toMarkedText::newLine(void)
     }
 }
 
-void toMarkedText::dropEvent(QDropEvent *e)
+void toScintilla::dropEvent(QDropEvent *e)
 {
     if(e->source() == this || e->source() == viewport())
     {
@@ -372,7 +372,7 @@ void toMarkedText::dropEvent(QDropEvent *e)
     setFocus();
 }
 
-void toMarkedText::mousePressEvent(QMouseEvent *e)
+void toScintilla::mousePressEvent(QMouseEvent *e)
 {
     DragStart = QPoint();
     if(e->button() == Qt::LeftButton && geometry().contains(e->pos()))
@@ -390,7 +390,7 @@ void toMarkedText::mousePressEvent(QMouseEvent *e)
     QsciScintilla::mousePressEvent(e);
 }
 
-void toMarkedText::keyPressEvent(QKeyEvent *e)
+void toScintilla::keyPressEvent(QKeyEvent *e)
 {
 //    if (Search)
 //    {
@@ -443,7 +443,7 @@ void toMarkedText::keyPressEvent(QKeyEvent *e)
 }
 
 #ifdef TORA3_GRAPH
-void toMarkedText::exportData(std::map<QString, QString> &data, const QString &prefix)
+void toScintilla::exportData(std::map<QString, QString> &data, const QString &prefix)
 {
     data[prefix + ":Filename"] = Filename;
     data[prefix + ":Text"] = text();
@@ -455,7 +455,7 @@ void toMarkedText::exportData(std::map<QString, QString> &data, const QString &p
         data[prefix + ":Edited"] = "Yes";
 }
 
-void toMarkedText::importData(std::map<QString, QString> &data, const QString &prefix)
+void toScintilla::importData(std::map<QString, QString> &data, const QString &prefix)
 {
     QString txt = data[prefix + ":Text"];
     if (txt != text())
@@ -481,7 +481,7 @@ static int FindIndex(const QString &str, int line, int col)
     return pos + col;
 }*/
 
-void toMarkedText::findPosition(int index, int &line, int &col)
+void toScintilla::findPosition(int index, int &line, int &col)
 {
     int pos = 0;
     for (int i = 0; i < lines(); i++)
@@ -501,7 +501,7 @@ void toMarkedText::findPosition(int index, int &line, int &col)
 }
 
 
-bool toMarkedText::findText(const QString &searchText, const QString &replaceText, Search::SearchFlags flags)
+bool toScintilla::findText(const QString &searchText, const QString &replaceText, Search::SearchFlags flags)
 {
     int line, index;
     bool found = false;
@@ -588,14 +588,14 @@ bool toMarkedText::findText(const QString &searchText, const QString &replaceTex
     return found; // TODO/FIXME: what to do with a retval?
 }
 
-void toMarkedText::findStop()
+void toScintilla::findStop()
 {
 	clearIndicatorRange(0, 0, lines(), lineLength(lines()-1), m_searchIndicator);
 }
 
 #if 0
 // TODO: this part is waiting for QScintilla backend feature (yet unimplemented).
-void toMarkedText::setSelectionType(int aType)
+void toScintilla::setSelectionType(int aType)
 {
     TLOG(2, toDecorator, __HERE__) << "setSelectionType" << SendScintilla(SCI_GETSELECTIONMODE) << aType;
     TLOG(2, toDecorator, __HERE__) << SendScintilla(SCI_SETSELECTIONMODE, aType);
@@ -603,7 +603,7 @@ void toMarkedText::setSelectionType(int aType)
 }
 #endif
 
-void toMarkedText::focusInEvent (QFocusEvent *e)
+void toScintilla::focusInEvent (QFocusEvent *e)
 {
     TLOG(9, toDecorator, __HERE__) << this << std::endl;
     QsciScintilla::focusInEvent(e);
@@ -614,16 +614,16 @@ void toMarkedText::focusInEvent (QFocusEvent *e)
     emit gotFocus();
 }
 
-void toMarkedText::focusOutEvent (QFocusEvent *e)
+void toScintilla::focusOutEvent (QFocusEvent *e)
 {
-    qDebug() << ">>> toMarkedText::focusOutEvent" << this;
+    qDebug() << ">>> toScintilla::focusOutEvent" << this;
     QsciScintilla::focusOutEvent(e);
     emit lostFocus();
 }
 
-void toMarkedText::contextMenuEvent(QContextMenuEvent *e)
+void toScintilla::contextMenuEvent(QContextMenuEvent *e)
 {
-    QPointer<toMarkedText> that = this;
+    QPointer<toScintilla> that = this;
     QPointer<QMenu> popup = createPopupMenu( e->pos() );
     if (!popup)
         return;
@@ -645,7 +645,7 @@ void toMarkedText::contextMenuEvent(QContextMenuEvent *e)
  * reimplement this function and return the created popup menu. Ownership
  * of the popup menu is transferred to the caller.
  */
-QMenu *toMarkedText::createPopupMenu(const QPoint& pos)
+QMenu *toScintilla::createPopupMenu(const QPoint& pos)
 {
     Q_UNUSED(pos);
 
@@ -707,7 +707,7 @@ QMenu *toMarkedText::createPopupMenu(const QPoint& pos)
     return popup;
 }
 
-QString toMarkedText::getHTML()
+QString toScintilla::getHTML()
 {
 	if (lexer() == NULL)
 		return QString::null;
@@ -1014,7 +1014,7 @@ static QString  GetRTFStyleChange(QString const& last, QString const& current)
 	return delta;
 }
 
-QString toMarkedText::getRTF()
+QString toScintilla::getRTF()
 {
 	if (lexer() == NULL)
 		return QString::null;
@@ -1237,7 +1237,7 @@ QString toMarkedText::getRTF()
 	return fp;
 }
 
-void toMarkedText::insert(const QString &str, bool select)
+void toScintilla::insert(const QString &str, bool select)
 {
     int lineFrom;
     int indexFrom;
@@ -1273,7 +1273,7 @@ void toMarkedText::insert(const QString &str, bool select)
  * additional movement to transit white space.
  * Used by cursor movement by word commands.
  */
-int toMarkedText::NextWordStart(int pos, int delta) {
+int toScintilla::NextWordStart(int pos, int delta) {
 	int length = text().length(); // get length in chars. (while pure length() return number of bytes)
 	if (delta < 0) {
 		while (pos > 0 && (m_charClasifier.GetClass(getByteAt(pos - 1)) == CharClassify::ccSpace))
@@ -1301,7 +1301,7 @@ int toMarkedText::NextWordStart(int pos, int delta) {
  * additional movement to transit white space.
  * Used by cursor movement by word commands.
  */
-int toMarkedText::NextWordEnd(int pos, int delta) {
+int toScintilla::NextWordEnd(int pos, int delta) {
 	int length = text().length(); // get length in chars. (while pure length() return number of bytes)
 	if (delta < 0) {
 		if (pos > 0) {
@@ -1329,25 +1329,25 @@ int toMarkedText::NextWordEnd(int pos, int delta) {
 	return pos;
 }
 
-char toMarkedText::getByteAt(int pos)
+char toScintilla::getByteAt(int pos)
 {
 	char ch = SendScintilla(SCI_GETCHARAT, pos);
 	return ch;
 }
 
-int toMarkedText::getStyleAt(int pos)
+int toScintilla::getStyleAt(int pos)
 {
 	int style = SendScintilla(QsciScintilla::SCI_GETSTYLEAT, pos);
 	return style;
 }
 
-int toMarkedText::getLevelAt(int line)
+int toScintilla::getLevelAt(int line)
 {
 	int level = SendScintilla(QsciScintilla::SCI_GETFOLDLEVEL, line);
 	return level;
 }
 
-wchar_t toMarkedText::getWCharAt(int pos) {
+wchar_t toScintilla::getWCharAt(int pos) {
 	//http://vacuproj.googlecode.com/svn/trunk/npscimoz/npscimoz/oldsrc/trunk.nsSciMoz.cxx
 	char _retval[4];
     /*
@@ -1471,13 +1471,13 @@ wchar_t toMarkedText::getWCharAt(int pos) {
     return byte;
 }
 
-toMarkedText::CharClassify toMarkedText::m_charClasifier;
+toScintilla::CharClassify toScintilla::m_charClasifier;
 
-toMarkedText::CharClassify::CharClassify() {
+toScintilla::CharClassify::CharClassify() {
 	SetDefaultCharClasses(true);
 }
 
-void toMarkedText::CharClassify::SetDefaultCharClasses(bool includeWordClass) {
+void toScintilla::CharClassify::SetDefaultCharClasses(bool includeWordClass) {
 	// Initialize all char classes to default values
 	for (int ch = 0; ch < 256; ch++) {
 		if (ch == '\r' || ch == '\n')
@@ -1491,7 +1491,7 @@ void toMarkedText::CharClassify::SetDefaultCharClasses(bool includeWordClass) {
 	}
 }
 
-void toMarkedText::CharClassify::SetCharClasses(const unsigned char *chars, cc newCharClass) {
+void toScintilla::CharClassify::SetCharClasses(const unsigned char *chars, cc newCharClass) {
 	// Apply the newCharClass to the specifed chars
 	if (chars) {
 		while (*chars) {
@@ -1501,7 +1501,7 @@ void toMarkedText::CharClassify::SetCharClasses(const unsigned char *chars, cc n
 	}
 }
 
-int toMarkedText::CharClassify::GetCharsOfClass(cc characterClass, unsigned char *buffer) {
+int toScintilla::CharClassify::GetCharsOfClass(cc characterClass, unsigned char *buffer) {
 	// Get characters belonging to the given char class; return the number
 	// of characters (if the buffer is NULL, don't write to it).
 	int count = 0;

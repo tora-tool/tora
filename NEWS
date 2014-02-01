@@ -1436,7 +1436,7 @@
 2001-12-11: Fixed problems with template browsing in MySQL.
 2001-12-11: Some more fixes to auto indent.
 2001-12-11: Fixed problem with current statement in sessions.
-2001-12-11: Made insert with mark visible outside toMarkedText.
+2001-12-11: Made insert with mark visible outside toScintilla.
 2001-12-11: Wrote obfuscation indent function.
 2001-12-11: Added user interface functions for auto indent.
 2001-12-11: Fixed problem with is in auto indent.

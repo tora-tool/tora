@@ -48,7 +48,7 @@
 #include "todebugtext.h"
 #include "core/tohelp.h"
 #include "editor/tohighlightedtext.h"
-#include "editor/tomarkedtext.h"
+#include "editor/toscintilla.h"
 #include "core/tomain.h"
 #include "tools/tooutput.h"
 #include "core/toparamget.h"
@@ -2359,7 +2359,7 @@ toDebug::toDebug(QWidget *main, toConnection &connection)
     Output->changeRefresh("None"); // disable output refresh timer until debugging starts
     DebugTabs->addTab(Output, tr("Debug &Output"));
 
-    RuntimeLog = new toMarkedText(DebugTabs);
+    RuntimeLog = new toScintilla(DebugTabs);
     DebugTabs->addTab(RuntimeLog, tr("&Runtime Log"));
 
     Editors = new QTabWidget(hsplitter);

@@ -47,7 +47,7 @@
 //#include <Qsci/qscilexersql.h>
 
 toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
-    : toMarkedText(parent)
+    : toScintilla(parent)
 	, highlighterType(QtSql)
     //TODO, syntaxColoring(toConfigurationSingle::Instance().highlightType())
 	// FIXME: disabled due repainting issues
@@ -156,7 +156,7 @@ void toHighlightedText::keyPressEvent(QKeyEvent * e)
         SendScintilla(SCI_SETSELECTIONSTART, pos, true);
         SendScintilla(SCI_SETSELECTIONEND, pos, true);
     }
-    toMarkedText::keyPressEvent(e);
+    toScintilla::keyPressEvent(e);
 }
 
 toHighlightedText::~toHighlightedText()
@@ -192,7 +192,7 @@ void toHighlightedText::autoCompleteFromAPIs()
 {
     complTimer->stop(); // it's a must to prevent infinite reopening
 	{
-		toMarkedText::autoCompleteFromAPIs();
+		toScintilla::autoCompleteFromAPIs();
 		return;
 	}
 }
@@ -341,7 +341,7 @@ void toHighlightedText::tableAtCursor(toCache::ObjectRef &table)
 	 * Theoretically I could use here SQLLexer::Lexer API if it was implemented for current database.
 	 * QScintilla API can not be used:
 	 *   - SCI_WORDENDPOSITION, SCI_WORDENDPOSITION do ignore punctuation chars like ('.')
-	 *   - Also toMarkedText::wordAtPosition() can not be used as string tokenizer
+	 *   - Also toScintilla::wordAtPosition() can not be used as string tokenizer
 	 *   - The closest implementation is Scintilla's MoveNextWordStart/MoveNextWordEnd but these methods are not accessible
 	 *
 	 *   This code loops over chars in the line buffer and queries the char-class and style for each char.

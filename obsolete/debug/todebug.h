@@ -104,7 +104,7 @@ class QToolButton;
 class toCodeModel;
 class toConnection;
 class toDebugText;
-class toMarkedText;
+class toScintilla;
 class toOutput;
 class toTreeWidget;
 class toTreeWidgetItem;
@@ -176,7 +176,7 @@ class toDebug : public toToolWidget
     toTreeWidget *Watch;
     toTreeWidget *Parameters;
     toOutput     *Output;
-    toMarkedText *RuntimeLog;
+    toScintilla *RuntimeLog;
 
     // Editors
     QTabWidget *Editors;
