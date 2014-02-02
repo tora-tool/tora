@@ -69,7 +69,6 @@ toScintilla::toScintilla(QWidget *parent, const char *name)
 	, m_searchText()
 	, m_flags()
 	, m_searchIndicator(9) // see QsciScintilla docs
-	, m_origContent()
 {
     if (name)
         setObjectName(name);
@@ -81,7 +80,7 @@ toScintilla::toScintilla(QWidget *parent, const char *name)
     super::setMarginLineNumbers(0, true);
     super::setCallTipsStyle(CallTipsNone);
 
-    // WARNING: it looks like this hack is mandatory for macosx. Oracle simly
+    // WARNING: it looks like this hack is mandatory for macosx. Oracle simply
     // doesn't understand mac's eols, so force to UNIX is a functional workaround
 #ifdef Q_WS_MAC
     super::setEolMode(QsciScintilla::EolUnix);
@@ -196,28 +195,6 @@ void toScintilla::setWordWrap(bool enable)
         setWrapMode(QsciScintilla::WrapNone);
         setWrapVisualFlags(QsciScintilla::WrapFlagNone,
                            QsciScintilla::WrapFlagNone);
-    }
-}
-
-void toScintilla::setXMLWrap(bool wrap)
-{
-    if (wrap)
-    {
-        QDomDocument d;
-        if (m_origContent.isEmpty())
-            m_origContent = text();
-        if (d.setContent(m_origContent))
-            setText(d.toString(2));
-        else
-            m_origContent.clear();
-    }
-    else
-    {
-        if (!m_origContent.isEmpty())
-        {
-            setText(m_origContent);
-            m_origContent.clear();
-        }
     }
 }
 

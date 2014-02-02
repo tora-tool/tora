@@ -397,6 +397,3 @@ bool toBaseEditor::hasSelectedText() const
 
 void toBaseEditor::setWordWrap(bool wrap)
 { m_editor->setWordWrap(wrap); };
-
-void toBaseEditor::setXMLWrap(bool wrap)
-{ m_editor->setXMLWrap(wrap); }

@@ -36,28 +36,20 @@
 #define TOSCINTILLA_H
 
 #include <Qsci/qsciscintilla.h>
-
+#include "core/toeditwidget.h"
 #include "core/utils.h"
 #include "editor/toeditglobals.h"
 
 #include <QtCore/QString>
-#include <QtCore/QTimer>
-#include <QtGui/QContextMenuEvent>
-#include <QtCore/QString>
-#include <QtGui/QDropEvent>
-#include <QtCore/QTimerEvent>
-#include <QtGui/QFocusEvent>
-#include <QtGui/QMouseEvent>
-#include <QtGui/QKeyEvent>
 #include <QtCore/QPoint>
-
-//#include <map>
+#include <QtGui/QContextMenuEvent>
 
 class QMenu;
+class QMouseEvent;
+class QFocusEvent;
+class QKeyEvent;
 class QsciPrinter;
 class QFileSystemWatcher;
-
-class toModelEditor;
 
 /**
  * Long story short - QScintilla::paint emits cursorPositionChanged
@@ -83,39 +75,9 @@ public slots:
  * menus and print support. It is based on QsciScintilla which is API compatible
  * with QTextEdit class. toEditWidget is abstract class representing copy/paste interface.
  */
-class toScintilla: public QsciScintilla//, public toEditWidget
+class toScintilla: public QsciScintilla //, public toEditWidget
 {
     Q_OBJECT;
-
-protected:
-    QSciMessage message;
-
-    typedef QsciScintilla super;
-    
-    /** Reimplemented for internal reasons.
-     */
-    virtual void mousePressEvent(QMouseEvent *e);
-
-    /** Reimplemented for internal reasons.
-     */
-    virtual void keyPressEvent(QKeyEvent *e);
-
-    // Copied from Scintilla CharClassify.h (does not support UTF8)
-    class CharClassify {
-    public:
-    	CharClassify();
-
-    	enum cc { ccSpace, ccNewLine, ccWord, ccPunctuation };
-    	void SetDefaultCharClasses(bool includeWordClass);
-    	void SetCharClasses(const unsigned char *chars, cc newCharClass);
-    	int GetCharsOfClass(cc charClass, unsigned char *buffer);
-    	cc GetClass(unsigned char ch) const { return static_cast<cc>(charClass[ch]);}
-    	bool IsWord(unsigned char ch) const { return static_cast<cc>(charClass[ch]) == ccWord;}
-
-    private:
-    	enum { maxChar=256 };
-    	unsigned char charClass[maxChar];    // not type cc to save space
-    };
 
 public:
     /** Create an editor.
@@ -205,12 +167,41 @@ public:
     int getLevelAt(int line);
     wchar_t getWCharAt(int pos);
 
+public slots:
+        void setWordWrap(bool);
+
+protected:
+    QSciMessage message;
+
+    typedef QsciScintilla super;
+    
+    /** Reimplemented for internal reasons.
+     */
+    virtual void mousePressEvent(QMouseEvent *e);
+
+    /** Reimplemented for internal reasons.
+     */
+    virtual void keyPressEvent(QKeyEvent *e);
+
+    // Copied from Scintilla CharClassify.h (does not support UTF8)
+    class CharClassify {
+    public:
+    	CharClassify();
+
+    	enum cc { ccSpace, ccNewLine, ccWord, ccPunctuation };
+    	void SetDefaultCharClasses(bool includeWordClass);
+    	void SetCharClasses(const unsigned char *chars, cc newCharClass);
+    	int GetCharsOfClass(cc charClass, unsigned char *buffer);
+    	cc GetClass(unsigned char ch) const { return static_cast<cc>(charClass[ch]);}
+    	bool IsWord(unsigned char ch) const { return static_cast<cc>(charClass[ch]) == ccWord;}
+
+    private:
+    	enum { maxChar=256 };
+    	unsigned char charClass[maxChar];    // not type cc to save space
+    };
+
 signals:
     void displayMenu(QMenu *);
-    // emitted when a new file is opened
-    void fileOpened(void);
-    void fileOpened(QString file);
-    void fileSaved(QString file);
 
     void gotFocus();
     void lostFocus();
@@ -243,19 +234,6 @@ private slots:
     //! \brief Handle line numbers in the editor on text change
     void linesChanged();
 
-public slots:
-
-    void setWordWrap(bool);
-
-    /*! \brief Tries to format XML content of the editor.
-    It's using "brute force" = expecting it's a xml string. If the QDomDocument fails
-    with parsing, nothing is changed.
-    The original content of the editor is stored in QString m_origContent. This attribute
-    is cleared if it's not needed
-    \param wrap true for use formatting, false for use original text
-    */
-    void setXMLWrap(bool wrap);
-
 private:
     QPoint DragStart;
 
@@ -263,10 +241,7 @@ private:
     Search::SearchFlags m_flags;
 
     //! Highlight all occurrences of m_searchText QScintilla indicator
-    int m_searchIndicator;
-
-    //! Original content of the editor for XML format functionality. See setXMLWrap()
-    QString m_origContent;
+    const int m_searchIndicator;
 
     struct StyleDefinition
     {

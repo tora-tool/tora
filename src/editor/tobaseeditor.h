@@ -125,7 +125,6 @@ public:
 
 public slots:
 	void setWordWrap(bool wrap);
-	void setXMLWrap(bool wrap);
 	void clear();
 
     virtual void searchReplace();
