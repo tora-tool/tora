@@ -42,6 +42,7 @@
 #include "core/toresulttableviewedit.h"
 #include "core/toresultmodeledit.h"
 #include "core/toconnectiontraits.h"
+#include "editor/toscintilla.h"
 #include "ui_toresultcontentfilterui.h"
 
 #include <QtGui/QToolBar>
@@ -333,7 +334,7 @@ void toResultTableData::changeFilter(bool checked)
 
     filter.AllTables->setChecked(AllFilter);
     filter.Order->setText(Order[FilterName]);
-    filter.Criteria->setText(Criteria[FilterName]);
+    filter.Criteria->sciEditor()->setText(Criteria[FilterName]);
 
 	filter.Columns->changeObject(toCache::ObjectRef(Owner, Table, Owner));
 
@@ -342,7 +343,7 @@ void toResultTableData::changeFilter(bool checked)
         AllFilter = filter.AllTables->isChecked();
 
         FilterName = filterName();
-        Criteria[FilterName] = filter.Criteria->text();
+        Criteria[FilterName] = filter.Criteria->sciEditor()->text();
         Order[FilterName] = filter.Order->text();
 
         maybeSave();

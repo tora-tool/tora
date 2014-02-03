@@ -57,13 +57,10 @@ public:
     toOutput(QWidget *parent, toConnection &connection, bool enabled = true);
     
     virtual ~toOutput();
+
     bool enabled(void);
 
-    void insertLine(const QString &str)
-    {
-        Output->append(str);
-        Output->setCursorPosition(Output->lines(), 0);
-    }
+    void insertLine(const QString &str);
 
 public slots:
     void clear(void);

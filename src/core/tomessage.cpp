@@ -33,6 +33,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "core/tomessage.h"
+#include "editor/toscintilla.h"
 
 #include <QtGui/QPushButton>
 #include <QtCore/QDateTime>
@@ -45,7 +46,7 @@ toMessage::toMessage(QWidget * parent, Qt::WindowFlags f)
 {
     setupUi(this);
     setModal(false);
-    Message->setReadOnly(true);
+    Message->sciEditor()->setReadOnly(true);
     buttonBox->button(QDialogButtonBox::Close)->setFocus(Qt::OtherFocusReason);
 
     QSettings s;
@@ -64,12 +65,12 @@ void toMessage::appendText(const QString & text)
     if (!isVisible())
         show();
 
-    int firstLine = Message->lines();
-    if (Message->lines() != 1)
-        Message->append("\n\n");
-    Message->append(QDateTime::currentDateTime().toString(Qt::TextDate) + "\n");
-    Message->append(text);
-    Message->ensureLineVisible((std::min)(firstLine+10, Message->lines()));
+    int firstLine = Message->sciEditor()->lines();
+    if (Message->sciEditor()->lines() != 1)
+        Message->sciEditor()->append("\n\n");
+    Message->sciEditor()->append(QDateTime::currentDateTime().toString(Qt::TextDate) + "\n");
+    Message->sciEditor()->append(text);
+    Message->sciEditor()->ensureLineVisible((std::min)(firstLine+10, Message->sciEditor()->lines()));
 }
 
 void toMessage::hideEvent(QHideEvent * event)

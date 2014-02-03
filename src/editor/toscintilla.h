@@ -119,6 +119,11 @@ public:
      */
     void findPosition(int index, int &line, int &col);
 
+    void gotoPosition(int pos);
+
+    int positionAfter(int pos, int offset);
+
+
     /** Insert text and optionallly mark inserted text.
      * @param str String to insert.
      * @param mark True if mark inserted as selected.

@@ -694,16 +694,16 @@ void toWorksheet::slotConnectionChanged(void)
 
 bool toWorksheet::checkSave()
 {
-    if (!Editor->isModified())
+    if (!Editor->sciEditor()->isModified())
         return true;
 
     if (!toConfigurationSingle::Instance().wsCheckSave())
     	return true;
 
     if (toConfigurationSingle::Instance().wsAutoSave() && !Editor->filename().isEmpty())
-    	if (Utils::toWriteFile(Editor->filename(), Editor->text()))
+    	if (Utils::toWriteFile(Editor->filename(), Editor->sciEditor()->text()))
     	{
-    		Editor->setModified(false);
+    		Editor->sciEditor()->setModified(false);
     		return true;
     	} else {
     		return false;
@@ -752,14 +752,14 @@ bool toWorksheet::checkSave()
     		{
     			return false;
     		} else {
-    			Editor->setModified(false);
+    			Editor->sciEditor()->setModified(false);
     			return true;
     		}
     	// Editor->filename if not empty => try to save it
     	} else {
-    		if (Utils::toWriteFile(Editor->filename(), Editor->text()))
+    		if (Utils::toWriteFile(Editor->filename(), Editor->sciEditor()->text()))
     		{
-    			Editor->setModified(false);
+    			Editor->sciEditor()->setModified(false);
     			return true;
     		} else {
     			return false;
@@ -770,7 +770,7 @@ bool toWorksheet::checkSave()
     {
     	// only ever called if closing widget, make sure this
     	// is not called again.
-    	Editor->setModified(false);
+    	Editor->sciEditor()->setModified(false);
     	return true;
     }
     default: // QMessageBox::Cancel
@@ -1312,7 +1312,7 @@ void toWorksheet::saveHistory(void)
 toSyntaxAnalyzer::statement toWorksheet::currentStatement() const
 {
     int cpos, cline;
-    Editor->getCursorPosition(&cline, &cpos);
+    Editor->sciEditor()->getCursorPosition(&cline, &cpos);
     toSyntaxAnalyzer *analyzer = Editor->editor()->analyzer();
     toSyntaxAnalyzer::statement stat = analyzer->getStatementAt(cline, cpos);
     analyzer->sanitizeStatement(stat);
@@ -1352,7 +1352,7 @@ void toWorksheet::slotFirstResult(const QString &sql,
     m_FirstDataReceived = true;
 
     if (error && result.offset() >= 0 && toConfigurationSingle::Instance().wsMoveToErr())
-    	Editor->setCursorPosition(m_lastQuery.lineFrom + result.line() - 1, result.column() - 1);
+    	Editor->sciEditor()->setCursorPosition(m_lastQuery.lineFrom + result.line() - 1, result.column() - 1);
 
     if (!error)
     {
@@ -1403,7 +1403,7 @@ void toWorksheet::slotUnhideResults()
 
 void toWorksheet::slotExecute()
 {
-    if (Editor->hasSelectedText())
+    if (Editor->sciEditor()->hasSelectedText())
     {
     	querySelection(Normal);
         return;
@@ -1414,7 +1414,7 @@ void toWorksheet::slotExecute()
 
 void toWorksheet::slotExplainPlan()
 {
-    if (Editor->hasSelectedText())
+    if (Editor->sciEditor()->hasSelectedText())
     {
     	querySelection(OnlyPlan);
         return ;
@@ -1442,12 +1442,12 @@ void toWorksheet::slotExecuteAll()
     toSyntaxAnalyzer::statementList stats = analyzer.getStatements(Editor->editor()->text());
 
     int cpos, cline, lastLinePos;
-    Editor->getCursorPosition(&cline, &cpos);
+    Editor->sciEditor()->getCursorPosition(&cline, &cpos);
 
     QProgressDialog dialog(tr("Executing all statements"),
                            tr("Cancel"),
                            0,
-                           Editor->lines(),
+                           Editor->sciEditor()->lines(),
                            this);
     Q_FOREACH(toSyntaxAnalyzer::statement stat, stats)
     {
@@ -1476,7 +1476,7 @@ void toWorksheet::slotExecuteAll()
         lastLinePos = stat.lineTo;
     }
 
-    Editor->setSelection(cline, 0, lastLinePos+1, 0);
+    Editor->sciEditor()->setSelection(cline, 0, lastLinePos+1, 0);
 }
 
 void toWorksheet::slotParse()
@@ -1496,8 +1496,8 @@ void toWorksheet::slotParse()
 			return;
 
 		int pos = stat.posFrom;
-		pos = Editor->positionAfter(pos, parseOffset);
-		Editor->gotoPosition(pos);
+		pos = Editor->sciEditor()->positionAfter(pos, parseOffset);
+		Editor->sciEditor()->gotoPosition(pos);
 		TLOG(1, toDecorator, __HERE__) << "Parse offset:" << parseOffset << std::endl;
 	}
 }
@@ -1772,7 +1772,7 @@ void toWorksheet::slotInsertSaved(QAction *act)
     if(!sql.isEmpty())
     {
         Editor->setFocus();
-        Editor->insert(sql);
+        Editor->sciEditor()->insert(sql);
     }
 }
 
@@ -1851,7 +1851,7 @@ void toWorksheet::slotSaveLast()
 
 void toWorksheet::insertStatement(const QString &str)
 {
-    QString txt = Editor->text();
+    QString txt = Editor->sciEditor()->text();
 
     int i = txt.indexOf(str);
 
@@ -1860,15 +1860,15 @@ void toWorksheet::insertStatement(const QString &str)
         int startCol, endCol;
         int startRow, endRow;
 
-        Editor->findPosition(i, startRow, startCol);
-        Editor->findPosition(i + str.length(), endRow, endCol);
+        Editor->sciEditor()->findPosition(i, startRow, startCol);
+        Editor->sciEditor()->findPosition(i + str.length(), endRow, endCol);
 
-        if (endCol < Editor->text(endRow).size())
+        if (endCol < Editor->sciEditor()->text(endRow).size())
         {
-            if (Editor->text(endRow).at(endCol) == ';')
+            if (Editor->sciEditor()->text(endRow).at(endCol) == ';')
                 endCol++;
         }
-        Editor->setSelection(startRow, startCol, endRow, endCol);
+        Editor->sciEditor()->setSelection(startRow, startCol, endRow, endCol);
     }
     else
     {
@@ -1878,7 +1878,7 @@ void toWorksheet::insertStatement(const QString &str)
             t += ";";
         }
 
-        Editor->insert(t, true);
+        Editor->sciEditor()->insert(t, true);
     }
 }
 
@@ -2017,7 +2017,7 @@ void toWorksheet::slotSetCaption(void)
     else
         filename = "Untitled";
 
-    name += (Editor->isModified() ?
+    name += (Editor->sciEditor()->isModified() ?
              QString(" - *") :
              QString(" - ")) + filename;
     toToolWidget::setCaption(name);

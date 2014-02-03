@@ -41,6 +41,7 @@
 #include "core/tosql.h"
 #include "core/toconfiguration.h"
 #include "core/utils.h"
+#include "editor/toscintilla.h"
 
 void toSGAStatement::viewResources(void)
 {
@@ -124,7 +125,7 @@ void toSGAStatement::changeTab(int index)
                 // TODO: toSQLParse disabled
                 // if (toConfigurationSingle::Instance().autoIndent())
                 // sql = toSQLParse::indent(sql);
-                SQLText->setText(sql);
+                SQLText->sciEditor()->setText(sql);
             }
             else if (CurrentTab == Plan)
             {

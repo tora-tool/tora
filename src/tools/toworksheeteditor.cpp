@@ -34,6 +34,7 @@
 
 #include "tools/toworksheeteditor.h"
 #include "tools/toworksheet.h"
+#include "editor/toscintilla.h"
 
 #include "core/utils.h"
 
@@ -60,7 +61,7 @@ bool toWorksheetEditor::editSave(bool askfile)
 bool toWorksheetEditor::editOpen(const QString &suggestedFile)
 {
     int ret = 1;
-    if (isModified())
+    if (sciEditor()->isModified())
     {
         // grab focus so user can see file and decide to save
         setFocus(Qt::OtherFocusReason);

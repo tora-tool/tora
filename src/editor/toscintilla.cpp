@@ -439,6 +439,18 @@ void toScintilla::findPosition(int index, int &line, int &col)
     return ;
 }
 
+void toScintilla::gotoPosition(int pos)
+{
+	long i = SendScintilla(QsciScintilla::SCI_GOTOPOS, pos);
+}
+
+int toScintilla::positionAfter(int pos, int offset)
+{
+	// Allow for multi-byte characters.
+	for(int i = 0; i < offset; i++)
+		pos = SendScintilla(QsciScintilla::SCI_POSITIONAFTER, pos);
+	return pos;
+}
 
 bool toScintilla::findText(const QString &searchText, const QString &replaceText, Search::SearchFlags flags)
 {

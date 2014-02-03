@@ -36,11 +36,12 @@
 #include "core/toeventquery.h"
 #include "core/toconfiguration.h"
 #include "core/utils.h"
+#include "editor/toscintilla.h"
 
 toResultField::toResultField(QWidget *parent, const char *name)
     : toHighlightedEditor(parent, name)
 {
-    setReadOnly(true);
+	sciEditor()->setReadOnly(true);
     Query = NULL;
     whichResultField = 1;
 }
@@ -117,7 +118,7 @@ void toResultField::slotPoll(void)
             }
             if (Unapplied.length() > THRESHOLD)
             {
-                append(Unapplied);
+            	sciEditor()->append(Unapplied);
                 Unapplied = QString::null;
             }
         }
@@ -144,7 +145,7 @@ void toResultField::slotQueryDone(void)
     	//        if (toConfigurationSingle::Instance().autoIndentRo() && !connection().providerIs("QMYSQL") && !connection().providerIs("Teradata"))
     	//            setText(toSQLParse::indent(text() + Unapplied));
     	//        else
-    	append(Unapplied);
+    	sciEditor()->append(Unapplied);
     }
     TOCATCH
     Unapplied = QString::null;
@@ -153,8 +154,8 @@ void toResultField::slotQueryDone(void)
     int line, col;
     QString buffer;
     QString firstWord, currentWord;
-    QString txt = text();
-    getCursorPosition(&line, &col);
+    QString txt = sciEditor()->text();
+    sciEditor()->getCursorPosition(&line, &col);
 
     //try {
     //  do {

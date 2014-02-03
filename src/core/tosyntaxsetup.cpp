@@ -105,9 +105,9 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
     	SyntaxComponent->addItem(colorName);
     }
     //Example->setAnalyzer(Analyzer);
-    Example->setReadOnly(true);
+    Example->sciEditor()->setReadOnly(true);
 
-    Example->setText(QString::fromLatin1("create procedure CheckObvious as\n"
+    Example->sciEditor()->setText(QString::fromLatin1("create procedure CheckObvious as\n"
                                          "begin\n"
                                          "  Quest:='Great'; -- This variable doesn't exist\n"
                                          "  if Quest = 'Great' then\n"

@@ -146,7 +146,7 @@ bool toPLSQL::viewSource(const QString &schema, const QString &name, const QStri
                 editor = te;
                 break;
             }
-            if (Editors->tabText(Editors->indexOf(te)) == tr("Unknown") && !te->editor()->isModified())
+            if (Editors->tabText(Editors->indexOf(te)) == tr("Unknown") && !te->editor()->sciEditor()->isModified())
                 editor = te;
         }
         if (!editor)
@@ -157,11 +157,11 @@ bool toPLSQL::viewSource(const QString &schema, const QString &name, const QStri
         }
         else
         {
-            editor->editor()->getCursorPosition(&row, &col);
+            editor->editor()->sciEditor()->getCursorPosition(&row, &col);
         }
         // set pointer to this PLSQLEditor to be used when saving packages/types
         editor->editor()->setEditor(this);
-        if (editor->editor()->lines() <= 1)
+        if (editor->editor()->sciEditor()->lines() <= 1)
         {
             editor->editor()->setData(schema, type, name);
             editor->editor()->readData(connection()/*, StackTrace*/);
@@ -175,7 +175,7 @@ bool toPLSQL::viewSource(const QString &schema, const QString &name, const QStri
 //                Editors->setTabIcon(Editors->indexOf(editor), QIcon());
         }
         Editors->setCurrentIndex(Editors->indexOf(editor));
-        editor->editor()->setCursorPosition(row, col);
+        editor->editor()->sciEditor()->setCursorPosition(row, col);
         if (setCurrent)
             editor->editor()->setCurrentDebugLine(line - 1);
         editor->setFocus();
@@ -660,7 +660,7 @@ void toPLSQL::parseResults(const QString buf, QMultiMap<int, QString> &res)
 */
 void toPLSQL::checkCode(void)
 {
-    if (currentEditor()->editor()->text().isEmpty())
+    if (currentEditor()->editor()->sciEditor()->text().isEmpty())
     {
         // do nothing if code text is empty
         return;
@@ -669,7 +669,7 @@ void toPLSQL::checkCode(void)
     QTemporaryFile tf;
     if (tf.open())
     {
-        if (!Utils::toWriteFile(tf.fileName(), currentEditor()->editor()->text()))
+        if (!Utils::toWriteFile(tf.fileName(), currentEditor()->editor()->sciEditor()->text()))
         {
 #ifdef DEBUG
             TLOG(2, toDecorator, __HERE__) << "Unable to write file (" + tf.fileName() + ")";

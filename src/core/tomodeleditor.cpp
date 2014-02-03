@@ -37,6 +37,7 @@
 #include "core/toglobalevent.h"
 #include "core/tomainwindow.h"
 #include "core/toqvalue.h"
+#include "editor/toscintilla.h"
 
 #include <QtGui/QKeyEvent>
 #include <QtGui/QVBoxLayout>
@@ -133,7 +134,7 @@ toModelEditor::toModelEditor(QWidget *parent,
     vbox->addWidget(Editor);
 
     Editable = Model->flags(Current) & Qt::ItemIsEditable;
-    Editor->setReadOnly(!Editable);
+    Editor->sciEditor()->setReadOnly(!Editable);
     Editor->setFocus();
     Editor->setWordWrap(true);
 
@@ -243,7 +244,7 @@ toModelEditor::toModelEditor(QWidget *parent,
     NullCheck = new QCheckBox(tr("NULL"), Toolbar);
     Toolbar->addWidget(NullCheck);
     connect(NullCheck, SIGNAL(toggled(bool)), this, SLOT(setNull(bool)));
-    NullCheck->setEnabled(!Editor->isReadOnly());
+    NullCheck->setEnabled(!Editor->sciEditor()->isReadOnly());
     NullCheck->setFocusPolicy(Qt::StrongFocus);
 
     Label = new QLabel(Toolbar);
@@ -280,27 +281,27 @@ void toModelEditor::writeSettings() const
 
 void toModelEditor::setText(const QString &str)
 {
-    Editor->setText(str);
+    Editor->sciEditor()->setText(str);
     NullCheck->setChecked(str.isNull());
-    Editor->setModified(false);
+    Editor->sciEditor()->setModified(false);
 }
 
 void toModelEditor::setNull(bool nul)
 {
-    Editor->setModified(true);
+    Editor->sciEditor()->setModified(true);
     Editor->setDisabled(nul);
 }
 
 void toModelEditor::store()
 {
-    if (Editor->isReadOnly())
+    if (Editor->sciEditor()->isReadOnly())
         return;
-    if (Editor->isModified())
+    if (Editor->sciEditor()->isModified())
     {
         if (!Editor->isEnabled())
             Model->setData(Current, QVariant(QString::null));
         else
-            Model->setData(Current, Editor->text());
+            Model->setData(Current, Editor->sciEditor()->text());
     }
     accept();
 }

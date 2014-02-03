@@ -40,6 +40,8 @@
 #include "core/tologger.h"
 #include "ts_log/ts_log_utils.h"
 
+#include <Qsci/qsciscintilla.h>
+
 #include <QtCore/QFileSystemWatcher>
 #include <QtCore/QtDebug>
 #include <QtCore/QDir>
@@ -132,7 +134,7 @@ void toBaseEditor::editPrint(void)
 
 bool toBaseEditor::editOpen(const QString &suggestedFile)
 {
-    if (isModified())
+    if (m_editor->isModified())
     {
         int ret = TOMessageBox::information(this,
                                             tr("Save changes?"),
@@ -183,7 +185,7 @@ bool toBaseEditor::editSave(bool askfile)
     if (askfile || fn.isEmpty())
       fn = Utils::toSaveFilename(fn, QString::null, this);
 
-    if (!fn.isEmpty() && Utils::toWriteFile(fn, text()))
+    if (!fn.isEmpty() && Utils::toWriteFile(fn, m_editor->text()))
     {
         toGlobalEventSingle::Instance().addRecentFile(fn);
         setFilename(fn);
@@ -223,7 +225,7 @@ void toBaseEditor::setEditFlags()
     {
     	FlagSet.Save = true;
     	FlagSet.Print = true;
-    	FlagSet.Copy = hasSelectedText();
+    	FlagSet.Copy = m_editor->hasSelectedText();
     	FlagSet.Search = true;
     	FlagSet.SelectAll = true;
     }
@@ -325,73 +327,6 @@ void toBaseEditor::setEditorFocus()
 	m_editor->findStop();
     m_editor->setFocus(Qt::OtherFocusReason);
 }
-
-void toBaseEditor::insert(const QString &str, bool select)
-{ m_editor->insert(str, select); }
-
-void toBaseEditor::findPosition(int index, int &line, int &col)
-{ m_editor->findPosition(index, line, col); }
-
-void toBaseEditor::setText(const QString &text)
-{ m_editor->setText(text); }
-
-QString toBaseEditor::text() const
-{ return m_editor->text(); }
-
-QString toBaseEditor::text(int line) const
-{ return m_editor->text(line); }
-
-void toBaseEditor::getCursorPosition(int *line, int *index) const
-{ m_editor->getCursorPosition(line, index); }
-
-void toBaseEditor::setCursorPosition(int line, int index)
-{ m_editor->setCursorPosition(line, index); }
-
-int toBaseEditor::positionAfter(int pos, int offset)
-{
-	// Allow for multi-byte characters.
-	for(int i = 0; i < offset; i++)
-		pos = m_editor->SendScintilla(QsciScintilla::SCI_POSITIONAFTER, pos);
-	return pos;
-}
-
-void toBaseEditor::gotoPosition(int pos)
-{
-	long i = m_editor->SendScintilla(QsciScintilla::SCI_GOTOPOS, pos);
-}
-
-void toBaseEditor::append(const QString &text)
-{ m_editor->append(text); }
-
-int toBaseEditor::lines() const
-{ return m_editor->lines(); }
-
-void toBaseEditor::setReadOnly(bool ro)
-{ m_editor->setReadOnly(ro); }
-
-bool toBaseEditor::isReadOnly () const
-{ return m_editor->isReadOnly(); }
-
-void toBaseEditor::setModified (bool m)
-{ m_editor->setModified(m); }
-
-bool toBaseEditor::isModified () const
-{ return m_editor->isModified(); }
-
-void toBaseEditor::ensureLineVisible (int line)
-{ m_editor->ensureLineVisible(line); }
-
-int toBaseEditor::lineLength(int line) const
-{ return m_editor->lineLength(line); }
-
-void toBaseEditor::setSelection(int lineFrom, int indexFrom, int lineTo, int indexTo)
-{ m_editor->setSelection(lineFrom, indexFrom, lineTo, indexTo); }
-
-QString toBaseEditor::selectedText() const
-{ return m_editor->selectedText(); }
-
-bool toBaseEditor::hasSelectedText() const
-{ return m_editor->hasSelectedText(); }
 
 void toBaseEditor::setWordWrap(bool wrap)
 { m_editor->setWordWrap(wrap); };

@@ -36,7 +36,7 @@
 #include "core/utils.h"
 #include "core/toconf.h"
 #include "core/toresultview.h"
-#include "core/tomainwindow.h"
+#include "editor/toscintilla.h"
 
 #include <QtGui/QKeyEvent>
 #include <QtGui/QVBoxLayout>
@@ -94,7 +94,7 @@ toMemoEditor::toMemoEditor(QWidget *parent,
     else
         Editor = new toMemoEditor::toMemoText(this);
     vbox->addWidget(Editor);
-    Editor->setReadOnly(Row < 0 || Col < 0 || listView());
+    Editor->sciEditor()->setReadOnly(Row < 0 || Col < 0 || listView());
     Editor->setFocus();
 
     QDialogButtonBox * buttonBox = new QDialogButtonBox(QDialogButtonBox::Close, Qt::Horizontal, this);
@@ -207,7 +207,7 @@ toMemoEditor::toMemoEditor(QWidget *parent,
     Null = new QCheckBox(tr("NULL"), Toolbar);
     Toolbar->addWidget(Null);
     connect(Null, SIGNAL(toggled(bool)), this, SLOT(null(bool)));
-    Null->setEnabled(!Editor->isReadOnly());
+    Null->setEnabled(!Editor->sciEditor()->isReadOnly());
     Null->setFocusPolicy(Qt::StrongFocus);
 
     setText(str);
@@ -256,45 +256,45 @@ void toMemoEditor::writeSettings() const
 
 void toMemoEditor::setText(const QString &str)
 {
-    Editor->setText(str);
+    Editor->sciEditor()->setText(str);
     Null->setChecked(str.isNull());
-    Editor->setModified(false);
+    Editor->sciEditor()->setModified(false);
 }
 
 void toMemoEditor::null(bool nul)
 {
-    Editor->setModified(true);
+    Editor->sciEditor()->setModified(true);
     Editor->setDisabled(nul);
 }
 
 QString toMemoEditor::text(void)
 {
-    return Editor->text();
+    return Editor->sciEditor()->text();
 }
 
 void toMemoEditor::store(void)
 {
-    if (Editor->isReadOnly())
+    if (Editor->sciEditor()->isReadOnly())
         return ;
-    if (Editor->isModified())
+    if (Editor->sciEditor()->isModified())
     {
         if (!Editor->isEnabled())
             emit changeData(Row, Col, QString::null);
         else
-            emit changeData(Row, Col, Editor->text());
+            emit changeData(Row, Col, Editor->sciEditor()->text());
     }
     accept();
 }
 
 void toMemoEditor::changePosition(int row, int cols)
 {
-    if (Editor->isModified())
+    if (Editor->sciEditor()->isModified())
     {
         if (!Editor->isEnabled())
             emit changeData(Row, Col, QString::null);
         else
-            emit changeData(Row, Col, Editor->text());
-        Editor->setModified(false);
+            emit changeData(Row, Col, Editor->sciEditor()->text());
+        Editor->sciEditor()->setModified(false);
     }
 
     toListView *lst = listView();

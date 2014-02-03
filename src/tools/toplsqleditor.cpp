@@ -43,6 +43,7 @@
 #include "core/totreewidget.h"
 #include "core/tosql.h"
 #include "core/toglobalevent.h"
+#include "editor/toscintilla.h"
 
 #include <QtCore/QSettings>
 #include <QtCore/QFileInfo>
@@ -177,7 +178,7 @@ static bool FindKeyword(toSQLParse::statement &statements, bool onlyNames,
 */
 bool toPLSQLEditor::compile(CompilationType t)
 {
-    QString str = text();
+    QString str = sciEditor()->text();
     bool ret = true; // indicates if compilation action was successfull
     if (str.isEmpty())
         return true;
@@ -442,8 +443,8 @@ bool toPLSQLEditor::readData(toConnection &conn/*, toTreeWidget *Stack*/)
             }
         }
         str += "\n/";
-        setText(str);
-        setModified(false);
+        sciEditor()->setText(str);
+        sciEditor()->setModified(false);
         setCurrentDebugLine(-1);
 
         emit contentChanged();
@@ -810,7 +811,7 @@ void toPLSQLWidget::goToError(QTreeWidgetItem * current, QTreeWidgetItem *)
     // do not try to move cursor when "parent" item in result list is selected
     if (current != m_errItem && current != m_warnItem && current != m_staticItem)
     {
-        m_editor->setCursorPosition(current->text(1).toInt() - 1, 0);
+        m_editor->sciEditor()->setCursorPosition(current->text(1).toInt() - 1, 0);
         m_editor->setFocus(Qt::OtherFocusReason);
     }
 } // goToError
@@ -822,7 +823,7 @@ void toPLSQLWidget::changeContent(toTreeWidgetItem *ci)
     {
         while (ci->parent())
             ci = ci->parent();
-        m_editor->setCursorPosition(item->Line, 0);
+        m_editor->sciEditor()->setCursorPosition(item->Line, 0);
     }
     m_editor->setFocus(Qt::OtherFocusReason);
 #ifdef AUTOEXPAND
@@ -879,21 +880,21 @@ bool toPLSQLEditor::editSave(bool askfile)
             // save specification first
             if (Type == "PACKAGE")
             {
-                if (!Utils::toWriteFile(fn, text() + "\n" +
-                                 other_part->text() + "\n"))
+                if (!Utils::toWriteFile(fn, sciEditor()->text() + "\n" +
+                                 other_part->sciEditor()->text() + "\n"))
                     return false;
             }
             else
             {
-                if (!Utils::toWriteFile(fn, other_part->text() + "\n" +
-                                 text() + "\n"))
+                if (!Utils::toWriteFile(fn, other_part->sciEditor()->text() + "\n" +
+                                 sciEditor()->text() + "\n"))
                     return false;
             }
             toGlobalEventSingle::Instance().addRecentFile(fn);
             toBaseEditor::setFilename(fn);
             other_part->setFilename(fn);
-            setModified(false);
-            other_part->setModified(false);
+            m_editor->setModified(false);
+            other_part->sciEditor()->setModified(false);
             emit fileSaved(fn);
             emit other_part->fileSaved(fn);
             return true;

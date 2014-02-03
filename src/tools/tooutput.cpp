@@ -39,6 +39,7 @@
 #include "core/toglobalevent.h"
 #include "core/toconfiguration.h"
 #include "core/utils.h"
+#include "editor/toscintilla.h"
 
 #include <map>
 
@@ -401,6 +402,12 @@ void toOutput::changeRefresh(const QString &str)
 bool toOutput::enabled(void)
 {
     return !enableAct->isChecked();
+}
+
+void toOutput::insertLine(const QString &str)
+{
+    Output->sciEditor()->append(str);
+    Output->sciEditor()->setCursorPosition((*Output)->lines(), 0);
 }
 
 static toSQL SQLLog("toLogOutput:Poll",

@@ -43,6 +43,9 @@
 class toScintilla;
 class QFileSystemWatcher;
 
+/** This class implements toEditWidget API (thus connects this widget to TOra's edit menus)
+ *	It connects class toScintilla instance with with toSearchReplace.
+ */
 class toBaseEditor : public QWidget, public toEditWidget
 {
 	Q_OBJECT;
@@ -63,7 +66,6 @@ public:
     virtual bool editOpen(const QString &suggestedFile = QString::null);
     virtual bool editSave(bool askfile);
 	virtual bool searchNext();
-
 	virtual void editReadAll();
 
     /** Get filename of current file in editor.
@@ -87,41 +89,20 @@ public:
         Filename = str;
     }
 
-    /** Insert text and optionallly mark inserted text.
-     * @param str String to insert.
-     * @param mark True if mark inserted as selected.
-     */
-    virtual void insert(const QString &str, bool select = false);
+    toScintilla* operator->()
+    {
+    	return m_editor;
+    }
 
+    toScintilla const* operator->() const
+    {
+    	return m_editor;
+    }
 
-    void findPosition(int index, int &line, int &col);
-
-	// QsciScintilla wrapper
-	QString text() const;
-	QString text (int line) const;
-	void setText(const QString &text);
-	void append(const QString &text);
-
-	void getCursorPosition(int *line, int *index) const;
-	void setCursorPosition(int line, int index);
-
-	int positionAfter(int pos, int offset = 1);
-	void gotoPosition(int pos);
-
-	int lines() const;
-	int lineLength(int line) const;
-
-	bool isReadOnly () const;
-	void setReadOnly(bool ro);
-
-	bool isModified () const;
-	void setModified (bool m);
-
-	void ensureLineVisible (int line);
-
-    void setSelection(int lineFrom, int indexFrom, int lineTo, int indexTo);
-    QString selectedText() const;
-    bool hasSelectedText() const;
+    toScintilla *sciEditor()
+    {
+    	return m_editor;
+    }
 
 public slots:
 	void setWordWrap(bool wrap);
@@ -140,17 +121,6 @@ signals:
 protected:
     toScintilla *m_editor;
 
-private:
-    //! Filename of the file in this buffer.
-    QString Filename;
-
-    //! Watch for file (if any) changes from external apps
-    QFileSystemWatcher * m_fsWatcher;
-
-    toSearchReplace *m_search;
-
-    void fsWatcherClear();
-
 private slots:
 	//! \brief Handle file external changes (3rd party modifications)
 	void m_fsWatcher_fileChanged(const QString & filename);
@@ -166,6 +136,17 @@ private slots:
 
     void gotFocus();
     void lostFocus();
+
+private:
+    //! Filename of the file in this buffer.
+    QString Filename;
+
+    //! Watch for file (if any) changes from external apps
+    QFileSystemWatcher * m_fsWatcher;
+
+    toSearchReplace *m_search;
+
+    void fsWatcherClear();
 };
 
 #endif
