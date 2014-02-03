@@ -593,7 +593,7 @@ void toScintilla::focusInEvent (QFocusEvent *e)
 
 void toScintilla::focusOutEvent (QFocusEvent *e)
 {
-    qDebug() << ">>> toScintilla::focusOutEvent" << this;
+	TLOG(9, toDecorator, __HERE__) << this << std::endl;
     QsciScintilla::focusOutEvent(e);
     emit lostFocus();
 }

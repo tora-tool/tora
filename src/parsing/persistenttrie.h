@@ -36,9 +36,9 @@
 
 #include <utility>
 
-QT_FORWARD_DECLARE_CLASS(QString)
-QT_FORWARD_DECLARE_CLASS(QStringList)
-QT_FORWARD_DECLARE_CLASS(QDebug)
+class QString;
+class QStringList;
+class QDebug;
 
 namespace QmlJS {
 namespace PersistentTrie {

@@ -126,6 +126,7 @@ toCache::toCache(toConnection &parentConnection, QString const &description)
 	, parentConn(parentConnection)
 	, m_threadWorker(new QThread(this))
 	, m_cacheWorker(new toCacheWorker(parentConn))
+	, m_trie(new QmlJS::PersistentTrie::Trie())
 {
 	m_threadWorker->setObjectName("toCacheWorker thread");
 	m_cacheWorker->moveToThread(m_threadWorker);
@@ -215,6 +216,12 @@ toCache::CacheEntry const* toCache::findEntry(toCache::ObjectRef const& o) const
 		return entryMap.value(objRef2, NULL);
 	}
 	return entryMap.value(o, NULL);
+}
+
+QStringList toCache::completeEntry(QString const& tab) const
+{
+	using namespace QmlJS::PersistentTrie;
+	return m_trie->complete(tab, "", LookupFlags(CaseInsensitive));
 }
 
 QList<toCache::CacheEntry const*> toCache::getEntriesInSchema(QString const& schema, CacheEntryType type) const
@@ -311,6 +318,8 @@ void toCache::upsertEntry(toCache::CacheEntry* e)
 		// no break
 	case TABLE:
 	case VIEW:
+		m_trie->insert(e->name.second);
+		// no break
 	case PROCEDURE:
 	case FUNCTION:
 	case PACKAGE:
@@ -699,6 +708,8 @@ void toCache::clearCache() {
 	}
 	ownersMap.clear();
 	usersMap.clear();
+
+	m_trie = QSharedPointer<QmlJS::PersistentTrie::Trie>(new QmlJS::PersistentTrie::Trie());
 }
 ;
 

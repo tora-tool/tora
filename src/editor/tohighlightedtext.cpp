@@ -33,6 +33,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "editor/tohighlightedtext.h"
+#include "core/toconnection.h"
 #include "core/toconnectiontraits.h"
 #include "core/toconfiguration.h"
 #include "core/tologger.h"
@@ -155,6 +156,15 @@ void toHighlightedText::keyPressEvent(QKeyEvent * e)
         }
         SendScintilla(SCI_SETSELECTIONSTART, pos, true);
         SendScintilla(SCI_SETSELECTIONEND, pos, true);
+    } else if (e->modifiers() == Qt::ControlModifier && e->key() == Qt::Key_T) {
+        int curline, curcol;
+        getCursorPosition (&curline, &curcol);
+        QString word = wordAtLineIndex(curline, curcol);
+        QStringList tabs = toConnection::currentConnection(this).getCache().completeEntry(word);
+        Q_FOREACH(QString t, tabs)
+        {
+        	TLOG(0, toNoDecorator, __HERE__) << " Tab: " << t << std::endl;
+        }
     }
     toScintilla::keyPressEvent(e);
 }

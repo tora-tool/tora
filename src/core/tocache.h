@@ -37,6 +37,8 @@
 
 #include "core/tora_export.h"
 
+#include "parsing/persistenttrie.h"
+
 #include <QtCore/QMetaType>
 #include <QtCore/QDate>
 #include <QtCore/QList>
@@ -294,6 +296,8 @@ public:
      */
     CacheEntry const* findEntry(ObjectRef const&) const;
 
+    QStringList completeEntry(QString const&) const;
+
     /** Query the cache for entries of particular type
      */
     QList<CacheEntry const *> getEntriesInSchema(QString const& schema, CacheEntryType type = ANY) const;
@@ -424,6 +428,8 @@ private:
 
     QThread *m_threadWorker;
     toCacheWorker *m_cacheWorker;
+
+    QSharedPointer<QmlJS::PersistentTrie::Trie> m_trie;
 
 signals:
        void userListRefreshed(void);
