@@ -65,11 +65,6 @@ toViewDirectory::toViewDirectory(QWidget *parent,
             this,
             SLOT(handleToolAdded(toToolWidget *)));
 
-    // connect(toMainWidget()->workspace(),
-    //         SIGNAL(subWindowActivated(QMdiSubWindow *)),
-    //         this,
-    //         SLOT(windowActivated(QMdiSubWindow *)));
-
     setWidget(ListView);
 
     // default to the default file in worksheet editor if specified
@@ -98,9 +93,13 @@ void toViewDirectory::findRoot(QFileInfo dir)
     if(!dir.isDir())
         dir = QFileInfo(dir.absoluteDir().absolutePath());
 
-    QModelIndex parent = Model->index(dir.absoluteFilePath());
+    QPersistentModelIndex parent = Model->index(dir.absoluteFilePath());
+    parent = Model->index(dir.absoluteFilePath());
     ListView->setRootIndex(parent);
-    Model->refresh(parent);
+    //ListView->setCurrentIndex(parent);
+    // TODO this causes
+    // "QPersistentModelIndex::~QPersistentModelIndex: "persistent model indexes corrupted"
+    // Model->refresh(parent);
 }
 
 
@@ -160,18 +159,3 @@ void toViewDirectory::showFile(QString file)
                                        QItemSelectionModel::ClearAndSelect);
     ListView->setCurrentIndex(index);
 }
-
-
-//void toViewDirectory::windowActivated(QMdiSubWindow *w)
-//{
-//    if(!w || !w->widget())
-//        return;
-//
-//    toWorksheet *sheet = dynamic_cast<toWorksheet *>(w->widget());
-//    if(!sheet)
-//        return;
-//
-//    QString file = sheet->editor()->filename();
-//    if(!file.isEmpty())
-//        showFile(file);
-//}

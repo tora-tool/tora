@@ -150,9 +150,10 @@ toMain::toMain()
     	this, SLOT(checkCaching()));
     connect(&toGlobalEventSingle::Instance(), SIGNAL(s_showMessage(QString, bool, bool)),
     	this, SLOT(showMessageImpl(QString, bool, bool)), Qt::QueuedConnection);
+    connect(&toGlobalEventSingle::Instance(), SIGNAL(s_editOpenFile(QString const&)),
+    		this, SLOT(editOpenFile(QString const&)));
     connect(&toWorkSpaceSingle::Instance(), SIGNAL(activeToolChaged(toToolWidget*)),
     		this, SLOT(slotActiveToolChaged(toToolWidget*)));
-
     
 #ifdef TORA3_SESSION
     if (toConfigurationSingle::Instance().restoreSession())
