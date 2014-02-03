@@ -49,6 +49,7 @@
 #include "core/toabout.h"
 #include "core/topreferences.h"
 #include "tools/toworksheet.h"
+#include "tools/toworksheeteditor.h"
 #include "tools/tobrowser.h"
 #include "core/toconfiguration.h"
 #include "core/toglobalevent.h"
@@ -76,7 +77,6 @@
 
 toMain::toMain()
 	: toMainWindow()
-	, toEditWidget::editHandler()
 	, BackgroundLabel(new toBackgroundLabel(statusBar()))
 	, editMenu(toEditMenuSingle::Instance())
 	, loggingWidget(toLoggingWidgetSingle::Instance())
@@ -757,22 +757,18 @@ void toMain::commandCallback(QAction *action)
 {
     QWidget *focus = qApp->focusWidget();
 
-    if (focus)
-    {
-		QString name = focus->objectName();
+//    if (focus)
+//    {
+//		QString name = focus->objectName();
+//        toEditWidget *edit = toEditWidget::findEdit(focus);
+//        if (edit && edit != Edit)
+//        	toEditMenuSingle::Instance().receivedFocus(edit);
+//        else if (focus->inherits("QLineEdit") || QString(focus->metaObject()->className()) == QString("QSpinBox"))
+//        	// TODO HUH? really?
+//        	toEditMenuSingle::Instance().receivedFocus(edit);
+//    }
 
-    	toEditWidget *Edit = toEditMenuSingle::Instance().editWidget();
-        toEditWidget *edit = toEditWidget::findEdit(focus);
-        if (edit && edit != Edit)
-        	toEditMenuSingle::Instance().receivedFocus(edit);
-        else if (focus->inherits("QLineEdit") || QString(focus->metaObject()->className()) == QString("QSpinBox"))
-        	// TODO HUH? really?
-        	toEditMenuSingle::Instance().receivedFocus(edit);
-    }
-
-    QWidget *currWidget = focus;
     toEditWidget *edit = toEditWidget::findEdit(focus);
-
     if (edit)
     {
         if (action == editMenu.redoAct)
@@ -809,7 +805,7 @@ void toMain::commandCallback(QAction *action)
             SelectionLabel->setText(action->isChecked() ? "Sel: Block" : "Sel: Normal");
         }
 #endif
-        else if (action == refreshAct)
+        else if (action == editMenu.readAllAct)
             edit->editReadAll();
         else if (action == editMenu.searchReplaceAct)
         {
@@ -885,10 +881,6 @@ void toMain::commandCallback(QAction *action)
         ConnectionSelection->setFocus();
     else if (action == quitAct)
         close();
-    // else if (action == cascadeAct)
-    //     workspace()->cascadeSubWindows();
-    // else if (action == tileAct)
-    //     workspace()->tileSubWindows();
     else if (action == helpCurrentAct)
         toHelp::displayHelp();
     else if (action == helpContentsAct)
@@ -1113,20 +1105,9 @@ void toMain::connectionSelectionChanged(void)
 void toMain::editOpenFile(const QString &file)
 {
     toWorksheet *sheet = 0;
-    toEditWidget *Edit = toEditMenuSingle::Instance().editWidget();
-    if(Edit)
-        sheet = dynamic_cast<toWorksheet *>(Edit);
-
-    // the only fscking way to find the tool on top, regardless of
-    // what's got focus or whatever.  this is called from docklets
-    // which usually have focus. though, manually setting focus on
-    // Workspace doesn't help either.
-    // if(!Workspace->subWindowList().isEmpty())
-    // {
-    //     QMdiSubWindow *sub = Workspace->subWindowList(QMdiArea::StackingOrder).last();
-    //     if(!sheet && sub)
-    //         sheet = dynamic_cast<toWorksheet *>(sub->widget());
-    // }
+//    toEditWidget *Edit = toEditMenuSingle::Instance().editWidget();
+//    if(Edit)
+//        sheet = dynamic_cast<toWorksheet *>(Edit);
 
     if(!sheet)
     {
@@ -1451,7 +1432,7 @@ void toMain::displayMessage(void)
 /** Handle events from toEditWidget subclasses */
 void toMain::receivedFocus(toEditWidget *widget)
 {
-	if (toWorksheet *sheet = dynamic_cast<toWorksheet *>(widget)) {
+	if (toWorksheetEditor *sheet = dynamic_cast<toWorksheetEditor *>(widget)) {
 		RowLabel->setText("?");
 		ColumnLabel->setText("?");
 	}

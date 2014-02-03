@@ -50,7 +50,7 @@ class toCodeOutline : public toDocklet
 {
     Q_OBJECT;
 
-    class editHandlerHolder: public toEditWidget::editHandler
+    class editHandlerHolder
     {
     public:
         editHandlerHolder() : m_current(NULL) {};

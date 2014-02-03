@@ -915,7 +915,6 @@ QString toListView::menuText(void)
 
 void toListView::focusInEvent(QFocusEvent *e)
 {
-    receivedFocus();
     toTreeWidget::focusInEvent(e);
 }
 

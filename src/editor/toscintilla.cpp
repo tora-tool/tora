@@ -33,6 +33,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "editor/toscintilla.h"
+#include "editor/tostyle.h"
 #include "core/toconf.h"
 #include "core/toconfiguration.h"
 #include "core/toglobalevent.h"
@@ -99,7 +100,7 @@ toScintilla::toScintilla(QWidget *parent, const char *name)
     super::setIndicatorDrawUnder(true, m_searchIndicator);
     // end of search all occurrences
 
-    connect(this, SIGNAL(linesChanged()), this, SLOT(linesChanged()));
+    connect(this, SIGNAL(linesChanged()), this, SLOT(slotLinesChanged()));
 
     // sets default tab width
     super::setTabWidth(toConfigurationSingle::Instance().tabStop());
@@ -175,7 +176,7 @@ QString toScintilla::convertTextS2Q(const char *s) const
     return QString::fromLatin1(s);
 }
 
-void toScintilla::linesChanged()
+void toScintilla::slotLinesChanged()
 {
     int x = QString::number(lines()).length() + 1;
     setMarginWidth(0, QString().fill('0', x));
@@ -242,9 +243,9 @@ void toScintilla::copy()
 	md->setText(txt);
 
 #if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
-	mime = getHTML();
+	mime = getSelectionAsHTML();
 #else defined(Q_OS_WIN)
-	mime = getRTF();
+	mime = getSelectionAsRTF();
 #endif
 
 	if (mime.isEmpty())
@@ -418,45 +419,6 @@ void toScintilla::keyPressEvent(QKeyEvent *e)
 	}
     QsciScintilla::keyPressEvent(e);
 }
-
-#ifdef TORA3_GRAPH
-void toScintilla::exportData(std::map<QString, QString> &data, const QString &prefix)
-{
-    data[prefix + ":Filename"] = Filename;
-    data[prefix + ":Text"] = text();
-    int curline, curcol;
-    getCursorPosition (&curline, &curcol);
-    data[prefix + ":Column"] = QString::number(curcol);
-    data[prefix + ":Line"] = QString::number(curline);
-    if (isModified())
-        data[prefix + ":Edited"] = "Yes";
-}
-
-void toScintilla::importData(std::map<QString, QString> &data, const QString &prefix)
-{
-    QString txt = data[prefix + ":Text"];
-    if (txt != text())
-        setText(txt);
-    Filename = data[prefix + ":Filename"];
-    setCursorPosition(data[prefix + ":Line"].toInt(), data[prefix + ":Column"].toInt());
-    if (data[prefix + ":Edited"].isEmpty())
-        setModified(false);
-}
-#endif
-
-/*
-static int FindIndex(const QString &str, int line, int col)
-{
-    int pos = 0;
-    for (int i = 0;i < line;i++)
-    {
-        pos = str.indexOf('\n', pos);
-        if (pos < 0)
-            return pos;
-        pos++;
-    }
-    return pos + col;
-}*/
 
 void toScintilla::findPosition(int index, int &line, int &col)
 {
@@ -684,7 +646,7 @@ QMenu *toScintilla::createPopupMenu(const QPoint& pos)
     return popup;
 }
 
-QString toScintilla::getHTML()
+QString toScintilla::getSelectionAsHTML()
 {
 	if (lexer() == NULL)
 		return QString::null;
@@ -756,9 +718,9 @@ QString toScintilla::getHTML()
 			QColor fore = lexer()->color(istyle);
 			QColor back = lexer()->paper(istyle);
 			QString styledSpan = "<span style=\"";
-			//			if (CurrentBuffer()->useMonoFont && sd.font.length() && sdmono.font.length()) {
-			//				sd.font = sdmono.font;
-			//				sd.size = sdmono.size;
+			//			if (CurrentBuffer()->useMonoFont && sd.Font.length() && sdmono.Font.length()) {
+			//				sd.Font = sdmono.Font;
+			//				sd.Size = sdmono.Size;
 			//				sd.italics = sdmono.italics;
 			//				sd.weight = sdmono.weight;
 			//			}
@@ -991,7 +953,7 @@ static QString  GetRTFStyleChange(QString const& last, QString const& current)
 	return delta;
 }
 
-QString toScintilla::getRTF()
+QString toScintilla::getSelectionAsRTF()
 {
 	if (lexer() == NULL)
 		return QString::null;
@@ -1037,14 +999,7 @@ QString toScintilla::getRTF()
 	recolor();
 
 	// Read the default settings
-	StyleDefinition defaultStyle;
-	defaultStyle.font = lexer()->font(STYLE_DEFAULT);
-	defaultStyle.size = lexer()->font(STYLE_DEFAULT).pointSize();
-	defaultStyle.fore = lexer()->color(STYLE_DEFAULT);
-	defaultStyle.back = lexer()->paper(STYLE_DEFAULT);
-	defaultStyle.weight = lexer()->font(STYLE_DEFAULT).weight();
-	defaultStyle.italics = lexer()->font(STYLE_DEFAULT).italic();
-	defaultStyle.bold= lexer()->font(STYLE_DEFAULT).bold();
+	toStyle defaultStyle(lexer()->color(STYLE_DEFAULT), lexer()->paper(STYLE_DEFAULT), lexer()->font(STYLE_DEFAULT));
 
 	bool tabs = true;
 	int tabSize = 4;
@@ -1061,17 +1016,17 @@ QString toScintilla::getRTF()
 
 	QString fontFace = sdmono.family();
 	if (fontFace.length()) {
-		defaultStyle.font = fontFace;
-	} else if (defaultStyle.font.family().isEmpty()) {
-		defaultStyle.font = RTF_FONTFACE;
+		defaultStyle.Font = fontFace;
+	} else if (defaultStyle.Font.family().isEmpty()) {
+		defaultStyle.Font = RTF_FONTFACE;
 	}
 	int fontSize = sdmono.pointSize();
 	if (fontSize > 0) {
-		defaultStyle.size = fontSize << 1;
-	} else if (defaultStyle.size == 0) {
-		defaultStyle.size = 10 << 1;
+		defaultStyle.Size = fontSize << 1;
+	} else if (defaultStyle.Size == 0) {
+		defaultStyle.Size = 10 << 1;
 	} else {
-		defaultStyle.size <<= 1;
+		defaultStyle.Size <<= 1;
 	}
 
 	QString styles[STYLE_DEFAULT + 1];
@@ -1084,61 +1039,54 @@ QString toScintilla::getRTF()
 	{ // fonts definitions
 		fp += RTF_FONTDEFOPEN;
 
-		fonts[0] = defaultStyle.font;
+		fonts[0] = defaultStyle.Font;
 
 		unsigned int characterset = 1; //props.GetInt("character.set", SC_CHARSET_DEFAULT);
-		fp += RTF_FONTDEF.arg(0).arg(characterset).arg(defaultStyle.font.family());
+		fp += RTF_FONTDEF.arg(0).arg(characterset).arg(defaultStyle.Font.family());
 
-		colors[0] = defaultStyle.fore;
-		colors[1] = defaultStyle.back;
+		colors[0] = defaultStyle.FGColor;
+		colors[1] = defaultStyle.BGColor;
 
 		for (int istyle = 0; istyle < STYLE_DEFAULT; istyle++) {
-			StyleDefinition sd;
-			sd.font = lexer()->font(istyle);
-			sd.size = lexer()->font(istyle).pointSize();
-			sd.fore = lexer()->color(istyle);
-			sd.back = lexer()->paper(istyle);
-			sd.weight = lexer()->font(istyle).weight();
-			sd.italics = lexer()->font(istyle).italic();
-			sd.bold= lexer()->font(istyle).bold();
+			toStyle sd(lexer()->color(istyle), lexer()->paper(istyle), lexer()->font(istyle));
 
 			for (i = 0; i < fontCount; i++)
-				if (sd.font == fonts[i])
+				if (sd.Font == fonts[i])
 					break;
 			if (i >= fontCount) {
-				fonts[fontCount++] = sd.font;
-				fp += RTF_FONTDEF.arg(i).arg(characterset).arg(sd.font.family());
+				fonts[fontCount++] = sd.Font;
+				fp += RTF_FONTDEF.arg(i).arg(characterset).arg(sd.Font.family());
 			}
 			lastStyle += RTF_SETFONTFACE.arg(i);
 			//lastStyle += RTF_SETFONTFACE + "0";
 
-			lastStyle += RTF_SETFONTSIZE.arg( sd.size ? sd.size << 1 : defaultStyle.size);
+			lastStyle += RTF_SETFONTSIZE.arg( sd.Size ? sd.Size << 1 : defaultStyle.Size);
 
 			for (i = 0; i < colorCount; i++)
-				if (sd.fore == colors[i])
+				if (sd.FGColor == colors[i])
 					break;
 			if (i >= colorCount)
-				colors[colorCount++] = sd.fore;
+				colors[colorCount++] = sd.FGColor;
 			lastStyle += RTF_SETCOLOR.arg(i);
 			//lastStyle += RTF_SETCOLOR "0";	// Default fore
 
 			for (i = 0; i < colorCount; i++)
-				if (sd.back == colors[i])
+				if (sd.BGColor == colors[i])
 					break;
 			if (i >= colorCount)
-				colors[colorCount++] = sd.back;
+				colors[colorCount++] = sd.BGColor;
 			lastStyle += RTF_SETBACKGROUND.arg(i);
 			//lastStyle += RTF_SETBACKGROUND + "1";	// Default back (use only one default background)
 
 
-			lastStyle += sd.bold ? RTF_BOLD_ON : RTF_BOLD_OFF;
-			lastStyle += sd.italics ? RTF_ITALIC_ON : RTF_ITALIC_OFF;
+			lastStyle += sd.Bold ? RTF_BOLD_ON : RTF_BOLD_OFF;
+			lastStyle += sd.Italics ? RTF_ITALIC_ON : RTF_ITALIC_OFF;
 
 			styles[istyle] = lastStyle;
 			lastStyle.truncate(0);
 		}
 		styles[STYLE_DEFAULT] = RTF_SETFONTFACE.arg("0")
-				+ RTF_SETFONTSIZE.arg(defaultStyle.size)
+				+ RTF_SETFONTSIZE.arg(defaultStyle.Size)
 				+ RTF_SETCOLOR.arg("0")
 				+ RTF_SETBACKGROUND.arg("1")
 				+ RTF_BOLD_OFF
@@ -1157,7 +1105,7 @@ QString toScintilla::getRTF()
 
 	fp += RTF_BODYOPEN
 			+ RTF_SETFONTFACE.arg("0")
-			+ RTF_SETFONTSIZE.arg(defaultStyle.size)
+			+ RTF_SETFONTSIZE.arg(defaultStyle.Size)
 			+ RTF_SETCOLOR.arg("0 ");
 	lastStyle = styles[STYLE_DEFAULT];
 	bool prevCR = false;

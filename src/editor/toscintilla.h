@@ -78,7 +78,9 @@ public slots:
 class toScintilla: public QsciScintilla //, public toEditWidget
 {
     Q_OBJECT;
-
+    typedef QsciScintilla super;
+    friend class toEditWidget;
+    friend class toBaseEditor;
 public:
     /** Create an editor.
      * @param parent Parent of this widget.
@@ -87,15 +89,6 @@ public:
     toScintilla(QWidget *parent, const char *name = NULL);
 
     virtual ~toScintilla();
-
-    /** Get location of the current selection. This function is now public. See the
-     * Qt documentation for more information.
-     */
-    bool getSelection (int * line1, int * col1, int * line2, int * col2)
-    {
-        QsciScintilla::getSelection(line1, col1, line2, col2);
-        return hasSelectedText();
-    }
 
     /** Get word at position. This function is now public.
      * re-implemented from QScintilla
@@ -108,40 +101,15 @@ public:
 
     QString convertTextS2Q(const char *s) const;
 
+    int NextWordStart(int pos, int delta);
+    int NextWordEnd(int pos, int delta);
+
 #if 0
 // TODO: this part is waiting for QScintilla backend feature (yet unimplemented).
     /*! \brief Set the selection mode for editor.
     \param aType SC_SEL_STREAM = 0, SC_SEL_RECTANGLE = 1, SC_SEL_LINES = 2
     */
     void setSelectionType(int aType = SC_SEL_STREAM);
-#endif
-
-    void print(const QString &fname);
-
-    /** Reimplemented from QsciScintilla
-     * QsciScintilla's selectAll doesn't always work like we want.
-     */
-//    virtual void selectAll(bool select = TRUE);
-
-    /** Reimplemented from QsciScintilla
-     */
-    virtual void copy();
-
-    /** Reimplemented from QsciScintilla
-     */
-    virtual void paste();
-
-#ifdef TORA3_SESSION
-    /** Export data to a map.
-     * @param data A map that can be used to recreate the data of a chart.
-     * @param prefix Prefix to add to the map.
-     */
-    virtual void exportData(std::map<QString, QString> &data, const QString &prefix);
-    /** Import data
-     * @param data Data to read from a map.
-     * @param prefix Prefix to read data from.
-     */
-    virtual void importData(std::map<QString, QString> &data, const QString &prefix);
 #endif
 
     /** Find the line and column of an index into the string of the entire editor.
@@ -160,28 +128,39 @@ public:
     bool findText(const QString &searchText, const QString &replaceText, Search::SearchFlags flags);
     void findStop();
 
-    int NextWordStart(int pos, int delta);
-    int NextWordEnd(int pos, int delta);
     char getByteAt(int pos);
     int getStyleAt(int pos);
     int getLevelAt(int line);
     wchar_t getWCharAt(int pos);
 
 public slots:
-        void setWordWrap(bool);
+	void setWordWrap(bool);
 
 protected:
-    QSciMessage message;
-
-    typedef QsciScintilla super;
+	void print(const QString &fname);
     
-    /** Reimplemented for internal reasons.
-     */
+	// QsciScintilla API reimplementation
+
+    //! \reimp
     virtual void mousePressEvent(QMouseEvent *e);
 
-    /** Reimplemented for internal reasons.
-     */
+    //! \reimp
     virtual void keyPressEvent(QKeyEvent *e);
+
+    //! \reimp
+    virtual void focusInEvent(QFocusEvent *e);
+
+    //! \reimp
+    virtual void focusOutEvent(QFocusEvent *e);
+
+    //! \reimp
+    virtual void contextMenuEvent(QContextMenuEvent *);
+
+    //! \reimp
+    virtual void copy();
+
+    //! \reimp
+    virtual void paste();
 
     // Copied from Scintilla CharClassify.h (does not support UTF8)
     class CharClassify {
@@ -209,13 +188,6 @@ signals:
 protected:
     virtual void newLine(void);
     virtual void dropEvent(QDropEvent *);
-    /** Reimplemented from QsciScintilla
-     */
-    virtual void focusInEvent(QFocusEvent *e);
-    virtual void focusOutEvent(QFocusEvent *e);
-
-    //! \reimp
-    virtual void contextMenuEvent(QContextMenuEvent *);
 
     /**
      * This function is called to create a right mouse button popup menu
@@ -225,16 +197,18 @@ protected:
      */
     virtual QMenu *createPopupMenu(const QPoint& pos);
 
-    QString getHTML();
-    QString getRTF();
+    QString getSelectionAsHTML();
+    QString getSelectionAsRTF();
 
     static CharClassify m_charClasifier;
+    QSciMessage m_message;
 private slots:
 
     //! \brief Handle line numbers in the editor on text change
-    void linesChanged();
+    void slotLinesChanged();
 
 private:
+
     QPoint DragStart;
 
     QString m_searchText;
@@ -242,17 +216,6 @@ private:
 
     //! Highlight all occurrences of m_searchText QScintilla indicator
     const int m_searchIndicator;
-
-    struct StyleDefinition
-    {
-    	QFont font;
-    	int size;
-    	QColor fore;
-    	QColor back;
-    	int weight;
-    	bool italics;
-    	bool bold;
-    };
 };
 
 #endif

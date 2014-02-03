@@ -46,6 +46,10 @@ class toStyle : public QObject
 public:
 	toStyle() // make QMap happy
 	: QObject(NULL)
+	, Size()
+	, Weight()
+	, Italics()
+	, Bold()
 	{}
 
 	toStyle(const toStyle &other)
@@ -53,13 +57,21 @@ public:
 	, FGColor(other.FGColor)
 	, BGColor(other.BGColor)
 	, Font(other.Font)
+	, Size(other.Size)
+	, Weight(other.Weight)
+	, Italics(other.Italics)
+	, Bold(other.Bold)
 	{}
 
 	toStyle& operator =(const toStyle &other)
 	{
 		FGColor = other.FGColor;
 		BGColor = other.BGColor;
-		Font =other.Font;
+		Font    = other.Font;
+		Size    = other.Size;
+		Weight  = other.Weight;
+		Italics = other.Italics;
+		Bold    = other.Bold;
 		return *this;
 	}
 
@@ -68,11 +80,19 @@ public:
 	, FGColor(fg)
 	, BGColor(bg)
 	, Font(fo)
+	, Size(fo.pointSize())
+	, Weight(fo.weight())
+	, Italics(fo.italic())
+	, Bold()
 	{}
 
 	QColor FGColor;
 	QColor BGColor;
 	QFont Font;
+	int Size;
+	int Weight;
+	bool Italics;
+	bool Bold;
 };
 
 typedef QMap<int, toStyle> toStylesMap;

@@ -35,8 +35,6 @@
 #include "core/toeditwidget.h"
 #include "core/tomainwindow.h"
 
-std::list<toEditWidget::editHandler *> *toEditWidget::Handlers;
-
 toEditWidget::toEditWidget()
 	: FlagSet()
 {
@@ -44,76 +42,7 @@ toEditWidget::toEditWidget()
 
 toEditWidget::~toEditWidget()
 {
-	lostFocus();
 }
-
-void toEditWidget::addHandler(toEditWidget::editHandler *handler)
-{
-    if (!Handlers)
-        Handlers = new std::list<toEditWidget::editHandler *>;
-    for (std::list<toEditWidget::editHandler *>::iterator i = (*Handlers).begin();
-            i != (*Handlers).end();
-            i++)
-        if (*i == handler)
-            return ;
-    (*Handlers).insert((*Handlers).end(), handler);
-}
-
-void toEditWidget::delHandler(toEditWidget::editHandler *handler)
-{
-    for (std::list<toEditWidget::editHandler *>::iterator i = (*Handlers).begin();
-            i != (*Handlers).end();
-            i++)
-        if (*i == handler)
-        {
-            (*Handlers).erase(i);
-            break;
-        }
-}
-
-void toEditWidget::lostFocus(void)
-{
-    if (!Handlers)
-        return ;
-    for (std::list<editHandler *>::iterator i = (*Handlers).begin();
-            i != (*Handlers).end();
-            i++)
-    {
-        (*i)->lostFocus(this);
-    }
-}
-
-void toEditWidget::receivedFocus(void)
-{
-    if (!Handlers)
-        return ;
-    for (std::list<editHandler *>::iterator i = (*Handlers).begin();
-            i != (*Handlers).end();
-            i++)
-    {
-        (*i)->receivedFocus(this);
-    }
-}
-
-toEditWidget::editHandler::editHandler()
-{
-    toEditWidget::addHandler(this);
-}
-
-toEditWidget::editHandler::~editHandler()
-{
-    toEditWidget::delHandler(this);
-}
-
-//bool toEditWidget::editOpen(QString)
-//{
-//    return true;
-//}
-
-//bool toEditWidget::editSave(bool)
-//{
-//    return true;
-//}
 
 toEditWidget *toEditWidget::findEdit(QWidget *widget)
 {

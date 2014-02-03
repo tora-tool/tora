@@ -48,14 +48,13 @@
 
 toEditMenu::toEditMenu()
 	: QMenu(tr("&Edit"), NULL)
-	, toEditWidget::editHandler()
-	, m_editWidget(NULL)
 	, m_clipboardContent(false)
 	, m_pasteSupported(false)
 {
 	QClipboard const *clipBoard = QApplication::clipboard();
 	QMimeData const *mimeData = clipBoard->mimeData();
 	connect(clipBoard, SIGNAL(dataChanged()), this, SLOT(clipBoardChanged()));
+	connect(this, SIGNAL(aboutToShow()), this, SLOT(slotAboutToShow()));
 
 	m_clipboardContent = mimeData->hasText() && !clipBoard->text().isEmpty();
 
@@ -122,37 +121,6 @@ toEditMenu::toEditMenu()
     disableAll();
 }
 
-void toEditMenu::receivedFocus(toEditWidget *widget)
-{
-	m_editWidget = widget;
-	if(widget == NULL)
-	{
-		disableAll();
-		return;
-	}
-	m_pasteSupported = widget->FlagSet.Paste;
-    undoAct->setEnabled(widget->FlagSet.Undo);
-    redoAct->setEnabled(widget->FlagSet.Redo);
-
-    cutAct->setEnabled(widget->FlagSet.Cut);
-    copyAct->setEnabled(widget->FlagSet.Copy);
-    pasteAct->setEnabled(m_pasteSupported && m_clipboardContent);
-    searchReplaceAct->setEnabled(widget->FlagSet.Search);
-    searchNextAct->setEnabled(widget->FlagSet.Search);
-    selectAllAct->setEnabled(widget->FlagSet.SelectAll);
-#if 0 // TODO: this part is waiting for QScintilla backend feature (yet unimplemented).
-    selectBlockAct->setEnabled(widget->FlagSet.SelectAll);
-#endif
-    readAllAct->setEnabled(widget->FlagSet.ReadAll);
-}
-
-void toEditMenu::lostFocus(toEditWidget *widget)
-{
-	////Q_ASSERT_X(widget == m_editWidget, (__HERE__).c_str(), "");
-	disableAll();
-	m_editWidget = NULL;
-}
-
 void toEditMenu::disableAll() {
 	undoAct->setEnabled(false);
 	redoAct->setEnabled(false);
@@ -176,5 +144,29 @@ void toEditMenu::clipBoardChanged()
 {
 	QClipboard const *clipBoard = QApplication::clipboard();
 	QMimeData const *mimeData = clipBoard->mimeData();
-    pasteAct->setEnabled(m_pasteSupported && m_clipboardContent);
+	m_clipboardContent = mimeData->hasText() && !clipBoard->text().isEmpty();
+}
+
+void toEditMenu::slotAboutToShow()
+{
+	disableAll();
+
+	toEditWidget *editWidget = toEditWidget::findEdit(QApplication::focusWidget());
+	if (editWidget)
+	{
+		m_pasteSupported = editWidget->FlagSet.Paste;
+		undoAct->setEnabled(editWidget->FlagSet.Undo);
+		redoAct->setEnabled(editWidget->FlagSet.Redo);
+
+		cutAct->setEnabled(editWidget->FlagSet.Cut);
+		copyAct->setEnabled(editWidget->FlagSet.Copy);
+		pasteAct->setEnabled(m_pasteSupported && m_clipboardContent);
+		searchReplaceAct->setEnabled(editWidget->FlagSet.Search);
+		searchNextAct->setEnabled(editWidget->FlagSet.Search);
+		selectAllAct->setEnabled(editWidget->FlagSet.SelectAll);
+#if 0 // TODO: this part is waiting for QScintilla backend feature (yet unimplemented).
+		selectBlockAct->setEnabled(editWidget->FlagSet.SelectAll);
+#endif
+		readAllAct->setEnabled(editWidget->FlagSet.ReadAll);
+	}
 }

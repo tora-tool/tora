@@ -116,7 +116,6 @@ void toTextView::editSelectAll(void)
 
 void toTextView::focusInEvent (QFocusEvent *e)
 {
-    receivedFocus();
     QWidget::focusInEvent(e);
 }
 

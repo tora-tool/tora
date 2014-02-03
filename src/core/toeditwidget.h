@@ -48,25 +48,6 @@
 class toEditWidget
 {
 public:
-    /** Class used to extent how to enable/disable parts of the interface as
-     * focus changes.
-     */
-    class editHandler
-    {
-    public:
-        /** Constructor.
-         */
-        editHandler();
-        /** Destructor.
-         */
-        virtual ~editHandler();
-        /** Called when a new widget receives the focus.
-         */
-        virtual void receivedFocus(toEditWidget *widget) = 0;
-        /** Called when a widget loses the focus.
-         */
-        virtual void lostFocus(toEditWidget *widget) = 0;
-    };
 
     struct FlagSetStruct
     {
@@ -97,8 +78,7 @@ public:
         , ReadAll(false)
         {}
     } FlagSet;
-private:
-    static std::list<editHandler *> *Handlers;
+
 public:
     /** Empty constructor, all functions are disabled.
      */
@@ -153,9 +133,6 @@ public:
     So far it is used in toCodeOutline only.
     */
     virtual QString editText() = 0;
-    //{
-    //    return QString();
-    //}
 
     /*! \brief Search for next occrence of text
     This is pure virtual as it has to be implemented in all
@@ -167,20 +144,6 @@ public:
     separated children of toEditWidget.
     */
     virtual void searchReplace() = 0;
-
-    /** Call this when this widget has received the focus. Must be called by the implementor.
-     */
-    virtual void receivedFocus(void);
-    /** Called when this widget has lost the focus. Don't forget to call parent when reimplemented.
-     */
-    virtual void lostFocus(void);
-
-    /** Add a hook to be called every time focus changes.
-     */
-    static void addHandler(editHandler *handler);
-    /** Removed a hook from being called every time focus changes.
-     */
-    static void delHandler(editHandler *handler);
 
     static toEditWidget* findEdit(QWidget *widget);
 };

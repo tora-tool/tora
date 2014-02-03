@@ -757,6 +757,31 @@ toHighlighterTypeButton::toHighlighterTypeButton()
 {
 }
 
+#ifdef TORA3_SESSION
+void toHighlightedText::exportData(std::map<QString, QString> &data, const QString &prefix)
+{
+    data[prefix + ":Filename"] = Filename;
+    data[prefix + ":Text"] = text();
+    int curline, curcol;
+    getCursorPosition (&curline, &curcol);
+    data[prefix + ":Column"] = QString::number(curcol);
+    data[prefix + ":Line"] = QString::number(curline);
+    if (isModified())
+        data[prefix + ":Edited"] = "Yes";
+}
+
+void toHighlightedText::importData(std::map<QString, QString> &data, const QString &prefix)
+{
+    QString txt = data[prefix + ":Text"];
+    if (txt != text())
+        setText(txt);
+    Filename = data[prefix + ":Filename"];
+    setCursorPosition(data[prefix + ":Line"].toInt(), data[prefix + ":Column"].toInt());
+    if (data[prefix + ":Edited"].isEmpty())
+        setModified(false);
+}
+#endif
+
 QColor toHighlightedText::lightCyan =  QColor(Qt::cyan).light(180);
 QColor toHighlightedText::lightMagenta = QColor(Qt::magenta).light(180);
 

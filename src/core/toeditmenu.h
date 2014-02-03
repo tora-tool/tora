@@ -44,21 +44,12 @@
  * as this must be accessed from various pieces it was moved into singleton
  *
  */
-class toEditMenu : public QMenu, public toEditWidget::editHandler
+class toEditMenu : public QMenu
 {
 	Q_OBJECT;
 public:
 	toEditMenu();
 	virtual ~toEditMenu();
-
-	/** Handle events from toEditWidget subclasses */
-    virtual void receivedFocus(toEditWidget *widget);
-
-    /** Handle events from toEditWidget subclasses */
-    virtual void lostFocus(toEditWidget *widget);
-
-    /** Return pointer to the last focuded toEditWidget */
-    inline toEditWidget* editWidget() const { return m_editWidget; };
 
     QAction *undoAct;
     QAction *redoAct;
@@ -75,9 +66,9 @@ public:
     QAction *prefsAct;
 private slots:
 	void clipBoardChanged();
+	void slotAboutToShow();
 private:
     void disableAll();
-    toEditWidget *m_editWidget;
     bool m_clipboardContent, m_pasteSupported;
 };
 typedef Loki::SingletonHolder<toEditMenu> toEditMenuSingle;

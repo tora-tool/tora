@@ -54,7 +54,6 @@ toCodeOutline::toCodeOutline(QWidget *parent,
     , m_timerID(-1)
 {
     setObjectName("Code Outline");
-    toEditWidget::addHandler(m_currentEditor);
 
     TabWidget = new QTabWidget(this);
 

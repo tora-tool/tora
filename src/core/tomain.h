@@ -72,7 +72,7 @@ class toWorkSpace;
  *
  * NOTE: the abstract class toMainWindow defines an interface have to implement.
  */
-class toMain : public toMainWindow , public toEditWidget::editHandler
+class toMain : public toMainWindow
 {
     Q_OBJECT;
 

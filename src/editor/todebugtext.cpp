@@ -138,12 +138,12 @@ void toDebugText::setStatusMessage(void)
     getCursorPosition (&curline, &curcol);
     QMap<int, QString>::iterator err = Errors.find(curline);
     if (err == Errors.end())
-    	message.text = QString::null;
+    	m_message.text = QString::null;
     else
-    	message.text = err.value();
+    	m_message.text = err.value();
 
     // Call Utils::statusMessage asynchronously (see QSciMessage)
-    QTimer::singleShot(0, &message, SLOT(notify()));
+    QTimer::singleShot(0, &m_message, SLOT(notify()));
 }
 
 void toDebugText::setCurrentDebugLine(int current)

@@ -37,6 +37,7 @@
 #include "core/toeditmenu.h"
 #include "core/toglobalevent.h"
 #include "core/utils.h"
+#include "core/tologger.h"
 #include "ts_log/ts_log_utils.h"
 
 #include <QtCore/QFileSystemWatcher>
@@ -239,7 +240,6 @@ void toBaseEditor::setEditFlags()
         FlagSet.Search = true;
         FlagSet.SelectAll = true;
     }
-    toEditMenuSingle::Instance().receivedFocus(this);
 }
 
 void toBaseEditor::m_fsWatcher_fileChanged(const QString & filename)
@@ -272,14 +272,12 @@ void toBaseEditor::fsWatcherClear()
 
 void toBaseEditor::gotFocus()
 {
-    qDebug() << "toBaseEditor::gotFocus" << this;
-    toEditWidget::receivedFocus();
+	TLOG(9, toDecorator, __HERE__) << this << std::endl;
 }
 
 void toBaseEditor::lostFocus()
 {
-    qDebug() << "toBaseEditor::lostFocus" << this;
-    toEditWidget::lostFocus();
+	TLOG(9, toDecorator, __HERE__) << this << std::endl;
 }
 
 void toBaseEditor::clear(void)

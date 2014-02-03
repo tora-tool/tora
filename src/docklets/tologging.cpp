@@ -80,8 +80,6 @@ toLoggingDocklet::toLoggingDocklet(QWidget *parent,
     FlagSet.Search = true;
     FlagSet.SelectAll = true;
 
-    toEditWidget::receivedFocus();
-
     connect(m_search, SIGNAL(searchNext(Search::SearchFlags)),
             this, SLOT(handleSearching(Search::SearchFlags)));
     connect(m_search, SIGNAL(windowClosed()),
@@ -102,7 +100,6 @@ QString toLoggingDocklet::name() const
 
 void toLoggingDocklet::focusInEvent (QFocusEvent *e)
 {
-	toEditWidget::receivedFocus();
 	toDocklet::focusInEvent(e);
 }
 void toLoggingDocklet::focusOutEvent (QFocusEvent *e)
