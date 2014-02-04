@@ -46,8 +46,3 @@ toSqlText* toHighlightedEditor::editor()
 {
 	return qobject_cast<toSqlText*>(m_editor);
 }
-
-//void toHighlightedText::setKeywordUpper(bool value)
-//{
-//	qobject_cast<toHighlightedTextEditor*>(m_editor)->setKeywordUpper(value);
-//}

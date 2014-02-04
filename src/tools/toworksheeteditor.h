@@ -35,20 +35,21 @@
 #ifndef TOWORKSHEETEDITOR_H
 #define TOWORKSHEETEDITOR_H
 
-
-#include "editor/tohighlightededitor.h"
+#include "editor/tobaseeditor.h"
 
 class toWorksheet;
+class toSqlText;
 
-class toWorksheetEditor : public toHighlightedEditor
+class toWorksheetEditor : public toBaseEditor
 {
     Q_OBJECT;
+    typedef toBaseEditor super;
 public:
-    typedef toHighlightedEditor super;
-
     toWorksheetEditor(toWorksheet *worksheet,
                     QWidget *parent,
                     const char *name = NULL);
+
+    toSqlText* editor();
 
     virtual bool editSave(bool askfile);
     virtual bool editOpen(const QString &suggestedFile);

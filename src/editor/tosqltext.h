@@ -66,9 +66,9 @@ class toSqlText : public toScintilla
 {
     Q_OBJECT;
     Q_ENUMS(HighlighterTypeEnum);
+    typedef toScintilla super;
 public:
     friend class toComplPopup;
-    typedef toScintilla super;
 
     enum HighlighterTypeEnum {
     	None   = 10,
@@ -99,12 +99,7 @@ public:
      */
     virtual ~toSqlText();
 
-    /*! \brief Inherited from toScintilla to clear all required editor
-    markers;
-    */
-    virtual void openFilename(const QString &file);
-
-	void setHighlighter(toSqlText::HighlighterTypeEnum);
+	virtual void setHighlighter(toSqlText::HighlighterTypeEnum);
     HighlighterTypeEnum getHighlighter(void);
 
     /**
@@ -113,25 +108,6 @@ public:
      */
     void setFont (const QFont & font);
 
-    // ------------------ API used by TOra classes ----------------------
-    // NOTE: currently all stubs
-
-    /**
-     * Set keyword upper flag. If this is set keywords will be converted
-     * to uppercase when painted.
-     *
-     * NOTE: this may be quite tricky to implement - have to check
-     *       how the Scintilla Lexers are working
-     *
-     * @param val New value of keyword to upper flag.
-     */
-    //void setKeywordUpper(bool val) {}
-
-    /**
-     * Sets the syntax colouring flag.
-     */
-    //void setSyntaxColoring(bool val);
-
     /** Get the tablename currently under the cursor.
      * @param owner Filled with owner or table or QString::null if no owner specified.
      * @param table Filled with tablename
@@ -139,17 +115,6 @@ public:
     void tableAtCursor(toCache::ObjectRef &table);
 
     toSyntaxAnalyzer* analyzer();
-
-    //void updateSyntaxColor(toSyntaxAnalyzer::infoType t);
-public slots:
-    void handleBookmark();
-    void gotoPrevBookmark();
-    void gotoNextBookmark();
-
-    // Override QScintilla
-    virtual void autoCompleteFromAPIs();
-
-    void positionChanged(int row, int col);
 
 private slots:
     void setHighlighter(int);
@@ -168,40 +133,14 @@ protected:
     /*! \brief Override QScintilla event handler to display code completion popup */
     virtual void keyPressEvent(QKeyEvent * e);
 
-    /*! \brief Guess what should be used for code completion
-    in this time.
-    When SQL parser can decide the editor is in FOO.bar state
-    it will suggest "bar" related columns etc.
-    When SQL parser couldn't find any suggestion it will list
-    keywords/functions from templates/completion.api list.
-    \param partial a QString reference with starting char sequence
-    */
-    QStringList getCompletionList(QString &partial);
-
     virtual void focusInEvent(QFocusEvent *e);
     virtual void focusOutEvent(QFocusEvent *e);
 
     void scheduleParsing();
     void unScheduleParsing();
 
-#ifdef TORA3_SESSION
-    /** Export data to a map.
-     * @param data A map that can be used to recreate the data of a chart.
-     * @param prefix Prefix to add to the map.
-     */
-    virtual void exportData(std::map<QString, QString> &data, const QString &prefix);
-    /** Import data
-     * @param data Data to read from a map.
-     * @param prefix Prefix to read data from.
-     */
-    virtual void importData(std::map<QString, QString> &data, const QString &prefix);
-#endif
-
 private:
     HighlighterTypeEnum highlighterType;
-
-    QsciAbstractAPIs* m_complAPI;
-    QTimer* complTimer;
 
     toSyntaxAnalyzer *m_analyzerNL, *m_analyzerOracle, *m_currentAnalyzer;
     QMap<int,QString> styleNames;
@@ -212,16 +151,6 @@ private:
 	QThread *m_parserThread;
 	toSqlTextWorker *m_worker;
 	bool m_haveFocus; // this flag handles situation when bg thread response is rececived after focus was lost
-
-    //! \brief A handler for current line highlighting - margin
-    // FIXME: disabled due repainting issues
-    // int m_currentLineMarginHandle;
-    //! \brief A handler for bookrmarks - line highlighted
-    int m_bookmarkHandle;
-    //! \brief A handler for bookrmarks - margin
-    int m_bookmarkMarginHandle;
-    //! \brief Bookrmarks handler list used for navigation (next/prev)
-    QList<int> m_bookmarks;
 };
 
 Q_DECLARE_METATYPE(toSqlText::HighlighterTypeEnum)

@@ -47,11 +47,6 @@ public:
 	toHighlightedEditor(QWidget *parent = 0, const char* name = 0);
 
 	toSqlText* editor();
-
-    // QsciScintilla wrapper
-    //void setKeywordUpper(bool value);
-    //void updateSyntaxColor(toSyntaxAnalyzer::infoType t) { qobject_cast<toHighlightedTextEditor*>(m_editor)->updateSyntaxColor(t); }
-
 };
 
 #endif

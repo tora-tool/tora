@@ -34,7 +34,7 @@
 
 #include "tools/toworksheeteditor.h"
 #include "tools/toworksheet.h"
-#include "editor/toscintilla.h"
+#include "editor/toworksheettext.h"
 
 #include "core/utils.h"
 
@@ -47,13 +47,18 @@
 toWorksheetEditor::toWorksheetEditor(toWorksheet *worksheet,
                                  QWidget *parent,
                                  const char *name)
-    : toHighlightedEditor(parent, name)
+    : toBaseEditor(new toWorksheetText(NULL), parent)
     , Worksheet(worksheet)
 { }
 
+toSqlText* toWorksheetEditor::editor()
+{
+	return qobject_cast<toSqlText*>(m_editor);
+}
+
 bool toWorksheetEditor::editSave(bool askfile)
 {
-    bool ret = toHighlightedEditor::editSave(askfile);
+    bool ret = super::editSave(askfile);
     Worksheet->slotSetCaption();
     return ret;
 }

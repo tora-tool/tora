@@ -35,7 +35,7 @@
 #include "docklets/toviewdirectory.h"
 #include "tools/toworksheet.h"
 #include "core/tomainwindow.h"
-#include "editor/tohighlightededitor.h"
+#include "tools/toworksheeteditor.h"
 #include "core/toconfiguration.h"
 #include "core/toglobalevent.h"
 

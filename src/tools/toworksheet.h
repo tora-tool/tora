@@ -81,7 +81,7 @@ public:
 
     virtual bool hasTransaction() const; // override fro toToolWidget
 
-    toHighlightedEditor *editor(void);
+    toWorksheetEditor *editor(void);
 
     virtual bool canHandle(const toConnection &);
 

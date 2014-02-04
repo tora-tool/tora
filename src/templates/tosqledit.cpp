@@ -39,6 +39,7 @@
 #include "core/toeditmenu.h"
 #include "core/toconfiguration.h"
 #include "editor/tohighlightededitor.h"
+#include "tools/toworksheeteditor.h"
 #include "core/tomainwindow.h"
 #include "core/toresultview.h"
 #include "core/tosql.h"

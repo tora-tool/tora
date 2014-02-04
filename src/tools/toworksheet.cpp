@@ -865,7 +865,7 @@ void toWorksheet::rollbackChanges()
 		toGlobalEventSingle::Instance().setNeedCommit(this, this->hasTransaction());
 }
 
-toHighlightedEditor* toWorksheet::editor(void)
+toWorksheetEditor* toWorksheet::editor(void)
 {
     return Editor;
 }
