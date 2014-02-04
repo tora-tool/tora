@@ -775,60 +775,15 @@ ENDIF()
 IF(TORA_DEBUG AND TEST_APP1)
 # test1
 SET(TEST1_SOURCES
-  core/toworkspace.cpp
-  core/toconfiguration.cpp
-  core/toconfigurationpriv.cpp
-  core/totool.cpp
-  core/toconnection.cpp
-  core/toconnectionoptions.cpp  
-  core/toconnectionregistry.cpp  
-  core/toconnectionprovider.cpp
-  core/toconnectionsubloan.cpp
-  core/toqvalue.cpp
-  core/toglobalevent.cpp
-  editor/tostyle.cpp
-  editor/tosqltext.cpp
-  editor/toscintilla.cpp
-  parsing/tosyntaxanalyzer.cpp
-  parsing/tosyntaxanalyzeroracle.cpp
-  parsing/tosyntaxanalyzernl.cpp
-  parsing/tolexeroracle.cpp
-  parsing/tolexeroracleapis.cpp
   parsing/tsqllexeroracle2.cc
   parsing/PLSQLGuiLexer.cc
   parsing/persistenttrie.cpp
-  core/utils.cpp
-  core/utils_part.cpp
-  core/totimer.cpp
-  core/tomainwindow.cpp
-  core/tocache.cpp
-  core/topushbutton.cpp
-  core/tosql.cpp
-  core/toquery.cpp
   #disabled parsing/tsqlparse.cpp
   ${PCH_SOURCE}
   )
 SET(TEST1_MOC_SOURCES
-  core/moc_toworkspace.cxx
-  core/moc_totool.cxx
-  core/moc_toconfiguration.cxx
-  core/moc_toconfigurationpriv.cxx  
-  core/moc_toconnection.cxx
-  core/moc_toconnectionregistry.cxx
-  core/moc_tomainwindow.cxx
   core/moc_toglobalevent.cxx
-  core/moc_tocache.cxx
-  core/moc_topushbutton.cxx
-  core/moc_toquery.cxx
-  core/moc_totimer.cxx
-  editor/moc_tostyle.cxx
-  editor/moc_tosqltext.cxx
-  editor/moc_toscintilla.cxx
   parsing/moc_tsqllexer.cxx
-  parsing/moc_tosyntaxanalyzer.cxx
-  parsing/moc_tolexeroracle.cxx
-  parsing/moc_tolexeroracleapis.cxx
-  ts_log/moc_toostream.cxx
   )
 ADD_EXECUTABLE("test1" ${GUI_TYPE}
   tests/test1.cpp

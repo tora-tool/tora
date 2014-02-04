@@ -32,28 +32,16 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "core/utils.h"
-#include "core/tologger.h"
-
-#include "core/toconf.h"
-#include "core/tomain.h"
-#include "core/tosql.h"
-#include "core/toconfiguration.h"
-#include "core/toqvalue.h"
-#include "core/toconnection.h"
-#include "core/toraversion.h"
-
+//#include "core/utils.h"
 //#include "parsing/tsqlparse.h"
 #include "parsing/tsqllexer.h"
 #include "parsing/persistenttrie.h"
 
 #include <QtCore/QDateTime>
 #include <QtGui/QApplication>
-#include <QtGui/QMessageBox>
 #include <QtCore/QTextCodec>
 #include <QtCore/QString>
 #include <QtCore/QTranslator>
-#include <QtGui/QStyleFactory>
 #include <QtCore/QLibrary>
 #include <QtCore/QDebug>
 
@@ -63,7 +51,7 @@ using namespace QmlJS::PersistentTrie;
 
 int main(int argc, char **argv)
 {
-	toConfiguration::setQSettingsEnv();
+	//toConfiguration::setQSettingsEnv();
 
 	/*! \warning: Keep the code before QApplication init as small
 	  as possible. There could be serious display issues when
@@ -86,7 +74,7 @@ int main(int argc, char **argv)
 
 		for(int i = 0; i <= 10; i++)
 		{
-			std::cout << lexer->wordAt(SQLLexer::Position(0, i)) << std::endl;
+			std::cout << qPrintable(lexer->wordAt(SQLLexer::Position(0, i))) << std::endl;
 		}
 		
 		SQLLexer::Lexer::token_const_iterator i = lexer->begin();
@@ -121,10 +109,6 @@ int main(int argc, char **argv)
 	catch (const QString &str)
 	{
 		std::cerr << "Unhandled exception:"<< std::endl << std::endl << qPrintable(str) << std::endl;
-		TOMessageBox::critical(NULL,
-				       qApp->translate("main", "Unhandled exception"),
-				       str,
-				       qApp->translate("main", "Exit"));
 	}
 	return 1;
 }
