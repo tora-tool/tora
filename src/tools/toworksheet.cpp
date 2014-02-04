@@ -69,7 +69,7 @@
 #include "parsing/tsqllexer.h"
 #include "parsing/tosyntaxanalyzer.h"
 
-#include "editor/tohighlightedtext.h"
+#include "editor/tosqltext.h"
 #include "core/toglobalevent.h"
 #include "core/toconfiguration.h"
 

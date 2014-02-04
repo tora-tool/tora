@@ -32,19 +32,19 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "editor/tohighlightedtext.h"
+#include "editor/tosqltext.h"
 #include "editor/tohighlightededitor.h"
 
 toHighlightedEditor::toHighlightedEditor(QWidget *parent, const char *name)
-	: toBaseEditor(new toHighlightedText(NULL), parent)
+	: toBaseEditor(new toSqlText(NULL), parent)
 {
 	if (name)
 		setObjectName(name);
 }
 
-toHighlightedText* toHighlightedEditor::editor()
+toSqlText* toHighlightedEditor::editor()
 {
-	return qobject_cast<toHighlightedText*>(m_editor);
+	return qobject_cast<toSqlText*>(m_editor);
 }
 
 //void toHighlightedText::setKeywordUpper(bool value)

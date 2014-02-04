@@ -56,7 +56,7 @@
 #include "core/utils.h"
 #include "core/tologger.h"
 #include "ts_log/toostream.h"
-#include "editor/tohighlightedtext.h"
+#include "editor/tosqltext.h"
 
 #include "icons/connect.xpm"
 #include "icons/disconnect.xpm"

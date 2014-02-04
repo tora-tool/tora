@@ -40,7 +40,7 @@
 
 #include <Qsci/qscilexersql.h>
 
-class toHighlightedText;
+class toSqlText;
 class QsciLexer;
 
 /** provides two "independent" functionalities:
@@ -52,7 +52,7 @@ class toSyntaxAnalyzer : public QObject
 	Q_OBJECT;
 	Q_ENUMS(statementClassEnum);
 	Q_ENUMS(WordClassEnum);
-	friend class toHighlightedText;
+	friend class toSqlText;
 public:
     /** Indicates type of statement - DDL/DML or PLSQL block
         This is later used when deciding if trailing semicolon should
@@ -155,7 +155,7 @@ public:
 
     typedef QList<statement> statementList;
 
-    toSyntaxAnalyzer(toHighlightedText *parent);
+    toSyntaxAnalyzer(toSqlText *parent);
     virtual ~toSyntaxAnalyzer();
 
     QColor getColor(WordClassEnum type) const;
@@ -182,7 +182,7 @@ class toSyntaxAnalyzerNL : public toSyntaxAnalyzer
 {
 	Q_OBJECT;
 public:
-	toSyntaxAnalyzerNL(toHighlightedText *parent);
+	toSyntaxAnalyzerNL(toSqlText *parent);
 	virtual ~toSyntaxAnalyzerNL();
 
 	virtual statementList getStatements(QString const& text);
@@ -202,7 +202,7 @@ class toSyntaxAnalyzerOracle : public toSyntaxAnalyzer
 {
 	Q_OBJECT;
 public:
-	toSyntaxAnalyzerOracle(toHighlightedText *parent);
+	toSyntaxAnalyzerOracle(toSqlText *parent);
 	virtual ~toSyntaxAnalyzerOracle();
 
 	virtual statementList getStatements(QString const& text);

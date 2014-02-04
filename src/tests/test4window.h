@@ -40,7 +40,7 @@
 #include <QtCore/QObject>
 #include <QtGui/QMainWindow>
 
-class toHighlightedText;
+class toSqlText;
 class QPushButton;
 
 class Test4Window : public QMainWindow, Ui::Test4Window
@@ -61,7 +61,7 @@ protected:
 	virtual void closeEvent(QCloseEvent *event);
 
 private:
-	toHighlightedText *editorLeft, *editorRight;
+	toSqlText *editorLeft, *editorRight;
 	QPushButton *pushButton;
 };
 

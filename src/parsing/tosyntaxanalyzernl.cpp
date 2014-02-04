@@ -34,7 +34,7 @@
 
 #include "core/toconfiguration.h"
 #include "parsing/tosyntaxanalyzer.h"
-#include "editor/tohighlightedtext.h"
+#include "editor/tosqltext.h"
 
 #include <QtCore/QString>
 #include <QtCore/QRegExp>
@@ -43,7 +43,7 @@
 #include <Qsci/qscilexer.h>
 #include <Qsci/qscilexersql.h>
 
-toSyntaxAnalyzerNL::toSyntaxAnalyzerNL(toHighlightedText *parent)
+toSyntaxAnalyzerNL::toSyntaxAnalyzerNL(toSqlText *parent)
 	: toSyntaxAnalyzer(parent)
 {}
 
@@ -101,7 +101,7 @@ toSyntaxAnalyzer::statement toSyntaxAnalyzerNL::getStatementAt(unsigned line, un
 
     toSyntaxAnalyzer::statement retval;
 
-	toHighlightedText *editor = qobject_cast<toHighlightedText *>(parent());
+	toSqlText *editor = qobject_cast<toSqlText *>(parent());
 	QString text(editor->text());
 
 	QStringList lines = text.split(NL);
@@ -172,7 +172,7 @@ QsciLexer * toSyntaxAnalyzerNL::createLexer(QObject *parent)
 
 void toSyntaxAnalyzerNL::sanitizeStatement(statement &stat)
 {
-	toHighlightedText *editor = qobject_cast<toHighlightedText *>(parent());
+	toSqlText *editor = qobject_cast<toSqlText *>(parent());
 	stat.posFrom = editor->SendScintilla(QsciScintilla::SCI_POSITIONFROMLINE, stat.lineFrom);
 	stat.posTo = editor->SendScintilla(QsciScintilla::SCI_GETLINEENDPOSITION, stat.lineTo);
 

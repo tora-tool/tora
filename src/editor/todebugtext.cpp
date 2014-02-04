@@ -36,7 +36,7 @@
 #include "core/tologger.h"
 
 toDebugText::toDebugText(QWidget *parent, const char *name)
-    : toHighlightedText(parent)
+    : toSqlText(parent)
 	, m_errorMarginHandle(QsciScintilla::markerDefine(QsciScintilla::Circle))
 	, m_errorHandle(QsciScintilla::markerDefine(QsciScintilla::Background))
 	, m_debugMarginHandle(QsciScintilla::markerDefine(QsciScintilla::Rectangle))

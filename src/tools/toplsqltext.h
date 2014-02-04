@@ -37,7 +37,7 @@
 
 
 #include "core/totool.h"
-//#include "editor/tohighlightedtext.h"
+//#include "editor/tosqltext.h"
 //#include "tosqlparse.h"
 //#include "tools/toplsqltext.h"
 

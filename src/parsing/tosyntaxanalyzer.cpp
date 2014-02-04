@@ -34,7 +34,7 @@
 
 #include "parsing/tosyntaxanalyzer.h"
 
-#include "editor/tohighlightedtext.h"
+#include "editor/tosqltext.h"
 
 #include <QtCore/QString>
 #include <QtCore/QRegExp>
@@ -70,7 +70,7 @@ toSyntaxAnalyzer::statement& toSyntaxAnalyzer::statement::operator=(toSyntaxAnal
 	return *this;
 }
 
-toSyntaxAnalyzer::toSyntaxAnalyzer(toHighlightedText *parent)
+toSyntaxAnalyzer::toSyntaxAnalyzer(toSqlText *parent)
 	: QObject(parent)
 {
 //	Colors[Default] = toConfigurationSingle::Instance().syntaxDefault();

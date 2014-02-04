@@ -32,7 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "editor/tohighlightedtext.h"
+#include "editor/tosqltext.h"
 #include "core/toconnection.h"
 #include "core/toconnectiontraits.h"
 #include "core/toconfiguration.h"
@@ -47,7 +47,7 @@
 #include <Qsci/qsciabstractapis.h>
 //#include <Qsci/qscilexersql.h>
 
-toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
+toSqlText::toSqlText(QWidget *parent, const char *name)
     : toScintilla(parent)
 	, highlighterType(QtSql)
     //TODO, syntaxColoring(toConfigurationSingle::Instance().highlightType())
@@ -104,7 +104,7 @@ toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
 	m_parserTimer->setInterval(5000);   // every 5s
 	m_parserTimer->setSingleShot(true); // repeat only if bg thread responded
 	m_parserThread->setObjectName("ParserThread");
-	m_worker = new toHighlightedTextWorker(NULL);
+	m_worker = new toSqlTextWorker(NULL);
 	m_worker->moveToThread(m_parserThread);
 	connect(m_parserTimer, SIGNAL(timeout()), this, SLOT(process()));
 	connect(this, SIGNAL(parsingRequested(QString)),  m_worker, SLOT(process(QString)));
@@ -127,7 +127,7 @@ toHighlightedText::toHighlightedText(QWidget *parent, const char *name)
 	scheduleParsing();
 }
 
-void toHighlightedText::keyPressEvent(QKeyEvent * e)
+void toSqlText::keyPressEvent(QKeyEvent * e)
 {
     // handle editor shortcuts with TAB
     // It uses qscintilla lowlevel API to handle "word under cursor"
@@ -169,14 +169,14 @@ void toHighlightedText::keyPressEvent(QKeyEvent * e)
     toScintilla::keyPressEvent(e);
 }
 
-toHighlightedText::~toHighlightedText()
+toSqlText::~toSqlText()
 {
 	m_parserThread->quit();
 	m_parserThread->wait();
 	delete m_parserThread;
 }
 
-void toHighlightedText::positionChanged(int row, int col)
+void toSqlText::positionChanged(int row, int col)
 {
 	if (col > 0)
 	{
@@ -198,7 +198,7 @@ void toHighlightedText::positionChanged(int row, int col)
 //    markerAdd(row, m_currentLineMarginHandle);
 }
 
-void toHighlightedText::autoCompleteFromAPIs()
+void toSqlText::autoCompleteFromAPIs()
 {
     complTimer->stop(); // it's a must to prevent infinite reopening
 	{
@@ -207,7 +207,7 @@ void toHighlightedText::autoCompleteFromAPIs()
 	}
 }
 
-void toHighlightedText::openFilename(const QString & file)
+void toSqlText::openFilename(const QString & file)
 {
 #pragma message WARN("TODO/FIXME: marks! toHighlightedTextEditor::openFilename")
 //    toMarkedTextEditor::openFilename(file);
@@ -223,7 +223,7 @@ super::lexer()->setColor(color, style); \
 super::lexer()->setPaper(paper, style); \
 super::lexer()->setFont(font, style);
 
-void toHighlightedText::setHighlighter(HighlighterTypeEnum h)
+void toSqlText::setHighlighter(HighlighterTypeEnum h)
 {
 	// TODO handle bgthread working here
 	QsciLexer *lexer = super::lexer();
@@ -257,7 +257,7 @@ void toHighlightedText::setHighlighter(HighlighterTypeEnum h)
 		setLexer(m_currentAnalyzer ? m_currentAnalyzer->createLexer(this) : NULL);
 	}
 #ifdef QT_DEBUG
-	QString txt = QLatin1String(ENUM_NAME(toHighlightedText, HighlighterTypeEnum , highlighterType));
+	QString txt = QLatin1String(ENUM_NAME(toSqlText, HighlighterTypeEnum , highlighterType));
 	TLOG(8, toDecorator, __HERE__) << " Lexer: " << txt << std::endl;
 
 	QMetaEnum m_enum = toSyntaxAnalyzer::staticMetaObject.enumerator(toSyntaxAnalyzer::staticMetaObject.indexOfEnumerator("WordClassEnum"));
@@ -285,11 +285,11 @@ void toHighlightedText::setHighlighter(HighlighterTypeEnum h)
 	{
 		declareStyle(OneLine,
 				QColor(Qt::black),
-				QColor(toHighlightedText::lightCyan),
+				QColor(toSqlText::lightCyan),
 				mono);
 		declareStyle(OneLineAlt,
 				QColor(Qt::black),
-				QColor(toHighlightedText::lightMagenta),
+				QColor(toSqlText::lightMagenta),
 				mono);
 		m_complAPI = super::lexer()->apis();
 	} else {
@@ -299,7 +299,7 @@ void toHighlightedText::setHighlighter(HighlighterTypeEnum h)
 	//update(); gets called by setFont
 }
 
-void toHighlightedText::setHighlighter(int h) // slot
+void toSqlText::setHighlighter(int h) // slot
 {	
 	QWidget *focus = qApp->focusWidget();
 
@@ -309,14 +309,14 @@ void toHighlightedText::setHighlighter(int h) // slot
 }
 
 #ifdef QT_DEBUG
-void toHighlightedText::reportFocus()
+void toSqlText::reportFocus()
 {
 	QWidget *focus = qApp->focusWidget();
 	TLOG(9, toDecorator, __HERE__) << (focus ? focus->metaObject()->className() : QString("NULL")) << std::endl;
 }
 #endif
 
-void toHighlightedText::setFont (const QFont & font)
+void toSqlText::setFont (const QFont & font)
 {
     // Only sets font lexer - one for all styles
     // this may (or may not) need to be changed in a future
@@ -345,7 +345,7 @@ void toHighlightedText::setFont (const QFont & font)
     super::setFont(font);
 }
 
-void toHighlightedText::tableAtCursor(toCache::ObjectRef &table)
+void toSqlText::tableAtCursor(toCache::ObjectRef &table)
 {
 	/**
 	 * Theoretically I could use here SQLLexer::Lexer API if it was implemented for current database.
@@ -445,12 +445,12 @@ void toHighlightedText::tableAtCursor(toCache::ObjectRef &table)
     }
 }
 
-toSyntaxAnalyzer* toHighlightedText::analyzer()
+toSyntaxAnalyzer* toSqlText::analyzer()
 {
 	return m_currentAnalyzer;
 }
 
-void toHighlightedText::handleBookmark()
+void toSqlText::handleBookmark()
 {
     int curline, curcol;
     getCursorPosition (&curline, &curcol);
@@ -470,7 +470,7 @@ void toHighlightedText::handleBookmark()
     qSort(m_bookmarks);
 }
 
-void toHighlightedText::gotoPrevBookmark()
+void toSqlText::gotoPrevBookmark()
 {
     int curline, curcol;
     getCursorPosition (&curline, &curcol);
@@ -487,7 +487,7 @@ void toHighlightedText::gotoPrevBookmark()
         setCursorPosition(newline, 0);
 }
 
-void toHighlightedText::gotoNextBookmark()
+void toSqlText::gotoNextBookmark()
 {
     int curline, curcol;
     getCursorPosition (&curline, &curcol);
@@ -505,7 +505,7 @@ void toHighlightedText::gotoNextBookmark()
         setCursorPosition(newline, 0);
 }
 
-QStringList toHighlightedText::getCompletionList(QString &partial)
+QStringList toSqlText::getCompletionList(QString &partial)
 {
     QStringList toReturn;
 #if 0
@@ -642,7 +642,7 @@ QStringList toHighlightedText::getCompletionList(QString &partial)
     return toReturn;
 }
 
-void toHighlightedText::focusInEvent(QFocusEvent *e)
+void toSqlText::focusInEvent(QFocusEvent *e)
 {
 #ifdef QT_DEBUG
 	QTimer::singleShot(1000, this, SLOT(reportFocus()));
@@ -656,7 +656,7 @@ void toHighlightedText::focusInEvent(QFocusEvent *e)
 	super::focusInEvent(e);
 }
 
-void toHighlightedText::focusOutEvent(QFocusEvent *e)
+void toSqlText::focusOutEvent(QFocusEvent *e)
 {
 	m_haveFocus = false;
 	toHighlighterTypeButtonSingle::Instance().setDisabled(true);
@@ -665,24 +665,24 @@ void toHighlightedText::focusOutEvent(QFocusEvent *e)
 	super::focusOutEvent(e);
 }
 
-void toHighlightedText::scheduleParsing()
+void toSqlText::scheduleParsing()
 {
 	if(m_haveFocus && !m_parserTimer->isActive())
 		m_parserTimer->start();
 }
 
-void toHighlightedText::unScheduleParsing()
+void toSqlText::unScheduleParsing()
 {
 	if(m_parserTimer->isActive())
 		m_parserTimer->stop();
 }
 
-void toHighlightedText::process()
+void toSqlText::process()
 {
 	emit parsingRequested(text());
 }
 
-void toHighlightedText::processed()
+void toSqlText::processed()
 {
 	if(!m_haveFocus) // response was received after the focus was lost
 		return;
@@ -716,18 +716,18 @@ void toHighlightedText::processed()
 	scheduleParsing();
 }
 
-toHighlightedTextWorker::toHighlightedTextWorker(QObject *parent)
+toSqlTextWorker::toSqlTextWorker(QObject *parent)
 	: QObject(parent)
 	, analyzer(NULL)
 {
 
 }
 
-toHighlightedTextWorker::~toHighlightedTextWorker()
+toSqlTextWorker::~toSqlTextWorker()
 {
 }
 
-void toHighlightedTextWorker::process(QString text)
+void toSqlTextWorker::process(QString text)
 {
 	statements.clear();
 	if(analyzer)
@@ -737,13 +737,13 @@ void toHighlightedTextWorker::process(QString text)
 	emit processed();
 }
 
-void toHighlightedTextWorker::setAnalyzer(toSyntaxAnalyzer *analyzer)
+void toSqlTextWorker::setAnalyzer(toSyntaxAnalyzer *analyzer)
 {
 	this->analyzer = analyzer;
 }
 
 toHighlighterTypeButton::toHighlighterTypeButton(QWidget *parent, const char *name)
-	: toToggleButton(toHighlightedText::staticMetaObject.enumerator(toHighlightedText::staticMetaObject.indexOfEnumerator("HighlighterTypeEnum"))
+	: toToggleButton(toSqlText::staticMetaObject.enumerator(toSqlText::staticMetaObject.indexOfEnumerator("HighlighterTypeEnum"))
 	, parent
 	, name
 	)
@@ -751,14 +751,14 @@ toHighlighterTypeButton::toHighlighterTypeButton(QWidget *parent, const char *na
 }
 
 toHighlighterTypeButton::toHighlighterTypeButton()
-	: toToggleButton(toHighlightedText::staticMetaObject.enumerator(toHighlightedText::staticMetaObject.indexOfEnumerator("HighlighterTypeEnum"))
+	: toToggleButton(toSqlText::staticMetaObject.enumerator(toSqlText::staticMetaObject.indexOfEnumerator("HighlighterTypeEnum"))
 	, NULL
 	)
 {
 }
 
 #ifdef TORA3_SESSION
-void toHighlightedText::exportData(std::map<QString, QString> &data, const QString &prefix)
+void toSqlText::exportData(std::map<QString, QString> &data, const QString &prefix)
 {
     data[prefix + ":Filename"] = Filename;
     data[prefix + ":Text"] = text();
@@ -770,7 +770,7 @@ void toHighlightedText::exportData(std::map<QString, QString> &data, const QStri
         data[prefix + ":Edited"] = "Yes";
 }
 
-void toHighlightedText::importData(std::map<QString, QString> &data, const QString &prefix)
+void toSqlText::importData(std::map<QString, QString> &data, const QString &prefix)
 {
     QString txt = data[prefix + ":Text"];
     if (txt != text())
@@ -782,6 +782,6 @@ void toHighlightedText::importData(std::map<QString, QString> &data, const QStri
 }
 #endif
 
-QColor toHighlightedText::lightCyan =  QColor(Qt::cyan).light(180);
-QColor toHighlightedText::lightMagenta = QColor(Qt::magenta).light(180);
+QColor toSqlText::lightCyan =  QColor(Qt::cyan).light(180);
+QColor toSqlText::lightMagenta = QColor(Qt::magenta).light(180);
 

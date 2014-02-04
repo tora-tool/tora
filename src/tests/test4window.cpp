@@ -33,7 +33,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "tests/test4window.h"
-#include "editor/tohighlightedtext.h"
+#include "editor/tosqltext.h"
 
 #include <QtGui/QStatusBar>
 #include <QtGui/QScrollArea>
@@ -66,12 +66,12 @@ Test4Window::Test4Window(const QString &sql)
 	menuGrammar->addAction(oracle);
 	menuGrammar->addAction(mysql);
 	
-	editorLeft = new toHighlightedText(this);
+	editorLeft = new toSqlText(this);
 	leftVerticalLayout->addWidget(editorLeft);
 	editorLeft->setText(sql);
 
-	editorRight = new toHighlightedText(this);
-	editorRight->setHighlighter(toHighlightedText::Oracle);
+	editorRight = new toSqlText(this);
+	editorRight->setHighlighter(toSqlText::Oracle);
 	rightVerticalLayout->addWidget(editorRight);
 	editorRight->setText(sql);
 	editorRight->setMarginType(2, QsciScintilla::TextMarginRightJustified);
@@ -102,10 +102,10 @@ void Test4Window::setLexer()
 	QString txt = pushButton->text();
 	if(txt == "Oracle")
 	{
-		editorRight->setHighlighter(toHighlightedText::Oracle);
+		editorRight->setHighlighter(toSqlText::Oracle);
 		pushButton->setText("Mysql");
 	} else {
-		editorRight->setHighlighter(toHighlightedText::Mysql);
+		editorRight->setHighlighter(toSqlText::Mysql);
 		pushButton->setText("Oracle");
 	}
 }

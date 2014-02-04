@@ -41,7 +41,7 @@
 #include "core/toresultlong.h"
 #include "core/tosql.h"
 #include "editor/tohighlightededitor.h"
-#include "editor/tohighlightedtext.h"
+#include "editor/tosqltext.h"
 
 #include <QtGui/QComboBox>
 #include <QtGui/QPixmap>

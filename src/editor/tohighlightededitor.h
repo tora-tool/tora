@@ -37,7 +37,7 @@
 
 #include "editor/tobaseeditor.h"
 
-class toHighlightedText;
+class toSqlText;
 
 class toHighlightedEditor : public toBaseEditor
 {
@@ -46,7 +46,7 @@ class toHighlightedEditor : public toBaseEditor
 public:
 	toHighlightedEditor(QWidget *parent = 0, const char* name = 0);
 
-	toHighlightedText* editor();
+	toSqlText* editor();
 
     // QsciScintilla wrapper
     //void setKeywordUpper(bool value);

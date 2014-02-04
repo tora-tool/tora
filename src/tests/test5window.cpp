@@ -49,7 +49,7 @@
 #include "tools/toplsqleditor.h"
 #include "tools/toplsqltext.h"
 
-#include "editor/tohighlightedtext.h"
+#include "editor/tosqltext.h"
 
 #include <QtGui/QStatusBar>
 #include <QtGui/QScrollArea>

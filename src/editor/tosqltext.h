@@ -32,8 +32,8 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOHIGHLIGHTEDTEXT_H
-#define TOHIGHLIGHTEDTEXT_H
+#ifndef TOSQLTEXT_H
+#define TOSQLTEXT_H
 
 #include "editor/toscintilla.h"
 #include "core/topushbutton.h"
@@ -52,7 +52,7 @@ class QListWidgetItem;
 class QsciAbstractAPIs;
 
 class toComplPopup;
-class toHighlightedTextWorker;
+class toSqlTextWorker;
 
 /**
  * A editor which supports syntax highlighting.
@@ -62,7 +62,7 @@ class toHighlightedTextWorker;
  * toHighlightedTextEditor. The rest of the API comes unchanged from toScintilla
  * which is now derived from QScintilla.
  */
-class toHighlightedText : public toScintilla
+class toSqlText : public toScintilla
 {
     Q_OBJECT;
     Q_ENUMS(HighlighterTypeEnum);
@@ -92,19 +92,19 @@ public:
      * @param parent Parent of widget.
      * @param name Name of widget.
      */
-    toHighlightedText(QWidget *parent, const char *name = NULL);
+    toSqlText(QWidget *parent, const char *name = NULL);
 
     /**
      * Cleaning up done here
      */
-    virtual ~toHighlightedText();
+    virtual ~toSqlText();
 
     /*! \brief Inherited from toScintilla to clear all required editor
     markers;
     */
     virtual void openFilename(const QString &file);
 
-	void setHighlighter(toHighlightedText::HighlighterTypeEnum);
+	void setHighlighter(toSqlText::HighlighterTypeEnum);
     HighlighterTypeEnum getHighlighter(void);
 
     /**
@@ -210,7 +210,7 @@ private:
     // toHighlightedTextWorker related variables
     QTimer *m_parserTimer;
 	QThread *m_parserThread;
-	toHighlightedTextWorker *m_worker;
+	toSqlTextWorker *m_worker;
 	bool m_haveFocus; // this flag handles situation when bg thread response is rececived after focus was lost
 
     //! \brief A handler for current line highlighting - margin
@@ -224,7 +224,7 @@ private:
     QList<int> m_bookmarks;
 };
 
-Q_DECLARE_METATYPE(toHighlightedText::HighlighterTypeEnum)
+Q_DECLARE_METATYPE(toSqlText::HighlighterTypeEnum)
 
 /* Utility class for @ref toCustomLexer
  * Instance of this class "lives" within background thread
@@ -232,17 +232,17 @@ Q_DECLARE_METATYPE(toHighlightedText::HighlighterTypeEnum)
  *
  * NOTE: this class could by nested, but QT does not support it
  */
-class toHighlightedTextWorker: public QObject {
+class toSqlTextWorker: public QObject {
 	Q_OBJECT;
-	friend class toHighlightedText;
+	friend class toSqlText;
 signals:
 	void finished();
 	void processed();
 	void error(QString err);
 
 public:
-	toHighlightedTextWorker(QObject *parent = 0);
-	~toHighlightedTextWorker();
+	toSqlTextWorker(QObject *parent = 0);
+	~toSqlTextWorker();
 
 public slots:
 	void process(QString);

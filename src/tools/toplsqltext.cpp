@@ -47,7 +47,7 @@
 #include "core/toglobalevent.h"
 #include "core/toconfiguration.h"
 #include "core/topushbutton.h"
-#include "editor/tohighlightedtext.h"
+#include "editor/tosqltext.h"
 #include "editor/tohighlightededitor.h"
 #include "editor/todebugtext.h"
 

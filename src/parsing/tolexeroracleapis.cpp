@@ -1,7 +1,7 @@
 #include "parsing/tolexeroracleapis.h"
 #include "parsing/tolexeroracle.h"
 #include "parsing/persistenttrie.h"
-#include "editor/tohighlightedtext.h"
+#include "editor/tosqltext.h"
 
 toLexerOracleAPIs::toLexerOracleAPIs(QsciLexer *lexer) : QsciAbstractAPIs(lexer)
 {
@@ -19,7 +19,7 @@ toLexerOracle* toLexerOracleAPIs::lexer() const
 void toLexerOracleAPIs::updateAutoCompletionList(const QStringList &context, QStringList &list)
 {
 	list << "AAA" << "BBB";
-	toHighlightedText* editor = dynamic_cast<toHighlightedText*>(lexer()->editor());
+	toSqlText* editor = dynamic_cast<toSqlText*>(lexer()->editor());
 	if (editor == NULL)
 		return;
 

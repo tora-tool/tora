@@ -34,7 +34,7 @@
 
 #include "parsing/tosyntaxanalyzer.h"
 #include "parsing/tolexeroracle.h"
-#include "editor/tohighlightedtext.h"
+#include "editor/tosqltext.h"
 
 #include <QtCore/QDebug>
 
@@ -43,7 +43,7 @@
 
 #include <iostream>
 
-toSyntaxAnalyzerOracle::toSyntaxAnalyzerOracle(toHighlightedText* parent)
+toSyntaxAnalyzerOracle::toSyntaxAnalyzerOracle(toSqlText* parent)
 	: toSyntaxAnalyzer(parent)
 {
 }
@@ -85,7 +85,7 @@ toSyntaxAnalyzer::statement toSyntaxAnalyzerOracle::getStatementAt(unsigned line
 {
 	toSyntaxAnalyzer::statement retval;
 
-	toHighlightedText *editor = qobject_cast<toHighlightedText *>(parent());
+	toSqlText *editor = qobject_cast<toSqlText *>(parent());
 	std::string str(editor->text().toStdString());
 	try {
 		std::auto_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("OracleGuiLexer", "", "toCustomLexer");
@@ -104,7 +104,7 @@ toSyntaxAnalyzer::statement toSyntaxAnalyzerOracle::getStatementAt(unsigned line
 			}
 
 			// The statement was found - setup retval
-			toHighlightedText *editor = qobject_cast<toHighlightedText *>(parent());
+			toSqlText *editor = qobject_cast<toSqlText *>(parent());
 			retval = statement(
 					start->getPosition().getLine(),
 					end->getPosition().getLine());
@@ -160,7 +160,7 @@ QsciLexer* toSyntaxAnalyzerOracle::createLexer(QObject* parent)
 
 void toSyntaxAnalyzerOracle::sanitizeStatement(statement& stat)
 {
-	toHighlightedText *editor = qobject_cast<toHighlightedText *>(parent());
+	toSqlText *editor = qobject_cast<toSqlText *>(parent());
 	char *buf = new char[stat.posTo - stat.posFrom + 1];
     editor->SendScintilla(QsciScintilla::SCI_GETTEXTRANGE, stat.posFrom, stat.posTo, buf);
     stat.sql = editor->convertTextS2Q(buf);

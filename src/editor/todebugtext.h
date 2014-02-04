@@ -35,17 +35,17 @@
 #ifndef TODEBUGTEXT_H
 #define TODEBUGTEXT_H
 
-#include "editor/tohighlightedtext.h"
+#include "editor/tosqltext.h"
 
 /**
  * A editor which supports syntax highlighting and also marks error lines
  */
-class toDebugText : public toHighlightedText
+class toDebugText : public toSqlText
 {
     Q_OBJECT;
 
 public:
-    typedef toHighlightedText super;
+    typedef toSqlText super;
 
     /** Create a new editor.
      * @param parent Parent of widget.

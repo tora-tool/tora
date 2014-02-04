@@ -43,7 +43,7 @@
 #include "core/toeventquery.h"
 #include "core/toresulttableview.h"
 #include "editor/tohighlightededitor.h"
-#include "editor/tohighlightedtext.h"
+#include "editor/tosqltext.h"
 
 #include "icons/unittest.xpm"
 #include "icons/refresh.xpm"

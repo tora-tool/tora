@@ -257,7 +257,7 @@ SET(TORA_MOC_CLASSES
   editor/tomarkededitor.h
   editor/toscintilla.h
   editor/tohighlightededitor.h
-  editor/tohighlightedtext.h
+  editor/tosqltext.h
   editor/todebugtext.h
   editor/todebugeditor.h
   editor/tosearchreplace.h
@@ -487,7 +487,7 @@ SET(TORA_SOURCES
   editor/tomarkededitor.cpp
   editor/toscintilla.cpp
   editor/tohighlightededitor.cpp
-  editor/tohighlightedtext.cpp
+  editor/tosqltext.cpp
   editor/todebugtext.cpp
   editor/todebugeditor.cpp
   editor/tosearchreplace.cpp
@@ -785,7 +785,7 @@ SET(TEST1_SOURCES
   core/toqvalue.cpp
   core/toglobalevent.cpp
   editor/tostyle.cpp
-  editor/tohighlightedtext.cpp
+  editor/tosqltext.cpp
   editor/toscintilla.cpp
   parsing/tosyntaxanalyzer.cpp
   parsing/tosyntaxanalyzeroracle.cpp
@@ -820,7 +820,7 @@ SET(TEST1_MOC_SOURCES
   core/moc_toquery.cxx
   core/moc_totimer.cxx
   editor/moc_tostyle.cxx
-  editor/moc_tohighlightedtext.cxx
+  editor/moc_tosqltext.cxx
   editor/moc_toscintilla.cxx
   parsing/moc_tsqllexer.cxx
   parsing/moc_tosyntaxanalyzer.cxx
@@ -903,10 +903,10 @@ SET(TEST4_SOURCES
   core/tomainwindow.cpp
   core/topushbutton.cpp
   core/utils_part.cpp
-  editor/moc_tohighlightedtext.cxx
+  editor/moc_tosqltext.cxx
   editor/moc_toscintilla.cxx
   editor/moc_tostyle.cxx
-  editor/tohighlightedtext.cpp
+  editor/tosqltext.cpp
   editor/toscintilla.cpp
   editor/tostyle.cpp
   parsing/MySQLGuiLexer.cc
@@ -1060,7 +1060,7 @@ SET(TEST5_SOURCES
   editor/moc_todebugeditor.cxx
   editor/moc_todebugtext.cxx  
   editor/moc_tohighlightededitor.cxx
-  editor/moc_tohighlightedtext.cxx
+  editor/moc_tosqltext.cxx
   editor/moc_tomarkededitor.cxx
   editor/moc_toscintilla.cxx
   editor/moc_tosearchreplace.cxx
@@ -1070,7 +1070,7 @@ SET(TEST5_SOURCES
   editor/todebugeditor.cpp
   editor/todebugtext.cpp
   editor/tohighlightededitor.cpp
-  editor/tohighlightedtext.cpp
+  editor/tosqltext.cpp
   editor/tomarkededitor.cpp
   editor/toscintilla.cpp
   editor/tosearchreplace.cpp
