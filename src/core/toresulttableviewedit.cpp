@@ -58,6 +58,7 @@ toResultTableViewEdit::toResultTableViewEdit(QWidget *parent, const char *name)
     setSelectionMode(QAbstractItemView::ContiguousSelection);
     viewport()->setAcceptDrops(true);
     setDragDropMode(QAbstractItemView::DragDrop);
+	toEditWidget::FlagSet.ReadAll = true;
 }
 
 

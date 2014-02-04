@@ -452,6 +452,11 @@ int toScintilla::positionAfter(int pos, int offset)
 	return pos;
 }
 
+void toScintilla::setSelection(int posFrom, int posTo)
+{
+    SendScintilla(SCI_SETSEL, posFrom, posTo);
+}
+
 bool toScintilla::findText(const QString &searchText, const QString &replaceText, Search::SearchFlags flags)
 {
     int line, index;

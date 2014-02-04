@@ -123,6 +123,9 @@ public:
 
     int positionAfter(int pos, int offset);
 
+    using QsciScintilla::setSelection;
+
+    void setSelection(int posFrom, int posTo);
 
     /** Insert text and optionallly mark inserted text.
      * @param str String to insert.
