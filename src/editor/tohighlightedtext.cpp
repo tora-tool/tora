@@ -160,11 +160,11 @@ void toHighlightedText::keyPressEvent(QKeyEvent * e)
         int curline, curcol;
         getCursorPosition (&curline, &curcol);
         QString word = wordAtLineIndex(curline, curcol);
-        QStringList tabs = toConnection::currentConnection(this).getCache().completeEntry(word);
-        Q_FOREACH(QString t, tabs)
-        {
-        	TLOG(0, toNoDecorator, __HERE__) << " Tab: " << t << std::endl;
-        }
+//        QStringList tabs = toConnection::currentConnection(this).getCache().completeEntry(word);
+//        Q_FOREACH(QString t, tabs)
+//        {
+//        	TLOG(0, toNoDecorator, __HERE__) << " Tab: " << t << std::endl;
+//        }
     }
     toScintilla::keyPressEvent(e);
 }

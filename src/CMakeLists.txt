@@ -896,6 +896,7 @@ SET(TEST4_SOURCES
   core/moc_toglobalevent.cxx
   core/moc_tomainwindow.cxx
   core/moc_topushbutton.cxx
+  core/moc_tocache.cxx
   core/toconfiguration.cpp
   core/toconfigurationpriv.cpp
   core/toglobalevent.cpp
