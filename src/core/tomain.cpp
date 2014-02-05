@@ -57,6 +57,7 @@
 #include "core/tologger.h"
 #include "ts_log/toostream.h"
 #include "editor/tosqltext.h"
+#include "editor/toworksheettext.h"
 
 #include "icons/connect.xpm"
 #include "icons/disconnect.xpm"
@@ -487,6 +488,10 @@ void toMain::createStatusbar()
     SelectionLabel->setMinimumWidth(90);
     SelectionLabel->setText("Sel: Normal");
 #endif
+
+    toEditorTypeButtonSingle::Instance().setFocusPolicy(Qt::NoFocus);
+    toEditorTypeButtonSingle::Instance().setDisabled(true);
+    statusBar()->addPermanentWidget(&toEditorTypeButtonSingle::Instance());
 
     toHighlighterTypeButtonSingle::Instance().setFocusPolicy(Qt::NoFocus);
     toHighlighterTypeButtonSingle::Instance().setDisabled(true);

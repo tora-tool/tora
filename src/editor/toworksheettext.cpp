@@ -40,9 +40,15 @@ toWorksheetText::toWorksheetText(QWidget *parent, const char *name)
 	, m_bookmarkHandle(QsciScintilla::markerDefine(QsciScintilla::Background))
 	, m_complAPI(NULL)
 	, complTimer(new QTimer(this))
+	, editorType(SciTe)
 {
     connect (this, SIGNAL(cursorPositionChanged(int, int)), this, SLOT(positionChanged(int, int)));
     connect( complTimer, SIGNAL(timeout()), this, SLOT(autoCompleteFromAPIs()) );
+
+	connect(&toEditorTypeButtonSingle::Instance(),
+			SIGNAL(toggled(int)),
+			this,
+			SLOT(setEditorType(int)));
 }
 
 toWorksheetText::~toWorksheetText()
@@ -133,6 +139,11 @@ void toWorksheetText::autoCompleteFromAPIs()
 		toScintilla::autoCompleteFromAPIs();
 		return;
 	}
+}
+
+void toWorksheetText::setEditorType(int)
+{
+
 }
 
 void toWorksheetText::handleBookmark()
@@ -329,16 +340,19 @@ QStringList toWorksheetText::getCompletionList(QString &partial)
 
 void toWorksheetText::focusInEvent(QFocusEvent *e)
 {
+	toEditorTypeButtonSingle::Instance().setEnabled(true);
+	toEditorTypeButtonSingle::Instance().setValue(editorType);
 	super::focusInEvent(e);
 }
 
 void toWorksheetText::focusOutEvent(QFocusEvent *e)
 {
+	toEditorTypeButtonSingle::Instance().setDisabled(true);
 	super::focusOutEvent(e);
 }
 
 #ifdef TORA3_SESSION
-void toSqlText::exportData(std::map<QString, QString> &data, const QString &prefix)
+void toWorksheetText::exportData(std::map<QString, QString> &data, const QString &prefix)
 {
     data[prefix + ":Filename"] = Filename;
     data[prefix + ":Text"] = text();
@@ -350,7 +364,7 @@ void toSqlText::exportData(std::map<QString, QString> &data, const QString &pref
         data[prefix + ":Edited"] = "Yes";
 }
 
-void toSqlText::importData(std::map<QString, QString> &data, const QString &prefix)
+void toWorksheetText::importData(std::map<QString, QString> &data, const QString &prefix)
 {
     QString txt = data[prefix + ":Text"];
     if (txt != text())
@@ -362,3 +376,17 @@ void toSqlText::importData(std::map<QString, QString> &data, const QString &pref
 }
 #endif
 
+toEditorTypeButton::toEditorTypeButton(QWidget *parent, const char *name)
+	: toToggleButton(toWorksheetText::staticMetaObject.enumerator(toWorksheetText::staticMetaObject.indexOfEnumerator("EditorTypeEnum"))
+	, parent
+	, name
+	)
+{
+}
+
+toEditorTypeButton::toEditorTypeButton()
+	: toToggleButton(toWorksheetText::staticMetaObject.enumerator(toWorksheetText::staticMetaObject.indexOfEnumerator("EditorTypeEnum"))
+	, NULL
+	)
+{
+}

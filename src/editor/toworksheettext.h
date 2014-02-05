@@ -40,8 +40,18 @@
 class toWorksheetText : public toSqlText
 {
     Q_OBJECT;
+    Q_ENUMS(EditorTypeEnum);
     typedef toSqlText super;
 public:
+
+    enum EditorTypeEnum {
+    	SciTe   = 100
+#ifdef QT_DEBUG
+    	, Custom  = 200
+    	, Emacs   = 300
+#endif
+    };
+
     /** Create a new editor.
      * @param parent Parent of widget.
      * @param name Name of widget.
@@ -53,6 +63,8 @@ public:
     virtual void setHighlighter(toSqlText::HighlighterTypeEnum);
 
 public slots:
+	void setEditorType(int);
+
     void handleBookmark();
     void gotoPrevBookmark();
     void gotoNextBookmark();
@@ -93,6 +105,8 @@ protected:
 #endif
 
 private:
+    EditorTypeEnum editorType;
+
 protected:
     QsciAbstractAPIs* m_complAPI;
     QTimer* complTimer;
@@ -107,5 +121,19 @@ protected:
     //! \brief Bookrmarks handler list used for navigation (next/prev)
     QList<int> m_bookmarks;
 };
+
+/**
+ * Subclass toToggleButton and iterate over values of HighlighterTypeEnum
+ */
+class toEditorTypeButton : public toToggleButton
+{
+	Q_OBJECT;
+public:
+	toEditorTypeButton(QWidget *parent, const char *name = 0);
+	toEditorTypeButton();
+};
+
+// this one will be usually parented by QStatusBar
+typedef Loki::SingletonHolder<toEditorTypeButton, Loki::CreateUsingNew, Loki::NoDestroy> toEditorTypeButtonSingle;
 
 #endif
