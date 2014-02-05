@@ -35,11 +35,10 @@
 #include "editor/tosqltext.h"
 #include "core/toconnection.h"
 #include "core/toconnectiontraits.h"
-#include "core/toconfiguration.h"
 #include "core/tologger.h"
 #include "core/utils.h"
+#include "core/toconfiguration.h"
 
-#include <QtCore/QtDebug>
 #include <QtGui/QListWidget>
 #include <QtGui/QVBoxLayout>
 
@@ -50,7 +49,6 @@
 toSqlText::toSqlText(QWidget *parent, const char *name)
     : toScintilla(parent)
 	, highlighterType(QtSql)
-    //TODO, syntaxColoring(toConfigurationSingle::Instance().highlightType())
 	// FIXME: disabled due repainting issues
 	//, m_currentLineMarginHandle(QsciScintilla::markerDefine(QsciScintilla::RightArrow))
 	, m_analyzerNL(NULL)
@@ -69,31 +67,7 @@ toSqlText::toSqlText(QWidget *parent, const char *name)
 #endif
 
     // Setup QsciScintilla stuff
-    QsciScintilla::setFolding(QsciScintilla::BoxedFoldStyle);
-    QsciScintilla::setAutoCompletionThreshold(0);
-    QsciScintilla::setAutoCompletionSource(QsciScintilla::AcsAPIs);
-
-    // highlight caret line
-    QsciScintilla::setCaretLineVisible(true);
-    // TODO setCaretLineBackgroundColor(DefaultAnalyzer.getColor(toSyntaxAnalyzer::CurrentLineMarker));
-#ifdef SCI_LEXER
-    // This is only required until transparency fixes in QScintilla go into stable release
-    QsciScintilla::SendScintilla(QsciScintilla::SCI_SETCARETLINEBACKALPHA, QsciScintilla::SC_ALPHA_NOALPHA);
-#else
-    QsciScintilla::SendScintilla(/*QsciScintilla::*/SCI_SETCARETLINEBACKALPHA, 100);
-#endif
-
-    // handle "max text width" mark
-    if (toConfigurationSingle::Instance().useMaxTextWidthMark())
-    {
-    	QsciScintilla::setEdgeColumn(toConfigurationSingle::Instance().maxTextWidthMark());
-        // TODO setEdgeColor(DefaultAnalyzer.getColor(toSyntaxAnalyzer::CurrentLineMarker).darker(150));
-    	QsciScintilla::setEdgeMode(QsciScintilla::EdgeLine);
-    }
-    else
-    	QsciScintilla::setEdgeMode(QsciScintilla::EdgeNone);
-
-    QsciScintilla::setAutoIndent(true);
+    // QsciScintilla::setFolding(QsciScintilla::BoxedFoldStyle);
 
     QsciScintilla::setMarginType(2, TextMarginRightJustified);
     QsciScintilla::setMarginWidth(2, QString::fromAscii("009"));
@@ -125,44 +99,49 @@ toSqlText::toSqlText(QWidget *parent, const char *name)
 
 void toSqlText::keyPressEvent(QKeyEvent * e)
 {
-    // handle editor shortcuts with TAB
-    // It uses qscintilla lowlevel API to handle "word under cursor"
-    // This code is taken from sqliteman.com
-    if (toConfigurationSingle::Instance().useEditorShortcuts()
-            && e->key() == Qt::Key_Tab)
-    {
-        int pos = SendScintilla(SCI_GETCURRENTPOS);
-        int start = SendScintilla(SCI_WORDSTARTPOSITION, pos, true);
-        int end = SendScintilla(SCI_WORDENDPOSITION, pos, true);
-        SendScintilla(SCI_SETSELECTIONSTART, start, true);
-        SendScintilla(SCI_SETSELECTIONEND, end, true);
-        QString key(selectedText());
-        EditorShortcutsMap shorts(toConfigurationSingle::Instance().editorShortcuts());
-        if (shorts.contains(key))
-        {
-            removeSelectedText();
-            insert(shorts.value(key).toString());
-            SendScintilla(SCI_SETCURRENTPOS,
-                          SendScintilla(SCI_GETCURRENTPOS) +
-                          shorts.value(key).toString().length());
-            pos = SendScintilla(SCI_GETCURRENTPOS);
-            SendScintilla(SCI_SETSELECTIONSTART, pos, true);
-            SendScintilla(SCI_SETSELECTIONEND, pos, true);
-            return;
-        }
-        SendScintilla(SCI_SETSELECTIONSTART, pos, true);
-        SendScintilla(SCI_SETSELECTIONEND, pos, true);
-    } else if (e->modifiers() == Qt::ControlModifier && e->key() == Qt::Key_T) {
-        int curline, curcol;
-        getCursorPosition (&curline, &curcol);
-        QString word = wordAtLineIndex(curline, curcol);
-//        QStringList tabs = toConnection::currentConnection(this).getCache().completeEntry(word);
-//        Q_FOREACH(QString t, tabs)
-//        {
-//        	TLOG(0, toNoDecorator, __HERE__) << " Tab: " << t << std::endl;
-//        }
-    }
-    toScintilla::keyPressEvent(e);
+#if TORA_INCREMENTAL_SEARCH
+	//    if (Search)
+	//    {
+	//        bool ok = false;
+	//        if (e->modifiers() == Qt::NoModifier && e->key() == Qt::Key_Backspace)
+	//        {
+	//            int len = SearchString.length();
+	//            if (len > 0)
+	//                SearchString.truncate(len - 1);
+	//            ok = true;
+	//        }
+	//        else if (e->key() != Qt::Key_Escape)
+	//        {
+	//            QString t = e->text();
+	//            if (t.length())
+	//            {
+	//                SearchString += t;
+	//                ok = true;
+	//            }
+	//            else if (e->key() == Qt::Key_Shift ||
+	//                     e->key() == Qt::Key_Control ||
+	//                     e->key() == Qt::Key_Meta ||
+	//                     e->key() == Qt::Key_Alt)
+	//            {
+	//                ok = true;
+	//            }
+	//        }
+	//
+	//        if (ok)
+	//        {
+	//            incrementalSearch(m_searchDirection, false);
+	//            e->accept();
+	//            return ;
+	//        }
+	//        else
+	//        {
+	//            Search = false;
+	//            LastSearch = SearchString;
+	//            Utils::toStatusMessage(QString::null);
+	//        }
+	//    }
+#endif
+    super::keyPressEvent(e);
 }
 
 toSqlText::~toSqlText()

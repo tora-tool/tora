@@ -117,6 +117,12 @@ toScintilla::~toScintilla()
 //	toEditWidget::lostFocus();
 }
 
+long toScintilla::currentPosition() const
+{
+	long pos = SendScintilla(SCI_GETCURRENTPOS);
+	return pos;
+}
+
 QString toScintilla::wordAtPosition(int position, bool onlyWordCharacters /* = true */) const
 {
     if (position < 0)
@@ -370,46 +376,6 @@ void toScintilla::mousePressEvent(QMouseEvent *e)
 
 void toScintilla::keyPressEvent(QKeyEvent *e)
 {
-//    if (Search)
-//    {
-//        bool ok = false;
-//        if (e->modifiers() == Qt::NoModifier && e->key() == Qt::Key_Backspace)
-//        {
-//            int len = SearchString.length();
-//            if (len > 0)
-//                SearchString.truncate(len - 1);
-//            ok = true;
-//        }
-//        else if (e->key() != Qt::Key_Escape)
-//        {
-//            QString t = e->text();
-//            if (t.length())
-//            {
-//                SearchString += t;
-//                ok = true;
-//            }
-//            else if (e->key() == Qt::Key_Shift ||
-//                     e->key() == Qt::Key_Control ||
-//                     e->key() == Qt::Key_Meta ||
-//                     e->key() == Qt::Key_Alt)
-//            {
-//                ok = true;
-//            }
-//        }
-//
-//        if (ok)
-//        {
-//            incrementalSearch(m_searchDirection, false);
-//            e->accept();
-//            return ;
-//        }
-//        else
-//        {
-//            Search = false;
-//            LastSearch = SearchString;
-//            Utils::toStatusMessage(QString::null);
-//        }
-//    }
 	if (e->matches(QKeySequence::Copy))
 	{
 		// "Override" scintilla's default copy behavior

@@ -90,6 +90,8 @@ public:
 
     virtual ~toScintilla();
 
+    long currentPosition() const;
+
     /** Get word at position. This function is now public.
      * re-implemented from QScintilla
      */

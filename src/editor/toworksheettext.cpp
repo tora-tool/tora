@@ -33,6 +33,9 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "editor/toworksheettext.h"
+#include "core/toconfiguration.h"
+#include "core/toconnection.h"
+#include "core/tologger.h"
 
 toWorksheetText::toWorksheetText(QWidget *parent, const char *name)
     : toSqlText(parent, name)
@@ -42,6 +45,29 @@ toWorksheetText::toWorksheetText(QWidget *parent, const char *name)
 	, complTimer(new QTimer(this))
 	, editorType(SciTe)
 {
+    QsciScintilla::setAutoCompletionThreshold(0);
+    QsciScintilla::setAutoCompletionSource(QsciScintilla::AcsAPIs);
+    QsciScintilla::setAutoIndent(true);
+
+    // highlight caret line
+    QsciScintilla::setCaretLineVisible(true);
+#ifdef SCI_LEXER
+    // This is only required until transparency fixes in QScintilla go into stable release
+    QsciScintilla::SendScintilla(QsciScintilla::SCI_SETCARETLINEBACKALPHA, QsciScintilla::SC_ALPHA_NOALPHA);
+#else
+    QsciScintilla::SendScintilla(QsciScintilla::SCI_SETCARETLINEBACKALPHA, 100);
+#endif
+
+    // handle "max text width" mark
+    if (toConfigurationSingle::Instance().useMaxTextWidthMark())
+    {
+    	QsciScintilla::setEdgeColumn(toConfigurationSingle::Instance().maxTextWidthMark());
+    	// TODO setEdgeColor(DefaultAnalyzer.getColor(toSyntaxAnalyzer::CurrentLineMarker).darker(150));
+    	QsciScintilla::setEdgeMode(QsciScintilla::EdgeLine);
+    }
+    else
+    	QsciScintilla::setEdgeMode(QsciScintilla::EdgeNone);
+
     connect (this, SIGNAL(cursorPositionChanged(int, int)), this, SLOT(positionChanged(int, int)));
     connect( complTimer, SIGNAL(timeout()), this, SLOT(autoCompleteFromAPIs()) );
 
@@ -68,45 +94,36 @@ void toWorksheetText::setHighlighter(toSqlText::HighlighterTypeEnum e)
 
 void toWorksheetText::keyPressEvent(QKeyEvent * e)
 {
-#if 0
     // handle editor shortcuts with TAB
     // It uses qscintilla lowlevel API to handle "word under cursor"
     // This code is taken from sqliteman.com
-    if (toConfigurationSingle::Instance().useEditorShortcuts()
-            && e->key() == Qt::Key_Tab)
+    if (e->key() == Qt::Key_Tab && toConfigurationSingle::Instance().useEditorShortcuts())
     {
-        int pos = SendScintilla(SCI_GETCURRENTPOS);
+        long pos = currentPosition();
         int start = SendScintilla(SCI_WORDSTARTPOSITION, pos, true);
         int end = SendScintilla(SCI_WORDENDPOSITION, pos, true);
-        SendScintilla(SCI_SETSELECTIONSTART, start, true);
-        SendScintilla(SCI_SETSELECTIONEND, end, true);
-        QString key(selectedText());
+        QString key(wordAtPosition(pos, true));
         EditorShortcutsMap shorts(toConfigurationSingle::Instance().editorShortcuts());
         if (shorts.contains(key))
         {
+            setSelection(start, end);
             removeSelectedText();
-            insert(shorts.value(key).toString());
-            SendScintilla(SCI_SETCURRENTPOS,
-                          SendScintilla(SCI_GETCURRENTPOS) +
-                          shorts.value(key).toString().length());
+            insert(shorts.value(key).toString(), false);
             pos = SendScintilla(SCI_GETCURRENTPOS);
-            SendScintilla(SCI_SETSELECTIONSTART, pos, true);
-            SendScintilla(SCI_SETSELECTIONEND, pos, true);
+            SendScintilla(SCI_SETEMPTYSELECTION, pos + shorts.value(key).toByteArray().length());
+    		e->accept();
             return;
         }
-        SendScintilla(SCI_SETSELECTIONSTART, pos, true);
-        SendScintilla(SCI_SETSELECTIONEND, pos, true);
     } else if (e->modifiers() == Qt::ControlModifier && e->key() == Qt::Key_T) {
         int curline, curcol;
         getCursorPosition (&curline, &curcol);
         QString word = wordAtLineIndex(curline, curcol);
-//        QStringList tabs = toConnection::currentConnection(this).getCache().completeEntry(word);
-//        Q_FOREACH(QString t, tabs)
-//        {
-//        	TLOG(0, toNoDecorator, __HERE__) << " Tab: " << t << std::endl;
-//        }
+        QStringList tabs = toConnection::currentConnection(this).getCache().completeEntry(word);
+        Q_FOREACH(QString t, tabs)
+        {
+        	TLOG(0, toNoDecorator, __HERE__) << " Tab: " << t << std::endl;
+        }
     }
-#endif
 	super::keyPressEvent(e);
 }
 
@@ -127,7 +144,7 @@ void toWorksheetText::positionChanged(int row, int col)
 			complTimer->stop();
 	}
 // FIXME: disabled due repainting issues
-    // current line marker (margin arrow)
+//    current line marker (margin arrow)
 //    markerDeleteAll(m_currentLineMarginHandle);
 //    markerAdd(row, m_currentLineMarginHandle);
 }
