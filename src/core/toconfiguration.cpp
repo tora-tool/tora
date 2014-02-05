@@ -257,15 +257,26 @@ void toConfiguration::setRefresh(const QString & v)
     d->m_refresh = v;
 }
 
-bool toConfiguration::syntaxHighlighting()
+int toConfiguration::syntaxHighlighting()
 {
 	Q_D(toConfiguration);
     return d->m_syntaxHighlighting;
 }
-void toConfiguration::setSyntaxHighlighting(bool v)
+void toConfiguration::setSyntaxHighlighting(int v)
 {
 	Q_D(toConfiguration);
     d->m_syntaxHighlighting = v;
+}
+
+int toConfiguration::editorType()
+{
+	Q_D(toConfiguration);
+    return d->m_editorType;
+}
+void toConfiguration::setEditorType(int v)
+{
+	Q_D(toConfiguration);
+    d->m_editorType = v;
 }
 
 bool toConfiguration::keywordUpper()

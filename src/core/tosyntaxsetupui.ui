@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>528</width>
-    <height>534</height>
+    <height>572</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,251 +32,228 @@
       <attribute name="title">
        <string>Options</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout">
+        <layout class="QHBoxLayout" name="horizontalLayout_9">
          <item>
-          <widget class="QCheckBox" name="SyntaxHighlighting">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="toolTip">
-            <string>Enable syntax highlighting, or use simple text editor</string>
-           </property>
+          <widget class="QLabel" name="label">
            <property name="text">
-            <string>S&amp;yntax highlighting</string>
+            <string>Syntax highlighting</string>
            </property>
           </widget>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout">
+          <widget class="QComboBox" name="SyntaxHighlighting">
            <item>
-            <widget class="QCheckBox" name="UseMaxTextWidthMark">
-             <property name="toolTip">
-              <string>Display the line/column marker at the specified position</string>
-             </property>
-             <property name="text">
-              <string>Use &amp;maximum text width mark</string>
-             </property>
-            </widget>
+            <property name="text">
+             <string extracomment="Use Scintilla native SQL Lexer">QsciSQL</string>
+            </property>
            </item>
            <item>
-            <widget class="QSpinBox" name="MaxTextWidthMark">
-             <property name="toolTip">
-              <string>Specify the column (text width) where to show marker</string>
-             </property>
-             <property name="minimum">
-              <number>1</number>
-             </property>
-             <property name="maximum">
-              <number>999999</number>
-             </property>
-            </widget>
+            <property name="text">
+             <string extracomment="Use vendor specific SQL Lexer (if implemented)">Native</string>
+            </property>
            </item>
-          </layout>
+          </widget>
          </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_10">
          <item>
-          <widget class="QCheckBox" name="KeywordUpper">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="toolTip">
-            <string>Convert all keywords to uppercase when displayingsyntaxhighlighted text.  Only available for monospaced fonts.</string>
-           </property>
+          <widget class="QLabel" name="EditorTypeLabel">
            <property name="text">
-            <string>&amp;Keyword upper</string>
+            <string>Editor Type</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="ObjectNamesUpper">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
+          <widget class="QComboBox" name="EditorType">
+           <item>
+            <property name="text">
+             <string>Scintilla</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Em</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QCheckBox" name="UseMaxTextWidthMark">
            <property name="toolTip">
-            <string>Table, view, column names etc. are extracted in upper-case</string>
+            <string>Display the line/column marker at the specified position</string>
            </property>
            <property name="text">
-            <string>Object names upper</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
+            <string>Use &amp;maximum text width mark</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="CodeCompletion">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
+          <widget class="QSpinBox" name="MaxTextWidthMark">
            <property name="toolTip">
-            <string>Activate code completion in SQL editors. Not recommended on slow connections.</string>
+            <string>Specify the column (text width) where to show marker</string>
            </property>
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>999999</number>
+           </property>
+           <property name="value">
+            <number>80</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="CodeCompletion">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="toolTip">
+          <string>Activate code completion in SQL editors. Not recommended on slow connections.</string>
+         </property>
+         <property name="text">
+          <string>&amp;Code completion</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="KeywordUpper">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="toolTip">
+          <string>Convert all keywords to uppercase when displayingsyntaxhighlighted text.  Only available for monospaced fonts.</string>
+         </property>
+         <property name="text">
+          <string>&amp;Keyword upper</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="ObjectNamesUpper">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="toolTip">
+          <string>Table, view, column names etc. are extracted in upper-case</string>
+         </property>
+         <property name="text">
+          <string>Object names upper</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="CompletionSort">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="toolTip">
+          <string>Sort the available completion rows alphabetically or in the order the are.</string>
+         </property>
+         <property name="text">
+          <string>&amp;Sort completion rows</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QCheckBox" name="EditorShortcuts">
            <property name="text">
-            <string>&amp;Code completion</string>
+            <string>&amp;Editor shortcuts (TAB replacement)</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="CompletionSort">
-           <property name="enabled">
-            <bool>false</bool>
+          <widget class="QPushButton" name="EditorShortcutsEdit">
+           <property name="text">
+            <string>E&amp;dit...</string>
            </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="AutoIndent">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="toolTip">
+          <string>Indent a new line in an editor to the same column as the previous line</string>
+         </property>
+         <property name="text">
+          <string>&amp;Indent same as previous line</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="UseSpacesForIndent">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="toolTip">
+          <string>If set the editor will insert spaces rather than tabs</string>
+         </property>
+         <property name="text">
+          <string>Use only spaces when indenting</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <item>
+          <widget class="QLabel" name="TabStopLabel">
            <property name="toolTip">
-            <string>Sort the available completion rows alphabetically or in the order the are.</string>
+            <string>Number of character width of tabstops</string>
+           </property>
+           <property name="whatsThis">
+            <string>Number of character width of tabstops</string>
            </property>
            <property name="text">
-            <string>&amp;Sort completion rows</string>
+            <string>Tab stop width</string>
            </property>
-           <property name="checked">
-            <bool>true</bool>
+           <property name="wordWrap">
+            <bool>false</bool>
+           </property>
+           <property name="buddy">
+            <cstring>TabStop</cstring>
            </property>
           </widget>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
-           <item>
-            <widget class="QCheckBox" name="EditorShortcuts">
-             <property name="text">
-              <string>&amp;Editor shortcuts (TAB replacement)</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="EditorShortcutsEdit">
-             <property name="text">
-              <string>E&amp;dit...</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="AutoIndent">
-           <property name="enabled">
-            <bool>false</bool>
+          <widget class="QSpinBox" name="TabStop">
+           <property name="minimum">
+            <number>1</number>
            </property>
-           <property name="toolTip">
-            <string>Indent a new line in an editor to the same column as the previous line</string>
-           </property>
-           <property name="text">
-            <string>&amp;Indent same as previous line</string>
+           <property name="value">
+            <number>8</number>
            </property>
           </widget>
          </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
-          <widget class="QCheckBox" name="UseSpacesForIndent">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="toolTip">
-            <string>If set the editor will insert spaces rather than tabs</string>
-           </property>
+          <widget class="QLabel" name="TextExample">
            <property name="text">
-            <string>Use only spaces when indenting</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_6">
-           <item>
-            <widget class="QLabel" name="TextLabel1_2">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="toolTip">
-              <string>Number of character width of tabstops</string>
-             </property>
-             <property name="whatsThis">
-              <string>Number of character width of tabstops</string>
-             </property>
-             <property name="text">
-              <string>Tab stop width</string>
-             </property>
-             <property name="wordWrap">
-              <bool>false</bool>
-             </property>
-             <property name="buddy">
-              <cstring>TabStop</cstring>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSpinBox" name="TabStop">
-             <property name="minimum">
-              <number>1</number>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_3">
-           <item>
-            <widget class="QLabel" name="TextExample">
-             <property name="text">
-              <string>Text example</string>
-             </property>
-             <property name="wordWrap">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="TextExampleChoose">
-             <property name="text">
-              <string>Choose</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_4">
-           <item>
-            <widget class="QLabel" name="CodeExample">
-             <property name="text">
-              <string>Code example</string>
-             </property>
-             <property name="wordWrap">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="CodeExampleChoose">
-             <property name="text">
-              <string>Choose</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_5">
-           <item>
-            <widget class="QLabel" name="ResultExample">
-             <property name="text">
-              <string>List example</string>
-             </property>
-             <property name="wordWrap">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="ResultExampleChoose">
-             <property name="text">
-              <string>Choose</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <widget class="QLabel" name="TextLabel1">
-           <property name="text">
-            <string>Filename extensions</string>
+            <string>Text example</string>
            </property>
            <property name="wordWrap">
             <bool>false</bool>
@@ -284,22 +261,81 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="Extensions"/>
-         </item>
-         <item>
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
+          <widget class="QPushButton" name="TextExampleChoose">
+           <property name="text">
+            <string>Choose</string>
            </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
+          </widget>
          </item>
         </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QLabel" name="CodeExample">
+           <property name="text">
+            <string>Code example</string>
+           </property>
+           <property name="wordWrap">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="CodeExampleChoose">
+           <property name="text">
+            <string>Choose</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <widget class="QLabel" name="ResultExample">
+           <property name="text">
+            <string>List example</string>
+           </property>
+           <property name="wordWrap">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="ResultExampleChoose">
+           <property name="text">
+            <string>Choose</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QLabel" name="TextLabel1">
+         <property name="text">
+          <string>Filename extensions</string>
+         </property>
+         <property name="wordWrap">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="Extensions"/>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>93</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
@@ -490,22 +526,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>SyntaxHighlighting</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>toSyntaxSetupUI</receiver>
-   <slot>changeHighlight(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>KeywordUpper</sender>
    <signal>toggled(bool)</signal>
    <receiver>toSyntaxSetupUI</receiver>
@@ -570,22 +590,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>SyntaxHighlighting</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>CodeCompletion</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>TextExampleChoose</sender>
    <signal>clicked()</signal>
    <receiver>toSyntaxSetupUI</receiver>
@@ -602,4 +606,7 @@
    </hints>
   </connection>
  </connections>
+ <buttongroups>
+  <buttongroup name="buttonGroup"/>
+ </buttongroups>
 </ui>

@@ -74,7 +74,7 @@ public:
     	None   = 10,
     	Oracle = 20,
     	Mysql  = 30,
-    	QtSql  = 40
+    	QsciSql  = 40
     };
 
     // Styles alternating colors for linenumbers

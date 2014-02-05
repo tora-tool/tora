@@ -47,7 +47,8 @@ public:
 
     // Editor
     //  Options
-    bool    m_syntaxHighlighting;
+    int     m_syntaxHighlighting;
+    int     m_editorType;
     bool    m_useMaxTextWidthMark;
     int     m_maxTextWidthMark;
     bool    m_keywordUpper;

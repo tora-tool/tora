@@ -57,19 +57,21 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
         setObjectName(name);
 
     setupUi(this);
-
     Analyzer = new toSyntaxAnalyzerNL(Example->editor());
 
+    SyntaxHighlighting->setCurrentIndex(toConfigurationSingle::Instance().syntaxHighlighting());
+    EditorType->setCurrentIndex(toConfigurationSingle::Instance().editorType());
     KeywordUpper->setChecked(toConfigurationSingle::Instance().keywordUpper());
     ObjectNamesUpper->setChecked(toConfigurationSingle::Instance().objectNamesUpper());
-    // TODO SyntaxHighlighting->setChecked(toConfigurationSingle::Instance().highlightType());
+    CompletionSort->setChecked(toConfigurationSingle::Instance().completionSort());
+
     UseMaxTextWidthMark->setChecked(toConfigurationSingle::Instance().useMaxTextWidthMark());
     MaxTextWidthMark->setValue(toConfigurationSingle::Instance().maxTextWidthMark());
     CodeCompletion->setChecked(toConfigurationSingle::Instance().codeCompletion());
     EditorShortcuts->setChecked(toConfigurationSingle::Instance().useEditorShortcuts());
     connect(EditorShortcutsEdit, SIGNAL(clicked()),
             this, SLOT(openEditorShortcutsDialog()));
-    CompletionSort->setChecked(toConfigurationSingle::Instance().completionSort());
+
     AutoIndent->setChecked(toConfigurationSingle::Instance().autoIndent());
     Extensions->setText(toConfigurationSingle::Instance().extensions());
     TabStop->setValue(toConfigurationSingle::Instance().tabStop());
@@ -240,6 +242,9 @@ void toSyntaxSetup::selectColor(void)
 
 void toSyntaxSetup::saveSetting(void)
 {
+	toConfigurationSingle::Instance().setSyntaxHighlighting(SyntaxHighlighting->currentIndex());
+	toConfigurationSingle::Instance().setEditorType(EditorType->currentIndex());
+
     toConfigurationSingle::Instance().setTextFontName(Utils::toFontToString(TextExample->font()));
     toConfigurationSingle::Instance().setCodeFontName(Utils::toFontToString(CodeExample->font()));
     toConfigurationSingle::Instance().setListFontName(ListFontName);

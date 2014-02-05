@@ -126,7 +126,9 @@ void toConfigurationPrivate::loadConfig()
 	m_dateFormat = s.value(CONF_DATE_FORMAT, DEFAULT_DATE_FORMAT).toString();
 	m_timestampFormat = s.value(CONF_TIMESTAMP_FORMAT, DEFAULT_TIMESTAMP_FORMAT).toString();
 
-	m_syntaxHighlighting = s.value(CONF_HIGHLIGHT, true).toBool();
+	m_syntaxHighlighting = s.value(CONF_HIGHLIGHT, 0).toInt();
+	m_editorType = s.value(CONF_EDITOR_TYPE, 0).toInt();
+
 	m_keywordUpper = s.value(CONF_KEYWORD_UPPER, DEFAULT_KEYWORD_UPPER).toBool();
 	m_objectNamesUpper = s.value(CONF_OBJECT_NAMES_UPPER, DEFAULT_OBJECT_NAMES_UPPER).toBool();
 
@@ -394,6 +396,7 @@ void toConfigurationPrivate::saveConfig()
 
 	// Editor setting
 	s.setValue(CONF_HIGHLIGHT, m_syntaxHighlighting);
+	s.setValue(CONF_EDITOR_TYPE, m_editorType);
 
 	s.setValue(CONF_TEXT, m_textFontName);
 	s.setValue(CONF_CODE, m_codeFontName);

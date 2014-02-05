@@ -48,7 +48,7 @@
 
 toSqlText::toSqlText(QWidget *parent, const char *name)
     : toScintilla(parent)
-	, highlighterType(QtSql)
+	, highlighterType(QsciSql)
 	// FIXME: disabled due repainting issues
 	//, m_currentLineMarginHandle(QsciScintilla::markerDefine(QsciScintilla::RightArrow))
 	, m_analyzerNL(NULL)
@@ -170,7 +170,7 @@ void toSqlText::setHighlighter(HighlighterTypeEnum h)
 		m_worker->setAnalyzer(m_currentAnalyzer);
 		setLexer(NULL);
 		break;
-	case QtSql:
+	case QsciSql:
 		if (m_analyzerNL == NULL)
 			m_analyzerNL = new toSyntaxAnalyzerNL(this);
 		m_currentAnalyzer = m_analyzerNL;

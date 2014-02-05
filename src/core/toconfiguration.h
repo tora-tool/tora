@@ -66,7 +66,8 @@ class TORA_EXPORT toConfiguration: public QObject
 
 	// Editor settings
 	//  Options tab
-	Q_PROPERTY(bool    SyntaxHighlighting READ syntaxHighlighting WRITE setSyntaxHighlighting)
+	Q_PROPERTY(int     SyntaxHighlighting READ syntaxHighlighting WRITE setSyntaxHighlighting)
+	Q_PROPERTY(int     EditorType         READ editorType         WRITE setEditorType)
 	Q_PROPERTY(bool    UseMaxTextWidthMark READ useMaxTextWidthMark WRITE setUseMaxTextWidthMark)
 	Q_PROPERTY(bool    KeywordUpper      READ keywordUpper        WRITE setKeywordUpper)
 	Q_PROPERTY(bool    ObjectNamesUpper  READ objectNamesUpper    WRITE setObjectNamesUpper)
@@ -162,8 +163,11 @@ public:
     QString refresh();
     void setRefresh(const QString & v);
 
-    bool syntaxHighlighting();
-    void setSyntaxHighlighting(bool v);
+    int syntaxHighlighting();
+    void setSyntaxHighlighting(int v);
+
+    int editorType();
+    void setEditorType(int v);
 
     bool keywordUpper();
     void setKeywordUpper(bool v);

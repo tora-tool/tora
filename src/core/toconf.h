@@ -56,6 +56,7 @@
 #define CONF_REFRESH  "RefreshInterval"
 #define DEFAULT_REFRESH  "None"
 #define CONF_HIGHLIGHT  "SyntaxHighlight"
+#define CONF_EDITOR_TYPE  "EditorType"
 #define CONF_KEYWORD_UPPER "KeywordUpper"
 #define DEFAULT_KEYWORD_UPPER false
 #define CONF_OBJECT_NAMES_UPPER "ObjectNamesUpper"
