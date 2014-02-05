@@ -38,8 +38,6 @@
 #define CONF_SAVE_PWD  "SavePassword"
 #define DEFAULT_SAVE_PWD false
 
-#define CONF_OPTIONS  "Options"
-#define DEFAULT_OPTIONS  ""
 #define CONF_MAX_NUMBER  "MaxNumber"
 #define DEFAULT_MAX_NUMBER 50
 #define CONF_MAX_COL_DISP "MaxColDisp"
@@ -77,11 +75,7 @@
 #define CONF_AUTO_COMMIT "AutoCommit"
 #define CONF_CHANGE_CONNECTION "ChangeConnection"
 #define CONF_CONNECT_HISTORY "ConnectHistory"
-#define CONF_CONNECT_SIZE "ConnectSize"
-#define CONF_CONNECT_CURRENT "ConnectCurrent"
-#define DEFAULT_CONNECT_SIZE 20
 #define CONF_DEFAULT_TOOL "DefaultTool"
-#define CONF_TOOL_ENABLE "Enabled"
 #define CONF_CHART_SAMPLES "ChartSamples"
 #define DEFAULT_CHART_SAMPLES 100
 #define CONF_DISPLAY_SAMPLES "DisplaySamples"
