@@ -1,5 +1,5 @@
 
-#include "macros.h"
+//#include "parsing/macros.h"
 //// #include "tsqlparser_export.h"
 #include "parsing/tsqlparse.h"
 

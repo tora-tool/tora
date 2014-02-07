@@ -1,7 +1,7 @@
 #include "docklets/toastwalk.h"
 #include "core/tologger.h"
-#include "ermodel/dotgraph.h"
-#include "core/tsqlparse.h"
+#include "dotgraph.h"
+#include "parsing/tsqlparse.h"
 
 #define GLUE '_'
 

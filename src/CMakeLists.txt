@@ -372,10 +372,10 @@ IF (POPPLER_QT4_FOUND)
 ENDIF (POPPLER_QT4_FOUND)
 
 IF (USE_EXPERIMENTAL)
-  # LIST(APPEND TORA_MOC_CLASSES docklets/tocodeoutline.h)
-  # IF(graphviz_FOUND)
-  #   LIST(APPEND TORA_MOC_CLASSES docklets/toquerymodel.h)
-  # ENDIF(graphviz_FOUND)
+  LIST(APPEND TORA_MOC_CLASSES docklets/tocodeoutline.h)
+    IF(graphviz_FOUND)
+  LIST(APPEND TORA_MOC_CLASSES docklets/toquerymodel.h)
+  ENDIF(graphviz_FOUND)
 ENDIF (USE_EXPERIMENTAL)
 
 IF(graphviz_FOUND)
@@ -463,7 +463,6 @@ SET(TORA_SOURCES
   core/toresulttableviewedit.cpp
   core/toresultcode.cpp
   core/toresultfield.cpp
-  #obsolere core/tosqlparse.cpp
   core/toextract.cpp  
   core/toresultgrants.cpp
   core/toresultdepend.cpp  
@@ -527,7 +526,7 @@ SET(TORA_SOURCES
   connection/toqodbcprovider.cpp
   connection/toqsqlquery.cpp
 
-  #disabled parsing/tsqlparse.cpp
+  parsing/tsqlparse.cpp
   parsing/tosyntaxanalyzer.cpp
   parsing/tosyntaxanalyzernl.cpp
   parsing/tosyntaxanalyzermysql.cpp
@@ -639,10 +638,10 @@ IF(ORACLE_FOUND)
 ENDIF(ORACLE_FOUND)
 
 IF (USE_EXPERIMENTAL)
-  # LIST(APPEND TORA_SOURCES docklets/tocodeoutline.cpp)
-  # IF(graphviz_FOUND)
-  #   LIST (APPEND TORA_SOURCES docklets/toquerymodel.cpp docklets/toastwalk.cpp)
-  # ENDIF(graphviz_FOUND)
+  LIST(APPEND TORA_SOURCES docklets/tocodeoutline.cpp)
+  IF(graphviz_FOUND)
+    LIST (APPEND TORA_SOURCES docklets/toquerymodel.cpp docklets/toastwalk.cpp)
+  ENDIF(graphviz_FOUND)
 ENDIF (USE_EXPERIMENTAL)
 
 IF(graphviz_FOUND)

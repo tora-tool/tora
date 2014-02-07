@@ -36,9 +36,8 @@
 #define TOQUERYMODEL_H
 
 //#include "config.h"
-#include "todocklet.h"
-
-#include "toeditwidget.h"
+#include "core/todocklet.h"
+#include "core/toeditwidget.h"
 
 #include <QtGui/QSortFilterProxyModel>
 
@@ -49,7 +48,7 @@ class toQueryModel : public toDocklet
 {
     Q_OBJECT;
 
-    class editHandlerHolder: public toEditWidget::editHandler
+    class editHandlerHolder //: public toEditWidget::editHandler
     {
     public:
         editHandlerHolder() : m_current(NULL) {};

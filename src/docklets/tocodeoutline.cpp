@@ -36,7 +36,7 @@
 #include "docklets/tocodeoutline.h"
 #include "core/tologger.h"
 
-#include "core/tsqlparse.h"
+#include "parsing/tsqlparse.h"
 
 //#include "tomain.h"
 //#include "toconnectionmodel.h"

@@ -36,8 +36,8 @@
 #define TOCODEOUTLINE_H
 
 
-#include "todocklet.h"
-#include "toeditwidget.h"
+#include "core/todocklet.h"
+#include "core/toeditwidget.h"
 
 #include <QtCore/QModelIndex>
 //class toToolWidget;

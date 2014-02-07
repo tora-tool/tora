@@ -32,10 +32,10 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "utils.h"
+#include "core/utils.h"
 #include "toquerymodel.h"
 
-#include "tologger.h"
+#include "core/tologger.h"
 
 //#include "tomain.h"
 //#include "toconnectionmodel.h"
@@ -46,11 +46,11 @@
 
 #include <QtCore/QTimerEvent>
 
-#include "core/tsqlparse.h"
+#include "parsing/tsqlparse.h"
 #include "docklets/toastwalk.h"
 
-#include "ermodel/dotgraphview.h"
-#include "ermodel/dotgraph.h"
+#include "dotgraphview.h"
+#include "dotgraph.h"
 
 #define TOOL_NAME "QueryModel"
 
@@ -68,7 +68,7 @@ toQueryModel::toQueryModel(QWidget *parent, Qt::WindowFlags flags)
     , m_timerID(-1)
 {
     setObjectName("Query model");
-    toEditWidget::addHandler(m_currentEditor);
+    //toEditWidget::addHandler(m_currentEditor);
 
     {
         m_widget = new DotGraphView( NULL /*actionCollection()*/, this);
