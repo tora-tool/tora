@@ -173,6 +173,7 @@ SET(TORA_MOC_CLASSES
   core/toabout.h
   core/tobackground.h
   core/tobackgroundlabel.h
+  core/toconfenum.h
   core/toconfiguration.h
   core/toconfigurationpriv.h
   core/toconnection.h

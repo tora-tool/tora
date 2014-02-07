@@ -36,8 +36,40 @@
 #define TOWORKSHEETTEXT_H
 
 #include "editor/tosqltext.h"
+#include "core/toconfenum.h"
 
-class toWorksheetText : public toSqlText
+namespace ToConfiguration
+{
+	class Editor : public ConfigContext
+	{
+		Q_OBJECT;
+		Q_ENUMS(OptionTypeEnum);
+	public:
+		Editor() : ConfigContext(ENUM_REF(Editor,OptionTypeEnum)) {};
+		enum OptionTypeEnum {
+			SyntaxHighlight         // #define CONF_HIGHLIGHT
+			, EditorType            // #define CONF_EDITOR_TYPE
+			, useMaxTextWidthMark
+			, KeywordUpper          // #define CONF_KEYWORD_UPPER
+			, ObjectNamesUpper      // #define CONF_OBJECT_NAMES_UPPER
+			, CodeComplete          // #define CONF_CODE_COMPLETION
+			, CompleteSort          // #define CONF_COMPLETION_SORT
+			, useEditorShortcuts
+			, useEditorShortcutsMap
+			, AutoIndent            // #define CONF_AUTO_INDENT
+			, TabSpaces             // #define CONF_TAB_SPACES
+			, TabStop               // #define CONF_TAB_STOP
+			, ConfText              // #define CONF_TEXT
+			, ConfCode              // #define CONF_CODE
+			, ListText              // #define CONF_LIST
+			, Extensions            // #define CONF_EXTENSIONS
+			// 2nd tab
+			, EditStyle             // #define CONF_EDIT_STYLE
+		};
+	};
+}
+
+class toWorksheetText : public toSqlText, public ToConfiguration::ConfigContextHolder
 {
     Q_OBJECT;
     Q_ENUMS(EditorTypeEnum);
@@ -120,6 +152,8 @@ protected:
     int m_bookmarkMarginHandle;
     //! \brief Bookrmarks handler list used for navigation (next/prev)
     QList<int> m_bookmarks;
+
+    static ToConfiguration::Editor s_EditorConfig;
 };
 
 /**

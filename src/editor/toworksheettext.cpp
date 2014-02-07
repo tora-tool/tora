@@ -39,6 +39,7 @@
 
 toWorksheetText::toWorksheetText(QWidget *parent, const char *name)
     : toSqlText(parent, name)
+	, ToConfiguration::ConfigContextHolder(s_EditorConfig)
 	, m_bookmarkMarginHandle(QsciScintilla::markerDefine(QsciScintilla::RightTriangle))
 	, m_bookmarkHandle(QsciScintilla::markerDefine(QsciScintilla::Background))
 	, m_complAPI(NULL)
@@ -367,6 +368,8 @@ void toWorksheetText::focusOutEvent(QFocusEvent *e)
 	toEditorTypeButtonSingle::Instance().setDisabled(true);
 	super::focusOutEvent(e);
 }
+
+ToConfiguration::Editor toWorksheetText::s_EditorConfig;
 
 #ifdef TORA3_SESSION
 void toWorksheetText::exportData(std::map<QString, QString> &data, const QString &prefix)

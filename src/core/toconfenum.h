@@ -36,16 +36,43 @@
 #define TOCONF_ENUM_H
 
 #include <QtCore/QObject>
+#include <QtCore/QMetaEnum>
+
+#ifndef ENUM_REF
+#define ENUM_REF(o,e) (o::staticMetaObject.enumerator(o::staticMetaObject.indexOfEnumerator(#e)))
+#endif
 
 namespace ToConfiguration {
 
-	class Main : public QObject
+	class ConfigContext : public QObject
+	{
+		Q_OBJECT;
+	public:
+		ConfigContext(ConfigContext const& other) : m_configEnum(other.m_configEnum) {};
+		ConfigContext(QMetaEnum const& e) : m_configEnum(e) {};
+	private:
+		QMetaEnum const& m_configEnum;
+	};
+
+	class ConfigContextHolder
+	{
+	public:
+		ConfigContextHolder(ConfigContext const& c)
+		: Context(c)
+		{}
+		virtual ~ConfigContextHolder() {};
+
+		ConfigContext Context;
+	};
+
+	class Main : public ConfigContext
 	{
 		Q_OBJECT;
 		Q_ENUMS(OptionTypeEnum);
 	public:
+		Main() : ConfigContext(ENUM_REF(Main,OptionTypeEnum)) {};
 		enum OptionTypeEnum {
-			LastVersion          // #define CONF_LAST_VERSION
+			LastVersion   = 1000 // #define CONF_LAST_VERSION
 			, FirstInstall       // #define CONF_FIRST_INSTALL
 			, RecentFiles        // #define CONF_RECENT_FILES
 			, RecentMax          // #define CONF_RECENT_MAX
@@ -61,14 +88,15 @@ namespace ToConfiguration {
 		};
 	};
 
-	class Global : public QObject
+	class Global : public ConfigContext
 	{
 		Q_OBJECT;
 		Q_ENUMS(OptionTypeEnum);
 	public:
+		Global() : ConfigContext(ENUM_REF(Global,OptionTypeEnum)) {};
 		enum OptionTypeEnum {
 			// Paths
-			SQLDictionary           // #define CONF_SQL_FILE
+			SQLDictionary = 2000    // #define CONF_SQL_FILE
 			, HelpPath              // #define CONF_HELP_PATH
 			, DefaultSession        // #define CONF_DEFAULT_SESSION
 			, CacheDir              // #define CONF_CACHE_DIR
@@ -99,13 +127,15 @@ namespace ToConfiguration {
 		};
 	};
 
-	class Editor : public QObject
+#if 0
+	class Editor : public ConfigContext
 	{
 		Q_OBJECT;
 		Q_ENUMS(OptionTypeEnum);
 	public:
+		Editor() : ConfigContext(ENUM_REF(Editor,OptionTypeEnum)) {};
 		enum OptionTypeEnum {
-			SyntaxHighlight         // #define CONF_HIGHLIGHT
+			SyntaxHighlight  = 3000 // #define CONF_HIGHLIGHT
 			, EditorType            // #define CONF_EDITOR_TYPE
 			, useMaxTextWidthMark
 			, KeywordUpper          // #define CONF_KEYWORD_UPPER
@@ -125,14 +155,16 @@ namespace ToConfiguration {
 			, EditStyle             // #define CONF_EDIT_STYLE
 		};
 	};
+#endif
 
-	class Database : public QObject
+	class Database : public ConfigContext
 	{
 		Q_OBJECT;
 		Q_ENUMS(OptionTypeEnum);
 	public:
+		Database() : ConfigContext(ENUM_REF(Database,OptionTypeEnum)) {};
 		enum OptionTypeEnum {
-			ObjectCache           // #define CONF_OBJECT_CACHE
+			ObjectCache   = 4000  // #define CONF_OBJECT_CACHE
 			, AutoCommit          // #define CONF_AUTO_COMMIT
 			, FirewallMode        // #define CONF_FIREWALL_MODE
 			, ConnectionTestInterval // #define CONF_CONN_TEST_INTERVAL
@@ -147,13 +179,14 @@ namespace ToConfiguration {
 		};
 	};
 
-	class Oracle : public QObject
+	class Oracle : public ConfigContext
 	{
 		Q_OBJECT;
 		Q_ENUMS(OptionTypeEnum);
 	public:
+		Oracle() : ConfigContext(ENUM_REF(Oracle,OptionTypeEnum)) {};
 		enum OptionTypeEnum {
-			ConfDateFormat        // #define CONF_DATE_FORMAT
+			ConfDateFormat = 5000 // #define CONF_DATE_FORMAT
 			, ConfTimestampFormat // #define CONF_TIMESTAMP_FORMAT
 			, MaxLong             // #define CONF_MAX_LONG
 			, PlanTable           // #define CONF_PLAN_TABLE
@@ -175,23 +208,25 @@ namespace ToConfiguration {
 		};
 	};
 
-	class MySQL : public QObject
+	class MySQL : public ConfigContext
 	{
 		Q_OBJECT;
 		Q_ENUMS(OptionTypeEnum);
 	public:
+		MySQL() : ConfigContext(ENUM_REF(MySQL,OptionTypeEnum)) {};
 		enum OptionTypeEnum {
-			BeforeCreateAction // #define CONF_CREATE_ACTION
+			BeforeCreateAction = 6000 // #define CONF_CREATE_ACTION
 		};
 	};
 
-	class Worksheet : public QObject
+	class Worksheet : public ConfigContext
 	{
 		Q_OBJECT;
 		Q_ENUMS(OptionTypeEnum);
 	public:
+		Worksheet() : ConfigContext(ENUM_REF(Worksheet,OptionTypeEnum)) {};
 		enum OptionTypeEnum {
-			AutoSave             // #define CONF_AUTO_SAVE
+			AutoSave  = 7000    // #define CONF_AUTO_SAVE
 			, CheckSave          // #define CONF_CHECK_SAVE
 			, LogAtEnd           // #define CONF_LOG_AT_END
 			, LogMulti           // #define CONF_LOG_MULTI
@@ -206,26 +241,28 @@ namespace ToConfiguration {
 		};
 	};
 
-	class Storage : public QObject
+	class Storage : public ConfigContext
 	{
 		Q_OBJECT;
 		Q_ENUMS(OptionTypeEnum);
 	public:
+		Storage() : ConfigContext(ENUM_REF(Storage,OptionTypeEnum)) {};
 	    enum OptionTypeEnum {
-		    DispTablespaces          // #define CONF_DISP_TABLESPACES
+		    DispTablespaces  = 8000  // #define CONF_DISP_TABLESPACES
 		    , DispCoalesced          // #define CONF_DISP_COALESCED
 		    , DispExtents            // #define CONF_DISP_EXTENTS
 		    , AvailableGraph         // #define CONF_DISP_AVAILABLEGRAPH
 	    };
 	};
 
-	class Browser : public QObject
+	class Browser : public ConfigContext
 	{
 		Q_OBJECT;
 		Q_ENUMS(OptionTypeEnum);
 	public:
+		Browser() : ConfigContext(ENUM_REF(Browser,OptionTypeEnum)) {};
 	    enum OptionTypeEnum {
-		    FilterIgnoreCase          // #define CONF_FILTER_IGNORE_CASE
+		    FilterIgnoreCase  = 9000  // #define CONF_FILTER_IGNORE_CASE
 		    , FilterInvert            // #define CONF_FILTER_INVERT  
 		    , FilterType              // #define CONF_FILTER_TYPE  
 		    , FilterTablespaceType    // #define CONF_FILTER_TABLESPACE_TYPE  
@@ -233,13 +270,14 @@ namespace ToConfiguration {
 	    };
 	};
 
-	class Rollback : public QObject
+	class Rollback : public ConfigContext
 	{
 		Q_OBJECT;
 		Q_ENUMS(OptionTypeEnum);
 	public:
+		Rollback() : ConfigContext(ENUM_REF(Rollback,OptionTypeEnum)) {};
 		enum OptionTypeEnum {
-			NoExec                 // #define CONF_NO_EXEC   
+			NoExec       = 10000   // #define CONF_NO_EXEC
 			, NeedRead             // #define CONF_NEED_READ 
 			, NeedTwo              // #define CONF_NEED_TWO  
 			, AlignLeft            // #define CONF_ALIGN_LEFT
@@ -247,28 +285,29 @@ namespace ToConfiguration {
 		};
 	};
 
-	class SgaTrace : public QObject
+	class SgaTrace : public ConfigContext
 	{
 		Q_OBJECT;
 		Q_ENUMS(OptionTypeEnum);
 	public:
+		SgaTrace() : ConfigContext(ENUM_REF(SgaTrace,OptionTypeEnum)) {};
 		enum OptionTypeEnum {
-			AutoUpdate              // #define CONF_AUTO_UPDATE   
+			AutoUpdate   = 11000  // #define CONF_AUTO_UPDATE
 		};
 	};
 
-	class Output : public QObject
+	class Output : public ConfigContext
 	{
 		Q_OBJECT;
 		Q_ENUMS(OptionTypeEnum);
 	public:
+		Output() : ConfigContext(ENUM_REF(Output,OptionTypeEnum)) {};
 		enum OptionTypeEnum {
-			PollingInterval         // #define CONF_POLLING    
+			PollingInterval = 12000 // #define CONF_POLLING
 			, Type                  // #define CONF_LOG_TYPE 
 			, LogUser               // #define CONF_LOG_USER 
 		};
 	};
-
 
 #if TORA_OBSOLETE
 // toeditextensions
