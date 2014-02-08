@@ -64,11 +64,9 @@ REGISTER_VIEW(TOOL_NAME, toQueryModel);
 toQueryModel::toQueryModel(QWidget *parent, Qt::WindowFlags flags)
     : toDocklet(tr(TOOL_NAME), parent, flags)
     , m_widget(NULL)
-    , m_currentEditor(new editHandlerHolder())
     , m_timerID(-1)
 {
     setObjectName("Query model");
-    //toEditWidget::addHandler(m_currentEditor);
 
     {
         m_widget = new DotGraphView( NULL /*actionCollection()*/, this);
@@ -155,7 +153,7 @@ void toQueryModel::timerEvent(QTimerEvent *e)
     QString newText;
     ///TLOG(0,toDecorator,__HERE__) << "void toQueryModel::timerEvent(QTimerEvent *e) fired" << std::endl;
 
-    if( m_timerID == e->timerId())
+    if (m_timerID == e->timerId())
     {
         // if( m_currentEditor->m_current)
         //  TLOG(0,toDecorator,__HERE__) << m_currentEditor->m_current->editText().toStdString() << std::endl;
@@ -165,13 +163,14 @@ void toQueryModel::timerEvent(QTimerEvent *e)
         toDocklet::timerEvent(e);
     }
 
-    if( !isVisible())
+    if (!isVisible())
         return;
 
-    if( m_currentEditor->m_current == NULL)
+    m_currentEditor = toEditWidget::findEdit(QApplication::focusWidget());
+    if ( m_currentEditor == NULL)
         return;
 
-    newText = m_currentEditor->m_current->editText();
+    newText = m_currentEditor->editText();
     if( newText == m_lastText)
         return;
 

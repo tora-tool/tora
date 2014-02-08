@@ -41,11 +41,13 @@
 #include <QtGui/QApplication>
 #include <QtCore/QTextCodec>
 #include <QtCore/QString>
+#include <QtCore/QStringList>
 #include <QtCore/QTranslator>
 #include <QtCore/QLibrary>
 #include <QtCore/QDebug>
 
 #include <memory>
+#include <iostream>
 
 using namespace QmlJS::PersistentTrie;
 

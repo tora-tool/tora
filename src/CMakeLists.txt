@@ -24,7 +24,6 @@ ENDIF (WIN32)
 ################################################################################
 INCLUDE_DIRECTORIES(
   ${CMAKE_SOURCE_DIR}
-  ${CMAKE_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/precompiled
   ${CMAKE_BINARY_DIR}
   ${CMAKE_SOURCE_DIR}/extlibs/trotl/src
@@ -56,16 +55,17 @@ IF (NOT WANT_INTERNAL_QSCINTILLA)
   INCLUDE_DIRECTORIES(${QSCINTILLA_INCLUDE_DIR})
 ENDIF (NOT WANT_INTERNAL_QSCINTILLA)
 
-IF (POPPLER_QT4_FOUND)
-  INCLUDE_DIRECTORIES(${POPPLER_QT4_INCLUDE_DIR})
-ENDIF (POPPLER_QT4_FOUND)
+IF (USE_EXPERIMENTAL)
+  INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/extlibs/libantlr3c-3.5.1/include)
+  INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/extlibs/libantlr3c-3.5.1)
+  IF (POPPLER_QT4_FOUND)
+    INCLUDE_DIRECTORIES(${POPPLER_QT4_INCLUDE_DIR})
+  ENDIF (POPPLER_QT4_FOUND)
 
-IF(graphviz_FOUND)
-  INCLUDE_DIRECTORIES(
-  	${graphviz_INCLUDE_DIRECTORIES}
-	${CMAKE_SOURCE_DIR}/extlibs/libermodel
-	)
-ENDIF(graphviz_FOUND)
+  IF(graphviz_FOUND)
+    INCLUDE_DIRECTORIES(${graphviz_INCLUDE_DIRECTORIES} ${CMAKE_SOURCE_DIR}/extlibs/libermodel)
+  ENDIF(graphviz_FOUND)
+ENDIF(USE_EXPERIMENTAL)
 
 ################################################################################
 #                              Resource files                                  #
@@ -538,6 +538,7 @@ SET(TORA_SOURCES
   parsing/MySQLLexer.cc
   parsing/tolexeroracleapis.cpp
   parsing/persistenttrie.cpp
+  parsing/tsqlparseoracle.cc
   
   docklets/toviewconnections.cpp
   docklets/toviewdirectory.cpp
@@ -639,6 +640,8 @@ ENDIF(ORACLE_FOUND)
 
 IF (USE_EXPERIMENTAL)
   LIST(APPEND TORA_SOURCES docklets/tocodeoutline.cpp)
+  LIST(APPEND TORA_SOURCES parsing/OracleSQLParser.cc)
+  LIST(APPEND TORA_SOURCES parsing/OracleSQLLexer.cc)
   IF(graphviz_FOUND)
     LIST (APPEND TORA_SOURCES docklets/toquerymodel.cpp docklets/toastwalk.cpp)
   ENDIF(graphviz_FOUND)
@@ -722,11 +725,6 @@ IF (POPPLER_QT4_FOUND)
   LIST(APPEND TORA_LIBS ${POPPLER_QT4_LIBRARIES})
 ENDIF(POPPLER_QT4_FOUND)
 
-IF(graphviz_FOUND)
-  link_directories(${graphviz_LIBRARY_DIRS}) # I'm not sure why it's required. But for macosx it's mandatory (probably)
-  LIST(APPEND TORA_LIBS ermodel ${graphviz_LIBRARIES})  
-ENDIF(graphviz_FOUND)
-
 IF (WANT_INTERNAL_QSCINTILLA)
   LIST(APPEND TORA_LIBS ${TORA_QSCINTILLA_LIB})
 ENDIF (WANT_INTERNAL_QSCINTILLA)
@@ -750,6 +748,14 @@ ENDIF (WIN32)
 IF (POSTGRESQL_FOUND)
    LIST(APPEND TORA_LIBS ${POSTGRESQL_LIBRARIES})
 ENDIF (POSTGRESQL_FOUND)
+
+IF(USE_EXPERIMENTAL)
+  IF(graphviz_FOUND)
+    LINK_DIRECTORIES(${graphviz_LIBRARY_DIRS}) # I'm not sure why it's required. But for macosx it's mandatory (probably)
+    LIST(APPEND TORA_LIBS ermodel ${graphviz_LIBRARIES})  
+  ENDIF(graphviz_FOUND)
+  LIST(APPEND TORA_LIBS antlr3c)
+ENDIF(USE_EXPERIMENTAL)
 
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 SET(CMAKE_INSTALL_RPATH "$ORIGIN/:$$ORIGIN/")
@@ -853,7 +859,6 @@ SET(TEST4_SOURCES
   core/moc_toglobalevent.cxx
   core/moc_tomainwindow.cxx
   core/moc_topushbutton.cxx
-  core/moc_tocache.cxx
   core/toconfiguration.cpp
   core/toconfigurationpriv.cpp
   core/toglobalevent.cpp

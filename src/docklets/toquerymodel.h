@@ -35,12 +35,11 @@
 #ifndef TOQUERYMODEL_H
 #define TOQUERYMODEL_H
 
-//#include "config.h"
 #include "core/todocklet.h"
-#include "core/toeditwidget.h"
 
 #include <QtGui/QSortFilterProxyModel>
 
+class toEditWidget;
 class DotGraphView;
 class QTimerEvent;
 
@@ -48,27 +47,9 @@ class toQueryModel : public toDocklet
 {
     Q_OBJECT;
 
-    class editHandlerHolder //: public toEditWidget::editHandler
-    {
-    public:
-        editHandlerHolder() : m_current(NULL) {};
-        virtual ~editHandlerHolder() {};
-        virtual void receivedFocus(toEditWidget *widget)
-        {
-            m_current = widget;
-
-        }
-        virtual void lostFocus(toEditWidget *widget)
-        {
-            m_current = NULL;
-        }
-        toEditWidget *m_current;
-    };
-
 private:
     DotGraphView *m_widget;
-
-    editHandlerHolder *m_currentEditor;
+    toEditWidget *m_currentEditor;
     QString m_lastText;
     int m_timerID;
 public:
