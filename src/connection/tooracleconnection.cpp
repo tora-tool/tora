@@ -451,3 +451,4 @@ toCache::ObjectRef toOracleConnectionSub::resolve(toCache::ObjectRef const& obje
 	}
 	return retval;
 }
+

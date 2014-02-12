@@ -89,6 +89,21 @@
 #include "icons/new.xpm"
 #endif
 
+QVariant ToConfiguration::Browser::defaultValue(int option) const
+{
+	switch(option)
+	{
+	case FilterIgnoreCase:       return QVariant((bool)false);
+	case FilterInvert:           return QVariant((bool)false);
+	case FilterType:             return QVariant((int)0);
+	case FilterTablespaceType:   return QVariant((int)0);
+	case FilterText:             return QVariant(QString(""));
+	default:
+		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Editor un-registered enum value: %1").arg(option)));
+		return QVariant();
+	}
+}
+
 const char **toBrowserTool::pictureXPM(void)
 {
     return const_cast<const char**>(tobrowser_xpm);

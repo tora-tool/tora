@@ -541,7 +541,6 @@ SET(TORA_SOURCES
   parsing/MySQLLexer.cc
   parsing/tolexeroracleapis.cpp
   parsing/persistenttrie.cpp
-  parsing/tsqlparseoracle.cc
   
   docklets/toviewconnections.cpp
   docklets/toviewdirectory.cpp
@@ -616,8 +615,6 @@ SET(TORA_SOURCES
   #TODO tools/toalert.cpp
   #TODO tools/totuning.cpp
 
-
-
   #     todebug.cpp
   #     todebugtext.cpp
   #     toeditextensions.cpp
@@ -642,9 +639,7 @@ IF(ORACLE_FOUND)
 ENDIF(ORACLE_FOUND)
 
 IF (USE_EXPERIMENTAL)
-  LIST(APPEND TORA_SOURCES docklets/tocodeoutline.cpp)
-  LIST(APPEND TORA_SOURCES parsing/OracleSQLParser.cc)
-  LIST(APPEND TORA_SOURCES parsing/OracleSQLLexer.cc)
+  LIST(APPEND TORA_SOURCES docklets/tocodeoutline.cpp parsing/OracleSQLParser.cc parsing/OracleSQLLexer.cc parsing/tsqlparseoracle.cc)
   IF(graphviz_FOUND)
     LIST (APPEND TORA_SOURCES docklets/toquerymodel.cpp docklets/toastwalk.cpp)
   ENDIF(graphviz_FOUND)

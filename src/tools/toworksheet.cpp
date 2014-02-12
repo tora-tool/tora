@@ -41,8 +41,8 @@
 #include "core/toeditablemenu.h"
 #include "core/utils.h"
 #include "core/toconf.h"
+#include "core/toconfenum.h"
 #include "core/tochangeconnection.h"
-#include "core/toconf.h"
 #include "core/toconnectionsub.h"
 #include "core/toconnectiontraits.h"
 #include "core/toparamget.h"
@@ -97,6 +97,51 @@
 #include "icons/toworksheet.xpm"
 #include "icons/up.xpm"
 #include "icons/down.xpm"
+
+namespace ToConfiguration {
+	class Worksheet : public ConfigContext
+	{
+		Q_OBJECT;
+		Q_ENUMS(OptionTypeEnum);
+	public:
+		Worksheet() : ConfigContext("Worksheet", ENUM_REF(Worksheet,OptionTypeEnum)) {};
+		enum OptionTypeEnum {
+ 			AutoSave  = 7000    // #define CONF_AUTO_SAVE
+			, CheckSave          // #define CONF_CHECK_SAVE
+			, LogAtEnd           // #define CONF_LOG_AT_END
+			, LogMulti           // #define CONF_LOG_MULTI
+			, Statistics         // #define CONF_STATISTICS
+			, TimedStats         // #define CONF_TIMED_STATS
+			, Number             // #define CONF_NUMBER (Display row number)
+			, MoveToError        // #define CONF_MOVE_TO_ERR
+			, History            // #define CONF_HISTORY (Save previous results)
+			, ExecLog            // #define CONF_EXEC_LOG
+			, ToplevelDescribe   // #define CONF_TOPLEVEL_DESCRIBE
+			, AutoLoad           // #define CONF_AUTO_LOAD (Default file)
+		};
+		QVariant defaultValue(int option) const
+		{
+			switch(option)
+			{
+			case AutoSave:           return QVariant((bool)false);
+			case CheckSave:          return QVariant((bool)true);
+			case LogAtEnd:           return QVariant((bool)true);
+			case LogMulti:           return QVariant((bool)true);
+			case Statistics:         return QVariant((bool)false);
+			case TimedStats:         return QVariant((bool)true);
+			case Number:             return QVariant((bool)true);
+			case MoveToError:        return QVariant((bool)true);
+			case History:            return QVariant((bool)false);
+			case ExecLog:            return QVariant((bool)false);
+			case ToplevelDescribe:   return QVariant((bool)true);
+			case AutoLoad:           return QVariant(QString(""));
+			default:
+				Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Editor un-registered enum value: %1").arg(option)));
+				return QVariant();
+			}
+		}
+	};
+};
 
 class toWorksheetTool : public toTool
 {

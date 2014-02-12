@@ -36,9 +36,43 @@
 #define TOORACLESETTING_H
 
 #include "core/tora_export.h"
+#include "core/toconfenum.h"
 #include "core/totool.h"
 
 #include "ui_tooraclesettingui.h"
+
+namespace ToConfiguration
+{
+
+	class Oracle : public ConfigContext
+	{
+		Q_OBJECT;
+		Q_ENUMS(OptionTypeEnum);
+	public:
+		Oracle() : ConfigContext("Oracle", ENUM_REF(Oracle,OptionTypeEnum)) {};
+		enum OptionTypeEnum {
+			ConfDateFormat = 5000 // #define CONF_DATE_FORMAT
+			, ConfTimestampFormat // #define CONF_TIMESTAMP_FORMAT
+			, MaxLong             // #define CONF_MAX_LONG
+			, PlanTable           // #define CONF_PLAN_TABLE
+			, KeepPlans           // #define CONF_KEEP_PLANS  // default: false
+			, VSqlPlans           // #define CONF_VSQL_PLANS  // default: true
+			, SharedPlan          // #define CONF_SHARED_PLAN // default: false
+			// Extractor. Controls the method used to produce database object extracts
+			// as well as extraction settings (which information should be extracted).
+			, UseDbmsMetadata      // #define CONF_USE_DBMS_METADATA
+			, IncludeStorage       // #define CONF_EXT_INC_STORAGE
+			, SkipOrgMon           // #define CONF_EXT_SKIP_ORGMON
+			, SkipStorageExceptTablespace // #define CONF_EXT_SKIP_STORAGE_EX_TABLESPACE
+			, IncludeParallel      // #define CONF_EXT_INC_PARALLEL
+			, IncludePartition     // #define CONF_EXT_INC_PARTITION
+			, IncludeCode          // #define CONF_EXT_INC_CODE
+			, IncludeHeader        // #define CONF_EXT_INC_HEADER
+			, IncludePrompt        // #define CONF_EXT_INC_PROMPT
+		};
+		virtual QVariant defaultValue(int option) const;
+	};
+};
 
 /** Instance of this class is returned by dll class toOracleProvider.
   * But even though this class is part of the main program
@@ -62,6 +96,8 @@ public slots:
     void createPlanTable(void);
 
     void dbmsMetadataClicked(bool);
+private:
+    static ToConfiguration::Oracle _conf;
 };
 
 #endif

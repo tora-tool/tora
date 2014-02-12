@@ -35,6 +35,8 @@
 #ifndef TOCONF_ENUM_H
 #define TOCONF_ENUM_H
 
+#include "core/tora_export.h"
+
 #include <QtCore/QObject>
 #include <QtCore/QMetaEnum>
 
@@ -44,7 +46,7 @@
 
 namespace ToConfiguration {
 
-	class ConfigContext : public QObject
+	class TORA_EXPORT ConfigContext : public QObject
 	{
 		Q_OBJECT;
 	public:
@@ -118,36 +120,6 @@ namespace ToConfiguration {
 		};
 	};
 
-#if 0
-	class Editor : public ConfigContext
-	{
-		Q_OBJECT;
-		Q_ENUMS(OptionTypeEnum);
-	public:
-		Editor() : ConfigContext(ENUM_REF(Editor,OptionTypeEnum)) {};
-		enum OptionTypeEnum {
-			SyntaxHighlight  = 3000 // #define CONF_HIGHLIGHT
-			, EditorType            // #define CONF_EDITOR_TYPE
-			, useMaxTextWidthMark
-			, KeywordUpper          // #define CONF_KEYWORD_UPPER
-			, ObjectNamesUpper      // #define CONF_OBJECT_NAMES_UPPER
-			, CodeComplete          // #define CONF_CODE_COMPLETION
-			, CompleteSort          // #define CONF_COMPLETION_SORT
-			, useEditorShortcuts
-			, useEditorShortcutsMap
-			, AutoIndent            // #define CONF_AUTO_INDENT
-			, TabSpaces             // #define CONF_TAB_SPACES
-			, TabStop               // #define CONF_TAB_STOP
-			, ConfText              // #define CONF_TEXT
-			, ConfCode              // #define CONF_CODE
-			, ListText              // #define CONF_LIST
-			, Extensions            // #define CONF_EXTENSIONS
-			// 2nd tab
-			, EditStyle             // #define CONF_EDIT_STYLE
-		};
-	};
-#endif
-
 	class Database : public ConfigContext
 	{
 		Q_OBJECT;
@@ -170,35 +142,6 @@ namespace ToConfiguration {
 		};
 	};
 
-	class Oracle : public ConfigContext
-	{
-		Q_OBJECT;
-		Q_ENUMS(OptionTypeEnum);
-	public:
-		Oracle() : ConfigContext("Oracle", ENUM_REF(Oracle,OptionTypeEnum)) {};
-		enum OptionTypeEnum {
-			ConfDateFormat = 5000 // #define CONF_DATE_FORMAT
-			, ConfTimestampFormat // #define CONF_TIMESTAMP_FORMAT
-			, MaxLong             // #define CONF_MAX_LONG
-			, PlanTable           // #define CONF_PLAN_TABLE
-			, KeepPlans           // #define CONF_KEEP_PLANS  // default: false
-			, VSqlPlans           // #define CONF_VSQL_PLANS  // default: true
-			, SharedPlan          // #define CONF_SHARED_PLAN // default: false
-			// Extractor. Controls the method used to produce database object extracts
-			// as well as extraction settings (which information should be extracted).
-			, ExtractorOptions     // #define CONF_EXT_GROUP_NAME
-			, UseDbmsMetadata      // #define CONF_USE_DBMS_METADATA
-			, IncludeStorage       // #define CONF_EXT_INC_STORAGE
-			, SkipOrgMon           // #define CONF_EXT_SKIP_ORGMON
-			, SkipStorageExceptTablespace // #define CONF_EXT_SKIP_STORAGE_EX_TABLESPACE
-			, IncludeParallel      // #define CONF_EXT_INC_PARALLEL
-			, IncludePartition     // #define CONF_EXT_INC_PARTITION
-			, IncludeCode          // #define CONF_EXT_INC_CODE
-			, IncludeHeader        // #define CONF_EXT_INC_HEADER
-			, IncludePrompt        // #define CONF_EXT_INC_PROMPT
-		};
-	};
-
 	class MySQL : public ConfigContext
 	{
 		Q_OBJECT;
@@ -207,28 +150,6 @@ namespace ToConfiguration {
 		MySQL() : ConfigContext("MySQL", ENUM_REF(MySQL,OptionTypeEnum)) {};
 		enum OptionTypeEnum {
 			BeforeCreateAction = 6000 // #define CONF_CREATE_ACTION
-		};
-	};
-
-	class Worksheet : public ConfigContext
-	{
-		Q_OBJECT;
-		Q_ENUMS(OptionTypeEnum);
-	public:
-		Worksheet() : ConfigContext("Worksheet", ENUM_REF(Worksheet,OptionTypeEnum)) {};
-		enum OptionTypeEnum {
-			AutoSave  = 7000    // #define CONF_AUTO_SAVE
-			, CheckSave          // #define CONF_CHECK_SAVE
-			, LogAtEnd           // #define CONF_LOG_AT_END
-			, LogMulti           // #define CONF_LOG_MULTI
-			, Statistics         // #define CONF_STATISTICS
-			, TimedStats         // #define CONF_TIMED_STATS
-			, Number             // #define CONF_NUMBER (Display row number)
-			, MoveToError        // #define CONF_MOVE_TO_ERR
-			, History            // #define CONF_HISTORY (Save previous results)
-			, ExecLog            // #define CONF_EXEC_LOG
-			, ToplevelDescribe   // #define CONF_TOPLEVEL_DESCRIBE
-			, AutoLoad           // #define CONF_AUTO_LOAD (Default file)
 		};
 	};
 
@@ -243,21 +164,6 @@ namespace ToConfiguration {
 		    , DispCoalesced          // #define CONF_DISP_COALESCED
 		    , DispExtents            // #define CONF_DISP_EXTENTS
 		    , AvailableGraph         // #define CONF_DISP_AVAILABLEGRAPH
-	    };
-	};
-
-	class Browser : public ConfigContext
-	{
-		Q_OBJECT;
-		Q_ENUMS(OptionTypeEnum);
-	public:
-		Browser() : ConfigContext("Browser", ENUM_REF(Browser,OptionTypeEnum)) {};
-	    enum OptionTypeEnum {
-		    FilterIgnoreCase  = 9000  // #define CONF_FILTER_IGNORE_CASE
-		    , FilterInvert            // #define CONF_FILTER_INVERT  
-		    , FilterType              // #define CONF_FILTER_TYPE  
-		    , FilterTablespaceType    // #define CONF_FILTER_TABLESPACE_TYPE  
-		    , FilterText              // #define CONF_FILTER_TEXT  
 	    };
 	};
 

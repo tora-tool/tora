@@ -39,6 +39,32 @@
 #include "core/toconnection.h"
 #include "core/toconnectionregistry.h"
 
+QVariant ToConfiguration::Oracle::defaultValue(int option) const
+{
+	switch(option)
+	{
+	case ConfDateFormat:                return QVariant(QString("YYYY-MM-DD HH24:MI:SS"));
+	case ConfTimestampFormat:           return QVariant(QString("YYYY-MM-DD HH24:MI:SSXFF"));
+	case MaxLong:                       return QVariant((int)30000);
+	case PlanTable:                     return QVariant(QString("PLAN_TABLE"));
+	case KeepPlans:                     return QVariant((bool)false);
+	case VSqlPlans:                     return QVariant((bool)true);
+	case SharedPlan:                    return QVariant((bool)false);
+	case UseDbmsMetadata:               return QVariant((bool)true);
+	case IncludeStorage:                return QVariant((bool)true);
+	case SkipOrgMon:                    return QVariant((bool)false);
+	case SkipStorageExceptTablespace:   return QVariant((bool)false);
+	case IncludeParallel:               return QVariant((bool)true);
+	case IncludePartition:              return QVariant((bool)true);
+	case IncludeCode:                   return QVariant((bool)true);
+	case IncludeHeader:                 return QVariant((bool)true);
+	case IncludePrompt:                 return QVariant((bool)true);
+	default:
+		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Editor un-registered enum value: %1").arg(option)));
+		return QVariant();
+	}
+}
+
 toOracleSetting::toOracleSetting(QWidget *parent)
     : QWidget(parent)
     , toSettingTab("database.html#oracle")

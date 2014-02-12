@@ -37,7 +37,7 @@
 
 //template #include "core/totemplate.h"
 #include "core/totool.h"
-
+#include "core/toconfenum.h"
 
 #include <map>
 #include <QtCore/QString>
@@ -79,6 +79,23 @@ class toBrowserSchemaBase;
 class toBrowserSchemaCodeBrowser;
 class toBrowserSchemaTableView;
 
+namespace ToConfiguration {
+	class Browser : public ConfigContext
+	{
+		Q_OBJECT;
+		Q_ENUMS(OptionTypeEnum);
+	public:
+		Browser() : ConfigContext("Browser", ENUM_REF(Browser,OptionTypeEnum)) {};
+	    enum OptionTypeEnum {
+		    FilterIgnoreCase  = 9000  // #define CONF_FILTER_IGNORE_CASE
+		    , FilterInvert            // #define CONF_FILTER_INVERT
+		    , FilterType              // #define CONF_FILTER_TYPE
+		    , FilterTablespaceType    // #define CONF_FILTER_TABLESPACE_TYPE
+		    , FilterText              // #define CONF_FILTER_TEXT
+	    };
+	    virtual QVariant defaultValue(int option) const;
+	};
+};
 
 /*! \brief Main GUI for Schema Browser.
 toBrowser holds the GUI stuff for schema browsing. It contains
@@ -358,6 +375,8 @@ public slots:
     void addConstraint(void);
     void addIndex(void);
 #endif
+private:
+    static ToConfiguration::Browser m_conf;
 };
 
 
