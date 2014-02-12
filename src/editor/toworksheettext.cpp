@@ -34,12 +34,65 @@
 
 #include "editor/toworksheettext.h"
 #include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
 #include "core/toconnection.h"
 #include "core/tologger.h"
+#include "editor/tostyle.h"
+
+using namespace ToConfiguration;
+
+QVariant ToConfiguration::Editor::defaultValue(int option) const
+{
+	switch(option)
+	{
+	case SyntaxHighlight:          return QVariant((int) 0);
+	case EditorType:               return QVariant((int) 0);
+	case UseMaxTextWidthMark:      return QVariant((bool) false);
+	case MaxTextWidthMark:         return QVariant((int)75);
+	case KeywordUpper:             return QVariant((bool) false);
+	case ObjectNamesUpper:         return QVariant((bool) false);
+	case CodeComplete:             return QVariant((bool) true);
+	case CompleteSort:             return QVariant((bool) true);
+	case UseEditorShortcuts:       return QVariant((bool) false);
+	case EditorShortcutsMap:    return QVariant(QMap<QString, QVariant>());
+	case AutoIndent:               return QVariant((bool) true);
+	case TabSpaces:                return QVariant((bool) false);
+	case TabStop:                  return QVariant((int) 8);
+	case ConfText:                 return QVariant(QString(""));
+	case ConfCode:                 return QVariant(QString(""));
+	case ListText:                 return QVariant(QString(""));
+	case Extensions:               return QVariant(QString("SQL (*.sql *.pkg *.pkb), Text (*.txt), All (*)"));
+	case EditStyle:
+	{
+		toStylesMap retval;
+		QMetaEnum StyleNameEnum(ENUM_REF(toSyntaxAnalyzer,WordClassEnum));
+		QsciLexerSQL *l = new QsciLexerSQL(NULL);
+		for (int idx = 0; idx < StyleNameEnum.keyCount(); idx++)
+		{
+			QString keyNameFg = QString::fromAscii("EditStyle") + StyleNameEnum.key(idx) + "Fg";
+			QString keyNameBg = QString::fromAscii("EditStyle") + StyleNameEnum.key(idx) + "Bg";
+			QString keyNameFo = QString::fromAscii("EditStyle") + StyleNameEnum.key(idx) + "Fo";
+			QColor fg, bg;
+			QFont fo;
+			fg = l->color((int)StyleNameEnum.value(idx));
+			bg = l->paper((int)StyleNameEnum.value(idx));
+			fo = QFont("");
+
+			QString styleName = StyleNameEnum.key(idx);
+			int styleNameEnum = StyleNameEnum.value(idx);
+			retval.insert(styleNameEnum, toStyle(fg, bg, fo));
+		}
+		delete l;
+		return QVariant::fromValue(retval);
+	}
+	default:
+		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Editor un-registered enum value: %1").arg(option)));
+		return QVariant();
+	}
+}
 
 toWorksheetText::toWorksheetText(QWidget *parent, const char *name)
     : toSqlText(parent, name)
-	, ToConfiguration::ConfigContextHolder(s_EditorConfig)
 	, m_bookmarkMarginHandle(QsciScintilla::markerDefine(QsciScintilla::RightTriangle))
 	, m_bookmarkHandle(QsciScintilla::markerDefine(QsciScintilla::Background))
 	, m_complAPI(NULL)
@@ -60,9 +113,9 @@ toWorksheetText::toWorksheetText(QWidget *parent, const char *name)
 #endif
 
     // handle "max text width" mark
-    if (toConfigurationSingle::Instance().useMaxTextWidthMark())
+    if (toConfigurationNewSingle::Instance().option(Editor::UseMaxTextWidthMark).toBool())
     {
-    	QsciScintilla::setEdgeColumn(toConfigurationSingle::Instance().maxTextWidthMark());
+    	QsciScintilla::setEdgeColumn(toConfigurationNewSingle::Instance().option(Editor::MaxTextWidthMark).toInt());
     	// TODO setEdgeColor(DefaultAnalyzer.getColor(toSyntaxAnalyzer::CurrentLineMarker).darker(150));
     	QsciScintilla::setEdgeMode(QsciScintilla::EdgeLine);
     }
@@ -98,13 +151,13 @@ void toWorksheetText::keyPressEvent(QKeyEvent * e)
     // handle editor shortcuts with TAB
     // It uses qscintilla lowlevel API to handle "word under cursor"
     // This code is taken from sqliteman.com
-    if (e->key() == Qt::Key_Tab && toConfigurationSingle::Instance().useEditorShortcuts())
+    if (e->key() == Qt::Key_Tab && toConfigurationNewSingle::Instance().option(Editor::UseEditorShortcuts).toBool())
     {
         long pos = currentPosition();
         int start = SendScintilla(SCI_WORDSTARTPOSITION, pos, true);
         int end = SendScintilla(SCI_WORDENDPOSITION, pos, true);
         QString key(wordAtPosition(pos, true));
-        EditorShortcutsMap shorts(toConfigurationSingle::Instance().editorShortcuts());
+        EditorShortcutsMap shorts(toConfigurationNewSingle::Instance().option(Editor::EditorShortcutsMap).toMap());
         if (shorts.contains(key))
         {
             setSelection(start, end);

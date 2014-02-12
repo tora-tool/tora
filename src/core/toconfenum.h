@@ -48,21 +48,12 @@ namespace ToConfiguration {
 	{
 		Q_OBJECT;
 	public:
-		ConfigContext(ConfigContext const& other) : m_configEnum(other.m_configEnum) {};
-		ConfigContext(QMetaEnum const& e) : m_configEnum(e) {};
+		ConfigContext(QString const& context, QMetaEnum const& e);
+		ConfigContext(ConfigContext const& other);
+		virtual QVariant defaultValue(int) const = 0;
 	private:
-		QMetaEnum const& m_configEnum;
-	};
-
-	class ConfigContextHolder
-	{
-	public:
-		ConfigContextHolder(ConfigContext const& c)
-		: Context(c)
-		{}
-		virtual ~ConfigContextHolder() {};
-
-		ConfigContext Context;
+		QMetaEnum m_configEnum;
+		QString m_contextName;
 	};
 
 	class Main : public ConfigContext
@@ -70,7 +61,7 @@ namespace ToConfiguration {
 		Q_OBJECT;
 		Q_ENUMS(OptionTypeEnum);
 	public:
-		Main() : ConfigContext(ENUM_REF(Main,OptionTypeEnum)) {};
+		Main() : ConfigContext("Main", ENUM_REF(Main,OptionTypeEnum)) {};
 		enum OptionTypeEnum {
 			LastVersion   = 1000 // #define CONF_LAST_VERSION
 			, FirstInstall       // #define CONF_FIRST_INSTALL
@@ -93,7 +84,7 @@ namespace ToConfiguration {
 		Q_OBJECT;
 		Q_ENUMS(OptionTypeEnum);
 	public:
-		Global() : ConfigContext(ENUM_REF(Global,OptionTypeEnum)) {};
+		Global() : ConfigContext("Global", ENUM_REF(Global,OptionTypeEnum)) {};
 		enum OptionTypeEnum {
 			// Paths
 			SQLDictionary = 2000    // #define CONF_SQL_FILE
@@ -162,7 +153,7 @@ namespace ToConfiguration {
 		Q_OBJECT;
 		Q_ENUMS(OptionTypeEnum);
 	public:
-		Database() : ConfigContext(ENUM_REF(Database,OptionTypeEnum)) {};
+		Database() : ConfigContext("Database", ENUM_REF(Database,OptionTypeEnum)) {};
 		enum OptionTypeEnum {
 			ObjectCache   = 4000  // #define CONF_OBJECT_CACHE
 			, AutoCommit          // #define CONF_AUTO_COMMIT
@@ -184,7 +175,7 @@ namespace ToConfiguration {
 		Q_OBJECT;
 		Q_ENUMS(OptionTypeEnum);
 	public:
-		Oracle() : ConfigContext(ENUM_REF(Oracle,OptionTypeEnum)) {};
+		Oracle() : ConfigContext("Oracle", ENUM_REF(Oracle,OptionTypeEnum)) {};
 		enum OptionTypeEnum {
 			ConfDateFormat = 5000 // #define CONF_DATE_FORMAT
 			, ConfTimestampFormat // #define CONF_TIMESTAMP_FORMAT
@@ -213,7 +204,7 @@ namespace ToConfiguration {
 		Q_OBJECT;
 		Q_ENUMS(OptionTypeEnum);
 	public:
-		MySQL() : ConfigContext(ENUM_REF(MySQL,OptionTypeEnum)) {};
+		MySQL() : ConfigContext("MySQL", ENUM_REF(MySQL,OptionTypeEnum)) {};
 		enum OptionTypeEnum {
 			BeforeCreateAction = 6000 // #define CONF_CREATE_ACTION
 		};
@@ -224,7 +215,7 @@ namespace ToConfiguration {
 		Q_OBJECT;
 		Q_ENUMS(OptionTypeEnum);
 	public:
-		Worksheet() : ConfigContext(ENUM_REF(Worksheet,OptionTypeEnum)) {};
+		Worksheet() : ConfigContext("Worksheet", ENUM_REF(Worksheet,OptionTypeEnum)) {};
 		enum OptionTypeEnum {
 			AutoSave  = 7000    // #define CONF_AUTO_SAVE
 			, CheckSave          // #define CONF_CHECK_SAVE
@@ -246,7 +237,7 @@ namespace ToConfiguration {
 		Q_OBJECT;
 		Q_ENUMS(OptionTypeEnum);
 	public:
-		Storage() : ConfigContext(ENUM_REF(Storage,OptionTypeEnum)) {};
+		Storage() : ConfigContext("Storage", ENUM_REF(Storage,OptionTypeEnum)) {};
 	    enum OptionTypeEnum {
 		    DispTablespaces  = 8000  // #define CONF_DISP_TABLESPACES
 		    , DispCoalesced          // #define CONF_DISP_COALESCED
@@ -260,7 +251,7 @@ namespace ToConfiguration {
 		Q_OBJECT;
 		Q_ENUMS(OptionTypeEnum);
 	public:
-		Browser() : ConfigContext(ENUM_REF(Browser,OptionTypeEnum)) {};
+		Browser() : ConfigContext("Browser", ENUM_REF(Browser,OptionTypeEnum)) {};
 	    enum OptionTypeEnum {
 		    FilterIgnoreCase  = 9000  // #define CONF_FILTER_IGNORE_CASE
 		    , FilterInvert            // #define CONF_FILTER_INVERT  
@@ -275,7 +266,7 @@ namespace ToConfiguration {
 		Q_OBJECT;
 		Q_ENUMS(OptionTypeEnum);
 	public:
-		Rollback() : ConfigContext(ENUM_REF(Rollback,OptionTypeEnum)) {};
+		Rollback() : ConfigContext("Rollback", ENUM_REF(Rollback,OptionTypeEnum)) {};
 		enum OptionTypeEnum {
 			NoExec       = 10000   // #define CONF_NO_EXEC
 			, NeedRead             // #define CONF_NEED_READ 
@@ -290,7 +281,7 @@ namespace ToConfiguration {
 		Q_OBJECT;
 		Q_ENUMS(OptionTypeEnum);
 	public:
-		SgaTrace() : ConfigContext(ENUM_REF(SgaTrace,OptionTypeEnum)) {};
+		SgaTrace() : ConfigContext("SgaTrace", ENUM_REF(SgaTrace,OptionTypeEnum)) {};
 		enum OptionTypeEnum {
 			AutoUpdate   = 11000  // #define CONF_AUTO_UPDATE
 		};
@@ -301,7 +292,7 @@ namespace ToConfiguration {
 		Q_OBJECT;
 		Q_ENUMS(OptionTypeEnum);
 	public:
-		Output() : ConfigContext(ENUM_REF(Output,OptionTypeEnum)) {};
+		Output() : ConfigContext("Output", ENUM_REF(Output,OptionTypeEnum)) {};
 		enum OptionTypeEnum {
 			PollingInterval = 12000 // #define CONF_POLLING
 			, Type                  // #define CONF_LOG_TYPE 

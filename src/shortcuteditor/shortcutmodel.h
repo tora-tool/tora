@@ -10,6 +10,8 @@ for which a new license (GPL+exception) is in place.
 #include <QtCore/QAbstractTableModel>
 #include <QtCore/QPair>
 
+typedef QMap<QString, QVariant> EditorShortcutsMap;
+typedef QMapIterator<QString, QVariant> EditorShortcutsMapIterator;
 
 /*! \brief A model for sQL editor shortcuts.
 See ShortcutEditorDialog for basic idea of shortcuts.

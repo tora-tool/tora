@@ -97,5 +97,8 @@ public:
 
 typedef QMap<int, toStyle> toStylesMap;
 
+Q_DECLARE_METATYPE(toStyle);
+Q_DECLARE_METATYPE(toStylesMap);
+
 #endif
 

@@ -170,86 +170,87 @@ ENDIF (POPPLER_QT4_FOUND)
 # MOC classses
 SET(TORA_MOC_CLASSES
   # Tora core sorces
+  #obsolete core/todatatype.h
+  #obsolete core/torunnable.h
+  #obsolete core/totaskrunner.h
+  #obsolete core/tothread.h
+  #obsolete core/tovisualize.h
   core/toabout.h
   core/tobackground.h
   core/tobackgroundlabel.h
+  core/tobarchart.h
+  core/tobrowserbasewidget.h # this one is used by core/todescribe.h (therefore is not in tools)
+  core/tocache.h
+  core/tochangeconnection.h
+  core/tocodemodel.h
   core/toconfenum.h
   core/toconfiguration.h
+  core/toconfiguration_new.h
   core/toconfigurationpriv.h
   core/toconnection.h
-  core/toconnectionregistry.h
-  core/todockbar.h
-  core/todocklet.h
-  core/toglobalsetting.h
-  core/tomain.h
-  core/tomainwindow.h
-  core/toglobalevent.h
-  core/tomessage.h
-  core/topreferences.h
-  core/topushbutton.h     
-  #obsolete core/totaskrunner.h
-  core/totreewidget.h
-  core/utils.h
-  core/tonewconnection.h  
   core/toconnectionimport.h
   core/toconnectionmodel.h
-  core/tohelp.h
-  core/tohelpsetup.h
-  core/totool.h
-  core/toquery.h
-  core/toqueryimpl.h
+  core/toconnectionregistry.h
+  core/todescribe.h
+  core/todockbar.h
+  core/todocklet.h
+  core/toeditablemenu.h
+  core/toeditmenu.h
   core/toeventquery.h
   core/toeventqueryworker.h
-  #obsolete core/torunnable.h
-  core/toresultview.h
-  core/toresult.h
-  core/toresultlistformat.h
-  core/tomemoeditor.h
-  core/totabwidget.h
-  core/toresultmodel.h
-  core/toresultmodeledit.h
-  core/toresulttableview.h  
-  core/toresulttableviewedit.h  
-  core/tochangeconnection.h
-  core/toparamget.h
-  core/tomodeleditor.h
-  core/toworkingwidget.h
-  core/toworkspace.h
-  core/toresultbar.h
-  core/tobarchart.h
+  core/toglobalevent.h
+  core/toglobalsetting.h
+  core/tohelp.h
+  core/tohelpsetup.h
   core/tolinechart.h
+  core/tomain.h
+  core/tomainwindow.h
+  core/tomemoeditor.h
+  core/tomessage.h
+  core/tomodeleditor.h
+  core/tonewconnection.h  
+  core/toparamget.h
+  core/topiechart.h
+  core/topreferences.h
+  core/topushbutton.h     
+  core/toquery.h
+  core/toqueryimpl.h
+  core/toresult.h
+  core/toresultbar.h
+  core/toresultcode.h
   core/toresultcols.h
   core/toresultcolscomment.h
-  core/toresultschema.h
   core/toresultcombo.h
-  core/toresultplan.h
-  core/toresultitem.h
-  core/toresultstats.h
-  core/todescribe.h
-  core/toresultcode.h
-  core/toresultfield.h
-  core/toresultgrants.h
+  core/toresultdatasingle.h
   core/toresultdepend.h
   core/toresultextent.h
-  core/tocodemodel.h
-  core/totableselect.h  
-  core/toresultdatasingle.h
-  #obsolete core/todatatype.h
-  #obsolete core/tovisualize.h
-  core/topiechart.h
-  core/toeditmenu.h
-  core/toeditablemenu.h
-  core/tosyntaxsetup.h
-  core/tocache.h
-  #obsolete core/tothread.h
-  core/toresultlock.h
-  core/toresultparam.h
-  core/toresultlong.h
-  core/tosplash.h
-  core/totimer.h
-  core/totextview.h
-  core/tobrowserbasewidget.h # this one is used by core/todescribe.h (therefore is not in tools)
+  core/toresultfield.h
+  core/toresultgrants.h
+  core/toresultitem.h
   core/toresultline.h
+  core/toresultlistformat.h
+  core/toresultlock.h
+  core/toresultlong.h
+  core/toresultmodel.h
+  core/toresultmodeledit.h
+  core/toresultparam.h
+  core/toresultplan.h
+  core/toresultschema.h
+  core/toresultstats.h
+  core/toresulttableview.h  
+  core/toresulttableviewedit.h  
+  core/toresultview.h
+  core/tosplash.h
+  core/tosyntaxsetup.h
+  core/totableselect.h  
+  core/totabwidget.h
+  core/totextview.h
+  core/totimer.h
+  core/totool.h
+  core/totreewidget.h
+  core/toworkingwidget.h
+  core/toworkspace.h
+  core/utils.h
   parsing/tsqllexer.h
   parsing/tosyntaxanalyzer.h
   parsing/tolexeroracleapis.h 
@@ -391,98 +392,100 @@ ENDIF()
 ################################################################################
 # sources
 SET(TORA_SOURCES
+  #obsolete core/todatatype.cpp
+  #obsolete core/totaskrunner.cpp
+  #obsolete core/tovisualize.cpp
   core/toabout.cpp
   core/tobackground.cpp
   core/tobackgroundlabel.cpp     
+  core/tobarchart.cpp
+  core/tobrowserbasewidget.cpp # this one is used by core/todescribe.h (therefore is not in tools)
   core/tocache.cpp
+  core/tochangeconnection.cpp 
+  core/tocodemodel.cpp
+  core/toconfenum.cpp
   core/toconfiguration.cpp
+  core/toconfiguration_new.cpp
   core/toconfigurationpriv.cpp
   core/toconnection.cpp
+  core/toconnectionimport.cpp
+  core/toconnectionmodel.cpp
   core/toconnectionoptions.cpp
+  core/toconnectionprovider.cpp
   core/toconnectionregistry.cpp
   core/toconnectionsub.cpp
   core/toconnectionsubloan.cpp
-  core/toconnectionprovider.cpp
+  core/todescribe.cpp
   core/todockbar.cpp
   core/todocklet.cpp
+  core/toeditablemenu.cpp
   core/toeditmenu.cpp
   core/toeditwidget.cpp
-  core/toglobalsetting.cpp
-  core/tohtml.cpp
-  core/tomain.cpp
-  core/tomainwindow.cpp
-  core/toglobalevent.cpp
-  core/toworkspace.cpp
-  core/tomessage.cpp
-  core/topreferences.cpp	
-  core/topushbutton.cpp
-  core/toqvalue.cpp
-  core/tosql.cpp
-  core/totimer.cpp
-  core/totreewidget.cpp
-  core/utils.cpp
-  core/utils_part.cpp
-  core/tosplash.cpp
-  core/tonewconnection.cpp
-  core/toconnectionimport.cpp
-  core/toconnectionmodel.cpp
-  core/tohelp.cpp
-  core/totool.cpp
-  core/toquery.cpp
   core/toeventquery.cpp
   core/toeventqueryworker.cpp
-  core/toresultview.cpp
-  core/toresult.cpp
-  core/toresultlistformat.cpp
-  core/tomemoeditor.cpp
-  core/totabwidget.cpp
+  core/toextract.cpp  
+  core/toglobalevent.cpp
+  core/toglobalsetting.cpp
+  core/tohelp.cpp
+  core/tohelpsetup.cpp
+  core/tohtml.cpp
+  core/tolinechart.cpp
   core/tolistviewformatter.cpp
   core/tolistviewformattercsv.cpp
   core/tolistviewformatterhtml.cpp
   core/tolistviewformattersql.cpp
   core/tolistviewformattertabdel.cpp
   core/tolistviewformattertext.cpp
-  core/toresultmodel.cpp
-  core/toresultmodeledit.cpp
-  core/toresulttableview.cpp
-  core/tochangeconnection.cpp 
-  core/toparamget.cpp
+  core/tomain.cpp
+  core/tomainwindow.cpp
+  core/tomemoeditor.cpp
+  core/tomessage.cpp
   core/tomodeleditor.cpp
-  core/toworkingwidget.cpp
+  core/tonewconnection.cpp
+  core/toparamget.cpp
+  core/topiechart.cpp
+  core/topreferences.cpp	
+  core/topushbutton.cpp
+  core/toquery.cpp
+  core/toqvalue.cpp
+  core/toresult.cpp
   core/toresultbar.cpp
-  core/tobarchart.cpp
-  core/tolinechart.cpp
+  core/toresultcode.cpp
   core/toresultcols.cpp
   core/toresultcolscomment.cpp
-  core/toresultschema.cpp
   core/toresultcombo.cpp
-  core/toresultplan.cpp
-  core/toresultitem.cpp
-  core/toresultstats.cpp
-  core/todescribe.cpp
-  core/toresulttableviewedit.cpp
-  core/toresultcode.cpp
-  core/toresultfield.cpp
-  core/toextract.cpp  
-  core/toresultgrants.cpp
+  core/toresultdatasingle.cpp
   core/toresultdepend.cpp  
   core/toresultextent.cpp
-  core/tocodemodel.cpp
-  core/totableselect.cpp  
-  core/toresultdatasingle.cpp
-  #obsolete core/todatatype.cpp
-  #obsolete core/tovisualize.cpp
-  core/topiechart.cpp
-  core/toeditablemenu.cpp
-  core/tosyntaxsetup.cpp
-  core/tohelpsetup.cpp
-  #obsolete core/totaskrunner.cpp
-  core/toresultlock.cpp
-  core/toresultparam.cpp
-  core/toresultlong.cpp
-  core/totextview.cpp
-  core/tobrowserbasewidget.cpp # this one is used by core/todescribe.h (therefore is not in tools)
+  core/toresultfield.cpp
+  core/toresultgrants.cpp
+  core/toresultitem.cpp
   core/toresultline.cpp
+  core/toresultlistformat.cpp
+  core/toresultlock.cpp
+  core/toresultlong.cpp
+  core/toresultmodel.cpp
+  core/toresultmodeledit.cpp
+  core/toresultparam.cpp
+  core/toresultplan.cpp
+  core/toresultschema.cpp
+  core/toresultstats.cpp
+  core/toresulttableview.cpp
+  core/toresulttableviewedit.cpp
+  core/toresultview.cpp
+  core/tosplash.cpp
+  core/tosql.cpp
+  core/tosyntaxsetup.cpp
+  core/totableselect.cpp  
+  core/totabwidget.cpp
+  core/totextview.cpp
+  core/totimer.cpp
+  core/totool.cpp
+  core/totreewidget.cpp
+  core/toworkingwidget.cpp
+  core/toworkspace.cpp
+  core/utils.cpp
+  core/utils_part.cpp
   
   editor/tobaseeditor.cpp
   editor/tomarkededitor.cpp

@@ -3,6 +3,7 @@
 
 #include "core/tora_export.h"
 #include "editor/tostyle.h"
+#include "shortcuteditor/shortcutmodel.h"
 
 #include <loki/Singleton.h>
 #include <QtCore/QStringList>
@@ -17,8 +18,6 @@ typedef QMap<QString, QString> ChartsMap;
 typedef QMapIterator<QString, QString> ChartsMapIterator;
 typedef QMap<QString, QString> TemplatesMap;
 typedef QMapIterator<QString, QString> TemplatesMapIterator;
-typedef QMap<QString, QVariant> EditorShortcutsMap;
-typedef QMapIterator<QString, QVariant> EditorShortcutsMapIterator;
 typedef QMap<QString, QString> ConnectionColors;
 typedef QMapIterator<QString, QString> ConnectionColorsIterator;
 
@@ -537,10 +536,10 @@ public:
     void setConnectionTestTimeout(int v);
 
     // shortcut editor
-    bool useEditorShortcuts();
-    void setUseEditorShortcuts(bool v);
-    EditorShortcutsMap editorShortcuts();
-    void setEditorShortcuts(const EditorShortcutsMap & v);
+	bool useEditorShortcuts();
+	void setUseEditorShortcuts(bool v);
+	EditorShortcutsMap editorShortcuts();
+	void setEditorShortcuts(const EditorShortcutsMap & v);
 
     // default encoding used when reading/writing files
     QString encoding();

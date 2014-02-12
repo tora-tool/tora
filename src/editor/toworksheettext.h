@@ -38,6 +38,8 @@
 #include "editor/tosqltext.h"
 #include "core/toconfenum.h"
 
+#include <QtCore/QVariant>
+
 namespace ToConfiguration
 {
 	class Editor : public ConfigContext
@@ -45,17 +47,18 @@ namespace ToConfiguration
 		Q_OBJECT;
 		Q_ENUMS(OptionTypeEnum);
 	public:
-		Editor() : ConfigContext(ENUM_REF(Editor,OptionTypeEnum)) {};
+		Editor() : ConfigContext("Editor", ENUM_REF(Editor,OptionTypeEnum)) {};
 		enum OptionTypeEnum {
-			SyntaxHighlight         // #define CONF_HIGHLIGHT
+			SyntaxHighlight  = 3000 // #define CONF_HIGHLIGHT
 			, EditorType            // #define CONF_EDITOR_TYPE
-			, useMaxTextWidthMark
+			, UseMaxTextWidthMark
+			, MaxTextWidthMark
 			, KeywordUpper          // #define CONF_KEYWORD_UPPER
 			, ObjectNamesUpper      // #define CONF_OBJECT_NAMES_UPPER
 			, CodeComplete          // #define CONF_CODE_COMPLETION
 			, CompleteSort          // #define CONF_COMPLETION_SORT
-			, useEditorShortcuts
-			, useEditorShortcutsMap
+			, UseEditorShortcuts
+			, EditorShortcutsMap
 			, AutoIndent            // #define CONF_AUTO_INDENT
 			, TabSpaces             // #define CONF_TAB_SPACES
 			, TabStop               // #define CONF_TAB_STOP
@@ -66,10 +69,11 @@ namespace ToConfiguration
 			// 2nd tab
 			, EditStyle             // #define CONF_EDIT_STYLE
 		};
+		virtual QVariant defaultValue(int option) const;
 	};
 }
 
-class toWorksheetText : public toSqlText, public ToConfiguration::ConfigContextHolder
+class toWorksheetText : public toSqlText
 {
     Q_OBJECT;
     Q_ENUMS(EditorTypeEnum);
