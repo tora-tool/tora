@@ -38,6 +38,7 @@
 #include "tools/toresultstorage.h"
 #include "core/toresultextent.h"
 #include "core/totool.h"
+#include "core/toconfenum.h"
 
 #include "ui_tostoragedatafileui.h"
 #include "ui_tostoragedialogui.h"
@@ -65,6 +66,23 @@ class toResultView;
 class toStorageDefinition;
 class toStorageDialog;
 class QTableView;
+
+namespace ToConfiguration {
+	class Storage : public ConfigContext
+	{
+		Q_OBJECT;
+		Q_ENUMS(OptionTypeEnum);
+	public:
+		Storage() : ConfigContext("Storage", ENUM_REF(Storage,OptionTypeEnum)) {};
+	    enum OptionTypeEnum {
+		    DispTablespaces  = 8000  // #define CONF_DISP_TABLESPACES
+		    , DispCoalesced          // #define CONF_DISP_COALESCED
+		    , DispExtents            // #define CONF_DISP_EXTENTS
+		    , AvailableGraph         // #define CONF_DISP_AVAILABLEGRAPH
+	    };
+		QVariant defaultValue(int option) const;
+	};
+};
 
 class toStorageTablespace : public QWidget, public Ui::toStorageTablespaceUI
 {

@@ -66,10 +66,19 @@
 #include "icons/tostorage.xpm"
 #include "icons/writetablespace.xpm"
 
-// #define CONF_DISP_TABLESPACES "DispTablespaces"
-// #define CONF_DISP_COALESCED "DispCoalesced"
-// #define CONF_DISP_EXTENTS "DispExtents"
-// #define CONF_DISP_AVAILABLEGRAPH "AvailableGraph"
+QVariant ToConfiguration::Storage::defaultValue(int option) const
+{
+	switch(option)
+	{
+	case DispTablespaces:  return QVariant((bool)true);
+	case DispCoalesced:    return QVariant((bool)false);
+	case DispExtents:      return QVariant((bool)false);
+	case AvailableGraph:   return QVariant((bool)true);
+	default:
+		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Editor un-registered enum value: %1").arg(option)));
+		return QVariant();
+	}
+}
 
 class toStoragePrefs : public QWidget, public Ui::toStoragePrefsUI, public toSettingTab
 {

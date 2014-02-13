@@ -120,28 +120,6 @@ namespace ToConfiguration {
 		};
 	};
 
-	class Database : public ConfigContext
-	{
-		Q_OBJECT;
-		Q_ENUMS(OptionTypeEnum);
-	public:
-		Database() : ConfigContext("Database", ENUM_REF(Database,OptionTypeEnum)) {};
-		enum OptionTypeEnum {
-			ObjectCache   = 4000  // #define CONF_OBJECT_CACHE
-			, AutoCommit          // #define CONF_AUTO_COMMIT
-			, FirewallMode        // #define CONF_FIREWALL_MODE
-			, ConnectionTestInterval // #define CONF_CONN_TEST_INTERVAL
-			, CachedConnections
-			, MaxNumber           // #define CONF_MAX_NUMBER (InitialFetch)
-			, MaxContent          // #define CONF_MAX_CONTENT (InitialEditorContent)
-			, MaxColDisp          // #define CONF_MAX_COL_DISP
-			, IndicateEmpty       // #define CONF_INDICATE_EMPTY
-			, IndicateEmptyColor  // #define CONF_INDICATE_EMPTY_COLOR
-			, NumberFormat        // #define CONF_NUMBER_FORMAT
-			, NumberDecimals      // #define CONF_NUMBER_DECIMALS
-		};
-	};
-
 	class MySQL : public ConfigContext
 	{
 		Q_OBJECT;
@@ -151,20 +129,6 @@ namespace ToConfiguration {
 		enum OptionTypeEnum {
 			BeforeCreateAction = 6000 // #define CONF_CREATE_ACTION
 		};
-	};
-
-	class Storage : public ConfigContext
-	{
-		Q_OBJECT;
-		Q_ENUMS(OptionTypeEnum);
-	public:
-		Storage() : ConfigContext("Storage", ENUM_REF(Storage,OptionTypeEnum)) {};
-	    enum OptionTypeEnum {
-		    DispTablespaces  = 8000  // #define CONF_DISP_TABLESPACES
-		    , DispCoalesced          // #define CONF_DISP_COALESCED
-		    , DispExtents            // #define CONF_DISP_EXTENTS
-		    , AvailableGraph         // #define CONF_DISP_AVAILABLEGRAPH
-	    };
 	};
 
 	class Rollback : public ConfigContext
