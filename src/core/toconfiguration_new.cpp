@@ -32,7 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "core/toConfiguration_new.h"
+#include "core/toconfiguration_new.h"
 #include "core/utils.h"
 #include "core/toconf.h"
 #include "ts_log/ts_log_utils.h"

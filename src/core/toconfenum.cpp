@@ -33,7 +33,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "core/toconfenum.h"
-#include "core/toConfiguration_new.h"
+#include "core/toconfiguration_new.h"
 
 namespace ToConfiguration {
 

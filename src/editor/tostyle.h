@@ -39,6 +39,7 @@
 #include <QtCore/QMap>
 #include <QtGui/QColor>
 #include <QtGui/QFont>
+#include <QMetaType>
 
 class toStyle : public QObject
 {
