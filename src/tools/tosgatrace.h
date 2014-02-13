@@ -35,8 +35,9 @@
 #ifndef TOSGATRACE_H
 #define TOSGATRACE_H
 
-
 #include "core/totool.h"
+#include "core/toconfenum.h"
+#include "ts_log/ts_log_utils.h"
 
 #include <QtCore/QString>
 
@@ -51,6 +52,30 @@ class toResultSchema;
 class toResultTableView;
 class toSGAStatement;
 class toTool;
+
+namespace ToConfiguration
+{
+	class SgaTrace : public ConfigContext
+	{
+		Q_OBJECT;
+		Q_ENUMS(OptionTypeEnum);
+	public:
+		SgaTrace() : ConfigContext("SgaTrace", ENUM_REF(SgaTrace,OptionTypeEnum)) {};
+		enum OptionTypeEnum {
+			AutoUpdate   = 11000  // #define CONF_AUTO_UPDATE
+		};
+		QVariant defaultValue(int option) const
+		{
+			switch(option)
+			{
+			case AutoUpdate: return QVariant((bool)true);
+			default:
+				Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Editor un-registered enum value: %1").arg(option)));
+				return QVariant();
+			}
+		}
+	};
+};
 
 class toSGATrace : public toToolWidget
 {

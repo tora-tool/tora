@@ -34,6 +34,7 @@
 
 #include "tools/tooutput.h"
 #include "core/toconf.h"
+#include "core/toconfenum.h"
 #include "core/toresultview.h"
 #include "core/totimer.h"
 #include "core/toglobalevent.h"
@@ -52,14 +53,33 @@
 #include "icons/refresh.xpm"
 #include "icons/tooutput.xpm"
 
-// #define CONF_POLLING     "Refresh"
-// #define DEFAULT_POLLING  "10 seconds"
-//
-// #define CONF_LOG_TYPE  "Type"
-// #define DEFAULT_LOG_TYPE "0"
-//
-// #define CONF_LOG_USER  "LogUser"
-// #define DEFAULT_LOG_USER "ULOG"
+namespace ToConfiguration
+{
+	class Output : public ConfigContext
+	{
+		Q_OBJECT;
+		Q_ENUMS(OptionTypeEnum);
+	public:
+		Output() : ConfigContext("Output", ENUM_REF(Output,OptionTypeEnum)) {};
+		enum OptionTypeEnum {
+			PollingInterval = 12000 // #define CONF_POLLING
+			, Type                  // #define CONF_LOG_TYPE
+			, LogUser               // #define CONF_LOG_USER
+		};
+		QVariant defaultValue(int option) const
+		{
+			switch(option)
+			{
+			case PollingInterval:  return QVariant(QString("10 seconds"));
+			case Type:             return QVariant((int)0);
+			case LogUser:          return QVariant(QString("ULOG"));
+			default:
+				Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Editor un-registered enum value: %1").arg(option)));
+				return QVariant();
+			}
+		}
+	};
+};
 
 class toOutputPrefs : public QGroupBox, public toSettingTab
 {

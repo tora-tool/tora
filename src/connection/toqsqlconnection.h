@@ -37,12 +37,37 @@
 
 #include "core/toconnection.h"
 #include "core/toconnectionsub.h"
+#include "core/toconfenum.h"
+#include "ts_log/ts_log_utils.h"
 
 #include <QtCore/QString>
 #include <QtSql/QSqlDatabase>
 
 class QSqlError;
 class toQSQLProvider;
+
+namespace ToConfiguration {
+	class MySQL : public ConfigContext
+	{
+		Q_OBJECT;
+		Q_ENUMS(OptionTypeEnum);
+	public:
+		MySQL() : ConfigContext("MySQL", ENUM_REF(MySQL,OptionTypeEnum)) {};
+		enum OptionTypeEnum {
+			BeforeCreateAction = 6000 // #define CONF_CREATE_ACTION
+		};
+		virtual QVariant defaultValue(int option) const
+		{
+			switch(option)
+			{
+			case BeforeCreateAction: return QVariant((int)0);
+			default:
+				Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Editor un-registered enum value: %1").arg(option)));
+				return QVariant();
+			}
+		}
+	};
+};
 
 // Utility class to lock QSqlDriver - TODO move it into Utils or completely remove
 // much thanks to:

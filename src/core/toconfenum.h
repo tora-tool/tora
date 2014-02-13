@@ -120,41 +120,6 @@ namespace ToConfiguration {
 		};
 	};
 
-	class MySQL : public ConfigContext
-	{
-		Q_OBJECT;
-		Q_ENUMS(OptionTypeEnum);
-	public:
-		MySQL() : ConfigContext("MySQL", ENUM_REF(MySQL,OptionTypeEnum)) {};
-		enum OptionTypeEnum {
-			BeforeCreateAction = 6000 // #define CONF_CREATE_ACTION
-		};
-	};
-
-	class SgaTrace : public ConfigContext
-	{
-		Q_OBJECT;
-		Q_ENUMS(OptionTypeEnum);
-	public:
-		SgaTrace() : ConfigContext("SgaTrace", ENUM_REF(SgaTrace,OptionTypeEnum)) {};
-		enum OptionTypeEnum {
-			AutoUpdate   = 11000  // #define CONF_AUTO_UPDATE
-		};
-	};
-
-	class Output : public ConfigContext
-	{
-		Q_OBJECT;
-		Q_ENUMS(OptionTypeEnum);
-	public:
-		Output() : ConfigContext("Output", ENUM_REF(Output,OptionTypeEnum)) {};
-		enum OptionTypeEnum {
-			PollingInterval = 12000 // #define CONF_POLLING
-			, Type                  // #define CONF_LOG_TYPE 
-			, LogUser               // #define CONF_LOG_USER 
-		};
-	};
-
 #if TORA_OBSOLETE
 // toeditextensions
 #define CONF_AUTO_INDENT_RO "AutoIndent"
