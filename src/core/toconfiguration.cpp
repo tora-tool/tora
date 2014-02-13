@@ -1386,11 +1386,11 @@ void toConfiguration::setWsToplevelDescribe(bool v)
 }
 
 
-bool toConfiguration::useEditorShortcuts()
-{
-	Q_D(toConfiguration);
-    return d->m_useEditorShortcuts;
-}
+//bool toConfiguration::useEditorShortcuts()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_useEditorShortcuts;
+//}
 
 void toConfiguration::setUseEditorShortcuts(bool v)
 {

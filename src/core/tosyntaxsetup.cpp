@@ -36,14 +36,18 @@
 #include "shortcuteditor/shortcuteditordialog.h"
 #include "core/totreewidget.h"
 #include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
 #include "core/utils.h"
 #include "parsing/tosyntaxanalyzer.h"
 #include "editor/todebugtext.h"
-
-#include <Qsci/qscilexersql.h>
+#include "editor/toworksheettext.h"
 
 #include <QtGui/QFontDialog>
 #include <QtGui/QColorDialog>
+
+#include <Qsci/qscilexersql.h>
+
+using namespace ToConfiguration;
 
 toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
     : QWidget(parent)
@@ -68,7 +72,7 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
     UseMaxTextWidthMark->setChecked(toConfigurationSingle::Instance().useMaxTextWidthMark());
     MaxTextWidthMark->setValue(toConfigurationSingle::Instance().maxTextWidthMark());
     CodeCompletion->setChecked(toConfigurationSingle::Instance().codeCompletion());
-    EditorShortcuts->setChecked(toConfigurationSingle::Instance().useEditorShortcuts());
+    EditorShortcuts->setChecked(toConfigurationNewSingle::Instance().option(Editor::UseEditorShortcuts).toBool());
     connect(EditorShortcutsEdit, SIGNAL(clicked()),
             this, SLOT(openEditorShortcutsDialog()));
 

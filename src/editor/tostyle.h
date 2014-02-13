@@ -37,9 +37,9 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QMap>
+#include <QtCore/QMetaType>
 #include <QtGui/QColor>
 #include <QtGui/QFont>
-#include <QMetaType>
 
 class toStyle : public QObject
 {

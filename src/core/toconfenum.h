@@ -131,21 +131,6 @@ namespace ToConfiguration {
 		};
 	};
 
-	class Rollback : public ConfigContext
-	{
-		Q_OBJECT;
-		Q_ENUMS(OptionTypeEnum);
-	public:
-		Rollback() : ConfigContext("Rollback", ENUM_REF(Rollback,OptionTypeEnum)) {};
-		enum OptionTypeEnum {
-			NoExec       = 10000   // #define CONF_NO_EXEC
-			, NeedRead             // #define CONF_NEED_READ 
-			, NeedTwo              // #define CONF_NEED_TWO  
-			, AlignLeft            // #define CONF_ALIGN_LEFT
-			, OldEnable            // #define CONF_OLD_ENABLE
-		};
-	};
-
 	class SgaTrace : public ConfigContext
 	{
 		Q_OBJECT;

@@ -85,7 +85,7 @@ toSyntaxAnalyzer::statement toSyntaxAnalyzerOracle::getStatementAt(unsigned line
 {
 	toSyntaxAnalyzer::statement retval;
 
-	toSqlText *editor = qobject_cast<toSqlText *>(parent());
+	toScintilla *editor = qobject_cast<toScintilla *>(parent());
 	std::string str(editor->text().toStdString());
 	try {
 		std::auto_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("OracleGuiLexer", "", "toCustomLexer");
@@ -104,7 +104,7 @@ toSyntaxAnalyzer::statement toSyntaxAnalyzerOracle::getStatementAt(unsigned line
 			}
 
 			// The statement was found - setup retval
-			toSqlText *editor = qobject_cast<toSqlText *>(parent());
+			toScintilla *editor = qobject_cast<toScintilla *>(parent());
 			retval = statement(
 					start->getPosition().getLine(),
 					end->getPosition().getLine());
@@ -160,7 +160,7 @@ QsciLexer* toSyntaxAnalyzerOracle::createLexer(QObject* parent)
 
 void toSyntaxAnalyzerOracle::sanitizeStatement(statement& stat)
 {
-	toSqlText *editor = qobject_cast<toSqlText *>(parent());
+	toScintilla *editor = qobject_cast<toScintilla *>(parent());
 	char *buf = new char[stat.posTo - stat.posFrom + 1];
     editor->SendScintilla(QsciScintilla::SCI_GETTEXTRANGE, stat.posFrom, stat.posTo, buf);
     stat.sql = editor->convertTextS2Q(buf);

@@ -72,7 +72,7 @@ class TORA_EXPORT toConfiguration: public QObject
 	Q_PROPERTY(bool    ObjectNamesUpper  READ objectNamesUpper    WRITE setObjectNamesUpper)
 	Q_PROPERTY(bool    CodeCompletion    READ codeCompletion      WRITE setCodeCompletion)
 	Q_PROPERTY(bool    CompletionSort    READ completionSort      WRITE setCompletionSort)
-	Q_PROPERTY(bool    UseEditorShortcuts READ useEditorShortcuts WRITE setUseEditorShortcuts)
+	//Q_PROPERTY(bool    UseEditorShortcuts READ useEditorShortcuts WRITE setUseEditorShortcuts)
 	Q_PROPERTY(EditorShortcutsMap EditorShortcuts READ editorShortcuts WRITE setEditorShortcuts)
 	Q_PROPERTY(bool    AutoIndent        READ autoIndent          WRITE setAutoIndent)
 	Q_PROPERTY(bool    UseSpacesForIndent READ useSpacesForIndent WRITE setUseSpacesForIndent)
@@ -536,7 +536,7 @@ public:
     void setConnectionTestTimeout(int v);
 
     // shortcut editor
-	bool useEditorShortcuts();
+	// bool useEditorShortcuts();
 	void setUseEditorShortcuts(bool v);
 	EditorShortcutsMap editorShortcuts();
 	void setEditorShortcuts(const EditorShortcutsMap & v);

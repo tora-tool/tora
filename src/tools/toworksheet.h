@@ -95,6 +95,8 @@ public:
     virtual void commitChanges();
     virtual void rollbackChanges();
 
+    toSyntaxAnalyzer::statement currentStatement() const;
+
     enum execTypeEnum
     {
         //! Display results in result tab
@@ -113,14 +115,15 @@ public:
     	SelectQueryEnum = true
     };
 
-protected:
-    void closeEvent(QCloseEvent *event);
-
-    virtual void focusInEvent(QFocusEvent *e);
-    virtual void focusOutEvent(QFocusEvent *e);
-
 public slots:
+    /**
+     * Updates tool caption.
+     */
+    void slotSetCaption(void);
     bool slotClose();
+
+protected slots:
+
     void slotSchemaChanged(const QString &);
     void slotConnectionChanged(void);
     void slotRefresh();
@@ -158,10 +161,11 @@ public slots:
      */
     void slotCreatePopupMenu(const QPoint &pos);
 
-    /**
-     * Updates tool caption.
-     */
-    void slotSetCaption(void);
+protected:
+    void closeEvent(QCloseEvent *event);
+
+    virtual void focusInEvent(QFocusEvent *e);
+    virtual void focusOutEvent(QFocusEvent *e);
 
 private slots:
     void slotPoll(void);
@@ -179,8 +183,6 @@ private:
     bool describe(toSyntaxAnalyzer::statement const&);
 
     QString currentSchema() const;
-
-    toSyntaxAnalyzer::statement currentStatement() const;
 
     QString duration(int, bool hundreds = true);
     void saveHistory(void);

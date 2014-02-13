@@ -545,6 +545,13 @@
 //#include "macros.h"
 //#include "error_handler.h"
 
+#ifdef _MSC_VER
+#define snprintf _snprintf
+#define ssize_t SSIZE_T
+#define uint32_t UINT32
+#define strncasecmp _strnicmp
+#define strcasecmp _stricmp
+#endif
  
 #ifdef __cplusplus
 extern "C" {

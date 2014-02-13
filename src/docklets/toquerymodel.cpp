@@ -32,25 +32,21 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
+#include "docklets/toquerymodel.h"
 #include "core/utils.h"
-#include "toquerymodel.h"
-
 #include "core/tologger.h"
-
-//#include "tomain.h"
-//#include "toconnectionmodel.h"
-
-//#include <QtGui/QHeaderView>
-#include <QtGui/QTabWidget>
-#include <QtGui/QListView>
-
-#include <QtCore/QTimerEvent>
 
 #include "parsing/tsqlparse.h"
 #include "docklets/toastwalk.h"
+#include "editor/toworksheettext.h"
+#include "tools/toworksheet.h"
 
 #include "dotgraphview.h"
 #include "dotgraph.h"
+
+#include <QtCore/QTimerEvent>
+#include <QtGui/QTabWidget>
+#include <QtGui/QListView>
 
 #define TOOL_NAME "QueryModel"
 
@@ -150,7 +146,7 @@ toQueryModel::toQueryModel(QWidget *parent, Qt::WindowFlags flags)
 
 void toQueryModel::timerEvent(QTimerEvent *e)
 {
-    QString newText;
+	QString newText;
     ///TLOG(0,toDecorator,__HERE__) << "void toQueryModel::timerEvent(QTimerEvent *e) fired" << std::endl;
 
     if (m_timerID == e->timerId())
@@ -170,7 +166,16 @@ void toQueryModel::timerEvent(QTimerEvent *e)
     if ( m_currentEditor == NULL)
         return;
 
-    newText = m_currentEditor->editText();
+    if (toWorksheetText *t = dynamic_cast<toWorksheetText*>(m_currentEditor))
+    {
+    	QWidget *widget = t->parentWidget()->parentWidget();
+    	toWorksheet *w = dynamic_cast<toWorksheet*>(widget);
+    	if(w)
+    		newText = w->currentStatement().sql;
+    } else {
+    	newText = m_currentEditor->editText();
+    }
+
     if( newText == m_lastText)
         return;
 
