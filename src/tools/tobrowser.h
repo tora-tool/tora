@@ -229,6 +229,7 @@ private slots:
      */
     void mainTab_currentChanged(int, Caching caching = USE_CACHE);
 
+    void slotSelected(const QString&);
 signals:
 	void filterChanged(toViewFilter*);
 

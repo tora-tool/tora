@@ -1000,6 +1000,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
 
     connect(tableView, SIGNAL(selectionChanged()), this, SLOT(changeItem()));
     connect(tableView, SIGNAL(displayMenu(QMenu *)), this, SLOT(displayTableMenu(QMenu *)));
+    connect(tableBrowserWidget, SIGNAL(selected(const QString&)), this, SLOT(slotSelected(const QString&)));
     connect(this,      SIGNAL(chilterChanged(toViewFilter*)), tableView, SLOT(setFilter(toViewFilter*)));
 
     m_objectsMap[tableSplitter] = tableView;
@@ -1317,6 +1318,45 @@ void toBrowser::mainTab_currentChanged(int /*ix*/, Caching caching) // caching =
     } else {
         TLOG(2, toDecorator, __HERE__) << "mainTab_currentChanged unhandled index:" << ix;
     }
+}
+
+void toBrowser::slotSelected(const QString& object)
+{
+    // It can be called when there is no widget at all
+    // e.g. from refresh(). Exit silently in this case.
+    if (!m_mainTab->currentWidget())
+        return;
+
+    QSplitter * ix = qobject_cast<QSplitter*>(m_mainTab->currentWidget());
+    if (m_objectsMap.contains(ix) && m_browsersMap.contains(ix))
+    {
+    	toBrowserSchemaBase *b = m_objectsMap[ix];
+    	if (QTableView *tv = dynamic_cast<QTableView*>(b))
+    	{
+    		QAbstractItemModel *model = tv->model();
+
+//    		QSortFilterProxyModel proxy;
+//    		proxy.setSourceModel(model);
+//    		proxy.setFilterFixedString(object);
+//    		int num_rows = model->rowCount();
+//    		int num_cols = model->columnCount();
+//    		QModelIndex matchingIndex = proxy.mapFromSource(proxy.index(num_rows,1/*num_cols*/));
+//    		if(matchingIndex.isValid())
+//    		{
+//    			tv->setCurrentIndex(matchingIndex);
+//    		}
+
+    		QModelIndexList matches = model->match(model->index(0,1), Qt::DisplayRole, object, 1, Qt::MatchExactly);
+    		if (!matches.isEmpty() && matches.first().isValid())
+    		{
+    			//tv->setCurrentIndex(matches.first());
+    			//tv->selectRow(matches.first().row());
+    			tv->selectionModel()->setCurrentIndex(matches.first(), QItemSelectionModel::ClearAndSelect|QItemSelectionModel::Current);
+    			tv->selectionModel()->select(matches.first(), QItemSelectionModel::ClearAndSelect|QItemSelectionModel::Current);
+    		}
+    	}
+    }
+
 }
 
 void toBrowser::slotWindowActivated(toToolWidget* widget)

@@ -928,7 +928,9 @@ void DotGraphView::mousePressEvent(QMouseEvent* e)
 	  if (CanvasElement *cei = dynamic_cast<CanvasElement*>(i))
 	  {
 		  QString id = cei->element()->id();
-		  QMessageBox::information(NULL, tr("Selected table:"), id);
+		  //QMessageBox::information(NULL, tr("Selected table:"), id);
+		  if (!id.isEmpty())
+			  emit selected(id);
 	  }
   }
   else

@@ -144,6 +144,7 @@ toResultDrawing::toResultDrawing(QWidget *parent, const char *name, Qt::WindowFl
 	m_dotGraphView = new DotGraphView(NULL, this);
 	m_dotGraphView ->initEmpty();
 	m_dotGraphView->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+	m_dotGraphView->prepareSelectSinlgeElement();
 	vbox->addWidget(m_dotGraphView);
 	this->setFocusProxy(m_dotGraphView);
 	this->setLayout(vbox);

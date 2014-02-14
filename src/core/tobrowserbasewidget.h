@@ -118,7 +118,8 @@ public:
     \param type type of object. Must be in uppercase and must match name of type used in database.
     */
     void setType(const QString & type);
-
+signals:
+	void selected(const QString&);
 private:
     QString m_schema;
     QString m_type;

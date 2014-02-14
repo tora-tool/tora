@@ -34,6 +34,7 @@
 
 #include "core/tobrowserbasewidget.h"
 #include "core/toconnectiontraits.h"
+#include "core/utils.h"
 #include "result/toresulttabledata.h"
 
 #include <QtGui/QApplication>
@@ -115,7 +116,7 @@ void toBrowserBaseWidget::tabWidget_currentChanged(int ix)
     if (m_schema.isEmpty() || m_object.isEmpty())
         return;
 
-    QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+    Utils::toBusy busy;
     QString key(currentWidget()->objectName());
 
     if ((!m_cache.contains(key))
@@ -125,7 +126,6 @@ void toBrowserBaseWidget::tabWidget_currentChanged(int ix)
         m_cache[key] = qMakePair(m_schema, m_object);
         updateData(key);
     }
-    QApplication::restoreOverrideCursor();
 }
 
 void toBrowserBaseWidget::updateData(const QString & ix)

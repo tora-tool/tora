@@ -52,6 +52,7 @@
 
 #if defined(GRAPHWIZ_FOUND)
 #include "core/toresultdrawing.h"
+#include "dotgraphview.h"
 #endif
 
 Util::RegisterInFactory<toBrowserTableWidget, toBrowserWidgetFactory, toCache::CacheEntryType> regToBrowserTableWidget(toCache::TABLE);
@@ -423,6 +424,7 @@ toBrowserTableWidget::toBrowserTableWidget(QWidget * parent)
 #if defined(GRAPHWIZ_FOUND)
     schemaView = new toResultDrawing(this);
     schemaView->setObjectName("schemaView");
+    connect(schemaView->m_dotGraphView, SIGNAL(selected(QString const&)), this, SLOT(slotSelected(QString const&)), Qt::QueuedConnection);
 #endif
     grantsView = new toResultGrants(this);
     grantsView->setObjectName("grantsView");
@@ -516,6 +518,11 @@ void toBrowserTableWidget::changeConnection()
         addTab(extractView, "Script");
     else
         extractView->hide();
+}
+
+void toBrowserTableWidget::slotSelected(const QString& object)
+{
+	emit selected(object);
 }
 
 //void toBrowserTableWidget::enableConstraints(bool enable)

@@ -179,6 +179,7 @@ Q_SIGNALS:
   void contextMenuEvent(const QString&, const QPoint&);
   void hoverEnter(const QString&);
   void hoverLeave(const QString&);
+  void selected(const QString&);
   
 public Q_SLOTS:
   void zoomIn();

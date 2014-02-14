@@ -80,6 +80,8 @@ public:
     Affected sub-tabs are: Constraints and Dependencies
     */
     //void enableConstraints(bool enable);
+private slots:
+	void slotSelected(const QString&);
 };
 
 #endif

@@ -42,13 +42,6 @@ class QSlider;
 
 class toResultDrawing : public QWidget, public toResult
 {
-private:
-    Q_OBJECT;
-
-    DotGraphView *m_dotGraphView;
-    QAction* refreshAct;
-    QSlider* slider;
-    int distance;
 public:
     toResultDrawing(QWidget *parent = 0,
 		    const char *name = 0,
@@ -69,8 +62,15 @@ public:
 
     /** Clear result widget */
     virtual void clearData();
+
+    DotGraphView *m_dotGraphView;
 private slots:
     void setDistance(int);
+private:
+    Q_OBJECT;
+    QAction* refreshAct;
+    QSlider* slider;
+    int distance;
 };
 
 
