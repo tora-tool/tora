@@ -59,7 +59,9 @@ class toBrowserTableWidget : public toBrowserBaseWidget
     toResultTableView *indexView;
     toResultTableView *constraintsView;
     toResultTableView *referencesView;
+#if defined(GRAPHWIZ_FOUND)
     toResultDrawing *schemaView;
+#endif
     toResultGrants *grantsView;
     toResultTableView *triggersView;
     toResultTableData *resultData;
