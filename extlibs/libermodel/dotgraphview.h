@@ -36,9 +36,9 @@
 ///#include <kactioncollection.h>
 ///#include <kconfiggroup.h>
 
-#include <QGraphicsView>
-#include <QSet>
-#include <QMap>
+#include <QtGui/QGraphicsView>
+#include <QtCore/QSet>
+#include <QtCore/QMap>
 
 #include "graphexporter.h"
 #include "kgraphviewer_interface.h"
@@ -221,8 +221,8 @@ public Q_SLOTS:
   void slotElementHoverLeave(CanvasEdge*);
 
 private Q_SLOTS:
-  void slotAGraphReadFinished();
 #ifdef GV_LIB
+  void slotAGraphReadFinished();
   void slotAGraphLayoutFinished();
 #endif
   
@@ -303,11 +303,13 @@ private:
   /// true if elements should be highlighted on hover; false otherwise
   bool m_highlighting;
 
+#ifdef GV_LIB
   /// A thread to load graphviz agraph files
   LoadAGraphThread m_loadThread;
   
   /// A thread to layout graphviz agraph files
   LayoutAGraphThread m_layoutThread;
+#endif
 };
 
 #endif // DOTGRAPHVIEW_H

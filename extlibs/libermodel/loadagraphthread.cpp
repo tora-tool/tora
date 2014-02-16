@@ -31,7 +31,7 @@ void LoadAGraphThread::run()
   fp = fopen(m_dotFileName.toUtf8().data(), "r");
   m_g = agread(fp);
 }
-#endif
+
 void LoadAGraphThread::loadFile(const QString& dotFileName)
 {
   ///kDebug();
@@ -40,3 +40,4 @@ void LoadAGraphThread::loadFile(const QString& dotFileName)
   m_dotFileName = dotFileName;
   start();
 }
+#endif

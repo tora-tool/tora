@@ -22,6 +22,7 @@
 
 #include <QThread>
 #ifdef GV_LIB
+#ifdef GV_LIB
 #include <graphviz/gvc.h>
 #endif
 
@@ -44,5 +45,6 @@ private:
   GVC_t *m_gvc;
 #endif
 };
+#endif
 
 #endif // LAYOUTAGRAPHTHREAD_H

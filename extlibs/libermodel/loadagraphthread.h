@@ -24,7 +24,6 @@
 
 #ifdef GV_LIB
 #include <graphviz/gvc.h>
-#endif
 
 class LoadAGraphThread : public QThread
 {
@@ -45,5 +44,6 @@ private:
   GVC_t *m_gvc;
 #endif
 };
+#endif
 
 #endif // LOADAGRAPHTHREAD_H

@@ -47,25 +47,25 @@
 #include <math.h>
 #include <iostream>
 
-#include <QMatrix>
-#include <QPainter>
-#include <QStyle>
-#include <QImage>
-#include <QContextMenuEvent>
-#include <QKeyEvent>
-#include <QPixmap>
-#include <QBitmap>
-#include <QResizeEvent>
-#include <QFocusEvent>
-#include <QMouseEvent>
-#include <QWheelEvent>
-#include <QMenu>
-#include <QGraphicsSimpleTextItem>
-#include <QScrollBar>
-#include <QActionGroup>
-#include <QInputDialog>
-#include <QApplication>
-#include <QFileDialog>
+#include <QtGui/QMatrix>
+#include <QtGui/QPainter>
+#include <QtGui/QStyle>
+#include <QtGui/QImage>
+#include <QtGui/QContextMenuEvent>
+#include <QtGui/QKeyEvent>
+#include <QtGui/QPixmap>
+#include <QtGui/QBitmap>
+#include <QtGui/QResizeEvent>
+#include <QtGui/QFocusEvent>
+#include <QtGui/QMouseEvent>
+#include <QtGui/QWheelEvent>
+#include <QtGui/QMenu>
+#include <QtGui/QGraphicsSimpleTextItem>
+#include <QtGui/QScrollBar>
+#include <QtGui/QActionGroup>
+#include <QtGui/QInputDialog>
+#include <QtGui/QApplication>
+#include <QtGui/QFileDialog>
 
 #include <QMessageBox> // TODO just a test - remove me
 
@@ -107,9 +107,11 @@ DotGraphView::DotGraphView(QActionGroup* actions, QWidget* parent) :
     m_newEdgeDraft(0),
     m_readWrite(false),
     m_leavedTimer(std::numeric_limits<int>::max()),
-    m_highlighting(false),
+    m_highlighting(false)
+#ifdef GV_LIB
     m_loadThread(),
     m_layoutThread()
+#endif
 {
   ///kDebug() << "New node pic=" << KGlobal::dirs()->findResource("data","kgraphviewerpart/pics/kgraphviewer-newnode.png");
   m_canvas = 0;
@@ -172,8 +174,10 @@ DotGraphView::DotGraphView(QActionGroup* actions, QWidget* parent) :
   connect(this, SIGNAL(removeEdge(const QString&)), m_graph, SLOT(removeEdge(const QString&)));
   connect(this, SIGNAL(removeNodeNamed(const QString&)), m_graph, SLOT(removeNodeNamed(const QString&)));
   connect(this, SIGNAL(removeElement(const QString&)), m_graph, SLOT(removeElement(const QString&)));
+#ifdef GV_LIB
   connect(&m_loadThread, SIGNAL(finished()), this, SLOT(slotAGraphReadFinished()));
   connect(&m_layoutThread, SIGNAL(finished()), this, SLOT(slotAGraphLayoutFinished()));
+#endif
 }
 
 DotGraphView::~DotGraphView()

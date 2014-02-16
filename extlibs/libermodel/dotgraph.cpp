@@ -442,7 +442,7 @@ void DotGraph::updateWithGraph(graph_t* newGraph)
     }
 
   }
-  
+
   node_t* ngn = agfstnode(newGraph);
   ///kDebug() << "first node:" << (void*)ngn;
   
