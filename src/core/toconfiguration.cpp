@@ -811,6 +811,18 @@ void toConfiguration::setPgsqlHome(QString const &v)
 	d->m_pgsqlHome = v;
 }
 
+QString  toConfiguration::graphvizHome()
+{
+	Q_D(toConfiguration);
+	return d->m_graphvizHome;
+}
+
+void toConfiguration::setGraphvizHome(QString const&v)
+{
+	Q_D(toConfiguration);
+	d->m_graphvizHome = v;
+}
+
 int toConfiguration::beforeCreateAction()
 {
 	Q_D(toConfiguration);

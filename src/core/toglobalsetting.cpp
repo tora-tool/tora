@@ -121,10 +121,13 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     MySQLHomeBrowse->setEnabled(true);
     PgsqlHome->setEnabled(true);
     PgSQLHomeBrowse->setEnabled(true);
+    GraphvizHome->setEnabled(true);
+    GraphvizHomeBrowse->setEnabled(true);
 #endif
     OracleHome->setText(toConfigurationSingle::Instance().oracleHome());
     MysqlHome->setText(toConfigurationSingle::Instance().mysqlHome());
     PgsqlHome->setText(toConfigurationSingle::Instance().pgsqlHome());
+    GraphvizHome->setText(toConfigurationSingle::Instance().graphvizHome());
 
     ChangeConnection->setChecked(toConfigurationSingle::Instance().changeConnection());
 	SavePassword->setChecked(toConfigurationSingle::Instance().savePassword());
@@ -252,6 +255,28 @@ void toGlobalSetting::pqsqlBrowse(void)
         		);
 }
 
+#ifdef Q_OS_WIN
+#define DOT "dot.exe"
+#else
+#define DOT "dot"
+#endif
+
+void toGlobalSetting::graphvizBrowse(void)
+{
+    QString str = TOFileDialog::getExistingDirectory(this, tr("Graphviz installation"), GraphvizHome->text());
+    if (str.isEmpty())
+    	return;
+    QFileInfo bindot(str + QDir::separator() + "bin", DOT);
+    if( bindot.isExecutable())
+    	GraphvizHome->setText(bindot.absoluteDir().absolutePath());
+    else
+        TOMessageBox::warning(
+        		toMainWindow::lookup(),
+        		QT_TRANSLATE_NOOP("toLibraryErrorB", "Executable error"),
+        		QT_TRANSLATE_NOOP("toLibraryErrorB", QString("Couldn't validate executable file: %1").arg(bindot.absoluteFilePath()))
+        		);
+}
+
 void toGlobalSetting::ColorizedConnectionsConfigure_clicked()
 {
     ConnectionColorsDialog dia(this);
@@ -267,6 +292,7 @@ void toGlobalSetting::saveSetting(void)
     toConfigurationSingle::Instance().setOracleHome(OracleHome->text());
     toConfigurationSingle::Instance().setMysqlHome(MysqlHome->text());
     toConfigurationSingle::Instance().setPgsqlHome(PgsqlHome->text());
+    toConfigurationSingle::Instance().setGraphvizHome(GraphvizHome->text());
 
     toConfigurationSingle::Instance().setChangeConnection(ChangeConnection->isChecked());
     toConfigurationSingle::Instance().setSavePassword(SavePassword->isChecked());

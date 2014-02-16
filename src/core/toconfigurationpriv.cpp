@@ -80,6 +80,7 @@ void toConfigurationPrivate::loadConfig()
 	m_oracleHome = s.value(CONF_ORACLE_HOME, "").toString();
 	m_mysqlHome = s.value(CONF_MYSQL_HOME, "").toString();
 	m_pgsqlHome = s.value(CONF_PGSQL_HOME, "").toString();
+	m_graphvizHome = s.value("GV_HOME", "").toString();
 	//  Options (1st column)
 	m_changeConnection = s.value(CONF_CHANGE_CONNECTION, true).toBool();
 	m_savePassword = s.value(CONF_SAVE_PWD, DEFAULT_SAVE_PWD).toBool();
@@ -362,6 +363,7 @@ void toConfigurationPrivate::saveConfig()
 	s.setValue(CONF_ORACLE_HOME, m_oracleHome);
 	s.setValue(CONF_MYSQL_HOME, m_mysqlHome);
 	s.setValue(CONF_PGSQL_HOME, m_pgsqlHome);
+	s.setValue("GV_HOME", m_graphvizHome);
 	//  Options (1st column)
 	s.setValue(CONF_CHANGE_CONNECTION, m_changeConnection);
 	s.setValue(CONF_SAVE_PWD, m_savePassword);

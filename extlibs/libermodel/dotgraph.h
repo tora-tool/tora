@@ -117,6 +117,8 @@ public:
   inline bool useLibrary() {return m_useLibrary;}
 #endif
 
+  static void setLayoutCommandPath(QString const&p);
+
 public Q_SLOTS:
   void removeNodeNamed(const QString& nodeName);
   void removeNodeFromSubgraph(const QString& nodeName, const QString& subgraphName);
@@ -150,6 +152,7 @@ private:
   bool m_directed;
   bool m_strict;
   QString m_layoutCommand;
+  static QString s_layoutCommandPath;
   
   unsigned int m_horizCellFactor, m_vertCellFactor;
   QVector< QSet< GraphNode* > > m_cells;

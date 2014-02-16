@@ -50,6 +50,10 @@
 #include <unistd.h>
 #endif
 
+#ifdef TORA_EXPERIMENTAL
+#include "dotgraph.h"
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -262,6 +266,11 @@ int main(int argc, char **argv)
 			}
 
         } // end splash
+
+#ifdef TORA_EXPERIMENTAL
+
+#endif
+        DotGraph::setLayoutCommandPath(toConfigurationSingle::Instance().graphvizHome());
 
         try
         {

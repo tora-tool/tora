@@ -96,6 +96,7 @@ namespace ToConfiguration {
 			, ORACLE_HOME           // #define CONF_ORACLE_HOME
 			, MYSQL_HOME            // #define CONF_MYSQL_HOME
 			, PGSQL_HOME            // #define CONF_PGSQL_HOME
+			, GV_HOME            // #define CONF_PGSQL_HOME
 			// Options (1st column)
 			, ChangeConnection      // #define CONF_CHANGE_CONNECTION
 			, SavePassword          // #define CONF_SAVE_PWD

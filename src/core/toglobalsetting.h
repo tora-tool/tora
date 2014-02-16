@@ -76,9 +76,10 @@ public slots:
     virtual void sessionBrowse(void);
     virtual void cacheBrowse(void);
 
-    virtual void oracleBrowse(void);
-    virtual void mysqlBrowse(void);
-    virtual void pqsqlBrowse(void);
+    void oracleBrowse(void);
+    void mysqlBrowse(void);
+    void pqsqlBrowse(void);
+    void graphvizBrowse(void);
 
     void ColorizedConnectionsConfigure_clicked();
 };

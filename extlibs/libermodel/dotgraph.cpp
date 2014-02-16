@@ -37,13 +37,14 @@
 ///#include <kdebug.h>
 ///#include <KMessageBox>
 
-#include <QFile>
-#include <QPair>
-#include <QByteArray>
-#include <QProcess>
-#include <QMutexLocker>
-#include <QMessageBox>
-#include <QUuid>
+#include <QtCore/QFile>
+#include <QtCore/QDir>
+#include <QtCore/QPair>
+#include <QtCore/QByteArray>
+#include <QtCore/QProcess>
+#include <QtCore/QMutexLocker>
+#include <QtCore/QUuid>
+#include <QtGui/QMessageBox>
 
 using namespace boost;
 using namespace boost::spirit::classic;
@@ -179,7 +180,7 @@ bool DotGraph::parseDot(const QString& str)
   m_dot = new QProcess();
   connect(m_dot,SIGNAL(finished(int,QProcess::ExitStatus)),this,SLOT(slotDotRunningDone(int,QProcess::ExitStatus)));
   connect(m_dot,SIGNAL(error(QProcess::ProcessError)),this,SLOT(slotDotRunningError(QProcess::ProcessError)));
-  m_dot->start(m_layoutCommand, options);
+  m_dot->start(s_layoutCommandPath + m_layoutCommand, options);
   ///kDebug() << "process started";
  return true;
 }
@@ -900,5 +901,12 @@ void DotGraph::addNewEdge(QString src, QString tgt, QMap<QString,QString> attrib
 }
 
 ///}
+
+void DotGraph::setLayoutCommandPath(QString const&p)
+{
+	s_layoutCommandPath = p + QDir::separator();
+};
+
+QString DotGraph::s_layoutCommandPath;
 
 ///#include "dotgraph.moc"

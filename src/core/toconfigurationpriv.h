@@ -22,6 +22,7 @@ public:
     QString m_oracleHome;
     QString m_mysqlHome;
     QString m_pgsqlHome;
+    QString m_graphvizHome;
     // Options (1st column)
     bool    m_changeConnection;
     bool    m_savePassword;

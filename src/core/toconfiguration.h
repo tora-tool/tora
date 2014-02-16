@@ -342,6 +342,10 @@ public:
     QString pgsqlHome();
     void setPgsqlHome(QString const&);
 
+    QString graphvizHome();
+    void setGraphvizHome(QString const&);
+
+
     int beforeCreateAction();
     void setBeforeCreateAction(int v);
 
