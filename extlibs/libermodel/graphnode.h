@@ -37,7 +37,9 @@
 #include <QMap>
 #include <QtCore/QTextStream>
 
+#ifdef GV_LIB
 #include <graphviz/gvc.h>
+#endif
 
 #include "dotrenderop.h"
 #include "dotgrammar.h"
@@ -59,8 +61,9 @@ class GraphNode : public GraphElement
 public:
   GraphNode();
   GraphNode(const GraphNode& gn);
+#ifdef GV_LIB
   GraphNode(node_t* gn);
-  
+#endif  
   virtual ~GraphNode() {}  
   
   inline CanvasNode* canvasNode() { return dynamic_cast<CanvasNode*>(canvasElement()); }
@@ -68,8 +71,9 @@ public:
   inline void setCanvasNode(CanvasNode* cn) { setCanvasElement((CanvasElement*)cn); }
 
   virtual void updateWithNode(const GraphNode& node);
+#ifdef GV_LIB
   virtual void updateWithNode(node_t* node);
-
+#endif
   
 private:
 };

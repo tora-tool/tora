@@ -38,11 +38,13 @@ GraphSubgraph::GraphSubgraph() :
 {
 }
 
+#ifdef GV_LiB
 GraphSubgraph::GraphSubgraph(graph_t* sg) :
   GraphElement(), m_content()
 {
   updateWithSubgraph(sg);
 }
+#endif
 
 void GraphSubgraph::updateWithSubgraph(const GraphSubgraph& subgraph)
 {
@@ -99,6 +101,7 @@ void GraphSubgraph::updateWithSubgraph(const GraphSubgraph& subgraph)
 //   kDebug() << "done";
 }
 
+#ifdef GV_LiB
 void GraphSubgraph::updateWithSubgraph(graph_t* subgraph)
 {
   ///kDebug() << subgraph->name;
@@ -155,7 +158,7 @@ void GraphSubgraph::updateWithSubgraph(graph_t* subgraph)
     
   }
 }
-
+#endif
 
 QString GraphSubgraph::backColor() const
 {

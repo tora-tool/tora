@@ -36,9 +36,9 @@
 #include "graphelement.h"
 #include "dotgrammar.h"
 #include "dotrenderop.h"
-
+#ifdef GV_LIB
 #include <graphviz/gvc.h>
-
+#endif
 #include <QStringList>
 #include <QMap>
 #include <QTextStream>
@@ -57,7 +57,9 @@ public:
   virtual ~GraphEdge();
 
   GraphEdge(const GraphEdge& edge);
+#ifdef GV_LIB
   GraphEdge(edge_t* edge);
+#endif
   
   CanvasEdge* canvasEdge() { return (CanvasEdge*)canvasElement(); }
   void setCanvasEdge(CanvasEdge* ce) { setCanvasElement((CanvasElement*)ce); }
@@ -93,8 +95,9 @@ public:
   inline const QList< DotRenderOp >&  arrowheads() const {return m_arrowheads;}
 
   virtual void updateWithEdge(const GraphEdge& edge);
+#ifdef GV_LIB
   virtual void updateWithEdge(edge_t* edge);
-
+#endif
 private:
   // we have a _ce *and* _from/_to because for collapsed edges,
   // only _to or _from will be unequal NULL

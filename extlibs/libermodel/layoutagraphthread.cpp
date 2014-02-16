@@ -21,6 +21,7 @@
 
 ///#include <kdebug.h>
 
+#ifdef GV_LiB
 void LayoutAGraphThread::run()
 {
   ///kDebug();
@@ -38,4 +39,4 @@ void LayoutAGraphThread::layoutGraph(graph_t* graph, const QString& layoutComman
   m_layoutCommand = layoutCommand;
   start();
 }
-
+#endif

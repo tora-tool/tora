@@ -29,7 +29,9 @@
 #include <QProcess>
 #include <QMutex>
 
+#ifdef GV_LIB
 #include <graphviz/gvc.h>
+#endif
 
 #include "graphelement.h"
 #include "graphsubgraph.h"
@@ -101,8 +103,10 @@ public:
 
   void saveTo(const QString& fileName);
 
-  virtual void updateWithGraph(graph_t* newGraph);
   virtual void updateWithGraph(const DotGraph& graph);
+#ifdef GV_LIB
+  virtual void updateWithGraph(graph_t* newGraph);
+#endif
 
   void setAttribute(const QString& elementId, const QString& attributeName, const QString& attributeValue);
 

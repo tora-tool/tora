@@ -22,24 +22,28 @@
 
 #include <QThread>
 
+#ifdef GV_LIB
 #include <graphviz/gvc.h>
-
+#endif
 
 class LoadAGraphThread : public QThread
 {
 public:
   void loadFile(const QString& dotFileName);
-  inline graph_t* g() {return m_g;}
   inline const QString& dotFileName() {return m_dotFileName;}
+#ifdef GV_LIB
+  inline graph_t* g() {return m_g;}
   inline GVC_t* gvc() {return m_gvc;}
-  
+#endif
 protected:
   virtual void run();
 
 private:
   QString m_dotFileName;
+#ifdef GV_LIB
   graph_t *m_g;
   GVC_t *m_gvc;
+#endif
 };
 
 #endif // LOADAGRAPHTHREAD_H

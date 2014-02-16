@@ -18,14 +18,11 @@ ENDIF(WANT_INTERNAL_QSCINTILLA)
 
 IF (USE_EXPERIMENTAL)
   ADD_SUBDIRECTORY(libantlr3c-3.5.1)
+  ADD_SUBDIRECTORY(libermodel)
 ENDIF(USE_EXPERIMENTAL)
 
 # Disabled, partially moved into src/parsing
 # ADD_SUBDIRECTORY(parsing) 
-
-IF (graphviz_FOUND)
-  ADD_SUBDIRECTORY(libermodel)
-ENDIF(graphviz_FOUND)
 
 # trotl library
 IF (ORACLE_FOUND)

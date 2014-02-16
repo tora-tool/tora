@@ -30,7 +30,9 @@
 #include "graphelement.h"
 #include "dotrenderop.h"
 
+#ifdef GV_LIB
 #include <graphviz/gvc.h>
+#endif
 
 ///namespace KGraphViewer
 ///{
@@ -49,16 +51,19 @@ class GraphSubgraph : public GraphElement
 //   Q_OBJECT
 public:
   GraphSubgraph();
+#ifdef GV_LIB
   explicit GraphSubgraph(graph_t* sg);
-  
+#endif
+
   virtual ~GraphSubgraph() {}  
 
   inline const GraphSubgraphMap& subgraphs() const {return m_subgraphsMap;}
   inline GraphSubgraphMap& subgraphs() {return m_subgraphsMap;}
   
   void updateWithSubgraph(const GraphSubgraph& subgraph);
+#ifdef GV_LIB
   void updateWithSubgraph(graph_t* subgraph);
-  
+#endif  
   CanvasSubgraph* canvasSubgraph() { return (CanvasSubgraph*)canvasElement();  }
   void setCanvasSubgraph(CanvasSubgraph* cs) { setCanvasElement((CanvasElement*)cs); }
 

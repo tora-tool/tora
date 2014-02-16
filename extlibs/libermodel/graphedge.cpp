@@ -103,6 +103,7 @@ void GraphEdge::updateWithEdge(const GraphEdge& edge)
   }
 }
 
+#ifdef GV_LiB
 void GraphEdge::updateWithEdge(edge_t* edge)
 {
   ///kDebug();
@@ -146,6 +147,7 @@ void GraphEdge::updateWithEdge(edge_t* edge)
   }
   
 }
+#endif
 
 QTextStream& operator<<(QTextStream& s, const GraphEdge& e)
 {

@@ -413,6 +413,7 @@ void DotGraph::saveTo(const QString& fileName)
   exporter.writeDot(this, fileName);
 }
 
+#ifdef GV_LiB
 void DotGraph::updateWithGraph(graph_t* newGraph)
 {
   ///kDebug();
@@ -516,6 +517,7 @@ void DotGraph::updateWithGraph(graph_t* newGraph)
   emit readyToDisplay();
   computeCells();
 }
+#endif
 
 void DotGraph::updateWithGraph(const DotGraph& newGraph)
 {

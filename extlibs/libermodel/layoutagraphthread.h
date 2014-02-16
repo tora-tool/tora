@@ -21,24 +21,28 @@
 #define LAYOUTAGRAPHTHREAD_H
 
 #include <QThread>
-
+#ifdef GV_LIB
 #include <graphviz/gvc.h>
+#endif
 
 class LayoutAGraphThread : public QThread
 {
 public:
-  void layoutGraph(graph_t* graph, const QString& layoutCommand);
-  inline graph_t* g() {return m_g;}
-  inline GVC_t* gvc() {return m_gvc;}
   inline const QString& layoutCommand() const {return m_layoutCommand;}
-  
+#ifdef GV_LIB
+  void layoutGraph(graph_t* graph, const QString& layoutCommand);
+  inline GVC_t* gvc() {return m_gvc;}
+  inline graph_t* g() {return m_g;}
+#endif  
 protected:
 virtual void run();
 
 private:
   QString m_layoutCommand;
+#ifdef GV_LIB
   graph_t* m_g;
   GVC_t *m_gvc;
+#endif
 };
 
 #endif // LAYOUTAGRAPHTHREAD_H

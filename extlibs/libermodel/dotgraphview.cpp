@@ -1986,6 +1986,7 @@ void DotGraphView::enterEvent ( QEvent * /*event*/ )
   }
 }
 
+#ifdef GV_LIB
 void DotGraphView::slotAGraphReadFinished()
 {
   QString layoutCommand = (m_graph!=0?m_graph->layoutCommand():"");
@@ -1999,7 +2000,6 @@ void DotGraphView::slotAGraphReadFinished()
   m_layoutThread.layoutGraph(m_loadThread.g(), layoutCommand);
 }
 
-#ifdef GV_LIB
 void DotGraphView::slotAGraphLayoutFinished()
 {
   bool result = loadLibrary(m_layoutThread.g(), m_layoutThread.layoutCommand());

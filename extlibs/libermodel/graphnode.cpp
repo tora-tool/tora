@@ -57,11 +57,13 @@ GraphElement(gn)
   //   kDebug() ;
 }
 
+#ifdef GV_LiB
 GraphNode::GraphNode(node_t* gn) : GraphElement()
 {
   ///kDebug();
   updateWithNode(gn);
 }
+#endif
 
 void GraphNode::updateWithNode(const GraphNode& node)
 {
@@ -75,6 +77,7 @@ void GraphNode::updateWithNode(const GraphNode& node)
 //   kDebug() << "done";
 }
 
+#ifdef GV_LiB
 void GraphNode::updateWithNode(node_t* node)
 {
   ///kDebug() << node->name;
@@ -102,6 +105,7 @@ void GraphNode::updateWithNode(node_t* node)
     attr = agnxtattr(node,attr);
   }
 }
+#endif
 
 QTextStream& operator<<(QTextStream& s, const GraphNode& n)
 {
