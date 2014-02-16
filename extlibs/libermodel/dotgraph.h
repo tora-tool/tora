@@ -108,9 +108,11 @@ public:
 
   GraphElement* elementNamed(const QString& id);
 
+#ifdef GV_LIB
   inline void setUseLibrary(bool value) {m_useLibrary = value;}
   inline bool useLibrary() {return m_useLibrary;}
-  
+#endif
+
 public Q_SLOTS:
   void removeNodeNamed(const QString& nodeName);
   void removeNodeFromSubgraph(const QString& nodeName, const QString& subgraphName);
@@ -156,8 +158,9 @@ private:
   ParsePhase m_phase;
 
   QMutex m_dotProcessMutex;
-
+#ifdef GV_LIB
   bool m_useLibrary;
+#endif
 };
 
 ///}

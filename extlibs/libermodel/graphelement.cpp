@@ -25,7 +25,9 @@
 ///#include <kdebug.h>
 
 #include <QRegExp>
+#ifdef GV_LIB
 #include <graphviz/gvc.h>
+#endif
 
 ///namespace KGraphViewer
 ///{
@@ -133,6 +135,7 @@ void GraphElement::removeAttribute(const QString& attribName)
   emit changed();
 }
 
+#ifdef GV_LIB
 void GraphElement::exportToGraphviz(void* element) const
 {
   QMap<QString,QString>::const_iterator it, it_end;
@@ -163,6 +166,7 @@ void GraphElement::exportToGraphviz(void* element) const
     }
   }
 }
+#endif
 
 QTextStream& operator<<(QTextStream& s, const GraphElement& n)
 {

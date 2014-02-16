@@ -83,9 +83,10 @@ public:
   virtual ~DotGraphView();
 
   bool loadDot(const QString& dotFileName);
+#if GV_LIB
   bool loadLibrary(const QString& dotFileName);
   bool loadLibrary(graph_t* graph, const QString& layoutCommand = "dot");
-
+#endif
   void readViewConfig();
   void saveViewConfig();
 
@@ -221,7 +222,9 @@ public Q_SLOTS:
 
 private Q_SLOTS:
   void slotAGraphReadFinished();
+#ifdef GV_LIB
   void slotAGraphLayoutFinished();
+#endif
   
 protected:
   void scrollContentsBy(int dx, int dy);

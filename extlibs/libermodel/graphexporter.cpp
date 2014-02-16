@@ -28,6 +28,10 @@
 #include "graphexporter.h"
 #include "dotgraph.h"
 
+#ifdef GV_LIB
+#include <graphviz/gvc.h>
+#endif
+
 #include <QFile>
 #include <QTextStream>
 #include <QTemporaryFile>
@@ -114,6 +118,7 @@ QString GraphExporter::writeDot(const DotGraph* graph, const QString& fileName)
   return actualFileName;
 }
 
+#ifdef GV_LIB
 graph_t* GraphExporter::exportToGraphviz(const DotGraph* graph)
 {
   int type = graph->directed()
@@ -156,4 +161,4 @@ graph_t* GraphExporter::exportToGraphviz(const DotGraph* graph)
   
   return agraph;
 }
-
+#endif

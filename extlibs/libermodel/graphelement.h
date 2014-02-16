@@ -102,9 +102,9 @@ public:
 
   bool isVisible() const { return m_visible; }
   void setVisible(bool v) { m_visible = v; }
-
+#ifdef GV_LIB
   void exportToGraphviz(void* element)  const;
-
+#endif
 Q_SIGNALS:
   void changed();
 

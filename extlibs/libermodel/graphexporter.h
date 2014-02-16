@@ -33,9 +33,6 @@
 
 #include <QString>
 
-#include <graphviz/gvc.h>
-
-
 ///namespace KGraphViewer
 ///{
 class DotGraph;
@@ -54,7 +51,9 @@ public:
   virtual ~GraphExporter();
 
   QString writeDot(const DotGraph* graph, const QString& fileName = QString());
+#ifdef GV_LIB
   graph_t* exportToGraphviz(const DotGraph* graph);
+#endif
 };
 
 ///}

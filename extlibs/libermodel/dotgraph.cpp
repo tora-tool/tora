@@ -29,7 +29,10 @@
 #include <stdlib.h>
 #include "fdstream.hpp"
 #include <boost/spirit/include/classic_confix.hpp>
+
+#ifdef GV_LIB
 #include <graphviz/gvc.h>
+#endif
 
 ///#include <kdebug.h>
 ///#include <KMessageBox>
@@ -56,8 +59,10 @@ DotGraph::DotGraph() :
   m_layoutCommand(""),
   m_readWrite(false),
   m_dot(0),
-  m_phase(Initial),
-  m_useLibrary(false)
+  m_phase(Initial)
+#ifdef GV_LIB
+  , m_useLibrary(false)
+#endif
 {
   setId("unnamed");
 }
@@ -70,8 +75,10 @@ DotGraph::DotGraph(const QString& command) :
   m_layoutCommand(command),
   m_readWrite(false),
   m_dot(0),
-  m_phase(Initial),
-  m_useLibrary(false)
+  m_phase(Initial)
+#ifdef GV_LIB
+  , m_useLibrary(false)
+#endif
 {
   setId("unnamed");
 }
@@ -83,8 +90,10 @@ DotGraph::DotGraph(const QString& command, const QString& fileName) :
   m_layoutCommand(command),
   m_readWrite(false),
   m_dot(0),
-  m_phase(Initial),
+  m_phase(Initial)
+#ifdef GV_LIB
   m_useLibrary(false)
+#endif
 {
   setId("unnamed");
 }
@@ -131,7 +140,9 @@ QString DotGraph::chooseLayoutProgramForFile(const QString& str)
 bool DotGraph::parseDot(const QString& str)
 {
   ///kDebug() << str;
+#ifdef GV_LIB
   m_useLibrary = false;
+#endif
   if (m_layoutCommand.isEmpty())
   {
     m_layoutCommand = chooseLayoutProgramForFile(str);
@@ -176,12 +187,13 @@ bool DotGraph::parseDot(const QString& str)
 bool DotGraph::update()
 {
   GraphExporter exporter;
-  if (!m_useLibrary)
+  //if (!m_useLibrary)
   {
     ///kDebug() << "command";
     QString str = exporter.writeDot(this);
     return parseDot(str);
   }
+#ifdef GV_LIB
   else
   {
     ///kDebug() << "library";
@@ -198,6 +210,7 @@ bool DotGraph::update()
     bool result = (gvFreeContext(gvc) == 0);
     return result;
   }
+#endif
 }
 
 QByteArray DotGraph::getDotResult(int , QProcess::ExitStatus )

@@ -50,10 +50,9 @@
 
 #include "result/toresulttabledata.h"
 
-#if defined(GRAPHWIZ_FOUND)
 #include "core/toresultdrawing.h"
 #include "dotgraphview.h"
-#endif
+
 
 Util::RegisterInFactory<toBrowserTableWidget, toBrowserWidgetFactory, toCache::CacheEntryType> regToBrowserTableWidget(toCache::TABLE);
 
@@ -421,11 +420,9 @@ toBrowserTableWidget::toBrowserTableWidget(QWidget * parent)
     referencesView->setObjectName("referencesView");
     referencesView->setSQL(SQLTableReferences);
     referencesView->setReadAll(true);
-#if defined(GRAPHWIZ_FOUND)
     schemaView = new toResultDrawing(this);
     schemaView->setObjectName("schemaView");
     connect(schemaView->m_dotGraphView, SIGNAL(selected(QString const&)), this, SLOT(slotSelected(QString const&)), Qt::QueuedConnection);
-#endif
     grantsView = new toResultGrants(this);
     grantsView->setObjectName("grantsView");
 
@@ -481,12 +478,10 @@ void toBrowserTableWidget::changeConnection()
         addTab(referencesView, "&References");
     else
         referencesView->hide();
-#if defined(GRAPHWIZ_FOUND)
     if (c.providerIs("Oracle"))
     	addTab(schemaView, "&Schema");
     else
     	schemaView->hide();
-#endif
     if (c.providerIs("Oracle"))
         addTab(grantsView, "&Grants");
     else

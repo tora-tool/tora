@@ -222,12 +222,12 @@ QString toQueryModel::name() const
 
 void toQueryModel::describeSlot(void)
 {
-
+#ifdef GV_LIB
     GVC_t *gvc = gvContext();
     graph_t *g = agopen("TST", AGRAPH);
 
     m_widget->loadLibrary(g);
-
+#endif
     QMap<QString, QString> ga;
     ga["compound"] = "true";
 

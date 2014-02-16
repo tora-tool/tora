@@ -1,3 +1,4 @@
+
 ##############################################################################################################
 ########## CMake Setup                                                                              ##########
 
@@ -263,10 +264,10 @@ ENDIF (NOT ENABLE_TERADATA)
 
 IF (USE_EXPERIMENTAL)
   FIND_PACKAGE(PopplerQt4)
-  FIND_PACKAGE(GraphViz)
+  #FIND_PACKAGE(GraphViz)
 ENDIF(USE_EXPERIMENTAL)
 
-MESSAGE(STATUS "graphviz_FOUND: ${graphviz_FOUND}")
+#MESSAGE(STATUS "graphviz_FOUND: ${graphviz_FOUND}")
 
 ################################################################################
 ##########                    Uninstall Setup                         ##########

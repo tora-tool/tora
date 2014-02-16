@@ -300,6 +300,7 @@ bool DotGraphView::loadDot(const QString& dotFileName)
   return true;
 }
 
+#ifdef GV_LIB
 bool DotGraphView::loadLibrary(const QString& dotFileName)
 {
   ///kDebug() << "'" << dotFileName << "'";
@@ -361,6 +362,7 @@ bool DotGraphView::loadLibrary(graph_t* graph, const QString& layoutCommand)
 
   return true;
 }
+#endif
 
 void DotGraphView::slotSelectionChanged()
 {
@@ -1205,9 +1207,11 @@ void DotGraphView::printPreview()
 bool DotGraphView::reload()
 {
   QString fileName = m_graph->dotFileName();
+#ifdef GV_LIB
   if (m_graph->useLibrary())
     return loadLibrary(fileName);
   else
+#endif
     return loadDot(fileName);
 }
 
@@ -1223,9 +1227,11 @@ void DotGraphView::dirty(const QString& dotFileName)
     //                             KStandardGuiItem::no(),
     //                             "reloadOnChangeMode"   ) == KMessageBox::Yes)
     {
+#ifdef GV_LIB
       if (m_graph->useLibrary())
         loadLibrary(dotFileName);
       else
+#endif
         loadDot(dotFileName);
     }
   }
@@ -1993,6 +1999,7 @@ void DotGraphView::slotAGraphReadFinished()
   m_layoutThread.layoutGraph(m_loadThread.g(), layoutCommand);
 }
 
+#ifdef GV_LIB
 void DotGraphView::slotAGraphLayoutFinished()
 {
   bool result = loadLibrary(m_layoutThread.g(), m_layoutThread.layoutCommand());
@@ -2003,6 +2010,7 @@ void DotGraphView::slotAGraphLayoutFinished()
   agclose(m_layoutThread.g());
   bool freeresult = (gvFreeContext(m_layoutThread.gvc()) == 0);
 }
+#endif
 
 ///#include "dotgraphview.moc"
 
