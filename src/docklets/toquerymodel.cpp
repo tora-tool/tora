@@ -35,6 +35,7 @@
 #include "docklets/toquerymodel.h"
 #include "core/utils.h"
 #include "core/tologger.h"
+#include "core/toconfiguration.h"
 
 #include "parsing/tsqlparse.h"
 #include "docklets/toastwalk.h"
@@ -140,7 +141,18 @@ toQueryModel::toQueryModel(QWidget *parent, Qt::WindowFlags flags)
         //m_widget->graph()->update();
     }
 
-    m_timerID = startTimer(5000);
+#ifdef Q_OS_WIN
+    QFileInfo dot(toConfigurationSingle::Instance().graphvizHome() + QDir::separator() + "bin" + QDir::separator() + "dot.exe");
+#else
+    QFileInfo dot("/usr/bin/dot");
+#endif
+    if (dot.isExecutable())
+    {
+    	m_timerID = startTimer(5000);
+    } else {
+    	setDisabled(true);
+    	blockSignals(true);
+    }
     ///TLOG(0,toDecorator,__HERE__) << "void toQueryModel::timerEvent(QTimerEvent *e) fired" << std::endl;
 }
 

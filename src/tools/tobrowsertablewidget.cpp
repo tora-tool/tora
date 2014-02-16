@@ -43,6 +43,7 @@
 #include "core/toresultextent.h"
 #include "core/utils.h"
 //#include "core/toextract.h"
+#include "core/toconfiguration.h"
 #include "core/toconnection.h"
 #include "core/toconnectionsub.h"
 #include "core/toconnectiontraits.h"
@@ -420,9 +421,13 @@ toBrowserTableWidget::toBrowserTableWidget(QWidget * parent)
     referencesView->setObjectName("referencesView");
     referencesView->setSQL(SQLTableReferences);
     referencesView->setReadAll(true);
+
+#ifdef TORA_EXPERIMENTAL
     schemaView = new toResultDrawing(this);
     schemaView->setObjectName("schemaView");
     connect(schemaView->m_dotGraphView, SIGNAL(selected(QString const&)), this, SLOT(slotSelected(QString const&)), Qt::QueuedConnection);
+#endif
+
     grantsView = new toResultGrants(this);
     grantsView->setObjectName("grantsView");
 
@@ -478,10 +483,20 @@ void toBrowserTableWidget::changeConnection()
         addTab(referencesView, "&References");
     else
         referencesView->hide();
-    if (c.providerIs("Oracle"))
+
+#ifdef TORA_EXPERIMENTAL
+#ifdef Q_OS_WIN
+    QFileInfo dot(toConfigurationSingle::Instance().graphvizHome() + QDir::separator() + "bin" + QDir::separator() + "dot.exe");
+#else
+    QFileInfo dot("/usr/bin/dot");
+#endif
+
+    if (c.providerIs("Oracle") && dot.isExecutable())
     	addTab(schemaView, "&Schema");
     else
     	schemaView->hide();
+#endif
+
     if (c.providerIs("Oracle"))
         addTab(grantsView, "&Grants");
     else
