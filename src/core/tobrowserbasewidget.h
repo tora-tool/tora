@@ -109,7 +109,7 @@ public:
     \param page a toResult and QWidget inherited object.
     \param label a text label for tab caption.
     */
-    virtual void addTab(QWidget * page, const QString & label);
+    virtual int addTab(QWidget * page, const QString & label);
 
     /*! \brief Set type of object being handled
     This is required for some result displaying classes (for example extractor). If

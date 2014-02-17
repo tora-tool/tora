@@ -47,6 +47,36 @@
 #include <QtGui/QToolBar>
 #include <QtGui/QAction>
 
+class MySlider : public QSlider
+{
+public:
+	explicit MySlider(QWidget *parent = 0) : QSlider(parent) {};
+	explicit MySlider(Qt::Orientation orientation, QWidget *parent = 0) : QSlider(orientation, parent) {};
+protected:
+	void mousePressEvent ( QMouseEvent * event )
+	{
+		QStyleOptionSlider opt;
+		initStyleOption(&opt);
+		QRect sr = style()->subControlRect(QStyle::CC_Slider, &opt, QStyle::SC_SliderHandle, this);
+
+		if (event->button() == Qt::LeftButton &&
+				sr.contains(event->pos()) == false)
+		{
+			int newVal;
+			if (orientation() == Qt::Vertical)
+				newVal = minimum() + ((maximum()-minimum()) * (height()-event->y())) / height();
+			else
+				newVal = minimum() + ((maximum()-minimum()) * event->x()) / width();
+
+			if (invertedAppearance() == true)
+				setValue( maximum() - newVal );
+			else
+				setValue(newVal);
+
+			event->accept();
+		}
+		QSlider::mousePressEvent(event);  }
+};
 
 // BIG FAT WARNING - this query causes: ORA-07445: exception encountered: core dump [lnxmin()+2384] [SIGSEGV]
 // on 11gR1. Use "alter session set OPTIMIZER_FEATURES_ENABLE='10.2.0.4';" as a workaround
@@ -133,7 +163,7 @@ toResultDrawing::toResultDrawing(QWidget *parent, const char *name, Qt::WindowFl
 
 	toolbar->addSeparator();
 
-	slider = new QSlider(Qt::Horizontal, toolbar);
+	slider = new MySlider(Qt::Horizontal, toolbar);
 	slider->setMinimum(1);
 	slider->setMaximum(10);
 	slider->setTickPosition(QSlider::TicksAbove);

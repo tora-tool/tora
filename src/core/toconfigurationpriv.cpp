@@ -80,7 +80,18 @@ void toConfigurationPrivate::loadConfig()
 	m_oracleHome = s.value(CONF_ORACLE_HOME, "").toString();
 	m_mysqlHome = s.value(CONF_MYSQL_HOME, "").toString();
 	m_pgsqlHome = s.value(CONF_PGSQL_HOME, "").toString();
-	m_graphvizHome = s.value("GV_HOME", "").toString();
+
+	{
+		QString defaultGvHome;
+#if defined(Q_OS_WIN32)
+		defaultGvHome = "C:/Program Files/Graphviz 2.28/bin";
+#elif defined(Q_OS_WIN64)
+		defaultGvHome = "C:/Program Files(x86)/Graphviz 2.28/bin";
+#else
+		defaultGvHome = "/usr/bin"
+#endif
+	m_graphvizHome = s.value("GV_HOME", defaultGvHome).toString();
+	}
 	//  Options (1st column)
 	m_changeConnection = s.value(CONF_CHANGE_CONNECTION, true).toBool();
 	m_savePassword = s.value(CONF_SAVE_PWD, DEFAULT_SAVE_PWD).toBool();

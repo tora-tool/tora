@@ -53,6 +53,7 @@
 
 #include "core/toresultdrawing.h"
 #include "dotgraphview.h"
+#include "dotgraph.h"
 
 
 Util::RegisterInFactory<toBrowserTableWidget, toBrowserWidgetFactory, toCache::CacheEntryType> regToBrowserTableWidget(toCache::TABLE);
@@ -485,16 +486,20 @@ void toBrowserTableWidget::changeConnection()
         referencesView->hide();
 
 #ifdef TORA_EXPERIMENTAL
-#ifdef Q_OS_WIN
-    QFileInfo dot(toConfigurationSingle::Instance().graphvizHome() + QDir::separator() + "bin" + QDir::separator() + "dot.exe");
-#else
-    QFileInfo dot("/usr/bin/dot");
-#endif
-
-    if (c.providerIs("Oracle") && dot.isExecutable())
-    	addTab(schemaView, "&Schema");
-    else
-    	schemaView->hide();
+    {
+    	int pos = 0;
+    	if (c.providerIs("Oracle"))
+    		pos = addTab(schemaView, "&Schema");
+    	else
+    		schemaView->hide();
+    	if (!DotGraph::hasValidPath())
+    	{
+    		schemaView->setDisabled(true);
+    		schemaView->blockSignals(true);
+    		if (pos)
+    			setTabEnabled(pos, false);
+    	}
+    }
 #endif
 
     if (c.providerIs("Oracle"))

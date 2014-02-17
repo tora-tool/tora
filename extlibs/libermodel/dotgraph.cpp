@@ -904,8 +904,29 @@ void DotGraph::addNewEdge(QString src, QString tgt, QMap<QString,QString> attrib
 
 void DotGraph::setLayoutCommandPath(QString const&p)
 {
-	s_layoutCommandPath = p + QDir::separator();
+	QFileInfo path(p);
+	if (path.isExecutable() && path.isDir())
+		s_layoutCommandPath = p + QDir::separator();
+	else
+		s_layoutCommandPath = "";
 };
+
+bool DotGraph::hasValidPath()
+{
+#if defined(Q_OS_UNIX)
+#define _BIN_SUFFIX ""
+	QFileInfo usrBinDot("/usr/bin/dot");
+	if (usrBinDot.isFile() && usrBinDot.isExecutable())
+		return true;
+#elif defined(Q_OS_WIN)
+#define _BIN_SUFFIX ".exe"
+#endif
+	QFileInfo dot(s_layoutCommandPath + "dot"_BIN_SUFFIX);
+	if (dot.isFile() && dot.isExecutable())
+		return true;
+	else
+		return false;
+}
 
 QString DotGraph::s_layoutCommandPath;
 

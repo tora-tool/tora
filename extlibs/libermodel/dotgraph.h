@@ -118,6 +118,7 @@ public:
 #endif
 
   static void setLayoutCommandPath(QString const&p);
+  static bool hasValidPath();
 
 public Q_SLOTS:
   void removeNodeNamed(const QString& nodeName);

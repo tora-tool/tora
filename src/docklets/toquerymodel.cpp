@@ -141,12 +141,7 @@ toQueryModel::toQueryModel(QWidget *parent, Qt::WindowFlags flags)
         //m_widget->graph()->update();
     }
 
-#ifdef Q_OS_WIN
-    QFileInfo dot(toConfigurationSingle::Instance().graphvizHome() + QDir::separator() + "bin" + QDir::separator() + "dot.exe");
-#else
-    QFileInfo dot("/usr/bin/dot");
-#endif
-    if (dot.isExecutable())
+    if (DotGraph::hasValidPath())
     {
     	m_timerID = startTimer(5000);
     } else {

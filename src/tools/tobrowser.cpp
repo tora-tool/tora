@@ -1510,12 +1510,12 @@ void toBrowser::changeConnection(void)
     refresh();
 }
 
-void toBrowser::addTab(QSplitter * page, const QString & label, bool enable)
+int toBrowser::addTab(QSplitter * page, const QString & label, bool enable)
 {
     page->setVisible(enable);
     if (!enable)
-        return;
-    m_mainTab->addTab(page, label);
+        return -1;
+    return m_mainTab->addTab(page, label);
 }
 
 QString toBrowser::currentItemText(int col)

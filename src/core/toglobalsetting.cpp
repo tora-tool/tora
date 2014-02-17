@@ -263,12 +263,27 @@ void toGlobalSetting::pqsqlBrowse(void)
 
 void toGlobalSetting::graphvizBrowse(void)
 {
-    QString str = TOFileDialog::getExistingDirectory(this, tr("Graphviz installation"), GraphvizHome->text());
+	QString defaultGvHome;
+#if defined(Q_OS_WIN32)
+	defaultGvHome = "C:/Program Files/Graphviz 2.28/bin";
+#elif defined(Q_OS_WIN64)
+	defaultGvHome = "C:/Program Files(x86)/Graphviz 2.28/bin";
+#else
+	defaultGvHome = "/usr/bin"
+#endif
+
+	QDir gvDir(GraphvizHome->text());
+	if(GraphvizHome->text().isEmpty() || !gvDir.exists() || !gvDir.isReadable())
+		gvDir = defaultGvHome;
+    QString str = TOFileDialog::getExistingDirectory(this, tr("Graphviz installation"), gvDir.absolutePath());
     if (str.isEmpty())
     	return;
     QFileInfo bindot(str + QDir::separator() + "bin", DOT);
-    if( bindot.isExecutable())
+    QFileInfo dot(str + QDir::separator(), DOT);
+    if( bindot.isExecutable() && bindot.isFile())
     	GraphvizHome->setText(bindot.absoluteDir().absolutePath());
+    else if( dot.isExecutable() && dot.isFile())
+    	GraphvizHome->setText(dot.absoluteDir().absolutePath());
     else
         TOMessageBox::warning(
         		toMainWindow::lookup(),

@@ -159,7 +159,7 @@ public:
 	\param label text to display as a tab title
 	\param enable true when it should be visible. False on missing feature.
 	 */
-	void addTab(QSplitter * page, const QString & label, bool enable);
+	int addTab(QSplitter * page, const QString & label, bool enable);
 
     virtual bool canHandle(const toConnection &conn);
 

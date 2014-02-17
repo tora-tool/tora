@@ -268,9 +268,8 @@ int main(int argc, char **argv)
         } // end splash
 
 #ifdef TORA_EXPERIMENTAL
-
+       DotGraph::setLayoutCommandPath(toConfigurationSingle::Instance().graphvizHome());
 #endif
-        DotGraph::setLayoutCommandPath(toConfigurationSingle::Instance().graphvizHome());
 
         try
         {

@@ -60,12 +60,12 @@ bool toBrowserBaseWidget::maybeSave()
     return ret;
 }
 
-void toBrowserBaseWidget::addTab(QWidget * page, const QString & label)
+int toBrowserBaseWidget::addTab(QWidget * page, const QString & label)
 {
     // show must go *before* QTabWidget::addTab() to prevent
     // widgets glitches in the other tabs.
     page->setVisible(true);
-    QTabWidget::addTab(page, label);
+    int pos = QTabWidget::addTab(page, label);
 
     toResult * r = dynamic_cast<toResult*>(page);
 
@@ -81,6 +81,7 @@ void toBrowserBaseWidget::addTab(QWidget * page, const QString & label)
                "widget objectName is already used; page objectName must be unique");
 
     m_tabs[page->objectName()] = r;
+    return pos;
 }
 
 void toBrowserBaseWidget::changeParams(const QString & schema, const QString & object, const QString & type)
