@@ -59,7 +59,7 @@ namespace ToConfiguration {
 			, OracleHomeDirectory   // #define CONF_ORACLE_HOME
 			, MysqlHomeDirectory    // #define CONF_MYSQL_HOME
 			, PgsqlHomeDirectory    // #define CONF_PGSQL_HOME
-			, GraphvizHomeDirectory // #define CONF_PGSQL_HOME
+			, GraphvizHomeDirectory
 			// Options (1st column)
 			, ChangeConnectionBool  // #define CONF_CHANGE_CONNECTION
 			, SavePasswordBool      // #define CONF_SAVE_PWD
@@ -73,19 +73,17 @@ namespace ToConfiguration {
 			, ColorizedConnectionsBool
 			, ColorizedConnectionsMap
 			// Options (2nd column)
-			, StatusLabelInt        // #define CONF_STATUS_MESSAGE
-			, HistorySizeInt        // #define CONF_CONNECT_HISTORY
+			, StatusMessageInt      // #define CONF_STATUS_MESSAGE
+			, HistorySizeInt        // #define CONF_STATUS_SAVE
 			, ChartSamplesInt       // #define CONF_CHART_SAMPLES
+			, DisplaySamplesInt     // #define CONF_DISPLAY_SAMPLES
 			, SizeUnit              // #define CONF_SIZE_UNIT
 			, RefreshIntervalInt    // #define CONF_REFRESH
 			, DefaultListFormat     // #define CONF_DEFAULT_FORMAT
 			, Style                 // #define CONF_STYLE
 			, Translation           // #define CONF_LOCALE (Translation)
 		};
-		virtual QVariant defaultValue(int) const
-		{
-			return QVariant();
-		}
+		virtual QVariant defaultValue(int) const;
 	};
 };
 

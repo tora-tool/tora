@@ -50,6 +50,63 @@
 
 ToConfiguration::Global s_global;
 
+QVariant ToConfiguration::Global::defaultValue(int option) const
+{
+	switch(option)
+	{
+	// Paths
+	case CustomSQL:			return QVariant(QDir::homePath() + QDir::separator() + ".torasql");
+	case HelpDirectory:		return QVariant(QString("qrc:/help/toc.html"));
+	case DefaultSession:		return QVariant(QDir::homePath() + QDir::separator() + ".tora.tse" );
+	case CacheDirectory:		return QVariant(QString(""));
+	case OracleHomeDirectory:	return QVariant(QString(""));
+	case MysqlHomeDirectory:	return QVariant(QString(""));
+	case PgsqlHomeDirectory:	return QVariant(QString(""));
+	case GraphvizHomeDirectory:
+	{
+		QString defaultGvHome;
+#if defined(Q_OS_WIN32)
+		defaultGvHome = "C:/Program Files/Graphviz 2.28/bin";
+#elif defined(Q_OS_WIN64)
+		defaultGvHome = "C:/Program Files(x86)/Graphviz 2.28/bin";
+#else
+		defaultGvHome = "/usr/bin";
+#endif
+		return QVariant(defaultGvHome);
+	}
+	// Options: (1st column)
+	case ChangeConnectionBool:	return QVariant((bool)true);
+	case SavePasswordBool:		return QVariant((bool)false);
+	case IncludeDbCaptionBool:	return QVariant((bool)true);
+	case RestoreSessionBool:	return QVariant((bool)false);
+	case ToadBindingsBool:		return QVariant((bool)false);
+	case CacheDiskBool:		return QVariant((bool)true);
+	case DisplayGridlinesBool:	return QVariant((bool)true);
+	case MultiLineResultsBool:	return QVariant((bool)false);
+	case MessageStatusbarBool:	return QVariant((bool)false);
+	case ColorizedConnectionsBool:	return QVariant((bool)true);
+	case ColorizedConnectionsMap:
+	{
+		QMap<QString, QVariant> retval;
+		retval["#FF0000"] = QVariant("Production");
+		retval["#00FF00"] = QVariant("Development");
+		retval["#0000FF"] = QVariant("Testing");
+		return retval;
+	}
+	// Options: (2nd column)
+	case StatusMessageInt:		return QVariant((int)5);
+	case HistorySizeInt:		return QVariant((int)10);
+	case ChartSamplesInt:		return QVariant((int)100);
+	case DisplaySamplesInt:     return QVariant((int)-1);
+	case SizeUnit:			return QVariant(QString("MB"));
+	case RefreshIntervalInt:	return QVariant((int)0);  // None
+	case DefaultListFormat:		return QVariant(QString(""));
+	case Style:			return QVariant(QString(""));
+	case Translation:		return QVariant(QLocale().name());
+	}
+};
+
+
 ConnectionColorsDialog::ConnectionColorsDialog(QWidget * parent)
     : QDialog(parent)
 {
@@ -162,10 +219,10 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     if (samples < 0)
     {
         AllSamples->setChecked(true);
-        DisplaySamples->setValue(ChartSamplesInt->value());
+        DisplaySamplesInt->setValue(ChartSamplesInt->value());
     }
     else
-        DisplaySamples->setValue(samples);
+        DisplaySamplesInt->setValue(samples);
     // SizeUnit
     QString typ(toConfigurationSingle::Instance().sizeUnit());
     if (typ == "KB")
@@ -196,21 +253,25 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     	Q_FOREACH(QWidget *w, lst)
     	{
     		qDebug() << w->objectName();
+    		if (w->objectName() == "qt_spinbox_lineedit") // internal widget inside QSpinBox
+    			continue;
     		if (QComboBox *combo = qobject_cast<QComboBox*>(w))
     		{
     			try
     			{
     				QVariant v = toConfigurationNewSingle::Instance().option(combo->objectName());
     			} catch (...) {
+    				qDebug() << w->objectName() << '*';
     				combo->setDisabled(true);
     			}
-    		} else if (QLineEdit *edit = qobject_cast<QLineEdit*>(w))
+    		} else if (QSpinBox *spin = qobject_cast<QSpinBox*>(w))
     		{
     			try
     			{
-    				QVariant v = toConfigurationNewSingle::Instance().option(edit->objectName());
+    				QVariant v = toConfigurationNewSingle::Instance().option(spin->objectName());
     			} catch (...) {
-    				edit->setDisabled(true);
+    				qDebug() << w->objectName() << '#';
+    				spin->setDisabled(true);
     			}
     		} else if (QLineEdit *edit = qobject_cast<QLineEdit*>(w))
     		{
@@ -218,6 +279,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     			{
     				QVariant v = toConfigurationNewSingle::Instance().option(edit->objectName());
     			} catch (...) {
+    				qDebug() << w->objectName() << '&';
     				edit->setDisabled(true);
     			}
     		} else if (QCheckBox *checkbox = qobject_cast<QCheckBox*>(w))
@@ -226,6 +288,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     			{
     				QVariant v = toConfigurationNewSingle::Instance().option(checkbox->objectName());
     			} catch (...) {
+    				qDebug() << w->objectName() << '%';
     				checkbox->setDisabled(true);
     			}
     		}
@@ -380,7 +443,7 @@ void toGlobalSetting::saveSetting(void)
     if (AllSamples->isChecked())
         toConfigurationSingle::Instance().setDisplaySamples(-1);
     else
-        toConfigurationSingle::Instance().setDisplaySamples(DisplaySamples->value());
+        toConfigurationSingle::Instance().setDisplaySamples(DisplaySamplesInt->value());
 
     toConfigurationSingle::Instance().setSizeUnit(SizeUnit->currentText());
     toConfigurationSingle::Instance().setRefresh(RefreshIntervalInt->currentText());

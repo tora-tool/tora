@@ -86,7 +86,7 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QCheckBox" name="UseMaxTextWidthMark">
+          <widget class="QCheckBox" name="UseMaxTextWidthMarkBool">
            <property name="toolTip">
             <string>Display the line/column marker at the specified position</string>
            </property>
@@ -114,7 +114,7 @@
         </layout>
        </item>
        <item>
-        <widget class="QCheckBox" name="CodeCompletion">
+        <widget class="QCheckBox" name="CodeCompletionBool">
          <property name="enabled">
           <bool>false</bool>
          </property>
@@ -190,7 +190,7 @@
         </layout>
        </item>
        <item>
-        <widget class="QCheckBox" name="AutoIndent">
+        <widget class="QCheckBox" name="AutoIndentBool">
          <property name="enabled">
           <bool>false</bool>
          </property>
@@ -203,7 +203,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="UseSpacesForIndent">
+        <widget class="QCheckBox" name="UseSpacesForIndentBool">
          <property name="enabled">
           <bool>false</bool>
          </property>
@@ -232,12 +232,12 @@
             <bool>false</bool>
            </property>
            <property name="buddy">
-            <cstring>TabStop</cstring>
+            <cstring>TabStopInt</cstring>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="TabStop">
+          <widget class="QSpinBox" name="TabStopInt">
            <property name="minimum">
             <number>1</number>
            </property>
@@ -574,7 +574,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>CodeCompletion</sender>
+   <sender>CodeCompletionBool</sender>
    <signal>toggled(bool)</signal>
    <receiver>CompletionSort</receiver>
    <slot>setEnabled(bool)</slot>
@@ -606,7 +606,4 @@
    </hints>
   </connection>
  </connections>
- <buttongroups>
-  <buttongroup name="buttonGroup"/>
- </buttongroups>
 </ui>

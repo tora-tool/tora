@@ -45,24 +45,24 @@ QVariant ToConfiguration::Editor::defaultValue(int option) const
 {
 	switch(option)
 	{
-	case SyntaxHighlight:          return QVariant((int) 0);
+	case SyntaxHighlighting:          return QVariant((int) 0);
 	case EditorType:               return QVariant((int) 0);
-	case UseMaxTextWidthMark:      return QVariant((bool) false);
-	case MaxTextWidthMark:         return QVariant((int)75);
-	case KeywordUpper:             return QVariant((bool) false);
-	case ObjectNamesUpper:         return QVariant((bool) false);
-	case CodeComplete:             return QVariant((bool) true);
-	case CompleteSort:             return QVariant((bool) true);
-	case UseEditorShortcuts:       return QVariant((bool) false);
+	case UseMaxTextWidthMarkBool:      return QVariant((bool) false);
+	case MaxTextWidthMarkInt:         return QVariant((int)75);
+	case KeywordUpperBool:             return QVariant((bool) false);
+	case ObjectNamesUpperBool:         return QVariant((bool) false);
+	case CodeCompleteBool:             return QVariant((bool) true);
+	case CompleteSortBool:             return QVariant((bool) true);
+	case UseEditorShortcutsBool:       return QVariant((bool) false);
 	case EditorShortcutsMap:    return QVariant(QMap<QString, QVariant>());
-	case AutoIndent:               return QVariant((bool) true);
-	case TabSpaces:                return QVariant((bool) false);
-	case TabStop:                  return QVariant((int) 8);
-	case ConfText:                 return QVariant(QString(""));
-	case ConfCode:                 return QVariant(QString(""));
-	case ListText:                 return QVariant(QString(""));
+	case AutoIndentBool:               return QVariant((bool) true);
+	case UseSpacesForIndentBool:                return QVariant((bool) false);
+	case TabStopInt:                  return QVariant((int) 8);
+	case ConfTextFont:                 return QVariant(QString(""));
+	case ConfCodeFont:                 return QVariant(QString(""));
+	case ListTextFont:                 return QVariant(QString(""));
 	case Extensions:               return QVariant(QString("SQL (*.sql *.pkg *.pkb), Text (*.txt), All (*)"));
-	case EditStyle:
+	case EditStyleMap:
 	{
 		toStylesMap retval;
 		QMetaEnum StyleNameEnum(ENUM_REF(toSyntaxAnalyzer,WordClassEnum));
@@ -113,9 +113,9 @@ toWorksheetText::toWorksheetText(QWidget *parent, const char *name)
 #endif
 
     // handle "max text width" mark
-    if (toConfigurationNewSingle::Instance().option(Editor::UseMaxTextWidthMark).toBool())
+    if (toConfigurationNewSingle::Instance().option(Editor::UseMaxTextWidthMarkBool).toBool())
     {
-    	QsciScintilla::setEdgeColumn(toConfigurationNewSingle::Instance().option(Editor::MaxTextWidthMark).toInt());
+    	QsciScintilla::setEdgeColumn(toConfigurationNewSingle::Instance().option(Editor::MaxTextWidthMarkInt).toInt());
     	// TODO setEdgeColor(DefaultAnalyzer.getColor(toSyntaxAnalyzer::CurrentLineMarker).darker(150));
     	QsciScintilla::setEdgeMode(QsciScintilla::EdgeLine);
     }
@@ -151,7 +151,7 @@ void toWorksheetText::keyPressEvent(QKeyEvent * e)
     // handle editor shortcuts with TAB
     // It uses qscintilla lowlevel API to handle "word under cursor"
     // This code is taken from sqliteman.com
-    if (e->key() == Qt::Key_Tab && toConfigurationNewSingle::Instance().option(Editor::UseEditorShortcuts).toBool())
+    if (e->key() == Qt::Key_Tab && toConfigurationNewSingle::Instance().option(Editor::UseEditorShortcutsBool).toBool())
     {
         long pos = currentPosition();
         int start = SendScintilla(SCI_WORDSTARTPOSITION, pos, true);
