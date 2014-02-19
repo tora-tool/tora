@@ -23,10 +23,14 @@ class TORA_EXPORT toConfigurationNew: public QObject
 	Q_OBJECT;
 	friend class ::ToConfiguration::ConfigContext;
 public:
+	class OptionNotFound : public std::exception
+	{};
+
 	toConfigurationNew(QObject *parent = 0);
     virtual ~toConfigurationNew();
 
     QVariant option(int option);
+    QVariant option(QString const& option);
     template <class T> void setOption(int option, T const&);
 
     /*! \brief Set the QSettings access strings.
@@ -42,10 +46,11 @@ public:
 protected:
     void registerConfigContext(QString const& context, QMetaEnum const& fields, ToConfiguration::ConfigContext const*);
 private:
-    QMap<unsigned, QVariant> m_configValues;
-    QMap<unsigned, ToConfiguration::ConfigContext const*> m_configContextPtr;
-    QMap<QString, QMetaEnum> m_contextSet;
-    QMap<QString, ToConfiguration::ConfigContext const*> m_contextSetPtr;
+    QMap<unsigned, QVariant> m_configMap;
+    QMap<unsigned, ToConfiguration::ConfigContext const*> m_configContextPtrMap;
+    QMap<QString, QMetaEnum> m_contextMap;
+    QMap<QString, ToConfiguration::ConfigContext const*> m_contextSetPtrMap;
+    QMap<QString, int> m_optionToEnumMap;
 };
 
 typedef Loki::SingletonHolder<toConfigurationNew> toConfigurationNewSingle;

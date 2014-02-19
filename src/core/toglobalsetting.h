@@ -36,11 +36,58 @@
 #define TOGLOBALSETTING_H
 
 #include "core/totool.h"
+#include "core/toconfenum.h"
 
 #include "ui_todatabasesettingui.h"
 #include "ui_toglobalsettingui.h"
 #include "ui_totoolsettingui.h"
 #include "ui_connectioncolorsdialogui.h"
+
+namespace ToConfiguration {
+	class Global : public ConfigContext
+	{
+		Q_OBJECT;
+		Q_ENUMS(OptionTypeEnum);
+	public:
+		Global() : ConfigContext("Global", ENUM_REF(Global,OptionTypeEnum)) {};
+		enum OptionTypeEnum {
+			// Paths
+			CustomSQL = 2000        // #define CONF_SQL_FILE
+			, HelpDirectory         // #define CONF_HELP_PATH
+			, DefaultSession        // #define CONF_DEFAULT_SESSION
+			, CacheDirectory        // #define CONF_CACHE_DIR
+			, OracleHomeDirectory   // #define CONF_ORACLE_HOME
+			, MysqlHomeDirectory    // #define CONF_MYSQL_HOME
+			, PgsqlHomeDirectory    // #define CONF_PGSQL_HOME
+			, GraphvizHomeDirectory // #define CONF_PGSQL_HOME
+			// Options (1st column)
+			, ChangeConnectionBool  // #define CONF_CHANGE_CONNECTION
+			, SavePasswordBool      // #define CONF_SAVE_PWD
+			, IncludeDbCaptionBool  // #define CONF_DB_TITLE
+			, RestoreSessionBool    // #define CONF_RESTORE_SESSION
+			, ToadBindingsBool      // #define CONF_TOAD_BINDINGS
+			, CacheDiskBool         // #define CONF_CACHE_DISK
+			, DisplayGridlinesBool  // #define CONF_DISPLAY_GRIDLINES
+			, MultiLineResultsBool  // #define CONF_MULTI_LINE_RESULTS
+			, MessageStatusbarBool  // #define CONF_MESSAGE_STATUSBAR
+			, ColorizedConnectionsBool
+			, ColorizedConnectionsMap
+			// Options (2nd column)
+			, StatusLabelInt        // #define CONF_STATUS_MESSAGE
+			, HistorySizeInt        // #define CONF_CONNECT_HISTORY
+			, ChartSamplesInt       // #define CONF_CHART_SAMPLES
+			, SizeUnit              // #define CONF_SIZE_UNIT
+			, RefreshIntervalInt    // #define CONF_REFRESH
+			, DefaultListFormat     // #define CONF_DEFAULT_FORMAT
+			, Style                 // #define CONF_STYLE
+			, Translation           // #define CONF_LOCALE (Translation)
+		};
+		virtual QVariant defaultValue(int) const
+		{
+			return QVariant();
+		}
+	};
+};
 
 
 class ConnectionColorsDialog : public QDialog, public Ui::ConnectionColorsDialog
@@ -66,7 +113,8 @@ class toGlobalSetting : public QWidget
     Q_OBJECT;
 
 public:
-    toGlobalSetting(QWidget *parent = 0, const char *name = 0, Qt::WFlags fl = 0);
+	toGlobalSetting(QWidget* parent = 0, const char* name = 0,
+			Qt::WFlags fl = 0);
 
 public slots:
     virtual void saveSetting(void);

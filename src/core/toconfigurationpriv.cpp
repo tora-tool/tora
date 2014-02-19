@@ -88,7 +88,7 @@ void toConfigurationPrivate::loadConfig()
 #elif defined(Q_OS_WIN64)
 		defaultGvHome = "C:/Program Files(x86)/Graphviz 2.28/bin";
 #else
-		defaultGvHome = "/usr/bin"
+		defaultGvHome = "/usr/bin";
 #endif
 	m_graphvizHome = s.value("GV_HOME", defaultGvHome).toString();
 	}

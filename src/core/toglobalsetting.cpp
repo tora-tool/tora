@@ -35,7 +35,9 @@
 #include "core/toglobalsetting.h"
 #include "core/utils.h"
 #include "core/toconf.h"
+#include "core/toconfenum.h"
 #include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
 #include "core/tomainwindow.h"
 #include "core/tocache.h"
 #include "core/toqvalue.h"
@@ -43,6 +45,10 @@
 #include <QtGui/QColorDialog>
 #include <QtCore/QString>
 #include <QtGui/QFileDialog>
+
+#include <QtCore/QDebug>
+
+ToConfiguration::Global s_global;
 
 ConnectionColorsDialog::ConnectionColorsDialog(QWidget * parent)
     : QDialog(parent)
@@ -115,7 +121,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
 	CustomSQL->setText(toConfigurationSingle::Instance().customSQL());
 	HelpDirectory->setText(toConfigurationSingle::Instance().helpDirectory());
     DefaultSession->setText(toConfigurationSingle::Instance().defaultSession());
-	CacheDir->setText(toCache::cacheDir().absolutePath());
+	CacheDirectory->setText(toCache::cacheDir().absolutePath());
 #ifdef Q_OS_WIN
 	MysqlHome->setEnabled(true);
     MySQLHomeBrowse->setEnabled(true);
@@ -124,39 +130,39 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     GraphvizHome->setEnabled(true);
     GraphvizHomeBrowse->setEnabled(true);
 #endif
-    OracleHome->setText(toConfigurationSingle::Instance().oracleHome());
-    MysqlHome->setText(toConfigurationSingle::Instance().mysqlHome());
-    PgsqlHome->setText(toConfigurationSingle::Instance().pgsqlHome());
-    GraphvizHome->setText(toConfigurationSingle::Instance().graphvizHome());
+    OracleHomeDirectory->setText(toConfigurationSingle::Instance().oracleHome());
+    MysqlHomeDirectory->setText(toConfigurationSingle::Instance().mysqlHome());
+    PgsqlHomeDirectory->setText(toConfigurationSingle::Instance().pgsqlHome());
+    GraphvizHomeDirectory->setText(toConfigurationSingle::Instance().graphvizHome());
 
-    ChangeConnection->setChecked(toConfigurationSingle::Instance().changeConnection());
-	SavePassword->setChecked(toConfigurationSingle::Instance().savePassword());
-    IncludeDbCaption->setChecked(toConfigurationSingle::Instance().includeDbCaption());
-    RestoreSession->setChecked(toConfigurationSingle::Instance().restoreSession());
-	ToadBindings->setChecked(toConfigurationSingle::Instance().toadBindings());
-	CacheDisk->setChecked(toConfigurationSingle::Instance().cacheDisk());
-    DisplayGridlines->setChecked(toConfigurationSingle::Instance().displayGridlines());
-    MultiLineResults->setChecked(toConfigurationSingle::Instance().multiLineResults());
-    MessageStatusbar->setChecked(toConfigurationSingle::Instance().messageStatusbar());
-    ColorizedConnections->setChecked(toConfigurationSingle::Instance().colorizedConnections());
-    connect(ColorizedConnectionsConfigure, SIGNAL(clicked()),
+    ChangeConnectionBool->setChecked(toConfigurationSingle::Instance().changeConnection());
+	SavePasswordBool->setChecked(toConfigurationSingle::Instance().savePassword());
+    IncludeDbCaptionBool->setChecked(toConfigurationSingle::Instance().includeDbCaption());
+    RestoreSessionBool->setChecked(toConfigurationSingle::Instance().restoreSession());
+	ToadBindingsBool->setChecked(toConfigurationSingle::Instance().toadBindings());
+	CacheDiskBool->setChecked(toConfigurationSingle::Instance().cacheDisk());
+    DisplayGridlinesBool->setChecked(toConfigurationSingle::Instance().displayGridlines());
+    MultiLineResultsBool->setChecked(toConfigurationSingle::Instance().multiLineResults());
+    MessageStatusbarBool->setChecked(toConfigurationSingle::Instance().messageStatusbar());
+    ColorizedConnectionsBool->setChecked(toConfigurationSingle::Instance().colorizedConnections());
+    connect(ColorizedConnectionsMap, SIGNAL(clicked()),
             this, SLOT(ColorizedConnectionsConfigure_clicked()));
 
-    StatusMessage->setValue(toConfigurationSingle::Instance().statusMessage());
-    HistorySize->setValue(toConfigurationSingle::Instance().historySize());
+    StatusMessageInt->setValue(toConfigurationSingle::Instance().statusMessage());
+    HistorySizeInt->setValue(toConfigurationSingle::Instance().historySize());
     int samples = toConfigurationSingle::Instance().chartSamples();
     if (samples < 0)
     {
         UnlimitedSamples->setChecked(true);
-        ChartSamples->setValue(DEFAULT_CHART_SAMPLES);
+        ChartSamplesInt->setValue(DEFAULT_CHART_SAMPLES);
     }
     else
-        ChartSamples->setValue(samples);
+        ChartSamplesInt->setValue(samples);
     samples = toConfigurationSingle::Instance().displaySamples();
     if (samples < 0)
     {
         AllSamples->setChecked(true);
-        DisplaySamples->setValue(ChartSamples->value());
+        DisplaySamples->setValue(ChartSamplesInt->value());
     }
     else
         DisplaySamples->setValue(samples);
@@ -167,9 +173,9 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     else if (typ == "MB")
         SizeUnit->setCurrentIndex(2);
     // Refresh
-    Utils::toRefreshCreate(OptionGroup, "toRefreshCreate", QString::null, Refresh);
+    Utils::toRefreshCreate(OptionGroup, "toRefreshCreate", QString::null, RefreshIntervalInt);
     // DefaultFormat
-    DefaultFormat->setCurrentIndex(toConfigurationSingle::Instance().defaultFormat());
+    DefaultListFormat->setCurrentIndex(toConfigurationSingle::Instance().defaultFormat());
     // style
     Style->addItems(Utils::toGetSessionTypes());
     QString str = Utils::toGetSessionType();
@@ -183,6 +189,49 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     }
     // Translation
     Translation->setText(toConfigurationSingle::Instance().translation());
+
+    {
+    	static QRegExp any(".*");
+    	QList<QWidget*> lst = findChildren<QWidget*>(any);
+    	Q_FOREACH(QWidget *w, lst)
+    	{
+    		qDebug() << w->objectName();
+    		if (QComboBox *combo = qobject_cast<QComboBox*>(w))
+    		{
+    			try
+    			{
+    				QVariant v = toConfigurationNewSingle::Instance().option(combo->objectName());
+    			} catch (...) {
+    				combo->setDisabled(true);
+    			}
+    		} else if (QLineEdit *edit = qobject_cast<QLineEdit*>(w))
+    		{
+    			try
+    			{
+    				QVariant v = toConfigurationNewSingle::Instance().option(edit->objectName());
+    			} catch (...) {
+    				edit->setDisabled(true);
+    			}
+    		} else if (QLineEdit *edit = qobject_cast<QLineEdit*>(w))
+    		{
+    			try
+    			{
+    				QVariant v = toConfigurationNewSingle::Instance().option(edit->objectName());
+    			} catch (...) {
+    				edit->setDisabled(true);
+    			}
+    		} else if (QCheckBox *checkbox = qobject_cast<QCheckBox*>(w))
+    		{
+    			try
+    			{
+    				QVariant v = toConfigurationNewSingle::Instance().option(checkbox->objectName());
+    			} catch (...) {
+    				checkbox->setDisabled(true);
+    			}
+    		}
+
+    	}
+    }
 }
 
 void toGlobalSetting::sqlBrowse(void)
@@ -208,29 +257,29 @@ void toGlobalSetting::helpBrowse(void)
 
 void toGlobalSetting::cacheBrowse(void)
 {
-    QString str = Utils::toOpenFilename(CacheDir->text(), QString::fromLatin1(".tora_cache"), this);
+    QString str = Utils::toOpenFilename(CacheDirectory->text(), QString::fromLatin1(".tora_cache"), this);
     if (!str.isEmpty())
-        CacheDir->setText(str);
+        CacheDirectory->setText(str);
 }
 
 void toGlobalSetting::oracleBrowse(void)
 {
-    QString str = TOFileDialog::getExistingDirectory(this, tr("Select ORACLE_HOME"), OracleHome->text());
+    QString str = TOFileDialog::getExistingDirectory(this, tr("Select ORACLE_HOME"), OracleHomeDirectory->text());
     if (!str.isEmpty())
-    	OracleHome->setText(str);
+    	OracleHomeDirectory->setText(str);
 }
 
 void toGlobalSetting::mysqlBrowse(void)
 {
-    QString str = TOFileDialog::getExistingDirectory(this, tr("MySQL client installation"), MysqlHome->text());
+    QString str = TOFileDialog::getExistingDirectory(this, tr("MySQL client installation"), MysqlHomeDirectory->text());
     if (str.isEmpty())
     	return;
     QFileInfo libmysqlopt(str + QDir::separator() + "lib" + QDir::separator() + "opt", "libmysql.dll");
     QFileInfo libmysql(str + QDir::separator() + "lib", "libmysql.dll");
     if( Utils::toLibrary::isValidLibrary(libmysqlopt))
-    	MysqlHome->setText(libmysqlopt.absolutePath());
+    	MysqlHomeDirectory->setText(libmysqlopt.absolutePath());
     else if( Utils::toLibrary::isValidLibrary(libmysql))
-    	MysqlHome->setText(libmysql.absolutePath());
+    	MysqlHomeDirectory->setText(libmysql.absolutePath());
     else
         TOMessageBox::warning(
         		toMainWindow::lookup(),
@@ -241,12 +290,12 @@ void toGlobalSetting::mysqlBrowse(void)
 
 void toGlobalSetting::pqsqlBrowse(void)
 {
-    QString str = TOFileDialog::getExistingDirectory(this, tr("PgSQL client installation"), PgsqlHome->text());
+    QString str = TOFileDialog::getExistingDirectory(this, tr("PgSQL client installation"), PgsqlHomeDirectory->text());
     if (str.isEmpty())
     	return;
     QFileInfo libpq(str + QDir::separator() + "lib", "libpq.dll");
     if( Utils::toLibrary::isValidLibrary(libpq))
-    	PgsqlHome->setText(str);
+    	PgsqlHomeDirectory->setText(str);
     else
         TOMessageBox::warning(
         		toMainWindow::lookup(),
@@ -269,11 +318,11 @@ void toGlobalSetting::graphvizBrowse(void)
 #elif defined(Q_OS_WIN64)
 	defaultGvHome = "C:/Program Files(x86)/Graphviz 2.28/bin";
 #else
-	defaultGvHome = "/usr/bin"
+	defaultGvHome = "/usr/bin";
 #endif
 
-	QDir gvDir(GraphvizHome->text());
-	if(GraphvizHome->text().isEmpty() || !gvDir.exists() || !gvDir.isReadable())
+	QDir gvDir(GraphvizHomeDirectory->text());
+	if(GraphvizHomeDirectory->text().isEmpty() || !gvDir.exists() || !gvDir.isReadable())
 		gvDir = defaultGvHome;
     QString str = TOFileDialog::getExistingDirectory(this, tr("Graphviz installation"), gvDir.absolutePath());
     if (str.isEmpty())
@@ -281,9 +330,9 @@ void toGlobalSetting::graphvizBrowse(void)
     QFileInfo bindot(str + QDir::separator() + "bin", DOT);
     QFileInfo dot(str + QDir::separator(), DOT);
     if( bindot.isExecutable() && bindot.isFile())
-    	GraphvizHome->setText(bindot.absoluteDir().absolutePath());
+    	GraphvizHomeDirectory->setText(bindot.absoluteDir().absolutePath());
     else if( dot.isExecutable() && dot.isFile())
-    	GraphvizHome->setText(dot.absoluteDir().absolutePath());
+    	GraphvizHomeDirectory->setText(dot.absoluteDir().absolutePath());
     else
         TOMessageBox::warning(
         		toMainWindow::lookup(),
@@ -303,30 +352,30 @@ void toGlobalSetting::saveSetting(void)
 	toConfigurationSingle::Instance().setCustomSQL(CustomSQL->text());
     toConfigurationSingle::Instance().setHelpDirectory(HelpDirectory->text());
     toConfigurationSingle::Instance().setDefaultSession(DefaultSession->text());
-    toConfigurationSingle::Instance().setCacheDir(CacheDir->text());
-    toConfigurationSingle::Instance().setOracleHome(OracleHome->text());
-    toConfigurationSingle::Instance().setMysqlHome(MysqlHome->text());
-    toConfigurationSingle::Instance().setPgsqlHome(PgsqlHome->text());
-    toConfigurationSingle::Instance().setGraphvizHome(GraphvizHome->text());
+    toConfigurationSingle::Instance().setCacheDir(CacheDirectory->text());
+    toConfigurationSingle::Instance().setOracleHome(OracleHomeDirectory->text());
+    toConfigurationSingle::Instance().setMysqlHome(MysqlHomeDirectory->text());
+    toConfigurationSingle::Instance().setPgsqlHome(PgsqlHomeDirectory->text());
+    toConfigurationSingle::Instance().setGraphvizHome(GraphvizHomeDirectory->text());
 
-    toConfigurationSingle::Instance().setChangeConnection(ChangeConnection->isChecked());
-    toConfigurationSingle::Instance().setSavePassword(SavePassword->isChecked());
-    toConfigurationSingle::Instance().setIncludeDbCaption(IncludeDbCaption->isChecked());
-    toConfigurationSingle::Instance().setRestoreSession(RestoreSession->isChecked());
-    toConfigurationSingle::Instance().setToadBindings(ToadBindings->isChecked());
-    toConfigurationSingle::Instance().setCacheDisk(CacheDisk->isChecked());
-    toConfigurationSingle::Instance().setDisplayGridlines(DisplayGridlines->isChecked());
-    toConfigurationSingle::Instance().setMultiLineResults(MultiLineResults->isChecked());
-    toConfigurationSingle::Instance().setMessageStatusbar(MessageStatusbar->isChecked());
-    toConfigurationSingle::Instance().setColorizedConnections(ColorizedConnections->isChecked());
+    toConfigurationSingle::Instance().setChangeConnection(ChangeConnectionBool->isChecked());
+    toConfigurationSingle::Instance().setSavePassword(SavePasswordBool->isChecked());
+    toConfigurationSingle::Instance().setIncludeDbCaption(IncludeDbCaptionBool->isChecked());
+    toConfigurationSingle::Instance().setRestoreSession(RestoreSessionBool->isChecked());
+    toConfigurationSingle::Instance().setToadBindings(ToadBindingsBool->isChecked());
+    toConfigurationSingle::Instance().setCacheDisk(CacheDiskBool->isChecked());
+    toConfigurationSingle::Instance().setDisplayGridlines(DisplayGridlinesBool->isChecked());
+    toConfigurationSingle::Instance().setMultiLineResults(MultiLineResultsBool->isChecked());
+    toConfigurationSingle::Instance().setMessageStatusbar(MessageStatusbarBool->isChecked());
+    toConfigurationSingle::Instance().setColorizedConnections(ColorizedConnectionsBool->isChecked());
 
-    toConfigurationSingle::Instance().setStatusMessage(StatusMessage->value());
-    toConfigurationSingle::Instance().setHistorySize(HistorySize->value());
+    toConfigurationSingle::Instance().setStatusMessage(StatusMessageInt->value());
+    toConfigurationSingle::Instance().setHistorySize(HistorySizeInt->value());
 
     if (UnlimitedSamples->isChecked())
         toConfigurationSingle::Instance().setChartSamples(-1);
     else
-        toConfigurationSingle::Instance().setChartSamples(ChartSamples->value());
+        toConfigurationSingle::Instance().setChartSamples(ChartSamplesInt->value());
 
     if (AllSamples->isChecked())
         toConfigurationSingle::Instance().setDisplaySamples(-1);
@@ -334,8 +383,8 @@ void toGlobalSetting::saveSetting(void)
         toConfigurationSingle::Instance().setDisplaySamples(DisplaySamples->value());
 
     toConfigurationSingle::Instance().setSizeUnit(SizeUnit->currentText());
-    toConfigurationSingle::Instance().setRefresh(Refresh->currentText());
-    toConfigurationSingle::Instance().setDefaultFormat(DefaultFormat->currentIndex());
+    toConfigurationSingle::Instance().setRefresh(RefreshIntervalInt->currentText());
+    toConfigurationSingle::Instance().setDefaultFormat(DefaultListFormat->currentIndex());
     toConfigurationSingle::Instance().setStyle(Style->currentText());
     Utils::toSetSessionType(Style->currentText());
     toConfigurationSingle::Instance().setTranslation(Translation->text());

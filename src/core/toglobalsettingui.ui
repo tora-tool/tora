@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>756</width>
-    <height>679</height>
+    <height>680</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -107,12 +107,12 @@
          <bool>false</bool>
         </property>
         <property name="buddy">
-         <cstring>CacheDir</cstring>
+         <cstring>CacheDirectory</cstring>
         </property>
        </widget>
       </item>
       <item row="3" column="1">
-       <widget class="QLineEdit" name="CacheDir"/>
+       <widget class="QLineEdit" name="CacheDirectory"/>
       </item>
       <item row="3" column="2">
        <widget class="QPushButton" name="CacheBrowse">
@@ -134,12 +134,12 @@ Also applies for Oracle Instant Client</string>
          <string>ORACLE_HOME</string>
         </property>
         <property name="buddy">
-         <cstring>OracleHome</cstring>
+         <cstring>OracleHomeDirectory</cstring>
         </property>
        </widget>
       </item>
       <item row="4" column="1">
-       <widget class="QLineEdit" name="OracleHome"/>
+       <widget class="QLineEdit" name="OracleHomeDirectory"/>
       </item>
       <item row="4" column="2">
        <widget class="QPushButton" name="OracleHomeBrowse">
@@ -161,12 +161,12 @@ Also applies for Oracle Instant Client</string>
          <string>MySQL Path</string>
         </property>
         <property name="buddy">
-         <cstring>MysqlHome</cstring>
+         <cstring>MysqlHomeDirectory</cstring>
         </property>
        </widget>
       </item>
       <item row="5" column="1">
-       <widget class="QLineEdit" name="MysqlHome">
+       <widget class="QLineEdit" name="MysqlHomeDirectory">
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -196,12 +196,12 @@ lib\libpq.dll</string>
          <string>PgSQL Path</string>
         </property>
         <property name="buddy">
-         <cstring>PgsqlHome</cstring>
+         <cstring>PgsqlHomeDirectory</cstring>
         </property>
        </widget>
       </item>
       <item row="6" column="1">
-       <widget class="QLineEdit" name="PgsqlHome">
+       <widget class="QLineEdit" name="PgsqlHomeDirectory">
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -230,12 +230,12 @@ lib\libpq.dll</string>
          <string>GraphViz Path</string>
         </property>
         <property name="buddy">
-         <cstring>MysqlHome</cstring>
+         <cstring>MysqlHomeDirectory</cstring>
         </property>
        </widget>
       </item>
       <item row="7" column="1">
-       <widget class="QLineEdit" name="GraphvizHome">
+       <widget class="QLineEdit" name="GraphvizHomeDirectory">
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -261,7 +261,7 @@ lib\libpq.dll</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="6" column="2">
-       <widget class="QComboBox" name="DefaultFormat">
+       <widget class="QComboBox" name="DefaultListFormat">
         <item>
          <property name="text">
           <string>Text</string>
@@ -293,7 +293,7 @@ lib\libpq.dll</string>
          <bool>false</bool>
         </property>
         <property name="buddy">
-         <cstring>DefaultFormat</cstring>
+         <cstring>DefaultListFormat</cstring>
         </property>
        </widget>
       </item>
@@ -309,7 +309,7 @@ lib\libpq.dll</string>
          <bool>false</bool>
         </property>
         <property name="buddy">
-         <cstring>StatusMessage</cstring>
+         <cstring>StatusMessageInt</cstring>
         </property>
        </widget>
       </item>
@@ -325,7 +325,7 @@ lib\libpq.dll</string>
          <bool>false</bool>
         </property>
         <property name="buddy">
-         <cstring>HistorySize</cstring>
+         <cstring>HistorySizeInt</cstring>
         </property>
        </widget>
       </item>
@@ -341,12 +341,12 @@ lib\libpq.dll</string>
          <bool>false</bool>
         </property>
         <property name="buddy">
-         <cstring>Refresh</cstring>
+         <cstring>RefreshIntervalInt</cstring>
         </property>
        </widget>
       </item>
       <item row="2" column="0">
-       <widget class="QCheckBox" name="IncludeDbCaption">
+       <widget class="QCheckBox" name="IncludeDbCaptionBool">
         <property name="toolTip">
          <string>Include database connection in window captions</string>
         </property>
@@ -356,7 +356,7 @@ lib\libpq.dll</string>
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QCheckBox" name="SavePassword">
+       <widget class="QCheckBox" name="SavePasswordBool">
         <property name="toolTip">
          <string>Remember the last password you used to connect.
 Will leave the password unencrypted in the config file.</string>
@@ -370,7 +370,7 @@ Will leave the password unencrypted in the config file.</string>
        </widget>
       </item>
       <item row="0" column="0">
-       <widget class="QCheckBox" name="ChangeConnection">
+       <widget class="QCheckBox" name="ChangeConnectionBool">
         <property name="toolTip">
          <string>Change currently select connection to the connection of the new active window</string>
         </property>
@@ -382,7 +382,7 @@ Will leave the password unencrypted in the config file.</string>
       <item row="9" column="0">
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QCheckBox" name="ColorizedConnections">
+         <widget class="QCheckBox" name="ColorizedConnectionsBool">
           <property name="toolTip">
            <string>Show color icons for session recognition in connection GUI widgets</string>
           </property>
@@ -392,7 +392,7 @@ Will leave the password unencrypted in the config file.</string>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="ColorizedConnectionsConfigure">
+         <widget class="QPushButton" name="ColorizedConnectionsMap">
           <property name="text">
            <string>Configure...</string>
           </property>
@@ -401,7 +401,7 @@ Will leave the password unencrypted in the config file.</string>
        </layout>
       </item>
       <item row="3" column="0">
-       <widget class="QCheckBox" name="RestoreSession">
+       <widget class="QCheckBox" name="RestoreSessionBool">
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -411,7 +411,7 @@ Will leave the password unencrypted in the config file.</string>
        </widget>
       </item>
       <item row="4" column="0">
-       <widget class="QCheckBox" name="ToadBindings">
+       <widget class="QCheckBox" name="ToadBindingsBool">
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -424,7 +424,7 @@ Will leave the password unencrypted in the config file.</string>
        </widget>
       </item>
       <item row="6" column="0">
-       <widget class="QCheckBox" name="DisplayGridlines">
+       <widget class="QCheckBox" name="DisplayGridlinesBool">
         <property name="toolTip">
          <string>Show grid lines in output results table.</string>
         </property>
@@ -434,7 +434,7 @@ Will leave the password unencrypted in the config file.</string>
        </widget>
       </item>
       <item row="5" column="0">
-       <widget class="QCheckBox" name="CacheDisk">
+       <widget class="QCheckBox" name="CacheDiskBool">
         <property name="toolTip">
          <string>Use Disk Caching of ObjectLists and Synonyms</string>
         </property>
@@ -444,14 +444,14 @@ Will leave the password unencrypted in the config file.</string>
        </widget>
       </item>
       <item row="7" column="0">
-       <widget class="QCheckBox" name="MultiLineResults">
+       <widget class="QCheckBox" name="MultiLineResultsBool">
         <property name="text">
          <string>Multi-line results</string>
         </property>
        </widget>
       </item>
       <item row="8" column="0">
-       <widget class="QCheckBox" name="MessageStatusbar">
+       <widget class="QCheckBox" name="MessageStatusbarBool">
         <property name="toolTip">
          <string>Display alerts in messagebar instead of poping up a dialog with a warning.</string>
         </property>
@@ -498,7 +498,7 @@ Will leave the password unencrypted in the config file.</string>
          <bool>false</bool>
         </property>
         <property name="buddy">
-         <cstring>ChartSamples</cstring>
+         <cstring>ChartSamplesInt</cstring>
         </property>
        </widget>
       </item>
@@ -538,14 +538,14 @@ Will leave the password unencrypted in the config file.</string>
        </widget>
       </item>
       <item row="0" column="2">
-       <widget class="QSpinBox" name="StatusMessage">
+       <widget class="QSpinBox" name="StatusMessageInt">
         <property name="suffix">
          <string> seconds</string>
         </property>
        </widget>
       </item>
       <item row="5" column="2">
-       <widget class="QComboBox" name="Refresh"/>
+       <widget class="QComboBox" name="RefreshIntervalInt"/>
       </item>
       <item row="3" column="2">
        <widget class="QSpinBox" name="DisplaySamples">
@@ -558,7 +558,7 @@ Will leave the password unencrypted in the config file.</string>
        </widget>
       </item>
       <item row="2" column="2">
-       <widget class="QSpinBox" name="ChartSamples">
+       <widget class="QSpinBox" name="ChartSamplesInt">
         <property name="suffix">
          <string/>
         </property>
@@ -619,7 +619,7 @@ Will leave the password unencrypted in the config file.</string>
        </widget>
       </item>
       <item row="1" column="2">
-       <widget class="QSpinBox" name="HistorySize">
+       <widget class="QSpinBox" name="HistorySizeInt">
         <property name="suffix">
          <string/>
         </property>
@@ -651,23 +651,23 @@ Will leave the password unencrypted in the config file.</string>
   <tabstop>HelpBrowse</tabstop>
   <tabstop>DefaultSession</tabstop>
   <tabstop>HelpBrowse_2</tabstop>
-  <tabstop>CacheDir</tabstop>
+  <tabstop>CacheDirectory</tabstop>
   <tabstop>CacheBrowse</tabstop>
-  <tabstop>OracleHome</tabstop>
+  <tabstop>OracleHomeDirectory</tabstop>
   <tabstop>OracleHomeBrowse</tabstop>
-  <tabstop>MysqlHome</tabstop>
+  <tabstop>MysqlHomeDirectory</tabstop>
   <tabstop>MySQLHomeBrowse</tabstop>
-  <tabstop>PgsqlHome</tabstop>
+  <tabstop>PgsqlHomeDirectory</tabstop>
   <tabstop>PgSQLHomeBrowse</tabstop>
-  <tabstop>ChangeConnection</tabstop>
-  <tabstop>SavePassword</tabstop>
-  <tabstop>IncludeDbCaption</tabstop>
-  <tabstop>RestoreSession</tabstop>
-  <tabstop>ToadBindings</tabstop>
-  <tabstop>CacheDisk</tabstop>
-  <tabstop>DisplayGridlines</tabstop>
-  <tabstop>ColorizedConnections</tabstop>
-  <tabstop>ColorizedConnectionsConfigure</tabstop>
+  <tabstop>ChangeConnectionBool</tabstop>
+  <tabstop>SavePasswordBool</tabstop>
+  <tabstop>IncludeDbCaptionBool</tabstop>
+  <tabstop>RestoreSessionBool</tabstop>
+  <tabstop>ToadBindingsBool</tabstop>
+  <tabstop>CacheDiskBool</tabstop>
+  <tabstop>DisplayGridlinesBool</tabstop>
+  <tabstop>ColorizedConnectionsBool</tabstop>
+  <tabstop>ColorizedConnectionsMap</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -738,7 +738,7 @@ Will leave the password unencrypted in the config file.</string>
   <connection>
    <sender>UnlimitedSamples</sender>
    <signal>toggled(bool)</signal>
-   <receiver>ChartSamples</receiver>
+   <receiver>ChartSamplesInt</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">

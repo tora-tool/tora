@@ -81,46 +81,6 @@ namespace ToConfiguration {
 		};
 	};
 
-	class Global : public ConfigContext
-	{
-		Q_OBJECT;
-		Q_ENUMS(OptionTypeEnum);
-	public:
-		Global() : ConfigContext("Global", ENUM_REF(Global,OptionTypeEnum)) {};
-		enum OptionTypeEnum {
-			// Paths
-			SQLDictionary = 2000    // #define CONF_SQL_FILE
-			, HelpPath              // #define CONF_HELP_PATH
-			, DefaultSession        // #define CONF_DEFAULT_SESSION
-			, CacheDir              // #define CONF_CACHE_DIR
-			, ORACLE_HOME           // #define CONF_ORACLE_HOME
-			, MYSQL_HOME            // #define CONF_MYSQL_HOME
-			, PGSQL_HOME            // #define CONF_PGSQL_HOME
-			, GV_HOME            // #define CONF_PGSQL_HOME
-			// Options (1st column)
-			, ChangeConnection      // #define CONF_CHANGE_CONNECTION
-			, SavePassword          // #define CONF_SAVE_PWD
-			, DBTitle               // #define CONF_DB_TITLE
-			, RestoreSession        // #define CONF_RESTORE_SESSION
-			, ToadBindings          // #define CONF_TOAD_BINDINGS
-			, CacheDiskUse          // #define CONF_CACHE_DISK
-			, Gridlines             // #define CONF_DISPLAY_GRIDLINES
-			, MultiLineResults      // #define CONF_MULTI_LINE_RESULTS
-			, MessageStatusbar      // #define CONF_MESSAGE_STATUSBAR
-			, ColorizedConnections
-			, ColorizedConnectionsMap
-			// Options (2nd column)
-			, StatusMessage         // #define CONF_STATUS_MESSAGE
-			, ConnectHistory        // #define CONF_CONNECT_HISTORY
-			, ChartSamples          // #define CONF_CHART_SAMPLES
-			, SizeUnit              // #define CONF_SIZE_UNIT
-			, RefreshInterval       // #define CONF_REFRESH
-			, DefaultFormat         // #define CONF_DEFAULT_FORMAT
-			, Style                 // #define CONF_STYLE
-			, Locale                // #define CONF_LOCALE (Translation)
-		};
-	};
-
 #if TORA_OBSOLETE
 // toeditextensions
 #define CONF_AUTO_INDENT_RO "AutoIndent"

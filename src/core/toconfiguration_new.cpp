@@ -54,30 +54,41 @@ toConfigurationNew::~toConfigurationNew()
 
 void toConfigurationNew::registerConfigContext(QString const& contextName, QMetaEnum const& fields, ToConfiguration::ConfigContext const* context)
 {
-	Q_ASSERT_X( !m_contextSet.contains(contextName), qPrintable(__QHERE__), qPrintable(QString("Context %1 is already registered").arg(contextName)));
-	m_contextSet.insert(contextName, fields);
+	Q_ASSERT_X( !m_contextMap.contains(contextName), qPrintable(__QHERE__), qPrintable(QString("Context %1 is already registered").arg(contextName)));
+	m_contextMap.insert(contextName, fields);
 
 	for(int idx = 0; idx < fields.keyCount(); idx++)
 	{
 		int intVal = fields.value(idx);
 		QString strVal = fields.key(idx);
-		Q_ASSERT_X( !m_configValues.contains(intVal), qPrintable(__QHERE__), qPrintable(QString("Context %1 value %2(%3) is already registered").arg(contextName).arg(strVal).arg(intVal)));
-		m_configValues.insert(intVal, QVariant());
-		m_configContextPtr.insert(intVal, context);
+		Q_ASSERT_X( !m_configMap.contains(intVal), qPrintable(__QHERE__), qPrintable(QString("Context %1 value %2(%3) is already registered").arg(contextName).arg(strVal).arg(intVal)));
+		m_configMap.insert(intVal, QVariant());
+		m_configContextPtrMap.insert(intVal, context);
+
+		Q_ASSERT_X( !m_optionToEnumMap.contains(strVal), qPrintable(__QHERE__), qPrintable(QString("Context %1 value %2(%3) is already registered").arg(contextName).arg(strVal).arg(intVal)));
+		m_optionToEnumMap.insert(strVal, intVal);
 	}
 
 }
 
 QVariant toConfigurationNew::option(int option)
 {
-	Q_ASSERT_X( m_configValues.contains(option), qPrintable(__QHERE__), qPrintable(QString("Unknown enum: %1").arg(option)));
-	if (m_configValues.value(option).isNull())
+	Q_ASSERT_X( m_configMap.contains(option), qPrintable(__QHERE__), qPrintable(QString("Unknown enum: %1").arg(option)));
+	if (m_configMap.value(option).isNull())
 	{
-		ToConfiguration::ConfigContext const* ctx = m_configContextPtr.value(option);
+		ToConfiguration::ConfigContext const* ctx = m_configContextPtrMap.value(option);
 		QVariant val = ctx->defaultValue(option);
-		m_configValues[option] = val;
+		m_configMap[option] = val;
 	}
-	return m_configValues.value(option);
+	return m_configMap.value(option);
+}
+
+QVariant toConfigurationNew::option(QString const& o)
+{
+	if (!m_optionToEnumMap.contains(o))
+		throw OptionNotFound();
+	int opt = m_optionToEnumMap.value(o);
+	return option(opt);
 }
 
 // a static one
