@@ -180,11 +180,11 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     DefaultSession->setText(toConfigurationSingle::Instance().defaultSession());
 	CacheDirectory->setText(toCache::cacheDir().absolutePath());
 #ifdef Q_OS_WIN
-	MysqlHome->setEnabled(true);
+	MysqlHomeDirectory->setEnabled(true);
     MySQLHomeBrowse->setEnabled(true);
-    PgsqlHome->setEnabled(true);
+    PgsqlHomeDirectory->setEnabled(true);
     PgSQLHomeBrowse->setEnabled(true);
-    GraphvizHome->setEnabled(true);
+    GraphvizHomeDirectory->setEnabled(true);
     GraphvizHomeBrowse->setEnabled(true);
 #endif
     OracleHomeDirectory->setText(toConfigurationSingle::Instance().oracleHome());

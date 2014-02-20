@@ -36,12 +36,55 @@
 #define TOMAINWINDOW_H
 
 #include "core/tora_export.h"
+#include "core/toconfenum.h"
 #include "loki/Singleton.h"
 
 #include <QtGui/QMainWindow>
 
 class toDockbar;
 class toDocklet;
+
+namespace ToConfiguration
+{
+	class Main : public ConfigContext
+	{
+		Q_OBJECT;
+		Q_ENUMS(OptionTypeEnum);
+	public:
+		Main() : ConfigContext("Main", ENUM_REF(Main,OptionTypeEnum)) {};
+		enum OptionTypeEnum {
+			LastVersion   = 1000 // #define CONF_LAST_VERSION
+			, FirstInstall       // #define CONF_FIRST_INSTALL
+			, RecentFiles        // #define CONF_RECENT_FILES
+			, RecentMax          // #define CONF_RECENT_MAX
+			, LastDir            // #define CONF_LAST_DIR
+			, Encoding           // #define CONF_ENCODING
+			, DefaultTool        // #define CONF_DEFAULT_TOOL
+			, CacheTimeout       // #define CONF_CACHE_TIMEOUT
+			, StatusSave         // #define CONF_STATUS_SAVE (Message history size)
+			, DontReread         // #define CONF_DONT_REREAD
+			, EditDragDrop       // #define CONF_EDIT_DRAG_DROP (toScintilla)
+			, CSVSeparator       // #define CONF_CSV_SEPARATOR
+			, CSVDelimiter       // #define CONF_CSV_DELIMITER
+		};
+		virtual QVariant defaultValue(int option) const
+		{
+			LastVersion   = 1000 // #define CONF_LAST_VERSION
+			, FirstInstall       // #define CONF_FIRST_INSTALL
+			, RecentFiles        // #define CONF_RECENT_FILES
+			, RecentMax          // #define CONF_RECENT_MAX
+			, LastDir            // #define CONF_LAST_DIR
+			, Encoding           // #define CONF_ENCODING
+			, DefaultTool        // #define CONF_DEFAULT_TOOL
+			, CacheTimeout       // #define CONF_CACHE_TIMEOUT
+			, StatusSave         // #define CONF_STATUS_SAVE (Message history size)
+			, DontReread         // #define CONF_DONT_REREAD
+			, EditDragDrop       // #define CONF_EDIT_DRAG_DROP (toScintilla)
+			, CSVSeparator       // #define CONF_CSV_SEPARATOR
+			, CSVDelimiter       // #define CONF_CSV_DELIMITER
+		}
+	};
+};
 
 class TORA_EXPORT toMainWindow : public QMainWindow
 {
@@ -59,6 +102,8 @@ public:
      * @return Pointer to main window.
      */
     static toMainWindow* lookup(void);
+private:
+    static ToConfiguration::Main s_mainConfig;
 };
 
 #endif

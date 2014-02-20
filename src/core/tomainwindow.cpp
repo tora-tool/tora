@@ -54,3 +54,5 @@ toMainWindow* toMainWindow::lookup()
     return NULL;
     // TODO: throw something here
 }
+
+ToConfiguration::Main s_mainConfig;
