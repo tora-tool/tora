@@ -67,22 +67,7 @@ namespace ToConfiguration
 			, CSVSeparator       // #define CONF_CSV_SEPARATOR
 			, CSVDelimiter       // #define CONF_CSV_DELIMITER
 		};
-		virtual QVariant defaultValue(int option) const
-		{
-			LastVersion   = 1000 // #define CONF_LAST_VERSION
-			, FirstInstall       // #define CONF_FIRST_INSTALL
-			, RecentFiles        // #define CONF_RECENT_FILES
-			, RecentMax          // #define CONF_RECENT_MAX
-			, LastDir            // #define CONF_LAST_DIR
-			, Encoding           // #define CONF_ENCODING
-			, DefaultTool        // #define CONF_DEFAULT_TOOL
-			, CacheTimeout       // #define CONF_CACHE_TIMEOUT
-			, StatusSave         // #define CONF_STATUS_SAVE (Message history size)
-			, DontReread         // #define CONF_DONT_REREAD
-			, EditDragDrop       // #define CONF_EDIT_DRAG_DROP (toScintilla)
-			, CSVSeparator       // #define CONF_CSV_SEPARATOR
-			, CSVDelimiter       // #define CONF_CSV_DELIMITER
-		}
+		virtual QVariant defaultValue(int option) const;
 	};
 };
 

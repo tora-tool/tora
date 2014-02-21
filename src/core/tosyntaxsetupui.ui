@@ -115,9 +115,6 @@
        </item>
        <item>
         <widget class="QCheckBox" name="CodeCompletionBool">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
          <property name="toolTip">
           <string>Activate code completion in SQL editors. Not recommended on slow connections.</string>
          </property>
@@ -128,9 +125,6 @@
        </item>
        <item>
         <widget class="QCheckBox" name="KeywordUpper">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
          <property name="toolTip">
           <string>Convert all keywords to uppercase when displayingsyntaxhighlighted text.  Only available for monospaced fonts.</string>
          </property>
@@ -141,9 +135,6 @@
        </item>
        <item>
         <widget class="QCheckBox" name="ObjectNamesUpper">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
          <property name="toolTip">
           <string>Table, view, column names etc. are extracted in upper-case</string>
          </property>
@@ -157,9 +148,6 @@
        </item>
        <item>
         <widget class="QCheckBox" name="CompletionSort">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
          <property name="toolTip">
           <string>Sort the available completion rows alphabetically or in the order the are.</string>
          </property>
@@ -191,9 +179,6 @@
        </item>
        <item>
         <widget class="QCheckBox" name="AutoIndentBool">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
          <property name="toolTip">
           <string>Indent a new line in an editor to the same column as the previous line</string>
          </property>
@@ -204,9 +189,6 @@
        </item>
        <item>
         <widget class="QCheckBox" name="UseSpacesForIndentBool">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
          <property name="toolTip">
           <string>If set the editor will insert spaces rather than tabs</string>
          </property>

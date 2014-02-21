@@ -68,33 +68,33 @@ void toConfiguration::setQSettingsEnv()
         QCoreApplication::setApplicationName(TOAPPNAME);
 }
 
-QString toConfiguration::customSQL()
-{
-	Q_D(toConfiguration);
-    return d->m_customSQL;
-}
+//QString toConfiguration::customSQL()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_customSQL;
+//}
 void toConfiguration::setCustomSQL(const QString & v)
 {
 	Q_D(toConfiguration);
     d->m_customSQL = v;
 }
 
-QString toConfiguration::helpDirectory()
-{
-	Q_D(toConfiguration);
-    return d->m_helpDirectory;
-}
+//QString toConfiguration::helpDirectory()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_helpDirectory;
+//}
 void toConfiguration::setHelpDirectory(const QString & v)
 {
 	Q_D(toConfiguration);
     d->m_helpDirectory = v;
 }
 
-QString toConfiguration::defaultSession()
-{
-	Q_D(toConfiguration);
-    return d->m_defaultSession;
-}
+//QString toConfiguration::defaultSession()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_defaultSession;
+//}
 void toConfiguration::setDefaultSession(const QString & v)
 {
 	Q_D(toConfiguration);
@@ -179,11 +179,11 @@ void toConfiguration::setPlanTable(const QString & v)
     d->m_planTable = v;
 }
 
-QString toConfiguration::textFontName()
-{
-	Q_D(toConfiguration);
-    return d->m_textFontName;
-}
+//QString toConfiguration::textFontName()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_textFontName;
+//}
 void toConfiguration::setTextFontName(const QString & v)
 {
 	Q_D(toConfiguration);
@@ -212,17 +212,22 @@ void toConfiguration::setListFontName(const QString & v)
     d->m_listFontName = v;
 }
 
-QString toConfiguration::oracleHome()
-{
-	Q_D(toConfiguration);
-	return d->m_oracleHome;
-}
+//QString toConfiguration::oracleHome()
+//{
+//	Q_D(toConfiguration);
+//	return d->m_oracleHome;
+//}
 
 void toConfiguration::setOracleHome(QString const &v)
 {
 	Q_D(toConfiguration);
 	d->m_oracleHome = v;
 }
+
+
+
+
+
 
 QString toConfiguration::dateFormat()
 {
@@ -268,33 +273,33 @@ void toConfiguration::setSyntaxHighlighting(int v)
     d->m_syntaxHighlighting = v;
 }
 
-int toConfiguration::editorType()
-{
-	Q_D(toConfiguration);
-    return d->m_editorType;
-}
+//int toConfiguration::editorType()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_editorType;
+//}
 void toConfiguration::setEditorType(int v)
 {
 	Q_D(toConfiguration);
     d->m_editorType = v;
 }
 
-bool toConfiguration::keywordUpper()
-{
-	Q_D(toConfiguration);
-    return d->m_keywordUpper;
-}
+//bool toConfiguration::keywordUpper()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_keywordUpper;
+//}
 void toConfiguration::setKeywordUpper(bool v)
 {
 	Q_D(toConfiguration);
     d->m_keywordUpper = v;
 }
 
-bool toConfiguration::objectNamesUpper()
-{
-	Q_D(toConfiguration);
-    return d->m_objectNamesUpper;
-}
+//bool toConfiguration::objectNamesUpper()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_objectNamesUpper;
+//}
 void toConfiguration::setObjectNamesUpper(bool v)
 {
 	Q_D(toConfiguration);
@@ -520,22 +525,22 @@ void toConfiguration::setObjectCache(toConfiguration::ObjectCacheEnum v)
     d->m_objectCache = v;
 }
 
-bool toConfiguration::firewallMode()
-{
-	Q_D(toConfiguration);
-    return d->m_firewallMode;
-}
+//bool toConfiguration::firewallMode()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_firewallMode;
+//}
 void toConfiguration::setFirewallMode(bool v)
 {
 	Q_D(toConfiguration);
     d->m_firewallMode = v;
 }
 
-int toConfiguration::connTestInterval()
-{
-	Q_D(toConfiguration);
-    return d->m_connTestInterval;
-}
+//int toConfiguration::connTestInterval()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_connTestInterval;
+//}
 void toConfiguration::setConnTestInterval(int v)
 {
 	Q_D(toConfiguration);
@@ -586,11 +591,11 @@ void toConfiguration::setSharedPlan(bool v)
     d->m_sharedPlan = v;
 }
 
-bool toConfiguration::restoreSession()
-{
-	Q_D(toConfiguration);
-    return d->m_restoreSession;
-}
+//bool toConfiguration::restoreSession()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_restoreSession;
+//}
 void toConfiguration::setRestoreSession(bool v)
 {
 	Q_D(toConfiguration);
@@ -709,11 +714,11 @@ int toConfiguration::cacheTimeout()
     return d->m_cacheTimeout;
 }
 
-int toConfiguration::tabStop()
-{
-	Q_D(toConfiguration);
-    return d->m_tabStop;
-}
+//int toConfiguration::tabStop()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_tabStop;
+//}
 void toConfiguration::setTabStop(int v)
 {
 	Q_D(toConfiguration);
@@ -731,22 +736,22 @@ void toConfiguration::setUseSpacesForIndent(bool v)
     d->m_useSpacesForIndent = v;
 }
 
-bool toConfiguration::editDragDrop()
-{
-	Q_D(toConfiguration);
-    return d->m_editDragDrop;
-}
+//bool toConfiguration::editDragDrop()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_editDragDrop;
+//}
 void toConfiguration::setEditDragDrop(bool v)
 {
 	Q_D(toConfiguration);
     d->m_editDragDrop = v;
 }
 
-bool toConfiguration::toadBindings()
-{
-	Q_D(toConfiguration);
-    return d->m_toadBindings;
-}
+//bool toConfiguration::toadBindings()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_toadBindings;
+//}
 void toConfiguration::setToadBindings(bool v)
 {
 	Q_D(toConfiguration);
@@ -764,11 +769,11 @@ void toConfiguration::setDisplayGridlines(bool v)
     d->m_displayGridlines = v;
 }
 
-QString toConfiguration::style()
-{
-	Q_D(toConfiguration);
-    return d->m_style;
-}
+//QString toConfiguration::style()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_style;
+//}
 void toConfiguration::setStyle(const QString & v)
 {
 	Q_D(toConfiguration);
@@ -787,11 +792,11 @@ void toConfiguration::setMaxLong(int v)
 }
 
 // toqsqlconnection
-QString toConfiguration::mysqlHome()
-{
-	Q_D(toConfiguration);
-	return d->m_mysqlHome;
-}
+//QString toConfiguration::mysqlHome()
+//{
+//	Q_D(toConfiguration);
+//	return d->m_mysqlHome;
+//}
 
 void toConfiguration::setMysqlHome(QString const &v)
 {
@@ -799,11 +804,11 @@ void toConfiguration::setMysqlHome(QString const &v)
 	d->m_mysqlHome = v;
 }
 
-QString toConfiguration::pgsqlHome()
-{
-	Q_D(toConfiguration);
-	return d->m_pgsqlHome;
-}
+//QString toConfiguration::pgsqlHome()
+//{
+//	Q_D(toConfiguration);
+//	return d->m_pgsqlHome;
+//}
 
 void toConfiguration::setPgsqlHome(QString const &v)
 {
@@ -1265,11 +1270,11 @@ void toConfiguration::setTuningCharts(bool v)
 }
 
 // toworksheet
-bool toConfiguration::wsAutoSave()
-{
-	Q_D(toConfiguration);
-    return d->m_wsAutoSave;
-}
+//bool toConfiguration::wsAutoSave()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_wsAutoSave;
+//}
 void toConfiguration::setWsAutoSave(bool v)
 {
 	Q_D(toConfiguration);
@@ -1549,99 +1554,99 @@ void toConfiguration::setForceLineEnd(const QString & v)
     d->m_forcelineend = v;
 }
 
-bool toConfiguration::extractorUseDbmsMetadata()
-{
-	Q_D(toConfiguration);
-    return d->m_extractorUseDbmsMetadata;
-}
+//bool toConfiguration::extractorUseDbmsMetadata()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_extractorUseDbmsMetadata;
+//}
 void toConfiguration::setExtractorUseDbmsMetadata(bool v)
 {
 	Q_D(toConfiguration);
     d->m_extractorUseDbmsMetadata = v;
 }
 
-bool toConfiguration::extractorIncludeSotrage()
-{
-	Q_D(toConfiguration);
-    return d->m_extractorIncludeSotrage;
-}
+//bool toConfiguration::extractorIncludeSotrage()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_extractorIncludeSotrage;
+//}
 void toConfiguration::setExtractorIncludeSotrage(bool v)
 {
 	Q_D(toConfiguration);
     d->m_extractorIncludeSotrage = v;
 }
 
-bool toConfiguration::extractorSkipOrgMonInformation()
-{
-	Q_D(toConfiguration);
-    return d->m_extractorSkipOrgMonInformation;
-}
+//bool toConfiguration::extractorSkipOrgMonInformation()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_extractorSkipOrgMonInformation;
+//}
 void toConfiguration::setExtractorSkipOrgMonInformation(bool v)
 {
 	Q_D(toConfiguration);
     d->m_extractorSkipOrgMonInformation = v;
 }
 
-bool toConfiguration::extractorSkipStorageExceptTablespaces()
-{
-	Q_D(toConfiguration);
-    return d->m_extractorSkipStorageExceptTablespaces;
-}
+//bool toConfiguration::extractorSkipStorageExceptTablespaces()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_extractorSkipStorageExceptTablespaces;
+//}
 void toConfiguration::setExtractorSkipStorageExceptTablespaces(bool v)
 {
 	Q_D(toConfiguration);
     d->m_extractorSkipStorageExceptTablespaces = v;
 }
 
-bool toConfiguration::extractorIncludeParallel()
-{
-	Q_D(toConfiguration);
-    return d->m_extractorIncludeParallel;
-}
+//bool toConfiguration::extractorIncludeParallel()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_extractorIncludeParallel;
+//}
 void toConfiguration::setExtractorIncludeParallel(bool v)
 {
 	Q_D(toConfiguration);
     d->m_extractorIncludeParallel = v;
 }
 
-bool toConfiguration::extractorIncludePartition()
-{
-	Q_D(toConfiguration);
-    return d->m_extractorIncludePartition;
-}
+//bool toConfiguration::extractorIncludePartition()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_extractorIncludePartition;
+//}
 void toConfiguration::setExtractorIncludePartition(bool v)
 {
 	Q_D(toConfiguration);
     d->m_extractorIncludePartition = v;
 }
 
-bool toConfiguration::extractorIncludeCode()
-{
-	Q_D(toConfiguration);
-    return d->m_extractorIncludeCode;
-}
+//bool toConfiguration::extractorIncludeCode()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_extractorIncludeCode;
+//}
 void toConfiguration::setExtractorIncludeCode(bool v)
 {
 	Q_D(toConfiguration);
     d->m_extractorIncludeCode = v;
 }
 
-bool toConfiguration::extractorIncludeHeader()
-{
-	Q_D(toConfiguration);
-    return d->m_extractorIncludeHeader;
-}
+//bool toConfiguration::extractorIncludeHeader()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_extractorIncludeHeader;
+//}
 void toConfiguration::setExtractorIncludeHeader(bool v)
 {
 	Q_D(toConfiguration);
     d->m_extractorIncludeHeader = v;
 }
 
-bool toConfiguration::extractorIncludePrompt()
-{
-	Q_D(toConfiguration);
-    return d->m_extractorIncludePrompt;
-}
+//bool toConfiguration::extractorIncludePrompt()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_extractorIncludePrompt;
+//}
 void toConfiguration::setExtractorIncludePrompt(bool v)
 {
 	Q_D(toConfiguration);

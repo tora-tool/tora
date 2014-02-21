@@ -175,9 +175,9 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     TabbedTools->setVisible(false);
 #endif
 
-	CustomSQL->setText(toConfigurationSingle::Instance().customSQL());
-	HelpDirectory->setText(toConfigurationSingle::Instance().helpDirectory());
-    DefaultSession->setText(toConfigurationSingle::Instance().defaultSession());
+	//CustomSQL->setText(toConfigurationSingle::Instance().customSQL());
+	//HelpDirectory->setText(toConfigurationSingle::Instance().helpDirectory());
+    //DefaultSession->setText(toConfigurationSingle::Instance().defaultSession());
 	CacheDirectory->setText(toCache::cacheDir().absolutePath());
 #ifdef Q_OS_WIN
 	MysqlHomeDirectory->setEnabled(true);
@@ -187,16 +187,16 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     GraphvizHomeDirectory->setEnabled(true);
     GraphvizHomeBrowse->setEnabled(true);
 #endif
-    OracleHomeDirectory->setText(toConfigurationSingle::Instance().oracleHome());
-    MysqlHomeDirectory->setText(toConfigurationSingle::Instance().mysqlHome());
-    PgsqlHomeDirectory->setText(toConfigurationSingle::Instance().pgsqlHome());
-    GraphvizHomeDirectory->setText(toConfigurationSingle::Instance().graphvizHome());
+    //OracleHomeDirectory->setText(toConfigurationSingle::Instance().oracleHome());
+    //MysqlHomeDirectory->setText(toConfigurationSingle::Instance().mysqlHome());
+    //PgsqlHomeDirectory->setText(toConfigurationSingle::Instance().pgsqlHome());
+    //GraphvizHomeDirectory->setText(toConfigurationSingle::Instance().graphvizHome());
 
     ChangeConnectionBool->setChecked(toConfigurationSingle::Instance().changeConnection());
 	SavePasswordBool->setChecked(toConfigurationSingle::Instance().savePassword());
     IncludeDbCaptionBool->setChecked(toConfigurationSingle::Instance().includeDbCaption());
-    RestoreSessionBool->setChecked(toConfigurationSingle::Instance().restoreSession());
-	ToadBindingsBool->setChecked(toConfigurationSingle::Instance().toadBindings());
+    //RestoreSessionBool->setChecked(toConfigurationSingle::Instance().restoreSession());
+	//ToadBindingsBool->setChecked(toConfigurationSingle::Instance().toadBindings());
 	CacheDiskBool->setChecked(toConfigurationSingle::Instance().cacheDisk());
     DisplayGridlinesBool->setChecked(toConfigurationSingle::Instance().displayGridlines());
     MultiLineResultsBool->setChecked(toConfigurationSingle::Instance().multiLineResults());
@@ -247,54 +247,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     // Translation
     Translation->setText(toConfigurationSingle::Instance().translation());
 
-    {
-    	static QRegExp any(".*");
-    	QList<QWidget*> lst = findChildren<QWidget*>(any);
-    	Q_FOREACH(QWidget *w, lst)
-    	{
-    		qDebug() << w->objectName();
-    		if (w->objectName() == "qt_spinbox_lineedit") // internal widget inside QSpinBox
-    			continue;
-    		if (QComboBox *combo = qobject_cast<QComboBox*>(w))
-    		{
-    			try
-    			{
-    				QVariant v = toConfigurationNewSingle::Instance().option(combo->objectName());
-    			} catch (...) {
-    				qDebug() << w->objectName() << '*';
-    				combo->setDisabled(true);
-    			}
-    		} else if (QSpinBox *spin = qobject_cast<QSpinBox*>(w))
-    		{
-    			try
-    			{
-    				QVariant v = toConfigurationNewSingle::Instance().option(spin->objectName());
-    			} catch (...) {
-    				qDebug() << w->objectName() << '#';
-    				spin->setDisabled(true);
-    			}
-    		} else if (QLineEdit *edit = qobject_cast<QLineEdit*>(w))
-    		{
-    			try
-    			{
-    				QVariant v = toConfigurationNewSingle::Instance().option(edit->objectName());
-    			} catch (...) {
-    				qDebug() << w->objectName() << '&';
-    				edit->setDisabled(true);
-    			}
-    		} else if (QCheckBox *checkbox = qobject_cast<QCheckBox*>(w))
-    		{
-    			try
-    			{
-    				QVariant v = toConfigurationNewSingle::Instance().option(checkbox->objectName());
-    			} catch (...) {
-    				qDebug() << w->objectName() << '%';
-    				checkbox->setDisabled(true);
-    			}
-    		}
-
-    	}
-    }
+    toSettingTab::processChildWidgets(this);
 }
 
 void toGlobalSetting::sqlBrowse(void)
@@ -512,8 +465,8 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent, const char *name, Qt::WFla
 //     BkgndConnect->setChecked(toConfigurationSingle::Instance().bkgndConnect());
     CachedConnections->setValue(toConfigurationSingle::Instance().cachedConnections());
     IndicateEmpty->setChecked(toConfigurationSingle::Instance().indicateEmpty());
-    FirewallMode->setChecked(toConfigurationSingle::Instance().firewallMode());
-    ConnTestInterval->setValue(toConfigurationSingle::Instance().connTestInterval());
+    //FirewallMode->setChecked(toConfigurationSingle::Instance().firewallMode());
+    //ConnTestInterval->setValue(toConfigurationSingle::Instance().connTestInterval());
 
     QColor nullColor;
     nullColor.setNamedColor(toConfigurationSingle::Instance().indicateEmptyColor());

@@ -861,7 +861,11 @@ SET(TEST4_SOURCES
   core/moc_toglobalevent.cxx
   core/moc_tomainwindow.cxx
   core/moc_topushbutton.cxx
+  core/toconfenum.cpp
+  core/moc_toconfenum.cxx
   core/toconfiguration.cpp
+  core/toconfiguration_new.cpp
+  core/moc_toconfiguration_new.cxx
   core/toconfigurationpriv.cpp
   core/toglobalevent.cpp
   core/tomainwindow.cpp
@@ -927,7 +931,8 @@ SET(TEST5_SOURCES
   core/moc_tobrowserbasewidget.cxx
   core/moc_tocache.cxx
   core/moc_tocodemodel.cxx
-  core/moc_toconfiguration.cxx  
+  core/moc_toconfiguration.cxx
+  core/moc_toconfiguration_new.cxx  
   core/moc_toconfigurationpriv.cxx
   core/moc_toconnection.cxx
   core/moc_toconnectionregistry.cxx
@@ -972,6 +977,7 @@ SET(TEST5_SOURCES
   core/tocache.cpp
   core/tocodemodel.cpp
   core/toconfiguration.cpp
+  core/toconfiguration_new.cpp
   core/toconfigurationpriv.cpp
   core/toconnection.cpp
   core/toconnectionoptions.cpp  

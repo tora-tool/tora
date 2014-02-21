@@ -36,6 +36,7 @@
 #define TOWORKSHEET_H
 
 #include "core/toconnection.h"
+#include "core/toconfenum.h"
 #include "core/totool.h"
 #include "parsing/tosyntaxanalyzer.h"
 
@@ -69,6 +70,31 @@ class toResultStats;
 class toTabWidget;
 class toTreeWidgetItem;
 class toEditableMenu;
+
+namespace ToConfiguration {
+	class Worksheet : public ConfigContext
+	{
+		Q_OBJECT;
+		Q_ENUMS(OptionTypeEnum);
+	public:
+		Worksheet() : ConfigContext("Worksheet", ENUM_REF(Worksheet,OptionTypeEnum)) {};
+		enum OptionTypeEnum {
+ 			AutoSave  = 7000    // #define CONF_AUTO_SAVE
+			, CheckSave          // #define CONF_CHECK_SAVE
+			, LogAtEnd           // #define CONF_LOG_AT_END
+			, LogMulti           // #define CONF_LOG_MULTI
+			, Statistics         // #define CONF_STATISTICS
+			, TimedStats         // #define CONF_TIMED_STATS
+			, Number             // #define CONF_NUMBER (Display row number)
+			, MoveToError        // #define CONF_MOVE_TO_ERR
+			, History            // #define CONF_HISTORY (Save previous results)
+			, ExecLog            // #define CONF_EXEC_LOG
+			, ToplevelDescribe   // #define CONF_TOPLEVEL_DESCRIBE
+			, AutoLoad           // #define CONF_AUTO_LOAD (Default file)
+		};
+		QVariant defaultValue(int option) const;
+	};
+};
 
 class toWorksheet : public toToolWidget
 {

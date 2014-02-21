@@ -31,6 +31,7 @@ class TORA_EXPORT toConfiguration: public QObject
      */
 	Q_ENUMS(ObjectCacheEnum)
 
+	/*
 	// Global Settings
 	//  Paths
 	Q_PROPERTY(QString CustomSQL         READ customSQL           WRITE setCustomSQL)
@@ -96,6 +97,7 @@ class TORA_EXPORT toConfiguration: public QObject
 	Q_PROPERTY(QString IndicateEmptyColor READ indicateEmptyColor WRITE setIndicateEmptyColor)
 	Q_PROPERTY(int     NumberFormat      READ numberFormat        WRITE setNumberFormat)
 	Q_PROPERTY(int     NumberDecimals    READ numberDecimals      WRITE setNumberDecimals)
+	*/
 public:
     toConfiguration(QObject *parent = 0);
     ~toConfiguration();
@@ -150,7 +152,7 @@ public:
     int maxColDisp();
     void setMaxColDisp(int v);
 
-    QString textFontName();
+    //QString textFontName();
     void setTextFontName(const QString & v);
 
     QString codeFontName();
@@ -165,13 +167,13 @@ public:
     int syntaxHighlighting();
     void setSyntaxHighlighting(int v);
 
-    int editorType();
+    //int editorType();
     void setEditorType(int v);
 
-    bool keywordUpper();
+    //bool keywordUpper();
     void setKeywordUpper(bool v);
 
-    bool objectNamesUpper();
+    //bool objectNamesUpper();
     void setObjectNamesUpper(bool v);
 
     QString cacheDir();
@@ -180,7 +182,7 @@ public:
     bool cacheDisk();
     void setCacheDisk(bool v);
 
-    QString customSQL();
+    //QString customSQL();
     void setCustomSQL(const QString & v);
 
     int statusMessage();
@@ -192,7 +194,7 @@ public:
     QString sizeUnit();
     void setSizeUnit(const QString & v);
 
-    QString helpDirectory();
+    //QString helpDirectory();
     void setHelpDirectory(const QString & v);
 
     int historySize();
@@ -243,19 +245,19 @@ public:
     ObjectCacheEnum objectCache();
     void setObjectCache(ObjectCacheEnum v);
 
-    bool firewallMode();
+    //bool firewallMode();
     void setFirewallMode(bool v);
 
-    int connTestInterval();
+    //int connTestInterval();
     void setConnTestInterval(int v);
 
     int initialEditorContent();
     void setInitialEditorContent(int v);
 
-    bool restoreSession();
+    //bool restoreSession();
     void setRestoreSession(bool v);
 
-    QString defaultSession();
+    //QString defaultSession();
     void setDefaultSession(const QString & v);
 
     int defaultFormat();
@@ -281,8 +283,8 @@ public:
     QString translation();
     void setTranslation(const QString & v);
 
-    int keepAlive();
-    void setKeepAlive(int v);
+    //int keepAlive();
+    //void setKeepAlive(int v);
 
     int numberFormat();
     void setNumberFormat(int v);
@@ -292,26 +294,26 @@ public:
 
     int cacheTimeout();
 
-    int tabStop();
+    //int tabStop();
     void setTabStop(int v);
 
     bool useSpacesForIndent();
     void setUseSpacesForIndent(bool v);
 
-    bool editDragDrop();
+    //bool editDragDrop();
     void setEditDragDrop(bool v);
 
-    bool toadBindings();
+    //bool toadBindings();
     void setToadBindings(bool v);
 
     bool displayGridlines();
     void setDisplayGridlines(bool v);
 
-    QString style();
+    //QString style();
     void setStyle(const QString & v);
 
     // tooracleconnection
-    QString oracleHome();
+    //QString oracleHome();
     void setOracleHome(QString const&);
 
     QString dateFormat();
@@ -336,10 +338,10 @@ public:
     void setSharedPlan(bool v);
 
     // toqsqlconnection
-    QString mysqlHome();
+    //QString mysqlHome();
     void setMysqlHome(QString const&);
 
-    QString pgsqlHome();
+    //QString pgsqlHome();
     void setPgsqlHome(QString const&);
 
     QString graphvizHome();
@@ -487,7 +489,7 @@ public:
     void setTuningCharts(bool v);
 
     // toworksheet
-    bool wsAutoSave();
+    //bool wsAutoSave();
     void setWsAutoSave(bool v);
 
     bool wsCheckSave();
@@ -555,31 +557,31 @@ public:
 
     // Extractor. Controls the method used to produce database object extracts
     // as well as extraction settings (which information should be extracted).
-    bool extractorUseDbmsMetadata();
+    //bool extractorUseDbmsMetadata();
     void setExtractorUseDbmsMetadata(bool v);
 
-    bool extractorIncludeSotrage();
+    //bool extractorIncludeSotrage();
     void setExtractorIncludeSotrage(bool v);
 
-    bool extractorSkipOrgMonInformation();
+    //bool extractorSkipOrgMonInformation();
     void setExtractorSkipOrgMonInformation(bool v);
 
-    bool extractorSkipStorageExceptTablespaces();
+    //bool extractorSkipStorageExceptTablespaces();
     void setExtractorSkipStorageExceptTablespaces(bool v);
 
-    bool extractorIncludeParallel();
+    //bool extractorIncludeParallel();
     void setExtractorIncludeParallel(bool v);
 
-    bool extractorIncludePartition();
+    //bool extractorIncludePartition();
     void setExtractorIncludePartition(bool v);
 
-    bool extractorIncludeCode();
+    //bool extractorIncludeCode();
     void setExtractorIncludeCode(bool v);
 
-    bool extractorIncludeHeader();
+    //bool extractorIncludeHeader();
     void setExtractorIncludeHeader(bool v);
 
-    bool extractorIncludePrompt();
+    //bool extractorIncludePrompt();
     void setExtractorIncludePrompt(bool v);
     
     // Aplication location paths

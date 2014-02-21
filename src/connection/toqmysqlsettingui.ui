@@ -22,9 +22,6 @@
    </property>
    <item row="0" column="0" colspan="2">
     <widget class="QCheckBox" name="BreakConnections">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
      <property name="text">
       <string>Posibility to break MySQL queries (Can require more connections)</string>
      </property>

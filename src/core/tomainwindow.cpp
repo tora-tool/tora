@@ -33,9 +33,36 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "core/tomainwindow.h"
+#include "ts_log/ts_log_utils.h"
 
 #include <QtGui/QApplication>
 #include <QtGui/QAction>
+
+namespace ToConfiguration
+{
+QVariant Main::defaultValue(int option) const
+{
+	switch(option)
+	{
+	case LastVersion: 	return QVariant(QString("")); // TORAVERSION
+	case FirstInstall: 	return QVariant(QString("")); // QDateTime::currentDateTime().toString()
+	case RecentFiles: 	return QVariant(QStringList());
+	case RecentMax: 	return QVariant((int)25);
+	case LastDir:       return QVariant(QString(""));
+	case Encoding:      return QVariant(QString("Default"));
+	case DefaultTool: 	return QVariant(QString(""));
+	case CacheTimeout: 	return QVariant((int)7);
+	case StatusSave: 	return QVariant((int)10);
+	case DontReread: 	return QVariant((bool)true);
+	case EditDragDrop: 	return QVariant((bool)false);
+	case CSVSeparator: 	return QVariant(QString(";"));
+	case CSVDelimiter: 	return QVariant(QString("\""));
+	default:
+		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Editor un-registered enum value: %1").arg(option)));
+		return QVariant();
+	}
+}
+}
 
 toMainWindow* toMainWindow::lookup()
 {

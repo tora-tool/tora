@@ -42,6 +42,8 @@
 #include "core/toqvalue.h"
 #include "core/tosplash.h"
 #include "core/utils.h"
+#include "core/toconfiguration_new.h"
+#include "core/toglobalsetting.h"
 
 #include <QtCore/QDir>
 #include <QtCore/QLibrary>
@@ -123,7 +125,7 @@ int main(int argc, char **argv)
 
 		// Loop over all providers found and try to load desired Oracle client
 		// 1st try to load requested Oracle client(if set) then load thick(TNS) Oracle client
-		QDir oHome = toConfigurationSingle::Instance().oracleHome();
+		QDir oHome = toConfigurationNewSingle::Instance().option(ToConfiguration::Global::OracleHomeDirectory).toString();
 		Q_FOREACH(toConnectionProviderFinder::ConnectionProvirerParams const& params, allProviders)
 		{
 			QString providerName = params.value("PROVIDER").toString();

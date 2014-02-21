@@ -79,7 +79,7 @@ int main(int argc, char **argv)
 	*/
 	QApplication app(argc, argv);
 
-	QString style(toConfigurationSingle::Instance().style());
+    QString style(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::Style).toString());
 	if (!style.isEmpty())
 		QApplication::setStyle(QStyleFactory::create(style));
 

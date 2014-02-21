@@ -36,6 +36,8 @@
 #include "parsing/tsqllexer.h"
 #include "core/utils.h"
 #include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
+#include "editor/toworksheettext.h"
 
 #include <QtCore/QDebug>
 #include <QtGui/QColor>
@@ -58,13 +60,14 @@ toCustomLexer::toCustomLexer(QObject *parent)
 		, lineText(NULL)
 		, bufferText(NULL)
 {
+	using namespace ToConfiguration;
 	QFont mono;
 #if defined(Q_OS_WIN)
 	mono = QFont("Courier New", 10);
 #elif defined(Q_OS_MAC)
 	mono = QFont("Courier", 12);
 #else
-	mono = QFont(Utils::toStringToFont(toConfigurationSingle::Instance().codeFontName()));
+	mono = QFont(Utils::toStringToFont(toConfigurationNewSingle::Instance().option(Editor::ConfCodeFont).toString()));
 #endif
 
 	styleStack = QList<int>();

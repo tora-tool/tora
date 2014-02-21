@@ -33,9 +33,11 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "connection/tooracleextract.h"
+#include "connection/tooraclesetting.h"
 #include "core/toconnectiontraits.h"
 #include "core/utils.h"
 #include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
 #include "core/toquery.h"
 #include "core/toextract.h"
 #include "core/tosql.h"
@@ -758,6 +760,7 @@ QString toOracleExtract::createTableText(toExtract &ext,
         const QString &owner,
         const QString &name) const
 {
+	using namespace ToConfiguration;
     QString monitoring = Utils::toShift(result);
     QString table = Utils::toShift(result);
     QString degree = Utils::toShift(result);
@@ -781,7 +784,7 @@ QString toOracleExtract::createTableText(toExtract &ext,
         ret += QString("      USING TABLESPACE %2\n").arg(QUOTE(tablespace));
     }
     ret += ")\n";
-    if (!toConfigurationSingle::Instance().extractorSkipOrgMonInformation())
+    if (!toConfigurationNewSingle::Instance().option(Oracle::SkipOrgMon).toBool())
     {
         if (CONNECTION.version() >= "0800" && ext.getStorage() && ! organization.isEmpty() )
         {
@@ -2324,6 +2327,8 @@ QString toOracleExtract::rangePartitions(toExtract &ext,
 
 QString toOracleExtract::segmentAttributes(toExtract &ext, toQList &result) const
 {
+	using namespace ToConfiguration;
+
     QString ret;
     if (ext.getStorage())
     {
@@ -2374,7 +2379,7 @@ QString toOracleExtract::segmentAttributes(toExtract &ext, toQList &result) cons
         QString blocks = *i;
         i++;
 
-        if (!toConfigurationSingle::Instance().extractorSkipStorageExceptTablespaces())
+        if (!toConfigurationNewSingle::Instance().option(Oracle::SkipStorageExceptTablespace).toBool())
         {
             if (ext.getResize())
                 ext.initialNext(blocks, initial, next);
@@ -7295,10 +7300,10 @@ QString toOracleExtract::createMetadata(toExtract &ext, const QString &owner, co
 	toConnectionSubLoan conn(ext.connection());
 
 	/* TODO
-	 * DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,’PRETTY’,false);
-	 * DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,’SQLTERMINATOR’,true);
-	 * DBMS_METADATA.SET_TRANSFORM_PARAM (DBMS_METADATA.SESSION_TRANSFORM, ‘STORAGE’,false);
-	 * DBMS_METADATA.SET_TRANSFORM_PARAM (DBMS_METADATA.SESSION_TRANSFORM, ‘SEGMENT_ATTRIBUTES’,false);
+	 * DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,ï¿½PRETTYï¿½,false);
+	 * DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,ï¿½SQLTERMINATORï¿½,true);
+	 * DBMS_METADATA.SET_TRANSFORM_PARAM (DBMS_METADATA.SESSION_TRANSFORM, ï¿½STORAGEï¿½,false);
+	 * DBMS_METADATA.SET_TRANSFORM_PARAM (DBMS_METADATA.SESSION_TRANSFORM, ï¿½SEGMENT_ATTRIBUTESï¿½,false);
 	*/
     toQuery query1(conn, SQLDbmsMetadataSetTransform, toQueryParams());
     query1.eof();
@@ -7668,9 +7673,10 @@ void toOracleExtract::create(toExtract &ext,
                              const QString &owner,
                              const QString &name) const
 {
+	using namespace ToConfiguration;
     clearFlags(ext);
 
-    if (toConfigurationSingle::Instance().extractorUseDbmsMetadata())
+    if (toConfigurationNewSingle::Instance().option(Oracle::UseDbmsMetadata).toBool())
     {
         stream << createMetadata(ext, owner, name, type);
         return;

@@ -38,6 +38,8 @@
 #include "core/tologger.h"
 #include "core/utils.h"
 #include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
+#include "editor/toworksheettext.h"
 
 #include <QtGui/QListWidget>
 #include <QtGui/QVBoxLayout>
@@ -57,13 +59,13 @@ toSqlText::toSqlText(QWidget *parent, const char *name)
 	, m_parserThread(new QThread(this))
 	, m_haveFocus(true)
 {
-
+	using namespace ToConfiguration;
 #if defined(Q_OS_WIN)
 	mono = QFont("Courier New", 10);
 #elif defined(Q_OS_MAC)
 	mono = QFont("Courier", 12);
 #else
-	mono = QFont(Utils::toStringToFont(toConfigurationSingle::Instance().codeFontName()));
+	mono = QFont(Utils::toStringToFont(toConfigurationNewSingle::Instance().option(Editor::ConfCodeFont).toString()));
 #endif
 
     // Setup QsciScintilla stuff
@@ -158,6 +160,8 @@ super::lexer()->setFont(font, style);
 
 void toSqlText::setHighlighter(HighlighterTypeEnum h)
 {
+	using namespace ToConfiguration;
+
 	// TODO handle bgthread working here
 	QsciLexer *lexer = super::lexer();
 	highlighterType = h;
@@ -225,7 +229,8 @@ void toSqlText::setHighlighter(HighlighterTypeEnum h)
 				QColor(toSqlText::lightMagenta),
 				mono);
 	}
-	setFont(Utils::toStringToFont(toConfigurationSingle::Instance().codeFontName()));
+
+	setFont(Utils::toStringToFont(toConfigurationNewSingle::Instance().option(Editor::ConfCodeFont).toString()));
 	//update(); gets called by setFont
 }
 

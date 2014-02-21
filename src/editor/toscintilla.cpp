@@ -34,10 +34,13 @@
 
 #include "editor/toscintilla.h"
 #include "editor/tostyle.h"
+#include "editor/toworksheettext.h"
 #include "core/toconf.h"
 #include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
 #include "core/toglobalevent.h"
 #include "core/tologger.h"
+#include "core/tomainwindow.h"
 
 #include <QtGui/QClipboard>
 #include <QtGui/QPrintDialog>
@@ -71,13 +74,14 @@ toScintilla::toScintilla(QWidget *parent, const char *name)
 	, m_flags()
 	, m_searchIndicator(9) // see QsciScintilla docs
 {
+	using namespace ToConfiguration;
     if (name)
         setObjectName(name);
 
     setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
-    super::setFont(Utils::toStringToFont(toConfigurationSingle::Instance().textFontName()));
+    super::setFont(Utils::toStringToFont(toConfigurationNewSingle::Instance().option(Editor::ConfTextFont).toString()));
     super::setMarginLineNumbers(0, true);
     super::setCallTipsStyle(CallTipsNone);
 
@@ -103,8 +107,8 @@ toScintilla::toScintilla(QWidget *parent, const char *name)
     connect(this, SIGNAL(linesChanged()), this, SLOT(slotLinesChanged()));
 
     // sets default tab width
-    super::setTabWidth(toConfigurationSingle::Instance().tabStop());
-    super::setIndentationsUseTabs(!toConfigurationSingle::Instance().useSpacesForIndent());
+    super::setTabWidth(toConfigurationNewSingle::Instance().option(Editor::TabStopInt).toInt());
+    super::setIndentationsUseTabs(!toConfigurationNewSingle::Instance().option(Editor::UseSpacesForIndentBool).toBool());
 
     super::setUtf8(true);
     setAcceptDrops(true); // QWidget::setAcceptDrops
@@ -304,7 +308,7 @@ void toScintilla::newLine(void)
         break;
     }
 
-    if (toConfigurationSingle::Instance().autoIndent())
+    if (toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::AutoIndentBool).toBool())
     {
         int curline, curcol;
         getCursorPosition (&curline, &curcol);
@@ -361,7 +365,7 @@ void toScintilla::mousePressEvent(QMouseEvent *e)
     DragStart = QPoint();
     if(e->button() == Qt::LeftButton && geometry().contains(e->pos()))
     {
-        if(!toConfigurationSingle::Instance().editDragDrop())
+        if(!toConfigurationNewSingle::Instance().option(ToConfiguration::Main::EditDragDrop).toBool())
         {
             // would normally be a drag request. clear selection.
             if(QsciScintilla::hasSelectedText())

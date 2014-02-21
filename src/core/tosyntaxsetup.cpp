@@ -56,6 +56,7 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
 	, Current(NULL)
 	, Styles(toConfigurationSingle::Instance().styles())
 {
+	using namespace ToConfiguration;
 
     if (name)
         setObjectName(name);
@@ -64,9 +65,9 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
     Analyzer = new toSyntaxAnalyzerNL(Example->editor());
 
     SyntaxHighlighting->setCurrentIndex(toConfigurationSingle::Instance().syntaxHighlighting());
-    EditorType->setCurrentIndex(toConfigurationSingle::Instance().editorType());
-    KeywordUpper->setChecked(toConfigurationSingle::Instance().keywordUpper());
-    ObjectNamesUpper->setChecked(toConfigurationSingle::Instance().objectNamesUpper());
+    //EditorType->setCurrentIndex(toConfigurationSingle::Instance().editorType());
+    //KeywordUpper->setChecked(toConfigurationSingle::Instance().keywordUpper());
+    //ObjectNamesUpper->setChecked(toConfigurationSingle::Instance().objectNamesUpper());
     CompletionSort->setChecked(toConfigurationSingle::Instance().completionSort());
 
     UseMaxTextWidthMarkBool->setChecked(toConfigurationSingle::Instance().useMaxTextWidthMark());
@@ -76,18 +77,18 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
     connect(EditorShortcutsEdit, SIGNAL(clicked()),
             this, SLOT(openEditorShortcutsDialog()));
 
-    AutoIndentBool->setChecked(toConfigurationSingle::Instance().autoIndent());
+    //AutoIndentBool->setChecked(toConfigurationSingle::Instance().autoIndent());
     Extensions->setText(toConfigurationSingle::Instance().extensions());
-    TabStopInt->setValue(toConfigurationSingle::Instance().tabStop());
-    UseSpacesForIndentBool->setChecked(toConfigurationSingle::Instance().useSpacesForIndent());
+    //TabStopInt->setValue(toConfigurationSingle::Instance().tabStop());
+    //UseSpacesForIndentBool->setChecked(toConfigurationSingle::Instance().useSpacesForIndent());
 
     {
-        QFont font(Utils::toStringToFont(toConfigurationSingle::Instance().codeFontName()));
+        QFont font(Utils::toStringToFont(toConfigurationNewSingle::Instance().option(Editor::ConfCodeFont).toString()));
         checkFixedWidth(font);
         CodeExample->setFont(font);
     }
 
-    TextExample->setFont(Utils::toStringToFont(toConfigurationSingle::Instance().textFontName()));
+    TextExample->setFont(Utils::toStringToFont(toConfigurationNewSingle::Instance().option(Editor::ConfTextFont).toString()));
 
     {
         QString str(toConfigurationSingle::Instance().listFontName());
@@ -130,50 +131,7 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
     Errors[2] = tr("Unknown variable");
     Example->setErrors(Errors);
 
-    {
-    	static QRegExp any(".*");
-    	QList<QWidget*> lst = findChildren<QWidget*>(any);
-    	Q_FOREACH(QWidget *w, lst)
-    	{
-    		qDebug() << w->objectName();
-    		if (w->objectName() == "qt_spinbox_lineedit") // internal widget inside QSpinBox
-    			continue;
-    		if (QComboBox *combo = qobject_cast<QComboBox*>(w))
-    		{
-    			try
-    			{
-    				QVariant v = toConfigurationNewSingle::Instance().option(combo->objectName());
-    			} catch (...) {
-    				combo->setDisabled(true);
-    			}
-    		} else if (QSpinBox *spin = qobject_cast<QSpinBox*>(w))
-    		{
-    			try
-    			{
-    				QVariant v = toConfigurationNewSingle::Instance().option(spin->objectName());
-    			} catch (...) {
-    				spin->setDisabled(true);
-    			}
-    		} else if (QLineEdit *edit = qobject_cast<QLineEdit*>(w))
-    		{
-    			try
-    			{
-    				QVariant v = toConfigurationNewSingle::Instance().option(edit->objectName());
-    			} catch (...) {
-    				edit->setDisabled(true);
-    			}
-    		} else if (QCheckBox *checkbox = qobject_cast<QCheckBox*>(w))
-    		{
-    			try
-    			{
-    				QVariant v = toConfigurationNewSingle::Instance().option(checkbox->objectName());
-    			} catch (...) {
-    				checkbox->setDisabled(true);
-    			}
-    		}
-
-    	}
-    }
+    toSettingTab::processChildWidgets(this);
 }
 
 void toSyntaxSetup::checkFixedWidth(const QFont &fnt)

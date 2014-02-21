@@ -35,6 +35,8 @@
 #include "connection/toteradatatraits.h"
 #include "core/utils.h"
 #include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
+#include "editor/toworksheettext.h"
 
 /** Return a string representation to address an object.
 *
@@ -54,6 +56,8 @@
 */
 QString toTeradataTraits::quote(QString const &name) const
 {
+	using namespace ToConfiguration;
+
     bool mustBeQuoted = false;
     // Identifiers starting with digit should be quoted
     if (name.at(0).isDigit())
@@ -79,7 +83,7 @@ QString toTeradataTraits::quote(QString const &name) const
     if (mustBeQuoted)
     	return QString::fromLatin1("\"") + name + QString::fromLatin1("\"");
 
-    if (toConfigurationSingle::Instance().objectNamesUpper())
+    if (toConfigurationNewSingle::Instance().option(Editor::ObjectNamesUpperBool).toBool())
     	return name.toUpper();
     else
     	return name.toLower();

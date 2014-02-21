@@ -34,6 +34,8 @@
 
 #include "connection/tooraclesetting.h"
 #include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
+
 #include "core/tologger.h"
 #include "core/utils.h"
 #include "core/toconnection.h"
@@ -78,7 +80,7 @@ toOracleSetting::toOracleSetting(QWidget *parent)
     //OpenCursors->setValue(toConfigurationSingle::Instance().openCursors());
     KeepPlans->setChecked(toConfigurationSingle::Instance().keepPlans());
     VsqlPlans->setChecked(toConfigurationSingle::Instance().vsqlPlans());
-    SharedPlan->setChecked(toConfigurationSingle::Instance().sharedPlan());
+    //SharedPlan->setChecked(toConfigurationSingle::Instance().sharedPlan());
     int len = toConfigurationSingle::Instance().maxLong();
     if (len >= 0)
     {
@@ -87,15 +89,15 @@ toOracleSetting::toOracleSetting(QWidget *parent)
         Unlimited->setChecked(false);
     }
     // extractor group options
-    cbUseDbmsMetadata->setChecked(toConfigurationSingle::Instance().extractorUseDbmsMetadata());
-    cbIncludeStorage->setChecked(toConfigurationSingle::Instance().extractorIncludeSotrage());
-    cbSkipOrgMon->setChecked(toConfigurationSingle::Instance().extractorSkipOrgMonInformation());
-    cbSkiptStorExTablespace->setChecked(toConfigurationSingle::Instance().extractorSkipStorageExceptTablespaces());
-    cbIncludeParallel->setChecked(toConfigurationSingle::Instance().extractorIncludeParallel());
-    cbIncludePartition->setChecked(toConfigurationSingle::Instance().extractorIncludePartition());
-    cbIncludeCode->setChecked(toConfigurationSingle::Instance().extractorIncludeCode());
-    cbIncludeHeader->setChecked(toConfigurationSingle::Instance().extractorIncludeHeader());
-    cbIncludePrompt->setChecked(toConfigurationSingle::Instance().extractorIncludePrompt());
+    //cbUseDbmsMetadata->setChecked(toConfigurationSingle::Instance().extractorUseDbmsMetadata());
+    //cbIncludeStorage->setChecked(toConfigurationSingle::Instance().extractorIncludeSotrage());
+    //cbSkipOrgMon->setChecked(toConfigurationSingle::Instance().extractorSkipOrgMonInformation());
+    //cbSkiptStorExTablespace->setChecked(toConfigurationSingle::Instance().extractorSkipStorageExceptTablespaces());
+    //cbIncludeParallel->setChecked(toConfigurationSingle::Instance().extractorIncludeParallel());
+    //cbIncludePartition->setChecked(toConfigurationSingle::Instance().extractorIncludePartition());
+    //cbIncludeCode->setChecked(toConfigurationSingle::Instance().extractorIncludeCode());
+    //cbIncludeHeader->setChecked(toConfigurationSingle::Instance().extractorIncludeHeader());
+    //cbIncludePrompt->setChecked(toConfigurationSingle::Instance().extractorIncludePrompt());
     connect(cbUseDbmsMetadata, SIGNAL(toggled(bool)), this, SLOT(dbmsMetadataClicked(bool)));
     dbmsMetadataClicked(cbUseDbmsMetadata->isChecked());
     try
@@ -108,6 +110,7 @@ toOracleSetting::toOracleSetting(QWidget *parent)
     {
         TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
     }
+    toSettingTab::processChildWidgets(this);
 }
 
 

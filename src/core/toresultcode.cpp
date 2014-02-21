@@ -36,6 +36,8 @@
 #include "core/utils.h"
 #include "core/toextract.h"
 #include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
+#include "connection/tooraclesetting.h"
 #include "editor/todebugtext.h"
 
 toResultCode::toResultCode(bool prompt, QWidget *parent, const char *name)
@@ -65,6 +67,7 @@ static toSQL SQLObjectType("toResultExtract:ObjectType",
 
 void toResultCode::query(const QString &sql, toQueryParams const& param)
 {
+	using namespace ToConfiguration;
     if (!setSqlAndParams(sql, param))
         return ;
 
@@ -113,7 +116,7 @@ void toResultCode::query(const QString &sql, toQueryParams const& param)
         {
             if ((type == QString::fromLatin1("TABLE") ||
                     type == QString::fromLatin1("TABLE PARTITION")) &&
-                    !toConfigurationSingle::Instance().extractorUseDbmsMetadata())
+                    !toConfigurationNewSingle::Instance().option(Oracle::UseDbmsMetadata).toBool())
             {
                 objects.insert(objects.end(), QString::fromLatin1("TABLE FAMILY:") + owner + QString::fromLatin1(".") + name);
                 objects.insert(objects.end(), QString::fromLatin1("TABLE REFERENCES:") + owner + QString::fromLatin1(".") + name);
@@ -130,11 +133,11 @@ void toResultCode::query(const QString &sql, toQueryParams const& param)
             objects.insert(objects.end(), type + QString::fromLatin1(":") + owner + QString::fromLatin1(".") + name);
 
         toExtract extract(conn, NULL);
-        extract.setCode(toConfigurationSingle::Instance().extractorIncludeCode());
-        extract.setHeading(m_heading && toConfigurationSingle::Instance().extractorIncludeHeader());
+        extract.setCode(toConfigurationNewSingle::Instance().option(Oracle::IncludeCode).toBool());
+        extract.setHeading(m_heading && toConfigurationNewSingle::Instance().option(Oracle::IncludeHeader).toBool());
         extract.setPrompt(Prompt);
         extract.setReplace(true); // generate create OR REPLACE statements
-        extract.setParallel(toConfigurationSingle::Instance().extractorIncludeParallel());
+        extract.setParallel(toConfigurationNewSingle::Instance().option(Oracle::IncludeParallel).toBool());
         editor()->setText(extract.create(objects));
     }
     TOCATCH

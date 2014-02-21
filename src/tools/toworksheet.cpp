@@ -72,6 +72,7 @@
 #include "editor/tosqltext.h"
 #include "core/toglobalevent.h"
 #include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
 
 #include <QtCore/QDebug>
 #include <QtCore/QSettings>
@@ -98,50 +99,30 @@
 #include "icons/up.xpm"
 #include "icons/down.xpm"
 
-namespace ToConfiguration {
-	class Worksheet : public ConfigContext
+namespace ToConfiguration
+{
+	QVariant Worksheet::defaultValue(int option) const
 	{
-		Q_OBJECT;
-		Q_ENUMS(OptionTypeEnum);
-	public:
-		Worksheet() : ConfigContext("Worksheet", ENUM_REF(Worksheet,OptionTypeEnum)) {};
-		enum OptionTypeEnum {
- 			AutoSave  = 7000    // #define CONF_AUTO_SAVE
-			, CheckSave          // #define CONF_CHECK_SAVE
-			, LogAtEnd           // #define CONF_LOG_AT_END
-			, LogMulti           // #define CONF_LOG_MULTI
-			, Statistics         // #define CONF_STATISTICS
-			, TimedStats         // #define CONF_TIMED_STATS
-			, Number             // #define CONF_NUMBER (Display row number)
-			, MoveToError        // #define CONF_MOVE_TO_ERR
-			, History            // #define CONF_HISTORY (Save previous results)
-			, ExecLog            // #define CONF_EXEC_LOG
-			, ToplevelDescribe   // #define CONF_TOPLEVEL_DESCRIBE
-			, AutoLoad           // #define CONF_AUTO_LOAD (Default file)
-		};
-		QVariant defaultValue(int option) const
+		switch(option)
 		{
-			switch(option)
-			{
-			case AutoSave:           return QVariant((bool)false);
-			case CheckSave:          return QVariant((bool)true);
-			case LogAtEnd:           return QVariant((bool)true);
-			case LogMulti:           return QVariant((bool)true);
-			case Statistics:         return QVariant((bool)false);
-			case TimedStats:         return QVariant((bool)true);
-			case Number:             return QVariant((bool)true);
-			case MoveToError:        return QVariant((bool)true);
-			case History:            return QVariant((bool)false);
-			case ExecLog:            return QVariant((bool)false);
-			case ToplevelDescribe:   return QVariant((bool)true);
-			case AutoLoad:           return QVariant(QString(""));
-			default:
-				Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Editor un-registered enum value: %1").arg(option)));
-				return QVariant();
-			}
+		case AutoSave:           return QVariant((bool)false);
+		case CheckSave:          return QVariant((bool)true);
+		case LogAtEnd:           return QVariant((bool)true);
+		case LogMulti:           return QVariant((bool)true);
+		case Statistics:         return QVariant((bool)false);
+		case TimedStats:         return QVariant((bool)true);
+		case Number:             return QVariant((bool)true);
+		case MoveToError:        return QVariant((bool)true);
+		case History:            return QVariant((bool)false);
+		case ExecLog:            return QVariant((bool)false);
+		case ToplevelDescribe:   return QVariant((bool)true);
+		case AutoLoad:           return QVariant(QString(""));
+		default:
+			Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Editor un-registered enum value: %1").arg(option)));
+			return QVariant();
 		}
-	};
-};
+	}
+}
 
 class toWorksheetTool : public toTool
 {
@@ -170,9 +151,13 @@ public:
         return true;
     }
     virtual void closeWindow(toConnection &connection) {};
+private:
+    static ToConfiguration::Worksheet s_worksheetConf;
 };
 
 static toWorksheetTool WorksheetTool;
+
+ToConfiguration::Worksheet toWorksheetTool::s_worksheetConf;
 
 #define CHUNK_SIZE 31
 /** Get an address to a SQL statement in the SGA. The address has the form
@@ -745,7 +730,7 @@ bool toWorksheet::checkSave()
     if (!toConfigurationSingle::Instance().wsCheckSave())
     	return true;
 
-    if (toConfigurationSingle::Instance().wsAutoSave() && !Editor->filename().isEmpty())
+    if (toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::AutoSave).toBool() && !Editor->filename().isEmpty())
     	if (Utils::toWriteFile(Editor->filename(), Editor->sciEditor()->text()))
     	{
     		Editor->sciEditor()->setModified(false);
@@ -2292,7 +2277,7 @@ toWorksheetSetup::toWorksheetSetup(toTool *tool, QWidget* parent, const char* na
 {
 
     setupUi(this);
-    AutoSave->setChecked(toConfigurationSingle::Instance().wsAutoSave());
+    //AutoSave->setChecked(toConfigurationSingle::Instance().wsAutoSave());
     CheckSave->setChecked(toConfigurationSingle::Instance().wsCheckSave());
     LogAtEnd->setChecked(toConfigurationSingle::Instance().wsLogAtEnd());
     LogMulti->setChecked(toConfigurationSingle::Instance().wsLogMulti());

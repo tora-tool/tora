@@ -39,6 +39,7 @@
 #include "core/totool.h"
 #include "core/utils.h"
 #include "core/tologger.h"
+#include "core/toconfiguration_new.h"
 #include "core/toconnection.h"
 #include "core/toconnectionregistry.h"
 #include "core/toworkspace.h"
@@ -69,6 +70,68 @@ QString const& toTool::key() const
 const int toTool::priority() const
 {
     return Priority;
+}
+
+void toSettingTab::processChildWidgets(QWidget *widget)
+{
+	static QRegExp any(".*");
+	QList<QWidget*> lst = widget->findChildren<QWidget*>(any);
+	Q_FOREACH(QWidget *w, lst)
+	{
+		qDebug() << w->objectName();
+		if (w->objectName() == "qt_spinbox_lineedit") // internal widget inside QSpinBox
+			continue;
+		if (QComboBox *combo = qobject_cast<QComboBox*>(w))
+		{
+			try
+			{
+				QVariant v = toConfigurationNewSingle::Instance().option(combo->objectName());
+			} catch (...) {
+				qDebug() << w->objectName() << '*';
+				combo->setDisabled(true);
+			}
+		} else if (QSpinBox *spin = qobject_cast<QSpinBox*>(w))
+		{
+			try
+			{
+				QVariant v = toConfigurationNewSingle::Instance().option(spin->objectName());
+				if (v.type() == QVariant::Int)
+				{
+					spin->setValue(v.toInt());
+				} else {
+					spin->setDisabled(true);
+				}
+			} catch (...) {
+				qDebug() << w->objectName() << '#';
+				spin->setDisabled(true);
+			}
+		} else if (QLineEdit *edit = qobject_cast<QLineEdit*>(w))
+		{
+			try
+			{
+				QVariant v = toConfigurationNewSingle::Instance().option(edit->objectName());
+			} catch (...) {
+				qDebug() << w->objectName() << '&';
+				edit->setDisabled(true);
+			}
+		} else if (QCheckBox *checkbox = qobject_cast<QCheckBox*>(w))
+		{
+			try
+			{
+				QVariant v = toConfigurationNewSingle::Instance().option(checkbox->objectName());
+				if (v.type() == QVariant::Bool)
+				{
+					checkbox->setChecked(v.toBool());
+				} else {
+					checkbox->setDisabled(true);
+				}
+			} catch (...) {
+				qDebug() << w->objectName() << '%';
+				checkbox->setDisabled(true);
+			}
+		}
+
+	}
 }
 
 toConnectionWidget::toConnectionWidget(toConnection &conn, QWidget *widget)

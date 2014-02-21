@@ -37,6 +37,8 @@
 #include "core/utils.h"
 #include "core/tooracleconst.h"
 #include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
+#include "core/toglobalsetting.h"
 #include "core/toconf.h"
 
 #include <QtCore/QDir>
@@ -168,13 +170,15 @@ EXIT:
 
 QList<toConnectionProviderFinder::ConnectionProvirerParams>  toOracleInstantFinder::find()
 {
+	using namespace ToConfiguration;
+
     QList<ConnectionProvirerParams> retval;
     QSet<QString> possibleOracleHomes;
     ConnectionProvirerParams ohome;
 
     do
     {
-    	QString cHome = toConfigurationSingle::Instance().oracleHome();
+    	QString cHome = toConfigurationNewSingle::Instance().option(Global::OracleHomeDirectory).toString();
     	if( cHome.isEmpty())
     		continue;
     	QDir dHome(cHome);
@@ -439,13 +443,15 @@ public:
 
 QList<toConnectionProviderFinder::ConnectionProvirerParams> toOracleFinder::find()
 {
+	using namespace ToConfiguration;
+
     QList<ConnectionProvirerParams> retval;
     QSet<QString> possibleOracleHomes;
     ConnectionProvirerParams ohome;
 
     do
     {
-    	QString cHome = toConfigurationSingle::Instance().oracleHome();
+    	QString cHome = toConfigurationNewSingle::Instance().option(Global::OracleHomeDirectory).toString();
     	if( cHome.isEmpty())
     		continue;
     	QDir dHome(cHome);

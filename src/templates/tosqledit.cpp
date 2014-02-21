@@ -38,6 +38,8 @@
 #include "core/toconnection.h"
 #include "core/toeditmenu.h"
 #include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
+#include "core/toglobalsetting.h"
 #include "editor/tohighlightededitor.h"
 #include "tools/toworksheeteditor.h"
 #include "core/tomainwindow.h"
@@ -274,7 +276,12 @@ void toSQLEdit::connectList(bool conn)
 toSQLEdit::~toSQLEdit()
 {
     SQLEditTool.closeWindow();
-    toSQL::saveSQL(toConfigurationSingle::Instance().customSQL());
+    try {
+        toSQL::saveSQL(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::CustomSQL).toString());
+    } catch (...) {
+    	// no exception thrown from destructor
+    }
+
 }
 
 void toSQLEdit::loadSQL(void)

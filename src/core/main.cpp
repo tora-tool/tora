@@ -33,6 +33,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
 #include "core/tosplash.h"
 #include "core/toconnectionprovider.h"
 #include "core/tooracleconst.h"
@@ -45,6 +46,7 @@
 #include "core/tomain.h"
 #include "core/utils.h"
 #include "core/tologger.h"
+#include "core/toglobalsetting.h"
 
 #ifndef Q_OS_WIN32
 #include <unistd.h>
@@ -95,7 +97,7 @@ int main(int argc, char **argv)
 
     try
     {
-        QString style(toConfigurationSingle::Instance().style());
+        QString style(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::Style).toString());
         if (!style.isEmpty())
             QApplication::setStyle(QStyleFactory::create(style));
 
@@ -106,11 +108,11 @@ int main(int argc, char **argv)
 //             qApp->setDefaultCodec(QTextCodec::codecForName(getenv("LANG")));
 
         QTranslator torats(0);
-        QString qmDir = toConfigurationSingle::Instance().sharePath();
+        QString qmDir = toConfigurationNewSingle::Instance().sharePath();
         torats.load(qmDir + QString("tora_") + toConfigurationSingle::Instance().translation(), ".");
         qApp->installTranslator(&torats);
 
-        if (toConfigurationSingle::Instance().toadBindings())
+        if (toConfigurationNewSingle::Instance().option(ToConfiguration::Global::ToadBindingsBool).toBool())
         {
             QTranslator toadbindings(0);
             // qt4 - hot candidate for a builtin resource
@@ -209,7 +211,7 @@ int main(int argc, char **argv)
 
             // Loop over all providers found and try to load desired Oracle client
             // 1st try to load requested Oracle client(if set) then load thick(TNS) Oracle client
-            QDir oHome = toConfigurationSingle::Instance().oracleHome();
+            QDir oHome = toConfigurationNewSingle::Instance().option(ToConfiguration::Global::OracleHomeDirectory).toString();
             Q_FOREACH(toConnectionProviderFinder::ConnectionProvirerParams const& params, allProviders)
             {
             	QString providerName = params.value("PROVIDER").toString();
@@ -268,12 +270,12 @@ int main(int argc, char **argv)
         } // end splash
 
 #ifdef TORA_EXPERIMENTAL
-       DotGraph::setLayoutCommandPath(toConfigurationSingle::Instance().graphvizHome());
+       DotGraph::setLayoutCommandPath(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::GraphvizHomeDirectory).toString());
 #endif
 
         try
         {
-            toSQL::loadSQL(toConfigurationSingle::Instance().customSQL());
+            toSQL::loadSQL(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::CustomSQL).toString());
         }
 		catch (QString const& e) {
 			TLOG(1, toDecorator, __HERE__) << "	Ignored exception:" << e << std::endl;

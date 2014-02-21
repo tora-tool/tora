@@ -36,6 +36,8 @@
 #include "parsing/tolexeroracleapis.h"
 #include "core/utils.h"
 #include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
+#include "editor/toworksheettext.h"
 
 #include <QtCore/QDebug>
 #include <QtGui/QColor>
@@ -58,6 +60,8 @@ toLexerOracle::toLexerOracle(QObject *parent)
 		, lineText(NULL)
 		, bufferText(NULL)
 {
+	using namespace ToConfiguration;
+
 	setAPIs(new toLexerOracleAPIs(this));
 
 	QFont mono;
@@ -66,7 +70,7 @@ toLexerOracle::toLexerOracle(QObject *parent)
 #elif defined(Q_OS_MAC)
 	mono = QFont("Courier", 12);
 #else
-	mono = QFont(Utils::toStringToFont(toConfigurationSingle::Instance().codeFontName()));
+	mono = QFont(Utils::toStringToFont(toConfigurationNewSingle::Instance().option(Editor::ConfCodeFont).toString()));
 #endif
 
 	declareStyle(Default,

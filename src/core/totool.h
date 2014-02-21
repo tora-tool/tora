@@ -270,6 +270,8 @@ public:
      * entry using the @ref toTool::setConfig function.
      */
     virtual void saveSetting(void) = 0;
+
+    virtual void processChildWidgets(QWidget*);
 };
 
 /** This class is used to hold connections for @ref toResult classes.

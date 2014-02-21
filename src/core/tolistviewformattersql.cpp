@@ -38,10 +38,12 @@
 
 #include "core/tolistviewformattersql.h"
 #include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
 #include "core/tolistviewformatterfactory.h"
 #include "core/tolistviewformatteridentifier.h"
 #include "core/toresultmodel.h"
 #include "core/utils.h"
+#include "editor/toworksheettext.h"
 
 namespace
 {
@@ -64,6 +66,8 @@ QString toListViewFormatterSQL::getFormattedString(toExportSettings &settings,
         //const toResultModel *model);
         const QAbstractItemModel * model)
 {
+	using namespace ToConfiguration;
+
     int     columns   = model->columnCount();
     int     rows      = model->rowCount();
 
@@ -75,7 +79,7 @@ QString toListViewFormatterSQL::getFormattedString(toExportSettings &settings,
     QString columnNames;
     QString output;
 
-    if (toConfigurationSingle::Instance().keywordUpper())
+    if (toConfigurationNewSingle::Instance().option(Editor::KeywordUpperBool).toBool())
         sql = "INSERT INTO %1%2 VALUES (%3);";
     else
         sql = "insert into %1%2 values (%3);";
