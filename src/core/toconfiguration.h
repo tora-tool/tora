@@ -224,7 +224,7 @@ public:
     bool completionSort();
     void setCompletionSort(bool v);
 
-    bool autoIndent();
+    //bool autoIndent();
     void setAutoIndent(bool v);
 
     bool dontReread();
@@ -344,7 +344,7 @@ public:
     //QString pgsqlHome();
     void setPgsqlHome(QString const&);
 
-    QString graphvizHome();
+    //QString graphvizHome();
     void setGraphvizHome(QString const&);
 
 
@@ -538,7 +538,7 @@ public:
     int maxTextWidthMark();
     void setMaxTextWidthMark(int v);
 
-    int connectionTestTimeout();
+    //int connectionTestTimeout();
     void setConnectionTestTimeout(int v);
 
     // shortcut editor

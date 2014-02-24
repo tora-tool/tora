@@ -449,11 +449,11 @@ void toConfiguration::setCompletionSort(bool v)
     d->m_completionSort = v;
 }
 
-bool toConfiguration::autoIndent()
-{
-	Q_D(toConfiguration);
-    return d->m_autoIndent;
-}
+//bool toConfiguration::autoIndent()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_autoIndent;
+//}
 void toConfiguration::setAutoIndent(bool v)
 {
 	Q_D(toConfiguration);
@@ -816,11 +816,11 @@ void toConfiguration::setPgsqlHome(QString const &v)
 	d->m_pgsqlHome = v;
 }
 
-QString  toConfiguration::graphvizHome()
-{
-	Q_D(toConfiguration);
-	return d->m_graphvizHome;
-}
+//QString  toConfiguration::graphvizHome()
+//{
+//	Q_D(toConfiguration);
+//	return d->m_graphvizHome;
+//}
 
 void toConfiguration::setGraphvizHome(QString const&v)
 {

@@ -129,7 +129,7 @@ int main(int argc, char **argv)
             QList<QString> plugins;
             plugins << "parsing";
 #ifdef Q_OS_WIN
-			QString mysqlHome(toConfigurationSingle::Instance().mysqlHome());
+			QString mysqlHome(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::MysqlHomeDirectory).toString());
 			QDir mysqlHomeDir(mysqlHome);
 			QFileInfo mysqllib(mysqlHomeDir, "libmysql.dll");
 			if (!mysqlHome.isEmpty() && mysqlHomeDir.exists() && Utils::toLibrary::isValidLibrary(mysqllib))
@@ -138,7 +138,7 @@ int main(int argc, char **argv)
 				plugins << mysqllib.absoluteFilePath();
 			}
 
-			QString pgsqlHome(toConfigurationSingle::Instance().pgsqlHome());
+			QString pgsqlHome(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::PgsqlHomeDirectory).toString());
 			QDir pgsqlHomeDir(pgsqlHome);
 			if (!pgsqlHome.isEmpty() && pgsqlHomeDir.exists()) {
 				QCoreApplication::addLibraryPath(pgsqlHome + QDir::separator() + "bin"); // libeay32.dll

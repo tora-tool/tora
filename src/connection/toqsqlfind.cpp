@@ -39,6 +39,8 @@
 #include "connection/toqmysqlprovider.h"
 #include "connection/toqodbcprovider.h"
 #include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
+#include "core/toglobalsetting.h"
 
 #include <QtCore/QDir>
 #include <QtSql/QSqlDatabase>
@@ -68,12 +70,12 @@ QList<toConnectionProviderFinder::ConnectionProvirerParams>  toQSqlFinder::find(
 {
 	QList<ConnectionProvirerParams> retval;
 #ifdef Q_OS_WIN
-	QString mysqlHome(toConfigurationSingle::Instance().mysqlHome());
+	QString mysqlHome(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::MysqlHomeDirectory).toString());
 	QDir mysqlHomeDir(mysqlHome);
 	if(!mysqlHome.isEmpty() && mysqlHomeDir.exists())
 		QCoreApplication::addLibraryPath (mysqlHome);
 
-	QString pgsqlHome(toConfigurationSingle::Instance().pgsqlHome());
+	QString pgsqlHome(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::PgsqlHomeDirectory).toString());
 	QDir pgsqlHomeDir(pgsqlHome);
 	if(!pgsqlHome.isEmpty() && pgsqlHomeDir.exists())
 	{
