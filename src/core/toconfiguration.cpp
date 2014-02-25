@@ -965,55 +965,55 @@ void toConfiguration::setCommentColumn(int v)
 }
 
 // tobrowser
-bool toConfiguration::filterIgnoreCase()
-{
-	Q_D(toConfiguration);
-    return d->m_filterIgnoreCase;
-}
+//bool toConfiguration::filterIgnoreCase()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_filterIgnoreCase;
+//}
 void toConfiguration::setFilterIgnoreCase(bool v)
 {
 	Q_D(toConfiguration);
     d->m_filterIgnoreCase = v;
 }
 
-bool toConfiguration::filterInvert()
-{
-	Q_D(toConfiguration);
-    return d->m_filterInvert;
-}
+//bool toConfiguration::filterInvert()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_filterInvert;
+//}
 void toConfiguration::setFilterInvert(bool v)
 {
 	Q_D(toConfiguration);
     d->m_filterInvert = v;
 }
 
-int toConfiguration::filterType()
-{
-	Q_D(toConfiguration);
-    return d->m_filterType;
-}
+//int toConfiguration::filterType()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_filterType;
+//}
 void toConfiguration::setFilterType(int v)
 {
 	Q_D(toConfiguration);
     d->m_filterType = v;
 }
 
-int toConfiguration::filterTablespaceType()
-{
-	Q_D(toConfiguration);
-    return d->m_filterTablespaceType;
-}
+//int toConfiguration::filterTablespaceType()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_filterTablespaceType;
+//}
 void toConfiguration::setFilterTablespaceType(int v)
 {
 	Q_D(toConfiguration);
     d->m_filterTablespaceType = v;
 }
 
-QString toConfiguration::filterText()
-{
-	Q_D(toConfiguration);
-    return d->m_filterText;
-}
+//QString toConfiguration::filterText()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_filterText;
+//}
 void toConfiguration::setFilterText(const QString & v)
 {
 	Q_D(toConfiguration);
@@ -1281,121 +1281,121 @@ void toConfiguration::setWsAutoSave(bool v)
     d->m_wsAutoSave = v;
 }
 
-bool toConfiguration::wsCheckSave()
-{
-	Q_D(toConfiguration);
-    return d->m_wsCheckSave;
-}
+//bool toConfiguration::wsCheckSave()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_wsCheckSave;
+//}
 void toConfiguration::setWsCheckSave(bool v)
 {
 	Q_D(toConfiguration);
     d->m_wsCheckSave = v;
 }
 
-QString toConfiguration::wsAutoLoad()
-{
-	Q_D(toConfiguration);
-    return d->m_wsAutoLoad;
-}
+//QString toConfiguration::wsAutoLoad()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_wsAutoLoad;
+//}
 void toConfiguration::setWsAutoLoad(const QString & v)
 {
 	Q_D(toConfiguration);
     d->m_wsAutoLoad = v;
 }
 
-bool toConfiguration::wsLogAtEnd()
-{
-	Q_D(toConfiguration);
-    return d->m_wsLogAtEnd;
-}
+//bool toConfiguration::wsLogAtEnd()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_wsLogAtEnd;
+//}
 void toConfiguration::setWsLogAtEnd(bool v)
 {
 	Q_D(toConfiguration);
     d->m_wsLogAtEnd = v;
 }
 
-bool toConfiguration::wsLogMulti()
-{
-	Q_D(toConfiguration);
-    return d->m_wsLogMulti;
-}
+//bool toConfiguration::wsLogMulti()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_wsLogMulti;
+//}
 void toConfiguration::setWsLogMulti(bool v)
 {
 	Q_D(toConfiguration);
     d->m_wsLogMulti = v;
 }
 
-bool toConfiguration::wsStatistics()
-{
-	Q_D(toConfiguration);
-    return d->m_wsStatistics;
-}
+//bool toConfiguration::wsStatistics()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_wsStatistics;
+//}
 void toConfiguration::setWsStatistics(bool v)
 {
 	Q_D(toConfiguration);
     d->m_wsStatistics = v;
 }
 
-bool toConfiguration::wsTimedStats()
-{
-	Q_D(toConfiguration);
-    return d->m_wsTimedStats;
-}
+//bool toConfiguration::wsTimedStats()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_wsTimedStats;
+//}
 void toConfiguration::setWsTimedStats(bool v)
 {
 	Q_D(toConfiguration);
     d->m_wsTimedStats = v;
 }
 
-bool toConfiguration::wsNumber()
-{
-	Q_D(toConfiguration);
-    return d->m_wsNumber;
-}
+//bool toConfiguration::wsNumber()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_wsNumber;
+//}
 void toConfiguration::setWsNumber(bool v)
 {
 	Q_D(toConfiguration);
     d->m_wsNumber = v;
 }
 
-bool toConfiguration::wsMoveToErr()
-{
-	Q_D(toConfiguration);
-    return d->m_wsMoveToErr;
-}
+//bool toConfiguration::wsMoveToErr()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_wsMoveToErr;
+//}
 void toConfiguration::setWsMoveToErr(bool v)
 {
 	Q_D(toConfiguration);
     d->m_wsMoveToErr = v;
 }
 
-bool toConfiguration::wsHistory()
-{
-	Q_D(toConfiguration);
-    return d->m_wsHistory;
-}
+//bool toConfiguration::wsHistory()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_wsHistory;
+//}
 void toConfiguration::setWsHistory(bool v)
 {
 	Q_D(toConfiguration);
     d->m_wsHistory = v;
 }
 
-bool toConfiguration::wsExecLog()
-{
-	Q_D(toConfiguration);
-    return d->m_wsExecLog;
-}
+//bool toConfiguration::wsExecLog()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_wsExecLog;
+//}
 void toConfiguration::setWsExecLog(bool v)
 {
 	Q_D(toConfiguration);
     d->m_wsExecLog = v;
 }
 
-bool toConfiguration::wsToplevelDescribe()
-{
-	Q_D(toConfiguration);
-    return d->m_wsToplevelDescribe;
-}
+//bool toConfiguration::wsToplevelDescribe()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_wsToplevelDescribe;
+//}
 void toConfiguration::setWsToplevelDescribe(bool v)
 {
 	Q_D(toConfiguration);

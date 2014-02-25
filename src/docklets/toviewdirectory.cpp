@@ -37,6 +37,7 @@
 #include "core/tomainwindow.h"
 #include "tools/toworksheeteditor.h"
 #include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
 #include "core/toglobalevent.h"
 
 REGISTER_VIEW("Directory", toViewDirectory);
@@ -45,6 +46,7 @@ toViewDirectory::toViewDirectory(QWidget *parent,
                                  Qt::WindowFlags flags)
     : toDocklet(tr("Directory"), parent, flags)
 {
+	using namespace ToConfiguration;
     setObjectName("Directory Docklet");
 
     ListView = new QListView(this);
@@ -68,7 +70,7 @@ toViewDirectory::toViewDirectory(QWidget *parent,
     setWidget(ListView);
 
     // default to the default file in worksheet editor if specified
-    QString autoload = toConfigurationSingle::Instance().wsAutoLoad();
+    QString autoload = toConfigurationNewSingle::Instance().option(Worksheet::AutoLoad).toString();
     if(!autoload.isEmpty())
         showFile(autoload);
     else

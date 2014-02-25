@@ -567,9 +567,9 @@ void toWorksheet::setup(bool autoLoad)
     connect(ResultTab, SIGNAL(currentChanged(int)),
             this, SLOT(slotChangeResult(int)));
 
-    if (autoLoad && !toConfigurationSingle::Instance().wsAutoLoad().isEmpty())
+    if (autoLoad && !toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::AutoLoad).toString().isEmpty())
     {
-        Editor->editOpen(toConfigurationSingle::Instance().wsAutoLoad());
+        Editor->editOpen(toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::AutoLoad).toString());
     }
 
     ToolMenu = NULL;
@@ -578,7 +578,7 @@ void toWorksheet::setup(bool autoLoad)
     {
         if (connection().providerIs("Oracle"))
         {
-            if (toConfigurationSingle::Instance().wsStatistics())
+            if (toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::Statistics).toBool())
             {
                 statisticAct->setChecked(true);
             }
@@ -724,10 +724,12 @@ void toWorksheet::slotConnectionChanged(void)
 
 bool toWorksheet::checkSave()
 {
+	using namespace ToConfiguration;
+
     if (!Editor->sciEditor()->isModified())
         return true;
 
-    if (!toConfigurationSingle::Instance().wsCheckSave())
+    if (!toConfigurationNewSingle::Instance().option(Worksheet::CheckSave).toBool())
     	return true;
 
     if (toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::AutoSave).toBool() && !Editor->filename().isEmpty())
@@ -1167,7 +1169,7 @@ void toWorksheet::query(toSyntaxAnalyzer::statement const& statement, execTypeEn
     	{
     		////lockConnection();
     		QString buffer;
-    		if (!toConfigurationSingle::Instance().wsHistory())
+    		if (!toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::History).toBool())
     		{
     			toConnectionSubLoan conn(connection(), currentSchema());
     			toQuery query(conn, statement.sql, toQueryParams());
@@ -1246,7 +1248,7 @@ void toWorksheet::query(toSyntaxAnalyzer::statement const& statement, execTypeEn
     	Poll.start(1000);
     	Started->setToolTip(tr("Duration while query has been running\n\n") + statement.sql);
     	stopAct->setEnabled(true);
-    	Result->setNumberColumn(toConfigurationSingle::Instance().wsNumber());
+    	Result->setNumberColumn(toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::Number).toBool());
     	// it fixes crash running statements from Schema Browser - PV
     	if (ResultTab)
     		ResultTab->setCurrentIndex(0);
@@ -1381,7 +1383,7 @@ void toWorksheet::slotFirstResult(const QString &sql,
 
     m_FirstDataReceived = true;
 
-    if (error && result.offset() >= 0 && toConfigurationSingle::Instance().wsMoveToErr())
+    if (error && result.offset() >= 0 && toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::MoveToError).toBool())
     	Editor->sciEditor()->setCursorPosition(m_lastQuery.lineFrom + result.line() - 1, result.column() - 1);
 
     if (!error)
@@ -1500,7 +1502,7 @@ void toWorksheet::slotExecuteAll()
 
         if (Current)
         	if (toResultView *last = dynamic_cast<toResultView *>(Current))
-        		if (toConfigurationSingle::Instance().wsHistory())
+        		if (toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::ExecLog).toBool())
         			if (last->firstChild())
         				History[LastID] = last;
         lastLinePos = stat.lineTo;
@@ -1608,7 +1610,7 @@ void toWorksheet::slotEnableStatistic(bool ena)
         ResultTab->setTabEnabled(ResultTab->indexOf(StatTab), true);
         statisticAct->setChecked(true);
         Statistics->clear();
-        if (toConfigurationSingle::Instance().wsTimedStats())
+        if (toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::TimedStats).toBool())
         {
         	connection().setInit("STATISTICS", QString::fromLatin1(ENABLETIMED));
         }
@@ -1630,7 +1632,7 @@ void toWorksheet::slotDescribe(void)
     table.first = connection().getTraits().unQuote(table.first);
     table.second = connection().getTraits().unQuote(table.second);
 
-    if (toConfigurationSingle::Instance().wsToplevelDescribe())
+    if (toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::ToplevelDescribe).toBool())
     {
         toDescribe * d = new toDescribe(this);
         d->changeParams(table); // this also calls QWidget::show()
@@ -1944,7 +1946,7 @@ void toWorksheet::slotExecuteLog(void)
 
         if (item->text(4).isEmpty())
         {
-            if (toConfigurationSingle::Instance().wsExecLog())
+            if (toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::ExecLog).toBool())
             {
                 query(item->allText(0), Normal);
             }
@@ -2233,18 +2235,19 @@ bool toWorksheet::checkUnlockConnection()
 
 void toWorksheet::addLog(const QString &result)
 {
+	using namespace ToConfiguration;
 	QString dur = duration(Time.elapsed());
 	QString now = QDateTime::currentDateTime().toString(Qt::SystemLocaleDate);
 	toResultViewItem *item = NULL;
 
-	if (!toConfigurationSingle::Instance().wsLogMulti())
+	if (!toConfigurationNewSingle::Instance().option(Worksheet::LogMulti).toBool())
 	{
-		if (!toConfigurationSingle::Instance().wsLogAtEnd())
+		if (!toConfigurationNewSingle::Instance().option(Worksheet::LogAtEnd).toBool())
 			item = new toResultViewItem(Logging, NULL);
 		else
 			item = new toResultViewItem(Logging, LastLogItem);
 	}
-	else if (!toConfigurationSingle::Instance().wsLogAtEnd())
+	else if (!toConfigurationNewSingle::Instance().option(Worksheet::LogAtEnd).toBool())
 		item = new toResultViewMLine(Logging, NULL);
 	else
 		item = new toResultViewMLine(Logging, LastLogItem);
@@ -2254,7 +2257,7 @@ void toWorksheet::addLog(const QString &result)
 	item->setText(1, result);
 	item->setText(2, now);
 	item->setText(3, dur);
-	if (toConfigurationSingle::Instance().wsHistory())
+	if (toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::History).toBool())
 		item->setText(4, QString::number(LastID));
 
 	toResultViewItem *citem= dynamic_cast<toResultViewItem *>(Logging->currentItem());
@@ -2278,17 +2281,17 @@ toWorksheetSetup::toWorksheetSetup(toTool *tool, QWidget* parent, const char* na
 
     setupUi(this);
     //AutoSave->setChecked(toConfigurationSingle::Instance().wsAutoSave());
-    CheckSave->setChecked(toConfigurationSingle::Instance().wsCheckSave());
-    LogAtEnd->setChecked(toConfigurationSingle::Instance().wsLogAtEnd());
-    LogMulti->setChecked(toConfigurationSingle::Instance().wsLogMulti());
-    MoveToError->setChecked(toConfigurationSingle::Instance().wsMoveToErr());
-    Statistics->setChecked(toConfigurationSingle::Instance().wsStatistics());
-    TimedStatistics->setChecked(toConfigurationSingle::Instance().wsTimedStats());
-    History->setChecked(toConfigurationSingle::Instance().wsHistory());
-    DisplayNumber->setChecked(toConfigurationSingle::Instance().wsNumber());
-    ToplevelDescribe->setChecked(toConfigurationSingle::Instance().wsToplevelDescribe());
-    DefaultFile->setText(toConfigurationSingle::Instance().wsAutoLoad());
-    ExecLog->setChecked(toConfigurationSingle::Instance().wsExecLog());
+    //CheckSave->setChecked(toConfigurationSingle::Instance().wsCheckSave());
+    //LogAtEnd->setChecked(toConfigurationSingle::Instance().wsLogAtEnd());
+    //LogMulti->setChecked(toConfigurationSingle::Instance().wsLogMulti());
+    //MoveToError->setChecked(toConfigurationSingle::Instance().wsMoveToErr());
+    //Statistics->setChecked(toConfigurationSingle::Instance().wsStatistics());
+    //TimedStatistics->setChecked(toConfigurationSingle::Instance().wsTimedStats());
+    //History->setChecked(toConfigurationSingle::Instance().wsHistory());
+    //DisplayNumber->setChecked(toConfigurationSingle::Instance().wsNumber());
+    //ToplevelDescribe->setChecked(toConfigurationSingle::Instance().wsToplevelDescribe());
+    //DefaultFile->setText(toConfigurationSingle::Instance().wsAutoLoad());
+    //ExecLog->setChecked(toConfigurationSingle::Instance().wsExecLog());
 }
 
 

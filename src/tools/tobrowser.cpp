@@ -57,6 +57,7 @@
 #include "core/toconnectiontraits.h"
 #include "core/toglobalevent.h"
 #include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
 
 #ifdef TOEXTENDED_MYSQL
 #  include "core/tomysqluser.h"
@@ -275,13 +276,14 @@ public:
 
     virtual void readFilterSettings(void)
     {
+    	using namespace ToConfiguration;
         QString t;
-        Text = toConfigurationSingle::Instance().filterText();
-        IgnoreCase = toConfigurationSingle::Instance().filterIgnoreCase();
-        Invert = toConfigurationSingle::Instance().filterInvert();
+        Text = toConfigurationNewSingle::Instance().option(Browser::FilterText).toString();
+        IgnoreCase = toConfigurationNewSingle::Instance().option(ToConfiguration::Browser::FilterIgnoreCase).toBool();
+        Invert = toConfigurationNewSingle::Instance().option(Browser::FilterInvert).toBool();
         OnlyOwnSchema = false;
-        Type = (FilterType) toConfigurationSingle::Instance().filterType();
-        TablespaceType = toConfigurationSingle::Instance().filterTablespaceType();
+        Type = (FilterType) toConfigurationNewSingle::Instance().option(Browser::FilterType).toInt();
+        TablespaceType = toConfigurationNewSingle::Instance().option(Browser::FilterTablespaceType).toInt();
     }
 
 #ifdef TORA3_SESSION

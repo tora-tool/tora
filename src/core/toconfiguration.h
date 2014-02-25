@@ -297,7 +297,7 @@ public:
     //int tabStop();
     void setTabStop(int v);
 
-    bool useSpacesForIndent();
+    //bool useSpacesForIndent();
     void setUseSpacesForIndent(bool v);
 
     //bool editDragDrop();
@@ -396,19 +396,19 @@ public:
     void setCommentColumn(int v);
 
     // tobrowser
-    bool filterIgnoreCase();
+    //bool filterIgnoreCase();
     void setFilterIgnoreCase(bool v);
 
-    bool filterInvert();
+    //bool filterInvert();
     void setFilterInvert(bool v);
 
-    int filterType();
+    //int filterType();
     void setFilterType(int v);
 
-    int filterTablespaceType();
+    //int filterTablespaceType();
     void setFilterTablespaceType(int v);
 
-    QString filterText();
+    //QString filterText();
     void setFilterText(const QString & v);
 
     // tohelp
@@ -492,37 +492,37 @@ public:
     //bool wsAutoSave();
     void setWsAutoSave(bool v);
 
-    bool wsCheckSave();
+    //bool wsCheckSave();
     void setWsCheckSave(bool v);
 
-    QString wsAutoLoad();
+    //QString wsAutoLoad();
     void setWsAutoLoad(const QString & v);
 
-    bool wsLogAtEnd();
+    //bool wsLogAtEnd();
     void setWsLogAtEnd(bool v);
 
-    bool wsLogMulti();
+    //bool wsLogMulti();
     void setWsLogMulti(bool v);
 
-    bool wsStatistics();
+    //bool wsStatistics();
     void setWsStatistics(bool v);
 
-    bool wsTimedStats();
+    //bool wsTimedStats();
     void setWsTimedStats(bool v);
 
-    bool wsNumber();
+    //bool wsNumber();
     void setWsNumber(bool v);
 
-    bool wsMoveToErr();
+    //bool wsMoveToErr();
     void setWsMoveToErr(bool v);
 
-    bool wsHistory();
+    //bool wsHistory();
     void setWsHistory(bool v);
 
-    bool wsExecLog();
+    //bool wsExecLog();
     void setWsExecLog(bool v);
 
-    bool wsToplevelDescribe();
+    //bool wsToplevelDescribe();
     void setWsToplevelDescribe(bool v);
 
 

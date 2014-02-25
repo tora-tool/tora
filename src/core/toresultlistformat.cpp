@@ -40,6 +40,7 @@
 #include "core/utils.h"
 #include "core/tolistviewformatter.h"
 #include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
 
 
 toResultListFormat::toResultListFormat(QWidget *parent, DialogType type, const char *name)
