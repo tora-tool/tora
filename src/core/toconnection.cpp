@@ -43,6 +43,7 @@
 #include "core/toquery.h"
 #include "core/totool.h"
 #include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
 #include "core/toconnectionprovider.h"
 #include "core/toworkspace.h"
 
@@ -483,7 +484,7 @@ void toConnection::putBackSub(toConnectionSub *conn)
     if(conn->isBroken())
     {
     	delete conn;
-    } else if(Connections.size() >= toConfigurationSingle::Instance().cachedConnections()) {
+    } else if(Connections.size() >= toConfigurationNewSingle::Instance().option(ToConfiguration::Database::CachedConnections).toInt()) {
     	delete conn;
     }
     else

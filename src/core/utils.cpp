@@ -37,8 +37,10 @@
 #include "core/tomainwindow.h"
 #include "core/tosql.h"
 #include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
 #include "core/totimer.h"
 #include "core/toglobalevent.h"
+#include "core/toglobalsetting.h"
 #include "core/toqvalue.h"
 #include "core/toquery.h"
 
@@ -795,7 +797,7 @@ QToolBar *toAllocBar(QWidget *parent, const QString &str)
     }
 
     QString name = str;
-    if (!db.isEmpty() && toConfigurationSingle::Instance().includeDbCaption())
+    if (!db.isEmpty() && toConfigurationNewSingle::Instance().option(ToConfiguration::Global::IncludeDbCaptionBool).toBool())
     {
         name += QString::fromLatin1(" ");
         name += db;
@@ -823,7 +825,7 @@ TODock *toAllocDock(const QString &name,
                     const QPixmap &pix)
 {
     QString str = name;
-    if (!db.isEmpty() && toConfigurationSingle::Instance().includeDbCaption())
+    if (!db.isEmpty() && toConfigurationNewSingle::Instance().option(ToConfiguration::Global::IncludeDbCaptionBool).toBool())
     {
         str += QString::fromLatin1(" ");
         str += db;

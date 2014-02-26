@@ -193,8 +193,8 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     //GraphvizHomeDirectory->setText(toConfigurationSingle::Instance().graphvizHome());
 
     ChangeConnectionBool->setChecked(toConfigurationSingle::Instance().changeConnection());
-	SavePasswordBool->setChecked(toConfigurationSingle::Instance().savePassword());
-    IncludeDbCaptionBool->setChecked(toConfigurationSingle::Instance().includeDbCaption());
+	//SavePasswordBool->setChecked(toConfigurationSingle::Instance().savePassword());
+    //IncludeDbCaptionBool->setChecked(toConfigurationSingle::Instance().includeDbCaption());
     //RestoreSessionBool->setChecked(toConfigurationSingle::Instance().restoreSession());
 	//ToadBindingsBool->setChecked(toConfigurationSingle::Instance().toadBindings());
 	CacheDiskBool->setChecked(toConfigurationSingle::Instance().cacheDisk());
@@ -453,17 +453,17 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent, const char *name, Qt::WFla
 //     InitialFetch->setValidator(new QIntValidator(InitialFetch));
 //     MaxContent->setValidator(new QIntValidator(InitialFetch));q
 
-    NumberFormat->setCurrentIndex(toConfigurationSingle::Instance().numberFormat());
+    //NumberFormat->setCurrentIndex(toConfigurationSingle::Instance().numberFormat());
 
-    Decimals->setValue(toConfigurationSingle::Instance().numberDecimals());
+    //Decimals->setValue(toConfigurationSingle::Instance().numberDecimals());
     if (NumberFormat->currentIndex() == 2)
         Decimals->setEnabled(true);
 
-    AutoCommit->setChecked(toConfigurationSingle::Instance().autoCommit());
+    //AutoCommit->setChecked(toConfigurationSingle::Instance().autoCommit());
 //     DontReread->setChecked(toConfigurationSingle::Instance().dontReread());
     ObjectCache->setCurrentIndex(toConfigurationSingle::Instance().objectCache());
 //     BkgndConnect->setChecked(toConfigurationSingle::Instance().bkgndConnect());
-    CachedConnections->setValue(toConfigurationSingle::Instance().cachedConnections());
+    //CachedConnections->setValue(toConfigurationSingle::Instance().cachedConnections());
     IndicateEmpty->setChecked(toConfigurationSingle::Instance().indicateEmpty());
     //FirewallMode->setChecked(toConfigurationSingle::Instance().firewallMode());
     //ConnTestInterval->setValue(toConfigurationSingle::Instance().connTestInterval());

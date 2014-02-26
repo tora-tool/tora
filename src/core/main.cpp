@@ -297,8 +297,10 @@ int main(int argc, char **argv)
         if (toConfigurationSingle::Instance().firstInstall().isEmpty())
         	toConfigurationSingle::Instance().setFirstInstall(QDateTime::currentDateTime().toString());
 
-        toQValue::setNumberFormat(toConfigurationSingle::Instance().numberFormat()
-        		, toConfigurationSingle::Instance().numberDecimals());
+        toQValue::setNumberFormat(
+        		toConfigurationNewSingle::Instance().option(ToConfiguration::Database::NumberFormat).toInt()
+        		, toConfigurationNewSingle::Instance().option(ToConfiguration::Database::NumberDecimals).toInt()
+        		);
 
         qRegisterMetaType<toQColumnDescriptionList>("toQColumnDescriptionList&");
         qRegisterMetaType<ValuesList>("ValuesList&");

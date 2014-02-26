@@ -42,6 +42,8 @@
 #include "core/toconnection.h"
 #include "core/tooracleconst.h"
 #include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
+#include "core/toglobalsetting.h"
 
 #include "icons/trash.xpm"
 
@@ -214,7 +216,7 @@ void toNewConnection::writeSettings(bool checkHistory)
         Settings.beginGroup("history/0");
         Settings.setValue("provider", Provider->currentText());
         Settings.setValue("username", Username->text());
-        if (toConfigurationSingle::Instance().savePassword())
+        if (toConfigurationNewSingle::Instance().option(ToConfiguration::Global::SavePasswordBool).toBool())
         {
             Settings.setValue("password", Utils::toObfuscate(Password->text()));
         }
@@ -262,7 +264,7 @@ void toNewConnection::writeSettings(bool checkHistory)
         Settings.setValue("schema", opt.schema);
         Settings.setValue("color", opt.color);
         Settings.setValue("port", opt.port);
-        if (toConfigurationSingle::Instance().savePassword())
+        if (toConfigurationNewSingle::Instance().option(ToConfiguration::Global::SavePasswordBool).toBool())
         {
             Settings.setValue("password", Utils::toObfuscate(opt.password));
         }

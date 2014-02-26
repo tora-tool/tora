@@ -121,11 +121,11 @@ bool toConfiguration::saveMap(const QString &file, std::map<QString, QString> &p
     return d->saveMap(file, pairs);
 }
 
-bool toConfiguration::savePassword()
-{
-	Q_D(toConfiguration);
-    return d->m_savePassword;
-}
+//bool toConfiguration::savePassword()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_savePassword;
+//}
 void toConfiguration::setSavePassword(bool v)
 {
 	Q_D(toConfiguration);
@@ -339,11 +339,11 @@ void toConfiguration::setStatusMessage(int v)
     d->m_statusMessage = v;
 }
 
-bool toConfiguration::includeDbCaption()
-{
-	Q_D(toConfiguration);
-    return d->m_dbTitle;
-}
+//bool toConfiguration::includeDbCaption()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_dbTitle;
+//}
 void toConfiguration::setIncludeDbCaption(bool v)
 {
 	Q_D(toConfiguration);
@@ -686,22 +686,22 @@ void toConfiguration::setTranslation(const QString & v)
     d->m_translation = v;
 }
 
-int toConfiguration::numberFormat()
-{
-	Q_D(toConfiguration);
-    return d->m_numberFormat;
-}
+//int toConfiguration::numberFormat()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_numberFormat;
+//}
 void toConfiguration::setNumberFormat(int v)
 {
 	Q_D(toConfiguration);
     d->m_numberFormat = v;
 }
 
-int toConfiguration::numberDecimals()
-{
-	Q_D(toConfiguration);
-    return d->m_numberDecimals;
-}
+//int toConfiguration::numberDecimals()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_numberDecimals;
+//}
 void toConfiguration::setNumberDecimals(int v)
 {
 	Q_D(toConfiguration);
@@ -725,11 +725,11 @@ void toConfiguration::setTabStop(int v)
     d->m_tabStop = v;
 }
 
-bool toConfiguration::useSpacesForIndent()
-{
-	Q_D(toConfiguration);
-    return d->m_useSpacesForIndent;
-}
+//bool toConfiguration::useSpacesForIndent()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_useSpacesForIndent;
+//}
 void toConfiguration::setUseSpacesForIndent(bool v)
 {
 	Q_D(toConfiguration);

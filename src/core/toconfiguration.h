@@ -140,7 +140,7 @@ public:
     */
     bool saveMap(const QString &file, std::map<QString, QString> &pairs);
 
-    bool savePassword();
+    //bool savePassword();
     void setSavePassword(bool v);
 
     int cachedConnections();
@@ -188,7 +188,7 @@ public:
     int statusMessage();
     void setStatusMessage(int v);
 
-    bool includeDbCaption();
+    //bool includeDbCaption();
     void setIncludeDbCaption(bool v);
 
     QString sizeUnit();
@@ -286,10 +286,10 @@ public:
     //int keepAlive();
     //void setKeepAlive(int v);
 
-    int numberFormat();
+    //int numberFormat();
     void setNumberFormat(int v);
 
-    int numberDecimals();
+    //int numberDecimals();
     void setNumberDecimals(int v);
 
     int cacheTimeout();
