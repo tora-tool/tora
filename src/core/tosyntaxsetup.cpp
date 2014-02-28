@@ -131,7 +131,7 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
     Errors[2] = tr("Unknown variable");
     Example->setErrors(Errors);
 
-    toSettingTab::processChildWidgets(this);
+    toSettingTab::loadSettings(this);
 }
 
 void toSyntaxSetup::checkFixedWidth(const QFont &fnt)

@@ -55,8 +55,6 @@ QVariant Main::defaultValue(int option) const
 	case StatusSave: 	return QVariant((int)10);
 	case DontReread: 	return QVariant((bool)true);
 	case EditDragDrop: 	return QVariant((bool)false);
-	case CSVSeparator: 	return QVariant(QString(";"));
-	case CSVDelimiter: 	return QVariant(QString("\""));
 	default:
 		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Editor un-registered enum value: %1").arg(option)));
 		return QVariant();

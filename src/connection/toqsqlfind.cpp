@@ -38,7 +38,6 @@
 #include "connection/toqpsqlprovider.h"
 #include "connection/toqmysqlprovider.h"
 #include "connection/toqodbcprovider.h"
-#include "core/toconfiguration.h"
 #include "core/toconfiguration_new.h"
 #include "core/toglobalsetting.h"
 

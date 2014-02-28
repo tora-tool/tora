@@ -595,7 +595,7 @@ void toResultPlan::checkException(const QString &str)
             QString planTable(toConfigurationSingle::Instance().planTable(connection().user()));
 
             // if shared plan table does not exist, do not try to create it
-            if(toConfigurationSingle::Instance().sharedPlan())
+            if(toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::SharedPlan).toBool())
             {
                 TOMessageBox::warning(this,
                                       tr("Plan table doesn't exist"),

@@ -820,6 +820,8 @@ static toStorageTool StorageTool;
 toStorage::toStorage(QWidget *main, toConnection &connection)
     : toToolWidget(StorageTool, "storage.html", main, connection, "toStorage")
 {
+	using namespace ToConfiguration;
+
     QToolBar *toolbar = Utils::toAllocBar(this, tr("Storage manager"));
     layout()->addWidget(toolbar);
 
@@ -844,7 +846,7 @@ toStorage::toStorage(QWidget *main, toConnection &connection)
     TablespaceAct = new QAction(QPixmap(const_cast<const char**>(tostorage_xpm)),
                                 tr("Show tablespaces or just datafiles."), this);
     TablespaceAct->setCheckable(true);
-    bool tablespaces = toConfigurationSingle::Instance().dispTablespaces();
+    bool tablespaces = toConfigurationNewSingle::Instance().dispTablespaces();
     if (tablespaces)
         TablespaceAct->setChecked(true);
     toolbar->addAction(TablespaceAct);

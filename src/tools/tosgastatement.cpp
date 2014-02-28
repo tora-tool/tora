@@ -136,7 +136,7 @@ void toSGAStatement::changeTab(int index)
                                                    SQLParsingSchema, Address));
                                */
                 if (////conn.version() >= "0900" &&
-                    toConfigurationSingle::Instance().vsqlPlans() &&
+                    toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::VSqlPlans).toBool() &&
                     toQuery::readQuery(conn, toSQL::string(SQLcheckVSQL, conn).arg(Address), toQueryParams()).begin()->toInt() > 0
                 )
                 {

@@ -64,8 +64,6 @@ namespace ToConfiguration
 			, StatusSave         // #define CONF_STATUS_SAVE (Message history size)
 			, DontReread         // #define CONF_DONT_REREAD
 			, EditDragDrop       // #define CONF_EDIT_DRAG_DROP (toScintilla)
-			, CSVSeparator       // #define CONF_CSV_SEPARATOR
-			, CSVDelimiter       // #define CONF_CSV_DELIMITER
 		};
 		virtual QVariant defaultValue(int option) const;
 	};

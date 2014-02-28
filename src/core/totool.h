@@ -271,7 +271,18 @@ public:
      */
     virtual void saveSetting(void) = 0;
 
-    virtual void processChildWidgets(QWidget*);
+    /*
+     * This function iterates over all child widgets an tries to find matching config option.
+     * Based on objectName and Widget type. Then configuration option's values are load from configuration into Widgets
+     */
+    virtual void loadSettings(QWidget*);
+
+    /*
+     * This function iterates over all child widgets an tries to find matching config option.
+     * Based on objectName and Widget type. Then configuration option's values are save into configuration from Widgets
+     */
+    virtual void saveSettings(QWidget*);
+
 };
 
 /** This class is used to hold connections for @ref toResult classes.

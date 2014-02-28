@@ -33,7 +33,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "core/tocache.h"
-#include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
 #include "core/toconnection.h"
 #include "core/toconnectionsub.h"
 #include "core/toconnectionsubloan.h"
@@ -42,6 +42,7 @@
 #include "core/toraversion.h"
 #include "core/utils.h"
 #include "core/toglobalevent.h"
+#include "core/toglobalsetting.h"
 
 #include <QtCore/QtDebug>
 #include <QtCore/QDir>
@@ -471,7 +472,7 @@ void toCache::rereadCache() {
 }
 
 void toCache::readCache() {
-	if (toConfigurationSingle::Instance().objectCache() == toConfiguration::NEVER) {
+	if (toConfigurationNewSingle::Instance().objectCache() == toConfiguration::NEVER) {
 		QWriteLocker lock(&cacheLock);
 		clearCache();
 		return;
@@ -527,7 +528,7 @@ void toCache::wait4BGThread() {
 
 QDir toCache::cacheDir() {
 	QString home(QDir::homePath());
-	QString dirname(toConfigurationSingle::Instance().cacheDir());
+	QString dirname(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::CacheDirectory).toString());
 
 	if (dirname.isEmpty()) {
 #ifdef Q_OS_WIN32
@@ -561,7 +562,7 @@ void toCache::writeDiskCache() {
 		return;
 	}
 
-	if (!toConfigurationSingle::Instance().cacheDisk())
+	if (!toConfigurationNewSingle::Instance().cacheDisk())
 		return;
 
 	QFileInfo fileInfo(cacheFile());
@@ -610,7 +611,7 @@ void toCache::writeDiskCache() {
 }
 
 bool toCache::loadDiskCache() {
-	if (!toConfigurationSingle::Instance().cacheDisk())
+	if (!toConfigurationNewSingle::Instance().cacheDisk())
 		return false;
 
 	QFileInfo fileInfo(cacheFile());
@@ -625,7 +626,7 @@ bool toCache::loadDiskCache() {
 		return false;
 
 	if (fileInfo.lastModified().addDays(
-			toConfigurationSingle::Instance().cacheTimeout()) < today)
+			toConfigurationNewSingle::Instance().cacheTimeout()) < today)
 		return false;
 
 	clearCache();

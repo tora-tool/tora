@@ -35,13 +35,30 @@
 #ifndef TOLISTVIEWFORMATTER
 #define TOLISTVIEWFORMATTER
 
+#include "core/toconfenum.h"
+
 #include <QtCore/QString>
 #include <QtCore/QModelIndexList>
 #include <QtCore/QVector>
 
+
 class toListView;
 class toResultModel;
 
+namespace ToConfiguration {
+	class Exporter : public ConfigContext
+	{
+		Q_OBJECT;
+		Q_ENUMS(OptionTypeEnum);
+	public:
+		Exporter() : ConfigContext("Exporter", ENUM_REF(Exporter,OptionTypeEnum)) {};
+		enum OptionTypeEnum {
+			CsvDelimiter = 13000
+			, CsvSeparator
+		};
+		virtual QVariant defaultValue(int) const;
+	};
+};
 
 /**
  * Class for storing settings for export.
@@ -114,7 +131,8 @@ public:
     {
         return (rowsExport == RowsSelected) || (columnsExport == ColumnsSelected);
     }
-
+private:
+    static ToConfiguration::Exporter s_Exporter;
 };
 
 

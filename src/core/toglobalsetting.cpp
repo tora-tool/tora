@@ -36,7 +36,6 @@
 #include "core/utils.h"
 #include "core/toconf.h"
 #include "core/toconfenum.h"
-#include "core/toconfiguration.h"
 #include "core/toconfiguration_new.h"
 #include "core/tomainwindow.h"
 #include "core/tocache.h"
@@ -100,7 +99,7 @@ QVariant ToConfiguration::Global::defaultValue(int option) const
 	case DisplaySamplesInt:     return QVariant((int)-1);
 	case SizeUnit:			return QVariant(QString("MB"));
 	case RefreshIntervalInt:	return QVariant((int)0);  // None
-	case DefaultListFormat:		return QVariant(QString(""));
+	case DefaultListFormat:		return QVariant((int)0);
 	case Style:			return QVariant(QString(""));
 	case Translation:		return QVariant(QLocale().name());
 	}
@@ -247,7 +246,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     // Translation
     Translation->setText(toConfigurationSingle::Instance().translation());
 
-    toSettingTab::processChildWidgets(this);
+    toSettingTab::loadSettings(this);
 }
 
 void toGlobalSetting::sqlBrowse(void)

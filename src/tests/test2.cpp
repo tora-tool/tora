@@ -69,7 +69,7 @@ static void usage()
 
 int main(int argc, char **argv)
 {
-	toConfiguration::setQSettingsEnv();
+	toConfigurationNew::setQSettingsEnv();
 
 	/*! \warning: Keep the code before QApplication init as small
 	  as possible. There could be serious display issues when

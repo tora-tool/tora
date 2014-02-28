@@ -212,6 +212,7 @@ SET(TORA_MOC_CLASSES
   core/tohelp.h
   core/tohelpsetup.h
   core/tolinechart.h
+  core/tolistviewformatter.h
   core/tomain.h
   core/tomainwindow.h
   core/tomemoeditor.h

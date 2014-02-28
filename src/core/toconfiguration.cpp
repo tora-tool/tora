@@ -886,16 +886,16 @@ void toConfiguration::setTools(ToolsMap &v)
 }
 
 // toresultlistformat
-QString toConfiguration::csvSeparator()
-{
-	Q_D(toConfiguration);
-    return d->m_csvSeparator;
-}
-QString toConfiguration::csvDelimiter()
-{
-	Q_D(toConfiguration);
-    return d->m_csvDelimiter;
-}
+//QString toConfiguration::csvSeparator()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_csvSeparator;
+//}
+//QString toConfiguration::csvDelimiter()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_csvDelimiter;
+//}
 
 // toeditextensions
 bool toConfiguration::commaBefore()

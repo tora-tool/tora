@@ -33,7 +33,6 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "connection/tooraclesetting.h"
-#include "core/toconfiguration.h"
 #include "core/toconfiguration_new.h"
 
 #include "core/tologger.h"
@@ -78,8 +77,8 @@ toOracleSetting::toOracleSetting(QWidget *parent)
     //CheckPoint->setText(toConfigurationSingle::Instance().planCheckpoint());
     ExplainPlan->setText(toConfigurationSingle::Instance().planTable(NULL));
     //OpenCursors->setValue(toConfigurationSingle::Instance().openCursors());
-    KeepPlans->setChecked(toConfigurationSingle::Instance().keepPlans());
-    VsqlPlans->setChecked(toConfigurationSingle::Instance().vsqlPlans());
+    //KeepPlans->setChecked(toConfigurationSingle::Instance().keepPlans());
+    //VsqlPlans->setChecked(toConfigurationSingle::Instance().vsqlPlans());
     //SharedPlan->setChecked(toConfigurationSingle::Instance().sharedPlan());
     int len = toConfigurationSingle::Instance().maxLong();
     if (len >= 0)
@@ -110,41 +109,42 @@ toOracleSetting::toOracleSetting(QWidget *parent)
     {
         TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
     }
-    toSettingTab::processChildWidgets(this);
+    toSettingTab::loadSettings(this);
 }
 
 
 void toOracleSetting::saveSetting()
 {
-    toConfigurationSingle::Instance().setKeepPlans(KeepPlans->isChecked());
-    toConfigurationSingle::Instance().setVsqlPlans(VsqlPlans->isChecked());
-    toConfigurationSingle::Instance().setSharedPlan(SharedPlan->isChecked());
-    toConfigurationSingle::Instance().setDateFormat(DefaultDate->text());
-    toConfigurationSingle::Instance().setTimestampFormat(DefaultTimestamp->text());
+	toSettingTab::saveSettings(this);
+    //toConfigurationSingle::Instance().setKeepPlans(KeepPlans->isChecked());
+    //toConfigurationSingle::Instance().setVsqlPlans(VsqlPlans->isChecked());
+    //toConfigurationSingle::Instance().setSharedPlan(SharedPlan->isChecked());
+    //toConfigurationSingle::Instance().setDateFormat(DefaultDate->text());
+    //toConfigurationSingle::Instance().setTimestampFormat(DefaultTimestamp->text());
 
 #pragma message WARN("TODO/FIXME: apply new NLS_DATE_FORMAT/NLS_TIMESTAMP_FORMAT here")
 
-    //toConfigurationSingle::Instance().setPlanCheckpoint(CheckPoint->text());
-    toConfigurationSingle::Instance().setPlanTable(ExplainPlan->text());
-    //toConfigurationSingle::Instance().setOpenCursors(OpenCursors->value());
+       //toConfigurationSingle::Instance().setPlanCheckpoint(CheckPoint->text());
+    //toConfigurationSingle::Instance().setPlanTable(ExplainPlan->text());
+       //toConfigurationSingle::Instance().setOpenCursors(OpenCursors->value());
     if (Unlimited->isChecked())
     {
-        toConfigurationSingle::Instance().setMaxLong(-1);
+        //toConfigurationSingle::Instance().setMaxLong(-1);
     }
     else
     {
-        toConfigurationSingle::Instance().setMaxLong(MaxLong->text().toInt());
+        //toConfigurationSingle::Instance().setMaxLong(MaxLong->text().toInt());
     }
     // extractor group options
-    toConfigurationSingle::Instance().setExtractorUseDbmsMetadata(cbUseDbmsMetadata->isChecked());
-    toConfigurationSingle::Instance().setExtractorIncludeSotrage(cbIncludeStorage->isChecked());
-    toConfigurationSingle::Instance().setExtractorSkipOrgMonInformation(cbSkipOrgMon->isChecked());
-    toConfigurationSingle::Instance().setExtractorSkipStorageExceptTablespaces(cbSkiptStorExTablespace->isChecked());
-    toConfigurationSingle::Instance().setExtractorIncludeParallel(cbIncludeParallel->isChecked());
-    toConfigurationSingle::Instance().setExtractorIncludePartition(cbIncludePartition->isChecked());
-    toConfigurationSingle::Instance().setExtractorIncludeCode(cbIncludeCode->isChecked());
-    toConfigurationSingle::Instance().setExtractorIncludeHeader(cbIncludeHeader->isChecked());
-    toConfigurationSingle::Instance().setExtractorIncludePrompt(cbIncludePrompt->isChecked());
+    //toConfigurationSingle::Instance().setExtractorUseDbmsMetadata(cbUseDbmsMetadata->isChecked());
+    //toConfigurationSingle::Instance().setExtractorIncludeSotrage(cbIncludeStorage->isChecked());
+    //toConfigurationSingle::Instance().setExtractorSkipOrgMonInformation(cbSkipOrgMon->isChecked());
+    //toConfigurationSingle::Instance().setExtractorSkipStorageExceptTablespaces(cbSkiptStorExTablespace->isChecked());
+    //toConfigurationSingle::Instance().setExtractorIncludeParallel(cbIncludeParallel->isChecked());
+    //toConfigurationSingle::Instance().setExtractorIncludePartition(cbIncludePartition->isChecked());
+    //toConfigurationSingle::Instance().setExtractorIncludeCode(cbIncludeCode->isChecked());
+    //toConfigurationSingle::Instance().setExtractorIncludeHeader(cbIncludeHeader->isChecked());
+    //toConfigurationSingle::Instance().setExtractorIncludePrompt(cbIncludePrompt->isChecked());
 }
 
 void toOracleSetting::dbmsMetadataClicked(bool)

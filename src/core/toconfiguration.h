@@ -176,7 +176,7 @@ public:
     //bool objectNamesUpper();
     void setObjectNamesUpper(bool v);
 
-    QString cacheDir();
+    //QString cacheDir();
     void setCacheDir(const QString & v);
 
     bool cacheDisk();
@@ -328,10 +328,10 @@ public:
     QString planTable(QString schema);
     void setPlanTable(const QString & v);
 
-    bool keepPlans();
+    //bool keepPlans();
     void setKeepPlans(bool v);
 
-    bool vsqlPlans();
+    //bool vsqlPlans();
     void setVsqlPlans(bool v);
 
     bool sharedPlan();
@@ -373,8 +373,8 @@ public:
     void setTools(ToolsMap &v);
 
     // toresultlistformat
-    QString csvSeparator();
-    QString csvDelimiter();
+    //QString csvSeparator();
+    //QString csvDelimiter();
 
     // toeditextensions
     bool commaBefore();

@@ -32,8 +32,6 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include <QtCore/QSettings>
-
 #include "core/toresultlistformat.h"
 
 #include "core/toconf.h"
@@ -41,11 +39,14 @@
 #include "core/tolistviewformatter.h"
 #include "core/toconfiguration.h"
 #include "core/toconfiguration_new.h"
+#include "core/toglobalsetting.h"
 
+#include <QtCore/QSettings>
 
 toResultListFormat::toResultListFormat(QWidget *parent, DialogType type, const char *name)
     : QDialog(parent)
 {
+	using namespace ToConfiguration;
 
     setupUi(this);
     setModal(true);
@@ -55,12 +56,12 @@ toResultListFormat::toResultListFormat(QWidget *parent, DialogType type, const c
     formatCombo->addItem(tr("HTML"));
     formatCombo->addItem(tr("SQL"));
 
-    int num = toConfigurationSingle::Instance().defaultFormat();
+    int num = toConfigurationNewSingle::Instance().option(Global::DefaultListFormat).toInt();
     formatCombo->setCurrentIndex(num);
     formatChanged(num);
 
-    delimiterEdit->setText(toConfigurationSingle::Instance().csvDelimiter());
-    separatorEdit->setText(toConfigurationSingle::Instance().csvSeparator());
+    delimiterEdit->setText(toConfigurationNewSingle::Instance().option(Exporter::CsvDelimiter).toString());
+    separatorEdit->setText(toConfigurationNewSingle::Instance().option(Exporter::CsvSeparator).toString());
 
     selectedRowsRadio->setChecked(type == TypeCopy);
     selectedColumnsRadio->setChecked(type == TypeCopy);

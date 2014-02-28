@@ -33,6 +33,24 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "core/tolistviewformatter.h"
+#include "ts_log/ts_log_utils.h"
+
+namespace ToConfiguration
+{
+QVariant Exporter::defaultValue(int option) const
+{
+	switch(option)
+	{
+	case CsvSeparator: 	return QVariant(QString(";"));
+	case CsvDelimiter: 	return QVariant(QString("\""));
+	default:
+		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Editor un-registered enum value: %1").arg(option)));
+		return QVariant();
+	}
+}
+}
+
+ToConfiguration::Exporter toExportSettings::s_Exporter;
 
 toListViewFormatter::toListViewFormatter()
 {

@@ -46,7 +46,6 @@
 #include "core/toconf.h"       // TOAPPNAME
 #include "core/toraversion.h"
 #include "core/tologger.h"
-#include "core/toconfiguration.h"
 
 #include "trotl.h"
 #include "trotl_convertor.h"

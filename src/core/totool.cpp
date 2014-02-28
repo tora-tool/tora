@@ -74,7 +74,7 @@ const int toTool::priority() const
     return Priority;
 }
 
-void toSettingTab::processChildWidgets(QWidget *widget)
+void toSettingTab::loadSettings(QWidget *widget)
 {
 	static QRegExp any(".*");
 	QList<QWidget*> lst = widget->findChildren<QWidget*>(any);
@@ -134,6 +134,11 @@ void toSettingTab::processChildWidgets(QWidget *widget)
 		}
 
 	}
+}
+
+void toSettingTab::saveSettings(QWidget *widget)
+{
+
 }
 
 toConnectionWidget::toConnectionWidget(toConnection &conn, QWidget *widget)

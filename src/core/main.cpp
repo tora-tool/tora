@@ -32,7 +32,6 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "core/toconfiguration.h"
 #include "core/toconfiguration_new.h"
 #include "core/tosplash.h"
 #include "core/toconnectionprovider.h"
@@ -81,7 +80,7 @@ int main(int argc, char **argv)
      * "Fatal IO error 11 (Resource temporarily unavailable) on X server :0"
      */
     QCoreApplication::setAttribute(Qt::AA_X11InitThreads); //  or just XInitThreads();
-    toConfiguration::setQSettingsEnv();
+    toConfigurationNew::setQSettingsEnv();
 
     /*! \warning: Keep the code before QApplication init as small
         as possible. There could be serious display issues when
@@ -109,7 +108,7 @@ int main(int argc, char **argv)
 
         QTranslator torats(0);
         QString qmDir = toConfigurationNewSingle::Instance().sharePath();
-        torats.load(qmDir + QString("tora_") + toConfigurationSingle::Instance().translation(), ".");
+        torats.load(qmDir + QString("tora_") + toConfigurationNewSingle::Instance().option(ToConfiguration::Global::Translation).toString(), ".");
         qApp->installTranslator(&torats);
 
         if (toConfigurationNewSingle::Instance().option(ToConfiguration::Global::ToadBindingsBool).toBool())
@@ -285,17 +284,17 @@ int main(int argc, char **argv)
             TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
         }
 
-        if (toConfigurationSingle::Instance().lastVersion() != TORAVERSION)
+        if (toConfigurationNewSingle::Instance().option(ToConfiguration::Main::LastVersion).toString() != TORAVERSION)
         {
             std::auto_ptr<toAbout> about ( new toAbout(toAbout::About, NULL, "About " TOAPPNAME, true));
             if (!about->exec())
                 exit (2);
-            toConfigurationSingle::Instance().setLastVersion(TORAVERSION);
+            toConfigurationNewSingle::Instance().setOption(ToConfiguration::Main::LastVersion, QString(TORAVERSION));
         }
 
 
-        if (toConfigurationSingle::Instance().firstInstall().isEmpty())
-        	toConfigurationSingle::Instance().setFirstInstall(QDateTime::currentDateTime().toString());
+        if (toConfigurationNewSingle::Instance().option(ToConfiguration::Main::FirstInstall).toString().isEmpty())
+        	toConfigurationNewSingle::Instance().setOption(ToConfiguration::Main::FirstInstall, QDateTime::currentDateTime().toString());
 
         toQValue::setNumberFormat(
         		toConfigurationNewSingle::Instance().option(ToConfiguration::Database::NumberFormat).toInt()
