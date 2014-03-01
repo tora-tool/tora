@@ -34,7 +34,7 @@ public:
     bool    m_multiLineResults;
     bool    m_messageStatusbar;
     bool    m_colorizedConnections;
-    ConnectionColors m_connectionColors;
+    ////ConnectionColors m_connectionColors;
     // Options (2nd column)
     int     m_statusMessage;
     int     m_historySize;

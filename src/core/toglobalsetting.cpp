@@ -111,7 +111,7 @@ ConnectionColorsDialog::ConnectionColorsDialog(QWidget * parent)
 {
     setupUi(this);
 
-    ConnectionColorsIterator it(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::ColorizedConnectionsMap));
+    ConnectionColorsIterator it(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::ColorizedConnectionsMap).toMap().begin());
     while (it.hasNext())
     {
         it.next();
@@ -406,138 +406,6 @@ void toGlobalSetting::saveSetting(void)
     ////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setTranslation(Translation->text());
 }
 
-void toDatabaseSetting::numberFormatChange()
-{
-    Decimals->setEnabled(NumberFormat->currentIndex() == 2);
-}
-
-void toDatabaseSetting::IndicateEmptyColor_clicked()
-{
-    QPalette palette = IndicateEmptyColor->palette();
-    QColor c = QColorDialog::getColor(
-                   palette.color(IndicateEmptyColor->backgroundRole()),
-                   this);
-
-    if (c.isValid())
-    {
-        palette.setColor(IndicateEmptyColor->backgroundRole(), c);
-        IndicateEmptyColor->setPalette(palette);
-    }
-}
-
-toDatabaseSetting::toDatabaseSetting(QWidget *parent, const char *name, Qt::WFlags fl)
-    : QWidget(parent, fl)
-    , toSettingTab("database.html")
-{
-    if (name)
-        setObjectName(name);
-    setupUi(this);
-
-    MaxColDisp->setValue(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxColDisp).toInt());
-    int mxNumber = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxNumber).toInt();
-    if (mxNumber <= 0)
-        FetchAll->setChecked(true);
-    else
-        InitialFetch->setValue(mxNumber);
-
-    int mxContent = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxContent).toInt();
-    if (mxContent <= 0)
-    {
-        MaxContent->setValue(InitialFetch->value());
-        UnlimitedContent->setChecked(true);
-    }
-    else
-        MaxContent->setValue(mxContent);
-
-//     MaxColDisp->setValidator(new QIntValidator(MaxColDisp));
-//     InitialFetch->setValidator(new QIntValidator(InitialFetch));
-//     MaxContent->setValidator(new QIntValidator(InitialFetch));q
-
-    //NumberFormat->setCurrentIndex(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::numberFormat());
-
-    //Decimals->setValue(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::numberDecimals());
-    if (NumberFormat->currentIndex() == 2)
-        Decimals->setEnabled(true);
-
-    //AutoCommit->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::autoCommit());
-//     DontReread->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::dontReread());
-    ////ObjectCache->setCurrentIndex(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::objectCache());
-//     BkgndConnect->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::bkgndConnect());
-    //CachedConnections->setValue(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::cachedConnections());
-    ////IndicateEmpty->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::indicateEmpty());
-    //FirewallMode->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::firewallMode());
-    //ConnTestInterval->setValue(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::connTestInterval());
-
-    QColor nullColor;
-    nullColor.setNamedColor(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::indicateEmptyColor));
-    QPalette palette = IndicateEmptyColor->palette();
-    palette.setColor(IndicateEmptyColor->backgroundRole(), nullColor);
-    IndicateEmptyColor->setPalette(palette);
-
-//     int val = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::autoLong();
-//     AutoLong->setChecked(val);
-//     MoveAfter->setValue(val);
-//     KeepAlive->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::keepAlive());
-
-    connect(IndicateEmpty, SIGNAL(clicked(bool)),
-            IndicateEmptyColor, SLOT(setEnabled(bool)));
-}
-
-// void toUpdateIndicateEmpty(void);
-
-void toDatabaseSetting::saveSetting(void)
-{
-	toSettingTab::saveSettings(this);
-    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setObjectCache((toConfiguration::ObjectCacheEnum)ObjectCache->currentIndex());
-
-    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setAutoCommit(AutoCommit->isChecked());
-    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setFirewallMode(FirewallMode->isChecked());
-    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setConnTestInterval(ConnTestInterval->value());
-    ///toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setCachedConnections(CachedConnections->value());
-
-
-    if (FetchAll->isChecked())
-        toConfigurationNewSingle::Instance().setOption(ToConfiguration::Database::InitialFetch, -1);
-    else
-        toConfigurationNewSingle::Instance().setOption(ToConfiguration::Database::InitialFetch, InitialFetch->value());
-
-    if (UnlimitedContent->isChecked())
-        toConfigurationNewSingle::Instance().setOption(ToConfiguration::Database::InitialEditorContent, -1);
-    else
-    {
-        int num = InitialFetch->value();
-        int maxnum = MaxContent->value();
-        if (num < 0)
-            maxnum = num;
-        else if (num >= maxnum)
-            maxnum = num + 1;
-        if (maxnum != MaxContent->text().toInt())
-            TOMessageBox::information(this, tr("Invalid values"),
-                                      tr("Doesn't make sense to have max content less than initial\n"
-                                         "fetch size. Will adjust value to be higher."),
-                                      tr("&Ok"));
-        toConfigurationNewSingle::Instance().setOption(ToConfiguration::Database::InitialEditorContent, maxnum);
-    }
-
-    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setMaxColDisp(MaxColDisp->value());
-
-//     toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setDontReread(DontReread->isChecked());
-
-//     toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setBkgndConnect(BkgndConnect->isChecked());
-//     toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setAutoLong(AutoLong->isChecked() ? MoveAfter->value() : 0);
-    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setIndicateEmpty(IndicateEmpty->isChecked());
-    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setIndicateEmptyColor(IndicateEmptyColor->palette().color(IndicateEmptyColor->backgroundRole()).name());
-//     toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setKeepAlive(KeepAlive->isChecked() ? DEFAULT_KEEP_ALIVE : -1); //FIXME: there was ""
-
-
-
-    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setNumberFormat(NumberFormat->currentIndex());
-    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setNumberDecimals(Decimals->value());
-    toQValue::setNumberFormat(NumberFormat->currentIndex(), Decimals->value());
-
-//     toUpdateIndicateEmpty();
-}
-
 toToolSetting::toToolSetting(QWidget *parent, const char *name, Qt::WFlags fl)
     : QWidget(parent/*, name, fl*/)
     , toSettingTab("toolsetting.html")
@@ -545,9 +413,9 @@ toToolSetting::toToolSetting(QWidget *parent, const char *name, Qt::WFlags fl)
     setupUi(this);
 
     Enabled->setSorting(0);
-    ToolsMap tMap(toConfigurationNewSingle::Instance().option(ToConfiguration::Tool::Tools());
-    for (ToolsRegistrySing::ObjectType::iterator i = ToolsRegistrySing::Instance().option(ToConfiguration::Database::begin();
-            i != ToolsRegistrySing::Instance().option(ToConfiguration::Database::end();
+    ToolsMap tMap(toConfigurationSingle::Instance().tools());
+    for (ToolsRegistrySing::ObjectType::iterator i = ToolsRegistrySing::Instance().begin();
+            i != ToolsRegistrySing::Instance().end();
             ++i)
     {
         toTool *pTool = i.value();
@@ -565,11 +433,11 @@ toToolSetting::toToolSetting(QWidget *parent, const char *name, Qt::WFlags fl)
 
     // set the default tool to prevent overvritting when
     // user does not change this combo box
-    QString defName(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::defaultTool());
+    QString defName(toConfigurationNewSingle::Instance().option(ToConfiguration::Main::DefaultTool).toString());
     int currIx = -1;
     if (!defName.isEmpty())
     {
-        toTool *def = ToolsRegistrySing::Instance().option(ToConfiguration::Database::value(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::defaultTool());
+        toTool *def = ToolsRegistrySing::Instance().value(toConfigurationNewSingle::Instance().option(ToConfiguration::Main::DefaultTool).toString());
         if (def)
             currIx = DefaultTool->findText(def->name());
     }
@@ -599,7 +467,7 @@ void toToolSetting::changeEnable(void)
 
 void toToolSetting::saveSetting(void)
 {
-    ToolsMap tMap(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::tools());
+    ToolsMap tMap(toConfigurationSingle::Instance().tools());
     for (QTreeWidgetItemIterator it(Enabled); (*it); it++)
     {
         tMap[(*it)->text(2)] = (*it)->isSelected();
@@ -608,8 +476,8 @@ void toToolSetting::saveSetting(void)
                 toConfigurationNewSingle::Instance().option(ToConfiguration::Global::globalSetConfig(str, (*it)->isSelected() ? "Yes" : "");
         */
         if (DefaultTool->currentText() == (*it)->text(0))
-            toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setDefaultTool((*it)->text(2));
+            toConfigurationNewSingle::Instance().setOption(ToConfiguration::Main::DefaultTool, (*it)->text(2));
 
     }
-    toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setTools(tMap);
+    toConfigurationSingle::Instance().setTools(tMap);
 }

@@ -383,11 +383,11 @@ void toConfiguration::setAutoCommit(bool v)
     d->m_autoCommit = v;
 }
 
-bool toConfiguration::changeConnection()
-{
-	Q_D(toConfiguration);
-    return d->m_changeConnection;
-}
+//bool toConfiguration::changeConnection()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_changeConnection;
+//}
 void toConfiguration::setChangeConnection(bool v)
 {
 	Q_D(toConfiguration);
@@ -493,26 +493,26 @@ void toConfiguration::setMultiLineResults(bool v)
     d->m_multiLineResults = v;
 }
 
-bool toConfiguration::colorizedConnections()
-{
-	Q_D(toConfiguration);
-    return d->m_colorizedConnections;
-}
-void toConfiguration::setColorizedConnections(bool v)
-{
-	Q_D(toConfiguration);
-    d->m_colorizedConnections = v;
-}
-ConnectionColors toConfiguration::connectionColors()
-{
-	Q_D(toConfiguration);
-    return d->m_connectionColors;
-}
-void toConfiguration::setConnectionColors(const ConnectionColors & v)
-{
-	Q_D(toConfiguration);
-    d->m_connectionColors = v;
-}
+//bool toConfiguration::colorizedConnections()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_colorizedConnections;
+//}
+//void toConfiguration::setColorizedConnections(bool v)
+//{
+//	Q_D(toConfiguration);
+//    d->m_colorizedConnections = v;
+//}
+//ConnectionColors toConfiguration::connectionColors()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_connectionColors;
+//}
+//void toConfiguration::setConnectionColors(const ConnectionColors & v)
+//{
+//	Q_D(toConfiguration);
+//    d->m_connectionColors = v;
+//}
 
 //toConfiguration::ObjectCacheEnum toConfiguration::objectCache()
 //{

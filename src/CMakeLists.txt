@@ -209,6 +209,7 @@ SET(TORA_MOC_CLASSES
   core/toeventqueryworker.h
   core/toglobalevent.h
   core/toglobalsetting.h
+  core/todatabasesetting.h
   core/tohelp.h
   core/tohelpsetup.h
   core/tolinechart.h
@@ -433,6 +434,7 @@ SET(TORA_SOURCES
   core/toextract.cpp  
   core/toglobalevent.cpp
   core/toglobalsetting.cpp
+  core/todatabasesetting.cpp
   core/tohelp.cpp
   core/tohelpsetup.cpp
   core/tohtml.cpp

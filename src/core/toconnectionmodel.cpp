@@ -34,7 +34,8 @@
 
 #include "core/toconnectionmodel.h"
 #include "core/tonewconnection.h"
-#include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
+#include "core/toglobalsetting.h"
 #include "core/utils.h"
 #include "core/tooracleconst.h"
 
@@ -179,7 +180,7 @@ QVariant toConnectionModel::data(const QModelIndex & index, int role) const
         }
         break;
     case Qt::DecorationRole:
-        if (index.column() == 1 && toConfigurationSingle::Instance().colorizedConnections())
+        if (index.column() == 1 && toConfigurationNewSingle::Instance().option(ToConfiguration::Global::ColorizedConnectionsBool).toBool())
             return Utils::connectionColorPixmap(opt.color);
         break;
     }

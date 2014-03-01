@@ -104,19 +104,19 @@ void toConfigurationPrivate::loadConfig()
 	m_messageStatusbar = s.value(CONF_MESSAGE_STATUSBAR, false).toBool();
 
 	m_colorizedConnections = s.value("ColorizedConnections", true).toBool();
-	cnt = s.beginReadArray("ConnectionColors");
-	for (int i = 0; i < cnt; ++i)
-	{
-		s.setArrayIndex(i);
-		m_connectionColors[s.value("key").toString()] = s.value("value").toString();
-	}
-	s.endArray();
-	if (m_connectionColors.empty())
-	{
-		m_connectionColors["#FF0000"] = "Production";
-		m_connectionColors["#00FF00"] = "Development";
-		m_connectionColors["#0000FF"] = "Testing";
-	}
+////	cnt = s.beginReadArray("ConnectionColors");
+////	for (int i = 0; i < cnt; ++i)
+////	{
+////		s.setArrayIndex(i);
+////		m_connectionColors[s.value("key").toString()] = s.value("value").toString();
+////	}
+////	s.endArray();
+////	if (m_connectionColors.empty())
+////	{
+////		m_connectionColors["#FF0000"] = "Production";
+////		m_connectionColors["#00FF00"] = "Development";
+////		m_connectionColors["#0000FF"] = "Testing";
+////	}
 	//  Options (2nd column)
 	m_cachedConnections = s.value("CachedConnections", 4).toInt();
 	m_statusMessage = s.value(CONF_STATUS_MESSAGE, DEFAULT_STATUS_MESSAGE).toInt();
@@ -386,15 +386,15 @@ void toConfigurationPrivate::saveConfig()
 	s.setValue(CONF_MULTI_LINE_RESULTS, m_multiLineResults);
 	s.setValue(CONF_MESSAGE_STATUSBAR, m_messageStatusbar);
 	s.setValue("ColorizedConnections", m_colorizedConnections);
-	s.beginWriteArray("ConnectionColors");
-	for (int i = 0; i < m_connectionColors.count(); ++i)
-	{
-		s.setArrayIndex(i);
-		key = m_connectionColors.keys().at(i);
-		s.setValue("key", key);
-		s.setValue("value", m_connectionColors[key]);
-	}
-	s.endArray();
+////	s.beginWriteArray("ConnectionColors");
+////	for (int i = 0; i < m_connectionColors.count(); ++i)
+////	{
+////		s.setArrayIndex(i);
+////		key = m_connectionColors.keys().at(i);
+////		s.setValue("key", key);
+////		s.setValue("value", m_connectionColors[key]);
+////	}
+////	s.endArray();
 	//  Options (2nd column)
 	s.setValue("CachedConnections", m_cachedConnections);
 	s.setValue(CONF_STATUS_MESSAGE, m_statusMessage);

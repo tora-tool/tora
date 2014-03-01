@@ -18,8 +18,6 @@ typedef QMap<QString, QString> ChartsMap;
 typedef QMapIterator<QString, QString> ChartsMapIterator;
 typedef QMap<QString, QString> TemplatesMap;
 typedef QMapIterator<QString, QString> TemplatesMapIterator;
-typedef QMap<QString, QString> ConnectionColors;
-typedef QMapIterator<QString, QString> ConnectionColorsIterator;
 
 class toConfigurationPrivate;
 class TORA_EXPORT toConfiguration: public QObject
@@ -236,11 +234,11 @@ public:
     bool multiLineResults();
     void setMultiLineResults(bool v);
 
-    bool colorizedConnections();
-    void setColorizedConnections(bool v);
+    ////bool colorizedConnections();
+    ////void setColorizedConnections(bool v);
 
-    ConnectionColors connectionColors();
-    void setConnectionColors(const ConnectionColors & v);
+    ////ConnectionColors connectionColors();
+    ///void setConnectionColors(const ConnectionColors & v);
 
     //ObjectCacheEnum objectCache();
     //void setObjectCache(ObjectCacheEnum v);

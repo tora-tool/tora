@@ -38,10 +38,27 @@
 #include "core/totool.h"
 #include "core/toconfenum.h"
 
-#include "ui_todatabasesettingui.h"
 #include "ui_toglobalsettingui.h"
 #include "ui_totoolsettingui.h"
 #include "ui_connectioncolorsdialogui.h"
+
+typedef QMap<QString, QString> ConnectionColors;
+typedef QMapIterator<QString, QString> ConnectionColorsIterator;
+
+class ConnectionColorsDialog : public QDialog, public Ui::ConnectionColorsDialog
+{
+    Q_OBJECT
+
+public:
+    ConnectionColorsDialog(QWidget * parent);
+
+private:
+    void newItem(const QString & color, const QString & desc);
+private slots:
+    void addItem();
+    void deleteItem();
+    void accept();
+};
 
 namespace ToConfiguration {
 	class Global : public ConfigContext
@@ -87,23 +104,6 @@ namespace ToConfiguration {
 	};
 };
 
-
-class ConnectionColorsDialog : public QDialog, public Ui::ConnectionColorsDialog
-{
-    Q_OBJECT
-
-public:
-    ConnectionColorsDialog(QWidget * parent);
-
-private:
-    void newItem(const QString & color, const QString & desc);
-private slots:
-    void addItem();
-    void deleteItem();
-    void accept();
-};
-
-
 class toGlobalSetting : public QWidget
     , public Ui::toGlobalSettingUI
     , public toSettingTab
@@ -128,21 +128,6 @@ public slots:
     void graphvizBrowse(void);
 
     void ColorizedConnectionsConfigure_clicked();
-};
-
-class toDatabaseSetting : public QWidget
-    , public Ui::toDatabaseSettingUI
-    , public toSettingTab
-{
-    Q_OBJECT;
-
-public:
-    toDatabaseSetting(QWidget *parent = 0, const char *name = 0, Qt::WFlags fl = 0);
-
-public slots:
-    virtual void saveSetting(void);
-    virtual void numberFormatChange();
-    virtual void IndicateEmptyColor_clicked();
 };
 
 class toToolSetting : public QWidget
