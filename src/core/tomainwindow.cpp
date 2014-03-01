@@ -51,7 +51,6 @@ QVariant Main::defaultValue(int option) const
 	case LastDir:       return QVariant(QString(""));
 	case Encoding:      return QVariant(QString("Default"));
 	case DefaultTool: 	return QVariant(QString(""));
-	case CacheTimeout: 	return QVariant((int)7);
 	case StatusSave: 	return QVariant((int)10);
 	case DontReread: 	return QVariant((bool)true);
 	case EditDragDrop: 	return QVariant((bool)false);

@@ -111,7 +111,7 @@ ConnectionColorsDialog::ConnectionColorsDialog(QWidget * parent)
 {
     setupUi(this);
 
-    ConnectionColorsIterator it(toConfigurationSingle::Instance().connectionColors());
+    ConnectionColorsIterator it(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::ColorizedConnectionsMap));
     while (it.hasNext())
     {
         it.next();
@@ -156,7 +156,7 @@ void ConnectionColorsDialog::accept()
         newMap[(*it)->text(2)] = (*it)->text(1);
         ++it;
     }
-    toConfigurationSingle::Instance().setConnectionColors(newMap);
+    toConfigurationNewSingle::Instance().setOption(ToConfiguration::Global::ColorizedConnectionsMap, newMap);
     QDialog::accept();
 }
 
@@ -174,9 +174,9 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     TabbedTools->setVisible(false);
 #endif
 
-	//CustomSQL->setText(toConfigurationSingle::Instance().customSQL());
-	//HelpDirectory->setText(toConfigurationSingle::Instance().helpDirectory());
-    //DefaultSession->setText(toConfigurationSingle::Instance().defaultSession());
+	//CustomSQL->setText(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::customSQL());
+	//HelpDirectory->setText(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::helpDirectory());
+    //DefaultSession->setText(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::defaultSession());
 	CacheDirectory->setText(toCache::cacheDir().absolutePath());
 #ifdef Q_OS_WIN
 	MysqlHomeDirectory->setEnabled(true);
@@ -186,27 +186,27 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     GraphvizHomeDirectory->setEnabled(true);
     GraphvizHomeBrowse->setEnabled(true);
 #endif
-    //OracleHomeDirectory->setText(toConfigurationSingle::Instance().oracleHome());
-    //MysqlHomeDirectory->setText(toConfigurationSingle::Instance().mysqlHome());
-    //PgsqlHomeDirectory->setText(toConfigurationSingle::Instance().pgsqlHome());
-    //GraphvizHomeDirectory->setText(toConfigurationSingle::Instance().graphvizHome());
+    //OracleHomeDirectory->setText(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::oracleHome());
+    //MysqlHomeDirectory->setText(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::mysqlHome());
+    //PgsqlHomeDirectory->setText(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::pgsqlHome());
+    //GraphvizHomeDirectory->setText(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::graphvizHome());
 
-    ChangeConnectionBool->setChecked(toConfigurationSingle::Instance().changeConnection());
-	//SavePasswordBool->setChecked(toConfigurationSingle::Instance().savePassword());
-    //IncludeDbCaptionBool->setChecked(toConfigurationSingle::Instance().includeDbCaption());
-    //RestoreSessionBool->setChecked(toConfigurationSingle::Instance().restoreSession());
-	//ToadBindingsBool->setChecked(toConfigurationSingle::Instance().toadBindings());
-	CacheDiskBool->setChecked(toConfigurationSingle::Instance().cacheDisk());
-    DisplayGridlinesBool->setChecked(toConfigurationSingle::Instance().displayGridlines());
-    MultiLineResultsBool->setChecked(toConfigurationSingle::Instance().multiLineResults());
-    MessageStatusbarBool->setChecked(toConfigurationSingle::Instance().messageStatusbar());
-    ColorizedConnectionsBool->setChecked(toConfigurationSingle::Instance().colorizedConnections());
+    ////ChangeConnectionBool->setChecked(ToConfiguration::Global::changeConnection());
+	//SavePasswordBool->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::savePassword());
+    //IncludeDbCaptionBool->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::includeDbCaption());
+    //RestoreSessionBool->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::restoreSession());
+	//ToadBindingsBool->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::toadBindings());
+	////CacheDiskBool->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::cacheDisk());
+    ////DisplayGridlinesBool->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::displayGridlines());
+    ////MultiLineResultsBool->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::multiLineResults());
+    ////MessageStatusbarBool->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::messageStatusbar());
+    ////ColorizedConnectionsBool->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::colorizedConnections());
     connect(ColorizedConnectionsMap, SIGNAL(clicked()),
             this, SLOT(ColorizedConnectionsConfigure_clicked()));
 
-    StatusMessageInt->setValue(toConfigurationSingle::Instance().statusMessage());
-    HistorySizeInt->setValue(toConfigurationSingle::Instance().historySize());
-    int samples = toConfigurationSingle::Instance().chartSamples();
+    ////StatusMessageInt->setValue(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::statusMessage());
+    ////HistorySizeInt->setValue(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::historySize());
+    int samples = toConfigurationNewSingle::Instance().option(ToConfiguration::Global::ChartSamplesInt).toInt();
     if (samples < 0)
     {
         UnlimitedSamples->setChecked(true);
@@ -214,7 +214,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     }
     else
         ChartSamplesInt->setValue(samples);
-    samples = toConfigurationSingle::Instance().displaySamples();
+    samples = toConfigurationNewSingle::Instance().option(ToConfiguration::Global::DisplaySamplesInt).toInt();
     if (samples < 0)
     {
         AllSamples->setChecked(true);
@@ -223,7 +223,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     else
         DisplaySamplesInt->setValue(samples);
     // SizeUnit
-    QString typ(toConfigurationSingle::Instance().sizeUnit());
+    QString typ(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::SizeUnit).toString());
     if (typ == "KB")
         SizeUnit->setCurrentIndex(1);
     else if (typ == "MB")
@@ -231,7 +231,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     // Refresh
     Utils::toRefreshCreate(OptionGroup, "toRefreshCreate", QString::null, RefreshIntervalInt);
     // DefaultFormat
-    DefaultListFormat->setCurrentIndex(toConfigurationSingle::Instance().defaultFormat());
+    DefaultListFormat->setCurrentIndex(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::DefaultListFormat).toInt());
     // style
     Style->addItems(Utils::toGetSessionTypes());
     QString str = Utils::toGetSessionType();
@@ -244,7 +244,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
         }
     }
     // Translation
-    Translation->setText(toConfigurationSingle::Instance().translation());
+    Translation->setText(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::Translation).toString());
 
     toSettingTab::loadSettings(this);
 }
@@ -364,45 +364,46 @@ void toGlobalSetting::ColorizedConnectionsConfigure_clicked()
 
 void toGlobalSetting::saveSetting(void)
 {
-	toConfigurationSingle::Instance().setCustomSQL(CustomSQL->text());
-    toConfigurationSingle::Instance().setHelpDirectory(HelpDirectory->text());
-    toConfigurationSingle::Instance().setDefaultSession(DefaultSession->text());
-    toConfigurationSingle::Instance().setCacheDir(CacheDirectory->text());
-    toConfigurationSingle::Instance().setOracleHome(OracleHomeDirectory->text());
-    toConfigurationSingle::Instance().setMysqlHome(MysqlHomeDirectory->text());
-    toConfigurationSingle::Instance().setPgsqlHome(PgsqlHomeDirectory->text());
-    toConfigurationSingle::Instance().setGraphvizHome(GraphvizHomeDirectory->text());
+	toSettingTab::saveSettings(this);
+	////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setCustomSQL(CustomSQL->text());
+    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setHelpDirectory(HelpDirectory->text());
+	////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setDefaultSession(DefaultSession->text());
+	////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setCacheDir(CacheDirectory->text());
+	////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setOracleHome(OracleHomeDirectory->text());
+	////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setMysqlHome(MysqlHomeDirectory->text());
+	////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setPgsqlHome(PgsqlHomeDirectory->text());
+	////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setGraphvizHome(GraphvizHomeDirectory->text());
 
-    toConfigurationSingle::Instance().setChangeConnection(ChangeConnectionBool->isChecked());
-    toConfigurationSingle::Instance().setSavePassword(SavePasswordBool->isChecked());
-    toConfigurationSingle::Instance().setIncludeDbCaption(IncludeDbCaptionBool->isChecked());
-    toConfigurationSingle::Instance().setRestoreSession(RestoreSessionBool->isChecked());
-    toConfigurationSingle::Instance().setToadBindings(ToadBindingsBool->isChecked());
-    toConfigurationSingle::Instance().setCacheDisk(CacheDiskBool->isChecked());
-    toConfigurationSingle::Instance().setDisplayGridlines(DisplayGridlinesBool->isChecked());
-    toConfigurationSingle::Instance().setMultiLineResults(MultiLineResultsBool->isChecked());
-    toConfigurationSingle::Instance().setMessageStatusbar(MessageStatusbarBool->isChecked());
-    toConfigurationSingle::Instance().setColorizedConnections(ColorizedConnectionsBool->isChecked());
+	////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setChangeConnection(ChangeConnectionBool->isChecked());
+	////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setSavePassword(SavePasswordBool->isChecked());
+	////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setIncludeDbCaption(IncludeDbCaptionBool->isChecked());
+	////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setRestoreSession(RestoreSessionBool->isChecked());
+	////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setToadBindings(ToadBindingsBool->isChecked());
+	////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setCacheDisk(CacheDiskBool->isChecked());
+	////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setDisplayGridlines(DisplayGridlinesBool->isChecked());
+	////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setMultiLineResults(MultiLineResultsBool->isChecked());
+	////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setMessageStatusbar(MessageStatusbarBool->isChecked());
+	////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setColorizedConnections(ColorizedConnectionsBool->isChecked());
 
-    toConfigurationSingle::Instance().setStatusMessage(StatusMessageInt->value());
-    toConfigurationSingle::Instance().setHistorySize(HistorySizeInt->value());
+    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setStatusMessage(StatusMessageInt->value());
+    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setHistorySize(HistorySizeInt->value());
 
     if (UnlimitedSamples->isChecked())
-        toConfigurationSingle::Instance().setChartSamples(-1);
+        toConfigurationNewSingle::Instance().setOption(ToConfiguration::Global::ChartSamplesInt, -1);
     else
-        toConfigurationSingle::Instance().setChartSamples(ChartSamplesInt->value());
+        toConfigurationNewSingle::Instance().setOption(ToConfiguration::Global::ChartSamplesInt, ChartSamplesInt->value());
 
     if (AllSamples->isChecked())
-        toConfigurationSingle::Instance().setDisplaySamples(-1);
+        toConfigurationNewSingle::Instance().setOption(ToConfiguration::Global::DisplaySamplesInt, -1);
     else
-        toConfigurationSingle::Instance().setDisplaySamples(DisplaySamplesInt->value());
+        toConfigurationNewSingle::Instance().setOption(ToConfiguration::Global::DisplaySamplesInt, DisplaySamplesInt->value());
 
-    toConfigurationSingle::Instance().setSizeUnit(SizeUnit->currentText());
-    toConfigurationSingle::Instance().setRefresh(RefreshIntervalInt->currentText());
-    toConfigurationSingle::Instance().setDefaultFormat(DefaultListFormat->currentIndex());
-    toConfigurationSingle::Instance().setStyle(Style->currentText());
+    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setSizeUnit(SizeUnit->currentText());
+    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setRefresh(RefreshIntervalInt->currentText());
+    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setDefaultFormat(DefaultListFormat->currentIndex());
+    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setStyle(Style->currentText());
     Utils::toSetSessionType(Style->currentText());
-    toConfigurationSingle::Instance().setTranslation(Translation->text());
+    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setTranslation(Translation->text());
 }
 
 void toDatabaseSetting::numberFormatChange()
@@ -432,14 +433,14 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent, const char *name, Qt::WFla
         setObjectName(name);
     setupUi(this);
 
-    MaxColDisp->setValue(toConfigurationSingle::Instance().maxColDisp());
-    int mxNumber = toConfigurationSingle::Instance().initialFetch();
+    MaxColDisp->setValue(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxColDisp).toInt());
+    int mxNumber = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxNumber).toInt();
     if (mxNumber <= 0)
         FetchAll->setChecked(true);
     else
         InitialFetch->setValue(mxNumber);
 
-    int mxContent = toConfigurationSingle::Instance().initialEditorContent();
+    int mxContent = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxContent).toInt();
     if (mxContent <= 0)
     {
         MaxContent->setValue(InitialFetch->value());
@@ -452,31 +453,31 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent, const char *name, Qt::WFla
 //     InitialFetch->setValidator(new QIntValidator(InitialFetch));
 //     MaxContent->setValidator(new QIntValidator(InitialFetch));q
 
-    //NumberFormat->setCurrentIndex(toConfigurationSingle::Instance().numberFormat());
+    //NumberFormat->setCurrentIndex(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::numberFormat());
 
-    //Decimals->setValue(toConfigurationSingle::Instance().numberDecimals());
+    //Decimals->setValue(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::numberDecimals());
     if (NumberFormat->currentIndex() == 2)
         Decimals->setEnabled(true);
 
-    //AutoCommit->setChecked(toConfigurationSingle::Instance().autoCommit());
-//     DontReread->setChecked(toConfigurationSingle::Instance().dontReread());
-    ObjectCache->setCurrentIndex(toConfigurationSingle::Instance().objectCache());
-//     BkgndConnect->setChecked(toConfigurationSingle::Instance().bkgndConnect());
-    //CachedConnections->setValue(toConfigurationSingle::Instance().cachedConnections());
-    IndicateEmpty->setChecked(toConfigurationSingle::Instance().indicateEmpty());
-    //FirewallMode->setChecked(toConfigurationSingle::Instance().firewallMode());
-    //ConnTestInterval->setValue(toConfigurationSingle::Instance().connTestInterval());
+    //AutoCommit->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::autoCommit());
+//     DontReread->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::dontReread());
+    ////ObjectCache->setCurrentIndex(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::objectCache());
+//     BkgndConnect->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::bkgndConnect());
+    //CachedConnections->setValue(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::cachedConnections());
+    ////IndicateEmpty->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::indicateEmpty());
+    //FirewallMode->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::firewallMode());
+    //ConnTestInterval->setValue(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::connTestInterval());
 
     QColor nullColor;
-    nullColor.setNamedColor(toConfigurationSingle::Instance().indicateEmptyColor());
+    nullColor.setNamedColor(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::indicateEmptyColor));
     QPalette palette = IndicateEmptyColor->palette();
     palette.setColor(IndicateEmptyColor->backgroundRole(), nullColor);
     IndicateEmptyColor->setPalette(palette);
 
-//     int val = toConfigurationSingle::Instance().autoLong();
+//     int val = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::autoLong();
 //     AutoLong->setChecked(val);
 //     MoveAfter->setValue(val);
-//     KeepAlive->setChecked(toConfigurationSingle::Instance().keepAlive());
+//     KeepAlive->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::keepAlive());
 
     connect(IndicateEmpty, SIGNAL(clicked(bool)),
             IndicateEmptyColor, SLOT(setEnabled(bool)));
@@ -486,21 +487,22 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent, const char *name, Qt::WFla
 
 void toDatabaseSetting::saveSetting(void)
 {
-    toConfigurationSingle::Instance().setObjectCache((toConfiguration::ObjectCacheEnum)ObjectCache->currentIndex());
+	toSettingTab::saveSettings(this);
+    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setObjectCache((toConfiguration::ObjectCacheEnum)ObjectCache->currentIndex());
 
-    toConfigurationSingle::Instance().setAutoCommit(AutoCommit->isChecked());
-    toConfigurationSingle::Instance().setFirewallMode(FirewallMode->isChecked());
-    toConfigurationSingle::Instance().setConnTestInterval(ConnTestInterval->value());
-    toConfigurationSingle::Instance().setCachedConnections(CachedConnections->value());
+    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setAutoCommit(AutoCommit->isChecked());
+    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setFirewallMode(FirewallMode->isChecked());
+    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setConnTestInterval(ConnTestInterval->value());
+    ///toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setCachedConnections(CachedConnections->value());
 
 
     if (FetchAll->isChecked())
-        toConfigurationSingle::Instance().setInitialFetch(-1);
+        toConfigurationNewSingle::Instance().setOption(ToConfiguration::Database::InitialFetch, -1);
     else
-        toConfigurationSingle::Instance().setInitialFetch(InitialFetch->value());
+        toConfigurationNewSingle::Instance().setOption(ToConfiguration::Database::InitialFetch, InitialFetch->value());
 
     if (UnlimitedContent->isChecked())
-        toConfigurationSingle::Instance().setInitialEditorContent(-1);
+        toConfigurationNewSingle::Instance().setOption(ToConfiguration::Database::InitialEditorContent, -1);
     else
     {
         int num = InitialFetch->value();
@@ -514,23 +516,23 @@ void toDatabaseSetting::saveSetting(void)
                                       tr("Doesn't make sense to have max content less than initial\n"
                                          "fetch size. Will adjust value to be higher."),
                                       tr("&Ok"));
-        toConfigurationSingle::Instance().setInitialEditorContent(maxnum);
+        toConfigurationNewSingle::Instance().setOption(ToConfiguration::Database::InitialEditorContent, maxnum);
     }
 
-    toConfigurationSingle::Instance().setMaxColDisp(MaxColDisp->value());
+    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setMaxColDisp(MaxColDisp->value());
 
-//     toConfigurationSingle::Instance().setDontReread(DontReread->isChecked());
+//     toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setDontReread(DontReread->isChecked());
 
-//     toConfigurationSingle::Instance().setBkgndConnect(BkgndConnect->isChecked());
-//     toConfigurationSingle::Instance().setAutoLong(AutoLong->isChecked() ? MoveAfter->value() : 0);
-    toConfigurationSingle::Instance().setIndicateEmpty(IndicateEmpty->isChecked());
-    toConfigurationSingle::Instance().setIndicateEmptyColor(IndicateEmptyColor->palette().color(IndicateEmptyColor->backgroundRole()).name());
-//     toConfigurationSingle::Instance().setKeepAlive(KeepAlive->isChecked() ? DEFAULT_KEEP_ALIVE : -1); //FIXME: there was ""
+//     toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setBkgndConnect(BkgndConnect->isChecked());
+//     toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setAutoLong(AutoLong->isChecked() ? MoveAfter->value() : 0);
+    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setIndicateEmpty(IndicateEmpty->isChecked());
+    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setIndicateEmptyColor(IndicateEmptyColor->palette().color(IndicateEmptyColor->backgroundRole()).name());
+//     toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setKeepAlive(KeepAlive->isChecked() ? DEFAULT_KEEP_ALIVE : -1); //FIXME: there was ""
 
 
 
-    toConfigurationSingle::Instance().setNumberFormat(NumberFormat->currentIndex());
-    toConfigurationSingle::Instance().setNumberDecimals(Decimals->value());
+    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setNumberFormat(NumberFormat->currentIndex());
+    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setNumberDecimals(Decimals->value());
     toQValue::setNumberFormat(NumberFormat->currentIndex(), Decimals->value());
 
 //     toUpdateIndicateEmpty();
@@ -543,9 +545,9 @@ toToolSetting::toToolSetting(QWidget *parent, const char *name, Qt::WFlags fl)
     setupUi(this);
 
     Enabled->setSorting(0);
-    ToolsMap tMap(toConfigurationSingle::Instance().tools());
-    for (ToolsRegistrySing::ObjectType::iterator i = ToolsRegistrySing::Instance().begin();
-            i != ToolsRegistrySing::Instance().end();
+    ToolsMap tMap(toConfigurationNewSingle::Instance().option(ToConfiguration::Tool::Tools());
+    for (ToolsRegistrySing::ObjectType::iterator i = ToolsRegistrySing::Instance().option(ToConfiguration::Database::begin();
+            i != ToolsRegistrySing::Instance().option(ToConfiguration::Database::end();
             ++i)
     {
         toTool *pTool = i.value();
@@ -563,11 +565,11 @@ toToolSetting::toToolSetting(QWidget *parent, const char *name, Qt::WFlags fl)
 
     // set the default tool to prevent overvritting when
     // user does not change this combo box
-    QString defName(toConfigurationSingle::Instance().defaultTool());
+    QString defName(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::defaultTool());
     int currIx = -1;
     if (!defName.isEmpty())
     {
-        toTool *def = ToolsRegistrySing::Instance().value(toConfigurationSingle::Instance().defaultTool());
+        toTool *def = ToolsRegistrySing::Instance().option(ToConfiguration::Database::value(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::defaultTool());
         if (def)
             currIx = DefaultTool->findText(def->name());
     }
@@ -597,17 +599,17 @@ void toToolSetting::changeEnable(void)
 
 void toToolSetting::saveSetting(void)
 {
-    ToolsMap tMap(toConfigurationSingle::Instance().tools());
+    ToolsMap tMap(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::tools());
     for (QTreeWidgetItemIterator it(Enabled); (*it); it++)
     {
         tMap[(*it)->text(2)] = (*it)->isSelected();
         /*        QString str = (*it)->text(2).toLatin1();
                 str += CONF_TOOL_ENABLE;
-                toConfigurationSingle::Instance().globalSetConfig(str, (*it)->isSelected() ? "Yes" : "");
+                toConfigurationNewSingle::Instance().option(ToConfiguration::Global::globalSetConfig(str, (*it)->isSelected() ? "Yes" : "");
         */
         if (DefaultTool->currentText() == (*it)->text(0))
-            toConfigurationSingle::Instance().setDefaultTool((*it)->text(2));
+            toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setDefaultTool((*it)->text(2));
 
     }
-    toConfigurationSingle::Instance().setTools(tMap);
+    toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setTools(tMap);
 }

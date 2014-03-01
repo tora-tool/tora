@@ -60,7 +60,6 @@ namespace ToConfiguration
 			, LastDir            // #define CONF_LAST_DIR
 			, Encoding           // #define CONF_ENCODING
 			, DefaultTool        // #define CONF_DEFAULT_TOOL
-			, CacheTimeout       // #define CONF_CACHE_TIMEOUT
 			, StatusSave         // #define CONF_STATUS_SAVE (Message history size)
 			, DontReread         // #define CONF_DONT_REREAD
 			, EditDragDrop       // #define CONF_EDIT_DRAG_DROP (toScintilla)

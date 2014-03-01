@@ -306,11 +306,11 @@ void toConfiguration::setObjectNamesUpper(bool v)
     d->m_objectNamesUpper = v;
 }
 
-QString toConfiguration::cacheDir()
-{
-	Q_D(toConfiguration);
-    return d->m_cacheDir;
-}
+//QString toConfiguration::cacheDir()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_cacheDir;
+//}
 void toConfiguration::setCacheDir(const QString & v)
 {
 	Q_D(toConfiguration);
@@ -514,16 +514,16 @@ void toConfiguration::setConnectionColors(const ConnectionColors & v)
     d->m_connectionColors = v;
 }
 
-toConfiguration::ObjectCacheEnum toConfiguration::objectCache()
-{
-	Q_D(toConfiguration);
-    return d->m_objectCache;
-}
-void toConfiguration::setObjectCache(toConfiguration::ObjectCacheEnum v)
-{
-	Q_D(toConfiguration);
-    d->m_objectCache = v;
-}
+//toConfiguration::ObjectCacheEnum toConfiguration::objectCache()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_objectCache;
+//}
+//void toConfiguration::setObjectCache(toConfiguration::ObjectCacheEnum v)
+//{
+//	Q_D(toConfiguration);
+//    d->m_objectCache = v;
+//}
 
 //bool toConfiguration::firewallMode()
 //{
@@ -558,22 +558,22 @@ void toConfiguration::setInitialEditorContent(int v)
     d->m_initialEditorContent = v;
 }
 
-bool toConfiguration::keepPlans()
-{
-	Q_D(toConfiguration);
-    return d->m_keepPlans;
-}
+//bool toConfiguration::keepPlans()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_keepPlans;
+//}
 void toConfiguration::setKeepPlans(bool v)
 {
 	Q_D(toConfiguration);
     d->m_keepPlans = v;
 }
 
-bool toConfiguration::vsqlPlans()
-{
-	Q_D(toConfiguration);
-    return d->m_vsqlPlans;
-}
+//bool toConfiguration::vsqlPlans()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_vsqlPlans;
+//}
 void toConfiguration::setVsqlPlans(bool v)
 {
 	Q_D(toConfiguration);

@@ -75,7 +75,7 @@ public:
     //    QString m_syntaxStaticBg;
 
     // Database
-    toConfiguration::ObjectCacheEnum m_objectCache;
+    ////toConfiguration::ObjectCacheEnum m_objectCache;
     bool    m_autoCommit;
     bool    m_firewallMode;
     int     m_connTestInterval;

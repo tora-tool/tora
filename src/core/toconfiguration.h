@@ -29,7 +29,7 @@ class TORA_EXPORT toConfiguration: public QObject
     /* This enum represents various states from ObjectCache comboBox
      * database settings gui(see todatabasesettingui.ui).
      */
-	Q_ENUMS(ObjectCacheEnum)
+	//Q_ENUMS(ObjectCacheEnum)
 
 	/*
 	// Global Settings
@@ -102,13 +102,13 @@ public:
     toConfiguration(QObject *parent = 0);
     ~toConfiguration();
 
-    enum ObjectCacheEnum
-    {
-        WHEN_NEEDED = 0,
-        ON_CONNECT = 1,
-        UNTIL_MANDATORY = 2,
-        NEVER = 3
-    };
+    //    enum ObjectCacheEnum
+    //    {
+    //        WHEN_NEEDED = 0,
+    //        ON_CONNECT = 1,
+    //        UNTIL_MANDATORY = 2,
+    //        NEVER = 3
+    //    };
 
     /*! \brief Set the QSettings access strings.
     QSettings uses these. It's used in the main.cpp before
@@ -203,7 +203,7 @@ public:
     bool autoCommit();
     void setAutoCommit(bool v);
 
-    bool changeConnection();
+    //bool changeConnection();
     void setChangeConnection(bool v);
 
     int connectSize();
@@ -242,8 +242,8 @@ public:
     ConnectionColors connectionColors();
     void setConnectionColors(const ConnectionColors & v);
 
-    ObjectCacheEnum objectCache();
-    void setObjectCache(ObjectCacheEnum v);
+    //ObjectCacheEnum objectCache();
+    //void setObjectCache(ObjectCacheEnum v);
 
     //bool firewallMode();
     void setFirewallMode(bool v);

@@ -42,7 +42,6 @@
 #include "core/toqvalue.h"
 #include "core/toquery.h"
 #include "core/totool.h"
-#include "core/toconfiguration.h"
 #include "core/toconfiguration_new.h"
 #include "core/toconnectionprovider.h"
 #include "core/toworkspace.h"
@@ -54,6 +53,7 @@ QVariant ToConfiguration::Database::defaultValue(int option) const
 	switch(option)
 	{
 	case ObjectCache:              return QVariant((int)1);
+	case CacheTimeout: 	           return QVariant((int)7);
 	case AutoCommit:               return QVariant((bool)false);
 	case FirewallMode:             return QVariant((bool)false);
 	case ConnectionTestInterval:   return QVariant((int)900);     //15min
@@ -104,7 +104,7 @@ toConnection::toConnection(const QString &provider,
     ////Version = connSub->version();
     {
         QMutexLocker clock(&ConnectionLock);
-        if (toConfigurationSingle::Instance().objectCache() == toConfiguration::ON_CONNECT)
+        if (toConfigurationNewSingle::Instance().option(ToConfiguration::Database::ObjectCache).toInt() == toCache::ON_CONNECT)
         	pCache->readCache();
 
     }
@@ -139,7 +139,7 @@ toConnection::toConnection(const toConnectionOptions &opts)
     ////Version = connSub->version();
     {
         QMutexLocker clock(&ConnectionLock);
-        if (toConfigurationSingle::Instance().objectCache() == toConfiguration::ON_CONNECT)
+        if (toConfigurationNewSingle::Instance().option(ToConfiguration::Database::ObjectCache) == toCache::ON_CONNECT)
         	pCache->readCache();
 
     }

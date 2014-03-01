@@ -71,6 +71,7 @@ namespace ToConfiguration {
 		Database() : ConfigContext("Database", ENUM_REF(Database,OptionTypeEnum)) {};
 		enum OptionTypeEnum {
 			ObjectCache   = 4000  // #define CONF_OBJECT_CACHE
+			, CacheTimeout        // #define CONF_CACHE_TIMEOUT
 			, AutoCommit          // #define CONF_AUTO_COMMIT
 			, FirewallMode        // #define CONF_FIREWALL_MODE
 			, ConnectionTestInterval // #define CONF_CONN_TEST_INTERVAL

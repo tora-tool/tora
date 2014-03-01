@@ -155,7 +155,7 @@ void toConfigurationPrivate::loadConfig()
 	m_autoIndent = s.value(CONF_AUTO_INDENT, true).toBool();
 	m_dontReread = s.value(CONF_DONT_REREAD, true).toBool();
 
-	m_objectCache = (toConfiguration::ObjectCacheEnum)s.value(CONF_OBJECT_CACHE, DEFAULT_OBJECT_CACHE).toInt();
+	////m_objectCache = (toConfiguration::ObjectCacheEnum)s.value(CONF_OBJECT_CACHE, DEFAULT_OBJECT_CACHE).toInt();
 	m_firewallMode = s.value(CONF_FIREWALL_MODE, false).toBool();
 	m_connTestInterval = s.value(CONF_CONN_TEST_INTERVAL, DEFAULT_CONN_TEST_INTERVAL).toInt();
 	m_initialEditorContent = s.value(CONF_MAX_CONTENT, DEFAULT_MAX_CONTENT).toInt();
@@ -429,7 +429,7 @@ void toConfigurationPrivate::saveConfig()
 	s.setValue(CONF_TAB_SPACES, m_useSpacesForIndent);
 
 	// Database settings
-	s.setValue(CONF_OBJECT_CACHE, m_objectCache);
+	////s.setValue(CONF_OBJECT_CACHE, m_objectCache);
 	s.setValue(CONF_AUTO_COMMIT, m_autoCommit);
 	s.setValue(CONF_FIREWALL_MODE, m_firewallMode);
 	s.setValue(CONF_CONN_TEST_INTERVAL, m_connTestInterval);

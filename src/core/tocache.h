@@ -115,6 +115,13 @@ class TORA_EXPORT toCache : public QObject
     friend class toCacheWorker;
 public:
     /*** Nested types ***/
+    enum ObjectCacheEnum
+    {
+        WHEN_NEEDED = 0,
+        ON_CONNECT = 1,
+        UNTIL_MANDATORY = 2,
+        NEVER = 3
+    };
 
     /** Object reference, used as a lookup key
     */
