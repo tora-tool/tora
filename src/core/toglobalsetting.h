@@ -43,7 +43,6 @@
 #include "ui_connectioncolorsdialogui.h"
 
 typedef QMap<QString, QString> ConnectionColors;
-typedef QMapIterator<QString, QString> ConnectionColorsIterator;
 
 class ConnectionColorsDialog : public QDialog, public Ui::ConnectionColorsDialog
 {

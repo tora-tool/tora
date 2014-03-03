@@ -4837,7 +4837,7 @@ void toOracleExtract::createTableContents(toExtract &ext,
         toQColumnDescriptionList desc = query.describe();
         int cols = query.columns();
         bool first = true;
-        QString dateformat(toConfigurationSingle::Instance().dateFormat());
+        QString dateformat(toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::ConfDateFormat).toString());
 
         QString beg = QString("INSERT INTO %1%2 (").arg(schema).arg(QUOTE(name));
         bool *dates = new bool[desc.size()];

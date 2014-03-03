@@ -40,6 +40,7 @@
 #include "core/tomainwindow.h"
 #include "core/tocache.h"
 #include "core/toqvalue.h"
+#include "ts_log/ts_log_utils.h"
 
 #include <QtGui/QColorDialog>
 #include <QtCore/QString>
@@ -102,6 +103,9 @@ QVariant ToConfiguration::Global::defaultValue(int option) const
 	case DefaultListFormat:		return QVariant((int)0);
 	case Style:			return QVariant(QString(""));
 	case Translation:		return QVariant(QLocale().name());
+	default:
+		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Editor un-registered enum value: %1").arg(option)));
+		return QVariant();
 	}
 };
 
@@ -111,11 +115,12 @@ ConnectionColorsDialog::ConnectionColorsDialog(QWidget * parent)
 {
     setupUi(this);
 
-    ConnectionColorsIterator it(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::ColorizedConnectionsMap).toMap().begin());
+    const QMap<QString, QVariant> ColorsMap(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::ColorizedConnectionsMap).toMap());
+    QMapIterator<QString, QVariant> it(ColorsMap);
     while (it.hasNext())
     {
         it.next();
-        newItem(it.key(), it.value());
+        newItem(it.key(), it.value().toString());
     }
     treeWidget->hideColumn(2);
 
@@ -413,7 +418,8 @@ toToolSetting::toToolSetting(QWidget *parent, const char *name, Qt::WFlags fl)
     setupUi(this);
 
     Enabled->setSorting(0);
-    ToolsMap tMap(toConfigurationSingle::Instance().tools());
+    QMap<QString, QVariant> tMap = toConfigurationNewSingle::Instance().option(ToConfiguration::Main::ToolsMap).toMap();
+    // loop over all registered tool names and check if they are enabled
     for (ToolsRegistrySing::ObjectType::iterator i = ToolsRegistrySing::Instance().begin();
             i != ToolsRegistrySing::Instance().end();
             ++i)
@@ -427,11 +433,11 @@ toToolSetting::toToolSetting(QWidget *parent, const char *name, Qt::WFlags fl)
                     menuName,
                     pTool->name(),
                     i.key());
-            item->setSelected(tMap[i.key()]);
+            item->setSelected(tMap[i.key()].toBool());
         }
     }
 
-    // set the default tool to prevent overvritting when
+    // set the default tool to prevent overwriting when
     // user does not change this combo box
     QString defName(toConfigurationNewSingle::Instance().option(ToConfiguration::Main::DefaultTool).toString());
     int currIx = -1;
@@ -467,17 +473,14 @@ void toToolSetting::changeEnable(void)
 
 void toToolSetting::saveSetting(void)
 {
-    ToolsMap tMap(toConfigurationSingle::Instance().tools());
+    QMap<QString, QVariant> tMap = toConfigurationNewSingle::Instance().option(ToConfiguration::Main::ToolsMap).toMap();
     for (QTreeWidgetItemIterator it(Enabled); (*it); it++)
     {
         tMap[(*it)->text(2)] = (*it)->isSelected();
-        /*        QString str = (*it)->text(2).toLatin1();
-                str += CONF_TOOL_ENABLE;
-                toConfigurationNewSingle::Instance().option(ToConfiguration::Global::globalSetConfig(str, (*it)->isSelected() ? "Yes" : "");
-        */
         if (DefaultTool->currentText() == (*it)->text(0))
             toConfigurationNewSingle::Instance().setOption(ToConfiguration::Main::DefaultTool, (*it)->text(2));
 
     }
-    toConfigurationSingle::Instance().setTools(tMap);
+    //toSettingTab::saveSettings(this);
+    toConfigurationNewSingle::Instance().setOption(ToConfiguration::Main::ToolsMap, tMap);
 }

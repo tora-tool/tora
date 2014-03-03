@@ -68,11 +68,12 @@ toNewConnection::toNewConnection(QWidget* parent, Qt::WFlags fl)
     setupUi(this);
 
     colorComboBox->addItem("None", "");
-    ConnectionColorsIterator it(toConfigurationSingle::Instance().connectionColors());
+    const QMap<QString, QVariant> ColorsMap(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::ColorizedConnectionsMap).toMap());
+    QMapIterator<QString, QVariant> it(ColorsMap);
     while (it.hasNext())
     {
         it.next();
-        colorComboBox->addItem(Utils::connectionColorPixmap(it.key()), it.value(), it.key());
+        colorComboBox->addItem(Utils::connectionColorPixmap(it.key()), it.value().toString(), it.key());
     }
 
     toHelp::connectDialog(this);

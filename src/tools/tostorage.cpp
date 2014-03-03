@@ -42,7 +42,7 @@
 #include "core/tohelp.h"
 #include "core/tomemoeditor.h"
 #include "core/toglobalevent.h"
-#include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
 
 #include <QtGui/QTableView>
 #include <QtGui/QToolBar>
@@ -93,19 +93,20 @@ toStoragePrefs::toStoragePrefs(toTool *tool, QWidget* parent, const char* name)
     : QWidget(parent), toSettingTab("storage.html"), Tool(tool)
 {
     setupUi(this);
-
-    DispCoalesced->setChecked(toConfigurationSingle::Instance().dispCoalesced());
-    DispExtents->setChecked(toConfigurationSingle::Instance().dispExtents());
-    DispTablespaces->setChecked(toConfigurationSingle::Instance().dispTablespaces());
-    DispAvailableGraph->setChecked(toConfigurationSingle::Instance().dispAvailableGraph());
+    toSettingTab::loadSettings(this);
+    //DispCoalesced->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Storage::DispCoalesced).toBool());
+    //DispExtents->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Storage::DispExtents).toBool());
+    //DispTablespaces->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Storage::DispTablespaces).toBool());
+    //DispAvailableGraph->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Storage::AvailableGraph).toBool());
 }
 
 void toStoragePrefs::saveSetting(void)
 {
-    toConfigurationSingle::Instance().setDispCoalesced(DispCoalesced->isChecked());
-    toConfigurationSingle::Instance().setDispExtents(DispExtents->isChecked());
-    toConfigurationSingle::Instance().setDispTablespaces(DispTablespaces->isChecked());
-    toConfigurationSingle::Instance().setDispAvailableGraph(DispAvailableGraph->isChecked());
+    //toConfigurationNewSingle::Instance().setDispCoalesced(DispCoalesced->isChecked());
+    //toConfigurationNewSingle::Instance().setDispExtents(DispExtents->isChecked());
+    //toConfigurationNewSingle::Instance().setDispTablespaces(DispTablespaces->isChecked());
+    //toConfigurationNewSingle::Instance().setDispAvailableGraph(DispAvailableGraph->isChecked());
+	toSettingTab::saveSettings(this);
 }
 
 class toStorageTool : public toTool
@@ -836,7 +837,7 @@ toStorage::toStorage(QWidget *main, toConnection &connection)
     ExtentAct = new QAction(QPixmap(const_cast<const char**>(storageextents_xpm)),
                             tr("Show extent view."), this);
     ExtentAct->setCheckable(true);
-    bool extents = toConfigurationSingle::Instance().dispExtents();
+    bool extents = toConfigurationNewSingle::Instance().option(ToConfiguration::Storage::DispExtents).toBool();
     if (extents)
         ExtentAct->setChecked(true);
     toolbar->addAction(ExtentAct);
@@ -846,7 +847,7 @@ toStorage::toStorage(QWidget *main, toConnection &connection)
     TablespaceAct = new QAction(QPixmap(const_cast<const char**>(tostorage_xpm)),
                                 tr("Show tablespaces or just datafiles."), this);
     TablespaceAct->setCheckable(true);
-    bool tablespaces = toConfigurationNewSingle::Instance().dispTablespaces();
+    bool tablespaces = toConfigurationNewSingle::Instance().option(ToConfiguration::Storage::DispTablespaces).toBool();
     if (tablespaces)
         TablespaceAct->setChecked(true);
     toolbar->addAction(TablespaceAct);
@@ -938,7 +939,7 @@ toStorage::toStorage(QWidget *main, toConnection &connection)
     splitter->setChildrenCollapsible(false);
     layout()->addWidget(splitter);
 
-    Storage = new toResultStorage(toConfigurationSingle::Instance().dispAvailableGraph(),
+    Storage = new toResultStorage(toConfigurationNewSingle::Instance().option(ToConfiguration::Storage::AvailableGraph).toBool(),
                                   splitter);
     ExtentParent = new QSplitter(Qt::Horizontal, splitter);
     Objects = new QTableView(ExtentParent);
@@ -1027,7 +1028,7 @@ void toStorage::slotWindowActivated(toToolWidget* widget)
 
 void toStorage::refresh(void)
 {
-    Storage->showCoalesced(toConfigurationSingle::Instance().dispCoalesced());
+    Storage->showCoalesced(toConfigurationNewSingle::Instance().option(ToConfiguration::Storage::DispCoalesced).toBool());
     Storage->query("", toQueryParams());
 }
 

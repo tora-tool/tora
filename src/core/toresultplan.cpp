@@ -36,7 +36,8 @@
 #include "core/utils.h"
 #include "core/toeventquery.h"
 #include "core/toresultcombo.h"
-#include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
+#include "connection/tooraclesetting.h"
 //#include "core/tosqlparse.h"
 
 toResultPlan::toResultPlan(QWidget *parent, const char *name)
@@ -162,7 +163,7 @@ void toResultPlan::connectSlotsAndStart()
 //
 //    Ident = QString::fromLatin1("TOra ") + QString::number((int)time(NULL) + rand());
 //
-//    QString planTable(toConfigurationSingle::Instance().planTable(conn.user()));
+//    QString planTable(toConfigurationNewSingle::Instance().planTable(conn.user()));
 //
 //    QString sql = Utils::toShift(Statements);
 //    if (sql.isNull())
@@ -202,7 +203,7 @@ void toResultPlan::connectSlotsAndStart()
 //        Query = new toEventQuery(this
 //        		                 , conn
 //                                 , toSQL::string(SQLViewPlan, conn).
-//                                   // arg(toConfigurationSingle::Instance().planTable()).
+//                                   // arg(toConfigurationNewSingle::Instance().planTable()).
 //                                   // Since EXPLAIN PLAN is always to conn.user() plan_table
 //                                   arg(explain).arg(Ident)
 //								 , toQueryParams()
@@ -307,7 +308,7 @@ void toResultPlan::query(const QString &sql, toQueryParams const& param)
             Ident = sql.mid(6);
             TopItem = new toResultViewItem(this, NULL, QString::fromLatin1("DML"));
             TopItem->setText(1, QString::fromLatin1("Saved plan"));
-        	QString planTable(toConfigurationSingle::Instance().planTable(connection().user()));
+        	QString planTable = ToConfiguration::Oracle::planTable(connection().user());
             Query = new toEventQuery(this
 				                     , connection()
 				                     // NOTE: this is special case - plan table is defined as %1. table name can not use bind variable place holder
@@ -351,7 +352,7 @@ void toResultPlan::query(const QString &sql, toQueryParams const& param)
             TopItem = new toResultViewItem(this, NULL, QString::fromLatin1("EXPLAIN PLAN:"));
             TopItem->setText(1, sql.left(50).trimmed());
 
-            QString planTable(toConfigurationSingle::Instance().planTable(conn.user()));
+        	QString planTable = ToConfiguration::Oracle::planTable(connection().user());
 
             QString explain = QString::fromLatin1("EXPLAIN PLAN SET STATEMENT_ID = '%1' INTO %2 FOR %3").
                               arg(Ident).
@@ -553,10 +554,10 @@ void toResultPlan::slotQueryDone()
         Query = new toEventQuery(this
         		                 , LockedConnection
         		                 , toSQL::string(SQLViewPlan, conn).
-                                 // arg(toConfigurationSingle::Instance().planTable()).
+                                 // arg(toConfigurationNewSingle::Instance().planTable()).
                                  // Since EXPLAIN PLAN is always to conn.user() plan_table
                                  // and current_schema can be different
-                                 arg(toConfigurationSingle::Instance().planTable(conn.user())).
+                                 arg(ToConfiguration::Oracle::planTable(conn.user())).
                                  arg(Ident)
                                  , toQueryParams()
                                  , toEventQuery::READ_ALL);
@@ -571,7 +572,7 @@ void toResultPlan::slotQueryDone()
         //if (!sql().startsWith(QString::fromLatin1("SAVED:")))
         //{
         //	Utils::toStatusMessage("Not implemented yet toResultPlan::queryDone");
-        //    //if (!toConfigurationSingle::Instance().keepPlans())
+        //    //if (!toConfigurationNewSingle::Instance().keepPlans())
         //    //    connection().execute(QString::fromLatin1("ROLLBACK TO SAVEPOINT %1").arg(chkPoint));
         //    //else
         //    //    toMainWidget()->setNeedCommit(connection());
@@ -592,7 +593,7 @@ void toResultPlan::checkException(const QString &str)
     {
         if (str.contains(QString::fromLatin1("ORA-02404")))
         {
-            QString planTable(toConfigurationSingle::Instance().planTable(connection().user()));
+        	QString planTable = ToConfiguration::Oracle::planTable(connection().user());
 
             // if shared plan table does not exist, do not try to create it
             if(toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::SharedPlan).toBool())

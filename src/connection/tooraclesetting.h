@@ -71,6 +71,7 @@ namespace ToConfiguration
 			, IncludePrompt        // #define CONF_EXT_INC_PROMPT
 		};
 		virtual QVariant defaultValue(int option) const;
+		static QString planTable(QString const& schema);
 	};
 };
 

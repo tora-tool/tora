@@ -190,7 +190,7 @@ void toConfigurationPrivate::loadConfig()
 	for (int i = 0; i < cnt; ++i)
 	{
 		s.setArrayIndex(i);
-		m_tools[s.value("ToolName").toString()] = s.value("Enabled").toBool();
+		//m_tools[s.value("ToolName").toString()] = s.value("Enabled").toBool();
 	}
 	s.endArray();
 	// toresultlistformat
@@ -472,13 +472,13 @@ void toConfigurationPrivate::saveConfig()
 
 	// tools
 	s.beginWriteArray(CONF_TOOLS);
-	for (int i = 0; i < m_tools.count(); ++i)
-	{
-		s.setArrayIndex(i);
-		key = m_tools.keys().at(i);
-		s.setValue("ToolName", key);
-		s.setValue("Enabled", m_tools[key]);
-	}
+	//for (int i = 0; i < m_tools.count(); ++i)
+	//{
+	//	s.setArrayIndex(i);
+	//	key = m_tools.keys().at(i);
+	//	s.setValue("ToolName", key);
+	//	s.setValue("Enabled", m_tools[key]);
+	//}
 	s.endArray();
 
 	// toresultlistformat

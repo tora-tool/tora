@@ -874,16 +874,16 @@ void toConfiguration::setRecentFiles(QStringList v)
     d->m_recentFiles = v;
 }
 // tools
-ToolsMap& toConfiguration::tools()
-{
-	Q_D(toConfiguration);
-    return d->m_tools;
-}
-void toConfiguration::setTools(ToolsMap &v)
-{
-	Q_D(toConfiguration);
-    d->m_tools = v;
-}
+//ToolsMap& toConfiguration::tools()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_tools;
+//}
+//void toConfiguration::setTools(ToolsMap &v)
+//{
+//	Q_D(toConfiguration);
+//    d->m_tools = v;
+//}
 
 // toresultlistformat
 //QString toConfiguration::csvSeparator()

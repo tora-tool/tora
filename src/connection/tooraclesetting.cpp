@@ -66,21 +66,33 @@ QVariant ToConfiguration::Oracle::defaultValue(int option) const
 	}
 }
 
+QString ToConfiguration::Oracle::planTable(QString const& schema)
+{
+	bool sharedPlan = toConfigurationNewSingle::Instance().option(SharedPlan).toBool();
+	QString planTable = toConfigurationNewSingle::Instance().option(PlanTable).toString();
+
+    if(sharedPlan || planTable.contains('.') || schema.isNull())
+        return PlanTable;
+
+    return schema + '.' + planTable;
+}
+
 toOracleSetting::toOracleSetting(QWidget *parent)
     : QWidget(parent)
     , toSettingTab("database.html#oracle")
 {
 
     setupUi(this);
-    DefaultDate->setText(toConfigurationSingle::Instance().dateFormat());
-    DefaultTimestamp->setText(toConfigurationSingle::Instance().timestampFormat());
+    //DefaultDate->setText(toConfigurationSingle::Instance().dateFormat());
+    //DefaultTimestamp->setText(toConfigurationSingle::Instance().timestampFormat());
     //CheckPoint->setText(toConfigurationSingle::Instance().planCheckpoint());
-    ExplainPlan->setText(toConfigurationSingle::Instance().planTable(NULL));
+    //ExplainPlan->setText(toConfigurationSingle::Instance().planTable(NULL));
     //OpenCursors->setValue(toConfigurationSingle::Instance().openCursors());
     //KeepPlans->setChecked(toConfigurationSingle::Instance().keepPlans());
     //VsqlPlans->setChecked(toConfigurationSingle::Instance().vsqlPlans());
     //SharedPlan->setChecked(toConfigurationSingle::Instance().sharedPlan());
-    int len = toConfigurationSingle::Instance().maxLong();
+    //int len = toConfigurationSingle::Instance().maxLong();
+    int len = toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::MaxLong).toInt();
     if (len >= 0)
     {
         MaxLong->setText(QString::number(len));

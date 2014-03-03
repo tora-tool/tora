@@ -40,7 +40,8 @@
 #include "core/toresulttableview.h"
 #include "core/toresultplan.h"
 #include "tools/toworksheetstatistic.h"
-#include "core/toconfiguration.h"
+//#include "core/toconfiguration_new.h"
+#include "connection/tooraclesetting.h"
 
 #include <QtGui/QComboBox>
 #include <QtGui/QSpinBox>
@@ -373,7 +374,7 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
         Plans = new toResultTableView(false, false, splitter);
         try
         {
-            Plans->query(toSQL::string(SQLListPlans, connection).arg(toConfigurationSingle::Instance().planTable(connection.user())), toQueryParams());
+            Plans->query(toSQL::string(SQLListPlans, connection).arg(ToConfiguration::Oracle::planTable(connection.user())), toQueryParams());
         }
         TOCATCH;
 

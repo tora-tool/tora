@@ -40,6 +40,7 @@
 #include "core/tomainwindow.h"
 #include "core/tocache.h"
 #include "core/toqvalue.h"
+#include "core/toconnection.h"
 
 #include <QtGui/QColorDialog>
 #include <QtCore/QString>

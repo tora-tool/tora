@@ -11,7 +11,6 @@
 #include <QtCore/QVariant>
 #include <QtGui/QApplication>
 
-typedef QMap<QString, bool> ToolsMap;
 typedef QMap<QString, QString> HelpsMap;
 typedef QMapIterator<QString, QString> HelpsMapIterator;
 typedef QMap<QString, QString> ChartsMap;
@@ -367,8 +366,8 @@ public:
     QByteArray rightDockbarState();
 
     // tools
-    ToolsMap& tools();
-    void setTools(ToolsMap &v);
+//    ToolsMap& tools();
+//    void setTools(ToolsMap &v);
 
     // toresultlistformat
     //QString csvSeparator();

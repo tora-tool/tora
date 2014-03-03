@@ -159,7 +159,7 @@ void toConnectionWidget::setConnection(toConnection &conn)
     Connection = &conn;               // 1st change "registration" to toConnection
 	oldConnection->delWidget(Widget); // then notify old connection about the change
     Connection->addWidget(Widget);
-    if (toConfigurationSingle::Instance().changeConnection())
+    if (toConfigurationNewSingle::Instance().option(ToConfiguration::Global::ChangeConnectionBool).toBool())
     	toConnectionRegistrySing::Instance().changeConnection(conn);
 }
 
@@ -385,7 +385,7 @@ void toToolWidget::setVisible(bool visible)
 
 void toToolWidget::toolActivated(toToolWidget *tool)
 {
-	if (tool == this && toConfigurationSingle::Instance().changeConnection())
+	if (tool == this && toConfigurationNewSingle::Instance().option(ToConfiguration::Global::ChangeConnectionBool).toBool())
 		toConnectionRegistrySing::Instance().changeConnection(connection());
 }
 
@@ -508,7 +508,7 @@ QToolBar* toToolsRegistry::toolsToolbar(QToolBar *toolbar) const
     try
     {
         int lastPriorityPix = 0;
-        ToolsMap &cfgTools = toConfigurationSingle::Instance().tools();
+        QMap<QString, QVariant> cfgTools = toConfigurationNewSingle::Instance().option(ToConfiguration::Main::ToolsMap).toMap();
 
         for (super::const_iterator i = super::begin(); i != super::end(); ++i)
         {
@@ -518,9 +518,9 @@ QToolBar* toToolsRegistry::toolsToolbar(QToolBar *toolbar) const
 
             // set the tools for the first run
             if (!cfgTools.contains(i.key()))
-                cfgTools[i.key()] = true;
+                cfgTools[i.key()] = QVariant((bool)true);
             // only enabled tools are set
-            if (cfgTools[i.key()] == false)
+            if (cfgTools[i.key()].toBool() == false)
                 continue;
 
             int priority = pTool->priority();
@@ -534,6 +534,7 @@ QToolBar* toToolsRegistry::toolsToolbar(QToolBar *toolbar) const
                 toolbar->addAction(toolAct);
 
         } // for tools
+        toConfigurationNewSingle::Instance().setOption(ToConfiguration::Main::ToolsMap, cfgTools);
     }
     TOCATCH;
     return toolbar;
@@ -548,7 +549,7 @@ QMenu* toToolsRegistry::toolsMenu(QMenu *menu) const
     {
         int lastPriorityMenu = 0;
 
-        ToolsMap &cfgTools = toConfigurationSingle::Instance().tools();
+        QMap<QString, QVariant> cfgTools = toConfigurationNewSingle::Instance().option(ToConfiguration::Main::ToolsMap).toMap();
 
         for (super::const_iterator i = super::begin(); i != super::end(); ++i)
         {
@@ -559,9 +560,9 @@ QMenu* toToolsRegistry::toolsMenu(QMenu *menu) const
 
             // set the tools for the first run
             if (!cfgTools.contains(i.key()))
-                cfgTools[i.key()] = true;
+                cfgTools[i.key()] = QVariant((bool)true);
             // only enabled tools are set
-            if (cfgTools[i.key()] == false)
+            if (cfgTools[i.key()].toBool() == false)
                 continue;
 
             int priority = pTool->priority();
@@ -574,6 +575,7 @@ QMenu* toToolsRegistry::toolsMenu(QMenu *menu) const
             if (menuName)
                 menu->addAction(toolAct);
         } // for tools
+        toConfigurationNewSingle::Instance().setOption(ToConfiguration::Main::ToolsMap, cfgTools);
     }
     TOCATCH;
     return menu;

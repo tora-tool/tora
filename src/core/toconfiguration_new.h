@@ -31,7 +31,7 @@ public:
 
     QVariant option(int option);
     QVariant option(QString const& option);
-    template <class T> void setOption(int option, T const&);
+    template <class T> void setOption(int option, T const&) {};
 
     /*! \brief Set the QSettings access strings.
     QSettings uses these. It's used in the main.cpp before

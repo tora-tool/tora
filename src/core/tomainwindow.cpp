@@ -33,6 +33,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "core/tomainwindow.h"
+#include "core/totool.h"
 #include "ts_log/ts_log_utils.h"
 
 #include <QtGui/QApplication>
@@ -54,6 +55,22 @@ QVariant Main::defaultValue(int option) const
 	case StatusSave: 	return QVariant((int)10);
 	case DontReread: 	return QVariant((bool)true);
 	case EditDragDrop: 	return QVariant((bool)false);
+	case ToolsMap:
+	{
+		// by default all the tools (having menu item name) are enabled
+		QMap<QString, QVariant> retval;
+	    for (ToolsRegistrySing::ObjectType::iterator i = ToolsRegistrySing::Instance().begin();
+	            i != ToolsRegistrySing::Instance().end();
+	            ++i)
+	    {
+	        toTool *pTool = i.value();
+	        if (pTool && pTool->menuItem())
+	        {
+	        	retval[i.key()] = QVariant((bool)true);
+	        }
+	    }
+	    return retval;
+	}
 	default:
 		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Editor un-registered enum value: %1").arg(option)));
 		return QVariant();

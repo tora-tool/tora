@@ -142,7 +142,7 @@ public:
     QByteArray m_mainWindowState;
 
     // tools
-    ToolsMap m_tools;
+    //ToolsMap m_tools;
     QString m_defaultTool;
 
     // toresultlistformat
