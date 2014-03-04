@@ -72,7 +72,7 @@ QString ToConfiguration::Oracle::planTable(QString const& schema)
 	QString planTable = toConfigurationNewSingle::Instance().option(PlanTable).toString();
 
     if(sharedPlan || planTable.contains('.') || schema.isNull())
-        return PlanTable;
+        return planTable;
 
     return schema + '.' + planTable;
 }

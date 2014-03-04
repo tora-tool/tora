@@ -212,7 +212,7 @@ toConnectionSub* toOracleConnectionImpl::createConnection(void)
     try
     {
         QString alterSessionSQL = QString::fromLatin1("ALTER SESSION SET NLS_DATE_FORMAT = '");
-        alterSessionSQL += toConfigurationSingle::Instance().dateFormat();
+        alterSessionSQL += toConfigurationNewSingle::Instance().dateFormat();
         alterSessionSQL += QString::fromLatin1("'");
         oracleQuery::trotlQuery date(*conn, qPrintable(alterSessionSQL));
     }
@@ -220,16 +220,16 @@ toConnectionSub* toOracleConnectionImpl::createConnection(void)
     {
         TLOG(5, toDecorator, __HERE__)
                 << "Failed to set new default date format for session: "
-                << toConfigurationSingle::Instance().dateFormat()
+                << toConfigurationNewSingle::Instance().dateFormat()
                 << std::endl;
         Utils::toStatusMessage(QObject::tr("Failed to set new default date format for session: %1")
-                               .arg(toConfigurationSingle::Instance().dateFormat()));
+                               .arg(toConfigurationNewSingle::Instance().dateFormat()));
     }
 
     try
     {
         QString alterSessionSQL = QString::fromLatin1("ALTER SESSION SET NLS_TIMESTAMP_FORMAT = '");
-        alterSessionSQL += toConfigurationSingle::Instance().timestampFormat();
+        alterSessionSQL += toConfigurationNewSingle::Instance().timestampFormat();
         alterSessionSQL += QString::fromLatin1("'");
         oracleQuery::trotlQuery timestmp(*conn, qPrintable(alterSessionSQL));
     }
@@ -237,20 +237,20 @@ toConnectionSub* toOracleConnectionImpl::createConnection(void)
     {
 	    TLOG(5, toDecorator, __HERE__)
 		    << "Failed to set new default timestmp format for session: "
-		    << toConfigurationSingle::Instance().timestampFormat()
+		    << toConfigurationNewSingle::Instance().timestampFormat()
 		    << std::endl
 		    << e.what();
 	    Utils::toStatusMessage(QObject::tr("Failed to set new default timestamp format for session: %1")
-				   .arg(toConfigurationSingle::Instance().timestampFormat()));
+				   .arg(toConfigurationNewSingle::Instance().timestampFormat()));
     }    
     catch (...)
     {
 	    TLOG(5, toDecorator, __HERE__)
 		    << "Failed to set new default timestmp format for session: "
-		    << toConfigurationSingle::Instance().timestampFormat()
+		    << toConfigurationNewSingle::Instance().timestampFormat()
 		    << std::endl;
 	    Utils::toStatusMessage(QObject::tr("Failed to set new default timestamp format for session: %1")
-				   .arg(toConfigurationSingle::Instance().timestampFormat()));
+				   .arg(toConfigurationNewSingle::Instance().timestampFormat()));
     }
 
     try

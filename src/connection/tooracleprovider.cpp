@@ -42,8 +42,8 @@
 
 #include "core/toconnectionprovider.h"
 #include "core/tologger.h"
-#include "core/tomainwindow.h"
 #include "core/tooracleconst.h"
+#include "core/toconfiguration_new.h"
 
 #include "connection/absfact.h"
 
@@ -131,12 +131,13 @@ bool toOracleProvider::initialize()
         }
         qputenv("NLS_LANG", nls.toLatin1());
 
-        toMaxLong = toConfigurationSingle::Instance().maxLong() == -1 ? 0x80000000 : toConfigurationSingle::Instance().maxLong();
+        toMaxLong = toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::MaxLong).toInt();
+        toMaxLong = toMaxLong == -1 ? 0x80000000 : toMaxLong;
         ::trotl::g_OCIPL_MAX_LONG = toMaxLong;
 
         //::trotl::g_OCIPL_BULK_ROWS = toConfigurationSingle::Instance().
 
-        dateFormat = toConfigurationSingle::Instance().dateFormat().toAscii();
+        dateFormat = toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::ConfDateFormat).toString().toAscii();
         ::trotl::g_TROTL_DEFAULT_DATE_FTM = const_cast<char*>(dateFormat.constData());
         ::trotl::OciEnvAlloc *_envallocp = new ::trotl::OciEnvAlloc;
 
