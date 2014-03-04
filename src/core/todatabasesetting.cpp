@@ -34,13 +34,11 @@
 
 #include "core/todatabasesetting.h"
 #include "core/utils.h"
-#include "core/toconf.h"
 #include "core/toconfenum.h"
 #include "core/toconfiguration_new.h"
 #include "core/tomainwindow.h"
-#include "core/tocache.h"
 #include "core/toqvalue.h"
-#include "core/toconnection.h"
+#include "ts_log/ts_log_utils.h"
 
 #include <QtGui/QColorDialog>
 #include <QtCore/QString>

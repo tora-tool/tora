@@ -36,7 +36,8 @@
 #include "core/utils.h"
 #include "core/totabwidget.h"
 #include "core/totool.h"
-#include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
+#include "core/tomainwindow.h"
 
 #include <QtCore/QTimer>
 
@@ -242,7 +243,7 @@ bool toResult::setSqlAndParams(const QString &sql, toQueryParams const& par)
     bool force = NeedsRefresh;
     NeedsRefresh = false;
 
-    if (toConfigurationSingle::Instance().dontReread() && SQL == sql && Params == par && force == false)
+    if (toConfigurationNewSingle::Instance().option(ToConfiguration::Main::DontReread).toBool() && SQL == sql && Params == par && force == false)
         return false;
 
     // Enter the inner loop if and only if the NeedsRefresh was false

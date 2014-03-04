@@ -42,6 +42,7 @@
 #include "core/toconfiguration_new.h"
 #include "core/toquery.h"
 #include "core/toqvalue.h"
+#include "core/todatabasesetting.h"
 
 #include <QtGui/QApplication>
 #include <QtCore/QMutexLocker>

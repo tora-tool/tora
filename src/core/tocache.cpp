@@ -43,6 +43,7 @@
 #include "core/utils.h"
 #include "core/toglobalevent.h"
 #include "core/toglobalsetting.h"
+#include "core/todatabasesetting.h"
 
 #include <QtCore/QtDebug>
 #include <QtCore/QDir>

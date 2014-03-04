@@ -45,6 +45,7 @@
 #include "core/toconfiguration_new.h"
 #include "core/toconnectionprovider.h"
 #include "core/toworkspace.h"
+#include "core/todatabasesetting.h"
 
 #include <QtGui/QMenu>
 

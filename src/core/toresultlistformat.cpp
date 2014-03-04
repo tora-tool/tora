@@ -37,7 +37,6 @@
 #include "core/toconf.h"
 #include "core/utils.h"
 #include "core/tolistviewformatter.h"
-#include "core/toconfiguration.h"
 #include "core/toconfiguration_new.h"
 #include "core/toglobalsetting.h"
 
@@ -111,6 +110,6 @@ void toResultListFormat::formatChanged(int pos)
 
 void toResultListFormat::accept()
 {
-    toConfigurationSingle::Instance().setDefaultFormat(formatCombo->currentIndex());
+    toConfigurationNewSingle::Instance().setOption(ToConfiguration::Global::DefaultListFormat, formatCombo->currentIndex());
     QDialog::accept();
 }

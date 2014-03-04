@@ -34,7 +34,7 @@
 
 #include "core/toconfiguration_new.h"
 #include "core/tosplash.h"
-//#include "core/toconnectionprovider.h"
+#include "core/toconnectionprovider.h"
 #include "core/tooracleconst.h"
 #include "core/tosql.h"
 #include "core/tocache.h"
