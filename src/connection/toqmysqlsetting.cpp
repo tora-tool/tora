@@ -34,7 +34,7 @@
 
 #include "connection/toqmysqlsetting.h"
 #include "connection/toqmysqlprovider.h"
-#include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
 
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QGroupBox>
@@ -47,11 +47,13 @@ toQMySqlSetting::toQMySqlSetting(QWidget *parent)
 	, toSettingTab("database.html#qsql")
 {
     setupUi(this);
-	BeforeCreateAction->setCurrentIndex(toConfigurationSingle::Instance().beforeCreateAction());
+	//BeforeCreateAction->setCurrentIndex(toConfigurationNewSingle::Instance().option(ToConfiguration::MySQL::BeforeCreateAction).toInt());
+    toSettingTab::loadSettings(this);
 }
 
 void toQMySqlSetting::saveSetting(void)
 {
-	toConfigurationSingle::Instance().setBeforeCreateAction(BeforeCreateAction->currentIndex());
+	//toConfigurationSingle::Instance().setOption(ToConfiguration::MySQL::BeforeCreateAction, BeforeCreateAction->currentIndex());
+    toSettingTab::saveSettings(this);
 }
 

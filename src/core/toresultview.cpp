@@ -38,7 +38,7 @@
 #include "core/tolistviewformatterfactory.h"
 #include "core/tomemoeditor.h"
 #include "core/toresultlistformat.h"
-#include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
 #include "core/tomainwindow.h"
 
 #include <QtCore/QTimer>
@@ -203,8 +203,8 @@ int toResultViewMLine::realWidth(const QFontMetrics &fm, const toTreeWidget *top
 {
     if (!MaxColDisp)
     {
-        MaxColDisp = toConfigurationSingle::Instance().maxColDisp();
-        Gridlines = toConfigurationSingle::Instance().displayGridlines();
+        MaxColDisp = toConfigurationNewSingle::Instance().maxColDisp();
+        Gridlines = toConfigurationNewSingle::Instance().displayGridlines();
     }
     QString t = text(column);
     if (t.isNull())
@@ -236,8 +236,8 @@ int toResultViewItem::realWidth(const QFontMetrics &fm, const toTreeWidget *top,
 {
     if (!MaxColDisp)
     {
-        MaxColDisp = toConfigurationSingle::Instance().maxColDisp();
-        Gridlines = toConfigurationSingle::Instance().displayGridlines();
+        MaxColDisp = toConfigurationNewSingle::Instance().maxColDisp();
+        Gridlines = toConfigurationNewSingle::Instance().displayGridlines();
     }
     QString t = text(column);
     if (t.isNull())
@@ -251,11 +251,11 @@ void toResultViewItem::paintCell(QPainter * p, const QColorGroup & cg, int colum
 #if 0     // disabled, not overriding correct function anyhow
     // null related background handling
     QColorGroup colNull(cg);
-    if ((toConfigurationSingle::Instance().indicateEmpty() && text(column) == "{null}")
+    if ((toConfigurationNewSingle::Instance().indicateEmpty() && text(column) == "{null}")
             || text(column).isNull())
     {
         QColor nullColor;
-        nullColor.setNamedColor(toConfigurationSingle::Instance().indicateEmptyColor());
+        nullColor.setNamedColor(toConfigurationNewSingle::Instance().indicateEmptyColor());
         colNull.setColor(QColorGroup::Base, nullColor);
     }
 
@@ -396,8 +396,8 @@ int toResultViewMLCheck::realWidth(const QFontMetrics &fm, const toTreeWidget *t
 {
     if (!MaxColDisp)
     {
-        MaxColDisp = toConfigurationSingle::Instance().maxColDisp();
-        Gridlines = toConfigurationSingle::Instance().displayGridlines();
+        MaxColDisp = toConfigurationNewSingle::Instance().maxColDisp();
+        Gridlines = toConfigurationNewSingle::Instance().displayGridlines();
     }
     QString t = text(column);
     if (t.isNull())
@@ -413,8 +413,8 @@ int toResultViewCheck::realWidth(const QFontMetrics &fm, const toTreeWidget *top
 {
     if (!MaxColDisp)
     {
-        MaxColDisp = toConfigurationSingle::Instance().maxColDisp();
-        Gridlines = toConfigurationSingle::Instance().displayGridlines();
+        MaxColDisp = toConfigurationNewSingle::Instance().maxColDisp();
+        Gridlines = toConfigurationNewSingle::Instance().displayGridlines();
     }
     QString t = text(column);
     if (t.isNull())
@@ -490,7 +490,7 @@ toListView::toListView(QWidget *parent, const char *name, Qt::WFlags f)
             SIGNAL(customContextMenuRequested(const QPoint &)),
             this,
             SLOT(displayMenu(const QPoint &)));
-    QString str(toConfigurationSingle::Instance().listFontName());
+    QString str(toConfigurationNewSingle::Instance().listFontName());
     if (!str.isEmpty())
     {
         QFont font(Utils::toStringToFont(str));
@@ -1224,8 +1224,8 @@ toTreeWidgetItem *toResultView::createItem(toTreeWidgetItem *last, const QString
 
 void toResultView::slotAddItem(void)
 {
-    MaxColDisp = toConfigurationSingle::Instance().maxColDisp();
-    Gridlines = toConfigurationSingle::Instance().displayGridlines();
+    MaxColDisp = toConfigurationNewSingle::Instance().maxColDisp();
+    Gridlines = toConfigurationNewSingle::Instance().displayGridlines();
 
     try
     {
@@ -1320,7 +1320,7 @@ void toResultView::query(const QString &sql, toQueryParams const& param)
         else
             setSorting(Query->columns());
 
-        int MaxNumber = toConfigurationSingle::Instance().initialFetch();
+        int MaxNumber = toConfigurationNewSingle::Instance().initialFetch();
         for (int j = 0; j < MaxNumber && !Query->eof(); j++)
             slotAddItem();
         if (ReadAll || MaxNumber < 0)

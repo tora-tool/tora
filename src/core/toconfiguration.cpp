@@ -47,7 +47,7 @@ toConfiguration::toConfiguration(QObject *parent)
 	: QObject(parent)
 	, d_ptr(NULL)
 {	
-    setQSettingsEnv();
+    //setQSettingsEnv();
     d_ptr = new toConfigurationPrivate(this);
 }
 
@@ -57,6 +57,7 @@ toConfiguration::~toConfiguration()
 	delete d;
 }
 
+//#if 0
 // static one
 void toConfiguration::setQSettingsEnv()
 {
@@ -1021,16 +1022,16 @@ void toConfiguration::setFilterText(const QString & v)
 }
 
 // tohelp
-HelpsMap toConfiguration::additionalHelp()
-{
-	Q_D(toConfiguration);
-    return d->m_additionalHelp;
-}
-void toConfiguration::setAdditionalHelp(HelpsMap v)
-{
-	Q_D(toConfiguration);
-    d->m_additionalHelp = v;
-}
+//HelpsMap toConfiguration::additionalHelp()
+//{
+//	Q_D(toConfiguration);
+//    return d->m_additionalHelp;
+//}
+//void toConfiguration::setAdditionalHelp(HelpsMap v)
+//{
+//	Q_D(toConfiguration);
+//    d->m_additionalHelp = v;
+//}
 
 #ifdef TORA3_CHARTS
 // tochartmanager
@@ -1665,3 +1666,4 @@ QString toConfiguration::sharePath()
 	return QString::fromAscii(SHARE_DIR);
 #endif
 }
+

@@ -91,6 +91,11 @@ QVariant toConfigurationNew::option(QString const& o)
 	return option(opt);
 }
 
+void toConfigurationNew::saveAll()
+{
+
+}
+
 // a static one
 void toConfigurationNew::setQSettingsEnv()
 {

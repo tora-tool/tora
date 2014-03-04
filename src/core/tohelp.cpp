@@ -39,10 +39,23 @@
 #include "core/tomainwindow.h"
 #include "core/totool.h"
 #include "core/tohelpsetup.h"
-#include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
+#include "ts_log/ts_log_utils.h"
 
 #include <QtGui/QMessageBox>
 #include <QtCore/QSettings>
+
+QVariant ToConfiguration::Help::defaultValue(int option) const
+{
+	switch(option)
+	{
+	// Paths
+	case AdditionalHelpMap:			return QVariant(QMap<QString, QVariant>());
+	default:
+		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Editor un-registered enum value: %1").arg(option)));
+		return QVariant();
+	}
+}
 
 
 toHelp *toHelp::Window;
@@ -68,6 +81,8 @@ void toHelpTool::displayHelp(void)
     // No dialog found
     toHelp::displayHelp();
 }
+
+ToConfiguration::Help toHelpTool::s_helpConfig;
 
 static toHelpTool HelpTool;
 
@@ -105,11 +120,12 @@ toHelp::toHelp(QWidget *parent, QString name, bool modal)
 
     std::map<QString, QString> Dsc;
     Dsc[tr(TOAPPNAME " manual")] = QString("qrc:/help/toc.html");
-    HelpsMapIterator i(toConfigurationSingle::Instance().additionalHelp());
+    QMap<QString, QVariant> hMap = toConfigurationNewSingle::Instance().option(ToConfiguration::Help::AdditionalHelpMap).toMap();
+    QMapIterator<QString, QVariant> i(hMap);
     while (i.hasNext())
     {
         i.next();
-        Dsc[i.key()] = i.value();
+        Dsc[i.key()] = i.value().toString();
     }
 
     splitter->setStretchFactor(splitter->indexOf(tabs), 0);

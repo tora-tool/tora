@@ -193,23 +193,24 @@ SET(TORA_MOC_CLASSES
   core/tochangeconnection.h
   core/tocodemodel.h
   core/toconfenum.h
-  core/toconfiguration.h
+  #core/toconfiguration.h
   core/toconfiguration_new.h
-  core/toconfigurationpriv.h
+  #core/toconfigurationpriv.h
   core/toconnection.h
   core/toconnectionimport.h
   core/toconnectionmodel.h
   core/toconnectionregistry.h
   core/todescribe.h
+  core/todatabasesetting.h
   core/todockbar.h
   core/todocklet.h
   core/toeditablemenu.h
   core/toeditmenu.h
+  core/toeditorsetting.h
   core/toeventquery.h
   core/toeventqueryworker.h
   core/toglobalevent.h
   core/toglobalsetting.h
-  core/todatabasesetting.h
   core/tohelp.h
   core/tohelpsetup.h
   core/tolinechart.h
@@ -412,9 +413,9 @@ SET(TORA_SOURCES
   core/tochangeconnection.cpp 
   core/tocodemodel.cpp
   core/toconfenum.cpp
-  core/toconfiguration.cpp
+  #core/toconfiguration.cpp
   core/toconfiguration_new.cpp
-  core/toconfigurationpriv.cpp
+  #core/toconfigurationpriv.cpp
   core/toconnection.cpp
   core/toconnectionimport.cpp
   core/toconnectionmodel.cpp
@@ -428,6 +429,7 @@ SET(TORA_SOURCES
   core/todocklet.cpp
   core/toeditablemenu.cpp
   core/toeditmenu.cpp
+  core/toeditorsetting.cpp
   core/toeditwidget.cpp
   core/toeventquery.cpp
   core/toeventqueryworker.cpp
@@ -859,17 +861,17 @@ IF(TORA_DEBUG AND TEST_APP4)
 SET(TEST4_SOURCES
   tests/test4.cpp
   tests/test4window.cpp
-  core/moc_toconfiguration.cxx
-  core/moc_toconfigurationpriv.cxx    
+  #core/moc_toconfiguration.cxx
+  #core/moc_toconfigurationpriv.cxx    
   core/moc_toglobalevent.cxx
   core/moc_tomainwindow.cxx
   core/moc_topushbutton.cxx
   core/toconfenum.cpp
   core/moc_toconfenum.cxx
-  core/toconfiguration.cpp
+  #core/toconfiguration.cpp
   core/toconfiguration_new.cpp
   core/moc_toconfiguration_new.cxx
-  core/toconfigurationpriv.cpp
+  #core/toconfigurationpriv.cpp
   core/toglobalevent.cpp
   core/tomainwindow.cpp
   core/topushbutton.cpp
@@ -934,9 +936,9 @@ SET(TEST5_SOURCES
   core/moc_tobrowserbasewidget.cxx
   core/moc_tocache.cxx
   core/moc_tocodemodel.cxx
-  core/moc_toconfiguration.cxx
+  #core/moc_toconfiguration.cxx
   core/moc_toconfiguration_new.cxx  
-  core/moc_toconfigurationpriv.cxx
+  #core/moc_toconfigurationpriv.cxx
   core/moc_toconnection.cxx
   core/moc_toconnectionregistry.cxx
   core/moc_todescribe.cxx
@@ -979,9 +981,9 @@ SET(TEST5_SOURCES
   core/tobrowserbasewidget.cpp
   core/tocache.cpp
   core/tocodemodel.cpp
-  core/toconfiguration.cpp
+  #core/toconfiguration.cpp
   core/toconfiguration_new.cpp
-  core/toconfigurationpriv.cpp
+  #core/toconfigurationpriv.cpp
   core/toconnection.cpp
   core/toconnectionoptions.cpp  
   core/toconnectionprovider.cpp

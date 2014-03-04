@@ -35,7 +35,8 @@
 #include "tools/toresultstorage.h"
 #include "core/utils.h"
 #include "core/toeventquery.h"
-#include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
+#include "core/toglobalsetting.h"
 
 #include <QtGui/QPainter>
 #include <QtGui/QItemDelegate>
@@ -190,7 +191,7 @@ bool toResultStorage::canHandle(const toConnection &conn)
 toResultStorage::toResultStorage(bool available, QWidget *parent, const char *name)
     : toResultView(false, false, parent, name), AvailableGraph(available)
 {
-    Unit = toConfigurationSingle::Instance().sizeUnit();
+    Unit = toConfigurationNewSingle::Instance().option(ToConfiguration::Global::SizeUnit).toString();
     setAllColumnsShowFocus(true);
     setSortingEnabled(false); // enable it after data fetch
     setRootIsDecorated(true);

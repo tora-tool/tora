@@ -35,6 +35,8 @@
 #ifndef TOTOOL_H
 #define TOTOOL_H
 
+#include "core/tora_export.h"
+
 #include <loki/Singleton.h>
 
 #include <QtCore/QMap>
@@ -253,7 +255,7 @@ private:
 /**
  * Abstract baseclass for widgets defining tool settings.
  */
-class toSettingTab : public toHelpContext
+class TORA_EXPORT toSettingTab : public toHelpContext
 {
 public:
     /**

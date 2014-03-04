@@ -51,8 +51,9 @@
 #include "tools/toworksheet.h"
 #include "tools/toworksheeteditor.h"
 #include "tools/tobrowser.h"
-#include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
 #include "core/toglobalevent.h"
+#include "core/toglobalsetting.h"
 #include "core/utils.h"
 #include "core/tologger.h"
 #include "ts_log/toostream.h"
@@ -114,19 +115,19 @@ toMain::toMain()
     setWindowTitle(TOAPPNAME " " TORAVERSION);
     setWindowIcon(QPixmap(const_cast<const char**>(tora_xpm)));
 
-    restoreGeometry(toConfigurationSingle::Instance().mainWindowGeometry());
-    restoreState(toConfigurationSingle::Instance().mainWindowState());
+    restoreGeometry(toConfigurationNewSingle::Instance().option(ToConfiguration::Main::MainWindowGeometry).toByteArray());
+    restoreState(toConfigurationNewSingle::Instance().option(ToConfiguration::Main::MainWindowState).toByteArray());
 
     //enableConnectionActions(false);
 
-    QString defName(toConfigurationSingle::Instance().defaultTool());
+    QString defName(toConfigurationNewSingle::Instance().option(ToConfiguration::Main::DefaultTool).toString());
     for (ToolsRegistrySing::ObjectType::iterator k = ToolsRegistrySing::Instance().begin();
             k != ToolsRegistrySing::Instance().end();
             ++k)
     {
         if(defName.isEmpty())
         {
-            toConfigurationSingle::Instance().setDefaultTool(k.key());
+            toConfigurationNewSingle::Instance().setOption(ToConfiguration::Main::DefaultTool, QVariant(k.key()));
             defName = k.key();
         }
         k.value()->customSetup();
@@ -157,13 +158,13 @@ toMain::toMain()
     		this, SLOT(slotActiveToolChaged(toToolWidget*)));
     
 #ifdef TORA3_SESSION
-    if (toConfigurationSingle::Instance().restoreSession())
+    if (toConfigurationNewSingle::Instance().restoreSession())
     {
         try
         {
             std::map<QString, QString> session;
-            toConfigurationSingle::Instance().loadMap(
-                toConfigurationSingle::Instance().defaultSession(), session);
+            toConfigurationNewSingle::Instance().loadMap(
+                toConfigurationNewSingle::Instance().defaultSession(), session);
             importData(session, "TOra");
         }
         TOCATCH;
@@ -565,8 +566,8 @@ void toMain::createDockbars()
                 SLOT(moveDocklet(toDocklet *, Qt::DockWidgetArea)));
     }
 
-    leftDockbar->restoreState(toConfigurationSingle::Instance().leftDockbarState());
-    rightDockbar->restoreState(toConfigurationSingle::Instance().rightDockbarState());
+    leftDockbar->restoreState(toConfigurationNewSingle::Instance().option(ToConfiguration::Main::LeftDockbarState).toByteArray());
+    rightDockbar->restoreState(toConfigurationNewSingle::Instance().option(ToConfiguration::Main::RightDockbarState).toByteArray());
 }
 
 void toMain::showFileMenu(void)
@@ -577,7 +578,7 @@ void toMain::showFileMenu(void)
     stopAct->setEnabled(hascon);
     rollbackAct->setEnabled(hascon);
     // disable reread cache if use caching is disabled
-    refreshAct->setEnabled(hascon && toConfigurationSingle::Instance().cacheDisk());
+    refreshAct->setEnabled(hascon && toConfigurationNewSingle::Instance().option(ToConfiguration::Global::CacheDiskBool).toBool());
     closeConn->setEnabled(hascon);
 
     updateRecent();
@@ -585,7 +586,7 @@ void toMain::showFileMenu(void)
 
 void toMain::updateRecent()
 {
-    QStringList files(toConfigurationSingle::Instance().recentFiles());
+    QStringList files(toConfigurationNewSingle::Instance().option(ToConfiguration::Main::RecentFiles).toStringList());
     recentMenu->clear();
 
     int index = 1;
@@ -615,20 +616,20 @@ void toMain::updateRecent()
         recentMenu->addAction(r);
     }
 
-    toConfigurationSingle::Instance().setRecentFiles(files);
+    toConfigurationNewSingle::Instance().setOption(ToConfiguration::Main::RecentFiles, QVariant(files));
 }
 
 
 void toMain::addRecentFile(const QString &file)
 {
-    QStringList files(toConfigurationSingle::Instance().recentFiles());
-    int maxnum = toConfigurationSingle::Instance().recentMax();
+    QStringList files(toConfigurationNewSingle::Instance().option(ToConfiguration::Main::RecentFiles).toStringList());
+    int maxnum = toConfigurationNewSingle::Instance().option(ToConfiguration::Main::RecentMax).toInt();
 
     files.removeAll(file);
     if (files.count() >= maxnum)
         files.removeAt(0);
     files.append(file);
-    toConfigurationSingle::Instance().setRecentFiles(files);
+    toConfigurationNewSingle::Instance().setOption(ToConfiguration::Main::RecentFiles, QVariant(files));
 }
 
 void toMain::updateWindowsMenu(void)
@@ -918,8 +919,8 @@ void toMain::commandCallback(QAction *action)
         try
         {
             std::map<QString, QString> session;
-            toConfigurationSingle::Instance().loadMap(
-                toConfigurationSingle::Instance().defaultSession(), session);
+            toConfigurationNewSingle::Instance().loadMap(
+                toConfigurationNewSingle::Instance().defaultSession(), session);
             importData(session, "TOra");
         }
         TOCATCH;
@@ -1012,25 +1013,25 @@ void toMain::closeEvent(QCloseEvent *event)
     exportData(session, "TOra");
     try
     {
-        toConfigurationSingle::Instance().saveMap(
-            toConfigurationSingle::Instance().defaultSession(),
+        toConfigurationNewSingle::Instance().saveMap(
+            toConfigurationNewSingle::Instance().defaultSession(),
             session);
     }
     TOCATCH;
 #endif
-    toConfigurationSingle::Instance().setMainWindowGeometry(saveGeometry());
-    toConfigurationSingle::Instance().setMainWindowState(saveState());
+    toConfigurationNewSingle::Instance().setOption(ToConfiguration::Main::MainWindowGeometry, QVariant(saveGeometry()));
+    toConfigurationNewSingle::Instance().setOption(ToConfiguration::Main::MainWindowState, QVariant(saveState()));
 
-    toConfigurationSingle::Instance().setLeftDockbarState(leftDockbar->saveState());
-    toConfigurationSingle::Instance().setRightDockbarState(rightDockbar->saveState());
+    toConfigurationNewSingle::Instance().setOption(ToConfiguration::Main::LeftDockbarState, QVariant(leftDockbar->saveState()));
+    toConfigurationNewSingle::Instance().setOption(ToConfiguration::Main::RightDockbarState, QVariant(rightDockbar->saveState()));
 
-    toConfigurationSingle::Instance().saveConfig();
+    toConfigurationNewSingle::Instance().saveAll();
     event->accept();
 }
 
 void toMain::createDefault(void)
 {
-    QString defName(toConfigurationSingle::Instance().defaultTool());
+    QString defName(toConfigurationNewSingle::Instance().option(ToConfiguration::Main::DefaultTool).toString());
     toTool *DefaultTool = NULL;
 
     for (ToolsRegistrySing::ObjectType::iterator i = ToolsRegistrySing::Instance().begin();
@@ -1147,7 +1148,7 @@ void toMain::showMessageImpl(QString str, bool save, bool log)
 {
     if (!str.isEmpty())
     {
-        int sec = toConfigurationSingle::Instance().statusMessage();
+        int sec = toConfigurationNewSingle::Instance().option(ToConfiguration::Global::StatusMessageInt).toInt();
         if (save || sec == 0)
             statusBar()->showMessage(str.simplified());
         else
@@ -1156,11 +1157,11 @@ void toMain::showMessageImpl(QString str, bool save, bool log)
         if (!save && log)
         {
             Utils::toPush(StatusMessages, str);
-            if ((int) StatusMessages.size() > toConfigurationSingle::Instance().historySize())
+            if ((int) StatusMessages.size() > toConfigurationNewSingle::Instance().option(ToConfiguration::Global::HistorySizeInt).toInt())
                 Utils::toShift(StatusMessages);
             statusBar()->setToolTip(str);
 
-            if (!toConfigurationSingle::Instance().messageStatusbar())
+            if (!toConfigurationNewSingle::Instance().option(ToConfiguration::Global::MessageStatusbarBool).toBool())
                 displayMessage();
         }
     }
@@ -1229,7 +1230,7 @@ void toMain::exportData(std::map<QString, QString> &data, const QString &prefix)
             foreach(toConnection * i, Connections)
             {
                 QString key = prefix + ":Connection:" + QString::number(id);
-                if (toConfigurationSingle::Instance().savePassword())
+                if (toConfigurationNewSingle::Instance().savePassword())
                     data[key + ":Password"] = toObfuscate(i->password());
                 data[key + ":User"] = i->user();
                 data[key + ":Host"] = i->host();
@@ -1312,7 +1313,7 @@ void toMain::importData(std::map<QString, QString> &data, const QString &prefix)
         QString password = Utils::toUnobfuscate(data[key + ":Password"]);
         QString provider = data[key + ":Provider"];
         bool ok = true;
-        if (toConfigurationSingle::Instance().defaultPassword() == password)
+        if (toConfigurationNewSingle::Instance().defaultPassword() == password)
         {
             password = QInputDialog::getText(this,
                                              tr("Input password"),
@@ -1383,7 +1384,7 @@ void toMain::saveSession(void)
         exportData(session, "TOra");
         try
         {
-            toConfigurationSingle::Instance().saveMap(fn, session);
+            toConfigurationNewSingle::Instance().saveMap(fn, session);
         }
         TOCATCH
     }
@@ -1397,7 +1398,7 @@ void toMain::loadSession(void)
         try
         {
             std::map<QString, QString> session;
-            toConfigurationSingle::Instance().loadMap(filename, session);
+            toConfigurationNewSingle::Instance().loadMap(filename, session);
             importData(session, "TOra");
         }
         TOCATCH
@@ -1410,7 +1411,7 @@ void toMain::closeSession(void)
     exportData(session, "TOra");
     try
     {
-        toConfigurationSingle::Instance().saveMap(toConfigurationSingle::Instance().defaultSession(), session);
+        toConfigurationNewSingle::Instance().saveMap(toConfigurationNewSingle::Instance().defaultSession(), session);
     }
     TOCATCH
 

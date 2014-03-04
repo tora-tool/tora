@@ -44,8 +44,10 @@
 #include "connection/tooraclequery.h"
 
 #include "core/toconf.h"       // TOAPPNAME
+#include "core/toconfiguration_new.h"
 #include "core/toraversion.h"
 #include "core/tologger.h"
+#include "connection/tooraclesetting.h"
 
 #include "trotl.h"
 #include "trotl_convertor.h"
@@ -212,7 +214,7 @@ toConnectionSub* toOracleConnectionImpl::createConnection(void)
     try
     {
         QString alterSessionSQL = QString::fromLatin1("ALTER SESSION SET NLS_DATE_FORMAT = '");
-        alterSessionSQL += toConfigurationNewSingle::Instance().dateFormat();
+        alterSessionSQL += toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::ConfDateFormat).toString();
         alterSessionSQL += QString::fromLatin1("'");
         oracleQuery::trotlQuery date(*conn, qPrintable(alterSessionSQL));
     }
@@ -220,16 +222,16 @@ toConnectionSub* toOracleConnectionImpl::createConnection(void)
     {
         TLOG(5, toDecorator, __HERE__)
                 << "Failed to set new default date format for session: "
-                << toConfigurationNewSingle::Instance().dateFormat()
+                << toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::ConfDateFormat).toString()
                 << std::endl;
         Utils::toStatusMessage(QObject::tr("Failed to set new default date format for session: %1")
-                               .arg(toConfigurationNewSingle::Instance().dateFormat()));
+                               .arg(toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::ConfDateFormat).toString()));
     }
 
     try
     {
         QString alterSessionSQL = QString::fromLatin1("ALTER SESSION SET NLS_TIMESTAMP_FORMAT = '");
-        alterSessionSQL += toConfigurationNewSingle::Instance().timestampFormat();
+        alterSessionSQL += toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::ConfTimestampFormat).toString();
         alterSessionSQL += QString::fromLatin1("'");
         oracleQuery::trotlQuery timestmp(*conn, qPrintable(alterSessionSQL));
     }
@@ -237,20 +239,20 @@ toConnectionSub* toOracleConnectionImpl::createConnection(void)
     {
 	    TLOG(5, toDecorator, __HERE__)
 		    << "Failed to set new default timestmp format for session: "
-		    << toConfigurationNewSingle::Instance().timestampFormat()
+		    << toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::ConfTimestampFormat).toString()
 		    << std::endl
 		    << e.what();
 	    Utils::toStatusMessage(QObject::tr("Failed to set new default timestamp format for session: %1")
-				   .arg(toConfigurationNewSingle::Instance().timestampFormat()));
+				   .arg(toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::ConfTimestampFormat).toString()));
     }    
     catch (...)
     {
 	    TLOG(5, toDecorator, __HERE__)
 		    << "Failed to set new default timestmp format for session: "
-		    << toConfigurationNewSingle::Instance().timestampFormat()
+		    << toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::ConfTimestampFormat).toString()
 		    << std::endl;
 	    Utils::toStatusMessage(QObject::tr("Failed to set new default timestamp format for session: %1")
-				   .arg(toConfigurationNewSingle::Instance().timestampFormat()));
+				   .arg(toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::ConfTimestampFormat).toString()));
     }
 
     try

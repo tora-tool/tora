@@ -11,13 +11,12 @@
 #include <QtCore/QVariant>
 #include <QtGui/QApplication>
 
-typedef QMap<QString, QString> HelpsMap;
-typedef QMapIterator<QString, QString> HelpsMapIterator;
 typedef QMap<QString, QString> ChartsMap;
 typedef QMapIterator<QString, QString> ChartsMapIterator;
 typedef QMap<QString, QString> TemplatesMap;
 typedef QMapIterator<QString, QString> TemplatesMapIterator;
 
+#if 0
 class toConfigurationPrivate;
 class TORA_EXPORT toConfiguration: public QObject
 {
@@ -106,7 +105,7 @@ public:
     //        UNTIL_MANDATORY = 2,
     //        NEVER = 3
     //    };
-
+//#if 0
     /*! \brief Set the QSettings access strings.
     QSettings uses these. It's used in the main.cpp before
     new QApplication instance init.
@@ -409,8 +408,8 @@ public:
     void setFilterText(const QString & v);
 
     // tohelp
-    HelpsMap additionalHelp();
-    void setAdditionalHelp(HelpsMap v);
+    //HelpsMap additionalHelp();
+    //void setAdditionalHelp(HelpsMap v);
 
 #ifdef TORA3_CHARTS
     // tochartmanager
@@ -583,11 +582,16 @@ public:
     
     // Aplication location paths
     QString sharePath();
+
+//#endif
+
 private:
 	toConfigurationPrivate * d_ptr;
     Q_DECLARE_PRIVATE(toConfiguration);
 };
 
 typedef Loki::SingletonHolder<toConfiguration> toConfigurationSingle;
+
+#endif
 
 #endif

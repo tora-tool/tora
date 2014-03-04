@@ -36,7 +36,7 @@
 #include "core/tohelp.h"
 #include "core/utils.h"
 #include "core/tohtml.h"
-#include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
 #include "core/tomainwindow.h"
 
 toHelpAddFile::toHelpAddFile(QWidget *parent, const char *name)
@@ -70,14 +70,16 @@ void toHelpAddFile::valid()
 
 
 toHelpPrefs::toHelpPrefs(toTool *tool, QWidget *parent, const char *name)
-    : QWidget(parent), toSettingTab("additionalhelp.html"), Tool(tool)
+    : QWidget(parent)
+	, toSettingTab("additionalhelp.html")
+	, Tool(tool)
 {
 
     if (name)
         setObjectName(name);
 
     setupUi(this);
-
+    toSettingTab::loadSettings(this);
 //     int tot = Tool->config("Number", "-1").toInt();
 //     if (tot != -1)
 //     {
@@ -90,19 +92,21 @@ toHelpPrefs::toHelpPrefs(toTool *tool, QWidget *parent, const char *name)
 //             new toTreeWidgetItem(FileList, root, file);
 //         }
 //     }
-    HelpsMapIterator i(toConfigurationSingle::Instance().additionalHelp());
+    const QMap<QString, QVariant> hMap = toConfigurationNewSingle::Instance().option(ToConfiguration::Help::AdditionalHelpMap).toMap();
+    QMapIterator<QString, QVariant> i(hMap);
     while (i.hasNext())
     {
         i.next();
-        new toTreeWidgetItem(FileList, i.key(), i.value());
+        new toTreeWidgetItem(FileList, i.key(), i.value().toString());
     }
 }
 
 
 void toHelpPrefs::saveSetting()
 {
+	toSettingTab::saveSettings(this);
 //     int i = 0;
-    HelpsMap h;
+    QMap<QString, QVariant> hMap;
     for (toTreeWidgetItem *item = FileList->firstChild(); item; item = item->nextSibling())
     {
 //         QString nam = QString::number(i);
@@ -110,10 +114,10 @@ void toHelpPrefs::saveSetting()
 //         nam += QString::fromLatin1("file");
 //         Tool->setConfig(nam.toLatin1(), item->text(1));
 //         i++;
-        h[item->text(0)] = item->text(1);
+        hMap[item->text(0)] = QVariant(item->text(1));
     }
 //     Tool->setConfig("Number", QString::number(i));
-    toConfigurationSingle::Instance().setAdditionalHelp(h);
+    toConfigurationNewSingle::Instance().setOption(ToConfiguration::Help::AdditionalHelpMap, hMap);
     delete toHelp::Window;
 }
 

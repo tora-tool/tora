@@ -35,7 +35,7 @@
 #include "core/topreferences.h"
 #include "core/toglobalsetting.h"
 #include "core/todatabasesetting.h"
-#include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
 #include "core/toconnectionprovider.h"
 #include "core/tomainwindow.h"
 #include "core/utils.h"
@@ -86,7 +86,7 @@ void toPreferences::saveSetting(void)
         if (tab)
             tab->saveSetting();
     }
-    toConfigurationSingle::Instance().saveConfig();
+    toConfigurationNewSingle::Instance().saveAll();
 }
 
 toPreferences::toPreferences(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)

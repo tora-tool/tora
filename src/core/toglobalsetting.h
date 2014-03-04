@@ -94,7 +94,7 @@ namespace ToConfiguration {
 			, ChartSamplesInt       // #define CONF_CHART_SAMPLES
 			, DisplaySamplesInt     // #define CONF_DISPLAY_SAMPLES
 			, SizeUnit              // #define CONF_SIZE_UNIT
-			, RefreshIntervalInt    // #define CONF_REFRESH
+			, RefreshInterval    // #define CONF_REFRESH
 			, DefaultListFormat     // #define CONF_DEFAULT_FORMAT
 			, Style                 // #define CONF_STYLE
 			, Translation           // #define CONF_LOCALE (Translation)

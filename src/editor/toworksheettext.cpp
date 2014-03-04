@@ -35,61 +35,12 @@
 #include "editor/toworksheettext.h"
 #include "core/toconfiguration.h"
 #include "core/toconfiguration_new.h"
+#include "core/toeditorsetting.h"
 #include "core/toconnection.h"
 #include "core/tologger.h"
-#include "editor/tostyle.h"
+///#include "editor/tostyle.h"
 
 using namespace ToConfiguration;
-
-QVariant ToConfiguration::Editor::defaultValue(int option) const
-{
-	switch(option)
-	{
-	case SyntaxHighlighting:          return QVariant((int) 0);
-	case EditorType:               return QVariant((int) 0);
-	case UseMaxTextWidthMarkBool:      return QVariant((bool) false);
-	case MaxTextWidthMarkInt:         return QVariant((int)75);
-	case KeywordUpperBool:             return QVariant((bool) false);
-	case ObjectNamesUpperBool:         return QVariant((bool) false);
-	case CodeCompleteBool:             return QVariant((bool) true);
-	case CompleteSortBool:             return QVariant((bool) true);
-	case UseEditorShortcutsBool:       return QVariant((bool) false);
-	case EditorShortcutsMap:    return QVariant(QMap<QString, QVariant>());
-	case AutoIndentBool:               return QVariant((bool) true);
-	case UseSpacesForIndentBool:                return QVariant((bool) false);
-	case TabStopInt:                  return QVariant((int) 8);
-	case ConfTextFont:                 return QVariant(QString(""));
-	case ConfCodeFont:                 return QVariant(QString(""));
-	case ListTextFont:                 return QVariant(QString(""));
-	case Extensions:               return QVariant(QString("SQL (*.sql *.pkg *.pkb), Text (*.txt), All (*)"));
-	case EditStyleMap:
-	{
-		toStylesMap retval;
-		QMetaEnum StyleNameEnum(ENUM_REF(toSyntaxAnalyzer,WordClassEnum));
-		QsciLexerSQL *l = new QsciLexerSQL(NULL);
-		for (int idx = 0; idx < StyleNameEnum.keyCount(); idx++)
-		{
-			QString keyNameFg = QString::fromAscii("EditStyle") + StyleNameEnum.key(idx) + "Fg";
-			QString keyNameBg = QString::fromAscii("EditStyle") + StyleNameEnum.key(idx) + "Bg";
-			QString keyNameFo = QString::fromAscii("EditStyle") + StyleNameEnum.key(idx) + "Fo";
-			QColor fg, bg;
-			QFont fo;
-			fg = l->color((int)StyleNameEnum.value(idx));
-			bg = l->paper((int)StyleNameEnum.value(idx));
-			fo = QFont("");
-
-			QString styleName = StyleNameEnum.key(idx);
-			int styleNameEnum = StyleNameEnum.value(idx);
-			retval.insert(styleNameEnum, toStyle(fg, bg, fo));
-		}
-		delete l;
-		return QVariant::fromValue(retval);
-	}
-	default:
-		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Editor un-registered enum value: %1").arg(option)));
-		return QVariant();
-	}
-}
 
 toWorksheetText::toWorksheetText(QWidget *parent, const char *name)
     : toSqlText(parent, name)

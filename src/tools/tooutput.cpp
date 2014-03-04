@@ -38,7 +38,7 @@
 #include "core/toresultview.h"
 #include "core/totimer.h"
 #include "core/toglobalevent.h"
-#include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
 #include "core/utils.h"
 #include "editor/toscintilla.h"
 
@@ -63,7 +63,7 @@ namespace ToConfiguration
 		Output() : ConfigContext("Output", ENUM_REF(Output,OptionTypeEnum)) {};
 		enum OptionTypeEnum {
 			PollingInterval = 12000 // #define CONF_POLLING
-			, Type                  // #define CONF_LOG_TYPE
+			, LogType               // #define CONF_LOG_TYPE
 			, LogUser               // #define CONF_LOG_USER
 		};
 		QVariant defaultValue(int option) const
@@ -71,7 +71,7 @@ namespace ToConfiguration
 			switch(option)
 			{
 			case PollingInterval:  return QVariant(QString("10 seconds"));
-			case Type:             return QVariant((int)0);
+			case LogType:          return QVariant((int)0);
 			case LogUser:          return QVariant(QString("ULOG"));
 			default:
 				Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Editor un-registered enum value: %1").arg(option)));
@@ -93,7 +93,7 @@ public:
         : QGroupBox(parent),
           toSettingTab("output.html"), Tool(tool)
     {
-
+    	using namespace ToConfiguration;
         if (name)
             setObjectName(name);
 
@@ -113,7 +113,7 @@ public:
 
         AutoPolling = Utils::toRefreshCreate(this,
                                              "toRefreshCreate",
-                                             toConfigurationSingle::Instance().polling());
+                                             toConfigurationNewSingle::Instance().option(Output::PollingInterval).toString());
         label->setBuddy(AutoPolling);
         vbox->addWidget(AutoPolling);
 
@@ -125,7 +125,7 @@ public:
         Type = new QComboBox(this);
         Type->addItem(qApp->translate("toLogOutput", "SQL Output"));
         Type->addItem(qApp->translate("toLogOutput", "Log4PL/SQL"));
-        Type->setCurrentIndex(toConfigurationSingle::Instance().logType());
+        Type->setCurrentIndex(toConfigurationNewSingle::Instance().option(Output::LogType).toInt());
         label->setBuddy(Type);
         vbox->addWidget(Type);
 
@@ -134,7 +134,7 @@ public:
                            this);
         vbox->addWidget(label);
 
-        User = new QLineEdit(toConfigurationSingle::Instance().logUser(), this);
+        User = new QLineEdit(toConfigurationNewSingle::Instance().option(Output::LogUser).toString(), this);
         label->setBuddy(User);
         vbox->addWidget(User);
 
@@ -142,9 +142,11 @@ public:
     }
     virtual void saveSetting(void)
     {
-        toConfigurationSingle::Instance().setPolling(AutoPolling->currentText());
-        toConfigurationSingle::Instance().setLogType(Type->currentIndex());
-        toConfigurationSingle::Instance().setLogUser(User->text());
+    	//using namespace ToConfiguration;
+        //toConfigurationNewSingle::Instance().setOption(Output::PollingInterval, AutoPolling->currentText());
+        //toConfigurationNewSingle::Instance().setOption(Output::LogType, Type->currentIndex());
+        //toConfigurationNewSingle::Instance().setOption(Output::LogUser, User->text());
+    	toSettingTab::saveSettings(this);
     }
 };
 
@@ -245,7 +247,7 @@ toOutput::toOutput(QWidget *main, toConnection &connection, bool enabled)
 
     Refresh = Utils::toRefreshCreate(Toolbar,
                                      "Refresh",
-                                     toConfigurationSingle::Instance().polling());
+                                     toConfigurationNewSingle::Instance().option(ToConfiguration::Output::PollingInterval).toString());
     Toolbar->addWidget(Refresh);
     connect(Refresh,
             SIGNAL(activated(const QString &)),
@@ -266,7 +268,7 @@ toOutput::toOutput(QWidget *main, toConnection &connection, bool enabled)
     try
     {
         connect(timer(), SIGNAL(timeout(void)), this, SLOT(refresh(void)));
-        Utils::toRefreshParse(timer(), toConfigurationSingle::Instance().polling());
+        Utils::toRefreshParse(timer(), toConfigurationNewSingle::Instance().option(ToConfiguration::Output::PollingInterval).toString());
     }
     TOCATCH;
 
@@ -453,7 +455,7 @@ toLogOutput::toLogOutput(QWidget *parent, toConnection &connection)
     Type = new QComboBox(Toolbar);
     Type->addItem(tr("SQL Output"));
     Type->addItem(tr("Log4PL/SQL"));
-    Type->setCurrentIndex(toConfigurationSingle::Instance().logType());
+    Type->setCurrentIndex(toConfigurationNewSingle::Instance().option(ToConfiguration::Output::LogType).toInt());
     Toolbar->addWidget(Type);
     connect(Type, SIGNAL(activated(int)), this, SLOT(changeType()));
 
@@ -472,7 +474,7 @@ void toLogOutput::refresh(void)
         // Ugly woodo to replace %1 with the configured logging table name
         customizedLogSQL.updateSQL(
         		SQLLog.name(), // "toLogOutput:Poll"
-        		toSQL::string(SQLLog.name(), connection()).arg( toConfigurationSingle::Instance().logUser()),
+        		toSQL::string(SQLLog.name(), connection()).arg( toConfigurationNewSingle::Instance().option(ToConfiguration::Output::LogUser).toString()),
         		toSQL::description(SQLLog.name()),
         		connection().version(),
         		connection().provider(),

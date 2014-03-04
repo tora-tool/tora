@@ -64,6 +64,10 @@ namespace ToConfiguration
 			, DontReread         // #define CONF_DONT_REREAD
 			, EditDragDrop       // #define CONF_EDIT_DRAG_DROP (toScintilla)
 			, ToolsMap
+			, MainWindowGeometry
+			, MainWindowState
+			, LeftDockbarState
+			, RightDockbarState
 		};
 		virtual QVariant defaultValue(int option) const;
 	};

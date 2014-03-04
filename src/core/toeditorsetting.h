@@ -32,53 +32,44 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TODATABASESETTING_H
-#define TODATABASESETTING_H
+#ifndef TOEDITORSETTING_H
+#define TOEDITORSETTING_H
 
-#include "core/totool.h"
 #include "core/toconfenum.h"
 
-#include "ui_todatabasesettingui.h"
+#include <QtCore/QVariant>
 
-namespace ToConfiguration {
-	class Database : public ConfigContext
+namespace ToConfiguration
+{
+	class Editor : public ConfigContext
 	{
 		Q_OBJECT;
 		Q_ENUMS(OptionTypeEnum);
 	public:
-		Database() : ConfigContext("Database", ENUM_REF(Database,OptionTypeEnum)) {};
+		Editor() : ConfigContext("Editor", ENUM_REF(Editor,OptionTypeEnum)) {};
 		enum OptionTypeEnum {
-			ObjectCache   = 4000  // #define CONF_OBJECT_CACHE
-			, CacheTimeout        // #define CONF_CACHE_TIMEOUT
-			, AutoCommit          // #define CONF_AUTO_COMMIT
-			, FirewallMode        // #define CONF_FIREWALL_MODE
-			, ConnectionTestInterval // #define CONF_CONN_TEST_INTERVAL
-			, CachedConnections
-			, MaxNumber           // #define CONF_MAX_NUMBER (InitialFetch)
-			, MaxContent          // #define CONF_MAX_CONTENT (InitialEditorContent)
-			, MaxColDisp          // #define CONF_MAX_COL_DISP
-			, IndicateEmpty       // #define CONF_INDICATE_EMPTY
-			, IndicateEmptyColor  // #define CONF_INDICATE_EMPTY_COLOR
-			, NumberFormat        // #define CONF_NUMBER_FORMAT
-			, NumberDecimals      // #define CONF_NUMBER_DECIMALS
+			SyntaxHighlighting  = 3000 // #define CONF_HIGHLIGHT
+			, EditorType            // #define CONF_EDITOR_TYPE
+			, UseMaxTextWidthMarkBool
+			, MaxTextWidthMarkInt
+			, KeywordUpperBool      // #define CONF_KEYWORD_UPPER
+			, ObjectNamesUpperBool  // #define CONF_OBJECT_NAMES_UPPER
+			, CodeCompleteBool      // #define CONF_CODE_COMPLETION
+			, CompleteSortBool      // #define CONF_COMPLETION_SORT
+			, UseEditorShortcutsBool
+			, EditorShortcutsMap
+			, AutoIndentBool        // #define CONF_AUTO_INDENT
+			, UseSpacesForIndentBool// #define CONF_TAB_SPACES
+			, TabStopInt            // #define CONF_TAB_STOP
+			, ConfTextFont          // #define CONF_TEXT
+			, ConfCodeFont          // #define CONF_CODE
+			, ListTextFont          // #define CONF_LIST
+			, Extensions            // #define CONF_EXTENSIONS
+			// 2nd tab
+			, EditStyleMap          // #define CONF_EDIT_STYLE
 		};
-		virtual QVariant defaultValue(int) const;
+		virtual QVariant defaultValue(int option) const;
 	};
-};
-
-class toDatabaseSetting : public QWidget
-    , public Ui::toDatabaseSettingUI
-    , public toSettingTab
-{
-    Q_OBJECT;
-
-public:
-    toDatabaseSetting(QWidget *parent = 0, const char *name = 0, Qt::WFlags fl = 0);
-
-public slots:
-    virtual void saveSetting(void);
-    virtual void numberFormatChange();
-    virtual void IndicateEmptyColor_clicked();
-};
+}
 
 #endif

@@ -48,6 +48,29 @@
 
 #include <QtCore/QDebug>
 
+QVariant ToConfiguration::Database::defaultValue(int option) const
+{
+	switch(option)
+	{
+	case ObjectCache:              return QVariant((int)1);
+	case CacheTimeout: 	           return QVariant((int)7);
+	case AutoCommit:               return QVariant((bool)false);
+	case FirewallMode:             return QVariant((bool)false);
+	case ConnectionTestInterval:   return QVariant((int)900);     //15min
+	case CachedConnections:        return QVariant((int)4);
+	case MaxNumber:                return QVariant((int)50);
+	case MaxContent:               return QVariant((int)100);
+	case MaxColDisp:               return QVariant((int)300);
+	case IndicateEmpty:            return QVariant((bool)true);
+	case IndicateEmptyColor:       return QVariant(QString("#f2ffbc"));
+	case NumberFormat:             return QVariant((int)0);
+	case NumberDecimals:           return QVariant((int)2);
+	default:
+		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Editor un-registered enum value: %1").arg(option)));
+		return QVariant();
+	}
+}
+
 void toDatabaseSetting::numberFormatChange()
 {
     Decimals->setEnabled(NumberFormat->currentIndex() == 2);

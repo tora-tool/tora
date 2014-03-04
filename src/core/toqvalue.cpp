@@ -35,7 +35,8 @@
 #include "core/toqvalue.h"
 #include "core/utils.h"
 #include "core/toconf.h"
-#include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
+#include "core/todatabasesetting.h"
 
 #include <QtCore/QVariant>
 #include <QtGui/QApplication>
@@ -243,7 +244,7 @@ const QByteArray toQValue::toByteArray() const
 
 QString toQValue::displayData() const
 {
-    if( isNull() && toConfigurationSingle::Instance().indicateEmpty())
+    if( isNull() && toConfigurationNewSingle::Instance().option(ToConfiguration::Database::IndicateEmpty).toBool())
     {
         return QString::fromLatin1("{null}");
     }

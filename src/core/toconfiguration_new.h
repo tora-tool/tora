@@ -33,6 +33,8 @@ public:
     QVariant option(QString const& option);
     template <class T> void setOption(int option, T const&) {};
 
+    void saveAll();
+
     /*! \brief Set the QSettings access strings.
     QSettings uses these. It's used in the main.cpp before
     new QApplication instance init.

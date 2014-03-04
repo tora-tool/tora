@@ -71,8 +71,9 @@
 
 #include "editor/tosqltext.h"
 #include "core/toglobalevent.h"
-#include "core/toconfiguration.h"
 #include "core/toconfiguration_new.h"
+
+#include "connection/toqsqlconnection.h"
 
 #include <QtCore/QDebug>
 #include <QtCore/QSettings>
@@ -1019,9 +1020,9 @@ static toSQL SQLDropMySQLRoutine("toWorksheet:DropRoutine",
 void toWorksheet::mySQLBeforeCreate(QString &chk)
 {
     // wether routine exists must checked if config is set to 2 (drop if exists) and 4 (ask if exists)
-    bool check = (toConfigurationSingle::Instance().beforeCreateAction() % 2 == 0);
+    bool check = (toConfigurationNewSingle::Instance().option(ToConfiguration::MySQL::BeforeCreateAction).toInt() % 2 == 0);
     // wether to ask or drop automatically if config is set to 3 (ask) and 4 (ask if exists)
-    bool ask = (toConfigurationSingle::Instance().beforeCreateAction() > 2);
+    bool ask = (toConfigurationNewSingle::Instance().option(ToConfiguration::MySQL::BeforeCreateAction).toInt() > 2);
     bool answerYes;
 
     // do a "poor mans" parsing as we do not actually need to parse everything
@@ -1111,7 +1112,7 @@ void toWorksheet::query(toSyntaxAnalyzer::statement const& statement, execTypeEn
         return;
 
     // Imitate something like "create or replace" syntax for MySQL
-    //if (connection().providerIs("QMYSQL") && code && toConfigurationSingle::Instance().createAction() > 0)
+    //if (connection().providerIs("QMYSQL") && code && toConfigurationNewSingle::Instance().createAction() > 0)
     //mySQLBeforeCreate(chk);
 
     if (describe(statement))
@@ -2276,39 +2277,43 @@ void toWorksheet::queryStarted(const toSyntaxAnalyzer::statement &stat)
 }
 
 toWorksheetSetup::toWorksheetSetup(toTool *tool, QWidget* parent, const char* name)
-    : QWidget(parent), toSettingTab("worksheet.html#preferences"), Tool(tool)
+    : QWidget(parent)
+	, toSettingTab("worksheet.html#preferences")
+	, Tool(tool)
 {
 
     setupUi(this);
-    //AutoSave->setChecked(toConfigurationSingle::Instance().wsAutoSave());
-    //CheckSave->setChecked(toConfigurationSingle::Instance().wsCheckSave());
-    //LogAtEnd->setChecked(toConfigurationSingle::Instance().wsLogAtEnd());
-    //LogMulti->setChecked(toConfigurationSingle::Instance().wsLogMulti());
-    //MoveToError->setChecked(toConfigurationSingle::Instance().wsMoveToErr());
-    //Statistics->setChecked(toConfigurationSingle::Instance().wsStatistics());
-    //TimedStatistics->setChecked(toConfigurationSingle::Instance().wsTimedStats());
-    //History->setChecked(toConfigurationSingle::Instance().wsHistory());
-    //DisplayNumber->setChecked(toConfigurationSingle::Instance().wsNumber());
-    //ToplevelDescribe->setChecked(toConfigurationSingle::Instance().wsToplevelDescribe());
-    //DefaultFile->setText(toConfigurationSingle::Instance().wsAutoLoad());
-    //ExecLog->setChecked(toConfigurationSingle::Instance().wsExecLog());
+    //AutoSave->setChecked(toConfigurationNewSingle::Instance().wsAutoSave());
+    //CheckSave->setChecked(toConfigurationNewSingle::Instance().wsCheckSave());
+    //LogAtEnd->setChecked(toConfigurationNewSingle::Instance().wsLogAtEnd());
+    //LogMulti->setChecked(toConfigurationNewSingle::Instance().wsLogMulti());
+    //MoveToError->setChecked(toConfigurationNewSingle::Instance().wsMoveToErr());
+    //Statistics->setChecked(toConfigurationNewSingle::Instance().wsStatistics());
+    //TimedStatistics->setChecked(toConfigurationNewSingle::Instance().wsTimedStats());
+    //History->setChecked(toConfigurationNewSingle::Instance().wsHistory());
+    //DisplayNumber->setChecked(toConfigurationNewSingle::Instance().wsNumber());
+    //ToplevelDescribe->setChecked(toConfigurationNewSingle::Instance().wsToplevelDescribe());
+    //DefaultFile->setText(toConfigurationNewSingle::Instance().wsAutoLoad());
+    //ExecLog->setChecked(toConfigurationNewSingle::Instance().wsExecLog());
+    toSettingTab::loadSettings(this);
 }
 
 
 void toWorksheetSetup::saveSetting(void)
 {
-    toConfigurationSingle::Instance().setWsAutoSave(AutoSave->isChecked());
-    toConfigurationSingle::Instance().setWsCheckSave(CheckSave->isChecked());
-    toConfigurationSingle::Instance().setWsLogAtEnd(LogAtEnd->isChecked());
-    toConfigurationSingle::Instance().setWsLogMulti(LogMulti->isChecked());
-    toConfigurationSingle::Instance().setWsToplevelDescribe(ToplevelDescribe->isChecked());
-    toConfigurationSingle::Instance().setWsMoveToErr(MoveToError->isChecked());
-    toConfigurationSingle::Instance().setWsStatistics(Statistics->isChecked());
-    toConfigurationSingle::Instance().setWsHistory(History->isChecked());
-    toConfigurationSingle::Instance().setWsTimedStats(TimedStatistics->isChecked());
-    toConfigurationSingle::Instance().setWsNumber(DisplayNumber->isChecked());
-    toConfigurationSingle::Instance().setWsExecLog(ExecLog->isChecked());
-    toConfigurationSingle::Instance().setWsAutoLoad(DefaultFile->text());
+    //toConfigurationNewSingle::Instance().setWsAutoSave(AutoSave->isChecked());
+    //toConfigurationNewSingle::Instance().setWsCheckSave(CheckSave->isChecked());
+    //toConfigurationNewSingle::Instance().setWsLogAtEnd(LogAtEnd->isChecked());
+    //toConfigurationNewSingle::Instance().setWsLogMulti(LogMulti->isChecked());
+    //toConfigurationNewSingle::Instance().setWsToplevelDescribe(ToplevelDescribe->isChecked());
+    //toConfigurationNewSingle::Instance().setWsMoveToErr(MoveToError->isChecked());
+    //toConfigurationNewSingle::Instance().setWsStatistics(Statistics->isChecked());
+    //toConfigurationNewSingle::Instance().setWsHistory(History->isChecked());
+    //toConfigurationNewSingle::Instance().setWsTimedStats(TimedStatistics->isChecked());
+    //toConfigurationNewSingle::Instance().setWsNumber(DisplayNumber->isChecked());
+    //toConfigurationNewSingle::Instance().setWsExecLog(ExecLog->isChecked());
+    //toConfigurationNewSingle::Instance().setWsAutoLoad(DefaultFile->text());
+	toSettingTab::saveSettings(this);
 }
 
 

@@ -44,7 +44,8 @@
 #include "tools/tostoragedefinition.h"
 #include "core/totimer.h"
 #include "core/toglobalevent.h"
-#include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
+#include "core/toglobalsetting.h"
 
 #include <QtGui/QSplitter>
 #include <QtGui/QToolBar>
@@ -172,30 +173,22 @@ toRollbackPrefs::toRollbackPrefs(toTool *tool, QWidget* parent, const char* name
         QSizePolicy::Expanding);
     vbox->addItem(spacer);
 
-//     if (!tool->config(CONF_OLD_ENABLE, "").isEmpty())
-//         OldEnable->setChecked(true);
-//     if (!tool->config(CONF_NO_EXEC, "Yes").isEmpty())
-//         NoExec->setChecked(true);
-//     if (!tool->config(CONF_NEED_READ, "Yes").isEmpty())
-//         NeedRead->setChecked(true);
-//     if (!tool->config(CONF_NEED_TWO, "Yes").isEmpty())
-//         NeedTwo->setChecked(true);
-//     if (!tool->config(CONF_ALIGN_LEFT, "Yes").isEmpty())
-//         AlignLeft->setChecked(true);
-    OldEnable->setChecked(toConfigurationSingle::Instance().oldEnable());
-    NoExec->setChecked(toConfigurationSingle::Instance().noExec());
-    NeedRead->setChecked(toConfigurationSingle::Instance().needRead());
-    NeedTwo->setChecked(toConfigurationSingle::Instance().needTwo());
-    AlignLeft->setChecked(toConfigurationSingle::Instance().alignLeft());
+    //OldEnable->setChecked(toConfigurationNewSingle::Instance().oldEnable());
+    //NoExec->setChecked(toConfigurationNewSingle::Instance().noExec());
+    //NeedRead->setChecked(toConfigurationNewSingle::Instance().needRead());
+    //NeedTwo->setChecked(toConfigurationNewSingle::Instance().needTwo());
+    //AlignLeft->setChecked(toConfigurationNewSingle::Instance().alignLeft());
+    toSettingTab::loadSettings(this);
 }
 
 void toRollbackPrefs::saveSetting(void)
 {
-    toConfigurationSingle::Instance().setNoExec(NoExec->isChecked());
-    toConfigurationSingle::Instance().setNeedRead(NeedRead->isChecked());
-    toConfigurationSingle::Instance().setNeedTwo(NeedTwo->isChecked());
-    toConfigurationSingle::Instance().setAlignLeft(AlignLeft->isChecked());
-    toConfigurationSingle::Instance().setOldEnable(OldEnable->isChecked());
+	toSettingTab::saveSettings(this);
+    //toConfigurationNewSingle::Instance().setNoExec(NoExec->isChecked());
+    //toConfigurationNewSingle::Instance().setNeedRead(NeedRead->isChecked());
+    //toConfigurationNewSingle::Instance().setNeedTwo(NeedTwo->isChecked());
+    //toConfigurationNewSingle::Instance().setAlignLeft(AlignLeft->isChecked());
+    //toConfigurationNewSingle::Instance().setOldEnable(OldEnable->isChecked());
 }
 
 class toRollbackTool : public toTool
@@ -222,7 +215,11 @@ public:
         return new toRollbackPrefs(this, parent);
     }
     virtual void closeWindow(toConnection &connection) {};
+private:
+    static ToConfiguration::Rollback s_rollbackConfig;
 };
+
+ToConfiguration::Rollback toRollbackTool::s_rollbackConfig;
 
 static toRollbackTool RollbackTool;
 
@@ -549,15 +546,9 @@ public:
                 NumExtents = num;
             }
 
-            bool noExec = toConfigurationSingle::Instance().noExec();
-            bool needRead = toConfigurationSingle::Instance().needRead();
-            bool needTwo = toConfigurationSingle::Instance().needTwo();
-//             if (RollbackTool.config(CONF_NO_EXEC, "Yes").isEmpty())
-//                 noExec = false;
-//             if (RollbackTool.config(CONF_NEED_READ, "Yes").isEmpty())
-//                 needRead = false;
-//             if (RollbackTool.config(CONF_NEED_TWO, "Yes").isEmpty())
-//                 needTwo = false;
+            bool noExec = toConfigurationNewSingle::Instance().option(ToConfiguration::Rollback::NoExec).toBool();
+            bool needRead = toConfigurationNewSingle::Instance().option(ToConfiguration::Rollback::NeedRead).toBool();
+            bool needTwo = toConfigurationNewSingle::Instance().option(ToConfiguration::Rollback::NeedTwo).toBool();
 
             std::map<QString, int> Exists;
             for (toTreeWidgetItem *i = firstChild(); i;)
@@ -709,11 +700,11 @@ toRollback::toRollback(QWidget *main, toConnection &connection)
     try
     {
         connect(timer(), SIGNAL(timeout(void)), this, SLOT(refresh(void)));
-        Utils::toRefreshParse(timer(), toConfigurationSingle::Instance().refresh());
+        Utils::toRefreshParse(timer(), toConfigurationNewSingle::Instance().option(ToConfiguration::Global::RefreshInterval).toString());
     }
     TOCATCH
 
-    if (toConfigurationSingle::Instance().oldEnable())
+    if (toConfigurationNewSingle::Instance().option(ToConfiguration::Rollback::OldEnable).toBool())
         enableOldAct->setChecked(true);
     else
         Statements->setEnabled(false);
@@ -759,7 +750,7 @@ void toRollback::slotWindowActivated(toToolWidget *widget)
 
 void toRollback::refresh(void)
 {
-    QString unit(toConfigurationSingle::Instance().sizeUnit());
+    QString unit(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::SizeUnit).toString());
     Segments->refreshWithParams(toQueryParams() << QString::number(Utils::toSizeDecode(unit)));
 
     TransactionUsers->refresh();
@@ -768,7 +759,7 @@ void toRollback::refresh(void)
 void toRollback::updateHeaders(const QString &sql, const toConnection::exception &res, bool error)
 {
     QString d;
-    QString unit("(" + toConfigurationSingle::Instance().sizeUnit() + ")");
+    QString unit("(" + toConfigurationNewSingle::Instance().option(ToConfiguration::Global::SizeUnit).toString() + ")");
 
     for (int i = 0; i < Segments->model()->columnCount(); ++i)
     {

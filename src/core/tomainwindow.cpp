@@ -71,6 +71,10 @@ QVariant Main::defaultValue(int option) const
 	    }
 	    return retval;
 	}
+	case MainWindowGeometry: return QVariant(QByteArray());
+	case MainWindowState:    return QVariant(QByteArray());
+	case LeftDockbarState:   return QVariant(QByteArray());
+	case RightDockbarState:  return QVariant(QByteArray());
 	default:
 		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Editor un-registered enum value: %1").arg(option)));
 		return QVariant();

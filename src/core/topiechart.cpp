@@ -36,8 +36,9 @@
 #include "core/utils.h"
 #include "core/tologger.h"
 #include "core/toconf.h"
-#include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
 #include "core/toconnection.h"
+#include "core/toeditorsetting.h"
 #include "core/tolinechart.h"
 #include "core/toresult.h"
 
@@ -80,7 +81,7 @@ toPieChart::toPieChart(QWidget *parent, const char *name, Qt::WFlags f)
 
     setMinimumSize(60, 60);
     // Use list font
-    QString str(toConfigurationSingle::Instance().listFontName());
+    QString str(toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::ListTextFont).toString());
     if (!str.isEmpty())
     {
         QFont font(Utils::toStringToFont(str));
@@ -152,7 +153,7 @@ toPieChart::toPieChart(toPieChart *pie,
 
     setMinimumSize(60, 60);
     // Use list font
-    QString str(toConfigurationSingle::Instance().listFontName());
+    QString str(toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::ListTextFont).toString());
     if (!str.isEmpty())
     {
         QFont font(Utils::toStringToFont(str));

@@ -37,12 +37,30 @@
 
 
 #include "core/totool.h"
+#include "core/toconfenum.h"
 
 #include "ui_tohelpui.h"
 
 #include <QtGui/QProgressBar>
 #include <QtGui/QWidget>
 #include <QtGui/QTreeWidget>
+
+namespace ToConfiguration {
+	class Help : public ConfigContext
+	{
+		Q_OBJECT;
+		Q_ENUMS(OptionTypeEnum);
+	public:
+		Help() : ConfigContext("Help", ENUM_REF(Help,OptionTypeEnum)) {};
+		enum OptionTypeEnum {
+			// Paths
+			AdditionalHelpMap = 14000
+		};
+		virtual QVariant defaultValue(int) const;
+	};
+};
+
+
 
 class toHelpPrefs;
 
@@ -69,6 +87,8 @@ public:
     virtual void closeWindow(toConnection &connection) {};
 public slots:
     void displayHelp(void);
+private:
+    static ToConfiguration::Help s_helpConfig;
 };
 
 /**

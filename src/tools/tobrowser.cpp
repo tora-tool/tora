@@ -56,7 +56,6 @@
 #include "core/toconnectionsub.h"
 #include "core/toconnectiontraits.h"
 #include "core/toglobalevent.h"
-#include "core/toconfiguration.h"
 #include "core/toconfiguration_new.h"
 
 #ifdef TOEXTENDED_MYSQL
@@ -254,7 +253,7 @@ public:
         if (!empty)
             readFilterSettings();
         else
-            toConfigurationSingle::Instance().setFilterType(FilterNone);  // No filter type
+            toConfigurationNewSingle::Instance().setFilterType(FilterNone);  // No filter type
     }
 
     virtual ~toBrowserFilter() {};
@@ -266,12 +265,12 @@ public:
 
     virtual void storeFilterSettings(void)
     {
-        toConfigurationSingle::Instance().setFilterIgnoreCase(IgnoreCase);
-        toConfigurationSingle::Instance().setFilterInvert(Invert);
-        toConfigurationSingle::Instance().setFilterType(Type);
-        toConfigurationSingle::Instance().setFilterTablespaceType(TablespaceType);
-        toConfigurationSingle::Instance().setFilterText(Text);
-        toConfigurationSingle::Instance().saveConfig();
+        toConfigurationNewSingle::Instance().setFilterIgnoreCase(IgnoreCase);
+        toConfigurationNewSingle::Instance().setFilterInvert(Invert);
+        toConfigurationNewSingle::Instance().setFilterType(Type);
+        toConfigurationNewSingle::Instance().setFilterTablespaceType(TablespaceType);
+        toConfigurationNewSingle::Instance().setFilterText(Text);
+        toConfigurationNewSingle::Instance().saveConfig();
     }
 
     virtual void readFilterSettings(void)

@@ -36,7 +36,9 @@
 #include "ui_tolinechartsetupui.h"
 #include "core/utils.h"
 #include "core/toconf.h"
-#include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
+#include "core/toglobalsetting.h"
+#include "core/toeditorsetting.h"
 
 #include <QtGui/QPainter>
 #include <QtGui/QPrinter>
@@ -112,16 +114,16 @@ toLineChart::toLineChart(QWidget *parent, const char *name, Qt::WFlags f)
     Grid = 5;
     AxisText = true;
     MousePoint[0] = MousePoint[1] = QPoint( -1, -1);
-    DisplaySamples = toConfigurationSingle::Instance().displaySamples();
+    DisplaySamples = toConfigurationNewSingle::Instance().option(ToConfiguration::Global::DisplaySamplesInt).toInt();
 
     clearZoom();
 
-    setSamples(toConfigurationSingle::Instance().chartSamples());
+    setSamples(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::ChartSamplesInt).toInt());
 
     setMinimumSize(80, 50);
 
     // Use list font
-    QString str(toConfigurationSingle::Instance().listFontName());
+    QString str(toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::ListTextFont).toString());
     if (!str.isEmpty())
     {
         QFont font(Utils::toStringToFont(str));
@@ -875,7 +877,7 @@ toLineChart::toLineChart (toLineChart *chart, QWidget *parent, const char *name,
     connect(Horizontal, SIGNAL(valueChanged(int)), this, SLOT(horizontalChange(int)));
 
     // Use list font
-    QString str(toConfigurationSingle::Instance().listFontName());
+    QString str(toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::ListTextFont).toString());
     if (!str.isEmpty())
     {
         QFont font(Utils::toStringToFont(str));

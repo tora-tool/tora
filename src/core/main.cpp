@@ -34,7 +34,7 @@
 
 #include "core/toconfiguration_new.h"
 #include "core/tosplash.h"
-#include "core/toconnectionprovider.h"
+//#include "core/toconnectionprovider.h"
 #include "core/tooracleconst.h"
 #include "core/tosql.h"
 #include "core/tocache.h"
@@ -46,6 +46,7 @@
 #include "core/utils.h"
 #include "core/tologger.h"
 #include "core/toglobalsetting.h"
+#include "core/todatabasesetting.h"
 
 #ifndef Q_OS_WIN32
 #include <unistd.h>

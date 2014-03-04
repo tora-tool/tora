@@ -99,7 +99,7 @@ QVariant ToConfiguration::Global::defaultValue(int option) const
 	case ChartSamplesInt:		return QVariant((int)100);
 	case DisplaySamplesInt:     return QVariant((int)-1);
 	case SizeUnit:			return QVariant(QString("MB"));
-	case RefreshIntervalInt:	return QVariant((int)0);  // None
+	case RefreshInterval:	return QVariant(QString("None"));  // None - 0
 	case DefaultListFormat:		return QVariant((int)0);
 	case Style:			return QVariant(QString(""));
 	case Translation:		return QVariant(QLocale().name());

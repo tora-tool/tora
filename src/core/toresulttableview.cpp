@@ -38,7 +38,7 @@
 #include "core/toeventquery.h"
 #include "core/toconf.h"
 #include "core/utils.h"
-#include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
 #include "core/toconnection.h"
 #include "core/tomodeleditor.h"
 #include "core/tomainwindow.h"
@@ -47,6 +47,7 @@
 #include "core/tolistviewformatterfactory.h"
 //#include "core/tolistviewformatteridentifier.h"
 #include "core/toworkingwidget.h"
+#include "core/toglobalsetting.h"
 
 #include <QtCore/QSize>
 #include <QtCore/QTimer>
@@ -313,8 +314,8 @@ int toResultTableView::visibleRows() const
 	int hh = height();
 	int hhh = s.height();
 	int rows = hh / s.height() + 1;
-	if (rows < toConfigurationSingle::Instance().initialFetch())
-		return toConfigurationSingle::Instance().initialFetch();
+	if (rows < toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxNumber).toInt())
+		return toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxNumber).toInt();
 	return rows;
 }
 
@@ -459,7 +460,7 @@ void toResultTableView::slotApplyColumnRules()
     ColumnsResized = false;
 
     slotResizeColumnsToContents();
-    if (toConfigurationSingle::Instance().multiLineResults())
+    if (toConfigurationNewSingle::Instance().option(ToConfiguration::Global::MultiLineResultsBool).toBool())
         resizeRowsToContents();
 
     if (ReadableColumns && VisibleColumns == 1)
@@ -644,7 +645,7 @@ void toResultTableView::setModel(toResultModel *model)
     // After data model is set we need to connect to it's signal dataChanged. This signal
     // will be emitted after sorting on column and we need to resize Row's again then
     // because height of rows do not "move" together with their rows when sorting.
-    if (toConfigurationSingle::Instance().multiLineResults())
+    if (toConfigurationNewSingle::Instance().option(ToConfiguration::Global::MultiLineResultsBool).toBool())
         connect(model,
                 SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)),
                 this,
@@ -784,7 +785,7 @@ void toResultTableView::slotColumnWasResized(int, int, int)
     ColumnsResized = true;
     // After resizing columns it could happen that different amount of vertical
     // space is required to display all information therefore we resize Rows.
-    if (toConfigurationSingle::Instance().multiLineResults())
+    if (toConfigurationNewSingle::Instance().option(ToConfiguration::Global::MultiLineResultsBool).toBool())
         resizeRowsToContents();
 }
 

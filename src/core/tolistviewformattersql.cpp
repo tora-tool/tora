@@ -37,13 +37,14 @@
 //
 
 #include "core/tolistviewformattersql.h"
-#include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
 #include "core/toconfiguration_new.h"
 #include "core/tolistviewformatterfactory.h"
 #include "core/tolistviewformatteridentifier.h"
 #include "core/toresultmodel.h"
 #include "core/utils.h"
 #include "editor/toworksheettext.h"
+#include "connection/tooraclesetting.h"
 
 namespace
 {
@@ -143,7 +144,7 @@ QString toListViewFormatterSQL::getFormattedString(toExportSettings &settings,
                     values += "NULL";
                 else
                 {
-                    values += "TO_DATE(\'" + currVal + "\' ,\'" + toConfigurationSingle::Instance().dateFormat() + "\')";
+                    values += "TO_DATE(\'" + currVal + "\' ,\'" + toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::ConfDateFormat).toString() + "\')";
                 }
             }
             else if (h.contains("CHAR"))

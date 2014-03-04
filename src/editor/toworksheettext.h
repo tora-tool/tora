@@ -36,42 +36,7 @@
 #define TOWORKSHEETTEXT_H
 
 #include "editor/tosqltext.h"
-#include "core/toconfenum.h"
-
-#include <QtCore/QVariant>
-
-namespace ToConfiguration
-{
-	class Editor : public ConfigContext
-	{
-		Q_OBJECT;
-		Q_ENUMS(OptionTypeEnum);
-	public:
-		Editor() : ConfigContext("Editor", ENUM_REF(Editor,OptionTypeEnum)) {};
-		enum OptionTypeEnum {
-			SyntaxHighlighting  = 3000 // #define CONF_HIGHLIGHT
-			, EditorType            // #define CONF_EDITOR_TYPE
-			, UseMaxTextWidthMarkBool
-			, MaxTextWidthMarkInt
-			, KeywordUpperBool      // #define CONF_KEYWORD_UPPER
-			, ObjectNamesUpperBool  // #define CONF_OBJECT_NAMES_UPPER
-			, CodeCompleteBool      // #define CONF_CODE_COMPLETION
-			, CompleteSortBool      // #define CONF_COMPLETION_SORT
-			, UseEditorShortcutsBool
-			, EditorShortcutsMap
-			, AutoIndentBool        // #define CONF_AUTO_INDENT
-			, UseSpacesForIndentBool// #define CONF_TAB_SPACES
-			, TabStopInt            // #define CONF_TAB_STOP
-			, ConfTextFont          // #define CONF_TEXT
-			, ConfCodeFont          // #define CONF_CODE
-			, ListTextFont          // #define CONF_LIST
-			, Extensions            // #define CONF_EXTENSIONS
-			// 2nd tab
-			, EditStyleMap          // #define CONF_EDIT_STYLE
-		};
-		virtual QVariant defaultValue(int option) const;
-	};
-}
+#include "core/toeditorsetting.h"
 
 class toWorksheetText : public toSqlText
 {

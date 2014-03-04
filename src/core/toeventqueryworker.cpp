@@ -39,7 +39,7 @@
 #include "core/toconf.h"
 //stat #include "core/toresultstats.h"
 #include "core/totool.h"
-#include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
 #include "core/toquery.h"
 #include "core/toqvalue.h"
 
@@ -159,7 +159,7 @@ void toEventQueryWorker::slotRead()
 			return;
 		}
 
-		unsigned maxRead = toConfigurationSingle::Instance().initialFetch(); 
+		unsigned maxRead = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxNumber).toInt();
 		ValuesList values;		
 		for(unsigned row = 0; row < maxRead; row++)
 		{

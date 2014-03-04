@@ -157,7 +157,7 @@ public:
     QString m_filterText;
 
     // tohelp
-    HelpsMap m_additionalHelp;
+    ////HelpsMap m_additionalHelp;
 
 #ifdef TORA3_CHARTS
     // tochartmanager

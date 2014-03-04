@@ -62,32 +62,6 @@ class toSQL;
 
 class QMenu;
 
-namespace ToConfiguration {
-	class Database : public ConfigContext
-	{
-		Q_OBJECT;
-		Q_ENUMS(OptionTypeEnum);
-	public:
-		Database() : ConfigContext("Database", ENUM_REF(Database,OptionTypeEnum)) {};
-		enum OptionTypeEnum {
-			ObjectCache   = 4000  // #define CONF_OBJECT_CACHE
-			, CacheTimeout        // #define CONF_CACHE_TIMEOUT
-			, AutoCommit          // #define CONF_AUTO_COMMIT
-			, FirewallMode        // #define CONF_FIREWALL_MODE
-			, ConnectionTestInterval // #define CONF_CONN_TEST_INTERVAL
-			, CachedConnections
-			, MaxNumber           // #define CONF_MAX_NUMBER (InitialFetch)
-			, MaxContent          // #define CONF_MAX_CONTENT (InitialEditorContent)
-			, MaxColDisp          // #define CONF_MAX_COL_DISP
-			, IndicateEmpty       // #define CONF_INDICATE_EMPTY
-			, IndicateEmptyColor  // #define CONF_INDICATE_EMPTY_COLOR
-			, NumberFormat        // #define CONF_NUMBER_FORMAT
-			, NumberDecimals      // #define CONF_NUMBER_DECIMALS
-		};
-		virtual QVariant defaultValue(int) const;
-	};
-};
-
 /** Represent a database connection in TOra. Observe that this can mean several actual
  * connections to the database as queries that are expected to run a long time are sometimes
  * executed in their own connection to make sure the interface doesn't lock up for a long time.
