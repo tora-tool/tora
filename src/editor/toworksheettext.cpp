@@ -373,8 +373,6 @@ void toWorksheetText::focusOutEvent(QFocusEvent *e)
 	super::focusOutEvent(e);
 }
 
-ToConfiguration::Editor toWorksheetText::s_EditorConfig;
-
 #ifdef TORA3_SESSION
 void toWorksheetText::exportData(std::map<QString, QString> &data, const QString &prefix)
 {

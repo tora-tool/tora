@@ -99,7 +99,7 @@ QVariant ToConfiguration::Browser::defaultValue(int option) const
 	case FilterTablespaceType:   return QVariant((int)0);
 	case FilterText:             return QVariant(QString(""));
 	default:
-		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Editor un-registered enum value: %1").arg(option)));
+		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Browser un-registered enum value: %1").arg(option)));
 		return QVariant();
 	}
 }
@@ -192,7 +192,8 @@ static toSQL SQLListTablespaces("toBrowser:ListTablespaces",
                                 " ORDER BY Tablespace_Name",
                                 "List the available tablespaces in a database.");
 
-class toBrowserFilter : public toViewFilter
+class toBrowserFilter
+	: public toViewFilter
 {
 	enum FilterType // see toBrowserFilterSetup::ButtonsGroup
 	{
@@ -223,14 +224,15 @@ public:
                     int tablespace,
                     const std::list<QString> &tablespaces,
                     bool onlyOwnSchema = false)
-        : Type(type),
-          IgnoreCase(cas),
-          Invert(invert),
-          Text(cas ? str.toUpper() : str),
-          TablespaceType(tablespace),
-          Tablespaces(tablespaces),
-          OnlyOwnSchema(onlyOwnSchema),
-          Empty(false)
+        : toViewFilter()
+        , Type(type)
+        , IgnoreCase(cas)
+        , Invert(invert)
+        , Text(cas ? str.toUpper() : str)
+        , TablespaceType(tablespace)
+        , Tablespaces(tablespaces)
+        , OnlyOwnSchema(onlyOwnSchema)
+        , Empty(false)
     {
 
         if (!str.isEmpty())
@@ -253,7 +255,7 @@ public:
         if (!empty)
             readFilterSettings();
         else
-            toConfigurationNewSingle::Instance().setFilterType(FilterNone);  // No filter type
+            toConfigurationNewSingle::Instance().setOption(ToConfiguration::Browser::FilterType, FilterNone);  // No filter type
     }
 
     virtual ~toBrowserFilter() {};
@@ -265,12 +267,13 @@ public:
 
     virtual void storeFilterSettings(void)
     {
-        toConfigurationNewSingle::Instance().setFilterIgnoreCase(IgnoreCase);
-        toConfigurationNewSingle::Instance().setFilterInvert(Invert);
-        toConfigurationNewSingle::Instance().setFilterType(Type);
-        toConfigurationNewSingle::Instance().setFilterTablespaceType(TablespaceType);
-        toConfigurationNewSingle::Instance().setFilterText(Text);
-        toConfigurationNewSingle::Instance().saveConfig();
+    	using namespace ToConfiguration;
+        toConfigurationNewSingle::Instance().setOption(Browser::FilterIgnoreCase, IgnoreCase);
+        toConfigurationNewSingle::Instance().setOption(Browser::FilterInvert, Invert);
+        toConfigurationNewSingle::Instance().setOption(Browser::FilterType, Type);
+        toConfigurationNewSingle::Instance().setOption(Browser::FilterTablespaceType, TablespaceType);
+        toConfigurationNewSingle::Instance().setOption(Browser::FilterText, Text);
+        toConfigurationNewSingle::Instance().saveAll();
     }
 
     virtual void readFilterSettings(void)
@@ -464,7 +467,9 @@ public:
     friend class toBrowserFilterSetup;
 };
 
-class toBrowserFilterSetup : public QDialog, public Ui::toBrowserFilterUI
+class toBrowserFilterSetup
+	: public QDialog
+	, public Ui::toBrowserFilterUI
 {
 private:
     QButtonGroup *ButtonsGroup;

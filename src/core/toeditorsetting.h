@@ -38,6 +38,8 @@
 #include "core/toconfenum.h"
 
 #include <QtCore/QVariant>
+#include <QtGui/QColor>
+#include <QtGui/QFont>
 
 namespace ToConfiguration
 {

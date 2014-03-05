@@ -70,7 +70,7 @@ namespace ToConfiguration
 			{
 			case AutoUpdate: return QVariant((bool)true);
 			default:
-				Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Editor un-registered enum value: %1").arg(option)));
+				Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context SgaTrace un-registered enum value: %1").arg(option)));
 				return QVariant();
 			}
 		}

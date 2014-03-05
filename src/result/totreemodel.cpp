@@ -34,7 +34,8 @@
 
 #include "result/totreemodel.h"
 
-#include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
+#include "core/todatabasesetting.h"
 #include "core/toqvalue.h"
 #include "ts_log/ts_log_utils.h"
 
@@ -96,8 +97,8 @@ QVariant toTreeModelPriv::data(QModelIndex const& index, int role) const
         }
         return QVariant(data.displayData());
     case Qt::BackgroundRole:
-        if (data.isNull() && toConfigurationSingle::Instance().indicateEmpty())
-            return QVariant(QColor(toConfigurationSingle::Instance().indicateEmptyColor()));
+        if (data.isNull() && toConfigurationNewSingle::Instance().option(ToConfiguration::Database::IndicateEmpty).toBool())
+            return QVariant(QColor(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::IndicateEmptyColor).toString()));
         return QVariant();
 //    case Qt::TextAlignmentRole:
 //        return (int) Headers.at(index.column()).align;

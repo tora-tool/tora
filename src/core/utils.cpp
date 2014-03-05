@@ -673,7 +673,7 @@ void toRefreshParse(toTimer *timer, const QString &str)
 {
     QString t = str;
     if (t.isEmpty())
-        t = toConfigurationSingle::Instance().refresh();
+        t = toConfigurationNewSingle::Instance().option(ToConfiguration::Global::RefreshInterval).toString();
 
     if (t == qApp->translate("toRefreshCreate", "None") || t == "None")
         timer->stop();
@@ -986,7 +986,7 @@ QComboBox *toRefreshCreate(QWidget *parent, const char *name, const QString &def
     if (!def.isNull())
         str = def;
     else
-        str = toConfigurationSingle::Instance().refresh();
+        str = toConfigurationNewSingle::Instance().option(ToConfiguration::Global::RefreshInterval).toString();
     if (str == "2 seconds")
         refresh->setCurrentIndex(1);
     else if (str == "5 seconds")
@@ -1245,6 +1245,98 @@ bool toCompareLists(QStringList &lsta, QStringList &lstb, int len)
         if (lsta[i] != lstb[i])
             return false;
     return true;
+}
+
+
+void toLoadMap(const QString &filename, std::map<QString, QString> &pairs)
+{
+	QByteArray data = Utils::toReadFile(filename).toUtf8();
+
+	int pos = 0;
+	int bol = 0;
+	int endtag = -1;
+	int wpos = 0;
+	int size = data.length();
+	while (pos < size)
+	{
+		switch (data[pos])
+		{
+		case '\n':
+		data[wpos] = 0;
+		if (endtag == -1)
+			throw QT_TRANSLATE_NOOP("toTool", "Malformed tag in config file. Missing = on row. (%1)").arg(QString(data.mid(bol, wpos - bol)));
+		{
+			QString tag = ((const char *)data) + bol;
+			QString val = ((const char *)data) + endtag + 1;
+			pairs[tag] = val;
+		}
+		bol = pos + 1;
+		endtag = -1;
+		wpos = pos;
+		break;
+		case '=':
+			if (endtag == -1)
+			{
+				endtag = pos;
+				data[wpos] = 0;
+				wpos = pos;
+			}
+			else
+				data[wpos] = data[pos];
+			break;
+		case '\\':
+			pos++;
+			switch (data[pos])
+			{
+			case 'n':
+				data[wpos] = '\n';
+				break;
+			case '\\':
+				if (endtag >= 0)
+					data[wpos] = '\\';
+				else
+					data[wpos] = ':';
+				break;
+			default:
+				throw QT_TRANSLATE_NOOP("toTool", "Unknown escape character in string (Only \\\\ and \\n recognised)");
+			}
+			break;
+			default:
+				data[wpos] = data[pos];
+				break;
+		}
+		wpos++;
+		pos++;
+	}
+
+	return;
+}
+
+
+bool toSaveMap(const QString &file, std::map<QString, QString> &pairs)
+{
+	QString data;
+
+	{
+		// qt4        QRegExp newline(QString::fromLatin1("\n"));
+		// qt4        QRegExp backslash(QString::fromLatin1("\\"));
+		QString newline("\n");
+		QString backslash("\\");
+		for (std::map<QString, QString>::iterator i = pairs.begin(); i != pairs.end(); i++)
+		{
+			QString str = (*i).first;
+			str.append(QString::fromLatin1("="));
+			str.replace(backslash, QString::fromLatin1("\\\\"));
+			str.replace(newline, QString::fromLatin1("\\n"));
+			QString line = (*i).second;
+			line.replace(backslash, QString::fromLatin1("\\\\"));
+			line.replace(newline, QString::fromLatin1("\\n"));
+			str += line.toUtf8();
+			str += QString::fromLatin1("\n");
+			data += str;
+		}
+	}
+	return Utils::toWriteFile(file, data);
 }
 
 } // namespace utils

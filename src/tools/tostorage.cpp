@@ -75,7 +75,7 @@ QVariant ToConfiguration::Storage::defaultValue(int option) const
 	case DispExtents:      return QVariant((bool)false);
 	case AvailableGraph:   return QVariant((bool)true);
 	default:
-		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Editor un-registered enum value: %1").arg(option)));
+		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Storage un-registered enum value: %1").arg(option)));
 		return QVariant();
 	}
 }

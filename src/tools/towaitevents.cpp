@@ -40,7 +40,8 @@
 #include "core/totool.h"
 #include "core/totreewidget.h"
 #include "core/totimer.h"
-#include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
+#include "core/toeditorsetting.h"
 
 #include <QtCore/QSettings>
 #include <QtGui/QComboBox>
@@ -158,7 +159,7 @@ void toWaitEvents::setup(int session)
     Types->setAllColumnsShowFocus(true);
     Types->setSelectionMode(toTreeWidget::Multi);
     Types->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
-    QString str(toConfigurationSingle::Instance().listFontName());
+    QString str(toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::ListTextFont).toString());
     if (!str.isEmpty())
     {
         QFont font(Utils::toStringToFont(str));

@@ -40,7 +40,8 @@
 #include "core/toresulttableview.h"
 #include "core/utils.h"
 #include "core/totimer.h"
-#include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
+#include "core/toglobalsetting.h"
 
 #include <QtGui/QComboBox>
 #include <QtGui/QCheckBox>
@@ -52,8 +53,6 @@
 #include "icons/refresh.xpm"
 #include "icons/tosgatrace.xpm"
 
-// #define CONF_AUTO_UPDATE    "AutoUpdate"
-
 class toSGATracePrefs : public QGroupBox, public toSettingTab
 {
     QCheckBox* AutoUpdate;
@@ -61,7 +60,8 @@ class toSGATracePrefs : public QGroupBox, public toSettingTab
 
 public:
     toSGATracePrefs(toTool *tool, QWidget* parent = 0, const char* name = 0)
-        : QGroupBox(parent), toSettingTab("trace.html"), Tool(tool)
+	: QGroupBox(parent)
+	, toSettingTab("trace.html"), Tool(tool)
     {
         if (name)
             setObjectName(name);
@@ -89,7 +89,8 @@ public:
 
 //         if (!Tool->config(CONF_AUTO_UPDATE, "Yes").isEmpty())
 //             AutoUpdate->setChecked(true);
-        AutoUpdate->setChecked(toConfigurationSingle::Instance().autoUpdate());
+        //AutoUpdate->setChecked(toConfigurationSingle::Instance().autoUpdate());
+        toSettingTab::loadSettings(this);
     }
     virtual void saveSetting(void)
     {
@@ -97,7 +98,8 @@ public:
 //             Tool->setConfig(CONF_AUTO_UPDATE, "Yes");
 //         else
 //             Tool->setConfig(CONF_AUTO_UPDATE, "");
-        toConfigurationSingle::Instance().setAutoUpdate(AutoUpdate->isChecked());
+        //toConfigurationSingle::Instance().setAutoUpdate(AutoUpdate->isChecked());
+        toSettingTab::saveSettings(this);
     }
 };
 
@@ -124,6 +126,8 @@ public:
         return new toSGATracePrefs(this, parent);
     }
     virtual void closeWindow(toConnection &connection) {};
+private:
+    ToConfiguration::SgaTrace s_sgaTraconConf;
 };
 
 static toSGATraceTool SGATraceTool;
@@ -216,7 +220,7 @@ toSGATrace::toSGATrace(QWidget *main, toConnection &connection)
     try
     {
         connect(timer(), SIGNAL(timeout(void)), this, SLOT(refresh(void)));
-        Utils::toRefreshParse(timer(), toConfigurationSingle::Instance().refresh());
+        Utils::toRefreshParse(timer(), toConfigurationNewSingle::Instance().option(ToConfiguration::Global::RefreshInterval).toString());
     }
     TOCATCH;
 
@@ -240,7 +244,7 @@ void toSGATrace::changeSchema(const QString &str)
         CurrentSchema = str;
     else
         CurrentSchema = QString::null;
-    if (toConfigurationSingle::Instance().autoUpdate())
+    if (toConfigurationNewSingle::Instance().option(ToConfiguration::SgaTrace::AutoUpdate).toBool())
         refresh();
 }
 

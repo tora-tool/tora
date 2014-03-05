@@ -58,35 +58,20 @@
 #include "icons/torollback.xpm"
 #include "icons/trash.xpm"
 
-namespace ToConfiguration {
-	class Rollback : public ConfigContext
+
+QVariant ToConfiguration::Rollback::defaultValue(int option) const
+{
+	switch(option)
 	{
-		Q_OBJECT;
-		Q_ENUMS(OptionTypeEnum);
-	public:
-		Rollback() : ConfigContext("Rollback", ENUM_REF(Rollback,OptionTypeEnum)) {};
-		enum OptionTypeEnum {
-			NoExec       = 10000   // #define CONF_NO_EXEC
-			, NeedRead             // #define CONF_NEED_READ
-			, NeedTwo              // #define CONF_NEED_TWO
-			, AlignLeft            // #define CONF_ALIGN_LEFT
-			, OldEnable            // #define CONF_OLD_ENABLE
-		};
-		virtual QVariant defaultValue(int option) const
-		{
-			switch(option)
-			{
-			case NoExec:       return QVariant((bool)true);
-			case NeedRead:     return QVariant((bool)true);
-			case NeedTwo:      return QVariant((bool)true);
-			case AlignLeft:    return QVariant((bool)true);
-			case OldEnable:    return QVariant((bool)false);
-			default:
-				Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Editor un-registered enum value: %1").arg(option)));
-				return QVariant();
-			}
-		}
-	};
+	case NoExec:       return QVariant((bool)true);
+	case NeedRead:     return QVariant((bool)true);
+	case NeedTwo:      return QVariant((bool)true);
+	case AlignLeft:    return QVariant((bool)true);
+	case OldEnable:    return QVariant((bool)false);
+	default:
+		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Rollback un-registered enum value: %1").arg(option)));
+		return QVariant();
+	}
 }
 
 class toRollbackPrefs : public QGroupBox, public toSettingTab

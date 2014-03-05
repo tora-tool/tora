@@ -35,6 +35,7 @@
 #ifndef TOCONF_H
 #define TOCONF_H
 
+#if 0
 #define CONF_SAVE_PWD  "SavePassword"
 #define DEFAULT_SAVE_PWD false
 
@@ -231,6 +232,8 @@
 #define DEFAULT_EXT_INC_HEADER true
 #define CONF_EXT_INC_PROMPT "IncludePrompt"
 #define DEFAULT_EXT_INC_PROMPT true
+
+#endif
 
 // Version of TOra, must also change rpm files
 #ifndef TOAPPNAME

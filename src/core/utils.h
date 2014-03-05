@@ -604,6 +604,9 @@ bool toCompareLists(QStringList &l1, QStringList &l2, int len);
  * */
 unsigned toNextPowerOfTwo(unsigned len);
 
+void toLoadMap(const QString &filename, std::map<QString, QString> &pairs);
+bool toSaveMap(const QString &file, std::map<QString, QString> &pairs);
+
 }
 
 #endif

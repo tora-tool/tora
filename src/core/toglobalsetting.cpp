@@ -104,7 +104,7 @@ QVariant ToConfiguration::Global::defaultValue(int option) const
 	case Style:			return QVariant(QString(""));
 	case Translation:		return QVariant(QLocale().name());
 	default:
-		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Editor un-registered enum value: %1").arg(option)));
+		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Global un-registered enum value: %1").arg(option)));
 		return QVariant();
 	}
 };
@@ -215,7 +215,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     if (samples < 0)
     {
         UnlimitedSamples->setChecked(true);
-        ChartSamplesInt->setValue(DEFAULT_CHART_SAMPLES);
+        ChartSamplesInt->setValue(100); // 100 is the default value
     }
     else
         ChartSamplesInt->setValue(samples);

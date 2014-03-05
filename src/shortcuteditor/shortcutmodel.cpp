@@ -5,13 +5,13 @@ a copyright and/or license notice that predates the release of Sqliteman
 for which a new license (GPL+exception) is in place.
 */
 #include "shortcuteditor/shortcutmodel.h"
-#include "core/toconfiguration.h"
-
+#include "core/toconfiguration_new.h"
+#include "core/toeditorsetting.h"
 
 ShortcutModel::ShortcutModel(QObject * /*parent*/)
     : QAbstractTableModel()
 {
-    EditorShortcutsMap map(toConfigurationSingle::Instance().editorShortcuts());
+    EditorShortcutsMap map(toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::EditorShortcutsMap).toMap());
     EditorShortcutsMapIterator i(map);
     while (i.hasNext())
     {
@@ -131,5 +131,5 @@ void ShortcutModel::saveValues()
     foreach (p, m_values)
     ret[p.first] = p.second;
 
-    toConfigurationSingle::Instance().setEditorShortcuts(ret);
+    toConfigurationNewSingle::Instance().setOption(ToConfiguration::Editor::EditorShortcutsMap, QVariant(ret));
 }

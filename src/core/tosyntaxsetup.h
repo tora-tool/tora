@@ -39,6 +39,7 @@
 #include "ui_tosyntaxsetupui.h"
 #include "core/totool.h"
 #include "editor/tostyle.h"
+#include "core/toeditorsetting.h"
 
 #include <QtCore/QString>
 #include <QtCore/QMetaEnum>
@@ -82,6 +83,7 @@ public slots:
 private:
     int wordClass() const;         // returns enum toSyntaxAnalyzer::wordClass
     void checkFixedWidth(const QFont &fnt);
+    static ToConfiguration::Editor s_editorConfig;
 };
 
 #endif

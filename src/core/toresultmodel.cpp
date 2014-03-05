@@ -40,6 +40,7 @@
 #include "core/toqvalue.h"
 #include "core/toeventquery.h"
 #include "core/toconnectiontraits.h"
+#include "core/todatabasesetting.h"
 
 #include <QtCore/QDebug>
 #include <QtCore/QMimeData>
@@ -56,7 +57,7 @@ toResultModel::toResultModel(toEventQuery *query,
 	, SortedOnColumn(-1)
 	, CurrRowKey(1)
 {
-    MaxRowsToAdd = MaxRows = toConfigurationNewSingle::Instance().initialFetch();
+    MaxRowsToAdd = MaxRows = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxNumber).toInt();
 
     Query = query;
     Query->setParent(this); // this will satisfy QObject's disposal
@@ -96,7 +97,7 @@ toResultModel::toResultModel(const QString &owner,
 	, Query(NULL)
 	, CurrRowKey(1)
 {
-    MaxRowsToAdd = MaxRows = toConfigurationNewSingle::Instance().initialFetch();
+    MaxRowsToAdd = MaxRows = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxNumber).toInt();
 
     setSupportedDragActions(Qt::CopyAction);
 
@@ -539,8 +540,8 @@ QVariant toResultModel::data(const QModelIndex &index, int role) const
         	return QVariant(rowDesc.key);
         return QVariant(data.displayData());
     case Qt::BackgroundRole:
-        if (data.isNull() && toConfigurationNewSingle::Instance().indicateEmpty())
-            return QVariant(QColor(toConfigurationNewSingle::Instance().indicateEmptyColor()));
+        if (data.isNull() && toConfigurationNewSingle::Instance().option(ToConfiguration::Database::IndicateEmpty).toBool())
+            return QVariant(QColor(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::IndicateEmptyColor).toString()));
         if (index.column() == 0) {
             return QPalette().color(QPalette::Window);
         }

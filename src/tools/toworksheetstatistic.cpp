@@ -38,7 +38,7 @@
 //obsolete #include "core/tobarchart.h"
 #include "core/toconf.h"
 #include "core/toresultview.h"
-#include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
 
 #include <QtGui/QCheckBox>
 #include <QtGui/QToolBar>
@@ -279,7 +279,9 @@ void toWorksheetStatistic::save(QAction *action)
                 stat["Description"] = (*i).Label->text();
                 try
                 {
-                    toConfigurationSingle::Instance().saveMap(fn, stat);
+                    throw QString("toWorksheetStatistic::save");
+                    // TODO have not idea what this should do
+                    // toConfigurationNewSingle::Instance().saveMap(fn, stat);
                 }
                 TOCATCH;
             }
@@ -314,7 +316,9 @@ void toWorksheetStatistic::load(void)
         try
         {
             std::map<QString, QString> ret;
-            toConfigurationSingle::Instance().loadMap(filename, ret);
+            throw QString("toWorksheetStatistic::load");
+            // TODO have not idea what this should do
+            // toConfigurationNewSingle::Instance().loadMap(filename, ret);
             addStatistics(ret);
         }
         TOCATCH

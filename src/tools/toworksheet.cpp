@@ -72,6 +72,7 @@
 #include "editor/tosqltext.h"
 #include "core/toglobalevent.h"
 #include "core/toconfiguration_new.h"
+#include "core/todatabasesetting.h"
 
 #include "connection/toqsqlconnection.h"
 
@@ -119,7 +120,7 @@ namespace ToConfiguration
 		case ToplevelDescribe:   return QVariant((bool)true);
 		case AutoLoad:           return QVariant(QString(""));
 		default:
-			Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Editor un-registered enum value: %1").arg(option)));
+			Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Worksheet un-registered enum value: %1").arg(option)));
 			return QVariant();
 		}
 	}

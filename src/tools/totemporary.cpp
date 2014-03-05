@@ -40,7 +40,8 @@
 #include "core/toresultlong.h"
 #include "tools/tosgastatement.h"
 #include "core/toglobalevent.h"
-#include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
+#include "core/toglobalsetting.h"
 
 #include <QtGui/QToolBar>
 #include <QtGui/QLayout>
@@ -142,7 +143,7 @@ toTemporary::toTemporary(QWidget *main, toConnection &connection)
     list.append(75);
     splitter->setSizes(list);
 
-    QString unit(toConfigurationSingle::Instance().sizeUnit());
+    QString unit(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::SizeUnit).toString());
     toQueryParams args = toQueryParams() << toQValue(Utils::toSizeDecode(unit)) << toQValue(unit);
 
     Objects->setSelectionMode(toTreeWidget::Single);

@@ -52,7 +52,7 @@ QVariant ToConfiguration::Help::defaultValue(int option) const
 	// Paths
 	case AdditionalHelpMap:			return QVariant(QMap<QString, QVariant>());
 	default:
-		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Editor un-registered enum value: %1").arg(option)));
+		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Help un-registered enum value: %1").arg(option)));
 		return QVariant();
 	}
 }

@@ -35,12 +35,12 @@
 #include "core/tosyntaxsetup.h"
 #include "shortcuteditor/shortcuteditordialog.h"
 #include "core/totreewidget.h"
-#include "core/toconfiguration.h"
-#include "core/toconfiguration_new.h"
 #include "core/utils.h"
 #include "parsing/tosyntaxanalyzer.h"
 #include "editor/todebugtext.h"
 #include "editor/toworksheettext.h"
+#include "core/toconfiguration_new.h"
+#include "core/toeditorsetting.h"
 
 #include <QtGui/QFontDialog>
 #include <QtGui/QColorDialog>
@@ -54,7 +54,7 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
     , toSettingTab("fonts.html")
 	, ColorsEnum(ENUM_REF(toSyntaxAnalyzer,WordClassEnum))
 	, Current(NULL)
-	, Styles(toConfigurationSingle::Instance().styles())
+	, Styles(toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::EditStyleMap).value<toStylesMap>())
 {
 	using namespace ToConfiguration;
 
@@ -62,25 +62,26 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
         setObjectName(name);
 
     setupUi(this);
+
     Analyzer = new toSyntaxAnalyzerNL(Example->editor());
 
-    SyntaxHighlighting->setCurrentIndex(toConfigurationSingle::Instance().syntaxHighlighting());
-    //EditorType->setCurrentIndex(toConfigurationSingle::Instance().editorType());
-    //KeywordUpper->setChecked(toConfigurationSingle::Instance().keywordUpper());
-    //ObjectNamesUpper->setChecked(toConfigurationSingle::Instance().objectNamesUpper());
-    CompletionSort->setChecked(toConfigurationSingle::Instance().completionSort());
+    //SyntaxHighlighting->setCurrentIndex(toConfigurationNewSingle::Instance().syntaxHighlighting());
+    //EditorType->setCurrentIndex(toConfigurationNewSingle::Instance().editorType());
+    //KeywordUpper->setChecked(toConfigurationNewSingle::Instance().keywordUpper());
+    //ObjectNamesUpper->setChecked(toConfigurationNewSingle::Instance().objectNamesUpper());
+    //CompletionSort->setChecked(toConfigurationNewSingle::Instance().completionSort());
 
-    UseMaxTextWidthMarkBool->setChecked(toConfigurationSingle::Instance().useMaxTextWidthMark());
-    MaxTextWidthMark->setValue(toConfigurationSingle::Instance().maxTextWidthMark());
-    CodeCompletionBool->setChecked(toConfigurationSingle::Instance().codeCompletion());
-    EditorShortcuts->setChecked(toConfigurationNewSingle::Instance().option(Editor::UseEditorShortcutsBool).toBool());
+    //UseMaxTextWidthMarkBool->setChecked(toConfigurationNewSingle::Instance().useMaxTextWidthMark());
+    //MaxTextWidthMark->setValue(toConfigurationNewSingle::Instance().maxTextWidthMark());
+    //CodeCompletionBool->setChecked(toConfigurationNewSingle::Instance().codeCompletion());
+    //EditorShortcuts->setChecked(toConfigurationNewSingle::Instance().option(Editor::UseEditorShortcutsBool).toBool());
     connect(EditorShortcutsEdit, SIGNAL(clicked()),
             this, SLOT(openEditorShortcutsDialog()));
 
-    //AutoIndentBool->setChecked(toConfigurationSingle::Instance().autoIndent());
-    Extensions->setText(toConfigurationSingle::Instance().extensions());
-    //TabStopInt->setValue(toConfigurationSingle::Instance().tabStop());
-    //UseSpacesForIndentBool->setChecked(toConfigurationSingle::Instance().useSpacesForIndent());
+    //AutoIndentBool->setChecked(toConfigurationNewSingle::Instance().autoIndent());
+    //Extensions->setText(toConfigurationNewSingle::Instance().extensions());
+    //TabStopInt->setValue(toConfigurationNewSingle::Instance().tabStop());
+    //UseSpacesForIndentBool->setChecked(toConfigurationNewSingle::Instance().useSpacesForIndent());
 
     {
         QFont font(Utils::toStringToFont(toConfigurationNewSingle::Instance().option(Editor::ConfCodeFont).toString()));
@@ -91,12 +92,13 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
     TextExample->setFont(Utils::toStringToFont(toConfigurationNewSingle::Instance().option(Editor::ConfTextFont).toString()));
 
     {
-        QString str(toConfigurationSingle::Instance().listFontName());
+        QString str(toConfigurationNewSingle::Instance().option(Editor::ListTextFont).toString());
         QFont font;
         if (str.isEmpty())
         {
             QWidget *wid = new toTreeWidget(this);
             font = qApp->font(wid);
+            delete wid;
         }
         else
         {
@@ -249,32 +251,35 @@ void toSyntaxSetup::selectColor(void)
 
 void toSyntaxSetup::saveSetting(void)
 {
-	toConfigurationSingle::Instance().setSyntaxHighlighting(SyntaxHighlighting->currentIndex());
-	toConfigurationSingle::Instance().setEditorType(EditorType->currentIndex());
+	//toConfigurationNewSingle::Instance().setSyntaxHighlighting(SyntaxHighlighting->currentIndex());
+	//toConfigurationNewSingle::Instance().setEditorType(EditorType->currentIndex());
 
-    toConfigurationSingle::Instance().setTextFontName(Utils::toFontToString(TextExample->font()));
-    toConfigurationSingle::Instance().setCodeFontName(Utils::toFontToString(CodeExample->font()));
-    toConfigurationSingle::Instance().setListFontName(ListFontName);
+    //toConfigurationNewSingle::Instance().setTextFontName(Utils::toFontToString(TextExample->font()));
+    //toConfigurationNewSingle::Instance().setCodeFontName(Utils::toFontToString(CodeExample->font()));
+    //toConfigurationNewSingle::Instance().setListFontName(ListFontName);
     // TODO bool highlight = SyntaxHighlighting->isChecked();
-    // TODO toConfigurationSingle::Instance().setHighlightType(highlight);
-    toConfigurationSingle::Instance().setUseMaxTextWidthMark(UseMaxTextWidthMarkBool->isChecked());
-    toConfigurationSingle::Instance().setMaxTextWidthMark(MaxTextWidthMark->value());
-    toConfigurationSingle::Instance().setKeywordUpper(KeywordUpper->isChecked());
-    toConfigurationSingle::Instance().setObjectNamesUpper(ObjectNamesUpper->isChecked());
-    // TODO toConfigurationSingle::Instance().setCodeCompletion(highlight && CodeCompletion->isChecked());
-    toConfigurationSingle::Instance().setCompletionSort(CompletionSort->isChecked());
-    toConfigurationSingle::Instance().setUseEditorShortcuts(EditorShortcuts->isChecked());
-    toConfigurationSingle::Instance().setAutoIndent(AutoIndentBool->isChecked());
-    toConfigurationSingle::Instance().setTabStop(TabStopInt->value());
-    toConfigurationSingle::Instance().setUseSpacesForIndent(UseSpacesForIndentBool->isChecked());
+    // TODO toConfigurationNewSingle::Instance().setHighlightType(highlight);
+    //toConfigurationNewSingle::Instance().setUseMaxTextWidthMark(UseMaxTextWidthMarkBool->isChecked());
+    //toConfigurationNewSingle::Instance().setMaxTextWidthMark(MaxTextWidthMark->value());
+    //toConfigurationNewSingle::Instance().setKeywordUpper(KeywordUpper->isChecked());
+    //toConfigurationNewSingle::Instance().setObjectNamesUpper(ObjectNamesUpper->isChecked());
+    // TODO toConfigurationNewSingle::Instance().setCodeCompletion(highlight && CodeCompletion->isChecked());
+    //toConfigurationNewSingle::Instance().setCompletionSort(CompletionSort->isChecked());
+    //toConfigurationNewSingle::Instance().setUseEditorShortcuts(EditorShortcuts->isChecked());
+    //toConfigurationNewSingle::Instance().setAutoIndent(AutoIndentBool->isChecked());
+    //toConfigurationNewSingle::Instance().setTabStop(TabStopInt->value());
+    //toConfigurationNewSingle::Instance().setUseSpacesForIndent(UseSpacesForIndentBool->isChecked());
 
-    toConfigurationSingle::Instance().setStyles(Styles);
+    //toConfigurationNewSingle::Instance().setStyles(Styles);
 
 //#define C2T(c) (Colors[Analyzer.typeString((c))])
-//    toConfigurationSingle::Instance().setSyntaxDefaultBg(C2T(toSyntaxAnalyzer::DefaultBg));
-//    toConfigurationSingle::Instance().setSyntaxDebugBg(C2T(toSyntaxAnalyzer::DebugBg));
-//    toConfigurationSingle::Instance().setSyntaxErrorBg(C2T(toSyntaxAnalyzer::ErrorBg));
-//    toConfigurationSingle::Instance().setSyntaxCurrentLineMarker(C2T(toSyntaxAnalyzer::CurrentLineMarker));
-//    toConfigurationSingle::Instance().setSyntaxStaticBg(C2T(toSyntaxAnalyzer::StaticBg));
-    toConfigurationSingle::Instance().setExtensions(Extensions->text());
+//    toConfigurationNewSingle::Instance().setSyntaxDefaultBg(C2T(toSyntaxAnalyzer::DefaultBg));
+//    toConfigurationNewSingle::Instance().setSyntaxDebugBg(C2T(toSyntaxAnalyzer::DebugBg));
+//    toConfigurationNewSingle::Instance().setSyntaxErrorBg(C2T(toSyntaxAnalyzer::ErrorBg));
+//    toConfigurationNewSingle::Instance().setSyntaxCurrentLineMarker(C2T(toSyntaxAnalyzer::CurrentLineMarker));
+//    toConfigurationNewSingle::Instance().setSyntaxStaticBg(C2T(toSyntaxAnalyzer::StaticBg));
+    //toConfigurationNewSingle::Instance().setExtensions(Extensions->text());
+    toSettingTab::saveSettings(this);
 }
+
+ToConfiguration::Editor toSyntaxSetup::s_editorConfig;

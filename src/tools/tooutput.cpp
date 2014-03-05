@@ -74,7 +74,7 @@ namespace ToConfiguration
 			case LogType:          return QVariant((int)0);
 			case LogUser:          return QVariant(QString("ULOG"));
 			default:
-				Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Editor un-registered enum value: %1").arg(option)));
+				Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Output un-registered enum value: %1").arg(option)));
 				return QVariant();
 			}
 		}

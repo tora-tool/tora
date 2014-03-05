@@ -32,8 +32,9 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "core/toconfiguration.h"
 #include "parsing/tosyntaxanalyzer.h"
+#include "core/toconfiguration_new.h"
+#include "core/toeditorsetting.h"
 #include "editor/tosqltext.h"
 
 #include <QtCore/QString>
@@ -144,28 +145,30 @@ QsciLexer * toSyntaxAnalyzerNL::createLexer(QObject *parent)
     retval->setFoldComments(true);
     retval->setFoldCompact(false);
 
+	toStylesMap sMap = toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::EditStyleMap).value<toStylesMap>();
 	QMetaEnum StyleNameEnum(ENUM_REF(toSyntaxAnalyzer,WordClassEnum));
 	QsciLexerSQL *l = new QsciLexerSQL(NULL);
 	for (int idx = 0; idx < StyleNameEnum.keyCount(); idx++)
 	{
 		int styleNameEnum = StyleNameEnum.value(idx);
-		retval->setColor(toConfigurationSingle::Instance().styleFgColor(styleNameEnum), styleNameEnum);
-		retval->setPaper(toConfigurationSingle::Instance().styleBgColor(styleNameEnum), styleNameEnum);
-		retval->setFont(toConfigurationSingle::Instance().codeFontName(), styleNameEnum);
+		retval->setColor(sMap.value(styleNameEnum).FGColor, styleNameEnum);
+		retval->setPaper(sMap.value(styleNameEnum).BGColor, styleNameEnum);
+		retval->setFont(toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::ConfCodeFont).toString(), styleNameEnum);
 	}
 
-	retval->setColor(toConfigurationSingle::Instance().styleFgColor(toSyntaxAnalyzer::Comment), QsciLexerSQL::CommentLine);
-	retval->setColor(toConfigurationSingle::Instance().styleFgColor(toSyntaxAnalyzer::Comment), QsciLexerSQL::CommentLineHash);
-	retval->setColor(toConfigurationSingle::Instance().styleFgColor(toSyntaxAnalyzer::Comment), QsciLexerSQL::PlusComment);
-	retval->setColor(toConfigurationSingle::Instance().styleFgColor(toSyntaxAnalyzer::Comment), QsciLexerSQL::CommentDocKeyword);
-	retval->setColor(toConfigurationSingle::Instance().styleFgColor(toSyntaxAnalyzer::Comment), QsciLexerSQL::CommentDocKeywordError);
-	retval->setPaper(toConfigurationSingle::Instance().styleBgColor(toSyntaxAnalyzer::Comment), QsciLexerSQL::CommentLine);
-	retval->setPaper(toConfigurationSingle::Instance().styleBgColor(toSyntaxAnalyzer::Comment), QsciLexerSQL::CommentLineHash);
-	retval->setPaper(toConfigurationSingle::Instance().styleBgColor(toSyntaxAnalyzer::Comment), QsciLexerSQL::PlusComment);
-	retval->setPaper(toConfigurationSingle::Instance().styleBgColor(toSyntaxAnalyzer::Comment), QsciLexerSQL::CommentDocKeyword);
-	retval->setPaper(toConfigurationSingle::Instance().styleBgColor(toSyntaxAnalyzer::Comment), QsciLexerSQL::CommentDocKeywordError);
+	retval->setColor(sMap.value(toSyntaxAnalyzer::Comment).FGColor, QsciLexerSQL::CommentLine);
+	retval->setColor(sMap.value(toSyntaxAnalyzer::Comment).FGColor, QsciLexerSQL::CommentLineHash);
+	retval->setColor(sMap.value(toSyntaxAnalyzer::Comment).FGColor, QsciLexerSQL::PlusComment);
+	retval->setColor(sMap.value(toSyntaxAnalyzer::Comment).FGColor, QsciLexerSQL::CommentDocKeyword);
+	retval->setColor(sMap.value(toSyntaxAnalyzer::Comment).FGColor, QsciLexerSQL::CommentDocKeywordError);
 
-	retval->setFont(toConfigurationSingle::Instance().codeFontName());
+	retval->setPaper(sMap.value(toSyntaxAnalyzer::Comment).BGColor, QsciLexerSQL::CommentLine);
+	retval->setPaper(sMap.value(toSyntaxAnalyzer::Comment).BGColor, QsciLexerSQL::CommentLineHash);
+	retval->setPaper(sMap.value(toSyntaxAnalyzer::Comment).BGColor, QsciLexerSQL::PlusComment);
+	retval->setPaper(sMap.value(toSyntaxAnalyzer::Comment).BGColor, QsciLexerSQL::CommentDocKeyword);
+	retval->setPaper(sMap.value(toSyntaxAnalyzer::Comment).BGColor, QsciLexerSQL::CommentDocKeywordError);
+
+	retval->setFont(toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::ConfCodeFont).toString());
 
     return retval;
 }

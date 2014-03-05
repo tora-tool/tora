@@ -43,7 +43,6 @@
 
 namespace ToConfiguration
 {
-
 	class Oracle : public ConfigContext
 	{
 		Q_OBJECT;
@@ -98,7 +97,7 @@ public slots:
 
     void dbmsMetadataClicked(bool);
 private:
-    static ToConfiguration::Oracle _conf;
+    static ToConfiguration::Oracle s_oracleConf;
 };
 
 #endif

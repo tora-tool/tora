@@ -36,7 +36,7 @@
 
 #include "core/utils.h"
 #include "core/tologger.h"
-#include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
 #include "core/toconnection.h"
 #include "core/tohelp.h"
 #include "editor/toscintilla.h"
@@ -61,14 +61,31 @@
 
 #include "icons/totemplate.xpm"
 
+typedef QMap<QString, QVariant> TemplatesMap;
+typedef QMapIterator<QString, QVariant> TemplatesMapIterator;
+
+namespace ToConfiguration
+{
+	class Template : public ConfigContext
+	{
+		Q_OBJECT;
+		Q_ENUMS(OptionTypeEnum);
+	public:
+		Template() : ConfigContext("Template", ENUM_REF(Template,OptionTypeEnum)) {};
+		enum OptionTypeEnum {
+			TemplateMap = 15000
+		};
+	};
+};
+
 static TemplatesMap DefaultText(void)
 {
     TemplatesMap def;
 
 #if !defined(TO_NO_ORACLE)
-    def["PL/SQL Functions"] = ":/templates/sqlfunctions.tpl";
-    def["Optimizer Hints"] = ":/templates/hints.tpl";
-    def["Log4PL/SQL"] = ":/templates/log4plsql.tpl";
+    def["PL/SQL Functions"] = QVariant(":/templates/sqlfunctions.tpl");
+    def["Optimizer Hints"] = QVariant(":/templates/hints.tpl");
+    def["Log4PL/SQL"] = QVariant(":/templates/log4plsql.tpl");
 #endif
 
     return def;
@@ -339,17 +356,20 @@ void toTemplateAddFile::valid()
 
 
 toTemplatePrefs::toTemplatePrefs(toTool *tool, QWidget *parent, const char *name)
-    : QWidget(parent), toSettingTab("template.html#setup"), Tool(tool)
+    : QWidget(parent)
+	, toSettingTab("template.html#setup")
+	, Tool(tool)
 {
 
     setupUi(this);
     TemplatesMap def = DefaultText();
 
-    TemplatesMapIterator i(toConfigurationSingle::Instance().templates());
+    TemplatesMap tMap = toConfigurationNewSingle::Instance().option(ToConfiguration::Template::TemplateMap).toMap();
+    TemplatesMapIterator i(tMap);
     while (i.hasNext())
     {
         i.next();
-        new toTreeWidgetItem(FileList, i.key(), i.value());
+        new toTreeWidgetItem(FileList, i.key(), i.value().toString());
         if (def.find(i.key()) != def.end())
             def.erase(def.find(i.key()));
     }
@@ -357,8 +377,9 @@ toTemplatePrefs::toTemplatePrefs(toTool *tool, QWidget *parent, const char *name
     while (j.hasNext())
     {
         j.next();
-        new toTreeWidgetItem(FileList, j.key(), j.value());
+        new toTreeWidgetItem(FileList, j.key(), j.value().toString());
     }
+    toSettingTab::loadSettings(this);
 }
 
 
@@ -373,7 +394,8 @@ void toTemplatePrefs::saveSetting(void)
             m[item->text(0)] = item->text(1);
     }
 
-    toConfigurationSingle::Instance().setTemplates(m);
+    toConfigurationNewSingle::Instance().setOption(ToConfiguration::Template::TemplateMap, m);
+    toSettingTab::saveSettings(this);
 }
 
 
@@ -396,7 +418,7 @@ void toTemplatePrefs::editFile(void)
             std::map<QString, QString> pairs;
             try
             {
-                toConfigurationSingle::Instance().loadMap(file, pairs);
+                Utils::toLoadMap(file, pairs);
             }
             catch (...)
             {
@@ -411,7 +433,7 @@ void toTemplatePrefs::editFile(void)
             if (edit.exec())
             {
                 edit.changeSelection();
-                if (!toConfigurationSingle::Instance().saveMap(file, pairs))
+                if (!Utils::toSaveMap(file, pairs))
                     throw qApp->translate("toTemplatePrefs", "Couldn't write file");
             }
         }
@@ -753,11 +775,12 @@ void toTextTemplate::insertItems(toTreeWidget *parent, QToolBar *)
 {
     TemplatesMap def = DefaultText();
 
-    TemplatesMapIterator i(toConfigurationSingle::Instance().templates());
+    TemplatesMap tMap = toConfigurationNewSingle::Instance().option(ToConfiguration::Template::TemplateMap).toMap();
+    TemplatesMapIterator i(tMap);
     while (i.hasNext())
     {
         i.next();
-        addFile(parent, i.key(), i.value());
+        addFile(parent, i.key(), i.value().toString());
         if (def.find(i.key()) != def.end())
             def.erase(def.find(i.key()));
     }
@@ -765,7 +788,7 @@ void toTextTemplate::insertItems(toTreeWidget *parent, QToolBar *)
     while (j.hasNext())
     {
         j.next();
-        addFile(parent, j.key(), j.value());
+        addFile(parent, j.key(), j.value().toString());
     }
 }
 
@@ -774,7 +797,7 @@ void toTextTemplate::addFile(toTreeWidget *parent, const QString &root, const QS
     std::map<QString, QString> pairs;
     try
     {
-        toConfigurationSingle::Instance().loadMap(file, pairs);
+        Utils::toLoadMap(file, pairs);
         toTemplateItem *last = new toTemplateItem(*this, parent, root);
         int lastLevel = 0;
         QStringList lstCtx;

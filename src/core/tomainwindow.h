@@ -63,6 +63,7 @@ namespace ToConfiguration
 			, StatusSave         // #define CONF_STATUS_SAVE (Message history size)
 			, DontReread         // #define CONF_DONT_REREAD
 			, EditDragDrop       // #define CONF_EDIT_DRAG_DROP (toScintilla)
+			, LineEnd
 			, ToolsMap
 			, MainWindowGeometry
 			, MainWindowState

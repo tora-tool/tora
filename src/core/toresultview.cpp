@@ -39,7 +39,10 @@
 #include "core/tomemoeditor.h"
 #include "core/toresultlistformat.h"
 #include "core/toconfiguration_new.h"
-#include "core/tomainwindow.h"
+#include "core/toglobalsetting.h"
+#include "core/todatabasesetting.h"
+#include "core/toeditorsetting.h"
+#include "core/toconfiguration_new.h"
 
 #include <QtCore/QTimer>
 #include <QtGui/QClipboard>
@@ -203,8 +206,8 @@ int toResultViewMLine::realWidth(const QFontMetrics &fm, const toTreeWidget *top
 {
     if (!MaxColDisp)
     {
-        MaxColDisp = toConfigurationNewSingle::Instance().maxColDisp();
-        Gridlines = toConfigurationNewSingle::Instance().displayGridlines();
+        MaxColDisp = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxColDisp).toInt();
+        Gridlines = toConfigurationNewSingle::Instance().option(ToConfiguration::Global::DisplayGridlinesBool).toBool();
     }
     QString t = text(column);
     if (t.isNull())
@@ -236,8 +239,8 @@ int toResultViewItem::realWidth(const QFontMetrics &fm, const toTreeWidget *top,
 {
     if (!MaxColDisp)
     {
-        MaxColDisp = toConfigurationNewSingle::Instance().maxColDisp();
-        Gridlines = toConfigurationNewSingle::Instance().displayGridlines();
+        MaxColDisp = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxColDisp).toInt();
+        Gridlines = toConfigurationNewSingle::Instance().option(ToConfiguration::Global::DisplayGridlinesBool).toBool();
     }
     QString t = text(column);
     if (t.isNull())
@@ -396,8 +399,8 @@ int toResultViewMLCheck::realWidth(const QFontMetrics &fm, const toTreeWidget *t
 {
     if (!MaxColDisp)
     {
-        MaxColDisp = toConfigurationNewSingle::Instance().maxColDisp();
-        Gridlines = toConfigurationNewSingle::Instance().displayGridlines();
+        MaxColDisp = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxColDisp).toInt();
+        Gridlines = toConfigurationNewSingle::Instance().option(ToConfiguration::Global::DisplayGridlinesBool).toBool();
     }
     QString t = text(column);
     if (t.isNull())
@@ -413,8 +416,8 @@ int toResultViewCheck::realWidth(const QFontMetrics &fm, const toTreeWidget *top
 {
     if (!MaxColDisp)
     {
-        MaxColDisp = toConfigurationNewSingle::Instance().maxColDisp();
-        Gridlines = toConfigurationNewSingle::Instance().displayGridlines();
+        MaxColDisp = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxColDisp).toInt();
+        Gridlines = toConfigurationNewSingle::Instance().option(ToConfiguration::Global::DisplayGridlinesBool).toBool();
     }
     QString t = text(column);
     if (t.isNull())
@@ -490,7 +493,7 @@ toListView::toListView(QWidget *parent, const char *name, Qt::WFlags f)
             SIGNAL(customContextMenuRequested(const QPoint &)),
             this,
             SLOT(displayMenu(const QPoint &)));
-    QString str(toConfigurationNewSingle::Instance().listFontName());
+    QString str(toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::ListTextFont).toString());
     if (!str.isEmpty())
     {
         QFont font(Utils::toStringToFont(str));
@@ -1224,8 +1227,8 @@ toTreeWidgetItem *toResultView::createItem(toTreeWidgetItem *last, const QString
 
 void toResultView::slotAddItem(void)
 {
-    MaxColDisp = toConfigurationNewSingle::Instance().maxColDisp();
-    Gridlines = toConfigurationNewSingle::Instance().displayGridlines();
+    MaxColDisp = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxColDisp).toInt();
+    Gridlines = toConfigurationNewSingle::Instance().option(ToConfiguration::Global::DisplayGridlinesBool).toBool();
 
     try
     {
@@ -1320,7 +1323,7 @@ void toResultView::query(const QString &sql, toQueryParams const& param)
         else
             setSorting(Query->columns());
 
-        int MaxNumber = toConfigurationNewSingle::Instance().initialFetch();
+        int MaxNumber = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxNumber).toInt();
         for (int j = 0; j < MaxNumber && !Query->eof(); j++)
             slotAddItem();
         if (ReadAll || MaxNumber < 0)

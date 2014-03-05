@@ -33,10 +33,10 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "core/utils.h"
-#include "core/toconf.h"
-#include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
 #include "core/toglobalevent.h"
 #include "core/tomainwindow.h"
+#include "core/toeditorsetting.h"
 
 #include <QtCore/QDir>
 #include <QtCore/QString>
@@ -127,7 +127,7 @@ void changeLineEnds(QByteArray * text, int eolModeSet)
 QString GetExtensions(void)
 {
     static QRegExp repl(QString::fromLatin1("\\s*,\\s*"));
-    QString t(toConfigurationSingle::Instance().extensions());
+    QString t(toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::Extensions).toString());
     t.replace(repl, QString::fromLatin1(";;")); // multiple filters are separated by double semicolons
     return t;
 }
@@ -138,7 +138,7 @@ static QString AddExt(QString t, const QString &filter)
     if (t.isEmpty())
         return t;
 
-    toConfigurationSingle::Instance().setLastDir(t);
+    toConfigurationNewSingle::Instance().setOption(ToConfiguration::Main::LastDir, QVariant(t));
 
     if (hasext.indexIn(t) < 0)
     {
@@ -162,8 +162,8 @@ static QString AddExt(QString t, const QString &filter)
 */
 QTextCodec * toGetCodec(void)
 {
-    QString codecConf = toConfigurationSingle::Instance().encoding();
-    if (codecConf == DEFAULT_ENCODING)
+    QString codecConf = toConfigurationNewSingle::Instance().option(ToConfiguration::Main::Encoding).toString();
+    if (codecConf == "Default")
         return QTextCodec::codecForLocale();
     else
         return QTextCodec::codecForName(codecConf.toAscii());
@@ -216,17 +216,17 @@ QString toOpenFilename(const QString &filename, const QString &filter, QWidget *
         retval = AddExt(TOFileDialog::getOpenFileName(parent, QObject::tr("Open File", "utils/toOpenFilename"), fi.absoluteFilePath(), t), t);
     else
     {
-        QString const& lastDir = toConfigurationSingle::Instance().lastDir();
+        QString lastDir = toConfigurationNewSingle::Instance().option(ToConfiguration::Main::LastDir).toString();
         retval = AddExt(TOFileDialog::getOpenFileName(parent, QObject::tr("Open File", "utils/toOpenFilename"), lastDir, t), t);
     }
     if (!retval.isEmpty())
-        toConfigurationSingle::Instance().setLastDir(retval);
+        toConfigurationNewSingle::Instance().setOption(ToConfiguration::Main::LastDir, QVariant(retval));
     return retval;
 }
 
 QString toOpenFilename(const QString &filter, QWidget *parent)
 {
-    QFileInfo fi(toConfigurationSingle::Instance().lastDir());
+    QFileInfo fi(toConfigurationNewSingle::Instance().option(ToConfiguration::Main::LastDir).toString());
     if ( fi.absoluteDir().exists())
         return toOpenFilename( fi.absolutePath(), filter, parent);
     return toOpenFilename(QDir::currentPath(), filter, parent);
@@ -240,7 +240,7 @@ QString toSaveFilename(const QString &filename, const QString &filter, QWidget *
 
     QString dir = filename;
     if (dir.isNull())
-        dir = toConfigurationSingle::Instance().lastDir();
+        dir = toConfigurationNewSingle::Instance().option(ToConfiguration::Main::LastDir).toString();
 
     return AddExt(TOFileDialog::getSaveFileName(parent, QObject::tr("Save File", "utils/toSaveFilename"), dir, t), t);
 }
@@ -292,17 +292,17 @@ bool toWriteFile(const QString &filename, const QByteArray &data)
 
     // Check if line end type should be changed to particular one
     // Note that line end type can be changed manually via menu
-    QString forceLineEndSetting = toConfigurationSingle::Instance().forceLineEnd();
-    if (forceLineEndSetting == "Linux" ||
-            forceLineEndSetting == "Windows" ||
-            forceLineEndSetting == "Mac")
+    QString lineEndSetting = toConfigurationNewSingle::Instance().option(ToConfiguration::Main::LineEnd).toString();
+    if (lineEndSetting == "Linux" ||
+            lineEndSetting == "Windows" ||
+            lineEndSetting == "Mac")
     {
         QByteArray ba = data;
-        if (toConfigurationSingle::Instance().forceLineEnd() == "Linux")
+        if (lineEndSetting == "Linux")
             changeLineEnds(&ba, T_EOL_LF);
-        else if (toConfigurationSingle::Instance().forceLineEnd() == "Windows")
+        else if (lineEndSetting == "Windows")
             changeLineEnds(&ba, T_EOL_CRLF);
-        else if (toConfigurationSingle::Instance().forceLineEnd() == "Mac")
+        else if (lineEndSetting == "Mac")
             changeLineEnds(&ba, T_EOL_CR);
         file.write(codec->fromUnicode(ba));
     }

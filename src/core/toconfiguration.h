@@ -13,8 +13,6 @@
 
 typedef QMap<QString, QString> ChartsMap;
 typedef QMapIterator<QString, QString> ChartsMapIterator;
-typedef QMap<QString, QString> TemplatesMap;
-typedef QMapIterator<QString, QString> TemplatesMapIterator;
 
 #if 0
 class toConfigurationPrivate;

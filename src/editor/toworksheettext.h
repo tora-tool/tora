@@ -121,8 +121,6 @@ protected:
     int m_bookmarkMarginHandle;
     //! \brief Bookrmarks handler list used for navigation (next/prev)
     QList<int> m_bookmarks;
-
-    static ToConfiguration::Editor s_EditorConfig;
 };
 
 /**

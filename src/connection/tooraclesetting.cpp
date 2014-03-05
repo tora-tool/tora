@@ -61,7 +61,7 @@ QVariant ToConfiguration::Oracle::defaultValue(int option) const
 	case IncludeHeader:                 return QVariant((bool)true);
 	case IncludePrompt:                 return QVariant((bool)true);
 	default:
-		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Editor un-registered enum value: %1").arg(option)));
+		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Oracle un-registered enum value: %1").arg(option)));
 		return QVariant();
 	}
 }
@@ -183,3 +183,5 @@ void toOracleSetting::createPlanTable()
     TOCATCH;
 #endif
 }
+
+ToConfiguration::Oracle toOracleSetting::s_oracleConf;

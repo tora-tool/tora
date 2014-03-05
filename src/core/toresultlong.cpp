@@ -35,7 +35,8 @@
 #include "core/toresultlong.h"
 #include "core/utils.h"
 #include "core/toeventquery.h"
-#include "core/toconfiguration.h"
+#include "core/toconfiguration_new.h"
+#include "core/todatabasesetting.h"
 
 toResultLong::toResultLong(bool readable, bool dispCol,
                            QWidget *parent, const char *name, Qt::WFlags f)
@@ -103,7 +104,7 @@ void toResultLong::query(const QString &sql, const toQueryParams &param)
             //// Query->slotReadAll(); // indicate that all records should be fetched
         }
         else
-            MaxNumber = toConfigurationSingle::Instance().initialFetch();
+            MaxNumber = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxNumber).toInt();
         Query->start();
     }
     catch (const toConnection::exception &str)

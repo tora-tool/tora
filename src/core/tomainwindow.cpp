@@ -55,6 +55,7 @@ QVariant Main::defaultValue(int option) const
 	case StatusSave: 	return QVariant((int)10);
 	case DontReread: 	return QVariant((bool)true);
 	case EditDragDrop: 	return QVariant((bool)false);
+	case LineEnd:       return QVariant(QString("Default"));
 	case ToolsMap:
 	{
 		// by default all the tools (having menu item name) are enabled
@@ -76,7 +77,7 @@ QVariant Main::defaultValue(int option) const
 	case LeftDockbarState:   return QVariant(QByteArray());
 	case RightDockbarState:  return QVariant(QByteArray());
 	default:
-		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Editor un-registered enum value: %1").arg(option)));
+		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Main un-registered enum value: %1").arg(option)));
 		return QVariant();
 	}
 }

@@ -35,7 +35,6 @@
 #include "parsing/tolexeroracle.h"
 #include "parsing/tolexeroracleapis.h"
 #include "core/utils.h"
-#include "core/toconfiguration.h"
 #include "core/toconfiguration_new.h"
 #include "editor/toworksheettext.h"
 
@@ -73,33 +72,34 @@ toLexerOracle::toLexerOracle(QObject *parent)
 	mono = QFont(Utils::toStringToFont(toConfigurationNewSingle::Instance().option(Editor::ConfCodeFont).toString()));
 #endif
 
+	toStylesMap sMap = toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::EditStyleMap).value<toStylesMap>();
 	declareStyle(Default,
-			toConfigurationSingle::Instance().styleFgColor(Default),
-			toConfigurationSingle::Instance().styleBgColor(Default),
+			sMap[Default].FGColor,
+			sMap[Default].BGColor,
 			mono);
 	declareStyle(Comment,
-			toConfigurationSingle::Instance().styleFgColor(Comment),
-			toConfigurationSingle::Instance().styleBgColor(Comment),
+			sMap[Comment].FGColor,
+			sMap[Comment].BGColor,
 			mono);
 	declareStyle(CommentMultiline,
-			toConfigurationSingle::Instance().styleFgColor(Comment),
-			toConfigurationSingle::Instance().styleBgColor(Comment),
+			sMap[Comment].FGColor,
+			sMap[Comment].BGColor,
 			mono);
 	declareStyle(Reserved,
-			toConfigurationSingle::Instance().styleFgColor(Reserved),
-			toConfigurationSingle::Instance().styleBgColor(Reserved),
+			sMap[Reserved].FGColor,
+			sMap[Reserved].BGColor,
 			mono);
 	declareStyle(Builtin,
-			toConfigurationSingle::Instance().styleFgColor(toSyntaxAnalyzer::KeywordSet5),
-			toConfigurationSingle::Instance().styleBgColor(toSyntaxAnalyzer::KeywordSet5),
+			sMap[toSyntaxAnalyzer::KeywordSet5].FGColor,
+			sMap[toSyntaxAnalyzer::KeywordSet5].BGColor,
 			mono);
 	declareStyle(Identifier,
-			toConfigurationSingle::Instance().styleFgColor(Identifier),
-			toConfigurationSingle::Instance().styleBgColor(Identifier),
+			sMap[Identifier].FGColor,
+			sMap[Identifier].BGColor,
 			mono);
 	declareStyle(OneLine,
-			toConfigurationSingle::Instance().styleFgColor(OneLine),
-			toConfigurationSingle::Instance().styleBgColor(OneLine),
+			sMap[OneLine].FGColor,
+			sMap[OneLine].BGColor,
 			mono);
 	declareStyle(Failure,
 			QColor(Qt::black),

@@ -377,7 +377,7 @@ public slots:
     void addIndex(void);
 #endif
 private:
-    static ToConfiguration::Browser m_conf;
+    static ToConfiguration::Browser s_browserConf;
 };
 
 
