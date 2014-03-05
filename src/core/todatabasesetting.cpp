@@ -200,3 +200,5 @@ void toDatabaseSetting::saveSetting(void)
 
 //     toUpdateIndicateEmpty();
 }
+
+ToConfiguration::Database toDatabaseSetting::s_databaseConfig;

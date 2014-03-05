@@ -79,6 +79,8 @@ public slots:
     virtual void saveSetting(void);
     virtual void numberFormatChange();
     virtual void IndicateEmptyColor_clicked();
+private:
+    static ToConfiguration::Database s_databaseConfig;
 };
 
 #endif

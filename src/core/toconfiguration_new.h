@@ -55,6 +55,6 @@ private:
     QMap<QString, int> m_optionToEnumMap;
 };
 
-typedef Loki::SingletonHolder<toConfigurationNew> toConfigurationNewSingle;
+class TORA_EXPORT toConfigurationNewSingle: public ::Loki::SingletonHolder<toConfigurationNew> {};
 
 #endif
