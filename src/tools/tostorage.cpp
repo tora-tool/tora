@@ -37,7 +37,6 @@
 #include "tools/tostoragedefinition.h"
 #include "core/tochangeconnection.h"
 #include "core/toconnectionsub.h"
-#include "core/toconf.h"
 #include "core/utils.h"
 #include "core/tohelp.h"
 #include "core/tomemoeditor.h"

@@ -35,7 +35,6 @@
 #include "core/toresultmodel.h"
 #include "core/utils.h"
 #include "core/tologger.h"
-#include "core/toconf.h"
 #include "core/toconfiguration_new.h"
 #include "core/toqvalue.h"
 #include "core/toeventquery.h"

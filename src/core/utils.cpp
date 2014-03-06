@@ -33,10 +33,8 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "core/utils.h"
-#include "core/toconf.h"
 #include "core/tomainwindow.h"
 #include "core/tosql.h"
-#include "core/toconfiguration.h"
 #include "core/toconfiguration_new.h"
 #include "core/totimer.h"
 #include "core/toglobalevent.h"

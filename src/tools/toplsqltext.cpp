@@ -45,7 +45,6 @@
 #include "core/todescribe.h"
 #include "core/toresultschema.h"
 #include "core/toglobalevent.h"
-#include "core/toconfiguration.h"
 #include "core/topushbutton.h"
 #include "editor/tosqltext.h"
 #include "editor/tohighlightededitor.h"

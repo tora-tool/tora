@@ -35,7 +35,6 @@
 #include "tools/totemporary.h"
 #include "core/utils.h"
 #include "core/tochangeconnection.h"
-#include "core/toconf.h"
 #include "core/toconnection.h"
 #include "core/toresultlong.h"
 #include "tools/tosgastatement.h"

@@ -34,7 +34,6 @@
 
 #include "core/toresultfield.h"
 #include "core/toeventquery.h"
-#include "core/toconfiguration.h"
 #include "core/utils.h"
 #include "editor/toscintilla.h"
 

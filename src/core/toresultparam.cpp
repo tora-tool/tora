@@ -34,7 +34,6 @@
 
 #include "core/toresultparam.h"
 #include "core/utils.h"
-#include "core/toconf.h"
 #include "core/tosql.h"
 #include "core/toresultview.h"
 #include "core/tomemoeditor.h"

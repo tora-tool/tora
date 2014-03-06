@@ -40,7 +40,6 @@
 #include "core/toresultview.h"
 #include "core/toeditablemenu.h"
 #include "core/utils.h"
-#include "core/toconf.h"
 #include "core/toconfenum.h"
 #include "core/tochangeconnection.h"
 #include "core/toconnectionsub.h"

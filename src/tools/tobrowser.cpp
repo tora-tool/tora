@@ -49,7 +49,6 @@
 
 #include "core/utils.h"
 #include "core/tochangeconnection.h"
-#include "core/toconf.h"
 #include "core/tohelp.h"
 #include "core/toresultschema.h"
 #include "core/toresultview.h"

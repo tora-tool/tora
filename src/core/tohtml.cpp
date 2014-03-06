@@ -33,7 +33,6 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "core/tohtml.h"
-#include "core/toconf.h"
 #include "core/tomainwindow.h"
 
 #include <QtGui/QApplication>

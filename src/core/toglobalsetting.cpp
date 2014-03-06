@@ -34,7 +34,6 @@
 
 #include "core/toglobalsetting.h"
 #include "core/utils.h"
-#include "core/toconf.h"
 #include "core/toconfenum.h"
 #include "core/toconfiguration_new.h"
 #include "core/tomainwindow.h"

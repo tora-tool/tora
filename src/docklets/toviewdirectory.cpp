@@ -36,7 +36,6 @@
 #include "tools/toworksheet.h"
 #include "core/tomainwindow.h"
 #include "tools/toworksheeteditor.h"
-#include "core/toconfiguration.h"
 #include "core/toconfiguration_new.h"
 #include "core/toglobalevent.h"
 

@@ -35,7 +35,6 @@
 #include "docklets/toquerymodel.h"
 #include "core/utils.h"
 #include "core/tologger.h"
-#include "core/toconfiguration.h"
 
 #include "parsing/tsqlparse.h"
 #include "docklets/toastwalk.h"

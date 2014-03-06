@@ -33,7 +33,6 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "core/tomodeleditor.h"
-#include "core/toconf.h"
 #include "core/toglobalevent.h"
 #include "core/tomainwindow.h"
 #include "core/toqvalue.h"

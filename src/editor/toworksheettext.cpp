@@ -33,12 +33,11 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "editor/toworksheettext.h"
-#include "core/toconfiguration.h"
 #include "core/toconfiguration_new.h"
 #include "core/toeditorsetting.h"
 #include "core/toconnection.h"
 #include "core/tologger.h"
-///#include "editor/tostyle.h"
+#include "shortcuteditor/shortcutmodel.h"
 
 using namespace ToConfiguration;
 

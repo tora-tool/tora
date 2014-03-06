@@ -34,10 +34,10 @@
 
 #include "core/toextract.h"
 #include "core/utils.h"
-#include "core/toconf.h"
 #include "core/toconnection.h"
 #include "core/toconnectiontraits.h"
 #include "core/toraversion.h"
+#include "core/toconf.h"
 
 #include <QtGui/QApplication>
 #include <QtGui/QProgressDialog>

@@ -34,10 +34,8 @@
 
 #include "templates/tosqledit.h"
 #include "core/utils.h"
-#include "core/toconf.h"
 #include "core/toconnection.h"
 #include "core/toeditmenu.h"
-#include "core/toconfiguration.h"
 #include "core/toconfiguration_new.h"
 #include "core/toglobalsetting.h"
 #include "editor/tohighlightededitor.h"

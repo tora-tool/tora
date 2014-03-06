@@ -37,7 +37,6 @@
 #include "core/toconnectiontraits.h"
 #include "core/utils.h"
 #include "core/tologger.h"
-#include "core/toconf.h"
 #include "core/tocache.h"
 #include "core/toqvalue.h"
 #include "core/toquery.h"

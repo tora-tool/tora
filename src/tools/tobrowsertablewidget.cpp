@@ -43,7 +43,6 @@
 #include "core/toresultextent.h"
 #include "core/utils.h"
 //#include "core/toextract.h"
-#include "core/toconfiguration.h"
 #include "core/toconnection.h"
 #include "core/toconnectionsub.h"
 #include "core/toconnectiontraits.h"

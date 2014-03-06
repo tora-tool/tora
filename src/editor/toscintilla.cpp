@@ -35,12 +35,11 @@
 #include "editor/toscintilla.h"
 #include "editor/tostyle.h"
 #include "editor/toworksheettext.h"
-#include "core/toconf.h"
-#include "core/toconfiguration.h"
 #include "core/toconfiguration_new.h"
 #include "core/toglobalevent.h"
 #include "core/tologger.h"
 #include "core/tomainwindow.h"
+#include "core/toconf.h"
 
 #include <QtGui/QClipboard>
 #include <QtGui/QPrintDialog>

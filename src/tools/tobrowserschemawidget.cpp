@@ -35,7 +35,6 @@
 #include "tools/tobrowserschemawidget.h"
 #include "core/tocodemodel.h"
 #include "core/utils.h"
-#include "core/toconfiguration.h"
 
 #include <QtCore/QCoreApplication>
 

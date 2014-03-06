@@ -36,7 +36,6 @@
 #include "core/utils.h"
 #include "core/tologger.h"
 #include "core/tochangeconnection.h"
-#include "core/toconf.h"
 #include "core/toresulttableview.h"
 #include "core/toglobalevent.h"
 

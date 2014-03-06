@@ -36,7 +36,6 @@
 
 #include "core/utils.h"
 #include "core/tochangeconnection.h"
-#include "core/toconf.h"
 #include "core/toresultschema.h"
 #include "core/toresultlock.h"
 #include "core/toresultitem.h"

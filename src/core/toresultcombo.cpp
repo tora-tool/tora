@@ -35,7 +35,6 @@
 #include "core/toresultcombo.h"
 #include "core/toresultschema.h"
 #include "core/utils.h"
-#include "core/toconf.h"
 #include "core/toconnection.h"
 #include "core/toeventquery.h"
 #include "core/tosql.h"

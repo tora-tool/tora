@@ -35,7 +35,6 @@
 #include "core/toresultcode.h"
 #include "core/utils.h"
 #include "core/toextract.h"
-#include "core/toconfiguration.h"
 #include "core/toconfiguration_new.h"
 #include "connection/tooraclesetting.h"
 #include "editor/todebugtext.h"

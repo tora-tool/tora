@@ -36,7 +36,6 @@
 #include "core/toeventquery.h"
 #include "core/utils.h"
 #include "core/tologger.h"
-#include "core/toconf.h"
 //stat #include "core/toresultstats.h"
 #include "core/totool.h"
 #include "core/toconfiguration_new.h"

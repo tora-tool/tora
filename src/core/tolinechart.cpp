@@ -35,10 +35,10 @@
 #include "core/tolinechart.h"
 #include "ui_tolinechartsetupui.h"
 #include "core/utils.h"
-#include "core/toconf.h"
 #include "core/toconfiguration_new.h"
 #include "core/toglobalsetting.h"
 #include "core/toeditorsetting.h"
+#include "core/toconf.h"
 
 #include <QtGui/QPainter>
 #include <QtGui/QPrinter>

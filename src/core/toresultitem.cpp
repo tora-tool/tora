@@ -34,7 +34,6 @@
 
 #include "core/toresultitem.h"
 #include "core/utils.h"
-#include "core/toconf.h"
 #include "core/toconnection.h"
 #include "core/toeventquery.h"
 #include "core/toresultresources.h"

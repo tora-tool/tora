@@ -36,7 +36,6 @@
 #include "core/utils.h"
 #include "core/tochangeconnection.h"
 #include "core/toconnection.h"
-#include "core/toconf.h"
 #include "core/tomainwindow.h"
 #include "core/toeventquery.h"
 #include "core/toresulttableview.h"

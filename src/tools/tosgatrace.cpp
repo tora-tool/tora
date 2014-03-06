@@ -35,7 +35,6 @@
 #include "tools/tosgatrace.h"
 #include "tools/tosgastatement.h"
 #include "core/tochangeconnection.h"
-#include "core/toconf.h"
 #include "core/toresultschema.h"
 #include "core/toresulttableview.h"
 #include "core/utils.h"

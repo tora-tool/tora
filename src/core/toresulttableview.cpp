@@ -36,7 +36,6 @@
 
 #include "core/toresultmodel.h"
 #include "core/toeventquery.h"
-#include "core/toconf.h"
 #include "core/utils.h"
 #include "core/toconfiguration_new.h"
 #include "core/toconnection.h"

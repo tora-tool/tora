@@ -35,12 +35,12 @@
 #include "core/topiechart.h"
 #include "core/utils.h"
 #include "core/tologger.h"
-#include "core/toconf.h"
 #include "core/toconfiguration_new.h"
 #include "core/toconnection.h"
 #include "core/toeditorsetting.h"
 #include "core/tolinechart.h"
 #include "core/toresult.h"
+#include "core/toconf.h"
 
 #include <math.h>
 #include <time.h>

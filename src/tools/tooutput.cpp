@@ -33,7 +33,6 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "tools/tooutput.h"
-#include "core/toconf.h"
 #include "core/toresultview.h"
 #include "core/totimer.h"
 #include "core/toglobalevent.h"

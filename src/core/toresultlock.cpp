@@ -33,7 +33,6 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "core/toresultlock.h"
-#include "core/toconf.h"
 #include "core/toconnection.h"
 #include "core/toeventquery.h"
 #include "core/toqvalue.h"

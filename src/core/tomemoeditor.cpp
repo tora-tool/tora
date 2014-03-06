@@ -34,7 +34,6 @@
 
 #include "core/tomemoeditor.h"
 #include "core/utils.h"
-#include "core/toconf.h"
 #include "core/toresultview.h"
 #include "editor/toscintilla.h"
 

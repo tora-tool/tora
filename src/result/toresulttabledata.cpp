@@ -34,8 +34,6 @@
 
 #include "result/toresulttabledata.h"
 #include "core/utils.h"
-#include "core/toconf.h"
-#include "core/toconfiguration.h"
 #include "core/toconnection.h"
 #include "core/toconnectionsub.h"
 #include "core/toresultdatasingle.h"

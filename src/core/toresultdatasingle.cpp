@@ -35,8 +35,6 @@
 #include "core/toresultdatasingle.h"
 
 #include "core/utils.h"
-#include "core/toconf.h"
-#include "core/toconfiguration.h"
 #include "core/toparamget.h"
 #include "core/tomodeleditor.h"
 

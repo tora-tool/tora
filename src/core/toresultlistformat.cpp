@@ -34,7 +34,6 @@
 
 #include "core/toresultlistformat.h"
 
-#include "core/toconf.h"
 #include "core/utils.h"
 #include "core/tolistviewformatter.h"
 #include "core/toconfiguration_new.h"

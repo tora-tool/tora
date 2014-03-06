@@ -34,7 +34,6 @@
 
 #include "tools/toanalyze.h"
 #include "core/utils.h"
-#include "core/toconf.h"
 #include "core/tomemoeditor.h"
 #include "core/toresultschema.h"
 #include "core/toresulttableview.h"

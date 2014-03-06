@@ -36,7 +36,6 @@
 #include "core/utils.h"
 #include "core/tologger.h"
 #include "core/tochangeconnection.h"
-#include "core/toconf.h"
 #include "core/toextract.h"
 #include "editor/todebugtext.h"
 #include "core/toresultcode.h"

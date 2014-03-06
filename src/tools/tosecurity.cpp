@@ -38,7 +38,6 @@
 
 #include "core/utils.h"
 #include "core/tochangeconnection.h"
-#include "core/toconf.h"
 #include "core/tomemoeditor.h"
 #include "core/toconnectionsub.h"
 #include "core/toglobalevent.h"

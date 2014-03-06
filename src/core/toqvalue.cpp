@@ -34,7 +34,6 @@
 
 #include "core/toqvalue.h"
 #include "core/utils.h"
-#include "core/toconf.h"
 #include "core/toconfiguration_new.h"
 #include "core/todatabasesetting.h"
 
