@@ -39,6 +39,7 @@
 #include "core/totool.h"
 #include "editor/tomarkededitor.h"
 #include "core/tosql.h"
+#include "core/toconfenum.h"
 
 #include <QtGui/QCloseEvent>
 #include <QtGui/QAction>
@@ -48,6 +49,23 @@
 class QComboBox;
 class toConnection;
 class toResultView;
+
+namespace ToConfiguration
+{
+	class Output : public ConfigContext
+	{
+		Q_OBJECT;
+		Q_ENUMS(OptionTypeEnum);
+	public:
+		Output() : ConfigContext("Output", ENUM_REF(Output,OptionTypeEnum)) {};
+		enum OptionTypeEnum {
+			PollingInterval = 12000 // #define CONF_POLLING
+			, LogType               // #define CONF_LOG_TYPE
+			, LogUser               // #define CONF_LOG_USER
+		};
+		QVariant defaultValue(int option) const;
+	};
+};
 
 class toOutput : public toToolWidget
 {

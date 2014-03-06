@@ -62,9 +62,20 @@ class toTemplateItem;
 class toTemplateProvider;
 class toEventQuery;
 
-/** Not part of the API.
- * @internal
- */
+namespace ToConfiguration
+{
+	class Template : public ConfigContext
+	{
+		Q_OBJECT;
+		Q_ENUMS(OptionTypeEnum);
+	public:
+		Template() : ConfigContext("Template", ENUM_REF(Template,OptionTypeEnum)) {};
+		enum OptionTypeEnum {
+			TemplateMap = 15000
+		};
+		QVariant defaultValue(int option) const;
+	};
+};
 
 class toTemplate : public QWidget, public toHelpContext
 {

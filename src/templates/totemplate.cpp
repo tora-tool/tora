@@ -64,20 +64,6 @@
 typedef QMap<QString, QVariant> TemplatesMap;
 typedef QMapIterator<QString, QVariant> TemplatesMapIterator;
 
-namespace ToConfiguration
-{
-	class Template : public ConfigContext
-	{
-		Q_OBJECT;
-		Q_ENUMS(OptionTypeEnum);
-	public:
-		Template() : ConfigContext("Template", ENUM_REF(Template,OptionTypeEnum)) {};
-		enum OptionTypeEnum {
-			TemplateMap = 15000
-		};
-	};
-};
-
 static TemplatesMap DefaultText(void)
 {
     TemplatesMap def;
@@ -90,6 +76,21 @@ static TemplatesMap DefaultText(void)
 
     return def;
 }
+
+QVariant ToConfiguration::Template::defaultValue(int option) const
+{
+	switch(option)
+	{
+	case TemplateMap:
+	{
+		QMap <QString, QVariant> retval;
+		return QVariant(retval);
+	}
+	default:
+		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Template un-registered enum value: %1").arg(option)));
+		return QVariant();
+	}
+};
 
 toTemplateEdit::toTemplateEdit(std::map<QString, QString> &pairs,
                                QWidget *parent, const char *name) :
@@ -515,7 +516,11 @@ public:
         return true;
     }
     virtual void closeWindow(toConnection &connection) {};
+private:
+    static ToConfiguration::Template s_templateConfig;
 };
+
+ToConfiguration::Template toTemplateTool::s_templateConfig;
 
 static toTemplateTool TemplateTool;
 

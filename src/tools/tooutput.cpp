@@ -34,7 +34,6 @@
 
 #include "tools/tooutput.h"
 #include "core/toconf.h"
-#include "core/toconfenum.h"
 #include "core/toresultview.h"
 #include "core/totimer.h"
 #include "core/toglobalevent.h"
@@ -53,32 +52,17 @@
 #include "icons/refresh.xpm"
 #include "icons/tooutput.xpm"
 
-namespace ToConfiguration
+QVariant ToConfiguration::Output::defaultValue(int option) const
 {
-	class Output : public ConfigContext
+	switch(option)
 	{
-		Q_OBJECT;
-		Q_ENUMS(OptionTypeEnum);
-	public:
-		Output() : ConfigContext("Output", ENUM_REF(Output,OptionTypeEnum)) {};
-		enum OptionTypeEnum {
-			PollingInterval = 12000 // #define CONF_POLLING
-			, LogType               // #define CONF_LOG_TYPE
-			, LogUser               // #define CONF_LOG_USER
-		};
-		QVariant defaultValue(int option) const
-		{
-			switch(option)
-			{
-			case PollingInterval:  return QVariant(QString("10 seconds"));
-			case LogType:          return QVariant((int)0);
-			case LogUser:          return QVariant(QString("ULOG"));
-			default:
-				Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Output un-registered enum value: %1").arg(option)));
-				return QVariant();
-			}
-		}
-	};
+	case PollingInterval:  return QVariant(QString("10 seconds"));
+	case LogType:          return QVariant((int)0);
+	case LogUser:          return QVariant(QString("ULOG"));
+	default:
+		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Output un-registered enum value: %1").arg(option)));
+		return QVariant();
+	}
 };
 
 class toOutputPrefs : public QGroupBox, public toSettingTab
@@ -199,7 +183,11 @@ public:
     {
         return new toOutputPrefs(this, parent);
     }
+private:
+    static ToConfiguration::Output s_outputConf;
 };
+
+ToConfiguration::Output toOutputTool::s_outputConf;
 
 static toOutputTool OutputTool;
 
