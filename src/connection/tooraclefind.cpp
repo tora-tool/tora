@@ -38,6 +38,7 @@
 #include "core/tooracleconst.h"
 #include "core/toconfiguration_new.h"
 #include "core/toglobalsetting.h"
+#include "core/toconf.h"
 
 #include <QtCore/QDir>
 #include <QtCore/QFile>

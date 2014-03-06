@@ -34,7 +34,6 @@
 
 #include "connection/toteradatatraits.h"
 #include "core/utils.h"
-#include "core/toconfiguration.h"
 #include "core/toconfiguration_new.h"
 #include "editor/toworksheettext.h"
 
