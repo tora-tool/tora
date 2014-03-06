@@ -159,7 +159,7 @@ void toEventQueryWorker::slotRead()
 			return;
 		}
 
-		unsigned maxRead = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxNumber).toInt();
+		unsigned maxRead = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::InitialFetchInt).toInt();
 		ValuesList values;		
 		for(unsigned row = 0; row < maxRead; row++)
 		{

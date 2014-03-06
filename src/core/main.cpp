@@ -298,8 +298,8 @@ int main(int argc, char **argv)
         	toConfigurationNewSingle::Instance().setOption(ToConfiguration::Main::FirstInstall, QDateTime::currentDateTime().toString());
 
         toQValue::setNumberFormat(
-        		toConfigurationNewSingle::Instance().option(ToConfiguration::Database::NumberFormat).toInt()
-        		, toConfigurationNewSingle::Instance().option(ToConfiguration::Database::NumberDecimals).toInt()
+        		toConfigurationNewSingle::Instance().option(ToConfiguration::Database::NumberFormatInt).toInt()
+        		, toConfigurationNewSingle::Instance().option(ToConfiguration::Database::NumberDecimalsInt).toInt()
         		);
 
         qRegisterMetaType<toQColumnDescriptionList>("toQColumnDescriptionList&");

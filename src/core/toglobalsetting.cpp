@@ -99,7 +99,7 @@ QVariant ToConfiguration::Global::defaultValue(int option) const
 	case DisplaySamplesInt:     return QVariant((int)-1);
 	case SizeUnit:			return QVariant(QString("MB"));
 	case RefreshInterval:	return QVariant(QString("None"));  // None - 0
-	case DefaultListFormat:		return QVariant((int)0);
+	case DefaultListFormatInt:		return QVariant((int)0);
 	case Style:			return QVariant(QString(""));
 	case Translation:		return QVariant(QLocale().name());
 	default:
@@ -235,7 +235,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     // Refresh
     Utils::toRefreshCreate(OptionGroup, "toRefreshCreate", QString::null, RefreshIntervalInt);
     // DefaultFormat
-    DefaultListFormat->setCurrentIndex(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::DefaultListFormat).toInt());
+    DefaultListFormat->setCurrentIndex(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::DefaultListFormatInt).toInt());
     // style
     Style->addItems(Utils::toGetSessionTypes());
     QString str = Utils::toGetSessionType();

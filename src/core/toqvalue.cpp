@@ -243,7 +243,7 @@ const QByteArray toQValue::toByteArray() const
 
 QString toQValue::displayData() const
 {
-    if( isNull() && toConfigurationNewSingle::Instance().option(ToConfiguration::Database::IndicateEmpty).toBool())
+    if( isNull() && toConfigurationNewSingle::Instance().option(ToConfiguration::Database::IndicateEmptyBool).toBool())
     {
         return QString::fromLatin1("{null}");
     }

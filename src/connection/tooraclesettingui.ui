@@ -53,7 +53,7 @@
     </widget>
    </item>
    <item row="2" column="2">
-    <widget class="QCheckBox" name="Unlimited">
+    <widget class="QCheckBox" name="UnlimitedBool">
      <property name="text">
       <string>Unlimited</string>
      </property>
@@ -63,7 +63,7 @@
     </widget>
    </item>
    <item row="4" column="2">
-    <widget class="QCheckBox" name="VsqlPlans">
+    <widget class="QCheckBox" name="VsqlPlansBool">
      <property name="toolTip">
       <string>Use V$SQL_PLAN when possible.</string>
      </property>
@@ -89,7 +89,7 @@
     </widget>
    </item>
    <item row="5" column="2">
-    <widget class="QCheckBox" name="SharedPlan">
+    <widget class="QCheckBox" name="SharedPlanBool">
      <property name="enabled">
       <bool>true</bool>
      </property>
@@ -102,7 +102,7 @@
     </widget>
    </item>
    <item row="3" column="2">
-    <widget class="QCheckBox" name="KeepPlans">
+    <widget class="QCheckBox" name="KeepPlansBool">
      <property name="toolTip">
       <string>Keep records for the plan explanations in the plan table.</string>
      </property>
@@ -115,7 +115,7 @@
     <widget class="QLineEdit" name="ExplainPlan"/>
    </item>
    <item row="2" column="1">
-    <widget class="QLineEdit" name="MaxLong"/>
+    <widget class="QLineEdit" name="MaxLongInt"/>
    </item>
    <item row="2" column="0">
     <widget class="QLabel" name="TextLabel6_3_2">
@@ -140,63 +140,63 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0,0,0,0,0,0">
       <item>
-       <widget class="QCheckBox" name="cbUseDbmsMetadata">
+       <widget class="QCheckBox" name="UseDbmsMetadataBool">
         <property name="text">
          <string>Use DBMS_METADATA</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="cbIncludeStorage">
+       <widget class="QCheckBox" name="IncludeStorageBool">
         <property name="text">
          <string>Include storage information</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="cbSkipOrgMon">
+       <widget class="QCheckBox" name="SkipOrgMonBool">
         <property name="text">
          <string>     Skip organisation and monitoring</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="cbSkiptStorExTablespace">
+       <widget class="QCheckBox" name="SkiptStorExTablespaceBool">
         <property name="text">
          <string>     Skip storage except tablespace</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="cbIncludeParallel">
+       <widget class="QCheckBox" name="IncludeParallelBool">
         <property name="text">
          <string>Include parallel information</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="cbIncludePartition">
+       <widget class="QCheckBox" name="IncludePartitionBool">
         <property name="text">
          <string>Include partition information</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="cbIncludeCode">
+       <widget class="QCheckBox" name="IncludeCodeBool">
         <property name="text">
          <string>Include code</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="cbIncludeHeader">
+       <widget class="QCheckBox" name="IncludeHeaderBool">
         <property name="text">
          <string>Include header</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="cbIncludePrompt">
+       <widget class="QCheckBox" name="IncludePromptBool">
         <property name="text">
          <string>Include prompt</string>
         </property>
@@ -242,12 +242,12 @@
  <tabstops>
   <tabstop>DefaultDate</tabstop>
   <tabstop>DefaultTimestamp</tabstop>
-  <tabstop>MaxLong</tabstop>
-  <tabstop>Unlimited</tabstop>
+  <tabstop>MaxLongInt</tabstop>
+  <tabstop>UnlimitedBool</tabstop>
   <tabstop>ExplainPlan</tabstop>
-  <tabstop>KeepPlans</tabstop>
+  <tabstop>KeepPlansBool</tabstop>
   <tabstop>CreatePlanTable</tabstop>
-  <tabstop>VsqlPlans</tabstop>
+  <tabstop>VsqlPlansBool</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -268,9 +268,9 @@
    </hints>
   </connection>
   <connection>
-   <sender>Unlimited</sender>
+   <sender>UnlimitedBool</sender>
    <signal>toggled(bool)</signal>
-   <receiver>MaxLong</receiver>
+   <receiver>MaxLongInt</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">

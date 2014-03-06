@@ -50,19 +50,19 @@ QVariant ToConfiguration::Database::defaultValue(int option) const
 {
 	switch(option)
 	{
-	case ObjectCache:              return QVariant((int)1);
+	case ObjectCacheInt:              return QVariant((int)1);
 	case CacheTimeout: 	           return QVariant((int)7);
-	case AutoCommit:               return QVariant((bool)false);
-	case FirewallMode:             return QVariant((bool)false);
+	case AutoCommitBool:               return QVariant((bool)false);
+	case FirewallModeBool:             return QVariant((bool)false);
 	case ConnectionTestInterval:   return QVariant((int)900);     //15min
-	case CachedConnections:        return QVariant((int)4);
-	case MaxNumber:                return QVariant((int)50);
-	case MaxContent:               return QVariant((int)100);
-	case MaxColDisp:               return QVariant((int)300);
-	case IndicateEmpty:            return QVariant((bool)true);
+	case CachedConnectionsInt:        return QVariant((int)4);
+	case InitialFetchInt:                return QVariant((int)50);
+	case MaxContentInt:               return QVariant((int)100);
+	case MaxColDispInt:               return QVariant((int)300);
+	case IndicateEmptyBool:            return QVariant((bool)true);
 	case IndicateEmptyColor:       return QVariant(QString("#f2ffbc"));
-	case NumberFormat:             return QVariant((int)0);
-	case NumberDecimals:           return QVariant((int)2);
+	case NumberFormatInt:             return QVariant((int)0);
+	case NumberDecimalsInt:           return QVariant((int)2);
 	default:
 		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Database un-registered enum value: %1").arg(option)));
 		return QVariant();
@@ -71,7 +71,7 @@ QVariant ToConfiguration::Database::defaultValue(int option) const
 
 void toDatabaseSetting::numberFormatChange()
 {
-    Decimals->setEnabled(NumberFormat->currentIndex() == 2);
+    DecimalsInt->setEnabled(NumberFormatInt->currentIndex() == 2);
 }
 
 void toDatabaseSetting::IndicateEmptyColor_clicked()
@@ -96,21 +96,21 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent, const char *name, Qt::WFla
         setObjectName(name);
     setupUi(this);
 
-    MaxColDisp->setValue(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxColDisp).toInt());
-    int mxNumber = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxNumber).toInt();
+    MaxColDispInt->setValue(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxColDispInt).toInt());
+    int mxNumber = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::InitialFetchInt).toInt();
     if (mxNumber <= 0)
-        FetchAll->setChecked(true);
+        FetchAllBool->setChecked(true);
     else
-        InitialFetch->setValue(mxNumber);
+        InitialFetchInt->setValue(mxNumber);
 
-    int mxContent = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxContent).toInt();
+    int mxContent = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxContentInt).toInt();
     if (mxContent <= 0)
     {
-        MaxContent->setValue(InitialFetch->value());
-        UnlimitedContent->setChecked(true);
+        MaxContentInt->setValue(InitialFetchInt->value());
+        UnlimitedContentBool->setChecked(true);
     }
     else
-        MaxContent->setValue(mxContent);
+        MaxContentInt->setValue(mxContent);
 
 //     MaxColDisp->setValidator(new QIntValidator(MaxColDisp));
 //     InitialFetch->setValidator(new QIntValidator(InitialFetch));
@@ -119,8 +119,8 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent, const char *name, Qt::WFla
     //NumberFormat->setCurrentIndex(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::numberFormat());
 
     //Decimals->setValue(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::numberDecimals());
-    if (NumberFormat->currentIndex() == 2)
-        Decimals->setEnabled(true);
+    if (NumberFormatInt->currentIndex() == 2)
+        DecimalsInt->setEnabled(true);
 
     //AutoCommit->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::autoCommit());
 //     DontReread->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::dontReread());
@@ -142,7 +142,7 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent, const char *name, Qt::WFla
 //     MoveAfter->setValue(val);
 //     KeepAlive->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::keepAlive());
 
-    connect(IndicateEmpty, SIGNAL(clicked(bool)),
+    connect(IndicateEmptyBool, SIGNAL(clicked(bool)),
             IndicateEmptyColor, SLOT(setEnabled(bool)));
 }
 
@@ -159,27 +159,27 @@ void toDatabaseSetting::saveSetting(void)
     ///toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setCachedConnections(CachedConnections->value());
 
 
-    if (FetchAll->isChecked())
-        toConfigurationNewSingle::Instance().setOption(ToConfiguration::Database::MaxNumber, -1);
+    if (FetchAllBool->isChecked())
+        toConfigurationNewSingle::Instance().setOption(ToConfiguration::Database::InitialFetchInt, -1);
     else
-        toConfigurationNewSingle::Instance().setOption(ToConfiguration::Database::MaxNumber, InitialFetch->value());
+        toConfigurationNewSingle::Instance().setOption(ToConfiguration::Database::InitialFetchInt, InitialFetchInt->value());
 
-    if (UnlimitedContent->isChecked())
-        toConfigurationNewSingle::Instance().setOption(ToConfiguration::Database::MaxContent, -1);
+    if (UnlimitedContentBool->isChecked())
+        toConfigurationNewSingle::Instance().setOption(ToConfiguration::Database::MaxContentInt, -1);
     else
     {
-        int num = InitialFetch->value();
-        int maxnum = MaxContent->value();
+        int num = InitialFetchInt->value();
+        int maxnum = MaxContentInt->value();
         if (num < 0)
             maxnum = num;
         else if (num >= maxnum)
             maxnum = num + 1;
-        if (maxnum != MaxContent->text().toInt())
+        if (maxnum != MaxContentInt->text().toInt())
             TOMessageBox::information(this, tr("Invalid values"),
                                       tr("Doesn't make sense to have max content less than initial\n"
                                          "fetch size. Will adjust value to be higher."),
                                       tr("&Ok"));
-        toConfigurationNewSingle::Instance().setOption(ToConfiguration::Database::MaxContent, maxnum);
+        toConfigurationNewSingle::Instance().setOption(ToConfiguration::Database::MaxContentInt, maxnum);
     }
 
     ////toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setMaxColDisp(MaxColDisp->value());
@@ -196,7 +196,7 @@ void toDatabaseSetting::saveSetting(void)
 
     ////toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setNumberFormat(NumberFormat->currentIndex());
     ////toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setNumberDecimals(Decimals->value());
-    toQValue::setNumberFormat(NumberFormat->currentIndex(), Decimals->value());
+    toQValue::setNumberFormat(NumberFormatInt->currentIndex(), DecimalsInt->value());
 
 //     toUpdateIndicateEmpty();
 }

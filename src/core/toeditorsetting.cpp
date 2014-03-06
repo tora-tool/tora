@@ -43,8 +43,8 @@ QVariant ToConfiguration::Editor::defaultValue(int option) const
 {
 	switch(option)
 	{
-	case SyntaxHighlighting:          return QVariant((int) 0);
-	case EditorType:               return QVariant((int) 0);
+	case SyntaxHighlightingInt:          return QVariant((int) 0);
+	case EditorTypeInt:               return QVariant((int) 0);
 	case UseMaxTextWidthMarkBool:      return QVariant((bool) false);
 	case MaxTextWidthMarkInt:         return QVariant((int)75);
 	case KeywordUpperBool:             return QVariant((bool) false);

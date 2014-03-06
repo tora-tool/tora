@@ -54,7 +54,7 @@ toResultListFormat::toResultListFormat(QWidget *parent, DialogType type, const c
     formatCombo->addItem(tr("HTML"));
     formatCombo->addItem(tr("SQL"));
 
-    int num = toConfigurationNewSingle::Instance().option(Global::DefaultListFormat).toInt();
+    int num = toConfigurationNewSingle::Instance().option(Global::DefaultListFormatInt).toInt();
     formatCombo->setCurrentIndex(num);
     formatChanged(num);
 
@@ -109,6 +109,6 @@ void toResultListFormat::formatChanged(int pos)
 
 void toResultListFormat::accept()
 {
-    toConfigurationNewSingle::Instance().setOption(ToConfiguration::Global::DefaultListFormat, formatCombo->currentIndex());
+    toConfigurationNewSingle::Instance().setOption(ToConfiguration::Global::DefaultListFormatInt, formatCombo->currentIndex());
     QDialog::accept();
 }

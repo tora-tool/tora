@@ -82,7 +82,7 @@ toConnection::toConnection(const QString &provider,
     ////Version = connSub->version();
     {
         QMutexLocker clock(&ConnectionLock);
-        if (toConfigurationNewSingle::Instance().option(ToConfiguration::Database::ObjectCache).toInt() == toCache::ON_CONNECT)
+        if (toConfigurationNewSingle::Instance().option(ToConfiguration::Database::ObjectCacheInt).toInt() == toCache::ON_CONNECT)
         	pCache->readCache();
 
     }
@@ -117,7 +117,7 @@ toConnection::toConnection(const toConnectionOptions &opts)
     ////Version = connSub->version();
     {
         QMutexLocker clock(&ConnectionLock);
-        if (toConfigurationNewSingle::Instance().option(ToConfiguration::Database::ObjectCache) == toCache::ON_CONNECT)
+        if (toConfigurationNewSingle::Instance().option(ToConfiguration::Database::ObjectCacheInt) == toCache::ON_CONNECT)
         	pCache->readCache();
 
     }
@@ -462,7 +462,7 @@ void toConnection::putBackSub(toConnectionSub *conn)
     if(conn->isBroken())
     {
     	delete conn;
-    } else if(Connections.size() >= toConfigurationNewSingle::Instance().option(ToConfiguration::Database::CachedConnections).toInt()) {
+    } else if(Connections.size() >= toConfigurationNewSingle::Instance().option(ToConfiguration::Database::CachedConnectionsInt).toInt()) {
     	delete conn;
     }
     else

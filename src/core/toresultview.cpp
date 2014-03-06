@@ -206,7 +206,7 @@ int toResultViewMLine::realWidth(const QFontMetrics &fm, const toTreeWidget *top
 {
     if (!MaxColDisp)
     {
-        MaxColDisp = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxColDisp).toInt();
+        MaxColDisp = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxColDispInt).toInt();
         Gridlines = toConfigurationNewSingle::Instance().option(ToConfiguration::Global::DisplayGridlinesBool).toBool();
     }
     QString t = text(column);
@@ -239,7 +239,7 @@ int toResultViewItem::realWidth(const QFontMetrics &fm, const toTreeWidget *top,
 {
     if (!MaxColDisp)
     {
-        MaxColDisp = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxColDisp).toInt();
+        MaxColDisp = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxColDispInt).toInt();
         Gridlines = toConfigurationNewSingle::Instance().option(ToConfiguration::Global::DisplayGridlinesBool).toBool();
     }
     QString t = text(column);
@@ -399,7 +399,7 @@ int toResultViewMLCheck::realWidth(const QFontMetrics &fm, const toTreeWidget *t
 {
     if (!MaxColDisp)
     {
-        MaxColDisp = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxColDisp).toInt();
+        MaxColDisp = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxColDispInt).toInt();
         Gridlines = toConfigurationNewSingle::Instance().option(ToConfiguration::Global::DisplayGridlinesBool).toBool();
     }
     QString t = text(column);
@@ -416,7 +416,7 @@ int toResultViewCheck::realWidth(const QFontMetrics &fm, const toTreeWidget *top
 {
     if (!MaxColDisp)
     {
-        MaxColDisp = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxColDisp).toInt();
+        MaxColDisp = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxColDispInt).toInt();
         Gridlines = toConfigurationNewSingle::Instance().option(ToConfiguration::Global::DisplayGridlinesBool).toBool();
     }
     QString t = text(column);
@@ -1227,7 +1227,7 @@ toTreeWidgetItem *toResultView::createItem(toTreeWidgetItem *last, const QString
 
 void toResultView::slotAddItem(void)
 {
-    MaxColDisp = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxColDisp).toInt();
+    MaxColDisp = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxColDispInt).toInt();
     Gridlines = toConfigurationNewSingle::Instance().option(ToConfiguration::Global::DisplayGridlinesBool).toBool();
 
     try
@@ -1323,7 +1323,7 @@ void toResultView::query(const QString &sql, toQueryParams const& param)
         else
             setSorting(Query->columns());
 
-        int MaxNumber = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxNumber).toInt();
+        int MaxNumber = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::InitialFetchInt).toInt();
         for (int j = 0; j < MaxNumber && !Query->eof(); j++)
             slotAddItem();
         if (ReadAll || MaxNumber < 0)

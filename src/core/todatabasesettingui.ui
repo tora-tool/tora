@@ -68,12 +68,12 @@
          <bool>false</bool>
         </property>
         <property name="buddy">
-         <cstring>MaxColDisp</cstring>
+         <cstring>MaxColDispInt</cstring>
         </property>
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="QSpinBox" name="MaxColDisp">
+       <widget class="QSpinBox" name="MaxColDispInt">
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -89,7 +89,7 @@
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QSpinBox" name="MaxContent">
+       <widget class="QSpinBox" name="MaxContentInt">
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -116,7 +116,7 @@
          <bool>false</bool>
         </property>
         <property name="buddy">
-         <cstring>InitialFetch</cstring>
+         <cstring>InitialFetchInt</cstring>
         </property>
        </widget>
       </item>
@@ -138,12 +138,12 @@
          <bool>false</bool>
         </property>
         <property name="buddy">
-         <cstring>MaxContent</cstring>
+         <cstring>MaxContentInt</cstring>
         </property>
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QSpinBox" name="InitialFetch">
+       <widget class="QSpinBox" name="InitialFetchInt">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
           <horstretch>1</horstretch>
@@ -153,7 +153,7 @@
        </widget>
       </item>
       <item row="1" column="2">
-       <widget class="QCheckBox" name="UnlimitedContent">
+       <widget class="QCheckBox" name="UnlimitedContentBool">
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -163,7 +163,7 @@
        </widget>
       </item>
       <item row="0" column="2">
-       <widget class="QCheckBox" name="FetchAll">
+       <widget class="QCheckBox" name="FetchAllBool">
         <property name="text">
          <string>&amp;All</string>
         </property>
@@ -201,7 +201,7 @@
        </widget>
       </item>
       <item row="1" column="3">
-       <widget class="QSpinBox" name="Decimals">
+       <widget class="QSpinBox" name="DecimalsInt">
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -214,14 +214,14 @@
        </widget>
       </item>
       <item row="0" column="0" colspan="2">
-       <widget class="QCheckBox" name="IndicateEmpty">
+       <widget class="QCheckBox" name="IndicateEmptyBool">
         <property name="text">
          <string>Indicate empty values as '' instead of &amp;NULL as {null}.</string>
         </property>
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QComboBox" name="NumberFormat">
+       <widget class="QComboBox" name="NumberFormatInt">
         <item>
          <property name="text">
           <string>Default</string>
@@ -258,7 +258,7 @@
          <bool>false</bool>
         </property>
         <property name="buddy">
-         <cstring>Decimals</cstring>
+         <cstring>DecimalsInt</cstring>
         </property>
        </widget>
       </item>
@@ -285,7 +285,7 @@
      </property>
      <layout class="QGridLayout">
       <item row="1" column="0">
-       <widget class="QCheckBox" name="FirewallMode">
+       <widget class="QCheckBox" name="FirewallModeBool">
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -323,7 +323,7 @@
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="QSpinBox" name="ConnTestInterval">
+       <widget class="QSpinBox" name="ConnTestIntervalInt">
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -349,7 +349,7 @@
        </widget>
       </item>
       <item row="3" column="1">
-       <widget class="QSpinBox" name="CachedConnections">
+       <widget class="QSpinBox" name="CachedConnectionsInt">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
           <horstretch>1</horstretch>
@@ -359,7 +359,7 @@
        </widget>
       </item>
       <item row="0" column="0">
-       <widget class="QCheckBox" name="AutoCommit">
+       <widget class="QCheckBox" name="AutoCommitBool">
         <property name="enabled">
          <bool>true</bool>
         </property>
@@ -382,16 +382,16 @@
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
   <tabstop>ObjectCache</tabstop>
-  <tabstop>FetchAll</tabstop>
-  <tabstop>UnlimitedContent</tabstop>
-  <tabstop>IndicateEmpty</tabstop>
-  <tabstop>NumberFormat</tabstop>
-  <tabstop>Decimals</tabstop>
+  <tabstop>FetchAllBool</tabstop>
+  <tabstop>UnlimitedContentBool</tabstop>
+  <tabstop>IndicateEmptyBool</tabstop>
+  <tabstop>NumberFormatInt</tabstop>
+  <tabstop>DecimalsInt</tabstop>
  </tabstops>
  <resources/>
  <connections>
   <connection>
-   <sender>NumberFormat</sender>
+   <sender>NumberFormatInt</sender>
    <signal>activated(QString)</signal>
    <receiver>toDatabaseSettingUI</receiver>
    <slot>numberFormatChange()</slot>

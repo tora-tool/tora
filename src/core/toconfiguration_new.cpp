@@ -119,3 +119,65 @@ QString toConfigurationNew::sharePath()
 	return QString::fromAscii(SHARE_DIR);
 #endif
 }
+
+template<>
+void toConfigurationNew::setOption <QVariant>(int option, QVariant const& newVal)
+{
+#ifdef QT_DEBUG
+	ToConfiguration::ConfigContext const* ctx = m_configContextPtrMap.value(option);
+	QVariant val = ctx->defaultValue(option);
+	Q_ASSERT_X(newVal.type() == val.type(), qPrintable(__QHERE__), qPrintable(QString("Option enum: %1 oldtype: %2 newtype %3")
+			.arg(option)
+			.arg(val.typeName())
+			.arg(newVal.typeName())
+			));
+#endif
+	m_configMap[option] = newVal;
+}
+
+template<> TORA_EXPORT
+void toConfigurationNew::setOption <QString>(int option, QString const& newVal)
+{
+#ifdef QT_DEBUG
+	ToConfiguration::ConfigContext const* ctx = m_configContextPtrMap.value(option);
+	QVariant val = ctx->defaultValue(option);
+	Q_ASSERT_X(QVariant::String == val.type(), qPrintable(__QHERE__), qPrintable(QString("Option enum: %1 oldtype: %2 newtype QString")
+			.arg(option)
+			.arg(val.typeName())
+			));
+#endif
+	m_configMap[option] = QVariant(newVal);
+}
+
+template<> TORA_EXPORT
+void toConfigurationNew::setOption <int>(int option, int const&newVal)
+{
+#ifdef QT_DEBUG
+	ToConfiguration::ConfigContext const* ctx = m_configContextPtrMap.value(option);
+	QVariant val = ctx->defaultValue(option);
+	Q_ASSERT_X(QVariant::Int == val.type(), qPrintable(__QHERE__), qPrintable(QString("Option enum: %1 oldtype: %2 newtype int")
+			.arg(option)
+			.arg(val.typeName())
+	));
+#endif
+	m_configMap[option] = QVariant(newVal);
+}
+
+template<> TORA_EXPORT
+void toConfigurationNew::setOption <bool>(int option, bool const&newVal)
+{
+#ifdef QT_DEBUG
+	ToConfiguration::ConfigContext const* ctx = m_configContextPtrMap.value(option);
+	QVariant val = ctx->defaultValue(option);
+	Q_ASSERT_X(QVariant::Bool == val.type(), qPrintable(__QHERE__), qPrintable(QString("Option enum: %1 oldtype: %2 newtype bool")
+			.arg(option)
+			.arg(val.typeName())
+	));
+#endif
+	m_configMap[option] = QVariant(newVal);
+}
+
+void toConfigurationNew::logUnknownOption(QString const&)
+{
+
+}

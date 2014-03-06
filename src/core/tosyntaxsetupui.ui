@@ -43,7 +43,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="SyntaxHighlighting">
+          <widget class="QComboBox" name="SyntaxHighlightingInt">
            <item>
             <property name="text">
              <string extracomment="Use Scintilla native SQL Lexer">QsciSQL</string>
@@ -68,7 +68,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="EditorType">
+          <widget class="QComboBox" name="EditorTypeInt">
            <item>
             <property name="text">
              <string>Scintilla</string>

@@ -31,7 +31,20 @@ public:
 
     QVariant option(int option);
     QVariant option(QString const& option);
-    template <class T> void setOption(int option, T const&) {};
+    template <class T> void setOption(QString const& optionName, T const& newVal)
+    {
+    	if (m_optionToEnumMap.contains(optionName))
+    	{
+    		setOption(m_optionToEnumMap.value(optionName), newVal);
+    	} else {
+    		logUnknownOption(optionName);
+    	}
+    }
+
+    template <class T> void setOption(int option, T const&)
+    {
+
+    };
 
     void saveAll();
 
@@ -48,12 +61,26 @@ public:
 protected:
     void registerConfigContext(QString const& context, QMetaEnum const& fields, ToConfiguration::ConfigContext const*);
 private:
+    void logUnknownOption(QString const&);
+
     QMap<unsigned, QVariant> m_configMap;
     QMap<unsigned, ToConfiguration::ConfigContext const*> m_configContextPtrMap;
     QMap<QString, QMetaEnum> m_contextMap;
     QMap<QString, ToConfiguration::ConfigContext const*> m_contextSetPtrMap;
     QMap<QString, int> m_optionToEnumMap;
 };
+
+template<> TORA_EXPORT
+void toConfigurationNew::setOption <QVariant>(int option, QVariant const&);
+
+template<> TORA_EXPORT
+void toConfigurationNew::setOption <QString>(int option, QString const&);
+
+template<> TORA_EXPORT
+void toConfigurationNew::setOption <int>(int option, int const&);
+
+template<> TORA_EXPORT
+void toConfigurationNew::setOption <bool>(int option, bool const&);
 
 class TORA_EXPORT toConfigurationNewSingle: public ::Loki::SingletonHolder<toConfigurationNew> {};
 

@@ -137,7 +137,34 @@ void toSettingTab::loadSettings(QWidget *widget)
 
 void toSettingTab::saveSettings(QWidget *widget)
 {
+	static QRegExp any(".*");
+	QList<QWidget*> lst = widget->findChildren<QWidget*>(any);
+	Q_FOREACH(QWidget *w, lst)
+	{
+		qDebug() << w->objectName();
+		if (w->objectName() == "qt_spinbox_lineedit") // internal widget inside QSpinBox
+			continue;
+		if (QComboBox *combo = qobject_cast<QComboBox*>(w))
+		{
+			if (combo->objectName().endsWith("Int"))
+				toConfigurationNewSingle::Instance().setOption(combo->objectName(), combo->currentIndex());
+			else
+				toConfigurationNewSingle::Instance().setOption(combo->objectName(), combo->currentText());
+		} else if (QSpinBox *spin = qobject_cast<QSpinBox*>(w))
+		{
+			toConfigurationNewSingle::Instance().setOption(spin->objectName(), spin->value());
+		} else if (QLineEdit *edit = qobject_cast<QLineEdit*>(w))
+		{
+			if (edit->objectName().endsWith("Int"))
+				toConfigurationNewSingle::Instance().setOption(edit->objectName(), edit->text().toInt());
+			else
+				toConfigurationNewSingle::Instance().setOption(edit->objectName(), edit->text());
+		} else if (QCheckBox *checkbox = qobject_cast<QCheckBox*>(w))
+		{
+			toConfigurationNewSingle::Instance().setOption(checkbox->objectName(), /*checkbox->isEnabled() &&*/ checkbox->isChecked());
+		}
 
+	}
 }
 
 toConnectionWidget::toConnectionWidget(toConnection &conn, QWidget *widget)

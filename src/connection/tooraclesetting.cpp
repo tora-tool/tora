@@ -95,9 +95,9 @@ toOracleSetting::toOracleSetting(QWidget *parent)
     int len = toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::MaxLong).toInt();
     if (len >= 0)
     {
-        MaxLong->setText(QString::number(len));
-        MaxLong->setValidator(new QIntValidator(MaxLong));
-        Unlimited->setChecked(false);
+        MaxLongInt->setText(QString::number(len));
+        MaxLongInt->setValidator(new QIntValidator(MaxLongInt));
+        UnlimitedBool->setChecked(false);
     }
     // extractor group options
     //cbUseDbmsMetadata->setChecked(toConfigurationSingle::Instance().extractorUseDbmsMetadata());
@@ -109,8 +109,8 @@ toOracleSetting::toOracleSetting(QWidget *parent)
     //cbIncludeCode->setChecked(toConfigurationSingle::Instance().extractorIncludeCode());
     //cbIncludeHeader->setChecked(toConfigurationSingle::Instance().extractorIncludeHeader());
     //cbIncludePrompt->setChecked(toConfigurationSingle::Instance().extractorIncludePrompt());
-    connect(cbUseDbmsMetadata, SIGNAL(toggled(bool)), this, SLOT(dbmsMetadataClicked(bool)));
-    dbmsMetadataClicked(cbUseDbmsMetadata->isChecked());
+    connect(UseDbmsMetadataBool, SIGNAL(toggled(bool)), this, SLOT(dbmsMetadataClicked(bool)));
+    dbmsMetadataClicked(UseDbmsMetadataBool->isChecked());
     try
     {
         // Check if connection exists
@@ -139,7 +139,7 @@ void toOracleSetting::saveSetting()
        //toConfigurationSingle::Instance().setPlanCheckpoint(CheckPoint->text());
     //toConfigurationSingle::Instance().setPlanTable(ExplainPlan->text());
        //toConfigurationSingle::Instance().setOpenCursors(OpenCursors->value());
-    if (Unlimited->isChecked())
+    if (UnlimitedBool->isChecked())
     {
         //toConfigurationSingle::Instance().setMaxLong(-1);
     }
@@ -161,14 +161,14 @@ void toOracleSetting::saveSetting()
 
 void toOracleSetting::dbmsMetadataClicked(bool)
 {
-	cbIncludeStorage->setDisabled(cbUseDbmsMetadata->isChecked());
-	cbSkipOrgMon->setDisabled(cbUseDbmsMetadata->isChecked());
-	cbSkiptStorExTablespace->setDisabled(cbUseDbmsMetadata->isChecked());
-	cbIncludeParallel->setDisabled(cbUseDbmsMetadata->isChecked());
-	cbIncludePartition->setDisabled(cbUseDbmsMetadata->isChecked());
-	cbIncludeCode->setDisabled(cbUseDbmsMetadata->isChecked());
-	cbIncludeHeader->setDisabled(cbUseDbmsMetadata->isChecked());
-	cbIncludePrompt->setDisabled(cbUseDbmsMetadata->isChecked());
+	IncludeStorageBool->setDisabled(UseDbmsMetadataBool->isChecked());
+	SkipOrgMonBool->setDisabled(UseDbmsMetadataBool->isChecked());
+	SkiptStorExTablespaceBool->setDisabled(UseDbmsMetadataBool->isChecked());
+	IncludeParallelBool->setDisabled(UseDbmsMetadataBool->isChecked());
+	IncludePartitionBool->setDisabled(UseDbmsMetadataBool->isChecked());
+	IncludeCodeBool->setDisabled(UseDbmsMetadataBool->isChecked());
+	IncludeHeaderBool->setDisabled(UseDbmsMetadataBool->isChecked());
+	IncludePromptBool->setDisabled(UseDbmsMetadataBool->isChecked());
 }
 
 void toOracleSetting::createPlanTable()

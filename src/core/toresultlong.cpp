@@ -104,7 +104,7 @@ void toResultLong::query(const QString &sql, const toQueryParams &param)
             //// Query->slotReadAll(); // indicate that all records should be fetched
         }
         else
-            MaxNumber = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxNumber).toInt();
+            MaxNumber = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::InitialFetchInt).toInt();
         Query->start();
     }
     catch (const toConnection::exception &str)

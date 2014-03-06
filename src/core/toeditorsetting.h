@@ -50,8 +50,8 @@ namespace ToConfiguration
 	public:
 		Editor() : ConfigContext("Editor", ENUM_REF(Editor,OptionTypeEnum)) {};
 		enum OptionTypeEnum {
-			SyntaxHighlighting  = 3000 // #define CONF_HIGHLIGHT
-			, EditorType            // #define CONF_EDITOR_TYPE
+			SyntaxHighlightingInt  = 3000 // #define CONF_HIGHLIGHT
+			, EditorTypeInt            // #define CONF_EDITOR_TYPE
 			, UseMaxTextWidthMarkBool
 			, MaxTextWidthMarkInt
 			, KeywordUpperBool      // #define CONF_KEYWORD_UPPER

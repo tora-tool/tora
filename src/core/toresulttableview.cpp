@@ -314,8 +314,8 @@ int toResultTableView::visibleRows() const
 	int hh = height();
 	int hhh = s.height();
 	int rows = hh / s.height() + 1;
-	if (rows < toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxNumber).toInt())
-		return toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxNumber).toInt();
+	if (rows < toConfigurationNewSingle::Instance().option(ToConfiguration::Database::InitialFetchInt).toInt())
+		return toConfigurationNewSingle::Instance().option(ToConfiguration::Database::InitialFetchInt).toInt();
 	return rows;
 }
 

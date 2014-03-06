@@ -48,19 +48,19 @@ namespace ToConfiguration {
 	public:
 		Database() : ConfigContext("Database", ENUM_REF(Database,OptionTypeEnum)) {};
 		enum OptionTypeEnum {
-			ObjectCache   = 4000  // #define CONF_OBJECT_CACHE
-			, CacheTimeout        // #define CONF_CACHE_TIMEOUT
-			, AutoCommit          // #define CONF_AUTO_COMMIT
-			, FirewallMode        // #define CONF_FIREWALL_MODE
+			ObjectCacheInt   = 4000  // #define CONF_OBJECT_CACHE
+			, CacheTimeout        // #define CONF_CACHE_TIMEOUT (invisible)
+			, AutoCommitBool          // #define CONF_AUTO_COMMIT
+			, FirewallModeBool    // #define CONF_FIREWALL_MODE
 			, ConnectionTestInterval // #define CONF_CONN_TEST_INTERVAL
-			, CachedConnections
-			, MaxNumber           // #define CONF_MAX_NUMBER (InitialFetch)
-			, MaxContent          // #define CONF_MAX_CONTENT (InitialEditorContent)
-			, MaxColDisp          // #define CONF_MAX_COL_DISP
-			, IndicateEmpty       // #define CONF_INDICATE_EMPTY
+			, CachedConnectionsInt
+			, InitialFetchInt     // #define CONF_MAX_NUMBER (InitialFetch)
+			, MaxContentInt       // #define CONF_MAX_CONTENT (InitialEditorContent)
+			, MaxColDispInt       // #define CONF_MAX_COL_DISP
+			, IndicateEmptyBool   // #define CONF_INDICATE_EMPTY
 			, IndicateEmptyColor  // #define CONF_INDICATE_EMPTY_COLOR
-			, NumberFormat        // #define CONF_NUMBER_FORMAT
-			, NumberDecimals      // #define CONF_NUMBER_DECIMALS
+			, NumberFormatInt     // #define CONF_NUMBER_FORMAT
+			, NumberDecimalsInt   // #define CONF_NUMBER_DECIMALS
 		};
 		virtual QVariant defaultValue(int) const;
 	};

@@ -1398,7 +1398,7 @@ void toWorksheet::slotFirstResult(const QString &sql,
         	// TODO: move this into queryDone
         	if (m_lastQuery.statementType == toSyntaxAnalyzer::DML)
         	{
-        		if (toConfigurationNewSingle::Instance().option(ToConfiguration::Database::AutoCommit).toBool())
+        		if (toConfigurationNewSingle::Instance().option(ToConfiguration::Database::AutoCommitBool).toBool())
         		{
         			Q_ASSERT_X(LockedConnection, qPrintable(__QHERE__), "Connection was not lent for DML");
         			(*LockedConnection)->commit();

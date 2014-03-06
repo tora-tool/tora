@@ -95,7 +95,7 @@ namespace ToConfiguration {
 			, DisplaySamplesInt     // #define CONF_DISPLAY_SAMPLES
 			, SizeUnit              // #define CONF_SIZE_UNIT
 			, RefreshInterval    // #define CONF_REFRESH
-			, DefaultListFormat     // #define CONF_DEFAULT_FORMAT
+			, DefaultListFormatInt  // #define CONF_DEFAULT_FORMAT
 			, Style                 // #define CONF_STYLE
 			, Translation           // #define CONF_LOCALE (Translation)
 		};

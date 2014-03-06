@@ -103,7 +103,7 @@ QVariant toTableModelPriv::data(QModelIndex const& index, int role) const
         }
         return QVariant(data.displayData());
     case Qt::BackgroundRole:
-        if (data.isNull() && toConfigurationNewSingle::Instance().option(ToConfiguration::Database::IndicateEmpty).toBool())
+        if (data.isNull() && toConfigurationNewSingle::Instance().option(ToConfiguration::Database::IndicateEmptyBool).toBool())
             return QVariant(QColor(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::IndicateEmptyColor).toString()));
         return QVariant();
 //    case Qt::TextAlignmentRole:

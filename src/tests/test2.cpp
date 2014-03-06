@@ -89,8 +89,8 @@ int main(int argc, char **argv)
 	try
 	{		
 		toQValue::setNumberFormat(
-			toConfigurationNewSingle::Instance().option(ToConfiguration::Database::NumberFormat).toInt(),
-			toConfigurationNewSingle::Instance().option(ToConfiguration::Database::NumberDecimals).toInt()
+			toConfigurationNewSingle::Instance().option(ToConfiguration::Database::NumberFormatInt).toInt(),
+			toConfigurationNewSingle::Instance().option(ToConfiguration::Database::NumberDecimalsInt).toInt()
 			);
 
 		qRegisterMetaType<toQColumnDescriptionList>("toQColumnDescriptionList&");

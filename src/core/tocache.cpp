@@ -473,7 +473,7 @@ void toCache::rereadCache() {
 }
 
 void toCache::readCache() {
-	if (toConfigurationNewSingle::Instance().option(ToConfiguration::Database::ObjectCache).toInt() == NEVER)
+	if (toConfigurationNewSingle::Instance().option(ToConfiguration::Database::ObjectCacheInt).toInt() == NEVER)
 	{
 		QWriteLocker lock(&cacheLock);
 		clearCache();
@@ -564,7 +564,7 @@ void toCache::writeDiskCache() {
 		return;
 	}
 
-	if (!toConfigurationNewSingle::Instance().option(ToConfiguration::Database::ObjectCache).toInt())
+	if (!toConfigurationNewSingle::Instance().option(ToConfiguration::Database::ObjectCacheInt).toInt())
 		return;
 
 	QFileInfo fileInfo(cacheFile());
@@ -613,7 +613,7 @@ void toCache::writeDiskCache() {
 }
 
 bool toCache::loadDiskCache() {
-	if (!toConfigurationNewSingle::Instance().option(ToConfiguration::Database::ObjectCache).toInt())
+	if (!toConfigurationNewSingle::Instance().option(ToConfiguration::Database::ObjectCacheInt).toInt())
 		return false;
 
 	QFileInfo fileInfo(cacheFile());
