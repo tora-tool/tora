@@ -71,6 +71,8 @@ namespace ToConfiguration
 			, RightDockbarState
 		};
 		virtual QVariant defaultValue(int option) const;
+
+		virtual QVariant toraIIValue(int) const;
 	};
 };
 

@@ -53,6 +53,9 @@ namespace ToConfiguration {
 		ConfigContext(QString const& context, QMetaEnum const& e);
 		ConfigContext(ConfigContext const& other);
 		virtual QVariant defaultValue(int) const = 0;
+
+		/* Try to migrate configuration from Tora2 config */
+		virtual QVariant toraIIValue(int) const { return QVariant(); }
 	private:
 		QMetaEnum m_configEnum;
 		QString m_contextName;

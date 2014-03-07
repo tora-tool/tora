@@ -81,6 +81,35 @@ QVariant Main::defaultValue(int option) const
 		return QVariant();
 	}
 }
+
+QVariant Main::toraIIValue(int option) const
+{
+	QSettings s;
+	QVariant retval;
+
+	switch(option)
+	{
+	case LastVersion: 	s.beginGroup("preferences"); retval = s.value("LastVersion"); break;
+	case FirstInstall: 	s.beginGroup("preferences"); retval = s.value("FirstInstall"); break;
+	case RecentFiles: 	s.beginGroup("preferences"); retval = s.value("RecentFiles"); break;
+	case RecentMax: 	s.beginGroup("preferences"); retval = s.value("RecentMax"); break;
+	case LastDir:       s.beginGroup("preferences"); retval = s.value("LastDir"); break;
+//	case Encoding:      return QVariant(QString("Default"));
+	case DefaultTool: 	s.beginGroup("preferences"); return s.value("DefaultTool"); break;
+//	case StatusSave: 	return QVariant((int)10);
+//	case DontReread: 	return QVariant((bool)true);
+//	case EditDragDrop: 	return QVariant((bool)false);
+//	case LineEnd:       return QVariant(QString("Default"));
+//	case ToolsMap:
+	case MainWindowGeometry: s.beginGroup("toMainWindow"); retval = s.value("geometry"); break;
+	case MainWindowState:    s.beginGroup("toMainWindow"); retval = s.value("state"); break;
+	case LeftDockbarState:   s.beginGroup("toMainWindow"); retval = s.value("leftDockbar"); break;
+	case RightDockbarState:  s.beginGroup("toMainWindow"); retval = s.value("rightDockbar"); break;
+	default:
+		retval = QVariant(); break;
+	}
+	s.endGroup();
+	return retval;
 }
 
 toMainWindow* toMainWindow::lookup()
