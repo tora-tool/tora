@@ -343,17 +343,15 @@ public:
 };
 
 
-class toTemplatePrefs : public QWidget,
-    public Ui::toTemplateSetupUI,
-    public toSettingTab
+class toTemplateSetting
+	: public QWidget
+    , public Ui::toTemplateSetupUI
+    , public toSettingTab
 {
-
     Q_OBJECT;
-
     toTool *Tool;
-
 public:
-    toTemplatePrefs(toTool *tool, QWidget *parent, const char *name = 0);
+    toTemplateSetting(toTool *tool, QWidget *parent, const char *name = 0);
 
 public slots:
     virtual void saveSetting(void);

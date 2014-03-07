@@ -59,8 +59,8 @@ namespace ToConfiguration
 	public:
 		Output() : ConfigContext("Output", ENUM_REF(Output,OptionTypeEnum)) {};
 		enum OptionTypeEnum {
-			PollingInterval = 12000 // #define CONF_POLLING
-			, LogType               // #define CONF_LOG_TYPE
+			PollingIntervalInt = 12000 // #define CONF_POLLING
+			, SourceTypeInt            // #define CONF_LOG_TYPE
 			, LogUser               // #define CONF_LOG_USER
 		};
 		QVariant defaultValue(int option) const;

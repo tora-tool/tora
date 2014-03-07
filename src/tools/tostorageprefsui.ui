@@ -27,7 +27,7 @@
   </property>
   <layout class="QGridLayout">
    <property name="margin">
-    <number>11</number>
+    <number>0</number>
    </property>
    <property name="spacing">
     <number>6</number>
@@ -45,7 +45,7 @@
        <number>6</number>
       </property>
       <item row="0" column="0">
-       <widget class="QCheckBox" name="DispTablespacesBool_2">
+       <widget class="QCheckBox" name="DispTablespacesBool">
         <property name="text">
          <string>&amp;Display coalesced column</string>
         </property>

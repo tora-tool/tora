@@ -138,9 +138,14 @@ SET(TORA_UI_SRC
   tools/toscriptschemawidgetui.ui
 
   tools/torollbackdialogui.ui
+  tools/torollbacksettingui.ui
 
-  tools/totuningoverviewui.ui
-  tools/totuningsettingui.ui
+  tools/tosgatracesettingui.ui
+
+  #tools/totuningoverviewui.ui
+  #tools/totuningsettingui.ui
+
+  tools/tooutputsettingui.ui
 
   shortcuteditor/shortcuteditordialog.ui
   

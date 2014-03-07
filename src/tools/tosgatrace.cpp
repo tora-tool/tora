@@ -33,6 +33,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "tools/tosgatrace.h"
+#include "ui_tosgatracesettingui.h"
 #include "tools/tosgastatement.h"
 #include "core/tochangeconnection.h"
 #include "core/toresultschema.h"
@@ -52,53 +53,27 @@
 #include "icons/refresh.xpm"
 #include "icons/tosgatrace.xpm"
 
-class toSGATracePrefs : public QGroupBox, public toSettingTab
+class toSGATraceSetting
+	: public QWidget
+	, public Ui::toSGATraceSettingUI
+	, public toSettingTab
 {
-    QCheckBox* AutoUpdate;
     toTool *Tool;
 
 public:
-    toSGATracePrefs(toTool *tool, QWidget* parent = 0, const char* name = 0)
-	: QGroupBox(parent)
+    toSGATraceSetting(toTool *tool, QWidget* parent = 0, const char* name = 0)
+	: QWidget(parent)
 	, toSettingTab("trace.html"), Tool(tool)
     {
+    	setupUi(this);
         if (name)
             setObjectName(name);
 
-        QVBoxLayout *vbox = new QVBoxLayout;
-        vbox->setSpacing(6);
-        vbox->setContentsMargins(11, 11, 11, 11);
-
-        setLayout(vbox);
-
-        setTitle(qApp->translate("toSGATracePrefs", "SGA Trace"));
-
-        AutoUpdate = new QCheckBox(this);
-        AutoUpdate->setText(qApp->translate("toSGATracePrefs", "&Auto update"));
-        AutoUpdate->setToolTip(qApp->translate("toSGATracePrefs",
-                                               "Update automatically after change of schema."));
-        vbox->addWidget(AutoUpdate);
-
-        QSpacerItem *spacer = new QSpacerItem(
-            20,
-            20,
-            QSizePolicy::Minimum,
-            QSizePolicy::Expanding);
-        vbox->addItem(spacer);
-
-//         if (!Tool->config(CONF_AUTO_UPDATE, "Yes").isEmpty())
-//             AutoUpdate->setChecked(true);
-        //AutoUpdate->setChecked(toConfigurationSingle::Instance().autoUpdate());
         toSettingTab::loadSettings(this);
     }
     virtual void saveSetting(void)
     {
-//         if (AutoUpdate->isChecked())
-//             Tool->setConfig(CONF_AUTO_UPDATE, "Yes");
-//         else
-//             Tool->setConfig(CONF_AUTO_UPDATE, "");
-        //toConfigurationSingle::Instance().setAutoUpdate(AutoUpdate->isChecked());
-        toSettingTab::saveSettings(this);
+    	toSettingTab::saveSettings(this);
     }
 };
 
@@ -122,12 +97,14 @@ public:
     }
     virtual QWidget *configurationTab(QWidget *parent)
     {
-        return new toSGATracePrefs(this, parent);
+        return new toSGATraceSetting(this, parent);
     }
     virtual void closeWindow(toConnection &connection) {};
 private:
-    ToConfiguration::SgaTrace s_sgaTraconConf;
+    static ToConfiguration::SgaTrace s_sgaTraceConf;
 };
+
+ToConfiguration::SgaTrace toSGATraceTool::s_sgaTraceConf;
 
 static toSGATraceTool SGATraceTool;
 

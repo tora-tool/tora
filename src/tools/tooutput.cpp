@@ -33,6 +33,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "tools/tooutput.h"
+#include "ui_tooutputsettingui.h"
 #include "core/toresultview.h"
 #include "core/totimer.h"
 #include "core/toglobalevent.h"
@@ -42,8 +43,7 @@
 
 #include <map>
 
-#include <QtGui/QLineEdit>
-#include <QtGui/QGroupBox>
+#include <QtGui/QWidget>
 
 #include "icons/eraselog.xpm"
 #include "icons/offline.xpm"
@@ -55,8 +55,8 @@ QVariant ToConfiguration::Output::defaultValue(int option) const
 {
 	switch(option)
 	{
-	case PollingInterval:  return QVariant(QString("10 seconds"));
-	case LogType:          return QVariant((int)0);
+	case PollingIntervalInt:  return QVariant(QString("10 seconds"));
+	case SourceTypeInt:          return QVariant((int)0);
 	case LogUser:          return QVariant(QString("ULOG"));
 	default:
 		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Output un-registered enum value: %1").arg(option)));
@@ -64,71 +64,32 @@ QVariant ToConfiguration::Output::defaultValue(int option) const
 	}
 };
 
-class toOutputPrefs : public QGroupBox, public toSettingTab
+class toOutputSetting
+	: public QWidget
+	, Ui::toOutputSettingUI
+	, public toSettingTab
 {
-    QComboBox *AutoPolling;
-    QComboBox *Type;
-    QLineEdit *User;
     toTool *Tool;
-
 public:
-    toOutputPrefs(toTool *tool, QWidget* parent = 0, const char* name = 0)
-        : QGroupBox(parent),
-          toSettingTab("output.html"), Tool(tool)
+    toOutputSetting(toTool *tool, QWidget* parent = 0, const char* name = 0)
+	: QWidget(parent)
+    , toSettingTab("output.html")
+	, Tool(tool)
     {
     	using namespace ToConfiguration;
+    	setupUi(this);
         if (name)
             setObjectName(name);
 
-        QVBoxLayout *vbox = new QVBoxLayout;
+        Utils::toRefreshCreate(this,
+        		"toRefreshCreate",
+        		toConfigurationNewSingle::Instance().option(Output::PollingIntervalInt).toString(),
+        		PollingIntervalInt);
 
-        setLayout(vbox);
-
-        setTitle(qApp->translate("toOutputPrefs", "SQL Output"));
-
-        QLabel *label = new QLabel(qApp->translate("toOutputPrefs",
-                                   "&Polling timeout"),
-                                   this);
-        label->setGeometry(QRect(20, 30, 100, 20));
-        label->setToolTip(qApp->translate("toOutputPrefs",
-                                          "Time between trying to poll for output."));
-        vbox->addWidget(label);
-
-        AutoPolling = Utils::toRefreshCreate(this,
-                                             "toRefreshCreate",
-                                             toConfigurationNewSingle::Instance().option(Output::PollingInterval).toString());
-        label->setBuddy(AutoPolling);
-        vbox->addWidget(AutoPolling);
-
-        label = new QLabel(qApp->translate("toOutputPrefs",
-                                           "Default &source"),
-                           this);
-        vbox->addWidget(label);
-
-        Type = new QComboBox(this);
-        Type->addItem(qApp->translate("toLogOutput", "SQL Output"));
-        Type->addItem(qApp->translate("toLogOutput", "Log4PL/SQL"));
-        Type->setCurrentIndex(toConfigurationNewSingle::Instance().option(Output::LogType).toInt());
-        label->setBuddy(Type);
-        vbox->addWidget(Type);
-
-        label = new QLabel(qApp->translate("toOutputPrefs",
-                                           "Log4PL/SQL &User"),
-                           this);
-        vbox->addWidget(label);
-
-        User = new QLineEdit(toConfigurationNewSingle::Instance().option(Output::LogUser).toString(), this);
-        label->setBuddy(User);
-        vbox->addWidget(User);
-
-        vbox->addStretch();
+        toSettingTab::loadSettings(this);
     }
     virtual void saveSetting(void)
     {
-    	//using namespace ToConfiguration;
-        //toConfigurationNewSingle::Instance().setOption(Output::PollingInterval, AutoPolling->currentText());
-        //toConfigurationNewSingle::Instance().setOption(Output::LogType, Type->currentIndex());
-        //toConfigurationNewSingle::Instance().setOption(Output::LogUser, User->text());
     	toSettingTab::saveSettings(this);
     }
 };
@@ -180,7 +141,7 @@ public:
 
     virtual QWidget *configurationTab(QWidget *parent)
     {
-        return new toOutputPrefs(this, parent);
+        return new toOutputSetting(this, parent);
     }
 private:
     static ToConfiguration::Output s_outputConf;
@@ -234,7 +195,7 @@ toOutput::toOutput(QWidget *main, toConnection &connection, bool enabled)
 
     Refresh = Utils::toRefreshCreate(Toolbar,
                                      "Refresh",
-                                     toConfigurationNewSingle::Instance().option(ToConfiguration::Output::PollingInterval).toString());
+                                     toConfigurationNewSingle::Instance().option(ToConfiguration::Output::PollingIntervalInt).toString());
     Toolbar->addWidget(Refresh);
     connect(Refresh,
             SIGNAL(activated(const QString &)),
@@ -255,7 +216,7 @@ toOutput::toOutput(QWidget *main, toConnection &connection, bool enabled)
     try
     {
         connect(timer(), SIGNAL(timeout(void)), this, SLOT(refresh(void)));
-        Utils::toRefreshParse(timer(), toConfigurationNewSingle::Instance().option(ToConfiguration::Output::PollingInterval).toString());
+        Utils::toRefreshParse(timer(), toConfigurationNewSingle::Instance().option(ToConfiguration::Output::PollingIntervalInt).toString());
     }
     TOCATCH;
 
@@ -442,7 +403,7 @@ toLogOutput::toLogOutput(QWidget *parent, toConnection &connection)
     Type = new QComboBox(Toolbar);
     Type->addItem(tr("SQL Output"));
     Type->addItem(tr("Log4PL/SQL"));
-    Type->setCurrentIndex(toConfigurationNewSingle::Instance().option(ToConfiguration::Output::LogType).toInt());
+    Type->setCurrentIndex(toConfigurationNewSingle::Instance().option(ToConfiguration::Output::SourceTypeInt).toInt());
     Toolbar->addWidget(Type);
     connect(Type, SIGNAL(activated(int)), this, SLOT(changeType()));
 

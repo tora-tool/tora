@@ -33,6 +33,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "tools/torollback.h"
+#include "ui_torollbacksettingui.h"
 #include "core/utils.h"
 #include "core/tochangeconnection.h"
 #include "core/tohelp.h"
@@ -46,9 +47,7 @@
 #include "core/toconfiguration_new.h"
 #include "core/toglobalsetting.h"
 
-#include <QtGui/QSplitter>
-#include <QtGui/QToolBar>
-#include <QtGui/QGroupBox>
+#include <QtGui/QWidget>
 
 #include "icons/addrollback.xpm"
 #include "icons/offline.xpm"
@@ -62,117 +61,53 @@ QVariant ToConfiguration::Rollback::defaultValue(int option) const
 {
 	switch(option)
 	{
-	case NoExec:       return QVariant((bool)true);
-	case NeedRead:     return QVariant((bool)true);
-	case NeedTwo:      return QVariant((bool)true);
-	case AlignLeft:    return QVariant((bool)true);
-	case OldEnable:    return QVariant((bool)false);
+	case OldEnableBool:    return QVariant((bool)false);
+	case AlignLeftBool:    return QVariant((bool)true);
+	case NoExecBool:       return QVariant((bool)true);
+	case NeedReadBool:     return QVariant((bool)true);
+	case NeedTwoBool:      return QVariant((bool)true);
 	default:
 		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Rollback un-registered enum value: %1").arg(option)));
 		return QVariant();
 	}
 }
 
-class toRollbackPrefs : public QGroupBox, public toSettingTab
+class toRollbackSetting
+	: public QWidget
+    , public Ui::toRollbackSettingUI
+	, public toSettingTab
 {
-    QCheckBox *OldEnable;
-    QCheckBox *NoExec;
-    QCheckBox *NeedRead;
-    QCheckBox *NeedTwo;
-    QCheckBox *AlignLeft;
-
-    toTool *Tool;
-
 public:
-    toRollbackPrefs(toTool *tool, QWidget* parent = 0, const char* name = 0);
+    toRollbackSetting(toTool *tool, QWidget* parent = 0, const char* name = 0);
     virtual void saveSetting(void);
+protected:
+	toTool *Tool;
 };
 
-toRollbackPrefs::toRollbackPrefs(toTool *tool, QWidget* parent, const char* name)
-    : QGroupBox(parent), toSettingTab("rollback.html#options"), Tool(tool)
+toRollbackSetting::toRollbackSetting(toTool *tool, QWidget* parent, const char* name)
+	: QWidget(parent)
+	, toSettingTab("rollback.html#options")
+	, Tool(tool)
 {
+    setupUi(this);
     if (name)
         setObjectName(name);
 
-    QVBoxLayout *vbox = new QVBoxLayout;
-    vbox->setSpacing(6);
-    vbox->setContentsMargins(11, 11, 11, 11);
+    connect(OldEnableBool, SIGNAL(toggled(bool)), AlignLeftBool, SLOT(setEnabled(bool)));
+    connect(OldEnableBool, SIGNAL(toggled(bool)), NoExecBool, SLOT(setEnabled(bool)));
+    connect(OldEnableBool, SIGNAL(toggled(bool)), NeedReadBool, SLOT(setEnabled(bool)));
+    connect(OldEnableBool, SIGNAL(toggled(bool)), NeedTwoBool, SLOT(setEnabled(bool)));
 
-    setLayout(vbox);
-
-    setTitle(qApp->translate("toRollbackPrefs", "Rollback Tool" ));
-
-    OldEnable = new QCheckBox(this);
-    OldEnable->setText(qApp->translate("toRollbackPrefs",
-                                       "&Enable snapshot too old detection." ));
-    OldEnable->setToolTip(qApp->translate(
-                              "toRollbackPrefs",
-                              "Enable snapshot too old detection, will put load on large databases."));
-    vbox->addWidget(OldEnable);
-
-    AlignLeft = new QCheckBox(this);
-    AlignLeft->setText(qApp->translate("toRollbackPrefs",
-                                       "&Disregard start extent." ));
-    AlignLeft->setEnabled(false);
-    connect(OldEnable, SIGNAL(toggled(bool)), AlignLeft, SLOT(setEnabled(bool)));
-    AlignLeft->setToolTip(qApp->translate(
-                              "toRollbackPrefs",
-                              "Always start from the left border when displaying extent usage."));
-    vbox->addWidget(AlignLeft);
-
-    NoExec = new QCheckBox(this);
-    NoExec->setText(qApp->translate("toRollbackPrefs",
-                                    "&Restart reexecuted statements" ));
-    NoExec->setEnabled(false);
-    connect(OldEnable, SIGNAL(toggled(bool)), NoExec, SLOT(setEnabled(bool)));
-    NoExec->setToolTip(qApp->translate(
-                           "toRollbackPrefs",
-                           "Start statements again that have been reexecuted."));
-    vbox->addWidget(NoExec);
-
-    NeedRead = new QCheckBox(this);
-    NeedRead->setText(qApp->translate("toRollbackPrefs",
-                                      "&Must read buffers" ));
-    NeedRead->setEnabled(false);
-    connect(OldEnable, SIGNAL(toggled(bool)), NeedRead, SLOT(setEnabled(bool)));
-    NeedRead->setToolTip(qApp->translate(
-                             "toRollbackPrefs",
-                             "Don't display statements that have not read buffers."));
-    vbox->addWidget(NeedRead);
-
-    NeedTwo = new QCheckBox(this);
-    NeedTwo->setText(qApp->translate("toRollbackPrefs",
-                                     "&Exclude first appearance" ));
-    NeedTwo->setEnabled(false);
-    connect(OldEnable, SIGNAL(toggled(bool)), NeedTwo, SLOT(setEnabled(bool)));
-    NeedTwo->setToolTip(qApp->translate(
-                            "toRollbackPrefs",
-                            "A statement must be visible at least two consecutive polls to be displayed."));
-    vbox->addWidget(NeedTwo);
-
-    QSpacerItem *spacer = new QSpacerItem(
-        20,
-        20,
-        QSizePolicy::Minimum,
-        QSizePolicy::Expanding);
-    vbox->addItem(spacer);
-
-    //OldEnable->setChecked(toConfigurationNewSingle::Instance().oldEnable());
-    //NoExec->setChecked(toConfigurationNewSingle::Instance().noExec());
-    //NeedRead->setChecked(toConfigurationNewSingle::Instance().needRead());
-    //NeedTwo->setChecked(toConfigurationNewSingle::Instance().needTwo());
-    //AlignLeft->setChecked(toConfigurationNewSingle::Instance().alignLeft());
     toSettingTab::loadSettings(this);
+    AlignLeftBool->setEnabled(OldEnableBool->isChecked());
+    NoExecBool->setEnabled(OldEnableBool->isChecked());
+    NeedReadBool->setEnabled(OldEnableBool->isChecked());
+    NeedTwoBool->setEnabled(OldEnableBool->isChecked());
 }
 
-void toRollbackPrefs::saveSetting(void)
+void toRollbackSetting::saveSetting(void)
 {
 	toSettingTab::saveSettings(this);
-    //toConfigurationNewSingle::Instance().setNoExec(NoExec->isChecked());
-    //toConfigurationNewSingle::Instance().setNeedRead(NeedRead->isChecked());
-    //toConfigurationNewSingle::Instance().setNeedTwo(NeedTwo->isChecked());
-    //toConfigurationNewSingle::Instance().setAlignLeft(AlignLeft->isChecked());
-    //toConfigurationNewSingle::Instance().setOldEnable(OldEnable->isChecked());
 }
 
 class toRollbackTool : public toTool
@@ -196,7 +131,7 @@ public:
     }
     virtual QWidget* configurationTab(QWidget *parent)
     {
-        return new toRollbackPrefs(this, parent);
+        return new toRollbackSetting(this, parent);
     }
     virtual void closeWindow(toConnection &connection) {};
 private:
@@ -530,9 +465,9 @@ public:
                 NumExtents = num;
             }
 
-            bool noExec = toConfigurationNewSingle::Instance().option(ToConfiguration::Rollback::NoExec).toBool();
-            bool needRead = toConfigurationNewSingle::Instance().option(ToConfiguration::Rollback::NeedRead).toBool();
-            bool needTwo = toConfigurationNewSingle::Instance().option(ToConfiguration::Rollback::NeedTwo).toBool();
+            bool noExec = toConfigurationNewSingle::Instance().option(ToConfiguration::Rollback::NoExecBool).toBool();
+            bool needRead = toConfigurationNewSingle::Instance().option(ToConfiguration::Rollback::NeedReadBool).toBool();
+            bool needTwo = toConfigurationNewSingle::Instance().option(ToConfiguration::Rollback::NeedTwoBool).toBool();
 
             std::map<QString, int> Exists;
             for (toTreeWidgetItem *i = firstChild(); i;)
@@ -688,7 +623,7 @@ toRollback::toRollback(QWidget *main, toConnection &connection)
     }
     TOCATCH
 
-    if (toConfigurationNewSingle::Instance().option(ToConfiguration::Rollback::OldEnable).toBool())
+    if (toConfigurationNewSingle::Instance().option(ToConfiguration::Rollback::OldEnableBool).toBool())
         enableOldAct->setChecked(true);
     else
         Statements->setEnabled(false);

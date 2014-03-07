@@ -1,101 +1,102 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>toTemplateSetupUI</class>
- <widget class="QWidget" name="toTemplateSetupUI" >
-  <property name="geometry" >
+ <widget class="QWidget" name="toTemplateSetupUI">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>526</width>
+    <width>600</width>
     <height>448</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>600</width>
+    <height>0</height>
+   </size>
+  </property>
+  <property name="windowTitle">
    <string>Form1</string>
   </property>
-  <layout class="QGridLayout" >
-   <property name="leftMargin" >
+  <layout class="QGridLayout">
+   <property name="margin">
     <number>0</number>
    </property>
-   <property name="topMargin" >
-    <number>0</number>
-   </property>
-   <property name="rightMargin" >
-    <number>0</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>0</number>
-   </property>
-   <property name="horizontalSpacing" >
+   <property name="spacing">
     <number>6</number>
    </property>
-   <property name="verticalSpacing" >
-    <number>6</number>
-   </property>
-   <item row="0" column="0" colspan="5" >
-    <widget class="toTreeWidget" name="FileList" >
-     <property name="allColumnsShowFocus" >
+   <item row="0" column="0" colspan="5">
+    <widget class="toTreeWidget" name="FileList">
+     <property name="allColumnsShowFocus">
       <bool>true</bool>
      </property>
      <column>
-      <property name="text" >
+      <property name="text">
        <string>Root</string>
       </property>
      </column>
      <column>
-      <property name="text" >
+      <property name="text">
        <string>Filename</string>
       </property>
      </column>
     </widget>
    </item>
-   <item row="1" column="4" >
-    <widget class="QPushButton" name="AddButton" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+   <item row="1" column="4">
+    <widget class="QPushButton" name="AddButton">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="text" >
+     <property name="text">
       <string>&amp;Add File</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="0" >
-    <widget class="QPushButton" name="RemoveButton" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+   <item row="1" column="0">
+    <widget class="QPushButton" name="RemoveButton">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="text" >
+     <property name="text">
       <string>&amp;Remove File</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="2" >
-    <widget class="QPushButton" name="EditButton" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+   <item row="1" column="2">
+    <widget class="QPushButton" name="EditButton">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="text" >
+     <property name="text">
       <string>&amp;Edit File</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="1" >
+   <item row="1" column="1">
     <spacer>
-     <property name="orientation" >
+     <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <property name="sizeType" >
+     <property name="sizeType">
       <enum>QSizePolicy::Expanding</enum>
      </property>
-     <property name="sizeHint" >
+     <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
        <height>20</height>
@@ -103,15 +104,15 @@
      </property>
     </spacer>
    </item>
-   <item row="1" column="3" >
+   <item row="1" column="3">
     <spacer>
-     <property name="orientation" >
+     <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <property name="sizeType" >
+     <property name="sizeType">
       <enum>QSizePolicy::Expanding</enum>
      </property>
-     <property name="sizeHint" >
+     <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
        <height>20</height>
@@ -142,11 +143,11 @@
    <receiver>toTemplateSetupUI</receiver>
    <slot>editFile()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -158,11 +159,11 @@
    <receiver>toTemplateSetupUI</receiver>
    <slot>delFile()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>
@@ -174,11 +175,11 @@
    <receiver>toTemplateSetupUI</receiver>
    <slot>addFile()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>20</x>
      <y>20</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
     </hint>

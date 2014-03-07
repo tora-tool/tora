@@ -26,6 +26,9 @@
    <string>toGlobalSettingUI</string>
   </property>
   <layout class="QGridLayout" name="gridLayout1">
+   <property name="margin">
+    <number>0</number>
+   </property>
    <item row="0" column="0">
     <widget class="QGroupBox" name="GroupBox2">
      <property name="title">

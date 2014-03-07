@@ -92,9 +92,13 @@ public:
 };
 
 toStorageSetting::toStorageSetting(toTool *tool, QWidget* parent, const char* name)
-    : QWidget(parent), toSettingTab("storage.html"), Tool(tool)
+    : QWidget(parent)
+	, toSettingTab("storage.html")
+	, Tool(tool)
 {
     setupUi(this);
+    if (name)
+        setObjectName(name);
     toSettingTab::loadSettings(this);
 }
 
@@ -127,6 +131,8 @@ public:
         return new toStorageSetting(this, parent);
     }
     virtual void closeWindow(toConnection &connection) {};
+private:
+    static ToConfiguration::Storage s_storageConf;
 };
 
 toDropTablespace::toDropTablespace(QWidget* parent, const char* name, Qt::WFlags fl)
@@ -809,6 +815,8 @@ std::list<QString> toStorageDialog::sql(void)
         return ret;
     }
 }
+
+ToConfiguration::Storage toStorageTool::s_storageConf;
 
 static toStorageTool StorageTool;
 

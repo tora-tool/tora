@@ -356,7 +356,7 @@ void toTemplateAddFile::valid()
 }
 
 
-toTemplatePrefs::toTemplatePrefs(toTool *tool, QWidget *parent, const char *name)
+toTemplateSetting::toTemplateSetting(toTool *tool, QWidget *parent, const char *name)
     : QWidget(parent)
 	, toSettingTab("template.html#setup")
 	, Tool(tool)
@@ -384,7 +384,7 @@ toTemplatePrefs::toTemplatePrefs(toTool *tool, QWidget *parent, const char *name
 }
 
 
-void toTemplatePrefs::saveSetting(void)
+void toTemplateSetting::saveSetting(void)
 {
     TemplatesMap m;
     TemplatesMap def = DefaultText();
@@ -400,7 +400,7 @@ void toTemplatePrefs::saveSetting(void)
 }
 
 
-void toTemplatePrefs::addFile(void)
+void toTemplateSetting::addFile(void)
 {
     toTemplateAddFile file(this);
     if (file.exec())
@@ -408,7 +408,7 @@ void toTemplatePrefs::addFile(void)
 }
 
 
-void toTemplatePrefs::editFile(void)
+void toTemplateSetting::editFile(void)
 {
     toTreeWidgetItem *item = FileList->selectedItem();
     if (item)
@@ -449,7 +449,7 @@ void toTemplatePrefs::editFile(void)
 }
 
 
-void toTemplatePrefs::delFile(void)
+void toTemplateSetting::delFile(void)
 {
     delete FileList->selectedItem();
 }
@@ -509,7 +509,7 @@ public:
     }
     virtual QWidget *configurationTab(QWidget *parent)
     {
-        return new toTemplatePrefs(this, parent);
+        return new toTemplateSetting(this, parent);
     }
     virtual bool canHandle(const toConnection &)
     {

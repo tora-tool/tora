@@ -61,11 +61,11 @@ namespace ToConfiguration {
 	public:
 		Rollback() : ConfigContext("Rollback", ENUM_REF(Rollback,OptionTypeEnum)) {};
 		enum OptionTypeEnum {
-			NoExec       = 10000   // #define CONF_NO_EXEC
-			, NeedRead             // #define CONF_NEED_READ
-			, NeedTwo              // #define CONF_NEED_TWO
-			, AlignLeft            // #define CONF_ALIGN_LEFT
-			, OldEnable            // #define CONF_OLD_ENABLE
+			OldEnableBool = 10000      // #define CONF_OLD_ENABLE
+			, AlignLeftBool            // #define CONF_ALIGN_LEFT
+			, NoExecBool               // #define CONF_NO_EXEC
+			, NeedReadBool             // #define CONF_NEED_READ
+			, NeedTwoBool              // #define CONF_NEED_TWO
 		};
 		virtual QVariant defaultValue(int option) const;
 	};
