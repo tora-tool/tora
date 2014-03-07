@@ -54,20 +54,20 @@ namespace ToConfiguration
 			, ConfTimestampFormat // #define CONF_TIMESTAMP_FORMAT
 			, MaxLong             // #define CONF_MAX_LONG
 			, PlanTable           // #define CONF_PLAN_TABLE
-			, KeepPlans           // #define CONF_KEEP_PLANS  // default: false
-			, VSqlPlans           // #define CONF_VSQL_PLANS  // default: true
-			, SharedPlan          // #define CONF_SHARED_PLAN // default: false
+			, KeepPlansBool           // #define CONF_KEEP_PLANS  // default: false
+			, VSqlPlansBool           // #define CONF_VSQL_PLANS  // default: true
+			, SharedPlanBool          // #define CONF_SHARED_PLAN // default: false
 			// Extractor. Controls the method used to produce database object extracts
 			// as well as extraction settings (which information should be extracted).
-			, UseDbmsMetadata      // #define CONF_USE_DBMS_METADATA
-			, IncludeStorage       // #define CONF_EXT_INC_STORAGE
-			, SkipOrgMon           // #define CONF_EXT_SKIP_ORGMON
-			, SkipStorageExceptTablespace // #define CONF_EXT_SKIP_STORAGE_EX_TABLESPACE
-			, IncludeParallel      // #define CONF_EXT_INC_PARALLEL
-			, IncludePartition     // #define CONF_EXT_INC_PARTITION
-			, IncludeCode          // #define CONF_EXT_INC_CODE
-			, IncludeHeader        // #define CONF_EXT_INC_HEADER
-			, IncludePrompt        // #define CONF_EXT_INC_PROMPT
+			, UseDbmsMetadataBool      // #define CONF_USE_DBMS_METADATA
+			, IncludeStorageBool       // #define CONF_EXT_INC_STORAGE
+			, SkipOrgMonBool           // #define CONF_EXT_SKIP_ORGMON
+			, SkipStorageExceptTablespaceBool // #define CONF_EXT_SKIP_STORAGE_EX_TABLESPACE
+			, IncludeParallelBool      // #define CONF_EXT_INC_PARALLEL
+			, IncludePartitionBool     // #define CONF_EXT_INC_PARTITION
+			, IncludeCodeBool          // #define CONF_EXT_INC_CODE
+			, IncludeHeaderBool        // #define CONF_EXT_INC_HEADER
+			, IncludePromptBool        // #define CONF_EXT_INC_PROMPT
 		};
 		virtual QVariant defaultValue(int option) const;
 		static QString planTable(QString const& schema);

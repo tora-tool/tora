@@ -72,8 +72,7 @@
 #include "core/toglobalevent.h"
 #include "core/toconfiguration_new.h"
 #include "core/todatabasesetting.h"
-
-#include "connection/toqsqlconnection.h"
+#include "connection/toqmysqlsetting.h"
 
 #include <QtCore/QDebug>
 #include <QtCore/QSettings>
@@ -106,17 +105,17 @@ namespace ToConfiguration
 	{
 		switch(option)
 		{
-		case AutoSave:           return QVariant((bool)false);
-		case CheckSave:          return QVariant((bool)true);
-		case LogAtEnd:           return QVariant((bool)true);
-		case LogMulti:           return QVariant((bool)true);
-		case Statistics:         return QVariant((bool)false);
-		case TimedStats:         return QVariant((bool)true);
-		case Number:             return QVariant((bool)true);
-		case MoveToError:        return QVariant((bool)true);
-		case History:            return QVariant((bool)false);
-		case ExecLog:            return QVariant((bool)false);
-		case ToplevelDescribe:   return QVariant((bool)true);
+		case AutoSaveBool:           return QVariant((bool)false);
+		case CheckSaveBool:          return QVariant((bool)true);
+		case LogAtEndBool:           return QVariant((bool)true);
+		case LogMultiBool:           return QVariant((bool)true);
+		case StatisticsBool:         return QVariant((bool)false);
+		case TimedStatsBool:         return QVariant((bool)true);
+		case DisplayNumberColumnBool:             return QVariant((bool)true);
+		case MoveToErrorBool:        return QVariant((bool)true);
+		case HistoryErrorBool:            return QVariant((bool)false);
+		case ExecLogBool:            return QVariant((bool)false);
+		case ToplevelDescribeBool:   return QVariant((bool)true);
 		case AutoLoad:           return QVariant(QString(""));
 		default:
 			Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Worksheet un-registered enum value: %1").arg(option)));
@@ -145,7 +144,7 @@ public:
     }
     virtual QWidget *configurationTab(QWidget *parent)
     {
-        return new toWorksheetSetup(this, parent);
+        return new toWorksheetSetting(this, parent);
     }
     virtual bool canHandle(const toConnection &)
     {
@@ -579,7 +578,7 @@ void toWorksheet::setup(bool autoLoad)
     {
         if (connection().providerIs("Oracle"))
         {
-            if (toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::Statistics).toBool())
+            if (toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::StatisticsBool).toBool())
             {
                 statisticAct->setChecked(true);
             }
@@ -730,10 +729,10 @@ bool toWorksheet::checkSave()
     if (!Editor->sciEditor()->isModified())
         return true;
 
-    if (!toConfigurationNewSingle::Instance().option(Worksheet::CheckSave).toBool())
+    if (!toConfigurationNewSingle::Instance().option(Worksheet::CheckSaveBool).toBool())
     	return true;
 
-    if (toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::AutoSave).toBool() && !Editor->filename().isEmpty())
+    if (toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::AutoSaveBool).toBool() && !Editor->filename().isEmpty())
     	if (Utils::toWriteFile(Editor->filename(), Editor->sciEditor()->text()))
     	{
     		Editor->sciEditor()->setModified(false);
@@ -1020,9 +1019,9 @@ static toSQL SQLDropMySQLRoutine("toWorksheet:DropRoutine",
 void toWorksheet::mySQLBeforeCreate(QString &chk)
 {
     // wether routine exists must checked if config is set to 2 (drop if exists) and 4 (ask if exists)
-    bool check = (toConfigurationNewSingle::Instance().option(ToConfiguration::MySQL::BeforeCreateAction).toInt() % 2 == 0);
+    bool check = (toConfigurationNewSingle::Instance().option(ToConfiguration::MySQL::BeforeCreateActionInt).toInt() % 2 == 0);
     // wether to ask or drop automatically if config is set to 3 (ask) and 4 (ask if exists)
-    bool ask = (toConfigurationNewSingle::Instance().option(ToConfiguration::MySQL::BeforeCreateAction).toInt() > 2);
+    bool ask = (toConfigurationNewSingle::Instance().option(ToConfiguration::MySQL::BeforeCreateActionInt).toInt() > 2);
     bool answerYes;
 
     // do a "poor mans" parsing as we do not actually need to parse everything
@@ -1170,7 +1169,7 @@ void toWorksheet::query(toSyntaxAnalyzer::statement const& statement, execTypeEn
     	{
     		////lockConnection();
     		QString buffer;
-    		if (!toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::History).toBool())
+    		if (!toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::HistoryErrorBool).toBool())
     		{
     			toConnectionSubLoan conn(connection(), currentSchema());
     			toQuery query(conn, statement.sql, toQueryParams());
@@ -1249,7 +1248,7 @@ void toWorksheet::query(toSyntaxAnalyzer::statement const& statement, execTypeEn
     	Poll.start(1000);
     	Started->setToolTip(tr("Duration while query has been running\n\n") + statement.sql);
     	stopAct->setEnabled(true);
-    	Result->setNumberColumn(toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::Number).toBool());
+    	Result->setNumberColumn(toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::DisplayNumberColumnBool).toBool());
     	// it fixes crash running statements from Schema Browser - PV
     	if (ResultTab)
     		ResultTab->setCurrentIndex(0);
@@ -1384,7 +1383,7 @@ void toWorksheet::slotFirstResult(const QString &sql,
 
     m_FirstDataReceived = true;
 
-    if (error && result.offset() >= 0 && toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::MoveToError).toBool())
+    if (error && result.offset() >= 0 && toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::MoveToErrorBool).toBool())
     	Editor->sciEditor()->setCursorPosition(m_lastQuery.lineFrom + result.line() - 1, result.column() - 1);
 
     if (!error)
@@ -1503,7 +1502,7 @@ void toWorksheet::slotExecuteAll()
 
         if (Current)
         	if (toResultView *last = dynamic_cast<toResultView *>(Current))
-        		if (toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::ExecLog).toBool())
+        		if (toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::ExecLogBool).toBool())
         			if (last->firstChild())
         				History[LastID] = last;
         lastLinePos = stat.lineTo;
@@ -1611,7 +1610,7 @@ void toWorksheet::slotEnableStatistic(bool ena)
         ResultTab->setTabEnabled(ResultTab->indexOf(StatTab), true);
         statisticAct->setChecked(true);
         Statistics->clear();
-        if (toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::TimedStats).toBool())
+        if (toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::TimedStatsBool).toBool())
         {
         	connection().setInit("STATISTICS", QString::fromLatin1(ENABLETIMED));
         }
@@ -1633,7 +1632,7 @@ void toWorksheet::slotDescribe(void)
     table.first = connection().getTraits().unQuote(table.first);
     table.second = connection().getTraits().unQuote(table.second);
 
-    if (toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::ToplevelDescribe).toBool())
+    if (toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::ToplevelDescribeBool).toBool())
     {
         toDescribe * d = new toDescribe(this);
         d->changeParams(table); // this also calls QWidget::show()
@@ -1947,7 +1946,7 @@ void toWorksheet::slotExecuteLog(void)
 
         if (item->text(4).isEmpty())
         {
-            if (toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::ExecLog).toBool())
+            if (toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::ExecLogBool).toBool())
             {
                 query(item->allText(0), Normal);
             }
@@ -2241,14 +2240,14 @@ void toWorksheet::addLog(const QString &result)
 	QString now = QDateTime::currentDateTime().toString(Qt::SystemLocaleDate);
 	toResultViewItem *item = NULL;
 
-	if (!toConfigurationNewSingle::Instance().option(Worksheet::LogMulti).toBool())
+	if (!toConfigurationNewSingle::Instance().option(Worksheet::LogMultiBool).toBool())
 	{
-		if (!toConfigurationNewSingle::Instance().option(Worksheet::LogAtEnd).toBool())
+		if (!toConfigurationNewSingle::Instance().option(Worksheet::LogAtEndBool).toBool())
 			item = new toResultViewItem(Logging, NULL);
 		else
 			item = new toResultViewItem(Logging, LastLogItem);
 	}
-	else if (!toConfigurationNewSingle::Instance().option(Worksheet::LogAtEnd).toBool())
+	else if (!toConfigurationNewSingle::Instance().option(Worksheet::LogAtEndBool).toBool())
 		item = new toResultViewMLine(Logging, NULL);
 	else
 		item = new toResultViewMLine(Logging, LastLogItem);
@@ -2258,7 +2257,7 @@ void toWorksheet::addLog(const QString &result)
 	item->setText(1, result);
 	item->setText(2, now);
 	item->setText(3, dur);
-	if (toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::History).toBool())
+	if (toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::HistoryErrorBool).toBool())
 		item->setText(4, QString::number(LastID));
 
 	toResultViewItem *citem= dynamic_cast<toResultViewItem *>(Logging->currentItem());
@@ -2276,50 +2275,26 @@ void toWorksheet::queryStarted(const toSyntaxAnalyzer::statement &stat)
 
 }
 
-toWorksheetSetup::toWorksheetSetup(toTool *tool, QWidget* parent, const char* name)
+toWorksheetSetting::toWorksheetSetting(toTool *tool, QWidget* parent, const char* name)
     : QWidget(parent)
 	, toSettingTab("worksheet.html#preferences")
 	, Tool(tool)
 {
 
     setupUi(this);
-    //AutoSave->setChecked(toConfigurationNewSingle::Instance().wsAutoSave());
-    //CheckSave->setChecked(toConfigurationNewSingle::Instance().wsCheckSave());
-    //LogAtEnd->setChecked(toConfigurationNewSingle::Instance().wsLogAtEnd());
-    //LogMulti->setChecked(toConfigurationNewSingle::Instance().wsLogMulti());
-    //MoveToError->setChecked(toConfigurationNewSingle::Instance().wsMoveToErr());
-    //Statistics->setChecked(toConfigurationNewSingle::Instance().wsStatistics());
-    //TimedStatistics->setChecked(toConfigurationNewSingle::Instance().wsTimedStats());
-    //History->setChecked(toConfigurationNewSingle::Instance().wsHistory());
-    //DisplayNumber->setChecked(toConfigurationNewSingle::Instance().wsNumber());
-    //ToplevelDescribe->setChecked(toConfigurationNewSingle::Instance().wsToplevelDescribe());
-    //DefaultFile->setText(toConfigurationNewSingle::Instance().wsAutoLoad());
-    //ExecLog->setChecked(toConfigurationNewSingle::Instance().wsExecLog());
     toSettingTab::loadSettings(this);
 }
 
 
-void toWorksheetSetup::saveSetting(void)
+void toWorksheetSetting::saveSetting(void)
 {
-    //toConfigurationNewSingle::Instance().setWsAutoSave(AutoSave->isChecked());
-    //toConfigurationNewSingle::Instance().setWsCheckSave(CheckSave->isChecked());
-    //toConfigurationNewSingle::Instance().setWsLogAtEnd(LogAtEnd->isChecked());
-    //toConfigurationNewSingle::Instance().setWsLogMulti(LogMulti->isChecked());
-    //toConfigurationNewSingle::Instance().setWsToplevelDescribe(ToplevelDescribe->isChecked());
-    //toConfigurationNewSingle::Instance().setWsMoveToErr(MoveToError->isChecked());
-    //toConfigurationNewSingle::Instance().setWsStatistics(Statistics->isChecked());
-    //toConfigurationNewSingle::Instance().setWsHistory(History->isChecked());
-    //toConfigurationNewSingle::Instance().setWsTimedStats(TimedStatistics->isChecked());
-    //toConfigurationNewSingle::Instance().setWsNumber(DisplayNumber->isChecked());
-    //toConfigurationNewSingle::Instance().setWsExecLog(ExecLog->isChecked());
-    //toConfigurationNewSingle::Instance().setWsAutoLoad(DefaultFile->text());
 	toSettingTab::saveSettings(this);
 }
 
 
-void toWorksheetSetup::slotChooseFile(void)
+void toWorksheetSetting::slotChooseFile(void)
 {
-    QString str = Utils::toOpenFilename(DefaultFile->text(), QString::null, this);
+    QString str = Utils::toOpenFilename(AutoLoad->text(), QString::null, this);
     if (!str.isEmpty())
-        DefaultFile->setText(str);
+        AutoLoad->setText(str);
 }

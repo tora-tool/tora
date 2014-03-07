@@ -63,56 +63,11 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
 
     setupUi(this);
 
-    Analyzer = new toSyntaxAnalyzerNL(Example->editor());
-
-    //SyntaxHighlighting->setCurrentIndex(toConfigurationNewSingle::Instance().syntaxHighlighting());
-    //EditorType->setCurrentIndex(toConfigurationNewSingle::Instance().editorType());
-    //KeywordUpper->setChecked(toConfigurationNewSingle::Instance().keywordUpper());
-    //ObjectNamesUpper->setChecked(toConfigurationNewSingle::Instance().objectNamesUpper());
-    //CompletionSort->setChecked(toConfigurationNewSingle::Instance().completionSort());
-
-    //UseMaxTextWidthMarkBool->setChecked(toConfigurationNewSingle::Instance().useMaxTextWidthMark());
-    //MaxTextWidthMark->setValue(toConfigurationNewSingle::Instance().maxTextWidthMark());
-    //CodeCompletionBool->setChecked(toConfigurationNewSingle::Instance().codeCompletion());
-    //EditorShortcuts->setChecked(toConfigurationNewSingle::Instance().option(Editor::UseEditorShortcutsBool).toBool());
     connect(EditorShortcutsEdit, SIGNAL(clicked()),
             this, SLOT(openEditorShortcutsDialog()));
 
-    //AutoIndentBool->setChecked(toConfigurationNewSingle::Instance().autoIndent());
-    //Extensions->setText(toConfigurationNewSingle::Instance().extensions());
-    //TabStopInt->setValue(toConfigurationNewSingle::Instance().tabStop());
-    //UseSpacesForIndentBool->setChecked(toConfigurationNewSingle::Instance().useSpacesForIndent());
-
-    {
-        QFont font(Utils::toStringToFont(toConfigurationNewSingle::Instance().option(Editor::ConfCodeFont).toString()));
-        checkFixedWidth(font);
-        CodeExample->setFont(font);
-    }
-
-    TextExample->setFont(Utils::toStringToFont(toConfigurationNewSingle::Instance().option(Editor::ConfTextFont).toString()));
-
-    {
-        QString str(toConfigurationNewSingle::Instance().option(Editor::ListTextFont).toString());
-        QFont font;
-        if (str.isEmpty())
-        {
-            QWidget *wid = new toTreeWidget(this);
-            font = qApp->font(wid);
-            delete wid;
-        }
-        else
-        {
-            font = Utils::toStringToFont(str);
-        }
-        ListFontName = Utils::toFontToString(font);
-        ResultExample->setFont(font);
-    }
-
-    for (int idx = 0; idx < ColorsEnum.keyCount(); idx++)
-    {
-    	QString colorName = ColorsEnum.key(idx);
-    	SyntaxComponent->addItem(colorName);
-    }
+    // Crete/Adjust additioal complex widgets
+    Analyzer = new toSyntaxAnalyzerNL(Example->editor());
     //Example->setAnalyzer(Analyzer);
     Example->sciEditor()->setReadOnly(true);
 
@@ -133,29 +88,61 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
     Errors[2] = tr("Unknown variable");
     Example->setErrors(Errors);
 
+    for (int idx = 0; idx < ColorsEnum.keyCount(); idx++)
+    {
+    	QString colorName = ColorsEnum.key(idx);
+    	SyntaxComponent->addItem(colorName);
+    }
+
+    // load values from toConfigurationNewSingle into Widgets (if widget name == Config Option Name)
     toSettingTab::loadSettings(this);
+
+    {
+        QFont font(Utils::toStringToFont(toConfigurationNewSingle::Instance().option(Editor::ConfCodeFont).toString()));
+        checkFixedWidth(font);
+        CodeExampleFont->setFont(font);
+    }
+
+    TextExampleFont->setFont(Utils::toStringToFont(toConfigurationNewSingle::Instance().option(Editor::ConfTextFont).toString()));
+
+    {
+        QString str(toConfigurationNewSingle::Instance().option(Editor::ListTextFont).toString());
+        QFont font;
+        if (str.isEmpty())
+        {
+            QWidget *wid = new toTreeWidget(this);
+            font = qApp->font(wid);
+            delete wid;
+        }
+        else
+        {
+            font = Utils::toStringToFont(str);
+        }
+        ListFontName = Utils::toFontToString(font);
+        ResultExampleFont->setFont(font);
+    }
 }
 
 void toSyntaxSetup::checkFixedWidth(const QFont &fnt)
 {
     QFontMetrics mtr(fnt);
     if (mtr.width(QString::fromLatin1("iiiiiiii")) == mtr.width(QString::fromLatin1("MMMMMMMM")))
-        KeywordUpper->setEnabled(true);
+        KeywordUpperBool->setEnabled(true);
     else
     {
-        KeywordUpper->setChecked(false);
-        KeywordUpper->setEnabled(false);
+        KeywordUpperBool->setChecked(false);
+        KeywordUpperBool->setEnabled(false);
     }
 }
 
 void toSyntaxSetup::selectFont(void)
 {
     bool ok = true;
-    QFont font = QFontDialog::getFont(&ok, CodeExample->font(), this);
+    QFont font = QFontDialog::getFont(&ok, CodeExampleFont->font(), this);
 
     if (ok)
     {
-        CodeExample->setFont(font);
+        CodeExampleFont->setFont(font);
         Example->setFont(font);
         checkFixedWidth(font);
     }
@@ -164,10 +151,10 @@ void toSyntaxSetup::selectFont(void)
 void toSyntaxSetup::selectText(void)
 {
     bool ok = true;
-    QFont font = QFontDialog::getFont(&ok, TextExample->font(), this);
+    QFont font = QFontDialog::getFont(&ok, TextExampleFont->font(), this);
 
     if (ok)
-        TextExample->setFont(font);
+        TextExampleFont->setFont(font);
 }
 
 void toSyntaxSetup::selectResultFont(void)
@@ -178,7 +165,7 @@ void toSyntaxSetup::selectResultFont(void)
     if (ok)
     {
         ListFontName = Utils::toFontToString(font);
-        ResultExample->setFont(font);
+        ResultExampleFont->setFont(font);
     }
 }
 
@@ -251,35 +238,12 @@ void toSyntaxSetup::selectColor(void)
 
 void toSyntaxSetup::saveSetting(void)
 {
-	//toConfigurationNewSingle::Instance().setSyntaxHighlighting(SyntaxHighlighting->currentIndex());
-	//toConfigurationNewSingle::Instance().setEditorType(EditorType->currentIndex());
-
-    //toConfigurationNewSingle::Instance().setTextFontName(Utils::toFontToString(TextExample->font()));
-    //toConfigurationNewSingle::Instance().setCodeFontName(Utils::toFontToString(CodeExample->font()));
-    //toConfigurationNewSingle::Instance().setListFontName(ListFontName);
-    // TODO bool highlight = SyntaxHighlighting->isChecked();
-    // TODO toConfigurationNewSingle::Instance().setHighlightType(highlight);
-    //toConfigurationNewSingle::Instance().setUseMaxTextWidthMark(UseMaxTextWidthMarkBool->isChecked());
-    //toConfigurationNewSingle::Instance().setMaxTextWidthMark(MaxTextWidthMark->value());
-    //toConfigurationNewSingle::Instance().setKeywordUpper(KeywordUpper->isChecked());
-    //toConfigurationNewSingle::Instance().setObjectNamesUpper(ObjectNamesUpper->isChecked());
-    // TODO toConfigurationNewSingle::Instance().setCodeCompletion(highlight && CodeCompletion->isChecked());
-    //toConfigurationNewSingle::Instance().setCompletionSort(CompletionSort->isChecked());
-    //toConfigurationNewSingle::Instance().setUseEditorShortcuts(EditorShortcuts->isChecked());
-    //toConfigurationNewSingle::Instance().setAutoIndent(AutoIndentBool->isChecked());
-    //toConfigurationNewSingle::Instance().setTabStop(TabStopInt->value());
-    //toConfigurationNewSingle::Instance().setUseSpacesForIndent(UseSpacesForIndentBool->isChecked());
-
-    //toConfigurationNewSingle::Instance().setStyles(Styles);
-
-//#define C2T(c) (Colors[Analyzer.typeString((c))])
-//    toConfigurationNewSingle::Instance().setSyntaxDefaultBg(C2T(toSyntaxAnalyzer::DefaultBg));
-//    toConfigurationNewSingle::Instance().setSyntaxDebugBg(C2T(toSyntaxAnalyzer::DebugBg));
-//    toConfigurationNewSingle::Instance().setSyntaxErrorBg(C2T(toSyntaxAnalyzer::ErrorBg));
-//    toConfigurationNewSingle::Instance().setSyntaxCurrentLineMarker(C2T(toSyntaxAnalyzer::CurrentLineMarker));
-//    toConfigurationNewSingle::Instance().setSyntaxStaticBg(C2T(toSyntaxAnalyzer::StaticBg));
-    //toConfigurationNewSingle::Instance().setExtensions(Extensions->text());
     toSettingTab::saveSettings(this);
+    toConfigurationNewSingle::Instance().setOption(ToConfiguration::Editor::ConfTextFont, Utils::toFontToString(TextExampleFont->font()));
+    toConfigurationNewSingle::Instance().setOption(ToConfiguration::Editor::ConfCodeFont, Utils::toFontToString(CodeExampleFont->font()));
+    toConfigurationNewSingle::Instance().setOption(ToConfiguration::Editor::ListTextFont, Utils::toFontToString(ResultExampleFont->font()));
+
+    // for ToConfiguration::Editor::EditStyleMap see ShortcutModel::saveValues
 }
 
 ToConfiguration::Editor toSyntaxSetup::s_editorConfig;

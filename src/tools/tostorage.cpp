@@ -69,42 +69,37 @@ QVariant ToConfiguration::Storage::defaultValue(int option) const
 {
 	switch(option)
 	{
-	case DispTablespaces:  return QVariant((bool)true);
-	case DispCoalesced:    return QVariant((bool)false);
-	case DispExtents:      return QVariant((bool)false);
-	case AvailableGraph:   return QVariant((bool)true);
+	case DispTablespacesBool:  return QVariant((bool)true);
+	case DispCoalescedBool:    return QVariant((bool)false);
+	case DispExtentsBool:      return QVariant((bool)false);
+	case DispAvailableGraphBool:   return QVariant((bool)true);
 	default:
 		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Storage un-registered enum value: %1").arg(option)));
 		return QVariant();
 	}
 }
 
-class toStoragePrefs : public QWidget, public Ui::toStoragePrefsUI, public toSettingTab
+class toStorageSetting
+	: public QWidget
+	, public Ui::toStoragePrefsUI
+	, public toSettingTab
 {
     toTool *Tool;
 
 public:
-    toStoragePrefs(toTool *tool, QWidget* parent = 0, const char* name = 0);
+    toStorageSetting(toTool *tool, QWidget* parent = 0, const char* name = 0);
     virtual void saveSetting(void);
 };
 
-toStoragePrefs::toStoragePrefs(toTool *tool, QWidget* parent, const char* name)
+toStorageSetting::toStorageSetting(toTool *tool, QWidget* parent, const char* name)
     : QWidget(parent), toSettingTab("storage.html"), Tool(tool)
 {
     setupUi(this);
     toSettingTab::loadSettings(this);
-    //DispCoalesced->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Storage::DispCoalesced).toBool());
-    //DispExtents->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Storage::DispExtents).toBool());
-    //DispTablespaces->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Storage::DispTablespaces).toBool());
-    //DispAvailableGraph->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Storage::AvailableGraph).toBool());
 }
 
-void toStoragePrefs::saveSetting(void)
+void toStorageSetting::saveSetting(void)
 {
-    //toConfigurationNewSingle::Instance().setDispCoalesced(DispCoalesced->isChecked());
-    //toConfigurationNewSingle::Instance().setDispExtents(DispExtents->isChecked());
-    //toConfigurationNewSingle::Instance().setDispTablespaces(DispTablespaces->isChecked());
-    //toConfigurationNewSingle::Instance().setDispAvailableGraph(DispAvailableGraph->isChecked());
 	toSettingTab::saveSettings(this);
 }
 
@@ -129,7 +124,7 @@ public:
     }
     virtual QWidget *configurationTab(QWidget *parent)
     {
-        return new toStoragePrefs(this, parent);
+        return new toStorageSetting(this, parent);
     }
     virtual void closeWindow(toConnection &connection) {};
 };
@@ -836,7 +831,7 @@ toStorage::toStorage(QWidget *main, toConnection &connection)
     ExtentAct = new QAction(QPixmap(const_cast<const char**>(storageextents_xpm)),
                             tr("Show extent view."), this);
     ExtentAct->setCheckable(true);
-    bool extents = toConfigurationNewSingle::Instance().option(ToConfiguration::Storage::DispExtents).toBool();
+    bool extents = toConfigurationNewSingle::Instance().option(ToConfiguration::Storage::DispExtentsBool).toBool();
     if (extents)
         ExtentAct->setChecked(true);
     toolbar->addAction(ExtentAct);
@@ -846,7 +841,7 @@ toStorage::toStorage(QWidget *main, toConnection &connection)
     TablespaceAct = new QAction(QPixmap(const_cast<const char**>(tostorage_xpm)),
                                 tr("Show tablespaces or just datafiles."), this);
     TablespaceAct->setCheckable(true);
-    bool tablespaces = toConfigurationNewSingle::Instance().option(ToConfiguration::Storage::DispTablespaces).toBool();
+    bool tablespaces = toConfigurationNewSingle::Instance().option(ToConfiguration::Storage::DispTablespacesBool).toBool();
     if (tablespaces)
         TablespaceAct->setChecked(true);
     toolbar->addAction(TablespaceAct);
@@ -938,7 +933,7 @@ toStorage::toStorage(QWidget *main, toConnection &connection)
     splitter->setChildrenCollapsible(false);
     layout()->addWidget(splitter);
 
-    Storage = new toResultStorage(toConfigurationNewSingle::Instance().option(ToConfiguration::Storage::AvailableGraph).toBool(),
+    Storage = new toResultStorage(toConfigurationNewSingle::Instance().option(ToConfiguration::Storage::DispAvailableGraphBool).toBool(),
                                   splitter);
     ExtentParent = new QSplitter(Qt::Horizontal, splitter);
     Objects = new QTableView(ExtentParent);
@@ -1027,7 +1022,7 @@ void toStorage::slotWindowActivated(toToolWidget* widget)
 
 void toStorage::refresh(void)
 {
-    Storage->showCoalesced(toConfigurationNewSingle::Instance().option(ToConfiguration::Storage::DispCoalesced).toBool());
+    Storage->showCoalesced(toConfigurationNewSingle::Instance().option(ToConfiguration::Storage::DispCoalescedBool).toBool());
     Storage->query("", toQueryParams());
 }
 

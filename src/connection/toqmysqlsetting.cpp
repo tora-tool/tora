@@ -42,12 +42,13 @@
 #include <QtGui/QComboBox>
 #include <QtGui/QLabel>
 
+ToConfiguration::MySQL s_mystConf;
+
 toQMySqlSetting::toQMySqlSetting(QWidget *parent) 
 	: QWidget(parent)
 	, toSettingTab("database.html#qsql")
 {
     setupUi(this);
-	//BeforeCreateAction->setCurrentIndex(toConfigurationNewSingle::Instance().option(ToConfiguration::MySQL::BeforeCreateAction).toInt());
     toSettingTab::loadSettings(this);
 }
 

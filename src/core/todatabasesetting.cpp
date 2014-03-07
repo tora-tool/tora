@@ -54,7 +54,7 @@ QVariant ToConfiguration::Database::defaultValue(int option) const
 	case CacheTimeout: 	           return QVariant((int)7);
 	case AutoCommitBool:               return QVariant((bool)false);
 	case FirewallModeBool:             return QVariant((bool)false);
-	case ConnectionTestInterval:   return QVariant((int)900);     //15min
+	case ConnTestIntervalInt:   return QVariant((int)900);     //15min
 	case CachedConnectionsInt:        return QVariant((int)4);
 	case InitialFetchInt:                return QVariant((int)50);
 	case MaxContentInt:               return QVariant((int)100);
@@ -71,7 +71,7 @@ QVariant ToConfiguration::Database::defaultValue(int option) const
 
 void toDatabaseSetting::numberFormatChange()
 {
-    DecimalsInt->setEnabled(NumberFormatInt->currentIndex() == 2);
+	NumberDecimalsInt->setEnabled(NumberFormatInt->currentIndex() == 2);
 }
 
 void toDatabaseSetting::IndicateEmptyColor_clicked()
@@ -96,12 +96,15 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent, const char *name, Qt::WFla
         setObjectName(name);
     setupUi(this);
 
-    MaxColDispInt->setValue(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxColDispInt).toInt());
+    connect(IndicateEmptyBool, SIGNAL(clicked(bool)),
+            IndicateEmptyColor, SLOT(setEnabled(bool)));
+
+    toSettingTab::loadSettings(this);
+
     int mxNumber = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::InitialFetchInt).toInt();
     if (mxNumber <= 0)
         FetchAllBool->setChecked(true);
-    else
-        InitialFetchInt->setValue(mxNumber);
+    FetchAllBool->setEnabled(true);
 
     int mxContent = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::MaxContentInt).toInt();
     if (mxContent <= 0)
@@ -109,27 +112,12 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent, const char *name, Qt::WFla
         MaxContentInt->setValue(InitialFetchInt->value());
         UnlimitedContentBool->setChecked(true);
     }
-    else
-        MaxContentInt->setValue(mxContent);
+    UnlimitedContentBool->setEnabled(true);
 
-//     MaxColDisp->setValidator(new QIntValidator(MaxColDisp));
-//     InitialFetch->setValidator(new QIntValidator(InitialFetch));
-//     MaxContent->setValidator(new QIntValidator(InitialFetch));q
-
-    //NumberFormat->setCurrentIndex(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::numberFormat());
-
-    //Decimals->setValue(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::numberDecimals());
     if (NumberFormatInt->currentIndex() == 2)
-        DecimalsInt->setEnabled(true);
-
-    //AutoCommit->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::autoCommit());
-//     DontReread->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::dontReread());
-    ////ObjectCache->setCurrentIndex(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::objectCache());
-//     BkgndConnect->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::bkgndConnect());
-    //CachedConnections->setValue(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::cachedConnections());
-    ////IndicateEmpty->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::indicateEmpty());
-    //FirewallMode->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::firewallMode());
-    //ConnTestInterval->setValue(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::connTestInterval());
+    	NumberDecimalsInt->setEnabled(true);
+    else
+    	NumberDecimalsInt->setEnabled(false);
 
     QColor nullColor;
     nullColor.setNamedColor(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::IndicateEmptyColor).toString());
@@ -137,29 +125,13 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent, const char *name, Qt::WFla
     palette.setColor(IndicateEmptyColor->backgroundRole(), nullColor);
     IndicateEmptyColor->setPalette(palette);
 
-//     int val = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::autoLong();
-//     AutoLong->setChecked(val);
-//     MoveAfter->setValue(val);
-//     KeepAlive->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::keepAlive());
-
-    connect(IndicateEmptyBool, SIGNAL(clicked(bool)),
-            IndicateEmptyColor, SLOT(setEnabled(bool)));
 }
-
-// void toUpdateIndicateEmpty(void);
 
 void toDatabaseSetting::saveSetting(void)
 {
 	toSettingTab::saveSettings(this);
-    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setObjectCache((toConfiguration::ObjectCacheEnum)ObjectCache->currentIndex());
 
-    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setAutoCommit(AutoCommit->isChecked());
-    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setFirewallMode(FirewallMode->isChecked());
-    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setConnTestInterval(ConnTestInterval->value());
-    ///toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setCachedConnections(CachedConnections->value());
-
-
-    if (FetchAllBool->isChecked())
+	if (FetchAllBool->isChecked())
         toConfigurationNewSingle::Instance().setOption(ToConfiguration::Database::InitialFetchInt, -1);
     else
         toConfigurationNewSingle::Instance().setOption(ToConfiguration::Database::InitialFetchInt, InitialFetchInt->value());
@@ -182,23 +154,7 @@ void toDatabaseSetting::saveSetting(void)
         toConfigurationNewSingle::Instance().setOption(ToConfiguration::Database::MaxContentInt, maxnum);
     }
 
-    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setMaxColDisp(MaxColDisp->value());
-
-//     toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setDontReread(DontReread->isChecked());
-
-//     toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setBkgndConnect(BkgndConnect->isChecked());
-//     toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setAutoLong(AutoLong->isChecked() ? MoveAfter->value() : 0);
-    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setIndicateEmpty(IndicateEmpty->isChecked());
-    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setIndicateEmptyColor(IndicateEmptyColor->palette().color(IndicateEmptyColor->backgroundRole()).name());
-//     toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setKeepAlive(KeepAlive->isChecked() ? DEFAULT_KEEP_ALIVE : -1); //FIXME: there was ""
-
-
-
-    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setNumberFormat(NumberFormat->currentIndex());
-    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Database::setNumberDecimals(Decimals->value());
-    toQValue::setNumberFormat(NumberFormatInt->currentIndex(), DecimalsInt->value());
-
-//     toUpdateIndicateEmpty();
+    toQValue::setNumberFormat(NumberFormatInt->currentIndex(), NumberDecimalsInt->value());
 }
 
 ToConfiguration::Database toDatabaseSetting::s_databaseConfig;

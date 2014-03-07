@@ -52,7 +52,7 @@ namespace ToConfiguration {
 			, CacheTimeout        // #define CONF_CACHE_TIMEOUT (invisible)
 			, AutoCommitBool          // #define CONF_AUTO_COMMIT
 			, FirewallModeBool    // #define CONF_FIREWALL_MODE
-			, ConnectionTestInterval // #define CONF_CONN_TEST_INTERVAL
+			, ConnTestIntervalInt // #define CONF_CONN_TEST_INTERVAL
 			, CachedConnectionsInt
 			, InitialFetchInt     // #define CONF_MAX_NUMBER (InitialFetch)
 			, MaxContentInt       // #define CONF_MAX_CONTENT (InitialEditorContent)

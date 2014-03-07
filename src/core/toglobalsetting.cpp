@@ -55,11 +55,30 @@ QVariant ToConfiguration::Global::defaultValue(int option) const
 	switch(option)
 	{
 	// Paths
-	case CustomSQL:			return QVariant(QDir::homePath() + QDir::separator() + ".torasql");
+	case CustomSQL:
+	{
+		QFileInfo torasql(QDir::homePath(), ".torasql");
+		return QVariant(torasql.absoluteFilePath());
+	}
 	case HelpDirectory:		return QVariant(QString("qrc:/help/toc.html"));
-	case DefaultSession:		return QVariant(QDir::homePath() + QDir::separator() + ".tora.tse" );
-	case CacheDirectory:		return QVariant(QString(""));
-	case OracleHomeDirectory:	return QVariant(QString(""));
+	case DefaultSession:
+	{
+		QFileInfo toratse(QDir::homePath(), ".tora.tse");
+		return QVariant(toratse.absoluteFilePath());
+	}
+	case CacheDirectory:
+	{
+		QDir dirname;
+#ifdef Q_OS_WIN32
+		if (getenv("TEMP"))
+			dirname = QString(getenv("TEMP"));
+		else
+#endif
+			dirname = QDir::homePath();
+		QFileInfo toraCache(dirname, ".tora_cache");
+		return QVariant(toraCache.absoluteFilePath());
+	}
+	case OracleHomeDirectory:	return QVariant(QString(getenv("ORACLE_HOME")));
 	case MysqlHomeDirectory:	return QVariant(QString(""));
 	case PgsqlHomeDirectory:	return QVariant(QString(""));
 	case GraphvizHomeDirectory:
@@ -179,10 +198,15 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     TabbedTools->setVisible(false);
 #endif
 
-	//CustomSQL->setText(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::customSQL());
-	//HelpDirectory->setText(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::helpDirectory());
-    //DefaultSession->setText(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::defaultSession());
-	CacheDirectory->setText(toCache::cacheDir().absolutePath());
+    // Refresh (load fields into ComboBox)
+    Utils::toRefreshCreate(OptionGroup, "toRefreshCreate", QString::null, RefreshInterval);
+
+    // style (load fields into ComboBox)
+    Style->addItems(QStyleFactory::keys());
+
+    // load values from toConfigurationNewSingle into Widgets  (if widget name == Config Option Name)
+    toSettingTab::loadSettings(this);
+
 #ifdef Q_OS_WIN
 	MysqlHomeDirectory->setEnabled(true);
     MySQLHomeBrowse->setEnabled(true);
@@ -191,58 +215,24 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     GraphvizHomeDirectory->setEnabled(true);
     GraphvizHomeBrowse->setEnabled(true);
 #endif
-    //OracleHomeDirectory->setText(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::oracleHome());
-    //MysqlHomeDirectory->setText(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::mysqlHome());
-    //PgsqlHomeDirectory->setText(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::pgsqlHome());
-    //GraphvizHomeDirectory->setText(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::graphvizHome());
-
-    ////ChangeConnectionBool->setChecked(ToConfiguration::Global::changeConnection());
-	//SavePasswordBool->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::savePassword());
-    //IncludeDbCaptionBool->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::includeDbCaption());
-    //RestoreSessionBool->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::restoreSession());
-	//ToadBindingsBool->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::toadBindings());
-	////CacheDiskBool->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::cacheDisk());
-    ////DisplayGridlinesBool->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::displayGridlines());
-    ////MultiLineResultsBool->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::multiLineResults());
-    ////MessageStatusbarBool->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::messageStatusbar());
-    ////ColorizedConnectionsBool->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::colorizedConnections());
     connect(ColorizedConnectionsMap, SIGNAL(clicked()),
             this, SLOT(ColorizedConnectionsConfigure_clicked()));
 
-    ////StatusMessageInt->setValue(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::statusMessage());
-    ////HistorySizeInt->setValue(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::historySize());
     int samples = toConfigurationNewSingle::Instance().option(ToConfiguration::Global::ChartSamplesInt).toInt();
     if (samples < 0)
     {
         UnlimitedSamples->setChecked(true);
-        ChartSamplesInt->setValue(100); // 100 is the default value
+        ChartSamplesInt->setValue(100); // 100 is the default value (max "unlimited" value?)
     }
-    else
-        ChartSamplesInt->setValue(samples);
+    UnlimitedSamples->setEnabled(true);
+
     samples = toConfigurationNewSingle::Instance().option(ToConfiguration::Global::DisplaySamplesInt).toInt();
     if (samples < 0)
     {
         AllSamples->setChecked(true);
-        DisplaySamplesInt->setValue(ChartSamplesInt->value());
+        DisplaySamplesInt->setValue(0); // 0 is the default value (max "unlimited" value?)
     }
-    else
-        DisplaySamplesInt->setValue(samples);
-    // SizeUnit
-    QString typ(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::SizeUnit).toString());
-    if (typ == "KB")
-        SizeUnit->setCurrentIndex(1);
-    else if (typ == "MB")
-        SizeUnit->setCurrentIndex(2);
-    // Refresh
-    Utils::toRefreshCreate(OptionGroup, "toRefreshCreate", QString::null, RefreshIntervalInt);
-    // DefaultFormat
-    DefaultListFormat->setCurrentIndex(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::DefaultListFormatInt).toInt());
-    // style
-    Style->addItems(QStyleFactory::keys());
-    // Translation
-    Translation->setText(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::Translation).toString());
-
-    toSettingTab::loadSettings(this);
+    AllSamples->setEnabled(true);
 }
 
 void toGlobalSetting::sqlBrowse(void)
@@ -361,28 +351,6 @@ void toGlobalSetting::ColorizedConnectionsConfigure_clicked()
 void toGlobalSetting::saveSetting(void)
 {
 	toSettingTab::saveSettings(this);
-	////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setCustomSQL(CustomSQL->text());
-    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setHelpDirectory(HelpDirectory->text());
-	////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setDefaultSession(DefaultSession->text());
-	////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setCacheDir(CacheDirectory->text());
-	////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setOracleHome(OracleHomeDirectory->text());
-	////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setMysqlHome(MysqlHomeDirectory->text());
-	////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setPgsqlHome(PgsqlHomeDirectory->text());
-	////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setGraphvizHome(GraphvizHomeDirectory->text());
-
-	////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setChangeConnection(ChangeConnectionBool->isChecked());
-	////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setSavePassword(SavePasswordBool->isChecked());
-	////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setIncludeDbCaption(IncludeDbCaptionBool->isChecked());
-	////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setRestoreSession(RestoreSessionBool->isChecked());
-	////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setToadBindings(ToadBindingsBool->isChecked());
-	////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setCacheDisk(CacheDiskBool->isChecked());
-	////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setDisplayGridlines(DisplayGridlinesBool->isChecked());
-	////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setMultiLineResults(MultiLineResultsBool->isChecked());
-	////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setMessageStatusbar(MessageStatusbarBool->isChecked());
-	////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setColorizedConnections(ColorizedConnectionsBool->isChecked());
-
-    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setStatusMessage(StatusMessageInt->value());
-    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setHistorySize(HistorySizeInt->value());
 
     if (UnlimitedSamples->isChecked())
         toConfigurationNewSingle::Instance().setOption(ToConfiguration::Global::ChartSamplesInt, -1);
@@ -394,12 +362,7 @@ void toGlobalSetting::saveSetting(void)
     else
         toConfigurationNewSingle::Instance().setOption(ToConfiguration::Global::DisplaySamplesInt, DisplaySamplesInt->value());
 
-    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setSizeUnit(SizeUnit->currentText());
-    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setRefresh(RefreshIntervalInt->currentText());
-    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setDefaultFormat(DefaultListFormat->currentIndex());
-    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setStyle(Style->currentText());
     Utils::toSetSessionType(Style->currentText());
-    ////toConfigurationNewSingle::Instance().option(ToConfiguration::Global::setTranslation(Translation->text());
 }
 
 toToolSetting::toToolSetting(QWidget *parent, const char *name, Qt::WFlags fl)

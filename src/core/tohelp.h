@@ -62,7 +62,7 @@ namespace ToConfiguration {
 
 
 
-class toHelpPrefs;
+class toHelpSetting;
 
 /**
  * Additional help tool. Also used as object to connect to to display help
@@ -202,7 +202,7 @@ public:
      */
     static void connectDialog(QDialog *dialog);
 
-    friend class toHelpPrefs;
+    friend class toHelpSetting;
 };
 
 #endif

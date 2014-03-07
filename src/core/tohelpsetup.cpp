@@ -69,7 +69,7 @@ void toHelpAddFile::valid()
 }
 
 
-toHelpPrefs::toHelpPrefs(toTool *tool, QWidget *parent, const char *name)
+toHelpSetting::toHelpSetting(toTool *tool, QWidget *parent, const char *name)
     : QWidget(parent)
 	, toSettingTab("additionalhelp.html")
 	, Tool(tool)
@@ -102,7 +102,7 @@ toHelpPrefs::toHelpPrefs(toTool *tool, QWidget *parent, const char *name)
 }
 
 
-void toHelpPrefs::saveSetting()
+void toHelpSetting::saveSetting()
 {
 	toSettingTab::saveSettings(this);
 //     int i = 0;
@@ -122,7 +122,7 @@ void toHelpPrefs::saveSetting()
 }
 
 
-void toHelpPrefs::addFile()
+void toHelpSetting::addFile()
 {
     toHelpAddFile file(this);
     if (file.exec())
@@ -130,13 +130,13 @@ void toHelpPrefs::addFile()
 }
 
 
-void toHelpPrefs::delFile()
+void toHelpSetting::delFile()
 {
     delete FileList->selectedItem();
 }
 
 
-void toHelpPrefs::oracleManuals()
+void toHelpSetting::oracleManuals()
 {
     // For Oracle 11g look for a file /nav/portal_3.htm which contains a list of all books
     QString filename = Utils::toOpenFilename(QString::fromLatin1("*index.htm*"), this);

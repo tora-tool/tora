@@ -75,10 +75,10 @@ namespace ToConfiguration {
 	public:
 		Storage() : ConfigContext("Storage", ENUM_REF(Storage,OptionTypeEnum)) {};
 	    enum OptionTypeEnum {
-		    DispTablespaces  = 8000  // #define CONF_DISP_TABLESPACES
-		    , DispCoalesced          // #define CONF_DISP_COALESCED
-		    , DispExtents            // #define CONF_DISP_EXTENTS
-		    , AvailableGraph         // #define CONF_DISP_AVAILABLEGRAPH
+		    DispTablespacesBool  = 8000  // #define CONF_DISP_TABLESPACES
+		    , DispCoalescedBool          // #define CONF_DISP_COALESCED
+		    , DispExtentsBool            // #define CONF_DISP_EXTENTS
+		    , DispAvailableGraphBool         // #define CONF_DISP_AVAILABLEGRAPH
 	    };
 		QVariant defaultValue(int option) const;
 	};

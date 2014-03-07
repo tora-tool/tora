@@ -79,18 +79,18 @@ namespace ToConfiguration {
 	public:
 		Worksheet() : ConfigContext("Worksheet", ENUM_REF(Worksheet,OptionTypeEnum)) {};
 		enum OptionTypeEnum {
- 			AutoSave  = 7000    // #define CONF_AUTO_SAVE
-			, CheckSave          // #define CONF_CHECK_SAVE
-			, LogAtEnd           // #define CONF_LOG_AT_END
-			, LogMulti           // #define CONF_LOG_MULTI
-			, Statistics         // #define CONF_STATISTICS
-			, TimedStats         // #define CONF_TIMED_STATS
-			, Number             // #define CONF_NUMBER (Display row number)
-			, MoveToError        // #define CONF_MOVE_TO_ERR
-			, History            // #define CONF_HISTORY (Save previous results)
-			, ExecLog            // #define CONF_EXEC_LOG
-			, ToplevelDescribe   // #define CONF_TOPLEVEL_DESCRIBE
-			, AutoLoad           // #define CONF_AUTO_LOAD (Default file)
+ 			AutoSaveBool  = 7000      // #define CONF_AUTO_SAVE
+			, CheckSaveBool           // #define CONF_CHECK_SAVE
+			, LogAtEndBool            // #define CONF_LOG_AT_END
+			, LogMultiBool            // #define CONF_LOG_MULTI
+			, StatisticsBool          // #define CONF_STATISTICS
+			, TimedStatsBool          // #define CONF_TIMED_STATS
+			, DisplayNumberColumnBool // #define CONF_NUMBER (Display row number)
+			, MoveToErrorBool         // #define CONF_MOVE_TO_ERR
+			, HistoryErrorBool        // #define CONF_HISTORY (Save previous results)
+			, ExecLogBool             // #define CONF_EXEC_LOG
+			, ToplevelDescribeBool    // #define CONF_TOPLEVEL_DESCRIBE
+			, AutoLoad                // #define CONF_AUTO_LOAD (Default file)
 		};
 		QVariant defaultValue(int option) const;
 	};
@@ -288,15 +288,16 @@ private:
 };
 
 
-class toWorksheetSetup : public QWidget,
-    public Ui::toWorksheetSetupUI,
-    public toSettingTab
+class toWorksheetSetting
+	: public QWidget
+	, public Ui::toWorksheetSetupUI
+	, public toSettingTab
 {
     Q_OBJECT;
     toTool *Tool;
 
 public:
-    toWorksheetSetup(toTool *tool, QWidget* parent = 0, const char* name = 0);
+    toWorksheetSetting(toTool *tool, QWidget* parent = 0, const char* name = 0);
 
     virtual void saveSetting(void);
 

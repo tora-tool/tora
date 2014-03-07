@@ -62,7 +62,7 @@ toHelp *toHelp::Window;
 
 QWidget *toHelpTool::configurationTab(QWidget *parent)
 {
-    return new toHelpPrefs(this, parent);
+    return new toHelpSetting(this, parent);
 }
 
 void toHelpTool::displayHelp(void)

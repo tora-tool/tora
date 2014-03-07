@@ -36,8 +36,35 @@
 #define TOQMYSQLSETTING_H
 
 #include "core/totool.h"
+#include "core/toconfenum.h"
+#include "ts_log/ts_log_utils.h"
 
 #include "ui_toqmysqlsettingui.h"
+
+namespace ToConfiguration {
+	class MySQL : public ConfigContext
+	{
+		Q_OBJECT;
+		Q_ENUMS(OptionTypeEnum);
+	public:
+		MySQL() : ConfigContext("MySQL", ENUM_REF(MySQL,OptionTypeEnum)) {};
+		enum OptionTypeEnum {
+			BreakConnectionsBool = 6000
+			, BeforeCreateActionInt  // #define CONF_CREATE_ACTION
+		};
+		virtual QVariant defaultValue(int option) const
+		{
+			switch(option)
+			{
+			case BreakConnectionsBool : return QVariant((bool)false);
+			case BeforeCreateActionInt: return QVariant((int)0);
+			default:
+				Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context MySQL un-registered enum value: %1").arg(option)));
+				return QVariant();
+			}
+		}
+	};
+};
 
 class toQMySqlSetting 
 	: public QWidget

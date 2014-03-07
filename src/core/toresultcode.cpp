@@ -115,7 +115,7 @@ void toResultCode::query(const QString &sql, toQueryParams const& param)
         {
             if ((type == QString::fromLatin1("TABLE") ||
                     type == QString::fromLatin1("TABLE PARTITION")) &&
-                    !toConfigurationNewSingle::Instance().option(Oracle::UseDbmsMetadata).toBool())
+                    !toConfigurationNewSingle::Instance().option(Oracle::UseDbmsMetadataBool).toBool())
             {
                 objects.insert(objects.end(), QString::fromLatin1("TABLE FAMILY:") + owner + QString::fromLatin1(".") + name);
                 objects.insert(objects.end(), QString::fromLatin1("TABLE REFERENCES:") + owner + QString::fromLatin1(".") + name);
@@ -132,11 +132,11 @@ void toResultCode::query(const QString &sql, toQueryParams const& param)
             objects.insert(objects.end(), type + QString::fromLatin1(":") + owner + QString::fromLatin1(".") + name);
 
         toExtract extract(conn, NULL);
-        extract.setCode(toConfigurationNewSingle::Instance().option(Oracle::IncludeCode).toBool());
-        extract.setHeading(m_heading && toConfigurationNewSingle::Instance().option(Oracle::IncludeHeader).toBool());
+        extract.setCode(toConfigurationNewSingle::Instance().option(Oracle::IncludeCodeBool).toBool());
+        extract.setHeading(m_heading && toConfigurationNewSingle::Instance().option(Oracle::IncludeHeaderBool).toBool());
         extract.setPrompt(Prompt);
         extract.setReplace(true); // generate create OR REPLACE statements
-        extract.setParallel(toConfigurationNewSingle::Instance().option(Oracle::IncludeParallel).toBool());
+        extract.setParallel(toConfigurationNewSingle::Instance().option(Oracle::IncludeParallelBool).toBool());
         editor()->setText(extract.create(objects));
     }
     TOCATCH

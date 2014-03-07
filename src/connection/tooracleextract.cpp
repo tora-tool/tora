@@ -783,7 +783,7 @@ QString toOracleExtract::createTableText(toExtract &ext,
         ret += QString("      USING TABLESPACE %2\n").arg(QUOTE(tablespace));
     }
     ret += ")\n";
-    if (!toConfigurationNewSingle::Instance().option(Oracle::SkipOrgMon).toBool())
+    if (!toConfigurationNewSingle::Instance().option(Oracle::SkipOrgMonBool).toBool())
     {
         if (CONNECTION.version() >= "0800" && ext.getStorage() && ! organization.isEmpty() )
         {
@@ -2378,7 +2378,7 @@ QString toOracleExtract::segmentAttributes(toExtract &ext, toQList &result) cons
         QString blocks = *i;
         i++;
 
-        if (!toConfigurationNewSingle::Instance().option(Oracle::SkipStorageExceptTablespace).toBool())
+        if (!toConfigurationNewSingle::Instance().option(Oracle::SkipStorageExceptTablespaceBool).toBool())
         {
             if (ext.getResize())
                 ext.initialNext(blocks, initial, next);
@@ -7675,7 +7675,7 @@ void toOracleExtract::create(toExtract &ext,
 	using namespace ToConfiguration;
     clearFlags(ext);
 
-    if (toConfigurationNewSingle::Instance().option(Oracle::UseDbmsMetadata).toBool())
+    if (toConfigurationNewSingle::Instance().option(Oracle::UseDbmsMetadataBool).toBool())
     {
         stream << createMetadata(ext, owner, name, type);
         return;

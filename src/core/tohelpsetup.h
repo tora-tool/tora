@@ -57,9 +57,10 @@ public slots:
 };
 
 
-class toHelpPrefs : public QWidget,
-    public Ui::toHelpSetupUI,
-    public toSettingTab
+class toHelpSetting
+	: public QWidget
+	, public Ui::toHelpSetupUI
+	, public toSettingTab
 {
 
     Q_OBJECT;
@@ -67,7 +68,7 @@ class toHelpPrefs : public QWidget,
     toTool *Tool;
 
 public:
-    toHelpPrefs(toTool *tool, QWidget *parent, const char *name = 0);
+    toHelpSetting(toTool *tool, QWidget *parent, const char *name = 0);
 
 public slots:
     virtual void saveSetting(void);

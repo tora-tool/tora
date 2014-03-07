@@ -47,7 +47,8 @@
 class QListWidgetItem;
 class toSyntaxAnalyzer;
 
-class toSyntaxSetup : public QWidget
+class toSyntaxSetup
+	: public QWidget
     , public Ui::toSyntaxSetupUI
     , public toSettingTab
 {

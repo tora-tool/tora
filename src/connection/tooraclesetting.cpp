@@ -48,18 +48,18 @@ QVariant ToConfiguration::Oracle::defaultValue(int option) const
 	case ConfTimestampFormat:           return QVariant(QString("YYYY-MM-DD HH24:MI:SSXFF"));
 	case MaxLong:                       return QVariant((int)30000);
 	case PlanTable:                     return QVariant(QString("PLAN_TABLE"));
-	case KeepPlans:                     return QVariant((bool)false);
-	case VSqlPlans:                     return QVariant((bool)true);
-	case SharedPlan:                    return QVariant((bool)false);
-	case UseDbmsMetadata:               return QVariant((bool)true);
-	case IncludeStorage:                return QVariant((bool)true);
-	case SkipOrgMon:                    return QVariant((bool)false);
-	case SkipStorageExceptTablespace:   return QVariant((bool)false);
-	case IncludeParallel:               return QVariant((bool)true);
-	case IncludePartition:              return QVariant((bool)true);
-	case IncludeCode:                   return QVariant((bool)true);
-	case IncludeHeader:                 return QVariant((bool)true);
-	case IncludePrompt:                 return QVariant((bool)true);
+	case KeepPlansBool:                     return QVariant((bool)false);
+	case VSqlPlansBool:                     return QVariant((bool)true);
+	case SharedPlanBool:                    return QVariant((bool)false);
+	case UseDbmsMetadataBool:               return QVariant((bool)true);
+	case IncludeStorageBool:                return QVariant((bool)true);
+	case SkipOrgMonBool:                    return QVariant((bool)false);
+	case SkipStorageExceptTablespaceBool:   return QVariant((bool)false);
+	case IncludeParallelBool:               return QVariant((bool)true);
+	case IncludePartitionBool:              return QVariant((bool)true);
+	case IncludeCodeBool:                   return QVariant((bool)true);
+	case IncludeHeaderBool:                 return QVariant((bool)true);
+	case IncludePromptBool:                 return QVariant((bool)true);
 	default:
 		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Oracle un-registered enum value: %1").arg(option)));
 		return QVariant();
@@ -68,7 +68,7 @@ QVariant ToConfiguration::Oracle::defaultValue(int option) const
 
 QString ToConfiguration::Oracle::planTable(QString const& schema)
 {
-	bool sharedPlan = toConfigurationNewSingle::Instance().option(SharedPlan).toBool();
+	bool sharedPlan = toConfigurationNewSingle::Instance().option(SharedPlanBool).toBool();
 	QString planTable = toConfigurationNewSingle::Instance().option(PlanTable).toString();
 
     if(sharedPlan || planTable.contains('.') || schema.isNull())
@@ -83,15 +83,7 @@ toOracleSetting::toOracleSetting(QWidget *parent)
 {
 
     setupUi(this);
-    //DefaultDate->setText(toConfigurationSingle::Instance().dateFormat());
-    //DefaultTimestamp->setText(toConfigurationSingle::Instance().timestampFormat());
-    //CheckPoint->setText(toConfigurationSingle::Instance().planCheckpoint());
-    //ExplainPlan->setText(toConfigurationSingle::Instance().planTable(NULL));
-    //OpenCursors->setValue(toConfigurationSingle::Instance().openCursors());
-    //KeepPlans->setChecked(toConfigurationSingle::Instance().keepPlans());
-    //VsqlPlans->setChecked(toConfigurationSingle::Instance().vsqlPlans());
-    //SharedPlan->setChecked(toConfigurationSingle::Instance().sharedPlan());
-    //int len = toConfigurationSingle::Instance().maxLong();
+    toSettingTab::loadSettings(this);
     int len = toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::MaxLong).toInt();
     if (len >= 0)
     {
@@ -99,64 +91,31 @@ toOracleSetting::toOracleSetting(QWidget *parent)
         MaxLongInt->setValidator(new QIntValidator(MaxLongInt));
         UnlimitedBool->setChecked(false);
     }
-    // extractor group options
-    //cbUseDbmsMetadata->setChecked(toConfigurationSingle::Instance().extractorUseDbmsMetadata());
-    //cbIncludeStorage->setChecked(toConfigurationSingle::Instance().extractorIncludeSotrage());
-    //cbSkipOrgMon->setChecked(toConfigurationSingle::Instance().extractorSkipOrgMonInformation());
-    //cbSkiptStorExTablespace->setChecked(toConfigurationSingle::Instance().extractorSkipStorageExceptTablespaces());
-    //cbIncludeParallel->setChecked(toConfigurationSingle::Instance().extractorIncludeParallel());
-    //cbIncludePartition->setChecked(toConfigurationSingle::Instance().extractorIncludePartition());
-    //cbIncludeCode->setChecked(toConfigurationSingle::Instance().extractorIncludeCode());
-    //cbIncludeHeader->setChecked(toConfigurationSingle::Instance().extractorIncludeHeader());
-    //cbIncludePrompt->setChecked(toConfigurationSingle::Instance().extractorIncludePrompt());
+    UnlimitedBool->setEnabled(true);
+
     connect(UseDbmsMetadataBool, SIGNAL(toggled(bool)), this, SLOT(dbmsMetadataClicked(bool)));
     dbmsMetadataClicked(UseDbmsMetadataBool->isChecked());
     try
     {
         // Check if connection exists
     	toConnectionRegistrySing::Instance().currentConnection();
-        CreatePlanTable->setEnabled(true);
+    	CreatePlanTable->setEnabled(true);
     }
     catch (...)
     {
-        TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
+    	CreatePlanTable->setEnabled(false);
     }
-    toSettingTab::loadSettings(this);
 }
 
 
 void toOracleSetting::saveSetting()
 {
 	toSettingTab::saveSettings(this);
-    //toConfigurationSingle::Instance().setKeepPlans(KeepPlans->isChecked());
-    //toConfigurationSingle::Instance().setVsqlPlans(VsqlPlans->isChecked());
-    //toConfigurationSingle::Instance().setSharedPlan(SharedPlan->isChecked());
-    //toConfigurationSingle::Instance().setDateFormat(DefaultDate->text());
-    //toConfigurationSingle::Instance().setTimestampFormat(DefaultTimestamp->text());
 
 #pragma message WARN("TODO/FIXME: apply new NLS_DATE_FORMAT/NLS_TIMESTAMP_FORMAT here")
 
-       //toConfigurationSingle::Instance().setPlanCheckpoint(CheckPoint->text());
-    //toConfigurationSingle::Instance().setPlanTable(ExplainPlan->text());
-       //toConfigurationSingle::Instance().setOpenCursors(OpenCursors->value());
     if (UnlimitedBool->isChecked())
-    {
-        //toConfigurationSingle::Instance().setMaxLong(-1);
-    }
-    else
-    {
-        //toConfigurationSingle::Instance().setMaxLong(MaxLong->text().toInt());
-    }
-    // extractor group options
-    //toConfigurationSingle::Instance().setExtractorUseDbmsMetadata(cbUseDbmsMetadata->isChecked());
-    //toConfigurationSingle::Instance().setExtractorIncludeSotrage(cbIncludeStorage->isChecked());
-    //toConfigurationSingle::Instance().setExtractorSkipOrgMonInformation(cbSkipOrgMon->isChecked());
-    //toConfigurationSingle::Instance().setExtractorSkipStorageExceptTablespaces(cbSkiptStorExTablespace->isChecked());
-    //toConfigurationSingle::Instance().setExtractorIncludeParallel(cbIncludeParallel->isChecked());
-    //toConfigurationSingle::Instance().setExtractorIncludePartition(cbIncludePartition->isChecked());
-    //toConfigurationSingle::Instance().setExtractorIncludeCode(cbIncludeCode->isChecked());
-    //toConfigurationSingle::Instance().setExtractorIncludeHeader(cbIncludeHeader->isChecked());
-    //toConfigurationSingle::Instance().setExtractorIncludePrompt(cbIncludePrompt->isChecked());
+    	toConfigurationNewSingle::Instance().setOption(ToConfiguration::Oracle::MaxLong, -1);
 }
 
 void toOracleSetting::dbmsMetadataClicked(bool)
