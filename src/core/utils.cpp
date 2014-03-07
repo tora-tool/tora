@@ -48,7 +48,6 @@
 #include <QtGui/QComboBox>
 #include <QtGui/QFileDialog>
 #include <QtGui/QToolBar>
-#include <QtGui/QStyleFactory>
 #include <QtGui/QPixmapCache>
 #include <QtGui/QPainter>
 #include <QtGui/QKeyEvent>
@@ -846,11 +845,6 @@ void toAttachDock(TODock *dock, QWidget *container, Qt::DockWidgetArea area)
         d->setWidget(container);
         container->show();
     }
-}
-
-QStringList toGetSessionTypes(void)
-{
-    return QStyleFactory::keys();
 }
 
 QString toGetSessionType(void)

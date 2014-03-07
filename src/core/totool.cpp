@@ -87,6 +87,10 @@ void toSettingTab::loadSettings(QWidget *widget)
 			try
 			{
 				QVariant v = toConfigurationNewSingle::Instance().option(combo->objectName());
+				if (combo->objectName().endsWith("Int"))
+					combo->setCurrentIndex(v.toInt());
+				else
+					combo->setCurrentIndex(combo->findText(v.toString()));
 			} catch (...) {
 				qDebug() << w->objectName() << '*';
 				combo->setDisabled(true);
@@ -111,6 +115,7 @@ void toSettingTab::loadSettings(QWidget *widget)
 			try
 			{
 				QVariant v = toConfigurationNewSingle::Instance().option(edit->objectName());
+				edit->setText(v.toString());
 			} catch (...) {
 				qDebug() << w->objectName() << '&';
 				edit->setDisabled(true);

@@ -510,10 +510,6 @@ void toUnShift(std::list<T> &lst, const T &str)
 */
 QString toGetSessionType(void);
 
-/** Get the available styles.
-*/
-QStringList toGetSessionTypes(void);
-
 /** Set the current session type (Style)
 * @param str Session to set, can be any of Motif, Motif Plus, SGI, CDE, Windows and Platinum
 * @exception QString if style not available.

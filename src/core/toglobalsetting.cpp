@@ -41,11 +41,12 @@
 #include "core/toqvalue.h"
 #include "ts_log/ts_log_utils.h"
 
-#include <QtGui/QColorDialog>
 #include <QtCore/QString>
-#include <QtGui/QFileDialog>
-
 #include <QtCore/QDebug>
+#include <QtGui/QColorDialog>
+#include <QtGui/QFileDialog>
+#include <QtGui/QStyleFactory>
+
 
 ToConfiguration::Global s_global;
 
@@ -100,7 +101,7 @@ QVariant ToConfiguration::Global::defaultValue(int option) const
 	case SizeUnit:			return QVariant(QString("MB"));
 	case RefreshInterval:	return QVariant(QString("None"));  // None - 0
 	case DefaultListFormatInt:		return QVariant((int)0);
-	case Style:			return QVariant(QString(""));
+	case Style:			return QVariant(Utils::toGetSessionType());
 	case Translation:		return QVariant(QLocale().name());
 	default:
 		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Global un-registered enum value: %1").arg(option)));
@@ -237,16 +238,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, Qt::WFlags f
     // DefaultFormat
     DefaultListFormat->setCurrentIndex(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::DefaultListFormatInt).toInt());
     // style
-    Style->addItems(Utils::toGetSessionTypes());
-    QString str = Utils::toGetSessionType();
-    for (int i = 0; i < Style->count(); i++)
-    {
-        if (str == Style->itemText(i))
-        {
-            Style->setCurrentIndex(i);
-            break;
-        }
-    }
+    Style->addItems(QStyleFactory::keys());
     // Translation
     Translation->setText(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::Translation).toString());
 
