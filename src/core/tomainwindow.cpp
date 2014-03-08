@@ -111,6 +111,7 @@ QVariant Main::toraIIValue(int option) const
 	s.endGroup();
 	return retval;
 }
+}
 
 toMainWindow* toMainWindow::lookup()
 {
