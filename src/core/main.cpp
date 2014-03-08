@@ -69,6 +69,7 @@
 #include <QtCore/QDir>
 #include <QtCore/QDebug>
 #include <QtCore/QDateTime>
+#include <QtCore/QSettings>
 #include <QtGui/QProgressBar>
 #include <QtGui/QStyleFactory>
 #include <QtGui/QApplication>
@@ -90,6 +91,21 @@ int main(int argc, char **argv)
         break it (e.g. qscintilla lexers etc.).
      */
     QApplication app(argc, argv);
+
+    /*! Try to transfer some config options from Tora 2.x */
+    {
+    	QSettings oldSettings (TOORGNAME, "TOra");
+    	QSettings newSettings (TOORGNAME, TOAPPNAME);
+    	oldSettings.beginGroup("connections");
+    	newSettings.beginGroup("connections");
+    	Q_FOREACH(QString key, oldSettings.allKeys())
+    	{
+    		newSettings.setValue(key, oldSettings.value(key));
+    	}
+    	oldSettings.endGroup();
+    	newSettings.endGroup();
+
+    }
 
 #pragma message WARN( "TODO/FIXME: hicolor theme is broken for Docklet icons. But we need to resolve X11 themes one day" )
     if (QIcon::themeName() == "hicolor")

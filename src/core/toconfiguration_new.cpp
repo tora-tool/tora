@@ -77,8 +77,12 @@ QVariant toConfigurationNew::option(int option)
 	if (m_configMap.value(option).isNull())
 	{
 		ToConfiguration::ConfigContext const* ctx = m_configContextPtrMap.value(option);
-		QVariant val = ctx->defaultValue(option);
-		m_configMap[option] = val;
+		QVariant defaultValue= ctx->defaultValue(option);
+		QVariant oldValue= ctx->toraIIValue(option);
+		if (!oldValue.isNull() && oldValue.canConvert(defaultValue.type()) && oldValue.convert(defaultValue.type()))
+			m_configMap[option] = oldValue;
+		else
+			m_configMap[option] = defaultValue;
 	}
 	return m_configMap.value(option);
 }

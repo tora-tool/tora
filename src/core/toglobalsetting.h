@@ -100,6 +100,8 @@ namespace ToConfiguration {
 			, Translation           // #define CONF_LOCALE (Translation)
 		};
 		virtual QVariant defaultValue(int) const;
+
+		virtual QVariant toraIIValue(int) const;
 	};
 };
 

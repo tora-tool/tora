@@ -37,7 +37,7 @@
 
 // Version of TOra, must also change rpm files
 #ifndef TOAPPNAME
-#  define TOAPPNAME  "TOra"
+#  define TOAPPNAME  "TOra3"
 #endif
 // defines for QSettings
 #ifndef TOORGDOMAIN

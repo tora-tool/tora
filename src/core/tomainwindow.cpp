@@ -34,6 +34,7 @@
 
 #include "core/tomainwindow.h"
 #include "core/totool.h"
+#include "core/toconf.h"
 #include "ts_log/ts_log_utils.h"
 
 #include <QtGui/QApplication>
@@ -84,7 +85,7 @@ QVariant Main::defaultValue(int option) const
 
 QVariant Main::toraIIValue(int option) const
 {
-	QSettings s;
+	QSettings s(TOORGNAME, "TOra"); // "old" Tora 2.x config namespace
 	QVariant retval;
 
 	switch(option)
@@ -106,6 +107,7 @@ QVariant Main::toraIIValue(int option) const
 	case LeftDockbarState:   s.beginGroup("toMainWindow"); retval = s.value("leftDockbar"); break;
 	case RightDockbarState:  s.beginGroup("toMainWindow"); retval = s.value("rightDockbar"); break;
 	default:
+		s.beginGroup("preferences");
 		retval = QVariant(); break;
 	}
 	s.endGroup();

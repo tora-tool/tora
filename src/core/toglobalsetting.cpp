@@ -36,6 +36,7 @@
 #include "core/utils.h"
 #include "core/toconfenum.h"
 #include "core/toconfiguration_new.h"
+#include "core/toconf.h"
 #include "core/tomainwindow.h"
 #include "core/tocache.h"
 #include "core/toqvalue.h"
@@ -128,6 +129,51 @@ QVariant ToConfiguration::Global::defaultValue(int option) const
 	}
 };
 
+QVariant ToConfiguration::Global::toraIIValue(int option) const
+{
+	QSettings s(TOORGNAME, "TOra"); // "old" Tora 2.x config namespace
+	QVariant retval;
+
+	switch(option)
+	{
+	// Paths
+	case CustomSQL:             s.beginGroup("preferences"); retval = s.value("SQLDictionary"); break;
+	//case HelpDirectory:
+	//case DefaultSession:
+	//case CacheDirectory:
+	case OracleHomeDirectory:	s.beginGroup("preferences"); retval = s.value("ORACLE_HOME"); break;
+	case MysqlHomeDirectory:	s.beginGroup("preferences"); retval = s.value("MYSQL_HOME"); break;
+	case PgsqlHomeDirectory:	s.beginGroup("preferences"); retval = s.value("PGSQL_HOME"); break;
+	case GraphvizHomeDirectory: s.beginGroup("preferences"); retval = s.value("GV_HOME"); break;
+		// Options: (1st column)
+	//case ChangeConnectionBool:	return QVariant((bool)true);
+	case SavePasswordBool:		s.beginGroup("preferences"); retval = s.value("SavePassword"); break;
+	//case IncludeDbCaptionBool:	return QVariant((bool)true);
+	//case RestoreSessionBool:	return QVariant((bool)false);
+	//case ToadBindingsBool:		return QVariant((bool)false);
+	//case CacheDiskBool:		    s.beginGroup("preferences"); retval = s.value("CacheDiskUse"); break;
+	//case DisplayGridlinesBool:	return QVariant((bool)true);
+	//case MultiLineResultsBool:	return QVariant((bool)false);
+	//case MessageStatusbarBool:	return QVariant((bool)false);
+	//case ColorizedConnectionsBool:	return QVariant((bool)true);
+	//case ColorizedConnectionsMap:
+		// Options: (2nd column)
+	//case StatusMessageInt:		return QVariant((int)5);
+	//case HistorySizeInt:		return QVariant((int)10);
+	//case ChartSamplesInt:		return QVariant((int)100);
+	//case DisplaySamplesInt:     return QVariant((int)-1);
+	//case SizeUnit:			return QVariant(QString("MB"));
+	//case RefreshInterval:	return QVariant(QString("None"));  // None - 0
+	//case DefaultListFormatInt:		return QVariant((int)0);
+	//case Style:			return QVariant(Utils::toGetSessionType());
+	//case Translation:		return QVariant(QLocale().name());
+	default:
+		s.beginGroup("preferences");
+		retval = QVariant(); break;
+	}
+	s.endGroup();
+	return retval;
+}
 
 ConnectionColorsDialog::ConnectionColorsDialog(QWidget * parent)
     : QDialog(parent)
