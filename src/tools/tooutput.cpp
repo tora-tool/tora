@@ -55,7 +55,7 @@ QVariant ToConfiguration::Output::defaultValue(int option) const
 {
 	switch(option)
 	{
-	case PollingIntervalInt:  return QVariant(QString("10 seconds"));
+	case PollingInterval:  return QVariant(QString("10 seconds"));
 	case SourceTypeInt:          return QVariant((int)0);
 	case LogUser:          return QVariant(QString("ULOG"));
 	default:
@@ -83,8 +83,8 @@ public:
 
         Utils::toRefreshCreate(this,
         		"toRefreshCreate",
-        		toConfigurationNewSingle::Instance().option(Output::PollingIntervalInt).toString(),
-        		PollingIntervalInt);
+        		toConfigurationNewSingle::Instance().option(Output::PollingInterval).toString(),
+        		PollingInterval);
 
         toSettingTab::loadSettings(this);
     }
@@ -195,7 +195,7 @@ toOutput::toOutput(QWidget *main, toConnection &connection, bool enabled)
 
     Refresh = Utils::toRefreshCreate(Toolbar,
                                      "Refresh",
-                                     toConfigurationNewSingle::Instance().option(ToConfiguration::Output::PollingIntervalInt).toString());
+                                     toConfigurationNewSingle::Instance().option(ToConfiguration::Output::PollingInterval).toString());
     Toolbar->addWidget(Refresh);
     connect(Refresh,
             SIGNAL(activated(const QString &)),
@@ -216,7 +216,7 @@ toOutput::toOutput(QWidget *main, toConnection &connection, bool enabled)
     try
     {
         connect(timer(), SIGNAL(timeout(void)), this, SLOT(refresh(void)));
-        Utils::toRefreshParse(timer(), toConfigurationNewSingle::Instance().option(ToConfiguration::Output::PollingIntervalInt).toString());
+        Utils::toRefreshParse(timer(), toConfigurationNewSingle::Instance().option(ToConfiguration::Output::PollingInterval).toString());
     }
     TOCATCH;
 

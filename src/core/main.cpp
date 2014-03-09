@@ -94,6 +94,7 @@ int main(int argc, char **argv)
 
     /*! Try to transfer some config options from Tora 2.x */
     {
+    	// Transfer connections
     	QSettings oldSettings (TOORGNAME, "TOra");
     	QSettings newSettings (TOORGNAME, TOAPPNAME);
     	oldSettings.beginGroup("connections");
@@ -104,7 +105,14 @@ int main(int argc, char **argv)
     	}
     	oldSettings.endGroup();
     	newSettings.endGroup();
-
+    	newSettings.sync();
+    	oldSettings.remove("connections");
+    	oldSettings.remove("helpdialog");
+    	oldSettings.remove("memoEditor");
+    	oldSettings.remove("toDescribe");
+    	oldSettings.remove("toWorksheet");
+    	oldSettings.remove("toWaitEvents");
+    	oldSettings.remove("toMessage");
     }
 
 #pragma message WARN( "TODO/FIXME: hicolor theme is broken for Docklet icons. But we need to resolve X11 themes one day" )
