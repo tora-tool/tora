@@ -44,6 +44,7 @@
 
 toConfigurationNew::toConfigurationNew(QObject *parent)
 	: QObject(parent)
+	, m_settings(TOORGNAME, TOAPPNAME)
 {	
     setQSettingsEnv();
 }
@@ -67,24 +68,41 @@ void toConfigurationNew::registerConfigContext(QString const& contextName, QMeta
 
 		Q_ASSERT_X( !m_optionToEnumMap.contains(strVal), qPrintable(__QHERE__), qPrintable(QString("Context %1 value %2(%3) is already registered").arg(contextName).arg(strVal).arg(intVal)));
 		m_optionToEnumMap.insert(strVal, intVal);
+		m_enumToOptionMap.insert(intVal, strVal);
 	}
 
 }
 
-QVariant toConfigurationNew::option(int option)
+QVariant toConfigurationNew::option(int optionKey)
 {
-	Q_ASSERT_X( m_configMap.contains(option), qPrintable(__QHERE__), qPrintable(QString("Unknown enum: %1").arg(option)));
-	if (m_configMap.value(option).isNull())
+	Q_ASSERT_X( m_configMap.contains(optionKey), qPrintable(__QHERE__), qPrintable(QString("Unknown enum: %1").arg(optionKey)));
+	// If config option was not loaded yet load it
+	ToConfiguration::ConfigContext const* ctx = NULL;
+	QVariant defaultValue;
+	if (m_configMap.value(optionKey).isNull())
 	{
-		ToConfiguration::ConfigContext const* ctx = m_configContextPtrMap.value(option);
-		QVariant defaultValue= ctx->defaultValue(option);
-		QVariant oldValue= ctx->toraIIValue(option);
-		if (!oldValue.isNull() && oldValue.canConvert(defaultValue.type()) && oldValue.convert(defaultValue.type()))
-			m_configMap[option] = oldValue;
-		else
-			m_configMap[option] = defaultValue;
+		ctx = m_configContextPtrMap.value(optionKey);
+		defaultValue= ctx->defaultValue(optionKey);	// defaultValue also determines datatype
+		{
+			m_settings.beginGroup("preferences");
+			m_settings.beginGroup(ctx->name());
+			QVariant prefValue = m_settings.value(m_enumToOptionMap.value(optionKey));
+			m_settings.endGroup();
+			m_settings.endGroup();
+			if (!prefValue.isNull() && prefValue.canConvert(defaultValue.type()) && prefValue.convert(defaultValue.type()))
+				m_configMap[optionKey] = prefValue;
+		}
 	}
-	return m_configMap.value(option);
+	// If config option was not loaded yet load it (use either Tora 2.x value or defaultValue)
+	if (m_configMap.value(optionKey).isNull())
+	{
+		QVariant oldValue= ctx->toraIIValue(optionKey);
+		if (!oldValue.isNull() && oldValue.canConvert(defaultValue.type()) && oldValue.convert(defaultValue.type()))
+			m_configMap[optionKey] = oldValue;
+		else
+			m_configMap[optionKey] = defaultValue;
+	}
+	return m_configMap.value(optionKey);
 }
 
 QVariant toConfigurationNew::option(QString const& o)
@@ -97,7 +115,33 @@ QVariant toConfigurationNew::option(QString const& o)
 
 void toConfigurationNew::saveAll()
 {
+	m_settings.beginGroup("preferences");
 
+	Q_FOREACH(QString key, m_optionToEnumMap.keys())
+	{
+		int optionKey = m_optionToEnumMap.value(key);
+		ToConfiguration::ConfigContext const* ctx = m_configContextPtrMap.value(optionKey);
+		QVariant defaultValue = ctx->defaultValue(optionKey);	// defaultValue also determines datatype
+		QVariant prefValue = m_settings.value(key);
+		QVariant currValue = m_configMap.value(optionKey);
+		if (!currValue.isNull() && currValue.canConvert(defaultValue.type()) && currValue.convert(defaultValue.type()) && currValue != defaultValue)
+		{
+			m_settings.beginGroup(ctx->name());
+			m_settings.setValue(key, currValue);
+			m_settings.endGroup();
+			continue;
+		}
+		if (!prefValue.isNull() && prefValue.canConvert(defaultValue.type()) && prefValue.convert(defaultValue.type()) && prefValue != defaultValue)
+		{
+			m_settings.beginGroup(ctx->name());
+			m_settings.setValue(key, prefValue);
+			m_configMap[optionKey] = prefValue;
+			m_settings.endGroup();
+			continue;
+		}
+	}
+	m_settings.endGroup();
+	m_settings.sync();
 }
 
 // a static one

@@ -56,6 +56,8 @@ namespace ToConfiguration {
 
 		/* Try to migrate configuration from Tora2 config */
 		virtual QVariant toraIIValue(int) const { return QVariant(); }
+
+		QString const& name() const { return m_contextName; }
 	private:
 		QMetaEnum m_configEnum;
 		QString m_contextName;

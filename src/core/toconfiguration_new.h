@@ -9,6 +9,7 @@
 
 #include <QtCore/QStringList>
 #include <QtCore/QMap>
+#include <QtCore/QSettings>
 #include <QtCore/QVariant>
 #include <QtGui/QApplication>
 
@@ -68,6 +69,8 @@ private:
     QMap<QString, QMetaEnum> m_contextMap;
     QMap<QString, ToConfiguration::ConfigContext const*> m_contextSetPtrMap;
     QMap<QString, int> m_optionToEnumMap;
+    QMap<int, QString> m_enumToOptionMap;
+    QSettings m_settings;
 };
 
 template<> TORA_EXPORT
