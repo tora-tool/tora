@@ -184,6 +184,8 @@ void toBrowserTool::addConstraint(void)
 }
 #endif
 
+ToConfiguration::Browser toBrowserTool::s_browserConf;
+
 static toBrowserTool BrowserTool;
 
 static toSQL SQLListTablespaces("toBrowser:ListTablespaces",
