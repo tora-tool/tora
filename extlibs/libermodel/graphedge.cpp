@@ -138,12 +138,13 @@ void GraphEdge::updateWithEdge(edge_t* edge)
     parse_renderop(agget(edge, (char*)"_tldraw_"), renderOperations());
     ///kDebug() << "element renderOperations size is now " << renderOperations().size();
   }
-  Agsym_t *attr = agfstattr(edge);
+  setRenderOperations(ops);
+  Agsym_t *attr = agnxtattr(agraphof(agtail(edge)), AGEDGE, NULL);
   while(attr)
   {
-    ///kDebug() /*<< edge->name*/ << ":" << attr->name << agxget(edge,attr->index);
-    m_attributes[attr->name] = agxget(edge,attr->index);
-    attr = agnxtattr(edge,attr);
+    ///kDebug() /*<< edge->name*/ << ":" << attr->name << agxget(edge,attr);
+    m_attributes[attr->name] = agxget(edge,attr);
+    attr = agnxtattr(agraphof(agtail(edge)), AGEDGE, attr);
   }
   
 }

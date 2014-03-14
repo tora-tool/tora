@@ -29,7 +29,7 @@ void LoadAGraphThread::run()
   FILE* fp;
   gvc = gvContext();
   fp = fopen(m_dotFileName.toUtf8().data(), "r");
-  m_g = agread(fp);
+  m_g = agread(fp, NULL);
 }
 
 void LoadAGraphThread::loadFile(const QString& dotFileName)

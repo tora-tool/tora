@@ -80,8 +80,8 @@ void GraphNode::updateWithNode(const GraphNode& node)
 #ifdef GV_LiB
 void GraphNode::updateWithNode(node_t* node)
 {
-  ///kDebug() << node->name;
-  m_attributes["id"] = node->name;
+  ///kDebug() << agnameof(node);
+  m_attributes["id"] = agnameof(node);
   m_attributes["label"] = ND_label(node)->text;
 
 
@@ -97,12 +97,12 @@ void GraphNode::updateWithNode(node_t* node)
     ///kDebug() << "_ldraw_: element renderOperations size is now " << renderOperations().size();
   }
 
-  Agsym_t *attr = agfstattr(node);
+  Agsym_t *attr = agnxtattr(agraphof(node), AGNODE, NULL);
   while(attr)
   {
-    ///kDebug() << node->name << ":" << attr->name << agxget(node,attr->index);
-    m_attributes[attr->name] = agxget(node,attr->index);
-    attr = agnxtattr(node,attr);
+    ///kDebug() << agnameof(node) << ":" << attr->name << agxget(node,attr);
+    m_attributes[attr->name] = agxget(node,attr);
+    attr = agnxtattr(agraphof(node), AGNODE, attr);
   }
 }
 #endif

@@ -417,104 +417,133 @@ void DotGraph::saveTo(const QString& fileName)
 #ifdef GV_LiB
 void DotGraph::updateWithGraph(graph_t* newGraph)
 {
-  ///kDebug();
-  for (edge_t* e = agfstout(newGraph->meta_node->graph, newGraph->meta_node); e;
-      e = agnxtout(newGraph->meta_node->graph, e)) {
-    graph_t* sg = agusergraph(e->head);
-    ///kDebug() << "subgraph:" << sg->name;
-    if (subgraphs().contains(sg->name))
+  kDebug();
+
+  // copy global graph render operations and attributes
+  DotRenderOpVec ops;
+  // decrease mem peak
+  setRenderOperations(ops);
+
+  if (agget(newGraph, (char*)"_draw_") != NULL)
     {
-      ///kDebug() << "known";
-      // ???
-      //       nodes()[ngn->name]->setZ(ngn->z());
-      subgraphs()[sg->name]->updateWithSubgraph(sg);
-      if (subgraphs()[sg->name]->canvasElement()!=0)
+      parse_renderop(agget(newGraph, (char*)"_draw_"), ops);
+      kDebug() << "_draw_: element renderOperations size is now " << ops.size();
+    }
+  if (agget(newGraph, (char*)"_ldraw_") != NULL)
+    {
+      parse_renderop(agget(newGraph, (char*)"_ldraw_"), ops);
+      kDebug() << "_ldraw_: element renderOperations size is now " << ops.size();
+    }
+
+  setRenderOperations(ops);
+
+  Agsym_t *attr = agnxtattr(newGraph, AGRAPH, NULL);
+  while(attr)
+    {
+      ///kDebug() << agnameof(newGraph) << ":" << attr->name << agxget(newGraph,attr);
+      m_attributes[attr->name] = agxget(newGraph,attr);
+      attr = agnxtattr(newGraph, AGRAPH, attr);
+    }
+  
+  // copy subgraphs
+  for (graph_t* sg = agfstsubg(newGraph); sg; sg = agnxtsubg(sg))
+  {
+    ///kDebug() << "subgraph:" << agnameof(sg);
+    if (subgraphs().contains(agnameof(sg)))
       {
-        //         nodes()[ngn->id()]->canvasElement()->setGh(m_height);
+	kDebug() << "known";
+	// ???
+	//       nodes()[ngn->name]->setZ(ngn->z());
+        subgraphs()[agnameof(sg)]->updateWithSubgraph(sg);
+        if (subgraphs()[agnameof(sg)]->canvasElement()!=0)
+	{
+	  //         nodes()[ngn->id()]->canvasElement()->setGh(m_height);
+	}
       }
-    }
     else
-    {
-      ///kDebug() << "new";
-      GraphSubgraph* newsg = new GraphSubgraph(sg);
-      //       kDebug() << "new created";
-      subgraphs().insert(sg->name, newsg);
-      //       kDebug() << "new inserted";
-    }
+      {
+	kDebug() << "new";
+	GraphSubgraph* newsg = new GraphSubgraph(sg);
+	//       kDebug() << "new created";
+	subgraphs().insert(sg->name, newsg);
+	//       kDebug() << "new inserted";
+      }
 
   }
 
+  // copy nodes
   node_t* ngn = agfstnode(newGraph);
-  ///kDebug() << "first node:" << (void*)ngn;
+  kDebug() << "first node:" << (void*)ngn;
   
   while (ngn != NULL)
-//   foreach (GraphNode* ngn, newGraph.nodes())
-  {
-    ///kDebug() << "node " << ngn->name;
-    if (nodes().contains(ngn->name))
+    //   foreach (GraphNode* ngn, newGraph.nodes())
     {
-      ///kDebug() << "known";
-// ???
-//       nodes()[ngn->name]->setZ(ngn->z());
-      nodes()[ngn->name]->updateWithNode(ngn);
-      if (nodes()[ngn->name]->canvasElement()!=0)
-      {
-        //         nodes()[ngn->id()]->canvasElement()->setGh(m_height);
-      }
-    }
-    else
-    {
-      ///kDebug() << "new";
-      GraphNode* newgn = new GraphNode(ngn);
-      //       kDebug() << "new created";
-      nodes().insert(ngn->name, newgn);
-      //       kDebug() << "new inserted";
-    }
-
-    edge_t* nge = agfstout(newGraph, ngn);
-    while (nge != NULL)
-    {
-      ///kDebug() << "edge " << nge->id;
-      QString edgeName = QString(nge->head->name) + nge->tail->name;
-      if (edges().contains(edgeName))
-      {
-        ///kDebug() << "edge known" << nge->id;
-//         edges()[nge->name]->setZ(nge->z());
-        edges()[edgeName]->updateWithEdge(nge);
-        if (edges()[edgeName]->canvasEdge()!=0)
-        {
-          //         edges()[nge->id()]->canvasEdge()->setGh(m_height);
-        }
-      }
+      ///kDebug() << "node " << agnameof(ngn);
+      if (nodes().contains(agnameof(ngn)))
+	{
+	  kDebug() << "known";
+	  // ???
+	  //       nodes()[ngn->name]->setZ(ngn->z());
+          nodes()[agnameof(ngn)]->updateWithNode(ngn);
+	  if (nodes()[agnameof(ngn)]->canvasElement()!=0)
+          {
+	      //         nodes()[ngn->id()]->canvasElement()->setGh(m_height);
+          }
+	}
       else
-      {
-        ///kDebug() << "new edge" << edgeName;
-        {
-          GraphEdge* newEdge = new GraphEdge();
-          newEdge->setId(edgeName);
-          newEdge->updateWithEdge(nge);
-          if (elementNamed(nge->tail->name) == 0)
-          {
-            GraphNode* newgn = new GraphNode();
-            //       kDebug() << "new created";
-            nodes().insert(nge->tail->name, newgn);
-          }
-          newEdge->setFromNode(elementNamed(nge->tail->name));
-          if (elementNamed(nge->head->name) == 0)
-          {
-            GraphNode* newgn = new GraphNode();
-            //       kDebug() << "new created";
-            nodes().insert(nge->head->name, newgn);
-          }
-          newEdge->setToNode(elementNamed(nge->head->name));
-          edges().insert(edgeName, newEdge);
-        }
-      }
-      nge = agnxtedge(newGraph, nge, ngn);
+	{
+	  kDebug() << "new";
+	  GraphNode* newgn = new GraphNode(ngn);
+	  //       kDebug() << "new created";
+	  nodes().insert(ngn->name, newgn);
+	  //       kDebug() << "new inserted";
+	}
+
+      // copy node edges
+      edge_t* nge = agfstout(newGraph, ngn);
+      while (nge != NULL)
+	{
+ //      kDebug() << "edge " << nge->id;
+	  QString edgeName = QString(agnameof(aghead(nge))) + agnameof(agtail(nge));
+	  if (edges().contains(edgeName))
+	    {
+//	      kDebug() << "edge known" << nge->id;
+	      //         edges()[nge->name]->setZ(nge->z());
+	      edges()[edgeName]->updateWithEdge(nge);
+	      if (edges()[edgeName]->canvasEdge()!=0)
+		{
+		  //         edges()[nge->id()]->canvasEdge()->setGh(m_height);
+		}
+	    }
+	  else
+	    {
+	      kDebug() << "new edge" << edgeName;
+	      {
+		GraphEdge* newEdge = new GraphEdge();
+		newEdge->setId(edgeName);
+		newEdge->updateWithEdge(nge);
+		if (elementNamed(nge->tail->name) == 0)
+		  {
+		    GraphNode* newgn = new GraphNode();
+		    //       kDebug() << "new created";
+		    nodes().insert(nge->tail->name, newgn);
+		  }
+		newEdge->setFromNode(elementNamed(nge->tail->name));
+		if (elementNamed(nge->head->name) == 0)
+		  {
+		    GraphNode* newgn = new GraphNode();
+		    //       kDebug() << "new created";
+		    nodes().insert(nge->head->name, newgn);
+		  }
+		newEdge->setToNode(elementNamed(nge->head->name));
+		edges().insert(edgeName, newEdge);
+	      }
+	    }
+	  nge = agnxtedge(newGraph, nge, ngn);
+	}
+      ngn = agnxtnode(newGraph, ngn);
     }
-    ngn = agnxtnode(newGraph, ngn);
-  }
-  ///kDebug() << "Done";
+  kDebug() << "Done";
   emit readyToDisplay();
   computeCells();
 }

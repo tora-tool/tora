@@ -483,23 +483,20 @@ bool parse_renderop(const std::string& str, DotRenderOpVec& arenderopvec)
                 +(
                    (
                      (ch_p('E')|ch_p('e'))[assign_a(therenderop)] >> +space_p >>
-                     repeat_p(4)[int_p[push_back_a(renderop.integers)] >> +space_p]
+                     repeat_p(4)[int_p[push_back_a(renderop.integers)] >> !((ch_p(',')|ch_p('.')) >> int_p) >> +space_p]
                    )[&valid_op] 
                    | (
                        (ch_p('P')|ch_p('p')|ch_p('L')|ch_p('B')|ch_p('b'))[assign_a(therenderop)] >> +space_p >>
                        int_p[assign_a(c)][push_back_a(renderop.integers)] >> +space_p >> 
                        repeat_p(boost::ref(c))[
-                                                int_p[push_back_a(renderop.integers)] >> +space_p >> 
-                                                int_p[push_back_a(renderop.integers)] >> +space_p
+                                                int_p[push_back_a(renderop.integers)] >> !((ch_p(',')|ch_p('.')) >> int_p) >> +space_p >>
+                                                int_p[push_back_a(renderop.integers)] >> !((ch_p(',')|ch_p('.')) >> int_p) >> +space_p
                                               ] 
                      )[&valid_op]
   // "T 1537 228 0 40 9 -#1 (== 0) T 1537 217 0 90 19 -MAIN:./main/main.pl "
                    | (
                        ch_p('T')[assign_a(therenderop)] >> +space_p >>
-                       int_p[push_back_a(renderop.integers)] >> +space_p >> 
-                       int_p[push_back_a(renderop.integers)] >> +space_p >> 
-                       int_p[push_back_a(renderop.integers)] >> +space_p >> 
-                       int_p[push_back_a(renderop.integers)] >> +space_p >> 
+                       repeat_p(4)[int_p[push_back_a(renderop.integers)] >> !((ch_p(',')|ch_p('.')) >> int_p) >> +space_p] >>
                        int_p[assign_a(c)] >> +space_p >> '-' >> 
                        (repeat_p(boost::ref(c))[anychar_p])[assign_a(thestr)] >> +space_p
                      )[&valid_op]
@@ -512,7 +509,7 @@ bool parse_renderop(const std::string& str, DotRenderOpVec& arenderopvec)
   // F 14,000000 11 -Times-Roman 
                     | (
                        ch_p('F')[assign_a(therenderop)] >> +space_p >>
-                       int_p[push_back_a(renderop.integers)] >> (ch_p(',')|ch_p('.')) >> int_p >> +space_p >>
+                       int_p[push_back_a(renderop.integers)] >> !((ch_p(',')|ch_p('.')) >> int_p) >> +space_p >>
                        int_p[assign_a(c)] >> +space_p >> '-' >> 
                        (repeat_p(boost::ref(c))[anychar_p])[assign_a(thestr)] >> +space_p
                      )[&valid_op]

@@ -121,11 +121,11 @@ QString GraphExporter::writeDot(const DotGraph* graph, const QString& fileName)
 #ifdef GV_LIB
 graph_t* GraphExporter::exportToGraphviz(const DotGraph* graph)
 {
-  int type = graph->directed()
-      ?(graph->strict()?AGDIGRAPHSTRICT:AGDIGRAPH)
-      :(graph->strict()?AGRAPHSTRICT:AGRAPH);
+  Agdesc_t type = Agstrictundirected;
+  type.directed = graph->directed();
+  type.strict = graph->strict();
   
-  graph_t* agraph = agopen((graph->id()!="\"\"")?graph->id().toUtf8().data():QString("unnamed").toUtf8().data(), type);
+  graph_t* agraph = agopen((graph->id()!="\"\"")?graph->id().toUtf8().data():QString("unnamed").toUtf8().data(), type, NULL);
 
   QTextStream stream;
   graph->exportToGraphviz(agraph);
@@ -137,7 +137,7 @@ graph_t* GraphExporter::exportToGraphviz(const DotGraph* graph)
   sit != graph->subgraphs().end(); ++sit )
   {
     const GraphSubgraph& s = **sit;
-    graph_t* subgraph = agsubg(agraph, s.id().toUtf8().data());
+    graph_t* subgraph = agsubg(agraph, s.id().toUtf8().data(), 1);
     s.exportToGraphviz(subgraph);
   }
   
@@ -145,7 +145,7 @@ graph_t* GraphExporter::exportToGraphviz(const DotGraph* graph)
   GraphNodeMap::const_iterator nit;
   foreach (GraphNode* n, graph->nodes())
   {
-    node_t* node = agnode(agraph, n->id().toUtf8().data());
+    node_t* node = agnode(agraph, n->id().toUtf8().data(), 1);
     n->exportToGraphviz(node);
   }
   
@@ -154,8 +154,8 @@ graph_t* GraphExporter::exportToGraphviz(const DotGraph* graph)
   foreach (GraphEdge* e, graph->edges())
   {
     ///kDebug() << "writing edge" << e->id();
-    edge_t* edge = agedge(agraph, agnode(agraph, e->fromNode()->id().toUtf8().data()),
-                          agnode(agraph, e->toNode()->id().toUtf8().data()));
+    edge_t* edge = agedge(agraph, agnode(agraph, e->fromNode()->id().toUtf8().data(), 0),
+                          agnode(agraph, e->toNode()->id().toUtf8().data(), 0), NULL, 1);
     e->exportToGraphviz(edge);
   }
   
