@@ -45,6 +45,8 @@
 #include <QtGui/QMessageBox>
 #include <QtGui/QMainWindow>
 
+#include <map>
+
 #ifdef Q_OS_WIN32
 #define NOMINMAX
 #include <windows.h>
