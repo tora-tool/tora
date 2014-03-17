@@ -53,6 +53,7 @@
 #include <QtGui/QMenu>
 #include <QtGui/QBoxLayout>
 #include <QtGui/QAction>
+#include <QtDebug>
 
 // A little magic to get lrefresh to work and get a check on qApp
 #undef QT_TRANSLATE_NOOP

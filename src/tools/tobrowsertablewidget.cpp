@@ -51,8 +51,10 @@
 #include "result/toresulttabledata.h"
 
 #include "core/toresultdrawing.h"
+#ifdef TORA_EXPERIMENTAL
 #include "dotgraphview.h"
 #include "dotgraph.h"
+#endif
 
 
 Util::RegisterInFactory<toBrowserTableWidget, toBrowserWidgetFactory, toCache::CacheEntryType> regToBrowserTableWidget(toCache::TABLE);

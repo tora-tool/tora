@@ -52,6 +52,7 @@
 #include <QtGui/QPainter>
 #include <QtGui/QKeyEvent>
 #include <QtGui/QDockWidget>
+#include <QStyleFactory>
 
 #include <stdlib.h>
 #include <algorithm>
