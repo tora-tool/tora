@@ -45,6 +45,7 @@
 
 class QTabWidget;
 class QListWidget;
+class QTimerEvent;
 
 class toCodeOutline : public toDocklet
 {
