@@ -1107,6 +1107,21 @@ IF(PCH_DEFINED)
 ENDIF(PCH_DEFINED)
 ENDIF(TORA_DEBUG AND TEST_APP5)
 
+IF(TORA_DEBUG AND TEST_APP6)
+# test6
+ADD_EXECUTABLE("test6" ${GUI_TYPE}
+  tests/test6.cpp
+  ${TEST6_SOURCES}
+  ${PCH_SOURCE}
+  )
+TARGET_LINK_LIBRARIES("test6")
+SET_TARGET_PROPERTIES("test6" PROPERTIES ENABLE_EXPORTS ON)
+ADD_DEPENDENCIES("test6" revisiontag) # explicitly say that the executable depends on the svnheader
+IF(PCH_DEFINED)
+  ADD_PRECOMPILED_HEADER("test6" ${PCH_HEADER} FORCEINCLUDE)
+ENDIF(PCH_DEFINED)
+ENDIF(TORA_DEBUG AND TEST_APP6)
+
 ################################################################################
 #                       Connection provider libraries                          #
 ################################################################################

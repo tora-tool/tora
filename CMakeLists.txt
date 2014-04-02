@@ -25,6 +25,7 @@ OPTION(TEST_APP2 "toConnection/toQuery test" OFF)
 OPTION(TEST_APP3 "simple application - execute toWorksheet in a separate application" OFF)
 OPTION(TEST_APP4 "simple application - execute toHighlightedText in separate application" OFF)
 OPTION(TEST_APP5 "simple application - single tool(tabbed)" OFF)
+OPTION(TEST_APP6 "simple application parser" OFF)
 
 #Set our CMake minimum version
 #Require 2.4.2 for Qt finding
