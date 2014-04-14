@@ -191,10 +191,10 @@ void toSyntaxSetup::changeLine(QListWidgetItem *item)
     if (Current)
     {
     	toSyntaxAnalyzer::WordClassEnum wc = (toSyntaxAnalyzer::WordClassEnum) wordClass();
-    	QPalette palette = ExampleColor->palette();
+    	QPalette palette = FontSample->palette();
         palette.setColor(QPalette::Background, Styles.value(wc).BGColor);
         palette.setColor(QPalette::Foreground, Styles.value(wc).FGColor);
-        ExampleColor->setPalette(palette);
+        //ExampleColor->setPalette(palette);
         //ExampleColor->setAutoFillBackground(true);
         //ExampleColor->setText("What ever text");
 
@@ -226,10 +226,14 @@ void toSyntaxSetup::selectColor(void)
             {
                 Styles[coleng].FGColor = col;
 
-                QPalette palette = ExampleColor->palette();
-                palette.setColor(QPalette::Background, col);
-                ExampleColor->setPalette(palette);
-                Example->update();
+               QPalette palette = FontSample->palette();
+               palette.setColor(QPalette::Foreground, col);
+               FontSample->setPalette(palette);
+               FontSample->update();
+
+               palette.setColor(QPalette::Background, col);
+               FGSample->setPalette(palette);
+               FGSample->update();
             }
         }
     }
