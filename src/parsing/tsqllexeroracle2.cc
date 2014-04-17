@@ -282,6 +282,9 @@ const Token& OracleGuiLexer::LA(int pos) const
 		case PLSQLGuiLexer::REGULAR_ID:
 			type = Token::L_IDENTIFIER;
 			break;
+		case PLSQLGuiLexer::NUMBER_LIT:
+			type = Token::L_NUMBER;
+			break;
 		default:
 			type = Token::X_UNASSIGNED;
 			break;

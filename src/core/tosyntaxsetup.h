@@ -57,7 +57,7 @@ class toSyntaxSetup
 
     QString ListFontName;
     QListWidgetItem *Current;
-    QMetaEnum ColorsEnum;
+    QMetaEnum WordClassEnum;
     toStylesMap Styles;  // QMap<enum toSyntaxAnalyzer::WordClass, toStyle> => toStyle
     toSyntaxAnalyzer* Analyzer;
 public:
@@ -66,7 +66,8 @@ public:
 
 public slots:
     virtual void changeLine(QListWidgetItem *);
-    virtual void selectColor(void);
+    virtual void selectFGColor(void);
+    virtual void selectBGColor(void);
     virtual void selectFont(void);
     virtual void selectText(void);
     virtual void selectResultFont(void);

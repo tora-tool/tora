@@ -56,10 +56,7 @@ class toSqlTextWorker;
 
 /**
  * A editor which supports syntax highlighting.
- *
- * This needs to be heavily re-implemented/simplified to use QScintilla syntax
- * coloring. For now it only stubs used API from previous version of
- * toHighlightedTextEditor. The rest of the API comes unchanged from toScintilla
+ * The rest of the API comes unchanged from toScintilla
  * which is now derived from QScintilla.
  */
 class toSqlText : public toScintilla

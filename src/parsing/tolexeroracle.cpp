@@ -71,36 +71,36 @@ toLexerOracle::toLexerOracle(QObject *parent)
 #else
 	mono = QFont(Utils::toStringToFont(toConfigurationNewSingle::Instance().option(Editor::ConfCodeFont).toString()));
 #endif
-
-	toStylesMap sMap = toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::EditStyleMap).value<toStylesMap>();
-	declareStyle(Default,
-			sMap[Default].FGColor,
-			sMap[Default].BGColor,
-			mono);
-	declareStyle(Comment,
-			sMap[Comment].FGColor,
-			sMap[Comment].BGColor,
-			mono);
-	declareStyle(CommentMultiline,
-			sMap[Comment].FGColor,
-			sMap[Comment].BGColor,
-			mono);
-	declareStyle(Reserved,
-			sMap[Reserved].FGColor,
-			sMap[Reserved].BGColor,
-			mono);
-	declareStyle(Builtin,
-			sMap[toSyntaxAnalyzer::KeywordSet5].FGColor,
-			sMap[toSyntaxAnalyzer::KeywordSet5].BGColor,
-			mono);
-	declareStyle(Identifier,
-			sMap[Identifier].FGColor,
-			sMap[Identifier].BGColor,
-			mono);
-	declareStyle(OneLine,
-			sMap[OneLine].FGColor,
-			sMap[OneLine].BGColor,
-			mono);
+//
+//	toStylesMap sMap = toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::EditStyleMap).value<toStylesMap>();
+//	declareStyle(Default,
+//			sMap[Default].FGColor,
+//			sMap[Default].BGColor,
+//			mono);
+//	declareStyle(Comment,
+//			sMap[Comment].FGColor,
+//			sMap[Comment].BGColor,
+//			mono);
+//	declareStyle(CommentMultiline,
+//			sMap[Comment].FGColor,
+//			sMap[Comment].BGColor,
+//			mono);
+//	declareStyle(Reserved,
+//			sMap[Reserved].FGColor,
+//			sMap[Reserved].BGColor,
+//			mono);
+//	declareStyle(Builtin,
+//			sMap[toSyntaxAnalyzer::KeywordSet5].FGColor,
+//			sMap[toSyntaxAnalyzer::KeywordSet5].BGColor,
+//			mono);
+//	declareStyle(Identifier,
+//			sMap[Identifier].FGColor,
+//			sMap[Identifier].BGColor,
+//			mono);
+//	declareStyle(OneLine,
+//			sMap[OneLine].FGColor,
+//			sMap[OneLine].BGColor,
+//			mono);
 	declareStyle(Failure,
 			QColor(Qt::black),
 			QColor(Qt::red),
@@ -210,6 +210,9 @@ void toLexerOracle::styleText(int start, int end)
 		case SQLLexer::Token::X_UNASSIGNED:
 		case SQLLexer::Token::L_IDENTIFIER:
 			setStyling(len2, Identifier);
+			break;
+		case SQLLexer::Token::L_NUMBER:
+			setStyling(len2, Number);
 			break;
 		case SQLLexer::Token::X_COMMENT:
 			setStyling(len2, Comment);

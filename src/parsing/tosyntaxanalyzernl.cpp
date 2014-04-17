@@ -36,6 +36,7 @@
 #include "core/toconfiguration_new.h"
 #include "core/toeditorsetting.h"
 #include "editor/tosqltext.h"
+#include "editor/tostyle.h"
 
 #include <QtCore/QString>
 #include <QtCore/QRegExp>
@@ -146,29 +147,7 @@ QsciLexer * toSyntaxAnalyzerNL::createLexer(QObject *parent)
     retval->setFoldCompact(false);
 
 	toStylesMap sMap = toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::EditStyleMap).value<toStylesMap>();
-	QMetaEnum StyleNameEnum(ENUM_REF(toSyntaxAnalyzer,WordClassEnum));
-	QsciLexerSQL *l = new QsciLexerSQL(NULL);
-	for (int idx = 0; idx < StyleNameEnum.keyCount(); idx++)
-	{
-		int styleNameEnum = StyleNameEnum.value(idx);
-		retval->setColor(sMap.value(styleNameEnum).FGColor, styleNameEnum);
-		retval->setPaper(sMap.value(styleNameEnum).BGColor, styleNameEnum);
-		retval->setFont(toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::ConfCodeFont).toString(), styleNameEnum);
-	}
-
-	retval->setColor(sMap.value(toSyntaxAnalyzer::Comment).FGColor, QsciLexerSQL::CommentLine);
-	retval->setColor(sMap.value(toSyntaxAnalyzer::Comment).FGColor, QsciLexerSQL::CommentLineHash);
-	retval->setColor(sMap.value(toSyntaxAnalyzer::Comment).FGColor, QsciLexerSQL::PlusComment);
-	retval->setColor(sMap.value(toSyntaxAnalyzer::Comment).FGColor, QsciLexerSQL::CommentDocKeyword);
-	retval->setColor(sMap.value(toSyntaxAnalyzer::Comment).FGColor, QsciLexerSQL::CommentDocKeywordError);
-
-	retval->setPaper(sMap.value(toSyntaxAnalyzer::Comment).BGColor, QsciLexerSQL::CommentLine);
-	retval->setPaper(sMap.value(toSyntaxAnalyzer::Comment).BGColor, QsciLexerSQL::CommentLineHash);
-	retval->setPaper(sMap.value(toSyntaxAnalyzer::Comment).BGColor, QsciLexerSQL::PlusComment);
-	retval->setPaper(sMap.value(toSyntaxAnalyzer::Comment).BGColor, QsciLexerSQL::CommentDocKeyword);
-	retval->setPaper(sMap.value(toSyntaxAnalyzer::Comment).BGColor, QsciLexerSQL::CommentDocKeywordError);
-
-	retval->setFont(toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::ConfCodeFont).toString());
+	sMap.updateLexer(retval);
 
     return retval;
 }

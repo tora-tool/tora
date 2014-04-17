@@ -41,6 +41,7 @@
 #include "editor/toworksheettext.h"
 #include "core/toconfiguration_new.h"
 #include "core/toeditorsetting.h"
+#include "ts_log/ts_log_utils.h"
 
 #include <QtGui/QFontDialog>
 #include <QtGui/QColorDialog>
@@ -52,7 +53,7 @@ using namespace ToConfiguration;
 toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
     : QWidget(parent)
     , toSettingTab("fonts.html")
-	, ColorsEnum(ENUM_REF(toSyntaxAnalyzer,WordClassEnum))
+	, WordClassEnum(ENUM_REF(toSyntaxAnalyzer,WordClassEnum))
 	, Current(NULL)
 	, Styles(toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::EditStyleMap).value<toStylesMap>())
 {
@@ -66,12 +67,12 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
     connect(EditorShortcutsEdit, SIGNAL(clicked()),
             this, SLOT(openEditorShortcutsDialog()));
 
-    // Crete/Adjust additioal complex widgets
+    // Crete/Adjust additional complex widgets
     Analyzer = new toSyntaxAnalyzerNL(Example->editor());
-    //Example->setAnalyzer(Analyzer);
     Example->sciEditor()->setReadOnly(true);
 
-    Example->sciEditor()->setText(QString::fromLatin1("create procedure CheckObvious as\n"
+    Example->sciEditor()->setText(QString::fromLatin1("PROMPT Create procedure\n"
+                                         "create procedure CheckObvious as\n"
                                          "begin\n"
                                          "  Quest:='Great'; -- This variable doesn't exist\n"
                                          "  if Quest = 'Great' then\n"
@@ -83,19 +84,27 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, Qt::WFlags fl)
                                          " */\n"
                                          "end;"));
 
+#pragma message WARN("TODO: Error line style & Debug line style")
+#if 0
     Example->setCurrentDebugLine(4);
     QMap<int, QString> Errors;
     Errors[2] = tr("Unknown variable");
     Example->setErrors(Errors);
+#endif
 
-    for (int idx = 0; idx < ColorsEnum.keyCount(); idx++)
+    for (int idx = 0; idx < WordClassEnum.keyCount(); idx++)
     {
-    	QString colorName = ColorsEnum.key(idx);
+    	QString colorName = WordClassEnum.key(idx);
     	SyntaxComponent->addItem(colorName);
     }
 
     // load values from toConfigurationNewSingle into Widgets (if widget name == Config Option Name)
     toSettingTab::loadSettings(this);
+
+    if(SyntaxHighlightingInt->currentText() == "QsciSQL")
+    	Example->editor()->setHighlighter(toSqlText::QsciSql);
+    else
+    	Example->editor()->setHighlighter(toSqlText::Oracle);
 
     {
         QFont font(Utils::toStringToFont(toConfigurationNewSingle::Instance().option(Editor::ConfCodeFont).toString()));
@@ -145,6 +154,20 @@ void toSyntaxSetup::selectFont(void)
         CodeExampleFont->setFont(font);
         Example->setFont(font);
         checkFixedWidth(font);
+
+        FontSample->setFont(font);
+        FontSample->update();
+
+        // One font for all work classes
+        for (int idx = 0; idx < WordClassEnum.keyCount(); idx++)
+        {
+        	QString colorName = WordClassEnum.key(idx);
+        	toSyntaxAnalyzer::WordClassEnum key = (toSyntaxAnalyzer::WordClassEnum)WordClassEnum.value(idx);
+        	Styles[key].Font = font;
+        }
+        Styles.updateLexer(Example->editor()->lexer());
+        Example->editor()->recolor(0, -1);
+        Example->editor()->update();
     }
 }
 
@@ -178,7 +201,7 @@ void toSyntaxSetup::openEditorShortcutsDialog()
 int toSyntaxSetup::wordClass() const
 {
     QString t = Current->text();
-    int e = ColorsEnum.keyToValue(t.toStdString().c_str());
+    int e = WordClassEnum.keyToValue(t.toStdString().c_str());
     if (e == -1)
     	throw tr("Unknown color name %1").arg(t);
 
@@ -211,10 +234,14 @@ void toSyntaxSetup::changeLine(QListWidgetItem *item)
         palette.setColor(QPalette::Foreground, Styles.value(wc).FGColor);
         FontSample->setFont(Styles.value(wc).Font);
         FontSample->setPalette(palette);
+        FontSample->setAutoFillBackground(true);
+        FontSample->update();
+
+        //Example->setSt
     }
 }
 
-void toSyntaxSetup::selectColor(void)
+void toSyntaxSetup::selectFGColor(void)
 {
     try
     {
@@ -234,6 +261,40 @@ void toSyntaxSetup::selectColor(void)
                palette.setColor(QPalette::Background, col);
                FGSample->setPalette(palette);
                FGSample->update();
+
+               Styles.updateLexer(Example->editor()->lexer());
+               Example->editor()->recolor(0, -1);
+               Example->editor()->update();
+            }
+        }
+    }
+    TOCATCH
+}
+
+void toSyntaxSetup::selectBGColor(void)
+{
+    try
+    {
+        if (Current)
+        {
+            int coleng = wordClass();
+            QColor col = QColorDialog::getColor(Styles.value(coleng).BGColor);
+            if (col.isValid())
+            {
+            	Styles[coleng].BGColor = col;
+
+               QPalette palette = FontSample->palette();
+               palette.setColor(QPalette::Background, col);
+               FontSample->setPalette(palette);
+               FontSample->update();
+
+               palette.setColor(QPalette::Background, col);
+               BGSample->setPalette(palette);
+               BGSample->update();
+
+               Styles.updateLexer(Example->editor()->lexer());
+               Example->editor()->recolor(0, -1);
+               Example->editor()->update();
             }
         }
     }
@@ -247,7 +308,9 @@ void toSyntaxSetup::saveSetting(void)
     toConfigurationNewSingle::Instance().setOption(ToConfiguration::Editor::ConfCodeFont, Utils::toFontToString(CodeExampleFont->font()));
     toConfigurationNewSingle::Instance().setOption(ToConfiguration::Editor::ListTextFont, Utils::toFontToString(ResultExampleFont->font()));
 
-    // for ToConfiguration::Editor::EditStyleMap see ShortcutModel::saveValues
+    // for ShortcutModel see ShortcutModel::saveValues
+
+    toConfigurationNewSingle::Instance().setOption(ToConfiguration::Editor::EditStyleMap, QVariant::fromValue(Styles));
 }
 
 ToConfiguration::Editor toSyntaxSetup::s_editorConfig;

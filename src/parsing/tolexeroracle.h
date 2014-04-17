@@ -54,6 +54,7 @@ public:
                 Reserved   = toSyntaxAnalyzer::Keyword,
                 Builtin    = toSyntaxAnalyzer::KeywordSet5,
                 Identifier = toSyntaxAnalyzer::Identifier,
+                Number     = toSyntaxAnalyzer::Number,
                 OneLine    = toSyntaxAnalyzer::PlusPrompt,
                 CommentMultiline = toSyntaxAnalyzer::QuotedIdentifier + 1,
                 Failure,

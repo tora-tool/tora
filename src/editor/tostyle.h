@@ -41,6 +41,8 @@
 #include <QtGui/QColor>
 #include <QtGui/QFont>
 
+class QsciLexer;
+
 class toStyle : public QObject
 {
 	Q_OBJECT;
@@ -96,7 +98,11 @@ public:
 	bool Bold;
 };
 
-typedef QMap<int, toStyle> toStylesMap;
+class toStylesMap: public QMap<int, toStyle>
+{
+public:
+	void updateLexer(QsciLexer*);
+};
 
 Q_DECLARE_METATYPE(toStyle);
 Q_DECLARE_METATYPE(toStylesMap);

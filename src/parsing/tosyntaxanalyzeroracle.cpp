@@ -34,7 +34,10 @@
 
 #include "parsing/tosyntaxanalyzer.h"
 #include "parsing/tolexeroracle.h"
+#include "core/toconfiguration_new.h"
+#include "core/toeditorsetting.h"
 #include "editor/tosqltext.h"
+#include "editor/tostyle.h"
 
 #include <QtCore/QDebug>
 
@@ -155,6 +158,8 @@ toSyntaxAnalyzer::statement toSyntaxAnalyzerOracle::getStatementAt(unsigned line
 QsciLexer* toSyntaxAnalyzerOracle::createLexer(QObject* parent)
 {
 	QsciLexer *retval = new toLexerOracle(parent);
+	toStylesMap sMap = toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::EditStyleMap).value<toStylesMap>();
+	sMap.updateLexer(retval);
 	return retval;
 }
 
