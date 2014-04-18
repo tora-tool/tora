@@ -33,6 +33,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "core/toeditorsetting.h"
+#include "core/utils.h"
 #include "editor/tostyle.h"
 #include "parsing/tosyntaxanalyzer.h"
 #include "ts_log/ts_log_utils.h"
@@ -57,24 +58,37 @@ QVariant ToConfiguration::Editor::defaultValue(int option) const
 	case UseSpacesForIndentBool:                return QVariant((bool) false);
 	case TabStopInt:                  return QVariant((int) 8);
 	case ConfTextFont:                 return QVariant(QString(""));
-	case ConfCodeFont:                 return QVariant(QString(""));
+	case ConfCodeFont:
+	{
+		QFont fo;
+		QFont mono;
+#if defined(Q_OS_WIN)
+		mono = QFont("Courier New", 10);
+#elif defined(Q_OS_MAC)
+		mono = QFont("Courier", 12);
+#else
+		// TODO
+#endif
+		mono.setStyleHint(QFont::Monospace, QFont::NoAntialias);
+		fo = mono.resolve(fo);
+		QString fontName = fo.toString();
+
+		return QVariant(fontName);
+	}
 	case ListTextFont:                 return QVariant(QString(""));
 	case Extensions:               return QVariant(QString("SQL (*.sql *.pkg *.pkb), Text (*.txt), All (*)"));
 	case EditStyleMap:
 	{
-		toStylesMap retval;
+		static toStylesMap retval;
+		if (!retval.isEmpty())
+			return QVariant::fromValue(retval);
 		QMetaEnum StyleNameEnum(ENUM_REF(toSyntaxAnalyzer,WordClassEnum));
 		QsciLexerSQL *l = new QsciLexerSQL(NULL);
 		for (int idx = 0; idx < StyleNameEnum.keyCount(); idx++)
 		{
-			QString keyNameFg = QString::fromAscii("EditStyle") + StyleNameEnum.key(idx) + "Fg";
-			QString keyNameBg = QString::fromAscii("EditStyle") + StyleNameEnum.key(idx) + "Bg";
-			QString keyNameFo = QString::fromAscii("EditStyle") + StyleNameEnum.key(idx) + "Fo";
-			QColor fg, bg;
-			QFont fo;
-			fg = l->color((int)StyleNameEnum.value(idx));
-			bg = l->paper((int)StyleNameEnum.value(idx));
-			fo = QFont("");
+			QColor fg = l->color((int)StyleNameEnum.value(idx));
+			QColor bg = l->paper((int)StyleNameEnum.value(idx));
+			QFont fo = Utils::toStringToFont(defaultValue(ConfCodeFont).toString());
 
 			QString styleName = StyleNameEnum.key(idx);
 			int styleNameEnum = StyleNameEnum.value(idx);
@@ -101,15 +115,54 @@ void ToConfiguration::Editor::saveUserType(QSettings &s, QVariant &val, int key)
 		if (i != NULL)
 		{
 			QString keyNameFg = QString(i) + "Fg";
+			QColor confFg = wMap.value(k).FGColor;
+			QColor defaFg = dMap.value(k).FGColor;
+			if( confFg != defaFg)
+				s.setValue(keyNameFg, confFg.name());
+
 			QString keyNameBg = QString(i) + "Bg";
+			QColor confBg = wMap.value(k).BGColor;
+			QColor defaBg = dMap.value(k).BGColor;
+			if( confBg != defaBg)
+				s.setValue(keyNameBg, confBg.name());
+
 			QString keyNameFo = QString(i) + "Fo";
-			QColor fg = wMap.value(k).FGColor;
-			QColor bg = wMap.value(k).BGColor;
-			QFont  fo = wMap.value(k).Font;
-			s.setValue(keyNameFg, fg.name());
-			s.setValue(keyNameBg, bg.name());
-			s.setValue(keyNameFo, fo.toString());
+			QFont  confFo = wMap.value(k).Font;
+			QFont  defaFo = dMap.value(k).Font;
+			if( confFo.toString() != defaFo.toString())
+				s.setValue(keyNameFo, confFo.toString());
 		}
 	}
 };
 
+void ToConfiguration::Editor::loadUserType(QSettings &s, QVariant &val, int key) const
+{
+	Q_ASSERT_X( key == EditStyleMap, qPrintable(__QHERE__), qPrintable(QString("Unknown key to store: %1").arg(key)));
+	QMetaEnum StyleNameEnum(ENUM_REF(toSyntaxAnalyzer,WordClassEnum));
+	toStylesMap dMap = defaultValue(EditStyleMap).value<toStylesMap>();
+	Q_FOREACH(int k, dMap.keys())
+	{
+		const char* i = StyleNameEnum.valueToKey(k);
+		if (i != NULL)
+		{
+			toStyle style = dMap.value(k);
+			QString keyNameFg = QString(i) + "Fg";
+			QColor confFg(s.value(keyNameFg).toString());
+			if (confFg.isValid())
+				style.FGColor = confFg;
+
+			QString keyNameBg = QString(i) + "Bg";
+			QColor confBg(s.value(keyNameBg).toString());
+			if( confBg.isValid())
+				style.BGColor = confBg;
+
+			QString keyNameFo = QString(i) + "Fo";
+			QString confFo = s.value(keyNameFo).toString();
+			if (!confFo.isEmpty() && QFont(confFo).exactMatch())
+				style.Font = QFont(confFo);
+
+			dMap.insert(k, style);
+		}
+	}
+	val = QVariant::fromValue(dMap);
+}

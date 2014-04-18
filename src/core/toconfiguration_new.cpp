@@ -82,15 +82,26 @@ QVariant toConfigurationNew::option(int optionKey)
 	if (m_configMap.value(optionKey).isNull())
 	{
 		ctx = m_configContextPtrMap.value(optionKey);
-		defaultValue= ctx->defaultValue(optionKey);	// defaultValue also determines datatype
+		defaultValue = ctx->defaultValue(optionKey);	// defaultValue also determines datatype
 		{
 			m_settings.beginGroup("preferences");
 			m_settings.beginGroup(ctx->name());
+
 			QVariant prefValue = m_settings.value(m_enumToOptionMap.value(optionKey));
-			m_settings.endGroup();
-			m_settings.endGroup();
 			if (!prefValue.isNull() && prefValue.canConvert(defaultValue.type()) && prefValue.convert(defaultValue.type()))
 				m_configMap[optionKey] = prefValue;
+			// We are looking for some complex (non-scalar) type stored in configuration
+			else if (defaultValue.type() == QVariant::UserType)
+			{
+				QVariant v;
+				m_settings.beginGroup(m_enumToOptionMap.value(optionKey));
+				ctx->loadUserType(m_settings, v, optionKey);
+				m_settings.endGroup();
+				m_configMap[optionKey] = v;
+			}
+
+			m_settings.endGroup();
+			m_settings.endGroup();
 		}
 	}
 	// If config option was not loaded yet load it (use either Tora 2.x value or defaultValue)
@@ -132,7 +143,7 @@ void toConfigurationNew::saveAll()
 			continue;
 		} else if ( !currValue.isNull() && currValue.type() == QVariant::UserType) {
 			m_settings.beginGroup(ctx->name());
-			m_settings.beginGroup(currValue.typeName());
+			m_settings.beginGroup(m_enumToOptionMap.value(optionKey));
 			ctx->saveUserType(m_settings, currValue, optionKey);
 			m_settings.endGroup();
 			m_settings.endGroup();

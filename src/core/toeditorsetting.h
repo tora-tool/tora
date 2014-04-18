@@ -73,7 +73,7 @@ namespace ToConfiguration
 		virtual QVariant defaultValue(int option) const;
 
 		virtual void saveUserType(QSettings &s, QVariant &val, int key) const;
-
+		virtual void loadUserType(QSettings &s, QVariant &val, int key) const;
 	};
 }
 
