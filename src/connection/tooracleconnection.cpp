@@ -312,13 +312,27 @@ void toOracleConnectionSub::close()
 
 void toOracleConnectionSub::commit()
 {
-	_conn->commit();
+	try {
+		_conn->commit();
+	} catch (const ::trotl::OciException &exc) {
+		if(exc.is_critical())
+			Broken = true;
+		_hasTransaction = NO_TRANSACTION;
+		ReThrowException(exc);
+	}
 	_hasTransaction = NO_TRANSACTION;
 }
 
 void toOracleConnectionSub::rollback()
 {
-	_conn->rollback();
+	try {
+		_conn->rollback();
+	} catch (const ::trotl::OciException &exc) {
+		if(exc.is_critical())
+			Broken = true;
+		_hasTransaction = NO_TRANSACTION;
+		ReThrowException(exc);
+	}
 	_hasTransaction = NO_TRANSACTION;
 }
 
@@ -348,6 +362,8 @@ bool toOracleConnectionSub::hasTransaction()
 		_hasTransaction = i ? HAS_TRANSACTION : NO_TRANSACTION;
 		return i;
 	} catch (const ::trotl::OciException &exc) {
+		if(exc.is_critical())
+			Broken = true;
 		ReThrowException(exc);
 	}
 }

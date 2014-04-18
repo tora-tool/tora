@@ -2228,8 +2228,11 @@ bool toWorksheet::checkUnlockConnection()
 		case 2:
 			return false;
 		}
-	}
-	TOCATCH
+	} catch (const QString &str) {
+		Utils::toStatusMessage(str);
+		if ((*LockedConnection)->isBroken() || !(*LockedConnection)->hasTransaction())
+			return true;
+    }
 	return false;
 }
 
