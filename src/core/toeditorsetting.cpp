@@ -88,3 +88,28 @@ QVariant ToConfiguration::Editor::defaultValue(int option) const
 		return QVariant();
 	}
 }
+
+void ToConfiguration::Editor::saveUserType(QSettings &s, QVariant &val, int key) const
+{
+	Q_ASSERT_X( key == EditStyleMap && val.canConvert<toStylesMap>(), qPrintable(__QHERE__), qPrintable(QString("Unknown key to store: %1").arg(key)));
+	QMetaEnum StyleNameEnum(ENUM_REF(toSyntaxAnalyzer,WordClassEnum));
+	toStylesMap dMap = defaultValue(EditStyleMap).value<toStylesMap>();
+	toStylesMap wMap = val.value<toStylesMap>();
+	Q_FOREACH(int k, wMap.keys())
+	{
+		const char* i = StyleNameEnum.valueToKey(k);
+		if (i != NULL)
+		{
+			QString keyNameFg = QString(i) + "Fg";
+			QString keyNameBg = QString(i) + "Bg";
+			QString keyNameFo = QString(i) + "Fo";
+			QColor fg = wMap.value(k).FGColor;
+			QColor bg = wMap.value(k).BGColor;
+			QFont  fo = wMap.value(k).Font;
+			s.setValue(keyNameFg, fg.name());
+			s.setValue(keyNameBg, bg.name());
+			s.setValue(keyNameFo, fo.toString());
+		}
+	}
+};
+

@@ -36,6 +36,7 @@
 #define TOCONF_ENUM_H
 
 #include "core/tora_export.h"
+#include "ts_log/ts_log_utils.h"
 
 #include <QtCore/QObject>
 #include <QtCore/QMetaEnum>
@@ -43,6 +44,9 @@
 #ifndef ENUM_REF
 #define ENUM_REF(o,e) (o::staticMetaObject.enumerator(o::staticMetaObject.indexOfEnumerator(#e)))
 #endif
+
+class QSettings;
+class QVariant;
 
 namespace ToConfiguration {
 
@@ -53,6 +57,16 @@ namespace ToConfiguration {
 		ConfigContext(QString const& context, QMetaEnum const& e);
 		ConfigContext(ConfigContext const& other);
 		virtual QVariant defaultValue(int) const = 0;
+
+		virtual void saveUserType(QSettings &s, QVariant &val, int key) const
+		{
+			Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Unknown key to store: %1").arg(key)));
+		};
+
+		virtual void loadUserType(QSettings &s, QVariant &val, int key) const
+		{
+			Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Unknown key to store: %1").arg(key)));
+		};
 
 		/* Try to migrate configuration from Tora2 config */
 		virtual QVariant toraIIValue(int) const { return QVariant(); }

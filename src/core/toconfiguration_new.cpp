@@ -130,6 +130,13 @@ void toConfigurationNew::saveAll()
 			m_settings.setValue(key, currValue);
 			m_settings.endGroup();
 			continue;
+		} else if ( !currValue.isNull() && currValue.type() == QVariant::UserType) {
+			m_settings.beginGroup(ctx->name());
+			m_settings.beginGroup(currValue.typeName());
+			ctx->saveUserType(m_settings, currValue, optionKey);
+			m_settings.endGroup();
+			m_settings.endGroup();
+			continue;
 		}
 		if (!prefValue.isNull() && prefValue.canConvert(defaultValue.type()) && prefValue.convert(defaultValue.type()) && prefValue != defaultValue)
 		{

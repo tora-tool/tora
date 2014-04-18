@@ -71,6 +71,9 @@ namespace ToConfiguration
 			, EditStyleMap          // #define CONF_EDIT_STYLE
 		};
 		virtual QVariant defaultValue(int option) const;
+
+		virtual void saveUserType(QSettings &s, QVariant &val, int key) const;
+
 	};
 }
 
