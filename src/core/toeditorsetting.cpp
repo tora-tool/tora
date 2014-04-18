@@ -39,6 +39,7 @@
 #include "ts_log/ts_log_utils.h"
 
 #include <QtCore/QDebug>
+#include <QtCore/QSettings>
 
 QVariant ToConfiguration::Editor::defaultValue(int option) const
 {
