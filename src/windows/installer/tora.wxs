@@ -14,7 +14,11 @@
   <?define PlatformProgramFilesFolder = "ProgramFilesFolder" ?>
   <?define PlatformSystemFolder = "SystemFolder" ?>
   <?endif ?>
-  <?define ProductVersion="2.9.5120" ?>
+  <?ifdef env.BUILD_NUMBER?>
+  <?define ProductVersion="2.9.$(env.BUILD_NUMBER)"?>
+  <?else?>
+  <?define ProductVersion="2.9.0"?>
+  <?endif?>
   <?define UpgradeCode="BAAA2F25-E626-4CC5-BC37-86477A2409AC"?>
   <?define BuildType = "RelWithDebInfo" ?>
   <Product Id="8D1E5566-5E9D-4915-947F-E2F7EFCE0E66" 
