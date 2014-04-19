@@ -63,8 +63,8 @@ DotGrammar::definition<ScannerT>::definition(DotGrammar const& /*self*/)
   graph  = (!(keyword_p("strict")[&strict]) >> (keyword_p("graph")[&undigraph] | keyword_p("digraph")[&digraph])
   >> !ID[&graphid] >> ch_p('{') >> !stmt_list >> ch_p('}'))[&finalactions];
   ID = (
-  ( ( (anychar_p - punct_p) | '_' ) >> *( (anychar_p - punct_p) | '_' ) )
-  | real_p
+  real_p
+  | ( ( (anychar_p - punct_p) | '_' ) >> *( (anychar_p - punct_p) | '_' ) )
   | ( '"' >>  *( (ch_p('\\') >> '"') | (anychar_p - '"') ) >>  '"' )
   | ( ch_p('<') >>  *( anychar_p  - '<' - '>' | tag ) >>  '>' )
   );
