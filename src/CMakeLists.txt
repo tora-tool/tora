@@ -1114,7 +1114,7 @@ ADD_EXECUTABLE("test6" ${GUI_TYPE}
   ${TEST6_SOURCES}
   ${PCH_SOURCE}
   )
-TARGET_LINK_LIBRARIES("test6")
+TARGET_LINK_LIBRARIES("test6" ermodel)
 SET_TARGET_PROPERTIES("test6" PROPERTIES ENABLE_EXPORTS ON)
 ADD_DEPENDENCIES("test6" revisiontag) # explicitly say that the executable depends on the svnheader
 IF(PCH_DEFINED)
