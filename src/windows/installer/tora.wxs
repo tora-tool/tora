@@ -21,7 +21,7 @@
   <?endif?>
   <?define UpgradeCode="BAAA2F25-E626-4CC5-BC37-86477A2409AC"?>
   <?define BuildType = "RelWithDebInfo" ?>
-  <Product Id="8D1E5566-5E9D-4915-947F-E2F7EFCE0E66" 
+  <Product Id="*" 
 	   Name="$(var.ProductName)" Language="1033" 
 	   Version="$(var.ProductVersion)"
 	   Manufacturer="TOra" 
@@ -45,6 +45,7 @@
     <WixVariable Id="WixUIBannerBmp" Value="largelogo.bmp" />
     <WixVariable Id="WixUILicenseRtf" Value="..\..\..\COPYING" />
 
+    <Property Id="PREVIOUSVERSIONSINSTALLED" Secure="yes" />
     <Upgrade Id="$(var.UpgradeCode)">
       <UpgradeVersion 
 	  OnlyDetect="no" 
@@ -129,7 +130,8 @@
     </Directory>
 
     <InstallExecuteSequence>
-      <RemoveExistingProducts After="InstallValidate" />
+      <!--<RemoveExistingProducts After="InstallValidate" />-->
+      <RemoveExistingProducts Before="InstallInitialize" />
     </InstallExecuteSequence>
 
     <Feature Id="DefaultFeature" Title="Main Feature" Level="1">
