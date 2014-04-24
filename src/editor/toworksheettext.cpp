@@ -40,6 +40,8 @@
 #include "core/tologger.h"
 #include "shortcuteditor/shortcutmodel.h"
 
+#include <QtGui/QListWidget>
+
 using namespace ToConfiguration;
 
 toWorksheetText::toWorksheetText(QWidget *parent, const char *name)
