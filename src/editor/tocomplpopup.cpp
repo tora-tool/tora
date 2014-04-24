@@ -33,12 +33,12 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "editor/tocomplpopup.h"
-#include "editor/tohighlightedtext.h"
+#include "editor/toworksheettext.h"
 
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QListWidget>
 
-toComplPopup::toComplPopup(toHighlightedText* editor)
+toComplPopup::toComplPopup(toWorksheetText* editor)
     : QWidget(editor, Qt::Popup)
 {
     List   = new QListWidget(this);

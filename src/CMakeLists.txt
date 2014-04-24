@@ -273,6 +273,7 @@ SET(TORA_MOC_CLASSES
   parsing/tolexeroracleapis.h 
   
   editor/tobaseeditor.h
+  editor/tocomplpopup.h
   editor/tomarkededitor.h
   editor/toscintilla.h
   editor/tohighlightededitor.h
@@ -504,6 +505,7 @@ SET(TORA_SOURCES
   core/utils_part.cpp
   
   editor/tobaseeditor.cpp
+  editor/tocomplpopup.cpp
   editor/tomarkededitor.cpp
   editor/toscintilla.cpp
   editor/tohighlightededitor.cpp

@@ -38,11 +38,14 @@
 #include "editor/tosqltext.h"
 #include "core/toeditorsetting.h"
 
+class toComplPopup;
+
 class toWorksheetText : public toSqlText
 {
     Q_OBJECT;
     Q_ENUMS(EditorTypeEnum);
     typedef toSqlText super;
+    friend class toComplPopup;
 public:
 
     enum EditorTypeEnum {
@@ -70,8 +73,11 @@ public slots:
     void gotoPrevBookmark();
     void gotoNextBookmark();
 
-    // Override QScintilla
+    // Override QScintilla (display custom toComplPopup window)
     virtual void autoCompleteFromAPIs();
+
+    // Insert chosen text
+    void completeFromAPI(QListWidgetItem * item);
 
     void positionChanged(int row, int col);
 
@@ -88,6 +94,8 @@ protected:
     \param partial a QString reference with starting char sequence
     */
     QStringList getCompletionList(QString &partial);
+
+    void completeWithText(QString const&);
 
     virtual void focusInEvent(QFocusEvent *e);
     virtual void focusOutEvent(QFocusEvent *e);
@@ -107,6 +115,7 @@ protected:
 
 private:
     EditorTypeEnum editorType;
+    toComplPopup* popup;
 
 protected:
     QsciAbstractAPIs* m_complAPI;

@@ -38,13 +38,13 @@
 #include <QtGui/QWidget>
 
 class QListWidget;
-class toHighlightedText;
+class toWorksheetText;
 
 class toComplPopup : public QWidget
 {
     Q_OBJECT;
 public:
-    toComplPopup(toHighlightedText* editor);
+    toComplPopup(toWorksheetText* editor);
     virtual ~toComplPopup();
 
     QListWidget* list(void)
@@ -59,7 +59,7 @@ protected:
     virtual void keyPressEvent(QKeyEvent * e);
 
 private:
-    toHighlightedText *Editor;
+    toWorksheetText  *Editor;
     QListWidget       *List;
 };
 

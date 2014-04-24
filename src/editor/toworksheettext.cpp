@@ -33,6 +33,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "editor/toworksheettext.h"
+#include "editor/tocomplpopup.h"
 #include "core/toconfiguration_new.h"
 #include "core/toeditorsetting.h"
 #include "core/toconnection.h"
@@ -48,6 +49,7 @@ toWorksheetText::toWorksheetText(QWidget *parent, const char *name)
 	, m_complAPI(NULL)
 	, complTimer(new QTimer(this))
 	, editorType(SciTe)
+	, popup(new toComplPopup(this))
 {
     QsciScintilla::setAutoCompletionThreshold(0);
     QsciScintilla::setAutoCompletionSource(QsciScintilla::AcsAPIs);
@@ -79,6 +81,16 @@ toWorksheetText::toWorksheetText(QWidget *parent, const char *name)
 			SIGNAL(toggled(int)),
 			this,
 			SLOT(setEditorType(int)));
+
+    popup->hide();
+    connect(popup->list(),
+            SIGNAL(itemClicked(QListWidgetItem*)),
+            this,
+            SLOT(completeFromAPI(QListWidgetItem*)));
+    connect(popup->list(),
+            SIGNAL(itemActivated(QListWidgetItem*)),
+            this,
+            SLOT(completeFromAPI(QListWidgetItem*)));
 }
 
 toWorksheetText::~toWorksheetText()
@@ -119,14 +131,9 @@ void toWorksheetText::keyPressEvent(QKeyEvent * e)
             return;
         }
     } else if (e->modifiers() == Qt::ControlModifier && e->key() == Qt::Key_T) {
-        int curline, curcol;
-        getCursorPosition (&curline, &curcol);
-        QString word = wordAtLineIndex(curline, curcol);
-        QStringList tabs = toConnection::currentConnection(this).getCache().completeEntry(word);
-        Q_FOREACH(QString t, tabs)
-        {
-        	TLOG(0, toNoDecorator, __HERE__) << " Tab: " << t << std::endl;
-        }
+        autoCompleteFromAPIs();
+        e->accept();
+        return;
     }
 	super::keyPressEvent(e);
 }
@@ -153,6 +160,8 @@ void toWorksheetText::positionChanged(int row, int col)
 //    markerAdd(row, m_currentLineMarginHandle);
 }
 
+// the QScintilla way of autocomletition
+#if 0
 void toWorksheetText::autoCompleteFromAPIs()
 {
     complTimer->stop(); // it's a must to prevent infinite reopening
@@ -160,6 +169,89 @@ void toWorksheetText::autoCompleteFromAPIs()
 		toScintilla::autoCompleteFromAPIs();
 		return;
 	}
+}
+#endif
+
+// the Tora way of autocomletition
+void toWorksheetText::autoCompleteFromAPIs()
+{
+    complTimer->stop(); // it's a must to prevent infinite reopening
+
+    Utils::toBusy busy;
+    QListWidget *list = popup->list();
+    QString partial; // TODO never used, never assigned
+    QStringList compleList = this->getCompletionList(partial);
+
+    if (compleList.count() == 0)
+        return;
+
+    if (compleList.count() == 1 /*&& compleList.first() == partial*/)
+    {
+        completeWithText(compleList.first());
+    } else {
+        long position, posx, posy;
+        int curCol, curRow;
+        this->getCursorPosition(&curRow, &curCol);
+        position = this->SendScintilla(SCI_GETCURRENTPOS);
+        posx = this->SendScintilla(SCI_POINTXFROMPOSITION, 0, position);
+        posy = this->SendScintilla(SCI_POINTYFROMPOSITION, 0, position) +
+               this->SendScintilla(SCI_TEXTHEIGHT, curRow);
+        QPoint p(posx, posy);
+        p = mapToGlobal(p);
+        popup->move(p);
+        list->clear();
+        list->addItems(compleList);
+//        if (!partial.isNull() && partial.length() > 0)
+//        {
+//            int i;
+//            for (i = 0; i < list->model()->rowCount(); i++)
+//            {
+//                if (list->item(i)->text().indexOf(partial) == 0)
+//                {
+//                    list->item(i)->setSelected(true);
+//                    list->setCurrentItem(list->item(i));
+//                    break;
+//                }
+//            }
+//        }
+
+        // if there's no current selection, select the first
+        // item. that way arrow keys work as intended.
+        QList<QListWidgetItem *> selected = list->selectedItems();
+        if (selected.size() < 1 && list->count() > 0)
+        {
+            list->item(0)->setSelected(true);
+            list->setCurrentItem(list->item(0));
+        }
+
+        popup->show();
+        popup->setFocus();
+    }
+}
+
+void toWorksheetText::completeFromAPI(QListWidgetItem* item)
+{
+    if (item)
+    {
+    	completeWithText(item->text());
+    }
+    popup->hide();
+}
+
+void toWorksheetText::completeWithText(QString const& text)
+{
+    long pos = currentPosition();
+    int start = SendScintilla(SCI_WORDSTARTPOSITION, pos, true);
+    int end = SendScintilla(SCI_WORDENDPOSITION, pos, true);
+    setSelection(start, end);
+    removeSelectedText();
+    insert(text);
+    SendScintilla(SCI_SETCURRENTPOS,
+                  SendScintilla(SCI_GETCURRENTPOS) +
+                  text.length());
+    pos = SendScintilla(SCI_GETCURRENTPOS);
+    SendScintilla(SCI_SETSELECTIONSTART, pos, true);
+    SendScintilla(SCI_SETSELECTIONEND, pos, true);
 }
 
 void toWorksheetText::setEditorType(int)
@@ -224,7 +316,7 @@ void toWorksheetText::gotoNextBookmark()
 
 QStringList toWorksheetText::getCompletionList(QString &partial)
 {
-    QStringList toReturn;
+    QStringList retval;
 #if 0
     int curline, curcol;
     // used as a flag to prevent completion popup when there is
@@ -235,7 +327,7 @@ QStringList toWorksheetText::getCompletionList(QString &partial)
     QString line = text(curline);
 
     if (isReadOnly() || curcol == 0 || !toConfigurationSingle::Instance().codeCompletion())
-        return toReturn;
+        return retval;
 
     //throw QString("QStringList toHighlightedTextEditor::getCompletionList ... not implemented yet.");
 
@@ -292,7 +384,7 @@ QStringList toWorksheetText::getCompletionList(QString &partial)
                     owner = tokens.getToken(false);
             }
             else if (token == ")")
-                return toReturn;
+                return retval;
         }
     }
     if (!owner.isEmpty())
@@ -312,7 +404,7 @@ QStringList toWorksheetText::getCompletionList(QString &partial)
                 {
                     QString t = conn.quote(table.Name, false);
                     if(t.indexOf(*partial) == 0)
-                        toReturn.append(t);
+                        retval.append(t);
                 }
             }
             else
@@ -329,7 +421,7 @@ QStringList toWorksheetText::getCompletionList(QString &partial)
                     else
                         t = conn.quote((*i).Name, false);
                     if (t.indexOf(*partial) == 0)
-                        toReturn.append(t);
+                        retval.append(t);
                 }
             }
         }
@@ -345,18 +437,28 @@ QStringList toWorksheetText::getCompletionList(QString &partial)
     }
 
     // if is toReturn empty fill it with keywords...
-    if (showDefault && toReturn.count() == 0)
+    if (showDefault && retval.count() == 0)
     {
         for (int i = 0; i < defaultCompletion.size(); ++i)
         {
             if (defaultCompletion.at(i).startsWith(partial, Qt::CaseInsensitive))
-                toReturn.append(defaultCompletion.at(i));
+                retval.append(defaultCompletion.at(i));
         }
     }
 
-    toReturn.sort();
+    retval.sort();
 #endif
-    return toReturn;
+    int curline, curcol;
+    getCursorPosition (&curline, &curcol);
+    QString word = wordAtLineIndex(curline, curcol);
+    retval = toConnection::currentConnection(this).getCache().completeEntry(word);
+    retval.sort();
+    Q_FOREACH(QString t, retval)
+    {
+    	TLOG(0, toNoDecorator, __HERE__) << " Tab: " << t << std::endl;
+    }
+
+    return retval;
 }
 
 void toWorksheetText::focusInEvent(QFocusEvent *e)
