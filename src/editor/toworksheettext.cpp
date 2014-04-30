@@ -184,7 +184,7 @@ void toWorksheetText::autoCompleteFromAPIs()
     QString partial; // TODO never used, never assigned
     QStringList compleList = this->getCompletionList(partial);
 
-    if (compleList.count() == 0)
+    if (compleList.isEmpty())
         return;
 
     if (compleList.count() == 1 /*&& compleList.first() == partial*/)
@@ -454,7 +454,8 @@ QStringList toWorksheetText::getCompletionList(QString &partial)
     getCursorPosition (&curline, &curcol);
     QString word = wordAtLineIndex(curline, curcol);
     retval = toConnection::currentConnection(this).getCache().completeEntry(word);
-    retval.sort();
+    if (retval.size() <= 100) // Do not waste CPU on sorting huge completition list TODO: limit the amount of returned entries
+    	retval.sort();
     Q_FOREACH(QString t, retval)
     {
     	TLOG(0, toNoDecorator, __HERE__) << " Tab: " << t << std::endl;
