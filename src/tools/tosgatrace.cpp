@@ -249,9 +249,14 @@ static toSQL SQLSGATrace("toSGATrace:SGATrace",
                          "with SGA address at the end and a table name 'b' with a column username and must accept \"and ...\" clauses at end.");
 
 static toSQL SQLLongOps(TOSQL_LONGOPS,
-                        "SELECT b.opname \"Type\",\n"
-                        "       a.SQL_Text \"SQL Text\",\n"
-                        "       b.start_time \"Start Time\",\n"
+                        "SELECT "
+                        //"       b.opname \"Type\",                        \n"
+                        "       b.message \"Message\",                    \n"
+                        "       a.SQL_Text \"SQL Text\",                  \n"
+                        "       b.start_time \"Start Time\",              \n"
+                        "       case when totalwork = 0 then 0            \n"
+                        "            else round(100 * sofar/totalwork, 2) \n"
+                        "       end as \"%\",                             \n"
                         "       b.sofar||'/'||b.totalwork \"Completed/Total\",\n"
                         "       b.elapsed_seconds||'/'||(b.elapsed_seconds+b.time_remaining) \"Completed/Total Time\",\n"
                         "       b.username \"Parsing Schema\",\n"

@@ -61,13 +61,7 @@ toResultLong::toResultLong(QWidget *parent, const char *name, Qt::WFlags f)
 
 void toResultLong::query(const QString &sql, const toQueryParams &param)
 {
-    if (!setSqlAndParams(sql, param))
-    {
-        emit firstResult(toResult::sql(),
-                         toConnection::exception(tr("Will not reexecute same query")), false);
-        emit done();
-        return ;
-    }
+    setSqlAndParams(sql, param);
     slotStop();
     Query = NULL;
     LastItem = NULL;
@@ -96,8 +90,8 @@ void toResultLong::query(const QString &sql, const toQueryParams &param)
         		                 //, Statistics
         		                 , toEventQuery::READ_ALL
         		                 );
-        connect(Query, SIGNAL(dataAvailable()), this, SLOT(slotAddItem()));
-        connect(Query, SIGNAL(done()), this, SLOT(slotQueryDone()));
+        connect(Query, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(slotAddItem()));
+        connect(Query, SIGNAL(done(toEventQuery*)), this, SLOT(slotQueryDone()));
         if (ReadAll)
         {
             MaxNumber = -1;
