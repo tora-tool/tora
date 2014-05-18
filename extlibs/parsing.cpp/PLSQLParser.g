@@ -21,17 +21,17 @@ options {
     tokenVocab=PLSQLLexer;
     language=Cpp;
     //memoize=true;
-    //output=AST;
+    output=AST;
 }
 
 import PLSQLKeys, PLSQLCommons, PLSQL_DMLParser, SQLPLUSParser;
 
 @parser::includes
 {
-	#include "UserTraits.hpp"
+	#include "s004Traits.hpp"
 	#include "PLSQLLexer.hpp"
 }
-@parser::namespace { Antlr3BackendImpl }
+@parser::namespace { Antlr3Test }
 
 @header {
 /**

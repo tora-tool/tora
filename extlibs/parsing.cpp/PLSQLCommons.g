@@ -19,10 +19,10 @@ parser grammar PLSQLCommons;
 
 @includes
 {
-        #include "UserTraits.hpp"
+        #include "s004Traits.hpp"
 }
 
-@namespace{ Antlr3BackendImpl }
+@namespace{ Antlr3Test }
 
 // $<Common SQL PL/SQL Clauses/Parts
 

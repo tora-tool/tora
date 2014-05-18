@@ -19,10 +19,10 @@ parser grammar PLSQLKeys;
 
 @includes
 {
- 	#include "UserTraits.hpp"
-// 	#include "PLSQLLexer.hpp"            
+	#include "s004Traits.hpp"
+	#include "PLSQLLexer.hpp"        
 }
-@namespace{ Antlr3BackendImpl }
+@namespace { Antlr3Test }
 
         
 // @members{

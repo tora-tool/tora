@@ -142,7 +142,7 @@ outputFile( LEXER,
 /* -----------------------------------------
  * Include the ANTLR3 generated header file.
  */
-#include    "<name>.hpp"
+#include "<name>.hpp"
 <if(trace)>
 #include \<iostream>
 <endif>
@@ -151,6 +151,7 @@ outputFile( LEXER,
 //
 <recognizer.grammar.delegators: {g|#include "<g.recognizerName>.hpp" }; separator="\n">
 <endif>
+#include \<memory>
 
 <actions.(actionScope).postinclude>
 /* ----------------------------------------- */
@@ -160,8 +161,8 @@ outputFile( LEXER,
 <if(literals)>
 
 <beginNamespace(actions)>
-<if(LEXER)>
-const ANTLR_UINT8* <name>Tokens::getTokenName(ANTLR_INT32 index) const
+<if(LEXER)><if(!PARSER)>
+const ANTLR_UINT8* <name>Tokens::getTokenName(ANTLR_UINT32 index)
 {
        if( EOF_TOKEN == index)
                return (ANTLR_UINT8*) "\<EOF>";
@@ -178,7 +179,7 @@ ANTLR_UINT8* <name>Tokens::TokenNames[<length(tokens)>+4]
        (ANTLR_UINT8*) "\<UP>",
        <rest(tokens):{it |(ANTLR_UINT8*) "<it.name>",//<it.type>}; separator="\n">
        };
-<endif>
+<endif><endif>
 
 /** String literals used by <name> that we must do things like MATCHS() with.
  *  C will normally just lay down 8 bit characters, and you can use L"xxx" to
@@ -205,6 +206,7 @@ ANTLR_UINT8* <name>Tokens::TokenNames[<length(tokens)>+4]
  */
 
 >>
+
 headerFileExtension() ::= ".hpp"
 
 beginNamespace(actions) ::= <%
@@ -378,16 +380,21 @@ public:
 		<tokens:{it | , <it.name> = <it.type> }; separator="\n">
 	};
 <if(LEXER)>
-       const ANTLR_UINT8* getTokenName(ANTLR_INT32 index) const;
+       static const ANTLR_UINT8* getTokenName(ANTLR_UINT32 index);
 
 protected:
-       static ANTLR_UINT8* TokenNames[];
+	static ANTLR_UINT8* TokenNames[];
+
 <endif>
 };
 
 /** Context tracking structure for <mainName()>
  */
-class <name> : public <componentBaseType()>, public <name>Tokens
+class <name> : public <componentBaseType()>
+    , public <name>Tokens
+<if(PARSER)>
+    , <name>ImplTraits::TreeAdaptorType
+<endif>
 {
 public:
 	typedef <name>ImplTraits ImplTraits;
@@ -396,6 +403,11 @@ public:
 	typedef <componentBaseType()> BaseType;
 	typedef ImplTraits::RecognizerSharedStateType\<StreamType> RecognizerSharedStateType;
 	typedef StreamType InputType;
+<if(PARSER)>
+	typedef <name>ImplTraits::CommonTokenType CommonTokenType;
+	typedef <name>ImplTraits::TreeAdaptorType TreeAdaptorType;
+<endif>
+
 <if(recognizer.filterMode)>
 	static const bool IsFiltered = true;
 <else>
@@ -428,6 +440,7 @@ public:
     <name>(InputType* instream, RecognizerSharedStateType* state<recognizer.grammar.delegators:{g|, <g.recognizerName>* <g:delegateName()>}>);
     
     void init(InputType* instream <recognizer.grammar.delegators:{g|, <g.recognizerName>* <g:delegateName()>}> );
+    static ANTLR_UINT8** getTokenNames();
 
     <actions.(actionScope).context>
 
@@ -556,14 +569,14 @@ headerReturnType(ruleDescriptor) ::= <%
 // Produce the lexer output
 //
 lexer(  grammar,
-	name,
+        name,
         tokens,
         scopes,
         rules,
         numRules,
         filterMode,
         superClass,
-        labelType="std::auto_ptr< ImplTraits::CommonTokenType >") ::= <<
+        labelType="ImplTraits::CommonTokenType") ::= <<
 
 using namespace antlr3;
 
@@ -883,7 +896,7 @@ void
  *
  * \return Pointer to first char * in the table.
  */
-static ANTLR_UINT8**	getTokenNames()
+ANTLR_UINT8**	<name>::getTokenNames()
 {
         return <grammar.composite.rootGrammar.recognizerName>TokenNames;
 }
@@ -995,7 +1008,7 @@ treeParser(	grammar,
  */
 synpredRule(ruleName, ruleDescriptor, block, description, nakedBlock) ::=
 <<
-// $ANTLR start <ruleName>
+// $ANTLR start synpredRule <ruleName>
 void <name>::m<ruleName>_fragment( <ruleDescriptor.parameterScope:parameterScope()> )
 {
 	<ruleLabelDefs()>
@@ -1228,7 +1241,7 @@ lexerRuleLabelDefs() ::= <<
 <[ruleDescriptor.tokenLabels,
   ruleDescriptor.tokenListLabels,
   ruleDescriptor.ruleLabels]
-    :{it |<labelType> <it.label.text>;}; separator="\n"
+    :{it |std::unique_ptr\<<labelType>\> <it.label.text> = NULL;}; separator="\n"
 >
 <ruleDescriptor.charLabels:{it |ANTLR_UINT32 <it.label.text>;}; separator="\n">
 <[ruleDescriptor.tokenListLabels,
@@ -1247,6 +1260,11 @@ lexerRuleLabelInit() ::= <<
 >>
 
 lexerRuleLabelFree() ::= <<
+<[ruleDescriptor.tokenLabels,
+  ruleDescriptor.tokenListLabels,
+  ruleDescriptor.ruleLabels]
+    :{it |<it.label.text> = NULL;}; separator="\n"
+>
 <[ruleDescriptor.tokenListLabels,
   ruleDescriptor.ruleListLabels,
   ruleDescriptor.ruleListLabels]
@@ -1574,7 +1592,7 @@ this->matchRange(<a>, <b>);
 >>
 
 /** For now, sets are interval tests and must be tested inline */
-matchSet(s,label,elementIndex,terminalOptions,postmatchCode="") ::= <<
+matchSet(s,label,elementIndex,postmatchCode="",terminalOptions={}) ::= <<
 <if(label)>
 <if(LEXER)>
 <label>= this->LA(1);<\n>
@@ -1632,7 +1650,7 @@ ANTLR_UINT32 <label>StartLine<elementIndex> = this->getLine();
 ANTLR_UINT32 <label>StartCharPos<elementIndex> = this->getCharPositionInLine();
 this->matchs(<string>);
 <checkRuleBacktrackFailure()>
-<label> = <labelType>(new CommonTokenType);
+<label>.reset( new CommonTokenType );
 <label>->set_type( CommonTokenType::TOKEN_INVALID );
 <label>->set_startIndex( <label>Start);
 <label>->set_stopIndex( this->getCharIndex()-1);
@@ -1705,7 +1723,7 @@ lexerRuleRef(rule,label,args,elementIndex,scope) ::= <<
     ANTLR_UINT32 <label>StartCharPos<elementIndex> = this->getCharPositionInLine();
     <if(scope)>m_<scope:delegateName()>-><endif>m<rule.name>(<if(scope)>m_<scope:delegateName()><endif> <if(args)>, <endif><args; separator=", ">);
     <checkRuleBacktrackFailure()>
-    <label> = <labelType>(new CommonTokenType());
+    <label>.reset( new CommonTokenType() );
     <label>->set_type( CommonTokenType::TOKEN_INVALID);
     <label>->set_startIndex( <label>Start<elementIndex> );
     <label>->set_stopIndex( this->getCharIndex()-1 );
@@ -1729,14 +1747,12 @@ lexerRuleRefAndListLabel(rule,label,args,elementIndex,scope) ::= <<
 lexerMatchEOF(label,elementIndex) ::= <<
 <if(label)>
 {
-    ANTLR_UINT32 <label>Start<elementIndex>;
+    ANTLR_UINT32 <label>Start<elementIndex> = this->getCharIndex();
     ANTLR_UINT32 <label>StartLine<elementIndex> = this->getLine();
     ANTLR_UINT32 <label>StartCharPos<elementIndex> = this->getCharPositionInLine();
-    <labelType> <label>;
-    <label>Start<elementIndex> = this->getCharIndex();
     this->matchc(ANTLR_CHARSTREAM_EOF);
     <checkRuleBacktrackFailure()>
-    <label> = <labelType>(new CommonTokenType());
+    <label>.reset( new CommonTokenType() );
     <label>->set_type( CommonTokenType::TOKEN_EOF );
     <label>->set_startIndex(<label>Start<elementIndex>);
     <label>->set_stopIndex(this->getCharIndex()-1);
@@ -2255,7 +2271,7 @@ bool
  */
 ruleLabelType(referencedRule) ::= <%
 <if(referencedRule.hasMultipleReturnValues)>
-<referencedRule.name>_return
+<referencedRule.grammar.recognizerName>::<referencedRule.name>_return
 <else>
 <if(referencedRule.hasSingleReturnValue)>
 <referencedRule.singleValueReturnType>
