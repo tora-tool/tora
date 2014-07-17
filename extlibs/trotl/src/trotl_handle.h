@@ -41,6 +41,7 @@
 #define TROTL_HANDLE_H_
 
 #include <typeinfo>
+#include <algorithm>
 #include <oci.h>
 
 #include "trotl_export.h"

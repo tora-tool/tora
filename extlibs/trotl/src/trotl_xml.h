@@ -34,6 +34,7 @@
 #ifndef TROTL_XML_H_
 #define TROTL_XML_H_
 
+// include rpcndr.h/wtypes.h before oratypes.h(from xml.h)
 // #ifdef WIN32
 // #include <stdio.h>
 // #include <wtypes.h>
@@ -41,6 +42,7 @@
 // //#define gmtime gmtime_s
 // //#define localtime localtime_s
 // #endif
+#include "trotl_common.h"
 
 extern "C" {
 #include "xml.h"

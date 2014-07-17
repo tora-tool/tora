@@ -1122,13 +1122,7 @@ void * SmallObjAllocator::Allocate( std::size_t numBytes, bool doThrow )
 
     if ( ( NULL == place ) && doThrow )
     {
-#ifdef _MSC_VER
-        throw std::bad_alloc( "could not allocate small object" );
-#else
-        // GCC did not like a literal string passed to std::bad_alloc.
-        // so just throw the default-constructed exception.
         throw std::bad_alloc();
-#endif
     }
     return place;
 }
