@@ -520,7 +520,11 @@ QList<toConnectionProviderFinder::ConnectionProvirerParams> toOracleFinder::find
     foreach( QString s, possibleOracleHomes)
     {
     	QDir ohDir(s);
-    	QDir ohLibDir(s + QDir::separator() + QString::fromAscii("lib"));
+#ifdef Q_OS_WIN32
+    	QDir ohLibDir(s + QDir::separator() + QString::fromAscii("bin"));
+#else
+		QDir ohLibDir(s + QDir::separator() + QString::fromAscii("lib"));
+#endif
     	QStringList sLibraries = ohLibDir.entryList( m_libname);
     	QString version;
     	foreach( QString sLibrary, sLibraries)
