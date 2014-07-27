@@ -34,7 +34,7 @@ INCLUDE_DIRECTORIES(
   ${CMAKE_CURRENT_SOURCE_DIR}/precompiled
   ${CMAKE_BINARY_DIR}
   ${CMAKE_SOURCE_DIR}/extlibs/trotl/src
-  ${CMAKE_SOURCE_DIR}/extlibs/libantlr3cpp-3.5.1/include
+  ${CMAKE_SOURCE_DIR}/extlibs/libantlr3cpp-3.5.2/include
   ${QT_INCLUDES}  
   )
 
