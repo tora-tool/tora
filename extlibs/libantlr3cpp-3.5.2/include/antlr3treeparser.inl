@@ -52,7 +52,7 @@ void TreeParser<ImplTraits>::fillExceptionData( ExceptionBaseType* ex )
 	// Are you ready for this? Deep breath now...
 	//
 	{
-		TreeType* tnode;
+		TreeTypePtr tnode;
 
 		tnode		= ex->get_token();
 
@@ -105,12 +105,12 @@ void TreeParser<ImplTraits>::displayRecognitionError( ANTLR_UINT8** tokenNames, 
 							<< this->get_rec()->get_state()->get_exception()->get_message();
 
 	IntStreamType* is			= this->get_istream();
-	TreeType* theBaseTree	= this->get_rec()->get_state()->get_exception()->get_token();
+	TreeTypePtr theBaseTree	= this->get_rec()->get_state()->get_exception()->get_token();
 	StringType ttext		= theBaseTree->toStringTree();
 
 	if  (theBaseTree != NULL)
 	{
-		TreeType*  theCommonTree	=  static_cast<TreeType*>(theBaseTree);
+		TreeTypePtr  theCommonTree	=  static_cast<TreeTypePtr>(theBaseTree);
 		if	(theCommonTree != NULL)
 		{
 			CommonTokenType* theToken	= theBaseTree->getToken();
@@ -156,8 +156,8 @@ TreeParser<ImplTraits>::getMissingSymbol( IntStreamType* istream, ExceptionBaseT
 					  ANTLR_UINT32	 expectedTokenType, BitsetListType*	follow)
 {
 	TreeNodeStreamType*		tns;
-	TreeType*				node;
-	TreeType*				current;
+	TreeTypePtr				node;
+	TreeTypePtr				current;
 	CommonTokenType*		token;
 	StringType				text;
         ANTLR_INT32             i;

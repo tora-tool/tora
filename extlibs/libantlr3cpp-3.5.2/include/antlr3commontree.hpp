@@ -45,9 +45,10 @@ public:
 	typedef typename ImplTraits::StringType	StringType;
 	typedef typename ImplTraits::CommonTokenType CommonTokenType;
 	typedef typename ImplTraits::TreeType TreeType;
-	typedef CommonTree TokenType;
-	typedef typename AllocPolicyType::template VectorType<TreeType*> ChildrenType;
-	typedef typename AllocPolicyType::template ListType<TreeType*>	ChildListType;
+	typedef typename ImplTraits::TreeTypePtr TreeTypePtr;
+	//typedef CommonTree TokenType;
+	typedef typename AllocPolicyType::template VectorType<TreeTypePtr> ChildrenType;
+	typedef typename AllocPolicyType::template ListType<TreeTypePtr> ChildListType;
 
 private:
 	/// The list of all the children that belong to this node. They are not part of the node
@@ -55,10 +56,6 @@ private:
     ///
     ChildrenType		m_children;
 
-    /// This is used to store the current child index position while descending
-    /// and ascending trees as the tree walk progresses.
-    ///
-    ANTLR_MARKER		m_savedIndex;
 
     /// Start token index that encases this tree
     ///
@@ -70,7 +67,7 @@ private:
 
     /// A single token, this is the payload for the tree
     ///
-    CommonTokenType*    m_token;
+    const CommonTokenType*    m_token;
 
 	/// Points to the node that has this node as a child.
 	/// If this is NULL, then this is the root node.
@@ -84,50 +81,63 @@ private:
 
 public:
 	CommonTree();
-	CommonTree( CommonTokenType* token );
-	CommonTree( CommonTree* token );
+	CommonTree( const CommonTokenType* token );
+	CommonTree( const CommonTree* token );
 	CommonTree( const CommonTree& ctree );
+	~CommonTree();
 
-	TokenType*   get_token() const;
+	const CommonTokenType* get_token() const;
+	void set_token(CommonTokenType const*);
+
 	ChildrenType& get_children();
 	const ChildrenType& get_children() const;
-	ChildrenType* get_children_p();
 	ANTLR_INT32	get_childIndex() const;
 	TreeType* get_parent() const;
+
+    ANTLR_MARKER   get_startIndex() const;
+    void	set_startIndex(ANTLR_MARKER index);
+
+    ANTLR_MARKER  get_stopIndex() const;
+    void	set_stopIndex(ANTLR_MARKER index);
 
 	void    set_parent( TreeType* parent);
 	void    set_childIndex( ANTLR_INT32 );
 
-	void	addChild(TreeType* child);
+	void	addChild(TreeTypePtr& child);
 	/// Add all elements of the supplied list as children of this node
 	///
 	void	addChildren(const ChildListType& kids);
-	void    createChildrenList();
-	TreeType*	deleteChild(ANTLR_UINT32 i);
+
+	TreeTypePtr	deleteChild(ANTLR_UINT32 i);
 	/// Delete children from start to stop and replace with t even if t is
 	/// a list (nil-root tree). Num of children can increase or decrease.
 	/// For huge child lists, inserting children can force walking rest of
 	/// children to set their child index; could be slow.
 	///
-	void	replaceChildren(ANTLR_INT32 startChildIndex, ANTLR_INT32 stopChildIndex, TreeType* t);
+	void	replaceChildren(ANTLR_INT32 startChildIndex, ANTLR_INT32 stopChildIndex, TreeTypePtr t);
+
 	CommonTree*	dupNode() const;
-	TreeType*	dupTree();
+	CommonTree*	dupNode(void *) const;
+
+
 	ANTLR_UINT32	getCharPositionInLine();
-	TreeType*	getChild(ANTLR_UINT32 i);
+	TreeTypePtr&	getChild(ANTLR_UINT32 i);
 	
 	ANTLR_UINT32	getChildCount() const;
 	ANTLR_UINT32	getType();
-	TreeType*	getFirstChildWithType(ANTLR_UINT32 type);
+	TreeTypePtr&	getFirstChildWithType(ANTLR_UINT32 type);
 	ANTLR_UINT32	getLine();
 	StringType	getText();
 	bool	isNilNode();
-	void	setChild(ANTLR_UINT32 i, TreeType* child);
+	void	setChild(ANTLR_UINT32 i, TreeTypePtr child);
 	StringType	toStringTree();
 	StringType	toString();
-	void	freshenPACIndexesAll();
-	void	freshenPACIndexes(ANTLR_UINT32 offset);
-	void    reuse();
-	~CommonTree();
+	void	freshenParentAndChildIndexes();
+	void	freshenParentAndChildIndexes(ANTLR_UINT32 offset);
+	void	freshenParentAndChildIndexesDeeply();
+	void	freshenParentAndChildIndexesDeeply(ANTLR_UINT32 offset);
+	// Prepare tree node to be re-used
+	void	reuse();
 };
 
 ANTLR_END_NAMESPACE()

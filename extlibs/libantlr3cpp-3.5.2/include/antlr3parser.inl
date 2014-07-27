@@ -2,7 +2,7 @@ ANTLR_BEGIN_NAMESPACE()
 
 template< class ImplTraits >
 Parser<ImplTraits>::Parser( ANTLR_UINT32 sizeHint, RecognizerSharedStateType* state )
-	:RecognizerType( sizeHint, state )
+	: RecognizerType( sizeHint, state )
 {
 	m_tstream = NULL;
 }
@@ -10,7 +10,7 @@ Parser<ImplTraits>::Parser( ANTLR_UINT32 sizeHint, RecognizerSharedStateType* st
 template< class ImplTraits >
 Parser<ImplTraits>::Parser( ANTLR_UINT32 sizeHint, TokenStreamType* tstream,
 												RecognizerSharedStateType* state )
-												:RecognizerType( sizeHint, state )
+	: RecognizerType( sizeHint, state )
 {
 	this->setTokenStream( tstream );
 }
@@ -19,7 +19,7 @@ template< class ImplTraits >
 Parser<ImplTraits>::Parser( ANTLR_UINT32 sizeHint, TokenStreamType* tstream,
 											DebugEventListenerType* dbg,
 											RecognizerSharedStateType* state )
-											:RecognizerType( sizeHint, state )
+	: RecognizerType( sizeHint, state )
 {
 	this->setTokenStream( tstream );
 	this->setDebugListener( dbg );
@@ -219,7 +219,7 @@ typename Parser<ImplTraits>::TokenType*	Parser<ImplTraits>::getMissingSymbol( In
 	token->set_charPositionInLine( current->get_charPositionInLine());
 	token->set_channel( TOKEN_DEFAULT_CHANNEL );
 	token->set_type(expectedTokenType);
-    token->set_lineStart( current->get_lineStart() );
+	token->set_lineStart( current->get_lineStart() );
 
 	// Create the token text that shows it has been inserted
 	//

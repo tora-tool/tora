@@ -295,7 +295,6 @@ public:
 	typedef typename ImplTraits::TreeParserType ComponentType;
 };
 
-
 ANTLR_END_NAMESPACE()
 
 #endif

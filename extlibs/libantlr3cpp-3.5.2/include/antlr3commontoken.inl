@@ -164,7 +164,7 @@ ANTLR_INLINE void	CommonToken<ImplTraits>::setText(const char* text)
 	if( text == NULL )
 		m_tokText.clear();
 	else
-		m_tokText = (const char*) text;
+		m_tokText = text;
 }
 
 template<class ImplTraits>

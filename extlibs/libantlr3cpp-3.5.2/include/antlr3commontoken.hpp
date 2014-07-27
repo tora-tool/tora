@@ -40,7 +40,7 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include    <stdlib.h>
-
+#include    <limits>
 #include    "antlr3defs.hpp"
 
 ANTLR_BEGIN_NAMESPACE()
@@ -78,7 +78,11 @@ public:
 
 		/** End of file token
 		 */
-		, TOKEN_EOF =	(ANTLR_CHARSTREAM_EOF & 0xFFFFFFFF)
+#ifndef  _MSC_VER
+		, TOKEN_EOF = std::numeric_limits<ANTLR_UINT32>::max()
+#else
+		, TOKEN_EOF = 0xFFFFFFFF
+#endif
 	};
 
 	typedef typename ImplTraits::TokenIntStreamType TokenIntStreamType;
@@ -133,6 +137,8 @@ public:
 	CommonToken(ANTLR_UINT32 type);
 	CommonToken(TOKEN_TYPE type);
 	CommonToken( const CommonToken& ctoken );
+
+	~CommonToken() {}
 
 	CommonToken& operator=( const CommonToken& ctoken );
 	bool operator==( const CommonToken& ctoken ) const;

@@ -72,7 +72,7 @@ CommonTreeNodeStream<ImplTraits>::CommonTreeNodeStream( const CommonTreeNodeStre
 }
 
 template<class ImplTraits>
-CommonTreeNodeStream<ImplTraits>::CommonTreeNodeStream( TreeType* tree, ANTLR_UINT32 hint )
+CommonTreeNodeStream<ImplTraits>::CommonTreeNodeStream( TreeTypePtr tree, ANTLR_UINT32 hint )
 {
 	this->init(hint);
 	m_root = tree;
@@ -101,7 +101,7 @@ CommonTreeNodeStream<ImplTraits>::~CommonTreeNodeStream()
 }
 
 template<class ImplTraits>
-typename CommonTreeNodeStream<ImplTraits>::TreeType*	CommonTreeNodeStream<ImplTraits>::_LT(ANTLR_INT32 k)
+typename CommonTreeNodeStream<ImplTraits>::TreeTypePtr	CommonTreeNodeStream<ImplTraits>::_LT(ANTLR_INT32 k)
 {
 	if	( m_p == -1)
 	{
@@ -128,7 +128,7 @@ typename CommonTreeNodeStream<ImplTraits>::TreeType*	CommonTreeNodeStream<ImplTr
 }
 
 template<class ImplTraits>
-typename CommonTreeNodeStream<ImplTraits>::TreeType*	CommonTreeNodeStream<ImplTraits>::getTreeSource()
+typename CommonTreeNodeStream<ImplTraits>::TreeTypePtr	CommonTreeNodeStream<ImplTraits>::getTreeSource()
 {
 	return m_root;
 }
@@ -152,7 +152,7 @@ typename CommonTreeNodeStream<ImplTraits>::StringType  CommonTreeNodeStream<Impl
 }
 
 template<class ImplTraits>
-typename CommonTreeNodeStream<ImplTraits>::StringType  CommonTreeNodeStream<ImplTraits>::toStringSS(TreeType* start, TreeType* stop)
+typename CommonTreeNodeStream<ImplTraits>::StringType  CommonTreeNodeStream<ImplTraits>::toStringSS(TreeTypePtr start, TreeTypePtr stop)
 {
 	StringType  buf;
     this->toStringWork(start, stop, buf);
@@ -160,7 +160,7 @@ typename CommonTreeNodeStream<ImplTraits>::StringType  CommonTreeNodeStream<Impl
 }
 
 template<class ImplTraits>
-void CommonTreeNodeStream<ImplTraits>::toStringWork(TreeType* start, TreeType* stop, StringType& str)
+void CommonTreeNodeStream<ImplTraits>::toStringWork(TreeTypePtr start, TreeTypePtr stop, StringType& str)
 {
 	ANTLR_UINT32   n;
 	ANTLR_UINT32   c;
@@ -196,7 +196,7 @@ void CommonTreeNodeStream<ImplTraits>::toStringWork(TreeType* start, TreeType* s
 
 	for	(c = 0; c<n ; c++)
 	{
-		TreeType*   child;
+		TreeTypePtr   child;
 
 		child = start->getChild(c);
 		this->toStringWork(child, stop, buf);
@@ -211,7 +211,7 @@ void CommonTreeNodeStream<ImplTraits>::toStringWork(TreeType* start, TreeType* s
 }
 
 template<class ImplTraits>
-typename  CommonTreeNodeStream<ImplTraits>::TreeType*	CommonTreeNodeStream<ImplTraits>::get(ANTLR_INT32 k)
+typename  CommonTreeNodeStream<ImplTraits>::TreeTypePtr	CommonTreeNodeStream<ImplTraits>::get(ANTLR_INT32 k)
 {
 	if( m_p == -1 )
 	{
@@ -222,10 +222,10 @@ typename  CommonTreeNodeStream<ImplTraits>::TreeType*	CommonTreeNodeStream<ImplT
 }
 
 template<class ImplTraits>
-void	CommonTreeNodeStream<ImplTraits>::replaceChildren(TreeType* parent, 
+void	CommonTreeNodeStream<ImplTraits>::replaceChildren(TreeTypePtr parent, 
 															ANTLR_INT32 startChildIndex, 
 															ANTLR_INT32 stopChildIndex, 
-															TreeType* t)
+															TreeTypePtr t)
 {
 	if	(parent != NULL)
 	{
@@ -236,7 +236,7 @@ void	CommonTreeNodeStream<ImplTraits>::replaceChildren(TreeType* parent,
 }
 
 template<class ImplTraits>
-typename CommonTreeNodeStream<ImplTraits>::TreeType* CommonTreeNodeStream<ImplTraits>::LB(ANTLR_INT32 k)
+typename CommonTreeNodeStream<ImplTraits>::TreeTypePtr CommonTreeNodeStream<ImplTraits>::LB(ANTLR_INT32 k)
 {
 	if	( k==0)
 	{
@@ -254,7 +254,7 @@ typename CommonTreeNodeStream<ImplTraits>::TreeType* CommonTreeNodeStream<ImplTr
 template<class ImplTraits>
 void CommonTreeNodeStream<ImplTraits>::addNavigationNode(ANTLR_UINT32 ttype)
 {
-	TreeType*	    node;
+	TreeTypePtr	    node;
 
 	node = NULL;
 
@@ -287,9 +287,9 @@ void CommonTreeNodeStream<ImplTraits>::addNavigationNode(ANTLR_UINT32 ttype)
 }
 
 template<class ImplTraits>
-typename CommonTreeNodeStream<ImplTraits>::TreeType*	CommonTreeNodeStream<ImplTraits>::newDownNode()
+typename CommonTreeNodeStream<ImplTraits>::TreeTypePtr	CommonTreeNodeStream<ImplTraits>::newDownNode()
 {
-	TreeType*	    dNode;
+	TreeTypePtr	    dNode;
     CommonTokenType*    token;
 
     token					= new CommonTokenType(CommonTokenType::TOKEN_DOWN);
@@ -299,9 +299,9 @@ typename CommonTreeNodeStream<ImplTraits>::TreeType*	CommonTreeNodeStream<ImplTr
 }
 
 template<class ImplTraits>
-typename CommonTreeNodeStream<ImplTraits>::TreeType*	CommonTreeNodeStream<ImplTraits>::newUpNode()
+typename CommonTreeNodeStream<ImplTraits>::TreeTypePtr	CommonTreeNodeStream<ImplTraits>::newUpNode()
 {
-	TreeType*	    uNode;
+	TreeTypePtr	    uNode;
     CommonTokenType*    token;
 
     token					= new CommonTokenType(CommonTokenType::TOKEN_UP);
@@ -372,7 +372,7 @@ void CommonTreeNodeStream<ImplTraits>::fillBufferRoot()
 }
 
 template<class ImplTraits>
-void CommonTreeNodeStream<ImplTraits>::fillBuffer(TreeType* t)
+void CommonTreeNodeStream<ImplTraits>::fillBuffer(TreeTypePtr t)
 {
 	bool	nilNode;
 	ANTLR_UINT32	nCount;

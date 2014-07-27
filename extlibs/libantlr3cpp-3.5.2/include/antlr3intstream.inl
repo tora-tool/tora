@@ -1570,7 +1570,7 @@ TokenIntStream<ImplTraits>::getSourceName()
 template<class ImplTraits>
 void  TreeNodeIntStream<ImplTraits>::consume()
 {
-	CommonTreeNodeStreamType* ctns = this->get_super();
+	TreeNodeStreamType* ctns = this->get_super();
 	if( ctns->get_p() == -1 )
 		ctns->fillBufferRoot();
 	ctns->inc_p();
@@ -1578,18 +1578,18 @@ void  TreeNodeIntStream<ImplTraits>::consume()
 template<class ImplTraits>
 ANTLR_MARKER		TreeNodeIntStream<ImplTraits>::tindex()
 {
-	CommonTreeNodeStreamType* ctns = this->get_super();
+	TreeNodeStreamType* ctns = this->get_super();
 	return (ANTLR_MARKER)(ctns->get_p());
 }
 
 template<class ImplTraits>
 ANTLR_UINT32		TreeNodeIntStream<ImplTraits>::_LA(ANTLR_INT32 i)
 {
-	CommonTreeNodeStreamType* tns	    = this->get_super();
+	TreeNodeStreamType* tns	    = this->get_super();
 
 	// Ask LT for the 'token' at that position
 	//
-	TreeType* t = tns->_LT(i);
+	TreeTypePtr t = tns->_LT(i);
 
 	if	(t == NULL)
 	{
@@ -1604,7 +1604,7 @@ ANTLR_UINT32		TreeNodeIntStream<ImplTraits>::_LA(ANTLR_INT32 i)
 template<class ImplTraits>
 ANTLR_MARKER	TreeNodeIntStream<ImplTraits>::mark()
 {
-	CommonTreeNodeStreamType* ctns	    = this->get_super();
+	TreeNodeStreamType* ctns	    = this->get_super();
 	
 	if	(ctns->get_p() == -1)
 	{
@@ -1640,14 +1640,14 @@ void TreeNodeIntStream<ImplTraits>::rewindLast()
 template<class ImplTraits>
 void	TreeNodeIntStream<ImplTraits>::seek(ANTLR_MARKER index)
 {
-	CommonTreeNodeStreamType* ctns	    = this->get_super();
+	TreeNodeStreamType* ctns	    = this->get_super();
 	ctns->set_p( ANTLR_UINT32_CAST(index) );
 }
 
 template<class ImplTraits>
 ANTLR_UINT32	TreeNodeIntStream<ImplTraits>::size()
 {
-	CommonTreeNodeStreamType* ctns	    = this->get_super();
+	TreeNodeStreamType* ctns	    = this->get_super();
 	
 	if	(ctns->get_p() == -1)
 	{

@@ -53,7 +53,9 @@
 #include	"antlr3commontreenodestream.hpp"
 #include    "antlr3lexer.hpp"
 #include    "antlr3parser.hpp"
-#include    "antlr3rewritestreams.hpp"
+//#include    "antlr3rewritestreams.hpp"
+#include    "antlr3rewriteruletokenstream.hpp"
+#include    "antlr3rewriterulesubtreestream.hpp"
 #include	"antlr3traits.hpp"
 #include    "antlr3treeparser.hpp"
 

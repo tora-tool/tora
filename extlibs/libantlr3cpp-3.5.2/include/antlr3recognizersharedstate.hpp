@@ -58,7 +58,7 @@ public:
 	typedef typename ImplTraits::AllocPolicyType AllocPolicyType;
 	typedef typename StreamType::UnitType TokenType;
 	typedef typename ImplTraits::CommonTokenType CommonTokenType;
-
+	
 	typedef typename ComponentTypeFinder<ImplTraits, StreamType>::ComponentType  ComponentType;
 	typedef typename ImplTraits::template RewriteStreamType< ComponentType > RewriteStreamType;
 	typedef typename ImplTraits::StringType StringType;
@@ -66,6 +66,8 @@ public:
 	typedef typename ImplTraits::template ExceptionBaseType<StreamType> ExceptionBaseType;
 	typedef typename ImplTraits::BitsetType BitsetType;
 	typedef typename ImplTraits::BitsetListType BitsetListType;
+
+	typedef typename ImplTraits::TreeAdaptorType TreeAdaptorType;
 
 	typedef typename AllocPolicyType::template StackType< BitsetListType > FollowingType;
 	typedef typename AllocPolicyType::template StackType< typename ImplTraits::InputStreamType* > InputStreamsType;
@@ -204,6 +206,11 @@ private:
      */
     InputStreamsType	m_streams;
 
+    /** Tree adaptor drives an AST trie construction.
+     *  Is shared between multiple imported grammars.
+     */
+    TreeAdaptorType*    m_treeAdaptor;
+
 public:
 	RecognizerSharedState();
 	ExceptionBaseType* get_exception() const;
@@ -228,7 +235,8 @@ public:
 	ANTLR_MARKER get_tokenStartCharIndex() const;
 	StringType& get_text();
 	InputStreamsType& get_streams();
-
+	TreeAdaptorType* get_treeAdaptor() const;
+	
 	void  set_following( const FollowingType& following );
 	void  set_sizeHint( ANTLR_UINT32 sizeHint );
 	void  set_error( bool error );
@@ -250,7 +258,8 @@ public:
 	void  set_tokenStartCharIndex( ANTLR_MARKER tokenStartCharIndex );
 	void  set_text( const StringType& text );
 	void  set_streams( const InputStreamsType& streams );
-
+	void  set_treeAdaptor( TreeAdaptorType* adaptor );
+	
 	void inc_errorCount();
 	void inc_backtracking();
 	void dec_backtracking();

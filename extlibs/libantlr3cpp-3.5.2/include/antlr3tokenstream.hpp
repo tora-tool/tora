@@ -333,14 +333,14 @@ public:
 	void insertToken( const TokenType& tok, BoolForwarder<false>  tokens_accessed_from_owning_rule  );
 
 	/** Get a token at an absolute index i; 0..n-1.  This is really only
-     *  needed for profiling and debugging and token stream rewriting.
-     *  If you don't want to buffer up tokens, then this method makes no
-     *  sense for you.  Naturally you can't use the rewrite stream feature.
-     *  I believe DebugTokenStream can easily be altered to not use
-     *  this method, removing the dependency.
-     */
-    const TokenType*   get(ANTLR_MARKER i);
-	const TokenType*   getToken(ANTLR_MARKER i);
+	 *  needed for profiling and debugging and token stream rewriting.
+	 *  If you don't want to buffer up tokens, then this method makes no
+	 *  sense for you.  Naturally you can't use the rewrite stream feature.
+	 *  I believe DebugTokenStream can easily be altered to not use
+	 *  this method, removing the dependency.
+	 */
+	const TokenType* get(ANTLR_MARKER i);
+	const TokenType* getToken(ANTLR_MARKER i);
 	const TokenType* getToken( ANTLR_MARKER tok_idx, BoolForwarder<true>  tokens_accessed_from_owning_rule );
 	const TokenType* getToken( ANTLR_MARKER tok_idx, BoolForwarder<false>  tokens_accessed_from_owning_rule  );
 

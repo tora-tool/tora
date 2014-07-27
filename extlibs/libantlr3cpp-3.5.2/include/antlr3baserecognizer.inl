@@ -62,15 +62,16 @@ BaseRecognizer<ImplTraits, StreamType>::match(ANTLR_UINT32 ttype, BitsetListType
 	//
 	const UnitType* matchedSymbol = this->getCurrentInputSymbol(is);
 
-    if	(is->_LA(1) == ttype)
-    {
+	//if (is->_LA(1) == ttype)
+	if (matchedSymbol->get_type() == ttype)
+	{
 		// The token was the one we were told to expect
 		//
 		is->consume();					   // Consume that token from the stream
 		m_state->set_errorRecovery(false); // Not in error recovery now (if we were)
 		m_state->set_failed(false);	// The match was a success
 		return matchedSymbol;								// We are done
-    }
+	}
 
     // We did not find the expected token type, if we are backtracking then
     // we just set the failed flag and return.

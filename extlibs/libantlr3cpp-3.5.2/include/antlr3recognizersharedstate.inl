@@ -19,6 +19,7 @@ RecognizerSharedState<ImplTraits, StreamType>::RecognizerSharedState()
 	m_tokenStartLine = 0;
 	m_tokenStartCharPositionInLine = 0;
 	m_tokenStartCharIndex = 0;
+	m_treeAdaptor = NULL;
 }
 
 template<class ImplTraits, class StreamType>
@@ -136,6 +137,12 @@ ANTLR_INLINE typename RecognizerSharedState<ImplTraits, StreamType>::StreamsType
 	return m_streams;
 }
 template<class ImplTraits, class StreamType>
+ANTLR_INLINE typename RecognizerSharedState<ImplTraits, StreamType>::TreeAdaptorType* RecognizerSharedState<ImplTraits, StreamType>::get_treeAdaptor() const
+{
+	return m_treeAdaptor;
+}
+
+template<class ImplTraits, class StreamType>
 ANTLR_INLINE void RecognizerSharedState<ImplTraits, StreamType>::set_exception( ExceptionBaseType* exception )
 {
 	m_exception = exception;
@@ -244,6 +251,11 @@ template<class ImplTraits, class StreamType>
 ANTLR_INLINE void RecognizerSharedState<ImplTraits, StreamType>::set_streams( const InputStreamsType& streams )
 {
 	m_streams = streams;
+}
+template<class ImplTraits, class StreamType>
+ANTLR_INLINE void RecognizerSharedState<ImplTraits, StreamType>::set_treeAdaptor( TreeAdaptorType* adaptor )
+{
+	m_treeAdaptor = adaptor;
 }
 
 template<class ImplTraits, class StreamType>

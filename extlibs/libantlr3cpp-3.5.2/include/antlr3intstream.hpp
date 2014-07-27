@@ -376,12 +376,13 @@ public:
 };
 
 template<class ImplTraits>
-class TreeNodeIntStream : public IntStream<ImplTraits, typename ImplTraits::CommonTreeNodeStreamType>
+class TreeNodeIntStream : public IntStream<ImplTraits, typename ImplTraits::TreeNodeStreamType>
 {
 public:
-	typedef typename ImplTraits::CommonTreeNodeStreamType CommonTreeNodeStreamType;
-	typedef IntStream<ImplTraits, CommonTreeNodeStreamType > BaseType;
+	typedef typename ImplTraits::TreeNodeStreamType TreeNodeStreamType;
+	typedef IntStream<ImplTraits, TreeNodeStreamType > BaseType;
 	typedef typename ImplTraits::TreeType TreeType;
+	typedef typename ImplTraits::TreeTypePtr TreeTypePtr;
 	typedef typename ImplTraits::CommonTokenType CommonTokenType;
 
 public:
