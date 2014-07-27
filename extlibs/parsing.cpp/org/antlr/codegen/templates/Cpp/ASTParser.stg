@@ -40,8 +40,8 @@
 
 @rule.setErrorReturnValue() ::= <<
 //TODO
-//retval.tree = (<ASTLabelType>)TreeAdaptorType::errorNode(input, retval.start, input.LT(-1));
-retval.tree = (<ASTLabelType>)TreeAdaptorType::errorNode(NULL, retval.start, LT(-1));
+//retval.tree = get_psrstate()->get_treeAdaptor()->errorNode(input, retval.start, input.LT(-1));
+retval.tree = get_psrstate()->get_treeAdaptor()->errorNode(NULL, retval.start, LT(-1));
 >>
 
 // TOKEN AST STUFF
@@ -51,8 +51,8 @@ tokenRef(token,label,elementIndex,terminalOptions={}) ::= <<
 <super.tokenRef(...)>
 <if(!ruleDescriptor.isSynPred)>
 <if(backtracking)>if ( <actions.(actionScope).synpredgate> ) {<endif>
-<label>_tree = <createNodeFromToken(...)>;
-TreeAdaptorType::addChild(root_0, <label>_tree);
+<label>_tree = std::move(<createNodeFromToken(...)>);
+get_psrstate()->get_treeAdaptor()->addChild(root_0, <label>_tree);
 <if(backtracking)>}<endif>
 <endif>
 >>
@@ -66,7 +66,7 @@ tokenRefRuleRoot(token,label,elementIndex,terminalOptions={}) ::= <<
 <if(!ruleDescriptor.isSynPred)>
 <if(backtracking)>if ( <actions.(actionScope).synpredgate> ) {<endif>
 <label>_tree = <createNodeFromToken(...)>;
-root_0 = (<ASTLabelType>)TreeAdaptorType::becomeRoot(<label>_tree, root_0);
+root_0 = get_psrstate()->get_treeAdaptor()->becomeRoot(<label>_tree, root_0);
 <if(backtracking)>}<endif>
 <endif>
 >>
@@ -103,7 +103,7 @@ tokenRefRuleRootAndListLabel(token,label,elementIndex,terminalOptions={}) ::= <<
 // I have more time.
 
 matchSet(s,label,elementIndex,postmatchCode,terminalOptions={}) ::= <%
-<super.matchSet(postmatchCode={<if(!ruleDescriptor.isSynPred)><if(backtracking)>if ( <actions.(actionScope).synpredgate> ) <endif>TreeAdaptorType::addChild(root_0, <createNodeFromToken(...)>);<endif>}, ...)>
+<super.matchSet(postmatchCode={<if(!ruleDescriptor.isSynPred)><if(backtracking)>if ( <actions.(actionScope).synpredgate> ) <endif>get_psrstate()->get_treeAdaptor()->addChild(root_0, <createNodeFromToken(...)>);<endif>}, ...)>
 %>
 
 matchRuleBlockSet(s,label,elementIndex,postmatchCode,treeLevel="0",terminalOptions={}) ::= <<
@@ -119,7 +119,7 @@ matchSetRuleRoot(s,label,elementIndex,debug,terminalOptions={}) ::= <<
 <if(label)>
 <label>=<castToLabelType("input.LT(1)")>;
 <endif>
-<super.matchSet(postmatchCode={<if(!ruleDescriptor.isSynPred)><if(backtracking)>if ( <actions.(actionScope).synpredgate> ) <endif>root_0 = (<ASTLabelType>)TreeAdaptorType::becomeRoot(<createNodeFromToken(...)>, root_0);<endif>},...)>
+<super.matchSet(postmatchCode={<if(!ruleDescriptor.isSynPred)><if(backtracking)>if ( <actions.(actionScope).synpredgate> ) <endif>root_0 = get_psrstate()->get_treeAdaptor()->becomeRoot(<createNodeFromToken(...)>, root_0);<endif>},...)>
 >>
 
 // RULE REF AST
@@ -128,7 +128,7 @@ matchSetRuleRoot(s,label,elementIndex,debug,terminalOptions={}) ::= <<
 ruleRef(rule,label,elementIndex,args,scope) ::= <<
 <super.ruleRef(...)>
 <if(!ruleDescriptor.isSynPred)>
-<if(backtracking)>if ( <actions.(actionScope).synpredgate> ) <endif>TreeAdaptorType::addChild(root_0, <label>.getTree());
+<if(backtracking)>if ( <actions.(actionScope).synpredgate> ) <endif>get_psrstate()->get_treeAdaptor()->addChild(root_0, <label>.tree);
 <endif>
 >>
 
@@ -138,25 +138,25 @@ ruleRefBang(rule,label,elementIndex,args,scope) ::= "<super.ruleRef(...)>"
 /** rule^ */
 ruleRefRuleRoot(rule,label,elementIndex,args,scope) ::= <<
 <super.ruleRef(...)>
-<if(backtracking)>if ( <actions.(actionScope).synpredgate> ) <endif>root_0 = (<ASTLabelType>)TreeAdaptorType::becomeRoot(<label>.getTree(), root_0);
+<if(backtracking)>if ( <actions.(actionScope).synpredgate> ) <endif>root_0 = get_psrstate()->get_treeAdaptor()->becomeRoot(<label>.tree, root_0);
 >>
 
 /** x+=rule when output=AST */
 ruleRefAndListLabel(rule,label,elementIndex,args,scope) ::= <<
 <ruleRef(...)>
-<listLabel(label, {<label>.getTree()})>
+<listLabel(label, {<label>.tree})>
 >>
 
 /** x+=rule! when output=AST is a rule ref with list addition */
 ruleRefBangAndListLabel(rule,label,elementIndex,args,scope) ::= <<
 <ruleRefBang(...)>
-<listLabel(label, {<label>.getTree()})>
+<listLabel(label, {<label>.tree})>
 >>
 
 /** x+=rule^ */
 ruleRefRuleRootAndListLabel(rule,label,elementIndex,args,scope) ::= <<
 <ruleRefRuleRoot(...)>
-<listLabel(label, {<label>.getTree()})>
+<listLabel(label, {<label>.tree})>
 >>
 
 // WILDCARD AST
@@ -165,8 +165,8 @@ wildcard(token,label,elementIndex,terminalOptions={}) ::= <<
 <super.wildcard(...)>
 <if(!ruleDescriptor.isSynPred)>
 <if(backtracking)>if ( <actions.(actionScope).synpredgate> ) {<endif>
-<label>_tree = (<ASTLabelType>)TreeAdaptorType::create(<label>);
-TreeAdaptorType::addChild(root_0, <label>_tree);
+<label>_tree = std::move(get_psrstate()->get_treeAdaptor()->create(<label>));
+get_psrstate()->get_treeAdaptor()->addChild(root_0, <label>_tree);
 <if(backtracking)>}<endif>
 <endif>
 >>
@@ -177,8 +177,8 @@ wildcardRuleRoot(token,label,elementIndex,terminalOptions={}) ::= <<
 <super.wildcard(...)>
 <if(!ruleDescriptor.isSynPred)>
 <if(backtracking)>if ( <actions.(actionScope).synpredgate> ) {<endif>
-<label>_tree = (<ASTLabelType>)TreeAdaptorType::create(<label>);
-root_0 = (<ASTLabelType>)TreeAdaptorType::becomeRoot(<label>_tree, root_0);
+<label>_tree = std::move(get_psrstate()->get_treeAdaptor()->create(<label>));
+root_0 = get_psrstate()->get_treeAdaptor()->becomeRoot(<label>_tree, root_0);
 <if(backtracking)>}<endif>
 <endif>
 >>
@@ -187,14 +187,14 @@ createNodeFromToken(label,terminalOptions={}) ::= <%
 <if(terminalOptions.node)>
 new <terminalOptions.node>(<label>) <! new MethodNode(IDLabel) !>
 <else>
-(<ASTLabelType>)TreeAdaptorType::create(<label>)
+get_psrstate()->get_treeAdaptor()->create(<label>)
 <endif>
 %>
 
 ruleCleanUp() ::= <<
 <super.ruleCleanUp()>
 <if(backtracking)>if ( <actions.(actionScope).synpredgate> ) {<endif>
-retval.tree = (<ASTLabelType>)TreeAdaptorType::rulePostProcessing(root_0);
-TreeAdaptorType::setTokenBoundaries(retval.tree, retval.start, retval.stop);
+retval.tree = get_psrstate()->get_treeAdaptor()->rulePostProcessing(root_0);
+get_psrstate()->get_treeAdaptor()->setTokenBoundaries(retval.tree, retval.start, retval.stop);
 <if(backtracking)>}<endif>
 >>

@@ -28,10 +28,10 @@ import PLSQLKeys, PLSQLCommons, PLSQL_DMLParser, SQLPLUSParser;
 
 @parser::includes
 {
-	#include "s004Traits.hpp"
+	#include "UserTraits.hpp"
 	#include "PLSQLLexer.hpp"
 }
-@parser::namespace { Antlr3Test }
+@parser::namespace { Antlr3BackendImpl }
 
 @header {
 /**

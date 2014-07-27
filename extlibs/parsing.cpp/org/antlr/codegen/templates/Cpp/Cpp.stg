@@ -249,7 +249,8 @@ headerFile( LEXER,
             trace,
             scopes,
             superClass,
-            literals
+            literals,
+            ASTLabelType = "ImplTraits::TreeTypePtr"
         ) ::=
 <<
 <leadIn("C++ header")>
@@ -392,9 +393,6 @@ protected:
  */
 class <name> : public <componentBaseType()>
     , public <name>Tokens
-<if(PARSER)>
-    , <name>ImplTraits::TreeAdaptorType
-<endif>
 {
 public:
 	typedef <name>ImplTraits ImplTraits;
@@ -405,7 +403,7 @@ public:
 	typedef StreamType InputType;
 <if(PARSER)>
 	typedef <name>ImplTraits::CommonTokenType CommonTokenType;
-	typedef <name>ImplTraits::TreeAdaptorType TreeAdaptorType;
+	<if(buildAST)>typedef <name>ImplTraits::TreeAdaptorType TreeAdaptorType;<endif>
 <endif>
 
 <if(recognizer.filterMode)>
@@ -661,7 +659,7 @@ const char* <name>::getGrammarFileName()
  *     - Fail NULL
  */
 <name>::<name>(StreamType* instream<grammar.delegators:{g|, <g.recognizerName>* <g:delegateName()>}>)
-:<name>ImplTraits::BaseLexerType(ANTLR_SIZE_HINT, instream, NULL)
+    :<name>ImplTraits::BaseLexerType(ANTLR_SIZE_HINT, instream, NULL)
 {
 	// See if we can create a new lexer with the standard constructor
 	//
@@ -677,7 +675,7 @@ const char* <name>::getGrammarFileName()
  *     - Fail NULL
  */
 <name>::<name>(StreamType* instream, RecognizerSharedStateType* state<grammar.delegators:{g|, <g.recognizerName>* <g:delegateName()>}>)
-:<name>ImplTraits::BaseLexerType(ANTLR_SIZE_HINT, instream, state)
+    :<name>ImplTraits::BaseLexerType(ANTLR_SIZE_HINT, instream, state)
 {
 	this->init(instream <grammar.delegators:{g|, <g:delegateName()>} >);
 }
@@ -704,7 +702,7 @@ void <name>::init(StreamType* instream<grammar.delegators:{g|, <g.recognizerName
 <endif>
 
 <if(grammar.directDelegates)>
-	// Initialize the lexers that we are going to delegate some
+	// Initialize the lexers/parsers that we are going to delegate some
 	// functions to.
 	//
 	<grammar.directDelegates:
@@ -769,7 +767,7 @@ filteringActionGate() ::= "this->get_backtracking()==1"
 genericParser(  grammar, name, scopes, tokens, tokenNames, rules, numRules,
                 bitsets, inputStreamType, superClass,
                 labelType, members,	rewriteElementType,
-                filterMode, ASTLabelType="ImplTraits::TreeType*") ::= <<
+                filterMode, ASTLabelType="ImplTraits::TreeTypePtr") ::= <<
 
 using namespace antlr3;
 <if(grammar.grammarIsRoot)>
@@ -828,6 +826,9 @@ const char* <name>::getGrammarFileName()
 
 void <name>::init(StreamType* instream<grammar.delegators:{g|, <g.recognizerName>* <g:delegateName()>}>)
 {
+	/* Allocate TreeAdaptorType 
+	 */
+	<if(grammar.grammarIsRoot)><if(buildAST)>this->get_psrstate()->set_treeAdaptor( new TreeAdaptorType() );<endif><endif>
     <actions.parser.apifuncs>
 <if(memoize)>
 <if(grammar.grammarIsRoot)>
@@ -838,24 +839,23 @@ void <name>::init(StreamType* instream<grammar.delegators:{g|, <g.recognizerName
 <endif>
 <endif>
 <if(grammar.directDelegates)>
-	// Initialize the lexers that we are going to delegate some
+	// Initialize the lexers/parsers that we are going to delegate some
 	// functions to.
 	//
 	<grammar.directDelegates:
 	      	{g|m_<g:delegateName()> = new <g.recognizerName>(instream, this->get_psrstate(), this<grammar.delegators:{g|, <g:delegateName()>}>);}; separator="\n">
-	<endif>
-        <if(grammar.delegators)>
-     	// Install the pointers back to lexers that will delegate us to perform certain functions
-     	// for them.
-     	//
-     		<grammar.delegators: {g| m_<g:delegateName()> = <g:delegateName()>;}; separator="\n">
-	<endif>
+<endif>
+<if(grammar.delegators)>
+	// Install the pointers back to lexers that will delegate us to perform certain functions
+	// for them.
+	//
+	<grammar.delegators: {g| m_<g:delegateName()> = <g:delegateName()>;}; separator="\n">
+<endif>
 	/* Install the token table
 	*/
 	this->get_psrstate()->set_tokenNames( <grammar.composite.rootGrammar.recognizerName>TokenNames );
 
 	<@debugStuff()>
-
 }
 
 void
@@ -867,12 +867,12 @@ void
 /** Free the parser resources
  */
 <name>::~<name>()
- {
+{
     <@cleanup>
     <@end>
 <if(grammar.directDelegates)>
-	// Free the parsers that we delegated to
-	// functions to.NULL the state so we only free it once.
+	// Free the parsers that we delegated to functions to.
+	// NULL the state so we only free it once.
 	//
 	<grammar.directDelegates:
          {g| m_<g:delegateName()>->set_psrstate( NULL );
@@ -886,6 +886,11 @@ void
 		this->setRuleMemo(NULL);
 	}
 <endif>
+<endif>
+<if(grammar.grammarIsRoot)>
+	/* Deallocate TreeAdaptorType 
+	 */
+	delete this->get_psrstate()->get_treeAdaptor();
 <endif>
 }
 
@@ -990,7 +995,7 @@ treeParser(	grammar,
 			bitsets,
 			filterMode,
 			labelType={<ASTLabelType>},
-			ASTLabelType="ImplTraits::TreeType*",
+			ASTLabelType="ImplTraits::TreeTypePtr",
 			superClass="TreeParser",
 			members={<actions.treeparser.members>}
 			) ::= <<
@@ -1129,7 +1134,7 @@ rule(ruleName,ruleDescriptor,block,emptyRule,description,exceptions,finally,memo
     <@preamble()>
     {
         <block>
-    }
+    }//...
     <ruleCleanUp()>
    
 <if(exceptions)>
@@ -1393,7 +1398,7 @@ block(alts,decls,decision,enclosingBlockLevel,blockLevel,decisionNumber,maxK,max
 
 // <fileName>:<description>
 {
-    int alt<decisionNumber>=<maxAlt>;
+    ANTLR_UINT32 alt<decisionNumber>=<maxAlt>;
     <decls>
     <@predecision()>
     <decision>
@@ -1454,7 +1459,7 @@ positiveClosureBlock(alts,decls,decision,enclosingBlockLevel,blockLevel,decision
 
     for (;;)
     {
-        int alt<decisionNumber>=<maxAlt>;
+        ANTLR_UINT32 alt<decisionNumber>=<maxAlt>;
 	<@predecision()>
 	<decision>
 	<@postdecision()>
@@ -1496,7 +1501,7 @@ closureBlock(alts,decls,decision,enclosingBlockLevel,blockLevel,decisionNumber,m
 <@preloop()>
 for (;;)
 {
-    int alt<decisionNumber>=<maxAlt>;
+    ANTLR_UINT32 alt<decisionNumber>=<maxAlt>;
     <@predecision()>
     <decision>
     <@postdecision()>
@@ -1816,7 +1821,7 @@ newFPE() ::= <<
 dfaState(k,edges,eotPredictsAlt,description,stateNumber,semPredState) ::= <<
 
 {
-    int LA<decisionNumber>_<stateNumber> = this->LA(<k>);
+    ANTLR_UINT32 LA<decisionNumber>_<stateNumber> = this->LA(<k>);
     <edges; separator="\nelse ">
     else
     {
@@ -1848,7 +1853,7 @@ ex->set_state( <stateNumber> );
  */
 dfaOptionalBlockState(k,edges,eotPredictsAlt,description,stateNumber,semPredState) ::= <<
 {
-    int LA<decisionNumber>_<stateNumber> = this->LA(<k>);
+    ANTLR_UINT32 LA<decisionNumber>_<stateNumber> = this->LA(<k>);
     <edges; separator="\nelse ">
 }
 >>
@@ -1861,13 +1866,13 @@ dfaOptionalBlockState(k,edges,eotPredictsAlt,description,stateNumber,semPredStat
  */
 
 dfaLoopbackStateDecls()::= <<
-ANTLR_UINT32   LA<decisionNumber>_<stateNumber>;
+ANTLR_UINT32 LA<decisionNumber>_<stateNumber>;
 >>
 dfaLoopbackState(k,edges,eotPredictsAlt,description,stateNumber,semPredState) ::= <<
 {
    /* dfaLoopbackState(k,edges,eotPredictsAlt,description,stateNumber,semPredState)
     */
-    int LA<decisionNumber>_<stateNumber> = this->LA(<k>);
+    ANTLR_UINT32 LA<decisionNumber>_<stateNumber> = this->LA(<k>);
     <edges; separator="\nelse "><\n>
     <if(eotPredictsAlt)>
     <if(!edges)>
@@ -2226,7 +2231,7 @@ globalAttributeScopeDef(scope) ::=
  */
 <if(scope.attributes)>
 
-StackType\< <scopeStruct(sname=scope.name)> > <scopeStack(sname=scope.name)>;
+ImplTraits::AllocPolicyType::StackType\< <scopeStruct(sname=scope.name)> > <scopeStack(sname=scope.name)>;
 
 <endif>
 >>
@@ -2235,7 +2240,7 @@ ruleAttributeScopeDef(scope) ::= <<
 <if(scope.attributes)>
 /* ruleAttributeScopeDef(scope)
  */
-StackType\< <scopeStruct(sname=scope.name)> >  <scopeStack(sname=scope.name,...)>;
+ImplTraits::AllocPolicyType::StackType\< <scopeStruct(sname=scope.name)> >  <scopeStack(sname=scope.name,...)>;
 
 <endif>
 >>
@@ -2300,8 +2305,6 @@ ruleLabelDef(label) ::= <<
 ruleLabelInitVal(label) ::= <<
 >>
 
-ASTLabelType() ::= "<if(recognizer.ASTLabelType)><recognizer.ASTLabelType><else>ImplTraits::TreeType*<endif>"
-
 /** Define a return struct for a rule if the code needs to access its
  *  start/stop tokens, tree stuff, attributes, ...  Leave a hole for
  *  subgroups to stick in members.
@@ -2317,31 +2320,32 @@ public:
     <ruleDescriptor:returnStructName()>()
         : BaseType()
         <if(scope)>, <scope.attributes:{it | <it.name>() }; separator=","><endif>
-        { init(); }
+        {}
     <ruleDescriptor:returnStructName()>( BaseParserType* parser )
         : BaseType(parser)
         <if(scope)>, <scope.attributes:{it | <it.name>() }; separator=","><endif>
-        { init(); }
-    <ruleDescriptor:returnStructName()>( const <ruleDescriptor:returnStructName()>& other )
+        {}
+    <ruleDescriptor:returnStructName()>( <ruleDescriptor:returnStructName()>&& other )
         : BaseType(other)
-    <if(scope)>, <scope.attributes:{it | <it.name>(other.<it.name>) }; separator=", "><endif>
-    { copy(other); }
+        <if(scope)>, <scope.attributes:{it | <it.name>(other.<it.name>) }; separator=", "><endif>
+    {
+        <if(buildAST)>tree = std::move(other.tree);<endif>
+    }
     ~<ruleDescriptor:returnStructName()>()
     {
         <@ruleReturnMembersDelete()>
     }
 
     <ruleDescriptor:returnStructName()>&
-    operator=( const <ruleDescriptor:returnStructName()>& other )
+    operator=( <ruleDescriptor:returnStructName()>&& other )
     {
         BaseType::operator=( other );
         <if(scope)><scope.attributes:{it | <it.name> = other.<it.name>; }; separator="\n"><endif>
-        copy(other);    
+        <if(buildAST)>tree = std::move(other.tree);<endif>
     	return *this;
     }
+
     <@ruleReturnMembers()>
-    void init() { <@ruleReturnMembersInit()> }
-    void copy( const <ruleDescriptor:returnStructName()>& other) { <@ruleReturnMembersCopy()> }    
 <else>
 struct <ruleDescriptor:returnStructName()>
 {

@@ -96,8 +96,10 @@ void parseFile(const char* fName, int fd)
 
 	//tstream->_LT(1);	// Don't do this mormally, just causes lexer to run for timings here
 	//putc('P', stdout); fflush(stdout);
-	auto ast = psr->seq_of_statements();
-	std::cout << ast.getTree()->toStringTree();
+	{
+	  auto ast = psr->seq_of_statements();
+	  std::cout << ast.getTree()->toStringTree();
+	}
 	//putc('F', stdout); fflush(stdout);
 	//putc('*', stdout); fflush(stdout);
 

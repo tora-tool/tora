@@ -20,9 +20,9 @@ parser grammar SQLPLUSParser;
 
 @includes
 {
- 	#include "s004Traits.hpp"
+ 	#include "UserTraits.hpp"
 }
-@namespace { Antlr3Test }
+@namespace{ Antlr3BackendImpl }
 
 sql_plus_command 
     :    (SOLIDUS|whenever_command|exit_command|prompt_command|set_command) SEMICOLON?

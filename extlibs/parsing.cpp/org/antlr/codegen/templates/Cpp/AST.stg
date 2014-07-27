@@ -57,17 +57,8 @@ parserMembers() ::= <<
 >>
 
 @returnScope.ruleReturnMembers() ::= <<
-<super.ASTLabelType()> tree;
-<super.ASTLabelType()> getTree() { return tree; }
+<ASTLabelType> tree;
 >>
-
-@returnScope.ruleReturnMembersInit() ::= <<
-tree = NULL;
->>
-
-@returnScope.ruleReturnMembersCopy() ::= <%
-tree = other.tree; const_cast\< <ruleDescriptor:returnStructName()>& >(other).tree = NULL;
-%>
 
 @returnScope.ruleReturnMembersDelete() ::= <<
 //if(tree != NULL)
@@ -85,26 +76,26 @@ tree = other.tree; const_cast\< <ruleDescriptor:returnStructName()>& >(other).tr
 /** Add a variable to track rule's return AST */
 ruleDeclarations() ::= <<
 <super.ruleDeclarations()>
-<ASTLabelType> root_0 = NULL;<\n>
+<ASTLabelType> root_0;<\n>
 >>
 
 ruleLabelDefs() ::= <<
 <super.ruleLabelDefs()>
 <if(!ruleDescriptor.isSynPred)>
 <[ruleDescriptor.tokenLabels,ruleDescriptor.wildcardTreeLabels, ruleDescriptor.wildcardTreeListLabels]:
-{it | <ASTLabelType> <it.label.text>_tree = NULL;}; separator="\n">
+{it | <ASTLabelType> <it.label.text>_tree;}; separator="\n">
 <ruleDescriptor.tokenListLabels:
-{it | <ASTLabelType> <it.label.text>_tree = NULL;}; separator="\n">
+{it | <ASTLabelType> <it.label.text>_tree;}; separator="\n">
 <if(ruleDescriptor.supportsLabelOptimization)>
 <ruleDescriptor.allTokenRefsInRewrites:
-{it | RewriteRule<rewriteElementType>Stream\<ImplTraits> *stream_<it> = new RewriteRule<rewriteElementType>Stream\<ImplTraits>(this,"token <it>");}; separator="\n">
+{it | RewriteRule<rewriteElementType>Stream\<ImplTraits> stream_<it>(get_psrstate()->get_treeAdaptor(), "token <it>");}; separator="\n">
 <ruleDescriptor.allRuleRefsInRewrites:
-{it | RewriteRuleSubtreeStream\<ImplTraits> *stream_<it> = new RewriteRuleSubtreeStream\<ImplTraits>(this,"rule <it>");}; separator="\n">
+{it | RewriteRuleSubtreeStream\<ImplTraits> stream_<it>(get_psrstate()->get_treeAdaptor(), "rule <it>");}; separator="\n">
 <else>
 <ruleDescriptor.allTokenRefsInAltsWithRewrites
-:{it | RewriteRule<rewriteElementType>Stream\<ImplTraits> *stream_<it> = new RewriteRule<rewriteElementType>Stream\<ImplTraits>(this,"token <it>");}; separator="\n">
+:{it | RewriteRule<rewriteElementType>Stream\<ImplTraits> stream_<it>(get_psrstate()->get_treeAdaptor(), "token <it>");}; separator="\n">
 <ruleDescriptor.allRuleRefsInAltsWithRewrites
-:{it | RewriteRuleSubtreeStream\<ImplTraits> *stream_<it> = new RewriteRuleSubtreeStream\<ImplTraits>(this,"rule <it>");}; separator="\n">
+:{it | RewriteRuleSubtreeStream\<ImplTraits> stream_<it>(get_psrstate()->get_treeAdaptor(), "rule <it>");}; separator="\n">
 <endif>
 <endif>
 >>
@@ -118,7 +109,7 @@ ruleLabelDefs() ::= <<
 <if(autoAST)>
 <if(outerAlt)>
 <if(!rewriteMode && !ruleDescriptor.isSynPred)>
-root_0 = TreeAdaptorType::nilNode();<\n>
+root_0 = std::move(get_psrstate()->get_treeAdaptor()->nilNode());<\n>
 <endif>
 <endif>
 <endif>
@@ -129,7 +120,7 @@ root_0 = TreeAdaptorType::nilNode();<\n>
 /** ID and track it for use in a rewrite rule */
 tokenRefTrack(token,label,elementIndex,terminalOptions={}) ::= <<
 <tokenRefBang(...)> <! Track implies no auto AST construction!>
-<if(backtracking)>if ( <actions.(actionScope).synpredgate> ) <endif>stream_<token>->add(<label>);<\n>
+<if(backtracking)>if ( <actions.(actionScope).synpredgate> ) <endif>stream_<token>.add(<label>);<\n>
 >>
 
 /** ids+=ID and track it for use in a rewrite rule; adds to ids *and*
@@ -143,7 +134,7 @@ tokenRefTrackAndListLabel(token,label,elementIndex,terminalOptions={}) ::= <<
 /** ^(ID ...) track for rewrite */
 tokenRefRuleRootTrack(token,label,elementIndex,terminalOptions={}) ::= <<
 <tokenRefBang(...)>
-<if(backtracking)>if ( <actions.(actionScope).synpredgate> ) <endif>stream_<token>->add(<label>);<\n>
+<if(backtracking)>if ( <actions.(actionScope).synpredgate> ) <endif>stream_<token>.add(<label>);<\n>
 >>
 
 /** Match ^(label+=TOKEN ...) track for rewrite */
@@ -155,25 +146,25 @@ tokenRefRuleRootTrackAndListLabel(token,label,elementIndex,terminalOptions={}) :
 /** rule when output=AST and tracking for rewrite */
 ruleRefTrack(rule,label,elementIndex,args,scope) ::= <<
 <super.ruleRef(...)>
-<if(backtracking)>if ( <actions.(actionScope).synpredgate> ) <endif>stream_<rule.name>->add(<label>.getTree());
+<if(backtracking)>if ( <actions.(actionScope).synpredgate> ) <endif>stream_<rule.name>.add(<label>.tree);
 >>
 
 /** x+=rule when output=AST and tracking for rewrite */
 ruleRefTrackAndListLabel(rule,label,elementIndex,args,scope) ::= <<
 <ruleRefTrack(...)>
-<listLabel(label, {<label>.getTree()})>
+<listLabel(label, {<label>.tree})>
 >>
 
 /** ^(rule ...) rewrite */
 ruleRefRuleRootTrack(rule,label,elementIndex,args,scope) ::= <<
 <ruleRefRuleRoot(...)>
-<if(backtracking)>if ( <actions.(actionScope).synpredgate> ) <endif>stream_<rule>->add(<label>.getTree());
+<if(backtracking)>if ( <actions.(actionScope).synpredgate> ) <endif>stream_<rule>.add(<label>.tree);
 >>
 
 /** ^(x+=rule ...) rewrite */
 ruleRefRuleRootTrackAndListLabel(rule,label,elementIndex,args,scope) ::= <<
 <ruleRefRuleRootTrack(...)>
-<listLabel(label, {<label>.getTree()})>
+<listLabel(label, {<label>.tree})>
 >>
 
 // R e w r i t e
@@ -200,14 +191,14 @@ rewriteCode(
 <if(backtracking)>
 if ( <actions.(actionScope).synpredgate> ) {
 <endif>
-<prevRuleRootRef()>.tree = root_0;
+<prevRuleRootRef()>.tree = std::move(root_0);
 <rewriteCodeLabels()>
-root_0 = TreeAdaptorType::nilNode();
+root_0 = std::move(get_psrstate()->get_treeAdaptor()->nilNode());
 <alts:rewriteAlt(); separator="else ">
 <! if tree parser and rewrite=true !>
 <if(TREE_PARSER)>
 <if(rewriteMode)>
-<prevRuleRootRef()>.tree = TreeAdaptorType::rulePostProcessing(root_0);
+<prevRuleRootRef()>.tree = get_psrstate()->get_treeAdaptor()->rulePostProcessing(root_0);
 input.replaceChildren(TreeAdaptorType::getParent(retval.start),
 					  TreeAdaptorType::getChildIndex(retval.start),
 					  TreeAdaptorType::getChildIndex(_last),
@@ -216,10 +207,10 @@ input.replaceChildren(TreeAdaptorType::getParent(retval.start),
 <endif>
 <! if parser or tree-parser && rewrite!=true, we need to set result !>
 <if(!TREE_PARSER)>
-<prevRuleRootRef()>.tree = root_0;
+//<prevRuleRootRef()>.tree = std::move(root_0);
 <else>
 <if(!rewriteMode)>
-<prevRuleRootRef()>.tree = root_0;
+<prevRuleRootRef()>.tree = std::move(root_0);
 <endif>
 <endif>
 <if(backtracking)>
@@ -229,27 +220,31 @@ input.replaceChildren(TreeAdaptorType::getParent(retval.start),
 
 rewriteCodeLabels() ::= <<
 <referencedTokenLabels
-	:{it | RewriteRule<rewriteElementType>Stream\<ImplTraits> *stream_<it>=new RewriteRule<rewriteElementType>Stream\<ImplTraits>(this,"token <it>",<it>);};
+	:{it | RewriteRule<rewriteElementType>Stream\<ImplTraits> stream_<it>(get_psrstate()->get_treeAdaptor(), "token <it>",<it>);};
 	separator="\n"
 >
 <referencedTokenListLabels
-	:{it | RewriteRule<rewriteElementType>Stream\<ImplTraits> *stream_<it>=new RewriteRule<rewriteElementType>Stream\<ImplTraits>(this,"token <it>", list_<it>);};
+	:{it | RewriteRule<rewriteElementType>Stream\<ImplTraits> stream_<it>(get_psrstate()->get_treeAdaptor(), "token <it>", list_<it>);};
 	separator="\n"
 >
 <referencedWildcardLabels
-	:{it | RewriteRuleSubtreeStream\<ImplTraits> *stream_<it>=new RewriteRuleSubtreeStream\<ImplTraits>(this,"wildcard <it>",<it>);};
+	:{it | RewriteRuleSubtreeStream\<ImplTraits> stream_<it>(get_psrstate()->get_treeAdaptor(), "wildcard <it>",<it>);};
 	separator="\n"
 >
 <referencedWildcardListLabels
-	:{it | RewriteRuleSubtreeStream\<ImplTraits> *stream_<it>=new RewriteRuleSubtreeStream\<ImplTraits>(this,"wildcard <it>",list_<it>);};
+	:{it | RewriteRuleSubtreeStream\<ImplTraits> stream_<it>(get_psrstate()->get_treeAdaptor(), "wildcard <it>",list_<it>);};
 	separator="\n"
 >
-<referencedRuleLabels
-	:{it | RewriteRuleSubtreeStream\<ImplTraits> *stream_<it>=new RewriteRuleSubtreeStream\<ImplTraits>(this,"rule <it>",<it>.getTree());};
+<first(referencedRuleLabels)
+	:{it | RewriteRuleSubtreeStream\<ImplTraits> stream_<it>(get_psrstate()->get_treeAdaptor(), "rule <it>",<it>.tree); // retval};
+	separator="\n"
+>
+<rest(referencedRuleLabels)
+	:{it | RewriteRuleSubtreeStream\<ImplTraits> stream_<it>(get_psrstate()->get_treeAdaptor(), "rule <it>",<it>.tree); // rewrite alias};
 	separator="\n"
 >
 <referencedRuleListLabels
-	:{it | RewriteRuleSubtreeStream\<ImplTraits> *stream_<it>=new RewriteRuleSubtreeStream\<ImplTraits>(this,"token <it>",list_<it>);};
+	:{it | RewriteRuleSubtreeStream\<ImplTraits> stream_<it>(get_psrstate()->get_treeAdaptor(), "token <it>",list_<it>);};
 	separator="\n"
 >
 >>
@@ -264,10 +259,10 @@ rewriteOptionalBlock(
 	description) ::=
 <<
 // <fileName>:<description>
-if ( <referencedElementsDeep:{el | stream_<el>->hasNext()}; separator="||"> ) {
+if ( <referencedElementsDeep:{el | stream_<el>.hasNext()}; separator="||"> ) {
 	<alt>
 }
-<referencedElementsDeep:{el | stream_<el>->reset();<\n>}>
+<referencedElementsDeep:{el | stream_<el>.reset();<\n>}>
 >>
 
 rewriteClosureBlock(
@@ -277,10 +272,10 @@ rewriteClosureBlock(
 	description) ::=
 <<
 // <fileName>:<description>
-while ( <referencedElements:{el | stream_<el>->hasNext()}; separator="||"> ) {
+while ( <referencedElements:{el | stream_<el>.hasNext()}; separator="||"> ) {
 	<alt>
 }
-<referencedElements:{el | stream_<el>->reset();<\n>}>
+<referencedElements:{el | stream_<el>.reset();<\n>}>
 >>
 
 rewritePositiveClosureBlock(
@@ -289,13 +284,13 @@ rewritePositiveClosureBlock(
 	referencedElements, // elements in immediately block; no nested blocks
 	description) ::=
 <<
-if ( !(<referencedElements:{el | stream_<el>->hasNext()}; separator="||">) ) {
+if ( !(<referencedElements:{el | stream_<el>.hasNext()}; separator="||">) ) {
 	throw new RewriteEarlyExitException();
 }
-while ( <referencedElements:{el | stream_<el>->hasNext()}; separator="||"> ) {
+while ( <referencedElements:{el | stream_<el>.hasNext()}; separator="||"> ) {
 	<alt>
 }
-<referencedElements:{el | stream_<el>->reset();<\n>}>
+<referencedElements:{el | stream_<el>.reset();<\n>}>
 >>
 
 rewriteAlt(a) ::= <<
@@ -312,15 +307,15 @@ if (<a.pred>) {
 >>
 
 /** For empty rewrites: "r : ... -> ;" */
-rewriteEmptyAlt() ::= "root_0 = NULL;"
+rewriteEmptyAlt() ::= "root_0.release();"
 
 rewriteTree(root,children,description,enclosingTreeLevel,treeLevel) ::= <<
 // <fileName>:<description>
 {
-<ASTLabelType> root_<treeLevel> = TreeAdaptorType::nilNode();
+<ASTLabelType> root_<treeLevel> = get_psrstate()->get_treeAdaptor()->nilNode();
 <root:rewriteElement()>
 <children:rewriteElement()>
-TreeAdaptorType::addChild(root_<enclosingTreeLevel>, root_<treeLevel>);
+get_psrstate()->get_treeAdaptor()->addChild(root_<enclosingTreeLevel>, root_<treeLevel>);
 }
 >>
 
@@ -333,22 +328,22 @@ rewriteElement(e) ::= <<
 
 /** Gen ID or ID[args] */
 rewriteTokenRef(token,elementIndex,args,terminalOptions={}) ::= <<
-TreeAdaptorType::addChild(root_<treeLevel>, <createRewriteNodeFromElement(...)>);
+get_psrstate()->get_treeAdaptor()->addChild(root_<treeLevel>, <createRewriteNodeFromElement(...)>);
 >>
 
 /** Gen $label ... where defined via label=ID */
 rewriteTokenLabelRef(label,elementIndex) ::= <<
-TreeAdaptorType::addChild(root_<treeLevel>, stream_<label>->nextNode());
+get_psrstate()->get_treeAdaptor()->addChild(root_<treeLevel>, stream_<label>.nextNode());
 >>
 
 /** Gen $label ... where defined via label+=ID */
 rewriteTokenListLabelRef(label,elementIndex) ::= <<
-TreeAdaptorType::addChild(root_<treeLevel>, stream_<label>->nextNode());
+get_psrstate()->get_treeAdaptor()->addChild(root_<treeLevel>, stream_<label>.nextNode());
 >>
 
 /** Gen ^($label ...) */
 rewriteTokenLabelRefRoot(label,elementIndex) ::= <<
-root_<treeLevel> = TreeAdaptorType::becomeRoot(stream_<label>->nextNode(), root_<treeLevel>);
+root_<treeLevel> = get_psrstate()->get_treeAdaptor()->becomeRoot(stream_<label>.nextNode(), root_<treeLevel>);
 >>
 
 /** Gen ^($label ...) where label+=... */
@@ -356,15 +351,15 @@ rewriteTokenListLabelRefRoot ::= rewriteTokenLabelRefRoot
 
 /** Gen ^(ID ...) or ^(ID[args] ...) */
 rewriteTokenRefRoot(token,elementIndex,args,terminalOptions={}) ::= <<
-root_<treeLevel> = TreeAdaptorType::becomeRoot(<createRewriteNodeFromElement(...)>, root_<treeLevel>);
+root_<treeLevel> = get_psrstate()->get_treeAdaptor()->becomeRoot(<createRewriteNodeFromElement(...)>, root_<treeLevel>);
 >>
 
 rewriteImaginaryTokenRef(args,token,elementIndex,terminalOptions={}) ::= <<
-TreeAdaptorType::addChild(root_<treeLevel>, <createImaginaryNode(token,args,terminalOptions)>);
+get_psrstate()->get_treeAdaptor()->addChild(root_<treeLevel>, <createImaginaryNode(token,args,terminalOptions)>);
 >>
 
 rewriteImaginaryTokenRefRoot(args,token,elementIndex,terminalOptions={}) ::= <<
-root_<treeLevel> = TreeAdaptorType::becomeRoot(<createImaginaryNode(token,args,terminalOptions)>, root_<treeLevel>);
+root_<treeLevel> = get_psrstate()->get_treeAdaptor()->becomeRoot(<createImaginaryNode(token,args,terminalOptions)>, root_<treeLevel>);
 >>
 
 /** plain -> {foo} action */
@@ -380,43 +375,43 @@ root_0 = <action>;
 prevRuleRootRef() ::= "retval"
 
 rewriteRuleRef(rule) ::= <<
-TreeAdaptorType::addChild(root_<treeLevel>, stream_<rule>->nextTree());
+get_psrstate()->get_treeAdaptor()->addChild(root_<treeLevel>, stream_<rule>.nextTree());
 >>
 
 rewriteRuleRefRoot(rule) ::= <<
-root_<treeLevel> = TreeAdaptorType::becomeRoot(stream_<rule>->nextNode(), root_<treeLevel>);
+root_<treeLevel> = get_psrstate()->get_treeAdaptor()->becomeRoot(stream_<rule>.nextNode(), root_<treeLevel>);
 >>
 
 rewriteNodeAction(action) ::= <<
-TreeAdaptorType::addChild(root_<treeLevel>, <action>);
+get_psrstate()->get_treeAdaptor()->addChild(root_<treeLevel>, <action>);
 >>
 
 rewriteNodeActionRoot(action) ::= <<
-root_<treeLevel> = TreeAdaptorType::becomeRoot(<action>, root_<treeLevel>);
+root_<treeLevel> = get_psrstate()->get_treeAdaptor()->becomeRoot(<action>, root_<treeLevel>);
 >>
 
 /** Gen $ruleLabel ... where defined via ruleLabel=rule */
 rewriteRuleLabelRef(label) ::= <<
-TreeAdaptorType::addChild(root_<treeLevel>, stream_<label>->nextTree());
+get_psrstate()->get_treeAdaptor()->addChild(root_<treeLevel>, stream_<label>.nextTree());
 >>
 
 /** Gen $ruleLabel ... where defined via ruleLabel+=rule */
 rewriteRuleListLabelRef(label) ::= <<
-TreeAdaptorType::addChild(root_<treeLevel>, stream_<label>->nextTree());
+get_psrstate()->get_treeAdaptor()->addChild(root_<treeLevel>, stream_<label>.nextTree());
 >>
 
 /** Gen ^($ruleLabel ...) where ruleLabel=rule */
 rewriteRuleLabelRefRoot(label) ::= <<
-root_<treeLevel> = TreeAdaptorType::becomeRoot(stream_<label>->nextNode(), root_<treeLevel>);
+root_<treeLevel> = get_psrstate()->get_treeAdaptor()->becomeRoot(stream_<label>.nextNode(), root_<treeLevel>);
 >>
 
 /** Gen ^($ruleLabel ...) where ruleLabel+=rule */
 rewriteRuleListLabelRefRoot(label) ::= <<
-root_<treeLevel> = TreeAdaptorType::becomeRoot(stream_<label>->nextNode(), root_<treeLevel>);
+root_<treeLevel> = get_psrstate()->get_treeAdaptor()->becomeRoot(stream_<label>.nextNode(), root_<treeLevel>);
 >>
 
 rewriteWildcardLabelRef(label) ::= <<
-TreeAdaptorType::addChild(root_<treeLevel>, stream_<label>->nextTree());
+get_psrstate()->get_treeAdaptor()->addChild(root_<treeLevel>, stream_<label>.nextTree());
 >>
 
 
@@ -425,7 +420,7 @@ createImaginaryNode(tokenType,args,terminalOptions={}) ::= <%
 <! new MethodNode(IDLabel, args) !>
 new <terminalOptions.node>(<tokenType><if(args)>, <args; separator=", "><endif>)
 <else>
-TreeAdaptorType::create(<tokenType>, <args; separator=", "><if(!args)>"<tokenType>"<endif>)
+get_psrstate()->get_treeAdaptor()->create(<tokenType>, <args; separator=", "><if(!args)>"<tokenType>"<endif>)
 <endif>
 %>
 
@@ -436,7 +431,7 @@ new <terminalOptions.node>(stream_<token>.nextToken()<if(args)>, <args; separato
 <if(args)> <! must create new node from old !>
 TreeAdaptorType.create(<token>, <args; separator=", ">)
 <else>
-stream_<token>->nextNode()
+stream_<token>.nextNode()
 <endif>
 <endif>
 %>

@@ -26,10 +26,10 @@ parser grammar PLSQL_DMLParser;
 
 @parser::includes
 {
-	#include "s004Traits.hpp"
+	#include "UserTraits.hpp"
 	#include "PLSQLLexer.hpp"
 }
-@parser::namespace { Antlr3Test }
+@parser::namespace { Antlr3BackendImpl }
 
 //SHOULD BE OVERRIDEN!
 compilation_unit

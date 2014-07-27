@@ -33,12 +33,9 @@ tokens { // moved to the import vocabulary
 
 @lexer::includes
 {
-	#include "s004Traits.hpp"
+	#include "UserTraits.hpp"
 }
-@lexer::namespace
-{
-Antlr3Test
-}
+@lexer::namespace{ Antlr3BackendImpl }        
 
 @header {
 /*

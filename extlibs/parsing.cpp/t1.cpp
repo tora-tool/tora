@@ -209,15 +209,16 @@ void parseFile(const char* fName, int fd)
 
 	tstream->_LT(1);	// Don't do this mormally, just causes lexer to run for timings here
 	//putc('P', stdout); fflush(stdout);
-	PLSQLParser::seq_of_statements_return r = psr->seq_of_statements();
-	std::cout << r.start->getText() << '[' << r.start->get_line() << ',' << r.start->get_charPositionInLine() << ']'
-		  << ".."
-		  << r.stop->getText() << '[' << r.stop->get_line() << ',' << r.stop->get_charPositionInLine() << ']'
-		  << std::endl;
+	{
+		PLSQLParser::seq_of_statements_return r = psr->seq_of_statements();
+		std::cout << r.start->getText() << '[' << r.start->get_line() << ',' << r.start->get_charPositionInLine() << ']'
+			  << ".."
+			  << r.stop->getText() << '[' << r.stop->get_line() << ',' << r.stop->get_charPositionInLine() << ']'
+			  << std::endl;
 	
-	//putc('F', stdout); fflush(stdout);
-	//putc('*', stdout); fflush(stdout);
-
+		//putc('F', stdout); fflush(stdout);
+		//putc('*', stdout); fflush(stdout);
+	}
 
 	delete psr; 
 	delete tstream; 
