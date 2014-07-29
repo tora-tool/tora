@@ -274,6 +274,7 @@ static toSQL SQLSessions(
     "toSession:ListSession",
     "SELECT a.Sid \"Id\",\n"
     "       a.Serial# \"Serial#\",\n"
+	"       a.UserName \"Username\",\n"
     "       a.SchemaName \"Schema\",\n"
     "       a.Status \"Status\",\n"
     "       a.Server \"Server\",\n"
