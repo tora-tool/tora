@@ -1148,6 +1148,7 @@ ENDIF(ORACLE_FOUND)
 # Teradata connection provider
 IF(TERADATA_FOUND)
   SET(PROVIDER_TERADATA "pteradata")
+  ADD_DEFINITIONS("-DNO_CLIV2_ERROR_T")
   ADD_LIBRARY(${PROVIDER_TERADATA} SHARED 
 	"connection/toteradataprovider.cpp" 
 	"connection/toteradatatraits.cpp")
