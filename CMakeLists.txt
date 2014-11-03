@@ -107,7 +107,7 @@ IF (CMAKE_COMPILER_IS_GNUCC)
   SET(CMAKE_C_FLAGS_DEBUG     "-O0 -fno-inline -rdynamic")
   SET(CMAKE_CXX_FLAGS_RELEASE "-O2")
   SET(CMAKE_C_FLAGS_RELEASE   "-O2")
-  SET(CMAKE_CXX_FLAGS         "-Wall -std=c++0x -ggdb3")
+  SET(CMAKE_CXX_FLAGS         "-Wall -std=c++03 -ggdb3")
   SET(CMAKE_C_FLAGS           "-Wall -ggdb3")
 ENDIF (CMAKE_COMPILER_IS_GNUCC)
 
