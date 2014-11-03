@@ -399,7 +399,10 @@ void toStorageDatafile::browseFile(void)
 
 void toStorageDatafile::autoExtend(bool val)
 {
-    MaximumSize->setEnabled(!UnlimitedMax->isChecked());
+    if (val)
+        MaximumSize->setEnabled(!UnlimitedMax->isChecked());
+    else
+        MaximumSize->setEnabled(false);
     UnlimitedMax->setEnabled(val);
     NextSize->setEnabled(val);
 }
