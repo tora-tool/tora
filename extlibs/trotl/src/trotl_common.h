@@ -148,7 +148,7 @@ typename ::Loki::TypeTraits<T>::ParameterType min
 
 #ifdef DEBUG
 #ifdef __GNUC__
-#define __TROTL_HERE__ ::trotl::tstring(((strrchr(__FILE__, '/') ?: __FILE__ - 1) + 1)) + ":"__TROTL_HERE1__(__LINE__)
+#define __TROTL_HERE__ ::trotl::tstring(((strrchr(__FILE__, '/') ?: __FILE__ - 1) + 1)) + ":" __TROTL_HERE1__(__LINE__)
 //	#define __HERE_SHORT__ ::trotl::tstring(((strrchr(__FILE__, '/') ?: __FILE__ - 1) + 1)) + ":"__HERE1__(__LINE__)
 //	#define __TROTL_HERE__ ::trotl::str_backtrace() + __HERE3__(__LINE__, __FILE__)
 #define __TROTL_HERE1__(x)   STR(x)"\t" + __PRETTY_FUNCTION__

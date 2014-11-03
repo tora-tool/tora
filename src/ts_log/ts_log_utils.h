@@ -7,8 +7,8 @@
 
 #ifdef __GNUC__
 #include <string.h>
-#define __QHERE__ QString::fromAscii(((strrchr(__FILE__, '/') ?: __FILE__ - 1) + 1)) + ":"__HERE1__(__LINE__)
-#define __HERE__  std::string(((strrchr(__FILE__, '/') ?: __FILE__ - 1) + 1)) + ":"__HERE1__(__LINE__)
+#define __QHERE__ QString::fromAscii(((strrchr(__FILE__, '/') ?: __FILE__ - 1) + 1)) + ":" __HERE1__(__LINE__)
+#define __HERE__  std::string(((strrchr(__FILE__, '/') ?: __FILE__ - 1) + 1)) + ":" __HERE1__(__LINE__)
 #define __HERE1__(x)   STR(x)"\t" + __PRETTY_FUNCTION__
 #define STR(a) #a
 #else
