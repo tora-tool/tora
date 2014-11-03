@@ -195,6 +195,7 @@ void toNewConnection::readSettings()
 
     int sortList = Settings.value(CONF_PROVIDER_LIST_SORT_OFFSET, DEFAULT_PROVIDER_LIST_SORT_OFFSET).toInt();
     Previous->sortByColumn(abs(sortList), (sortList >= 0 ? Qt::AscendingOrder : Qt::DescendingOrder));
+    checkBoxRememberPasswords->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::SavePasswordBool).toBool());
 
     Previous->hideColumn(0);
 }
@@ -204,6 +205,8 @@ void toNewConnection::writeSettings(bool checkHistory)
 {
     int r = 0;
     Settings.setValue("geometry", saveGeometry());
+    toConfigurationNewSingle::Instance().setOption(ToConfiguration::Global::SavePasswordBool,
+                                                   checkBoxRememberPasswords->isChecked());
 
     Settings.setValue(CONF_PROVIDER_LIST_SORT_OFFSET,
                       (Previous->horizontalHeader()->sortIndicatorOrder() == Qt:: AscendingOrder ? 1 : -1)*

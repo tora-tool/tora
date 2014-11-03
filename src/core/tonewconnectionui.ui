@@ -14,7 +14,7 @@
    <string>New connection</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0" colspan="2">
+   <item row="0" column="0" colspan="3">
     <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="2,1">
      <item>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -485,6 +485,16 @@
      </item>
     </layout>
    </item>
+   <item row="1" column="2">
+    <widget class="QDialogButtonBox" name="ButtonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
    <item row="1" column="0">
     <widget class="QPushButton" name="ImportButton">
      <property name="text">
@@ -493,12 +503,9 @@
     </widget>
    </item>
    <item row="1" column="1">
-    <widget class="QDialogButtonBox" name="ButtonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+    <widget class="QCheckBox" name="checkBoxRememberPasswords">
+     <property name="text">
+      <string>Remember passwords</string>
      </property>
     </widget>
    </item>
