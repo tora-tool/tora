@@ -950,7 +950,7 @@ bool DotGraph::hasValidPath()
 #elif defined(Q_OS_WIN)
 #define _BIN_SUFFIX ".exe"
 #endif
-	QFileInfo dot(s_layoutCommandPath + "dot"_BIN_SUFFIX);
+	QFileInfo dot(s_layoutCommandPath + "dot" _BIN_SUFFIX);
 	if (dot.isFile() && dot.isExecutable())
 		return true;
 	else
