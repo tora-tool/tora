@@ -330,16 +330,18 @@ TORA_EXPORT void toStatusMessage(const QString &str, bool save = false, bool log
 /* This can't be documented in KDoc, anyway it is an easy way to catch any exception that
 * might be sent by TOra or OTL and display the message in the statusbar of the main window.
 */
-//#define TOROLLBACK(x)                           \
-//  catch (const QString &str) {                \
-//  toStatusMessage(str);                     \
-//  try {                                     \
-//  x.rollback();                           \
-//  } catch(...)                              \
-//  {                                         \
-//  get_log(1).ts<toDecorator>( __HERE__) << "  Ignored exception." << std::endl; \
-//  }                       \
-//  }
+#if 0
+#define TOROLLBACK(x)                           \
+ catch (const QString &str) {                \
+ toStatusMessage(str);                     \
+ try {                                     \
+ x.rollback();                           \
+ } catch(...)                              \
+ {                                         \
+ get_log(1).ts<toDecorator>( __HERE__) << "  Ignored exception." << std::endl; \
+ }                       \
+ }
+#endif
 
 /**
  * Get extensions for file save dialog from editor configuration
