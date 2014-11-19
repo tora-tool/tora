@@ -1,4 +1,4 @@
-// This defines the interface to the QsciLexerCMake class.
+// This defines the interface to the QsciLexerPO class.
 //
 // Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
@@ -23,8 +23,8 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 
-#ifndef QSCILEXERCMAKE_H
-#define QSCILEXERCMAKE_H
+#ifndef QSCILEXERPO_H
+#define QSCILEXERPO_H
 
 #ifdef __APPLE__
 extern "C++" {
@@ -36,14 +36,14 @@ extern "C++" {
 #include <Qsci/qscilexer.h>
 
 
-//! \brief The QsciLexerCMake class encapsulates the Scintilla CMake lexer.
-class QSCINTILLA_EXPORT QsciLexerCMake : public QsciLexer
+//! \brief The QsciLexerPO class encapsulates the Scintilla PO lexer.
+class QSCINTILLA_EXPORT QsciLexerPO : public QsciLexer
 {
     Q_OBJECT
 
 public:
     //! This enum defines the meanings of the different styles used by the
-    //! CMake lexer.
+    //! PO lexer.
     enum {
         //! The default.
         Default = 0,
@@ -51,53 +51,52 @@ public:
         //! A comment.
         Comment = 1,
 
-        //! A string.
-        String = 2,
+        //! A message identifier.
+        MessageId = 2,
 
-        //! A left quoted string.
-        StringLeftQuote = 3,
+        //! The text of a message identifier.
+        MessageIdText = 3,
 
-        //! A right quoted string.
-        StringRightQuote = 4,
+        //! A message string.
+        MessageString = 4,
 
-        //! A function.  (Defined by keyword set number 1.)
-        Function = 5,
+        //! The text of a message string.
+        MessageStringText = 5,
 
-        //! A variable. (Defined by keyword set number 2.)
-        Variable = 6,
+        //! A message context.
+        MessageContext = 6,
 
-        //! A label.
-        Label = 7,
+        //! The text of a message context.
+        MessageContextText = 7,
 
-        //! A keyword defined in keyword set number 3.  The class must be
-        //! sub-classed and re-implement keywords() to make use of this style.
-        KeywordSet3 = 8,
+        //! The "fuzzy" flag.
+        Fuzzy = 8,
 
-        //! A WHILE block.
-        BlockWhile = 9,
+        //! A programmer comment.
+        ProgrammerComment = 9,
 
-        //! A FOREACH block.
-        BlockForeach = 10,
+        //! A reference.
+        Reference = 10,
 
-        //! An IF block.
-        BlockIf = 11,
+        //! A flag.
+        Flags = 11,
 
-        //! A MACRO block.
-        BlockMacro = 12,
+        //! A message identifier text end-of-line.
+        MessageIdTextEOL = 12,
 
-        //! A variable within a string.
-        StringVariable = 13,
+        //! A message string text end-of-line.
+        MessageStringTextEOL = 13,
 
-        //! A number.
-        Number = 14
+        //! A message context text end-of-line.
+        MessageContextTextEOL = 14
     };
 
-    //! Construct a QsciLexerCMake with parent \a parent.  \a parent is
-    //! typically the QsciScintilla instance.
-    QsciLexerCMake(QObject *parent = 0);
+    //! Construct a QsciLexerPO with parent \a parent.  \a parent is typically
+    //! the QsciScintilla instance.
+    QsciLexerPO(QObject *parent = 0);
 
-    //! Destroys the QsciLexerCMake instance.
-    virtual ~QsciLexerCMake();
+    //! Destroys the QsciLexerPO instance.
+    virtual ~QsciLexerPO();
 
     //! Returns the name of the language.
     const char *language() const;
@@ -114,15 +113,6 @@ public:
     //! Returns the font for style number \a style.
     QFont defaultFont(int style) const;
 
-    //! Returns the background colour of the text for style number \a style.
-    //!
-    //! \sa defaultColor()
-    QColor defaultPaper(int style) const;
-
-    //! Returns the set of keywords for the keyword set \a set recognised
-    //! by the lexer as a space separated string.
-    const char *keywords(int set) const;
-
     //! Returns the descriptive name for style number \a style.  If the
     //! style is invalid for this language then an empty QString is returned.
     //! This is intended to be used in user preference dialogs.
@@ -132,17 +122,28 @@ public:
     //! signal as required.
     void refreshProperties();
 
-    //! Returns true if ELSE blocks can be folded.
+    //! Returns true if multi-line comment blocks can be folded.
     //!
-    //! \sa setFoldAtElse()
-    bool foldAtElse() const;
+    //! \sa setFoldComments()
+    bool foldComments() const;
+
+    //! Returns true if trailing blank lines are included in a fold block.
+    //!
+    //! \sa setFoldCompact()
+    bool foldCompact() const;
 
 public slots:
-    //! If \a fold is true then ELSE blocks can be folded.  The default is
-    //! false.
+    //! If \a fold is true then multi-line comment blocks can be folded.
+    //! The default is false.
     //!
-    //! \sa foldAtElse()
-    virtual void setFoldAtElse(bool fold);
+    //! \sa foldComments()
+    virtual void setFoldComments(bool fold);
+
+    //! If \a fold is true then trailing blank lines are included in a fold
+    //! block. The default is true.
+    //!
+    //! \sa foldCompact()
+    virtual void setFoldCompact(bool fold);
 
 protected:
     //! The lexer's properties are read from the settings \a qs.  \a prefix
@@ -158,12 +159,14 @@ protected:
     bool writeProperties(QSettings &qs,const QString &prefix) const;
 
 private:
-    void setAtElseProp();
+    void setCommentProp();
+    void setCompactProp();
 
-    bool fold_atelse;
+    bool fold_comments;
+    bool fold_compact;
 
-    QsciLexerCMake(const QsciLexerCMake &);
-    QsciLexerCMake &operator=(const QsciLexerCMake &);
+    QsciLexerPO(const QsciLexerPO &);
+    QsciLexerPO &operator=(const QsciLexerPO &);
 };
 
 #ifdef __APPLE__

@@ -1,4 +1,4 @@
-// This defines the interface to the QsciLexerPerl class.
+// This defines the interface to the QsciLexerCoffeeScript class.
 //
 // Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
@@ -23,8 +23,8 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 
-#ifndef QSCILEXERPERL_H
-#define QSCILEXERPERL_H
+#ifndef QSCILEXERCOFFEESCRIPT_H
+#define QSCILEXERCOFFEESCRIPT_H
 
 #ifdef __APPLE__
 extern "C++" {
@@ -36,27 +36,27 @@ extern "C++" {
 #include <Qsci/qscilexer.h>
 
 
-//! \brief The QsciLexerPerl class encapsulates the Scintilla Perl
-//! lexer.
-class QSCINTILLA_EXPORT QsciLexerPerl : public QsciLexer
+//! \brief The QsciLexerCoffeeScript class encapsulates the Scintilla
+//! CoffeeScript lexer.
+class QSCINTILLA_EXPORT QsciLexerCoffeeScript : public QsciLexer
 {
     Q_OBJECT
 
 public:
     //! This enum defines the meanings of the different styles used by the
-    //! Perl lexer.
+    //! C++ lexer.
     enum {
         //! The default.
         Default = 0,
 
-        //! An error.
-        Error = 1,
+        //! A C-style comment.
+        Comment = 1,
 
-        //! A comment.
-        Comment = 2,
+        //! A C++-style comment line.
+        CommentLine = 2,
 
-        //! A POD.
-        POD = 3,
+        //! A JavaDoc/Doxygen C-style comment.
+        CommentDoc = 3,
 
         //! A number.
         Number = 4,
@@ -70,112 +70,62 @@ public:
         //! A single-quoted string.
         SingleQuotedString = 7,
 
+        //! An IDL UUID.
+        UUID = 8,
+
+        //! A pre-processor block.
+        PreProcessor = 9,
+
         //! An operator.
         Operator = 10,
 
         //! An identifier
         Identifier = 11,
 
-        //! A scalar.
-        Scalar = 12,
+        //! The end of a line where a string is not closed.
+        UnclosedString = 12,
 
-        //! An array.
-        Array = 13,
-
-        //! A hash.
-        Hash = 14,
-
-        //! A symbol table.
-        SymbolTable = 15,
+        //! A C# verbatim string.
+        VerbatimString = 13,
 
         //! A regular expression.
-        Regex = 17,
+        Regex = 14,
 
-        //! A substitution.
-        Substitution = 18,
+        //! A JavaDoc/Doxygen C++-style comment line.
+        CommentLineDoc = 15,
 
-        //! Backticks.
-        Backticks = 20,
+        //! A keyword defined in keyword set number 2.  The class must be
+        //! sub-classed and re-implement keywords() to make use of this style.
+        KeywordSet2 = 16,
 
-        //! A data section.
-        DataSection = 21,
+        //! A JavaDoc/Doxygen keyword.
+        CommentDocKeyword = 17,
 
-        //! A here document delimiter.
-        HereDocumentDelimiter = 22,
+        //! A JavaDoc/Doxygen keyword error defined in keyword set number 3.
+        //! The class must be sub-classed and re-implement keywords() to make
+        //! use of this style.
+        CommentDocKeywordError = 18,
 
-        //! A single quoted here document.
-        SingleQuotedHereDocument = 23,
+        //! A global class defined in keyword set number 4.  The class must be
+        //! sub-classed and re-implement keywords() to make use of this style.
+        GlobalClass = 19,
 
-        //! A double quoted here document.
-        DoubleQuotedHereDocument = 24,
+        //! A block comment.
+        CommentBlock = 22,
 
-        //! A backtick here document.
-        BacktickHereDocument = 25,
+        //! A block regular expression.
+        BlockRegex = 23,
 
-        //! A quoted string (q).
-        QuotedStringQ = 26,
-
-        //! A quoted string (qq).
-        QuotedStringQQ = 27,
-
-        //! A quoted string (qx).
-        QuotedStringQX = 28,
-
-        //! A quoted string (qr).
-        QuotedStringQR = 29,
-
-        //! A quoted string (qw).
-        QuotedStringQW = 30,
-
-        //! A verbatim POD.
-        PODVerbatim = 31,
-
-        //! A Subroutine prototype.
-        SubroutinePrototype = 40,
-
-        //! A format identifier.
-        FormatIdentifier = 41,
-
-        //! A format body.
-        FormatBody = 42,
-
-        //! A double-quoted string (interpolated variable).
-        DoubleQuotedStringVar = 43,
-
-        //! A translation.
-        Translation = 44,
-
-        //! A regular expression (interpolated variable).
-        RegexVar = 54,
-
-        //! A substitution (interpolated variable).
-        SubstitutionVar = 55,
-
-        //! Backticks (interpolated variable).
-        BackticksVar = 57,
-
-        //! A double quoted here document (interpolated variable).
-        DoubleQuotedHereDocumentVar = 61,
-
-        //! A backtick here document (interpolated variable).
-        BacktickHereDocumentVar = 62,
-
-        //! A quoted string (qq, interpolated variable).
-        QuotedStringQQVar = 64,
-
-        //! A quoted string (qx, interpolated variable).
-        QuotedStringQXVar = 65,
-
-        //! A quoted string (qr, interpolated variable).
-        QuotedStringQRVar = 66
+        //! A block regular expression comment.
+        BlockRegexComment = 24,
     };
 
-    //! Construct a QsciLexerPerl with parent \a parent.  \a parent is
+    //! Construct a QsciLexerCoffeeScript with parent \a parent.  \a parent is
     //! typically the QsciScintilla instance.
-    QsciLexerPerl(QObject *parent = 0);
+    QsciLexerCoffeeScript(QObject *parent = 0);
 
-    //! Destroys the QsciLexerPerl instance.
-    virtual ~QsciLexerPerl();
+    //! Destroys the QsciLexerCoffeeScript instance.
+    virtual ~QsciLexerCoffeeScript();
 
     //! Returns the name of the language.
     const char *language() const;
@@ -198,14 +148,18 @@ public:
     //! auto-indentation.  The styles is returned via \a style.
     const char *blockStart(int *style = 0) const;
 
+    //! \internal Returns a space separated list of keywords in a
+    //! particular style that define the start of a block for
+    //! auto-indentation.  The styles is returned via \a style.
+    const char *blockStartKeyword(int *style = 0) const;
+
     //! \internal Returns the style used for braces for brace matching.
     int braceStyle() const;
 
     //! Returns the string of characters that comprise a word.
     const char *wordCharacters() const;
 
-    //! Returns the foreground colour of the text for style number
-    //! \a style.
+    //! Returns the foreground colour of the text for style number \a style.
     //!
     //! \sa defaultPaper()
     QColor defaultColor(int style) const;
@@ -222,7 +176,11 @@ public:
     QColor defaultPaper(int style) const;
 
     //! Returns the set of keywords for the keyword set \a set recognised
-    //! by the lexer as a space separated string.
+    //! by the lexer as a space separated string.  Set 1 is normally used for
+    //! primary keywords and identifiers.  Set 2 is normally used for secondary
+    //! keywords and identifiers.  Set 3 is normally used for documentation
+    //! comment keywords.  Set 4 is normally used for global classes and
+    //! typedefs.
     const char *keywords(int set) const;
 
     //! Returns the descriptive name for style number \a style.  If the
@@ -234,88 +192,79 @@ public:
     //! propertyChanged() signal as required.
     void refreshProperties();
 
-    //! If \a fold is true then "} else {" lines can be folded.  The default is
-    //! false.
+    //! Returns true if '$' characters are allowed in identifier names.
     //!
-    //! \sa foldAtElse()
-    void setFoldAtElse(bool fold);
+    //! \sa setDollarsAllowed()
+    bool dollarsAllowed() const {return dollars;}
 
-    //! Returns true if "} else {" lines can be folded.
+    //! If \a allowed is true then '$' characters are allowed in identifier
+    //! names.  The default is true.
     //!
-    //! \sa setFoldAtElse()
-    bool foldAtElse() const {return fold_atelse;}
+    //! \sa dollarsAllowed()
+    void setDollarsAllowed(bool allowed);
 
     //! Returns true if multi-line comment blocks can be folded.
     //!
     //! \sa setFoldComments()
-    bool foldComments() const;
+    bool foldComments() const {return fold_comments;}
 
-    //! Returns true if trailing blank lines are included in a fold block.
-    //!
-    //! \sa setFoldCompact()
-    bool foldCompact() const;
-
-    //! If \a fold is true then packages can be folded.  The default is true.
-    //!
-    //! \sa foldPackages()
-    void setFoldPackages(bool fold);
-
-    //! Returns true if packages can be folded.
-    //!
-    //! \sa setFoldPackages()
-    bool foldPackages() const;
-
-    //! If \a fold is true then POD blocks can be folded.  The default is true.
-    //!
-    //! \sa foldPODBlocks()
-    void setFoldPODBlocks(bool fold);
-
-    //! Returns true if POD blocks can be folded.
-    //!
-    //! \sa setFoldPODBlocks()
-    bool foldPODBlocks() const;
-
-public slots:
     //! If \a fold is true then multi-line comment blocks can be folded.
     //! The default is false.
     //!
     //! \sa foldComments()
-    virtual void setFoldComments(bool fold);
+    void setFoldComments(bool fold);
+
+    //! Returns true if trailing blank lines are included in a fold block.
+    //!
+    //! \sa setFoldCompact()
+    bool foldCompact() const {return fold_compact;}
 
     //! If \a fold is true then trailing blank lines are included in a fold
     //! block. The default is true.
     //!
     //! \sa foldCompact()
-    virtual void setFoldCompact(bool fold);
+    void setFoldCompact(bool fold);
+
+    //! Returns true if preprocessor lines (after the preprocessor
+    //! directive) are styled.
+    //!
+    //! \sa setStylePreprocessor()
+    bool stylePreprocessor() const {return style_preproc;}
+
+    //! If \a style is true then preprocessor lines (after the preprocessor
+    //! directive) are styled.  The default is false.
+    //!
+    //! \sa stylePreprocessor()
+    void setStylePreprocessor(bool style);
 
 protected:
     //! The lexer's properties are read from the settings \a qs.  \a prefix
     //! (which has a trailing '/') should be used as a prefix to the key of
     //! each setting.  true is returned if there is no error.
     //!
+    //! \sa writeProperties()
     bool readProperties(QSettings &qs,const QString &prefix);
 
     //! The lexer's properties are written to the settings \a qs.
     //! \a prefix (which has a trailing '/') should be used as a prefix to
     //! the key of each setting.  true is returned if there is no error.
     //!
+    //! \sa readProperties()
     bool writeProperties(QSettings &qs,const QString &prefix) const;
 
 private:
-    void setAtElseProp();
     void setCommentProp();
     void setCompactProp();
-    void setPackagesProp();
-    void setPODBlocksProp();
+    void setStylePreprocProp();
+    void setDollarsProp();
 
-    bool fold_atelse;
     bool fold_comments;
     bool fold_compact;
-    bool fold_packages;
-    bool fold_pod_blocks;
+    bool style_preproc;
+    bool dollars;
 
-    QsciLexerPerl(const QsciLexerPerl &);
-    QsciLexerPerl &operator=(const QsciLexerPerl &);
+    QsciLexerCoffeeScript(const QsciLexerCoffeeScript &);
+    QsciLexerCoffeeScript &operator=(const QsciLexerCoffeeScript &);
 };
 
 #ifdef __APPLE__

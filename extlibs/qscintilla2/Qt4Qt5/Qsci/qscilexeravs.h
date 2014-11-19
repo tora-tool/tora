@@ -1,4 +1,4 @@
-// This defines the interface to the QsciLexerVerilog class.
+// This defines the interface to the QsciLexerAVS class.
 //
 // Copyright (c) 2014 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
@@ -23,8 +23,8 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
 
-#ifndef QSCILEXERVERILOG_H
-#define QSCILEXERVERILOG_H
+#ifndef QSCILEXERAVS_H
+#define QSCILEXERAVS_H
 
 #ifdef __APPLE__
 extern "C++" {
@@ -36,70 +36,68 @@ extern "C++" {
 #include <Qsci/qscilexer.h>
 
 
-//! \brief The QsciLexerVerilog class encapsulates the Scintilla Verilog
-//! lexer.
-class QSCINTILLA_EXPORT QsciLexerVerilog : public QsciLexer
+//! \brief The QsciLexerAVS class encapsulates the Scintilla AVS lexer.
+class QSCINTILLA_EXPORT QsciLexerAVS : public QsciLexer
 {
     Q_OBJECT
 
 public:
     //! This enum defines the meanings of the different styles used by the
-    //! Verilog lexer.
+    //! AVS lexer.
     enum {
         //! The default.
         Default = 0,
 
-        //! A comment.
-        Comment = 1,
+        //! A block comment.
+        BlockComment = 1,
+
+        //! A nested block comment.
+        NestedBlockComment = 2,
 
         //! A line comment.
-        CommentLine = 2,
+        LineComment = 3,
 
-        //! A bang comment.
-        CommentBang = 3,
-
-        //! A number
+        //! A number.
         Number = 4,
 
-        //! A keyword.
-        Keyword = 5,
+        //! An operator.
+        Operator = 5,
+
+        //! An identifier
+        Identifier = 6,
 
         //! A string.
-        String = 6,
+        String = 7,
 
-        //! A keyword defined in keyword set number 2.  The class must
-        //! be sub-classed and re-implement keywords() to make use of
-        //! this style.
-        KeywordSet2 = 7,
+        //! A triple quoted string.
+        TripleString = 8,
 
-        //! A system task.
-        SystemTask = 8,
+        //! A keyword (as defined by keyword set number 1)..
+        Keyword = 9,
 
-        //! A pre-processor block.
-        Preprocessor = 9,
+        //! A filter (as defined by keyword set number 2).
+        Filter = 10,
 
-        //! An operator.
-        Operator = 10,
+        //! A plugin (as defined by keyword set number 3).
+        Plugin = 11,
 
-        //! An identifier.
-        Identifier = 11,
+        //! A function (as defined by keyword set number 4).
+        Function = 12,
 
-        //! The end of a line where a string is not closed.
-        UnclosedString = 12,
+        //! A clip property (as defined by keyword set number 5).
+        ClipProperty = 13,
 
-        //! A keyword defined in keyword set number 4.  The class must
-        //! be sub-classed and re-implement keywords() to make use of
-        //! this style.  This set is intended to be used for user defined
-        //! identifiers and tasks.
-        UserKeywordSet = 19
+        //! A keyword defined in keyword set number 6.  The class must be
+        //! sub-classed and re-implement keywords() to make use of this style.
+        KeywordSet6 = 14
     };
 
-    //! Construct a QsciLexerVerilog with parent \a parent.  \a parent is
-    //! typically the QsciScintilla instance.
-    QsciLexerVerilog(QObject *parent = 0);
+    //! Construct a QsciLexerAVS with parent \a parent.  \a parent is typically
+    //! the QsciScintilla instance.
+    QsciLexerAVS(QObject *parent = 0);
 
-    //! Destroys the QsciLexerVerilog instance.
-    virtual ~QsciLexerVerilog();
+    //! Destroys the QsciLexerAVS instance.
+    virtual ~QsciLexerAVS();
 
     //! Returns the name of the language.
     const char *language() const;
@@ -119,16 +117,8 @@ public:
     //! \sa defaultPaper()
     QColor defaultColor(int style) const;
 
-    //! Returns the end-of-line fill for style number \a style.
-    bool defaultEolFill(int style) const;
-
     //! Returns the font for style number \a style.
     QFont defaultFont(int style) const;
-
-    //! Returns the background colour of the text for style number \a style.
-    //!
-    //! \sa defaultColor()
-    QColor defaultPaper(int style) const;
 
     //! Returns the set of keywords for the keyword set \a set recognised
     //! by the lexer as a space separated string.
@@ -139,94 +129,55 @@ public:
     //! This is intended to be used in user preference dialogs.
     QString description(int style) const;
 
-    //! Causes all properties to be refreshed by emitting the
-    //! propertyChanged() signal as required.
+    //! Causes all properties to be refreshed by emitting the propertyChanged()
+    //! signal as required.
     void refreshProperties();
-
-    //! If \a fold is true then "} else {" lines can be folded.  The
-    //! default is false.
-    //!
-    //! \sa foldAtElse()
-    void setFoldAtElse(bool fold);
-
-    //! Returns true if "} else {" lines can be folded.
-    //!
-    //! \sa setFoldAtElse()
-    bool foldAtElse() const;
-
-    //! If \a fold is true then multi-line comment blocks can be folded.
-    //! The default is false.
-    //!
-    //! \sa foldComments()
-    void setFoldComments(bool fold);
 
     //! Returns true if multi-line comment blocks can be folded.
     //!
     //! \sa setFoldComments()
     bool foldComments() const;
 
-    //! If \a fold is true then trailing blank lines are included in a fold
-    //! block. The default is true.
-    //!
-    //! \sa foldCompact()
-    void setFoldCompact(bool fold);
-
     //! Returns true if trailing blank lines are included in a fold block.
     //!
     //! \sa setFoldCompact()
     bool foldCompact() const;
 
-    //! If \a fold is true then preprocessor blocks can be folded.  The
-    //! default is true.
+public slots:
+    //! If \a fold is true then multi-line comment blocks can be folded.
+    //! The default is false.
     //!
-    //! \sa foldPreprocessor()
-    void setFoldPreprocessor(bool fold);
+    //! \sa foldComments()
+    virtual void setFoldComments(bool fold);
 
-    //! Returns true if preprocessor blocks can be folded.
+    //! If \a fold is true then trailing blank lines are included in a fold
+    //! block. The default is true.
     //!
-    //! \sa setFoldPreprocessor()
-    bool foldPreprocessor() const;
-
-    //! If \a fold is true then modules can be folded.  The default is false.
-    //!
-    //! \sa foldAtModule()
-    void setFoldAtModule(bool fold);
-
-    //! Returns true if modules can be folded.
-    //!
-    //! \sa setFoldAtModule()
-    bool foldAtModule() const;
+    //! \sa foldCompact()
+    virtual void setFoldCompact(bool fold);
 
 protected:
     //! The lexer's properties are read from the settings \a qs.  \a prefix
     //! (which has a trailing '/') should be used as a prefix to the key of
     //! each setting.  true is returned if there is no error.
     //!
-    //! \sa writeProperties()
     bool readProperties(QSettings &qs,const QString &prefix);
 
     //! The lexer's properties are written to the settings \a qs.
     //! \a prefix (which has a trailing '/') should be used as a prefix to
     //! the key of each setting.  true is returned if there is no error.
     //!
-    //! \sa readProperties()
     bool writeProperties(QSettings &qs,const QString &prefix) const;
 
 private:
-    void setAtElseProp();
     void setCommentProp();
     void setCompactProp();
-    void setPreprocProp();
-    void setAtModuleProp();
 
-    bool fold_atelse;
     bool fold_comments;
     bool fold_compact;
-    bool fold_preproc;
-    bool fold_atmodule;
 
-    QsciLexerVerilog(const QsciLexerVerilog &);
-    QsciLexerVerilog &operator=(const QsciLexerVerilog &);
+    QsciLexerAVS(const QsciLexerAVS &);
+    QsciLexerAVS &operator=(const QsciLexerAVS &);
 };
 
 #ifdef __APPLE__
