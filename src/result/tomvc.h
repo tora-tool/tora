@@ -215,8 +215,8 @@ void TOMVC< _T, _VP, _DP>::observeHeaders(const toQuery::HeaderList &headers)
 	{
 		struct toQuery::HeaderDesc d;
 
-		d.name = QString::fromAscii("#");
-		d.datatype = QString::fromAscii("RowNumber");
+		d.name = QString::fromLatin1("#");
+		d.datatype = QString::fromLatin1("RowNumber");
 		h.prepend(d);
 	}
 	Model::setHeaders(h);
