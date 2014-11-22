@@ -101,7 +101,7 @@ toSandbox::toSandbox(/*toTool *tool,*/ QWidget *parent, toConnection &connection
     new toChangeConnection(toolbar);
 
     m_statement = new QLineEdit(this);
-    m_statement->setText(QString::fromAscii("select * from dba_objects"));
+    m_statement->setText(QString::fromLatin1("select * from dba_objects"));
     layout()->addWidget(m_statement);
 
 

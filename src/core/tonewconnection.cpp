@@ -87,8 +87,8 @@ toNewConnection::toNewConnection(QWidget* parent, toWFlags fl)
 		{
 			if (p == "Oracle")
 			{
-				Provider->addItem(ORACLE_INSTANTCLIENT, QVariant(QString::fromAscii(ORACLE_PROVIDER)));
-				Provider->addItem(ORACLE_TNSCLIENT, QVariant(QString::fromAscii(ORACLE_PROVIDER)));
+				Provider->addItem(ORACLE_INSTANTCLIENT, QVariant(QString::fromLatin1(ORACLE_PROVIDER)));
+				Provider->addItem(ORACLE_TNSCLIENT, QVariant(QString::fromLatin1(ORACLE_PROVIDER)));
 			}
 			else
 			{

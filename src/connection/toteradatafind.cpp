@@ -58,7 +58,7 @@ public:
 
     virtual QString name() const
     {
-        return QString::fromAscii("Teradata");
+        return QString::fromLatin1("Teradata");
     };
 
     /** Return list of possible client locations
@@ -84,21 +84,21 @@ private:
 
 QSet<QString> const toTeradataFinder::m_paths = QSet<QString>()
 #if defined(Q_OS_LINUX)
-        << QString::fromAscii("/opt/teradata/client/14.00/lib64/")
-        << QString::fromAscii("/opt/teradata/client/14.00/lib/")
-        << QString::fromAscii("/opt/teradata/client/13.00/lib64/")
-        << QString::fromAscii("/opt/teradata/client/13.00/lib/")
+        << QString::fromLatin1("/opt/teradata/client/14.00/lib64/")
+        << QString::fromLatin1("/opt/teradata/client/14.00/lib/")
+        << QString::fromLatin1("/opt/teradata/client/13.00/lib64/")
+        << QString::fromLatin1("/opt/teradata/client/13.00/lib/")
 #elif  defined(Q_OS_WIN32)
 #endif
         ;
 
 QList<QString> const toTeradataFinder::m_libname = QList<QString>()
 #if defined(Q_OS_LINUX)
-        << QString::fromAscii("libcliv2.so")
+        << QString::fromLatin1("libcliv2.so")
 #elif defined(Q_OS_WIN32)
-        << QString::fromAscii("wincli32.dll")
+        << QString::fromLatin1("wincli32.dll")
 #elif defined(Q_OS_WIN64)
-        << QString::fromAscii("wincli64.dll")
+        << QString::fromLatin1("wincli64.dll")
 #endif
         ;
 

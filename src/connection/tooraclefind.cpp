@@ -70,7 +70,7 @@ public:
 
     virtual QString name() const
     {
-        return QString::fromAscii(ORACLE_INSTANTCLIENT);
+        return QString::fromLatin1(ORACLE_INSTANTCLIENT);
     };
 
     /** Return list of possible client locations
@@ -98,37 +98,37 @@ private:
 
 QSet<QString> const toOracleInstantFinder::m_paths = QSet<QString>()
 #if defined(Q_OS_LINUX)
-        << QString::fromAscii("/usr/lib/oracle/11.2/client64/lib")
-        << QString::fromAscii("/usr/lib/oracle/11.2/client/lib")
-        << QString::fromAscii("/usr/lib/oracle/11.1/client64/lib")
-        << QString::fromAscii("/usr/lib/oracle/11.1/client/lib")
-        << QString::fromAscii("/usr/lib/oracle/10.2.0.5/client64/lib")
-        << QString::fromAscii("/usr/lib/oracle/10.2.0.5/client/lib")
-        << QString::fromAscii("/usr/lib/oracle/10.2.0.4/client64/lib")
-        << QString::fromAscii("/usr/lib/oracle/10.2.0.4/client/lib")
-        << QString::fromAscii("/usr/lib/oracle/10.2.0.3/client64/lib")
-        << QString::fromAscii("/usr/lib/oracle/10.2.0.3/client/lib")
-        << QString::fromAscii("/opt/instantclient*")
-        << QString::fromAscii("/usr/lib")
+        << QString::fromLatin1("/usr/lib/oracle/11.2/client64/lib")
+        << QString::fromLatin1("/usr/lib/oracle/11.2/client/lib")
+        << QString::fromLatin1("/usr/lib/oracle/11.1/client64/lib")
+        << QString::fromLatin1("/usr/lib/oracle/11.1/client/lib")
+        << QString::fromLatin1("/usr/lib/oracle/10.2.0.5/client64/lib")
+        << QString::fromLatin1("/usr/lib/oracle/10.2.0.5/client/lib")
+        << QString::fromLatin1("/usr/lib/oracle/10.2.0.4/client64/lib")
+        << QString::fromLatin1("/usr/lib/oracle/10.2.0.4/client/lib")
+        << QString::fromLatin1("/usr/lib/oracle/10.2.0.3/client64/lib")
+        << QString::fromLatin1("/usr/lib/oracle/10.2.0.3/client/lib")
+        << QString::fromLatin1("/opt/instantclient*")
+        << QString::fromLatin1("/usr/lib")
 #elif  defined(Q_OS_WIN32)
-        << QString::fromAscii("C:\\instantclient*")
-        << QString::fromAscii("D:\\instantclient*")
-        << QString::fromAscii("E:\\instantclient*")
-        << QString::fromAscii("C:\\oracle\\instantclient*")
-        << QString::fromAscii("D:\\oracle\\instantclient*")
-        << QString::fromAscii("E:\\oracle\\instantclient*")
-        << QString::fromAscii("D:\\devel\\instantclient*")
+        << QString::fromLatin1("C:\\instantclient*")
+        << QString::fromLatin1("D:\\instantclient*")
+        << QString::fromLatin1("E:\\instantclient*")
+        << QString::fromLatin1("C:\\oracle\\instantclient*")
+        << QString::fromLatin1("D:\\oracle\\instantclient*")
+        << QString::fromLatin1("E:\\oracle\\instantclient*")
+        << QString::fromLatin1("D:\\devel\\instantclient*")
 #endif
 		<< QDir::currentPath() 
         ;
 
 QList<QString> const toOracleInstantFinder::m_libname = QList<QString>()
 #if defined(Q_OS_LINUX)
-        << QString::fromAscii("libclntsh.so*")
+        << QString::fromLatin1("libclntsh.so*")
 #elif defined(Q_WS_MAC)
-        << QString::fromAscii("libclntsh.*dylib")
+        << QString::fromLatin1("libclntsh.*dylib")
 #elif defined(Q_OS_WIN32) // Note both 32 and 64 bit build
-        << QString::fromAscii("OCI.dll")
+        << QString::fromLatin1("OCI.dll")
 #endif
         ;
 
@@ -367,8 +367,8 @@ void toOracleInstantFinder::loadLib(ConnectionProvirerParams const &params)
     - dlopen("libtrotl.so")
     */
     int retval;
-    QDir toraHome(QDir::homePath() + QDir::separator() + QChar('.') + QString::fromAscii(TOAPPNAME));
-    QString providerPath(toraHome.absolutePath() + QDir::separator() + QString::fromAscii("poracle"));
+    QDir toraHome(QDir::homePath() + QDir::separator() + QChar('.') + QString::fromLatin1(TOAPPNAME));
+    QString providerPath(toraHome.absolutePath() + QDir::separator() + QString::fromLatin1("poracle"));
     TLOG(5, toNoDecorator, __HERE__) << "Creating plugin path:" << providerPath << std::endl;
     if( !toraHome.mkpath(providerPath))
 	    throw QString("Could not create: %1").arg(providerPath);
@@ -426,7 +426,7 @@ public:
 
     virtual QString name() const
     {
-        return QString::fromAscii(ORACLE_TNSCLIENT);
+        return QString::fromLatin1(ORACLE_TNSCLIENT);
     };
 
     /** Return list of possible client locations
@@ -521,9 +521,9 @@ QList<toConnectionProviderFinder::ConnectionProvirerParams> toOracleFinder::find
     {
     	QDir ohDir(s);
 #ifdef Q_OS_WIN32
-    	QDir ohLibDir(s + QDir::separator() + QString::fromAscii("bin"));
+    	QDir ohLibDir(s + QDir::separator() + QString::fromLatin1("bin"));
 #else
-		QDir ohLibDir(s + QDir::separator() + QString::fromAscii("lib"));
+		QDir ohLibDir(s + QDir::separator() + QString::fromLatin1("lib"));
 #endif
     	QStringList sLibraries = ohLibDir.entryList( m_libname);
     	QString version;

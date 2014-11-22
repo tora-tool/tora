@@ -106,7 +106,7 @@ QString toOracleTraits::unQuote(QString const &name) const
 QString toOracleTraits::quoteVarchar(const QString &name) const
 {
 	QString retval(name);
-	retval.replace('\'', QString::fromAscii("\'\'"), Qt::CaseSensitive);
+	retval.replace('\'', QString::fromLatin1("\'\'"), Qt::CaseSensitive);
 	return QChar('\'') + retval + ('\'');
 }
 
@@ -118,8 +118,8 @@ QString toOracleTraits::schemaSwitchSQL(QString const & schema) const
 
 QList<QString> toOracleTraits::primaryKeys(toConnection &conn, toCache::ObjectRef const&obj) const
 {
-	static const QString ROWID(QString::fromAscii("ROWID"));
-	static const QString ORA_ROWSCN(QString::fromAscii("ORA_ROWSCN"));
+	static const QString ROWID(QString::fromLatin1("ROWID"));
+	static const QString ORA_ROWSCN(QString::fromLatin1("ORA_ROWSCN"));
 
 	toCache::CacheEntry const* e = conn.getCache().findEntry(obj);
 	if (e && e->type == toCache::TABLE)

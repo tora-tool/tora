@@ -51,7 +51,7 @@ public:
 
     virtual QString name() const
     {
-        return QString::fromAscii(QSQL_FINDER);
+        return QString::fromLatin1(QSQL_FINDER);
     };
 
     /** Return list of possible client locations

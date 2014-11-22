@@ -75,7 +75,7 @@ Test4Window::Test4Window(const QString &sql)
 	rightVerticalLayout->addWidget(editorRight);
 	editorRight->setText(sql);
 	editorRight->setMarginType(2, QsciScintilla::TextMarginRightJustified);
-	editorRight->setMarginWidth(2, QString::fromAscii("009"));
+	editorRight->setMarginWidth(2, QString::fromLatin1("009"));
 
 	connect(oracle, SIGNAL(triggered()), this, SLOT(setOracle()));
 	connect(mysql, SIGNAL(triggered()), this, SLOT(setMySQL()));

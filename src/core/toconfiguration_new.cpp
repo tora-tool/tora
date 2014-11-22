@@ -182,7 +182,7 @@ QString toConfigurationNew::sharePath()
 	appl += QDir::separator();
 	return appl;
 #else
-	return QString::fromAscii(SHARE_DIR);
+	return QString::fromLatin1(SHARE_DIR);
 #endif
 }
 
