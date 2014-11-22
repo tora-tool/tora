@@ -37,7 +37,7 @@
 
 #include "core/todocklet.h"
 
-#include <QtGui/QSortFilterProxyModel>
+#include <QSortFilterProxyModel>
 
 class toEditWidget;
 class DotGraphView;
