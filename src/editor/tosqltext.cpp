@@ -40,8 +40,8 @@
 #include "core/toconfiguration_new.h"
 #include "editor/toworksheettext.h"
 
-#include <QtGui/QListWidget>
-#include <QtGui/QVBoxLayout>
+#include <QListWidget>
+#include <QVBoxLayout>
 
 #include <Qsci/qsciapis.h>
 #include <Qsci/qsciabstractapis.h>

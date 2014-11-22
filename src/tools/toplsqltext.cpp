@@ -53,11 +53,11 @@
 #include <QtCore/QSettings>
 #include <QtCore/QTemporaryFile>
 #include <QtCore/QProcess>
-#include <QtGui/QToolBar>
-#include <QtGui/QMenu>
-#include <QtGui/QTreeView>
-#include <QtGui/QSplitter>
-#include <QtGui/QToolButton>
+#include <QToolBar>
+#include <QMenu>
+#include <QTreeView>
+#include <QSplitter>
+#include <QToolButton>
 
 #include "icons/close.xpm"
 #include "icons/compile.xpm"

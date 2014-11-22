@@ -35,8 +35,8 @@
 #include "editor/tocomplpopup.h"
 #include "editor/toworksheettext.h"
 
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QListWidget>
+#include <QVBoxLayout>
+#include <QListWidget>
 
 toComplPopup::toComplPopup(toWorksheetText* editor)
     : QWidget(editor, Qt::Popup)

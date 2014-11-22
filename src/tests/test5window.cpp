@@ -51,9 +51,9 @@
 
 #include "editor/tosqltext.h"
 
-#include <QtGui/QStatusBar>
-#include <QtGui/QScrollArea>
-#include <QtGui/QSplitter>
+#include <QStatusBar>
+#include <QScrollArea>
+#include <QSplitter>
 
 Test5Window::Test5Window(QString user, QString password, QString connect, QSet<QString>& options)
 	: toMainWindow()

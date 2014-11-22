@@ -42,13 +42,13 @@
 #include "core/toconnectiontraits.h"
 
 #include <QtCore/QRegExp>
-#include <QtGui/QCheckBox>
-#include <QtGui/QLabel>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QGridLayout>
-#include <QtGui/QScrollArea>
-#include <QtGui/QApplication>
+#include <QCheckBox>
+#include <QLabel>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QGridLayout>
+#include <QScrollArea>
+#include <QApplication>
 
 //static toSQL SQLComment(
 //    "toResultCols:Comments",

@@ -37,8 +37,8 @@
 #include "core/tomainwindow.h"
 #include "core/toworkspace.h"
 
-#include <QtGui/QApplication>
-#include <QtGui/QVBoxLayout>
+#include <QApplication>
+#include <QVBoxLayout>
 
 
 static QMap<QString, toDockletHolder *>& Docklets()

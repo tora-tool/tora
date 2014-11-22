@@ -45,11 +45,11 @@
 #include "icons/execute.xpm"
 #include "icons/awrtool.xpm"
 
-#include <QtGui/QLineEdit>
-#include <QtGui/QDateEdit>
-#include <QtGui/QMessageBox> //TODO see utis.h define TOMessageBox QMessageBox(QMessageBox should be included there)
-#include <QtGui/QToolBar>
-#include <QtGui/QLabel>
+#include <QLineEdit>
+#include <QDateEdit>
+#include <QMessageBox> //TODO see utis.h define TOMessageBox QMessageBox(QMessageBox should be included there)
+#include <QToolBar>
+#include <QLabel>
 
 #include <iostream>
 #include <list>

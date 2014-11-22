@@ -39,7 +39,7 @@
 #include "core/totimer.h"
 #include "core/toglobalevent.h"
 
-#include <QtGui/QMenu>
+#include <QMenu>
 
 
 toResultLine::toResultLine(QWidget *parent, const char *name)

@@ -42,9 +42,9 @@
 #include "core/toconfiguration_new.h"
 #include "core/toglobalsetting.h"
 
-#include <QtGui/QToolBar>
-#include <QtGui/QLayout>
-#include <QtGui/QSplitter>
+#include <QToolBar>
+#include <QLayout>
+#include <QSplitter>
 
 #include "icons/refresh.xpm"
 #include "icons/totemporary.xpm"

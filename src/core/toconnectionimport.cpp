@@ -39,7 +39,7 @@
 #include "migratetool/squirrelsql.h"
 #include "migratetool/tora3.h"
 
-#include <QtGui/QMessageBox>
+#include <QMessageBox>
 
 toConnectionImport::toConnectionImport(QWidget * parent)
     : QDialog(parent)

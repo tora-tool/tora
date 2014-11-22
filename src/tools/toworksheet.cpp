@@ -77,8 +77,8 @@
 #include <QtCore/QDebug>
 #include <QtCore/QSettings>
 #include <QtCore/QTextStream>
-#include <QtGui/QInputDialog>
-#include <QtGui/QProgressDialog>
+#include <QInputDialog>
+#include <QProgressDialog>
 #include <QtCore/QCryptographicHash>
 
 #include "icons/clock.xpm"

@@ -39,7 +39,7 @@
 
 #include <QtCore/QSettings>
 #include <QtGui/QHideEvent>
-#include <QtGui/QMessageBox>
+#include <QMessageBox>
 #include <QtCore/QList>
 
 toDescribe::toDescribe(QWidget * parent)

@@ -52,7 +52,7 @@
 #include <QtCore/QDataStream>
 #include <QtCore/QMutexLocker>
 #include <QtCore/QThread>
-#include <QtGui/QProgressDialog>
+#include <QProgressDialog>
 //#include <boost/preprocessor/iteration/detail/local.hpp>
 
 /* This method runs as a separate thread executed from:

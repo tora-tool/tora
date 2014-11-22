@@ -39,8 +39,8 @@
 #include "core/toresulttableview.h"
 #include "core/toglobalevent.h"
 
-#include <QtGui/QToolBar>
-#include <QtGui/QVBoxLayout>
+#include <QToolBar>
+#include <QVBoxLayout>
 
 #include "icons/refresh.xpm"
 

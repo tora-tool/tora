@@ -61,9 +61,9 @@
 #  include "core/tomysqluser.h"
 #endif
 
-#include <QtGui/QInputDialog>
-#include <QtGui/QSplitter>
-#include <QtGui/QToolBar>
+#include <QInputDialog>
+#include <QSplitter>
+#include <QToolBar>
 
 #include "icons/addindex.xpm"
 #include "icons/addtable.xpm"

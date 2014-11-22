@@ -37,7 +37,7 @@
 #include "core/toresulttableview.h"
 #include "core/utils.h"
 
-#include <QtGui/QProgressDialog>
+#include <QProgressDialog>
 #include <QtCore/QCoreApplication>
 #include <QtGui/QPainter>
 

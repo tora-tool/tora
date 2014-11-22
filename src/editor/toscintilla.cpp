@@ -44,9 +44,9 @@
 #include <QtGui/QClipboard>
 #include <QtGui/QPrintDialog>
 #include <QtXml/QDomDocument>
-#include <QtGui/QShortcut>
+#include <QShortcut>
 #include <QtCore/QtDebug>
-#include <QtGui/QMenu>
+#include <QMenu>
 #include <QtGui/QClipboard>
 
 #include <Qsci/qsciprinter.h>

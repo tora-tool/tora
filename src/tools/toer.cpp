@@ -32,7 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include <QtGui/QToolBar>
+#include <QToolBar>
 
 #include "tools/toer.h"
 #include "core/tologger.h"
@@ -50,7 +50,7 @@
 #include "dotgraph.h"
 #include "dotgraphview.h"
 
-#include <QtGui/QToolBar>
+#include <QToolBar>
 
 static toSQL SQLALLRefs (
 			"toResultDrawing:ALLREFConstraints",

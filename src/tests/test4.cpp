@@ -38,7 +38,7 @@
 #include "core/tologger.h"
 #include "core/toconfiguration_new.h"
 
-#include <QtGui/QApplication>
+#include <QApplication>
 #include <QtCore/QLibrary>
 
 int main(int argc, char **argv)

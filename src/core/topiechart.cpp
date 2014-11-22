@@ -46,11 +46,11 @@
 #include <time.h>
 
 #include <QtGui/QPainter>
-#include <QtGui/QToolTip>
+#include <QToolTip>
 #include <QtGui/QPaintEvent>
 #include <QtGui/QPixmap>
 #include <QtGui/QMouseEvent>
-#include <QtGui/QMenu>
+#include <QMenu>
 #include <QtGui/QPrinter>
 #include <QtGui/QPrintDialog>
 

@@ -48,11 +48,11 @@
 #include "core/totimer.h"
 #include "core/toglobalevent.h"
 
-#include <QtGui/QLayout>
-#include <QtGui/QLineEdit>
-#include <QtGui/QToolButton>
-#include <QtGui/QSplitter>
-#include <QtGui/QToolBar>
+#include <QLayout>
+#include <QLineEdit>
+#include <QToolButton>
+#include <QSplitter>
+#include <QToolBar>
 
 #include "icons/add.xpm"
 #include "icons/clock.xpm"

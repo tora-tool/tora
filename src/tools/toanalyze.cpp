@@ -42,11 +42,11 @@
 //#include "core/toconfiguration_new.h"
 #include "connection/tooraclesetting.h"
 
-#include <QtGui/QComboBox>
-#include <QtGui/QSpinBox>
-#include <QtGui/QMenu>
-#include <QtGui/QToolBar>
-#include <QtGui/QVBoxLayout>
+#include <QComboBox>
+#include <QSpinBox>
+#include <QMenu>
+#include <QToolBar>
+#include <QVBoxLayout>
 
 #include "icons/execute.xpm"
 #include "icons/refresh.xpm"

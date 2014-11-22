@@ -41,7 +41,7 @@
 #include <QtCore/QDir>
 #include <QtCore/QString>
 #include <QtCore/QTextCodec>
-#include <QtGui/QFileDialog>
+#include <QFileDialog>
 
 // A little magic to get lrefresh to work and get a check on qApp
 #undef QT_TRANSLATE_NOOP

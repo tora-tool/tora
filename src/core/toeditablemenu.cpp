@@ -33,7 +33,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "core/toeditablemenu.h"
-#include <QtGui/QAction>
+#include <QAction>
 #include <QtGui/QContextMenuEvent>
 
 #include "icons/trash.xpm"

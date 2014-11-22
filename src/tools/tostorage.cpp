@@ -43,9 +43,9 @@
 #include "core/toglobalevent.h"
 #include "core/toconfiguration_new.h"
 
-#include <QtGui/QTableView>
-#include <QtGui/QToolBar>
-#include <QtGui/QFileDialog>
+#include <QTableView>
+#include <QToolBar>
+#include <QFileDialog>
 #include <QtGui/QSortFilterProxyModel>
 
 #include "icons/addfile.xpm"

@@ -42,7 +42,7 @@
 #include "icons/paste.xpm"
 #include "icons/search.xpm"
 
-#include <QtGui/QApplication>
+#include <QApplication>
 #include <QtGui/QClipboard>
 #include <QtCore/QMimeData>
 

@@ -40,10 +40,10 @@
 #include "core/tosql.h"
 #include "core/totool.h"
 
-#include <QtGui/QLabel>
-#include <QtGui/QLayout>
-#include <QtGui/QToolTip>
-#include <QtGui/QApplication>
+#include <QLabel>
+#include <QLayout>
+#include <QToolTip>
+#include <QApplication>
 #include <QtGui/QResizeEvent>
 
 static toSQL SQLResource(

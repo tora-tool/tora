@@ -3,10 +3,10 @@
 #include "core/tochangeconnection.h"
 #include "core/toconnectionregistry.h"
 
-#include <QtGui/QLayout>
-#include <QtGui/QToolBar>
-#include <QtGui/QLineEdit>
-#include <QtGui/QAction>
+#include <QLayout>
+#include <QToolBar>
+#include <QLineEdit>
+#include <QAction>
 
 static const char * execute_xpm[] =
 {

@@ -42,7 +42,7 @@
 
 #include <QtGui/QPainter>
 #include <QtGui/QPrinter>
-#include <QtGui/QScrollBar>
+#include <QScrollBar>
 #include <QtGui/QPrintDialog>
 
 #include "icons/print.xpm"

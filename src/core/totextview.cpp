@@ -38,7 +38,7 @@
 
 #include <QtGui/QFocusEvent>
 #include <QtGui/QTextDocument>
-#include <QtGui/QTextBrowser>
+#include <QTextBrowser>
 
 toTextView::toTextView(QWidget *parent /* = 0*/, const char *name /* = 0*/)
 	: QWidget(parent)

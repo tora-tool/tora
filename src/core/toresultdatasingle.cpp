@@ -38,14 +38,14 @@
 #include "core/toparamget.h"
 #include "core/tomodeleditor.h"
 
-#include <QtGui/QScrollArea>
-#include <QtGui/QCheckBox>
-#include <QtGui/QLineEdit>
-#include <QtGui/QAction>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QGridLayout>
-#include <QtGui/QLabel>
-#include <QtGui/QProgressBar>
+#include <QScrollArea>
+#include <QCheckBox>
+#include <QLineEdit>
+#include <QAction>
+#include <QVBoxLayout>
+#include <QGridLayout>
+#include <QLabel>
+#include <QProgressBar>
 
 toResultDataSingle::toResultDataSingle(QWidget *parent)
     : QWidget(parent)

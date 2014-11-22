@@ -34,9 +34,9 @@
 
 #include "core/toworkingwidget.h"
 
-#include <QtGui/QPushButton>
-#include <QtGui/QLabel>
-#include <QtGui/QHBoxLayout>
+#include <QPushButton>
+#include <QLabel>
+#include <QHBoxLayout>
 
 #include "icons/stop.xpm"
 

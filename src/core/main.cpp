@@ -70,10 +70,10 @@
 #include <QtCore/QDebug>
 #include <QtCore/QDateTime>
 #include <QtCore/QSettings>
-#include <QtGui/QProgressBar>
-#include <QtGui/QStyleFactory>
-#include <QtGui/QApplication>
-#include <QtGui/QMessageBox>
+#include <QProgressBar>
+#include <QStyleFactory>
+#include <QApplication>
+#include <QMessageBox>
 
 int main(int argc, char **argv)
 {

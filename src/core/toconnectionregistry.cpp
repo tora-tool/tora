@@ -37,7 +37,7 @@
 #include "core/utils.h"
 #include "ts_log/ts_log_utils.h"
 
-#include <QtGui/QAction>
+#include <QAction>
 
 toConnectionRegistry::~toConnectionRegistry()
 {

@@ -36,11 +36,11 @@
 #include "connection/toqmysqlprovider.h"
 #include "core/toconfiguration_new.h"
 
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QGroupBox>
-#include <QtGui/QCheckBox>
-#include <QtGui/QComboBox>
-#include <QtGui/QLabel>
+#include <QVBoxLayout>
+#include <QGroupBox>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QLabel>
 
 ToConfiguration::MySQL s_mystConf;
 

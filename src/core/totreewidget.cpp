@@ -35,8 +35,8 @@
 #include "core/totreewidget.h"
 
 
-#include <QtGui/QTreeWidget>
-#include <QtGui/QTreeWidgetItem>
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
 
 
 toTreeWidget::toTreeWidget(QWidget *parent,

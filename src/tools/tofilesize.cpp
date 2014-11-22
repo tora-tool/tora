@@ -34,11 +34,11 @@
 
 #include "tools/tofilesize.h"
 
-#include <QtGui/QRadioButton>
-#include <QtGui/QSpinBox>
-#include <QtGui/QLayout>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QHBoxLayout>
+#include <QRadioButton>
+#include <QSpinBox>
+#include <QLayout>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
 
 #include <stdio.h>
 

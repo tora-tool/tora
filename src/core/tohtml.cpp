@@ -35,7 +35,7 @@
 #include "core/tohtml.h"
 #include "core/tomainwindow.h"
 
-#include <QtGui/QApplication>
+#include <QApplication>
 #include <QtCore/QString>
 #include <QtCore/QChar>
 

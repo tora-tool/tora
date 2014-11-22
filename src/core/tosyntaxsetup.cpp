@@ -43,8 +43,8 @@
 #include "core/toeditorsetting.h"
 #include "ts_log/ts_log_utils.h"
 
-#include <QtGui/QFontDialog>
-#include <QtGui/QColorDialog>
+#include <QFontDialog>
+#include <QColorDialog>
 
 #include <Qsci/qscilexersql.h>
 

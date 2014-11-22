@@ -48,12 +48,12 @@
 #include <stdio.h>
 
 #include <QtCore/QMutexLocker>
-#include <QtGui/QComboBox>
-#include <QtGui/QLabel>
-#include <QtGui/QLineEdit>
-#include <QtGui/QMenuBar>
-#include <QtGui/QToolButton>
-#include <QtGui/QMdiArea>
+#include <QComboBox>
+#include <QLabel>
+#include <QLineEdit>
+#include <QMenuBar>
+#include <QToolButton>
+#include <QMdiArea>
 #include <QtGui/QPixmap>
 
 #include "icons/commit.xpm"

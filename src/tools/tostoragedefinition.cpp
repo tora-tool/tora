@@ -35,10 +35,10 @@
 #include "tools/tostoragedefinition.h"
 #include "tools/tofilesize.h"
 
-#include <QtGui/QToolTip>
-#include <QtGui/QCheckBox>
-#include <QtGui/QLabel>
-#include <QtGui/QSpinBox>
+#include <QToolTip>
+#include <QCheckBox>
+#include <QLabel>
+#include <QSpinBox>
 
 toStorageDefinition::toStorageDefinition(QWidget* parent, const char* name, Qt::WFlags fl)
     : QWidget(parent)

@@ -35,7 +35,7 @@
 #include "connection/toqpsqlsetting.h"
 #include "core/utils.h"
 
-#include <QtGui/QFileDialog>
+#include <QFileDialog>
 
 toQPSQLSetting::toQPSQLSetting(QWidget *parent)
 	: QWidget(parent)

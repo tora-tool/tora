@@ -42,14 +42,14 @@
 #include "editor/tohighlightededitor.h"
 #include "editor/tosqltext.h"
 
-#include <QtGui/QComboBox>
+#include <QComboBox>
 #include <QtGui/QPixmap>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QSpinBox>
-#include <QtGui/QSplitter>
-#include <QtGui/QTabWidget>
-#include <QtGui/QToolBar>
-#include <QtGui/QLineEdit>
+#include <QVBoxLayout>
+#include <QSpinBox>
+#include <QSplitter>
+#include <QTabWidget>
+#include <QToolBar>
+#include <QLineEdit>
 
 #include "icons/clock.xpm"
 #include "icons/execute.xpm"

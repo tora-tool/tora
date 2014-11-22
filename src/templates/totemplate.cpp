@@ -50,14 +50,14 @@
 
 #include <QtGui/QHideEvent>
 #include <QtGui/QShowEvent>
-#include <QtGui/QTextEdit>
+#include <QTextEdit>
 #include <QtCore/QFileInfo>
-#include <QtGui/QLabel>
-#include <QtGui/QLineEdit>
-#include <QtGui/QMessageBox>
-#include <QtGui/QPushButton>
-#include <QtGui/QSplitter>
-#include <QtGui/QToolBar>
+#include <QLabel>
+#include <QLineEdit>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QSplitter>
+#include <QToolBar>
 
 #include "icons/totemplate.xpm"
 

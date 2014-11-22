@@ -55,11 +55,11 @@
 #include <QtGui/QClipboard>
 #include <QtGui/QFont>
 #include <QtGui/QFontMetrics>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QMessageBox>
-#include <QtGui/QScrollBar>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QProgressDialog>
+#include <QHBoxLayout>
+#include <QMessageBox>
+#include <QScrollBar>
+#include <QVBoxLayout>
+#include <QProgressDialog>
 
 toResultTableView::toResultTableView(QWidget * parent)
     : QTableView(parent)

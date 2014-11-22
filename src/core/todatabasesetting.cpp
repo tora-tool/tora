@@ -40,9 +40,9 @@
 #include "core/toqvalue.h"
 #include "ts_log/ts_log_utils.h"
 
-#include <QtGui/QColorDialog>
+#include <QColorDialog>
 #include <QtCore/QString>
-#include <QtGui/QFileDialog>
+#include <QFileDialog>
 
 #include <QtCore/QDebug>
 

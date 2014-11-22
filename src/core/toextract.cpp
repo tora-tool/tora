@@ -39,8 +39,8 @@
 #include "core/toraversion.h"
 #include "core/toconf.h"
 
-#include <QtGui/QApplication>
-#include <QtGui/QProgressDialog>
+#include <QApplication>
+#include <QProgressDialog>
 #include <QtCore/QString>
 #include <QtNetwork/QHostInfo>
 

@@ -42,7 +42,7 @@
 #include "core/tosql.h"
 #include "core/totool.h"
 
-#include <QtGui/QApplication>
+#include <QApplication>
 #include <QtCore/QRegExp>
 
 static toOracleExtract OracleExtractor;

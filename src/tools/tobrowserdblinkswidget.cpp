@@ -39,7 +39,7 @@
 #include "core/toresultcode.h"
 #include "core/toquery.h"
 
-#include <QtGui/QMessageBox>
+#include <QMessageBox>
 
 static toSQL SQLDBLinkInfo("toBrowser:DBLinkInformation",
                            "SELECT * FROM Sys.all_db_links a\n"

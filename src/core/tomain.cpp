@@ -72,9 +72,9 @@
 #include "icons/stop.xpm"
 #include "icons/refresh.xpm"
 
-#include <QtGui/QComboBox>
-#include <QtGui/QStatusBar>
-#include <QtGui/QMenuBar>
+#include <QComboBox>
+#include <QStatusBar>
+#include <QMenuBar>
 
 
 toMain::toMain()

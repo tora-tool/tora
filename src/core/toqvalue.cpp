@@ -38,7 +38,7 @@
 #include "core/todatabasesetting.h"
 
 #include <QtCore/QVariant>
-#include <QtGui/QApplication>
+#include <QApplication>
 
 //#include <cstdio>
 

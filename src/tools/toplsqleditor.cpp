@@ -48,8 +48,8 @@
 #include <QtCore/QSettings>
 #include <QtCore/QFileInfo>
 #include <QtCore/QDir>
-#include <QtGui/QApplication>
-#include <QtGui/QSplitter>
+#include <QApplication>
+#include <QSplitter>
 
 #define PLSQL_ERROR "ERROR"
 #define PLSQL_WARNING "WARNING"

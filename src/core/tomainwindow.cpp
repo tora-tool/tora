@@ -37,8 +37,8 @@
 #include "core/toconf.h"
 #include "ts_log/ts_log_utils.h"
 
-#include <QtGui/QApplication>
-#include <QtGui/QAction>
+#include <QApplication>
+#include <QAction>
 #include <QSettings>
 
 namespace ToConfiguration

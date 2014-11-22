@@ -37,7 +37,7 @@
 #include "core/toeventquery.h"
 #include "core/totimer.h"
 
-#include <QtGui/QMenu>
+#include <QMenu>
 #include <QtCore/QObject>
 
 toResultBar::toResultBar(QWidget *parent, const char *name)

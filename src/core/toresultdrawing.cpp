@@ -32,7 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include <QtGui/QVBoxLayout>
+#include <QVBoxLayout>
 
 #include "core/toresultdrawing.h"
 #include "core/utils.h"
@@ -42,11 +42,11 @@
 
 #include "icons/refresh.xpm"
 
-#include <QtGui/QStyle>
-#include <QtGui/QSlider>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QToolBar>
-#include <QtGui/QAction>
+#include <QStyle>
+#include <QSlider>
+#include <QVBoxLayout>
+#include <QToolBar>
+#include <QAction>
 #include <QMouseEvent>
 #include <QStyleOptionSlider>
 

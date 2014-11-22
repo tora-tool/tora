@@ -43,10 +43,10 @@
 #include "core/tosyntaxsetup.h"
 
 #include <QtCore/QString>
-#include <QtGui/QFrame>
-#include <QtGui/QLayout>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QListWidget>
+#include <QFrame>
+#include <QLayout>
+#include <QVBoxLayout>
+#include <QListWidget>
 
 
 void toPreferences::addWidget(QListWidgetItem *item, QWidget *widget)

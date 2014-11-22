@@ -43,12 +43,12 @@
 #include "core/toconfiguration_new.h"
 #include "core/toglobalsetting.h"
 
-#include <QtGui/QComboBox>
-#include <QtGui/QCheckBox>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QGroupBox>
-#include <QtGui/QSplitter>
-#include <QtGui/QToolBar>
+#include <QComboBox>
+#include <QCheckBox>
+#include <QVBoxLayout>
+#include <QGroupBox>
+#include <QSplitter>
+#include <QToolBar>
 
 #include "icons/refresh.xpm"
 #include "icons/tosgatrace.xpm"

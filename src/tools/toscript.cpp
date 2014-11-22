@@ -43,15 +43,15 @@
 #include "tools/toworksheet.h"
 #include "tools/toscripttreeitem.h"
 
-#include <QtGui/QScrollArea>
-#include <QtGui/QMessageBox>
+#include <QScrollArea>
+#include <QMessageBox>
 #include <QtCore/QFile>
 #include <QtCore/QDir>
-#include <QtGui/QFileDialog>
-#include <QtGui/QCompleter>
-#include <QtGui/QDirModel>
+#include <QFileDialog>
+#include <QCompleter>
+#include <QDirModel>
 #include <QtCore/QSettings>
-#include <QtGui/QSplitter>
+#include <QSplitter>
 #include <QtCore/QTextStream>
 
 #include "icons/execute.xpm"

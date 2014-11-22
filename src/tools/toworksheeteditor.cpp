@@ -38,7 +38,7 @@
 
 #include "core/utils.h"
 
-#include <QtGui/QMessageBox>
+#include <QMessageBox>
 #include <QtCore/QtDebug>
 #include <QtCore/QFileInfo>
 #include <QtCore/QDir>

@@ -47,7 +47,7 @@
 #include "core/toconfiguration_new.h"
 #include "core/toglobalsetting.h"
 
-#include <QtGui/QWidget>
+#include <QWidget>
 
 #include "icons/addrollback.xpm"
 #include "icons/offline.xpm"

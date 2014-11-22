@@ -38,7 +38,7 @@
 #include "core/tomain.h"
 #include "editor/tosearchreplace.h"
 
-#include <QtGui/QPlainTextEdit>
+#include <QPlainTextEdit>
 
 REGISTER_VIEW("Logging", toLoggingDocklet);
 

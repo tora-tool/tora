@@ -45,9 +45,9 @@
 #include "core/tologger.h"
 #include "tools/toworksheet.h"
 
-#include <QtGui/QStatusBar>
-#include <QtGui/QScrollArea>
-#include <QtGui/QSplitter>
+#include <QStatusBar>
+#include <QScrollArea>
+#include <QSplitter>
 
 Test3Window::Test3Window(QString user, QString password, QString connect, QSet<QString>& options)
 	: toMainWindow()

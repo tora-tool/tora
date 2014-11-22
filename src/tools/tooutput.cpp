@@ -43,7 +43,7 @@
 
 #include <map>
 
-#include <QtGui/QWidget>
+#include <QWidget>
 
 #include "icons/eraselog.xpm"
 #include "icons/offline.xpm"

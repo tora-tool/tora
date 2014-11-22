@@ -50,17 +50,17 @@
 #include <QtCore/QFileInfo>
 #include <QtCore/QString>
 
-#include <QtGui/QLabel>
-#include <QtGui/QLineEdit>
-#include <QtGui/QMenuBar>
-#include <QtGui/QMessageBox>
-#include <QtGui/QSplitter>
-#include <QtGui/QToolButton>
-#include <QtGui/QComboBox>
-#include <QtGui/QFrame>
+#include <QLabel>
+#include <QLineEdit>
+#include <QMenuBar>
+#include <QMessageBox>
+#include <QSplitter>
+#include <QToolButton>
+#include <QComboBox>
+#include <QFrame>
 #include <QtGui/QPixmap>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QHBoxLayout>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
 
 #include "icons/add.xpm"
 #include "icons/commit.xpm"

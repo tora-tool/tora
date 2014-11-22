@@ -49,10 +49,10 @@
 #include "core/toglobalevent.h"
 #include "core/toglobalsetting.h"
 
-#include <QtGui/QToolBar>
-#include <QtGui/QMenu>
-#include <QtGui/QBoxLayout>
-#include <QtGui/QAction>
+#include <QToolBar>
+#include <QMenu>
+#include <QBoxLayout>
+#include <QAction>
 #include <QtDebug>
 
 // A little magic to get lrefresh to work and get a check on qApp

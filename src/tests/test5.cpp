@@ -47,7 +47,7 @@
 
 #include <QtCore/QDir>
 #include <QtCore/QLibrary>
-#include <QtGui/QProgressBar>
+#include <QProgressBar>
 
 static void usage()
 {

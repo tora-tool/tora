@@ -43,7 +43,7 @@
 #include "core/toqvalue.h"
 #include "core/todatabasesetting.h"
 
-#include <QtGui/QApplication>
+#include <QApplication>
 #include <QtCore/QMutexLocker>
 #include <QtCore/QTimer>
 

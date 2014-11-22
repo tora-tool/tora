@@ -40,7 +40,7 @@
 #include "core/tologger.h"
 #include "shortcuteditor/shortcutmodel.h"
 
-#include <QtGui/QListWidget>
+#include <QListWidget>
 
 using namespace ToConfiguration;
 

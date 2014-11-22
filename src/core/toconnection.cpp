@@ -46,7 +46,7 @@
 #include "core/toworkspace.h"
 #include "core/todatabasesetting.h"
 
-#include <QtGui/QMenu>
+#include <QMenu>
 
 toConnection::toConnection(const QString &provider,
                            const QString &user, const QString &password,

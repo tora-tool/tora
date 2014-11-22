@@ -38,10 +38,10 @@
 #include "editor/toscintilla.h"
 
 #include <QtGui/QKeyEvent>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QDialogButtonBox>
+#include <QVBoxLayout>
+#include <QDialogButtonBox>
 #include <QtCore/QSettings>
-#include <QtGui/QCheckBox>
+#include <QCheckBox>
 
 #include "icons/commit.xpm"
 #include "icons/copy.xpm"

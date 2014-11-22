@@ -40,9 +40,9 @@
 #include "core/toresultview.h"
 #include "core/toconfiguration_new.h"
 
-#include <QtGui/QCheckBox>
-#include <QtGui/QToolBar>
-#include <QtGui/QVBoxLayout>
+#include <QCheckBox>
+#include <QToolBar>
+#include <QVBoxLayout>
 
 #include "icons/fileopen.xpm"
 #include "icons/filesave.xpm"

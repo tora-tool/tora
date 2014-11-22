@@ -45,7 +45,7 @@
 #include <QtCore/QFileSystemWatcher>
 #include <QtCore/QtDebug>
 #include <QtCore/QDir>
-#include <QtGui/QVBoxLayout>
+#include <QVBoxLayout>
 
 toBaseEditor::toBaseEditor(toScintilla *editor, QWidget *parent)
 	: QWidget(parent)

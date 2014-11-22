@@ -35,10 +35,10 @@
 #include "tests/test4window.h"
 #include "editor/tosqltext.h"
 
-#include <QtGui/QStatusBar>
-#include <QtGui/QScrollArea>
-#include <QtGui/QSplitter>
-#include <QtGui/QToolBar>
+#include <QStatusBar>
+#include <QScrollArea>
+#include <QSplitter>
+#include <QToolBar>
 
 Test4Window::Test4Window(const QString &sql)
 	: Ui::Test4Window()

@@ -37,7 +37,7 @@
 #include "core/utils.h"
 #include "result/toresulttabledata.h"
 
-#include <QtGui/QApplication>
+#include <QApplication>
 
 toBrowserBaseWidget::toBrowserBaseWidget(QWidget * parent)
     : QTabWidget(parent)

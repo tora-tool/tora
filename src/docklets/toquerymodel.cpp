@@ -45,8 +45,8 @@
 #include "dotgraph.h"
 
 #include <QtCore/QTimerEvent>
-#include <QtGui/QTabWidget>
-#include <QtGui/QListView>
+#include <QTabWidget>
+#include <QListView>
 
 #define TOOL_NAME "QueryModel"
 

@@ -49,11 +49,11 @@
 
 #include <QtCore/QList>
 #include <QtCore/QDebug>
-#include <QtGui/QToolBar>
-#include <QtGui/QToolButton>
-#include <QtGui/QSplitter>
+#include <QToolBar>
+#include <QToolButton>
+#include <QSplitter>
 #include <QtGui/QPixmap>
-#include <QtGui/QProgressDialog>
+#include <QProgressDialog>
 
 #include "icons/refresh.xpm"
 #include "icons/toinvalid.xpm"

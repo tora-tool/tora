@@ -34,8 +34,8 @@
 
 #include "migratetool/sqldeveloper.h"
 
-#include <QtGui/QMessageBox>
-#include <QtGui/QFileDialog>
+#include <QMessageBox>
+#include <QFileDialog>
 #include <QtXml/QXmlStreamReader>
 
 #include <QtCore/QtDebug>

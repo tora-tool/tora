@@ -44,9 +44,9 @@
 
 #include <QtCore/QString>
 #include <QtCore/QDebug>
-#include <QtGui/QColorDialog>
-#include <QtGui/QFileDialog>
-#include <QtGui/QStyleFactory>
+#include <QColorDialog>
+#include <QFileDialog>
+#include <QStyleFactory>
 
 
 ToConfiguration::Global s_global;

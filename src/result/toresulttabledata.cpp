@@ -43,10 +43,10 @@
 #include "editor/toscintilla.h"
 #include "ui_toresultcontentfilterui.h"
 
-#include <QtGui/QToolBar>
-#include <QtGui/QAction>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QMessageBox>
+#include <QToolBar>
+#include <QAction>
+#include <QVBoxLayout>
+#include <QMessageBox>
 #include <QtGui/QCloseEvent>
 
 #include "icons/refresh.xpm"

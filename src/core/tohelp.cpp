@@ -42,7 +42,7 @@
 #include "core/toconfiguration_new.h"
 #include "ts_log/ts_log_utils.h"
 
-#include <QtGui/QMessageBox>
+#include <QMessageBox>
 #include <QtCore/QSettings>
 
 QVariant ToConfiguration::Help::defaultValue(int option) const

@@ -51,12 +51,12 @@
 #include "editor/tomarkededitor.h"
 
 #include <QtCore/QDateTime>
-#include <QtGui/QApplication>
-#include <QtGui/QMessageBox>
+#include <QApplication>
+#include <QMessageBox>
 #include <QtCore/QTextCodec>
 #include <QtCore/QString>
 #include <QtCore/QTranslator>
-#include <QtGui/QStyleFactory>
+#include <QStyleFactory>
 #include <QtCore/QLibrary>
 
 #include <memory>

@@ -46,12 +46,12 @@
 #include "core/tosql.h"
 #include "core/totool.h"
 
-#include <QtGui/QLabel>
-#include <QtGui/QMenuBar>
-#include <QtGui/QTabWidget>
-#include <QtGui/QToolBar>
+#include <QLabel>
+#include <QMenuBar>
+#include <QTabWidget>
+#include <QToolBar>
 #include <QtGui/QPixmap>
-#include <QtGui/QLayout>
+#include <QLayout>
 
 #include "icons/refresh.xpm"
 #include "icons/tocurrent.xpm"

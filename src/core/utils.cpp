@@ -44,14 +44,14 @@
 
 #include <QtCore/QTextCodec>
 #include <QtCore/QThread>
-#include <QtGui/QApplication>
-#include <QtGui/QComboBox>
-#include <QtGui/QFileDialog>
-#include <QtGui/QToolBar>
+#include <QApplication>
+#include <QComboBox>
+#include <QFileDialog>
+#include <QToolBar>
 #include <QtGui/QPixmapCache>
 #include <QtGui/QPainter>
 #include <QtGui/QKeyEvent>
-#include <QtGui/QDockWidget>
+#include <QDockWidget>
 #include <QStyleFactory>
 
 #include <stdlib.h>

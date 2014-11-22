@@ -41,10 +41,10 @@
 #include "core/tologger.h"
 #include "core/utils.h"
 
-#include <QtGui/QMenu>
-#include <QtGui/QToolTip>
+#include <QMenu>
+#include <QToolTip>
 #include <QtGui/QPixmap>
-#include <QtGui/QToolBar>
+#include <QToolBar>
 
 #include "icons/changeconnect.xpm"
 

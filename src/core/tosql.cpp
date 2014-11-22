@@ -36,7 +36,7 @@
 #include "core/utils.h"
 #include "core/toconnection.h"
 
-#include <QtGui/QApplication>
+#include <QApplication>
 #include <QtCore/QString>
 
 // A little magic to get lrefresh to work and get a check on qApp

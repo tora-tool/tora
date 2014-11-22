@@ -38,10 +38,10 @@
 #include "core/utils.h"
 #include "ts_log/ts_log_utils.h"
 
-#include <QtGui/QTabBar>
-#include <QtGui/QStackedWidget>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QLabel>
+#include <QTabBar>
+#include <QStackedWidget>
+#include <QVBoxLayout>
+#include <QLabel>
 #include <QtCore/QSignalMapper>
 #include <QtCore/QVariant>
 #include <QtGui/QPixmap>

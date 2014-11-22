@@ -38,7 +38,7 @@
 #include "parsing/persistenttrie.h"
 
 #include <QtCore/QDateTime>
-#include <QtGui/QApplication>
+#include <QApplication>
 #include <QtCore/QTextCodec>
 #include <QtCore/QString>
 #include <QtCore/QStringList>

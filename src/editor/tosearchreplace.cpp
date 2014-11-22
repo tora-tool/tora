@@ -41,9 +41,9 @@
 
 #include "icons/close.xpm"
 
-#include <QtGui/QAction>
-#include <QtGui/QTextEdit>
-#include <QtGui/QLineEdit>
+#include <QAction>
+#include <QTextEdit>
+#include <QLineEdit>
 
 toSearchReplace::toSearchReplace(QWidget *parent)
     : QWidget(parent)

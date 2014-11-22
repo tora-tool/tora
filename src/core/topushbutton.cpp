@@ -34,11 +34,11 @@
 
 #include "core/topushbutton.h"
 
-#include <QtGui/QStyleOptionButton>
+#include <QStyleOptionButton>
 #include <QtGui/QPainter>
-#include <QtGui/QStylePainter>
-#include <QtGui/QToolButton>
-#include <QtGui/QToolBar>
+#include <QStylePainter>
+#include <QToolButton>
+#include <QToolBar>
 
 /**
  * much inspiration from libqxt

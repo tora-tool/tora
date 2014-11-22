@@ -40,7 +40,7 @@
 #include "core/toconnectiontraits.h"
 #include "core/tosql.h"
 
-#include <QtGui/QApplication>
+#include <QApplication>
 
 toQuery::toQuery(toConnectionSubLoan &conn, const toSQL &sql, toQueryParams const& params)
     : m_ConnectionSubLoan(conn)

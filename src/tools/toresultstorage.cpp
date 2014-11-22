@@ -39,7 +39,7 @@
 #include "core/toglobalsetting.h"
 
 #include <QtGui/QPainter>
-#include <QtGui/QItemDelegate>
+#include <QItemDelegate>
 
 
 // columns count

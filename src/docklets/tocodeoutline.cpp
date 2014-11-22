@@ -42,9 +42,9 @@
 //#include "toconnectionmodel.h"
 
 #include <QtCore/QTimerEvent>
-#include <QtGui/QListWidget>
-//#include <QtGui/QListView>
-//#include <QtGui/QHeaderView>
+#include <QListWidget>
+//#include <QListView>
+//#include <QHeaderView>
 
 REGISTER_VIEW("Outline", toCodeOutline);
 

@@ -39,9 +39,9 @@
 #include "core/toconnectiontraits.h"
 #include "core/toresultschema.h"
 
-#include <QtGui/QLabel>
+#include <QLabel>
 #include <QtCore/QTimer>
-#include <QtGui/QVBoxLayout>
+#include <QVBoxLayout>
 
 void toTableSelect::setup()
 {

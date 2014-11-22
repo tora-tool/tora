@@ -39,15 +39,15 @@
 #include "core/toconnectionsub.h"
 #include "core/toglobalevent.h"
 
-#include <QtGui/QApplication>
+#include <QApplication>
 #include <QtGui/QClipboard>
 #include <QtGui/QKeyEvent>
-#include <QtGui/QScrollBar>
-#include <QtGui/QItemDelegate>
+#include <QScrollBar>
+#include <QItemDelegate>
 #include <QtCore/QSize>
 #include <QtGui/QFont>
 #include <QtGui/QFontMetrics>
-#include <QtGui/QProgressDialog>
+#include <QProgressDialog>
 
 toResultTableViewEdit::toResultTableViewEdit(QWidget *parent, const char *name)
     : toResultTableView(false, false, parent, name, true)

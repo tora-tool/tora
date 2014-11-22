@@ -42,8 +42,8 @@
 #include "core/toconnectionsub.h"
 #include "core/toglobalevent.h"
 
-#include <QtGui/QSplitter>
-#include <QtGui/QToolBar>
+#include <QSplitter>
+#include <QToolBar>
 
 #include "icons/addrole.xpm"
 #include "icons/adduser.xpm"

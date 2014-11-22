@@ -40,7 +40,7 @@
 #include <QtCore/QHash>
 #include <QtCore/QString>
 #include <QtCore/QStringList>
-#include <QtGui/QCheckBox>
+#include <QCheckBox>
 
 QHash<QString, QStringList> toParamGet::DefaultCache;
 QHash<QString, QStringList> toParamGet::Cache;

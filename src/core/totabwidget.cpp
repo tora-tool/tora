@@ -35,7 +35,7 @@
 #include "core/totabwidget.h"
 
 #include <QtCore/QObject>
-#include <QtGui/QTabWidget>
+#include <QTabWidget>
 
 #include <list>
 

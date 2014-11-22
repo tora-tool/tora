@@ -46,10 +46,10 @@
 
 #include "icons/trash.xpm"
 
-#include <QtGui/QMessageBox>
-#include <QtGui/QHeaderView>
+#include <QMessageBox>
+#include <QHeaderView>
 #include <QtCore/QStringList>
-#include <QtGui/QMenu>
+#include <QMenu>
 #include <QtGui/QIcon>
 #include <QtGui/QSortFilterProxyModel>
 

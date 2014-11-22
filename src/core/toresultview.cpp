@@ -47,7 +47,7 @@
 #include <QtCore/QTimer>
 #include <QtGui/QClipboard>
 #include <QtGui/QPainter>
-#include <QtGui/QProgressDialog>
+#include <QProgressDialog>
 
 static int MaxColDisp;
 static bool Gridlines;

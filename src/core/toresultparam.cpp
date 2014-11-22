@@ -42,14 +42,14 @@
 #include "core/toraversion.h"
 #include "core/toconnectionsub.h"
 
-#include <QtGui/QLabel>
-#include <QtGui/QLineEdit>
+#include <QLabel>
+#include <QLineEdit>
 #include <QtCore/QRegExp>
-#include <QtGui/QToolBar>
-#include <QtGui/QToolButton>
-#include <QtGui/QToolTip>
+#include <QToolBar>
+#include <QToolButton>
+#include <QToolTip>
 #include <QtGui/QPixmap>
-#include <QtGui/QVBoxLayout>
+#include <QVBoxLayout>
 
 #include "icons/database.xpm"
 #include "icons/filesave.xpm"
