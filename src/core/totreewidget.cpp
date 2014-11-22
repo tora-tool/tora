@@ -41,7 +41,7 @@
 
 toTreeWidget::toTreeWidget(QWidget *parent,
                            const char *name,
-                           Qt::WFlags f)
+                           toWFlags f)
     : QTreeWidget(parent)
 {
     if (name)

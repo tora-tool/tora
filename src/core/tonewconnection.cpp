@@ -60,7 +60,7 @@
 static toConnectionModel     *m_connectionModel = 0;
 static QSortFilterProxyModel *m_proxyModel      = 0;
 
-toNewConnection::toNewConnection(QWidget* parent, Qt::WFlags fl)
+toNewConnection::toNewConnection(QWidget* parent, toWFlags fl)
     : QDialog(parent, fl)
     , toHelpContext(QString::fromLatin1("newconnection.html"))
 {

@@ -63,7 +63,7 @@
 #include "icons/single.xpm"
 #include "icons/trash.xpm"
 
-toResultTableData::toResultTableData(QWidget *parent, const char *name, Qt::WindowFlags f)
+toResultTableData::toResultTableData(QWidget *parent, const char *name, toWFlags f)
     : QWidget(parent, f)
     , Model(NULL)
 	, AllFilter(false)

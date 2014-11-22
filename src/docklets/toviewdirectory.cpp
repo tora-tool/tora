@@ -42,7 +42,7 @@
 REGISTER_VIEW("Directory", toViewDirectory);
 
 toViewDirectory::toViewDirectory(QWidget *parent,
-                                 Qt::WindowFlags flags)
+                                 toWFlags flags)
     : toDocklet(tr("Directory"), parent, flags)
 {
 	using namespace ToConfiguration;

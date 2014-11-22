@@ -414,7 +414,7 @@ static toSQL SQLTableColumnsMySql(
     "5.0",
     "QMYSQL");
 
-toResultCols::toResultCols(QWidget *parent, const char *name, Qt::WFlags f)
+toResultCols::toResultCols(QWidget *parent, const char *name, toWFlags f)
     : QWidget(parent, f)
 	, SQL(SQLTableColumns)
 {
@@ -423,7 +423,7 @@ toResultCols::toResultCols(QWidget *parent, const char *name, Qt::WFlags f)
 	setup();
 }
 
-toResultCols::toResultCols(toSQL const& sql, QWidget *parent, const char *name, Qt::WFlags f)
+toResultCols::toResultCols(toSQL const& sql, QWidget *parent, const char *name, toWFlags f)
     : QWidget(parent, f)
 	, SQL(sql) // SQL(SQLTableColumns)
 {

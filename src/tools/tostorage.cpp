@@ -135,7 +135,7 @@ private:
     static ToConfiguration::Storage s_storageConf;
 };
 
-toDropTablespace::toDropTablespace(QWidget* parent, const char* name, Qt::WFlags fl)
+toDropTablespace::toDropTablespace(QWidget* parent, const char* name, toWFlags fl)
     : QWidget(parent, fl)
 {
     setupUi(this);
@@ -163,7 +163,7 @@ std::list<QString> toDropTablespace::sql()
 
 
 
-toStorageTablespace::toStorageTablespace(QWidget* parent, const char* name, Qt::WFlags fl)
+toStorageTablespace::toStorageTablespace(QWidget* parent, const char* name, toWFlags fl)
     : QWidget(parent, fl)
 {
     setupUi(this);
@@ -279,7 +279,7 @@ std::list<QString> toStorageTablespace::sql()
     return ret;
 }
 
-toStorageDatafile::toStorageDatafile(bool temp, bool dispName, QWidget* parent, const char* name, Qt::WFlags fl)
+toStorageDatafile::toStorageDatafile(bool temp, bool dispName, QWidget* parent, const char* name, toWFlags fl)
     : QWidget(parent, fl),
       Tempfile(temp)
 {

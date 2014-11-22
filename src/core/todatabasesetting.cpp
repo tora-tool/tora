@@ -88,7 +88,7 @@ void toDatabaseSetting::IndicateEmptyColor_clicked()
     }
 }
 
-toDatabaseSetting::toDatabaseSetting(QWidget *parent, const char *name, Qt::WFlags fl)
+toDatabaseSetting::toDatabaseSetting(QWidget *parent, const char *name, toWFlags fl)
     : QWidget(parent, fl)
     , toSettingTab("database.html")
 {

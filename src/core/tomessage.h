@@ -36,7 +36,7 @@
 #define TOMESSAGE_H
 
 #include "ui_tomessageui.h"
-
+#include "core/utils.h"
 
 /*! \brief Non-modal and non-blocking message dialog for
 errors/warnings reporting.
@@ -60,7 +60,7 @@ class toMessage : public QDialog, public Ui::toMessageUI
     Q_OBJECT;
 
 public:
-    toMessage(QWidget * parent = 0, Qt::WindowFlags f = 0);
+    toMessage(QWidget * parent = 0, toWFlags f = 0);
 
 public slots:
     /*! \brief Appends text to the log widget.

@@ -459,7 +459,7 @@ QString toResultViewCheck::firstText(int col) const
     return txt;
 }
 
-toListView::toListView(QWidget *parent, const char *name, Qt::WFlags f)
+toListView::toListView(QWidget *parent, const char *name, toWFlags f)
     : toTreeWidget(parent, name, f)
     , toEditWidget()
 	, AllTip(NULL)
@@ -1202,13 +1202,13 @@ void toResultView::setup(bool readable, bool dispCol)
     SortAscending = true;
 }
 
-toResultView::toResultView(bool readable, bool dispCol, QWidget *parent, const char *name, Qt::WFlags f)
+toResultView::toResultView(bool readable, bool dispCol, QWidget *parent, const char *name, toWFlags f)
     : toListView(parent, name, f)
 {
     setup(readable, dispCol);
 }
 
-toResultView::toResultView(QWidget *parent, const char *name, Qt::WFlags f)
+toResultView::toResultView(QWidget *parent, const char *name, toWFlags f)
     : toListView(parent, name, f)
 {
     setup(false, true);

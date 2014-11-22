@@ -90,13 +90,13 @@ public:
      * @param name Name of widget.
      * @param f Widget flags.
      */
-    toResultLong(bool readable, bool numCol, QWidget *parent, const char *name = NULL, Qt::WFlags f = 0);
+    toResultLong(bool readable, bool numCol, QWidget *parent, const char *name = NULL, toWFlags f = 0);
     /** Create widget. The columns are not readable and the number column is displayed.
      * @param parent Parent of list.
      * @param name Name of widget.
      * @param f Widget flags.
      */
-    toResultLong(QWidget *parent, const char *name = NULL, Qt::WFlags f = 0);
+    toResultLong(QWidget *parent, const char *name = NULL, toWFlags f = 0);
     ~toResultLong();
 
     /** Set statistics widget.

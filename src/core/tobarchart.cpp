@@ -39,7 +39,7 @@
 #include <QtGui/QPainter>
 #include <QtGui/QPolygon>
 
-toBarChart::toBarChart(QWidget *parent, const char *name, Qt::WFlags f)
+toBarChart::toBarChart(QWidget *parent, const char *name, toWFlags f)
     : toLineChart(parent, name, f)
 {
     setMinValue(0);
@@ -222,7 +222,7 @@ void toBarChart::paintChart(QPainter *p, QRect &rect)
     }
 }
 
-toBarChart::toBarChart (toBarChart *chart, QWidget *parent, const char *name, Qt::WFlags f)
+toBarChart::toBarChart (toBarChart *chart, QWidget *parent, const char *name, toWFlags f)
     : toLineChart(chart, parent, name, f)
 {}
 

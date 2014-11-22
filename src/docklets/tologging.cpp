@@ -43,7 +43,7 @@
 REGISTER_VIEW("Logging", toLoggingDocklet);
 
 toLoggingDocklet::toLoggingDocklet(QWidget *parent,
-                                   Qt::WindowFlags flags)
+                                   toWFlags flags)
     : toDocklet(tr("Logging"), parent, flags)
 	, toEditWidget()
 	, log(toLoggingWidgetSingle::Instance())

@@ -136,7 +136,7 @@ static const QString AboutText = QString::fromUtf8(
 #define ABOUT_CAPTION TOAPPNAME " %1"
 
 
-toAbout::toAbout(AboutType page, QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+toAbout::toAbout(AboutType page, QWidget* parent, const char* name, bool modal, toWFlags fl)
     : QDialog(parent, fl)
 {
     if (name)

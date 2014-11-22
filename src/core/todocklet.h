@@ -50,7 +50,7 @@ class toDockletHolder
 public:
     virtual ~toDockletHolder() {};
     virtual toDocklet* docklet(QWidget *parent = 0,
-                               Qt::WindowFlags flags = 0) = 0;
+                               toWFlags flags = 0) = 0;
 };
 
 
@@ -61,7 +61,7 @@ class toDocklet : public QDockWidget
 public:
     explicit toDocklet(const QString &title,
                        QWidget *parent = 0,
-                       Qt::WindowFlags flags = 0);
+                       toWFlags flags = 0);
     virtual ~toDocklet() {}
 
 
@@ -161,7 +161,7 @@ class TYPE##Holder : public toDockletHolder                 \
 {                                                           \
 public:                                                     \
     virtual toDocklet* docklet(QWidget *parent = 0,         \
-                               Qt::WindowFlags flags = 0)   \
+                               toWFlags flags = 0)   \
     {                                                       \
         static TYPE *let = new TYPE(parent, flags);         \
         return let;                                         \

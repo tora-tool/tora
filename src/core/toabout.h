@@ -37,6 +37,7 @@
 
 
 #include "ui_toaboutui.h"
+#include "core/utils.h"
 
 class toAbout : public QDialog, public Ui::toAboutUI
 {
@@ -49,7 +50,7 @@ public:
         License
     };
 
-    toAbout(AboutType, QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+    toAbout(AboutType, QWidget* parent = 0, const char* name = 0, bool modal = false, toWFlags fl = 0);
     ~toAbout();
 
 };

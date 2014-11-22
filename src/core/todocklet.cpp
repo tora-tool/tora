@@ -36,6 +36,7 @@
 #include "core/todocklet.h"
 #include "core/tomainwindow.h"
 #include "core/toworkspace.h"
+#include "core/utils.h"
 
 #include <QApplication>
 #include <QVBoxLayout>
@@ -50,7 +51,7 @@ static QMap<QString, toDockletHolder *>& Docklets()
 
 toDocklet::toDocklet(const QString &title,
                      QWidget *parent,
-                     Qt::WindowFlags flags)
+                     toWFlags flags)
     : QDockWidget(title, parent, flags),
       isPopup(false)
 {

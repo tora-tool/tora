@@ -48,7 +48,7 @@
 REGISTER_VIEW("Connection", toViewConnections);
 
 toViewConnections::toViewConnections(QWidget *parent,
-                                     Qt::WindowFlags flags)
+                                     toWFlags flags)
     : toDocklet(tr("Connections"), parent, flags)
 {
     setObjectName("Connections Docklet");

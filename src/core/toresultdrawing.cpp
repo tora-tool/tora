@@ -144,7 +144,7 @@ static toSQL SQLTableFKWithDistance(
 			"Oracle");
 
 
-toResultDrawing::toResultDrawing(QWidget *parent, const char *name, Qt::WindowFlags f)
+toResultDrawing::toResultDrawing(QWidget *parent, const char *name, toWFlags f)
 	: QWidget(parent, f)
 	, toResult()
 	, distance(1)

@@ -55,7 +55,7 @@ class XMdiSubWindow : public QMdiSubWindow
 {
 public:
     XMdiSubWindow( QWidget * parent = 0
-                , Qt::WindowFlags flags = 0
+                , toWFlags flags = 0
                 )
         : QMdiSubWindow( parent, flags )
     {

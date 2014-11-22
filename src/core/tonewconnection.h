@@ -84,7 +84,7 @@ public slots:
 
 public:
     toNewConnection(QWidget* parent = 0,
-                    Qt::WFlags fl = 0);
+                    toWFlags fl = 0);
 
     toConnection* connection()
     {

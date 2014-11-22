@@ -54,7 +54,7 @@ private:
 
 public:
     toViewConnections(QWidget *parent = 0,
-                      Qt::WindowFlags flags = 0);
+                      toWFlags flags = 0);
 
 
     /**

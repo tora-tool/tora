@@ -45,7 +45,7 @@ class toResultDrawing : public QWidget, public toResult
 public:
     toResultDrawing(QWidget *parent = 0,
 		    const char *name = 0,
-		    Qt::WindowFlags f = 0);
+		    toWFlags f = 0);
 
     /**
      * Reimplemented from toResult. Can handle all connections.
