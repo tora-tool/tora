@@ -41,11 +41,11 @@
 #include "core/tobackgroundlabel.h"
 
 #include <QtCore/QObject>
-#include <QtGui/QMdiArea>
-#include <QtGui/QMdiSubWindow>
-#include <QtGui/QMenuBar>
+#include <QMdiArea>
+#include <QMdiSubWindow>
+#include <QMenuBar>
 #include <QtCore/QSet>
-#include <QtGui/QTextEdit>
+#include <QTextEdit>
 
 class toWorkSpace;
 class toConnection;

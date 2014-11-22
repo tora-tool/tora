@@ -47,7 +47,7 @@
 #include "result/totableview.h"
 
 #include <QtCore/QObject>
-#include <QtGui/QHeaderView>
+#include <QHeaderView>
 
 /** toTableView traits */
 struct MVCTraits

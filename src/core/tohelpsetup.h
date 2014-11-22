@@ -41,7 +41,7 @@
 #include "ui_tohelpaddfileui.h"
 #include "ui_tohelpsetupui.h"
 
-#include <QtGui/QDialog>
+#include <QDialog>
 
 
 class toHelpAddFile : public QDialog, public Ui::toHelpAddFileUI

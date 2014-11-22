@@ -47,8 +47,8 @@
 
 #include <list>
 
-#include <QtGui/QDialog>
-#include <QtGui/QLabel>
+#include <QDialog>
+#include <QLabel>
 
 class QCheckBox;
 class QLabel;

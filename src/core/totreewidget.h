@@ -37,9 +37,9 @@
 
 
 
-#include <QtGui/QTreeWidget>
-#include <QtGui/QTreeWidgetItem>
-#include <QtGui/QTreeWidgetItemIterator>
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
+#include <QTreeWidgetItemIterator>
 #include <QtCore/QList>
 #include <QtCore/QVariant>
 

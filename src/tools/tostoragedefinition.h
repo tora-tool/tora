@@ -40,8 +40,8 @@
 
 #include <list>
 
-#include <QtGui/QWidget>
-#include <QtGui/QLabel>
+#include <QWidget>
+#include <QLabel>
 
 class QCheckBox;
 class Q3GroupBox;

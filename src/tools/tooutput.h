@@ -42,9 +42,9 @@
 #include "core/toconfenum.h"
 
 #include <QtGui/QCloseEvent>
-#include <QtGui/QAction>
-#include <QtGui/QMenu>
-#include <QtGui/QToolBar>
+#include <QAction>
+#include <QMenu>
+#include <QToolBar>
 
 class QComboBox;
 class toConnection;

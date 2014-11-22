@@ -37,7 +37,7 @@
 
 #include "ts_log/ts_log_utils.h"
 
-#include <QtGui/QTableView>
+#include <QTableView>
 
 
 class toTableViewPriv : public QTableView

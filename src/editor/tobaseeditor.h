@@ -38,7 +38,7 @@
 #include "core/toeditwidget.h"
 #include "editor/tosearchreplace.h"
 
-#include <QtGui/QWidget>
+#include <QWidget>
 
 class toScintilla;
 class QFileSystemWatcher;

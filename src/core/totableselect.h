@@ -4,7 +4,7 @@
 
 #include "totool.h"
 
-#include <QtGui/QGroupBox>
+#include <QGroupBox>
 
 class toConnection;
 class toResultSchema;

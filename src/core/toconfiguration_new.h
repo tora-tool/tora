@@ -11,7 +11,7 @@
 #include <QtCore/QMap>
 #include <QtCore/QSettings>
 #include <QtCore/QVariant>
-#include <QtGui/QApplication>
+#include <QApplication>
 
 namespace ToConfiguration {
 	class ConfigContext;

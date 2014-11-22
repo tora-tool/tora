@@ -35,7 +35,7 @@
 #ifndef TOFILESIZE_H
 #define TOFILESIZE_H
 
-#include <QtGui/QGroupBox>
+#include <QGroupBox>
 
 class QRadioButton;
 class QSpinBox;

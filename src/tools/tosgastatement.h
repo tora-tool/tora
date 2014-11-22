@@ -37,7 +37,7 @@
 
 
 
-#include <QtGui/QTabWidget>
+#include <QTabWidget>
 
 class QComboBox;
 class QTabWidget;

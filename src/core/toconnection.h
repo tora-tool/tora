@@ -41,7 +41,7 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QPointer>
-#include <QtGui/QWidget>
+#include <QWidget>
 #include <QtCore/QSet>
 #include <QtCore/QMap>
 #include <QtCore/QMetaType>

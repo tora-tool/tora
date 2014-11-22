@@ -45,7 +45,7 @@
 #include <QtGui/QFocusEvent>
 #include <QtGui/QMouseEvent>
 #include <QtGui/QKeyEvent>
-#include <QtGui/QMenu>
+#include <QMenu>
 
 #include <map>
 #include <algorithm>

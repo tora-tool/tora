@@ -41,7 +41,7 @@
 
 #include "ui_torollbackdialogui.h"
 
-#include <QtGui/QDialog>
+#include <QDialog>
 
 #include <algorithm>
 

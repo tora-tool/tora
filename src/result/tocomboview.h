@@ -37,7 +37,7 @@
 
 #include "ts_log/ts_log_utils.h"
 
-#include <QtGui/QComboBox>
+#include <QComboBox>
 
 
 class toComboBoxView : public QComboBox

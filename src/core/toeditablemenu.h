@@ -37,7 +37,7 @@
 
 
 
-#include <QtGui/QMenu>
+#include <QMenu>
 #include <QtGui/QKeyEvent>
 
 

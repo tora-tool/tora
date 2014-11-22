@@ -38,7 +38,7 @@
 #include "core/toresultmodeledit.h"
 #include "ui_toresulttabledataui.h"
 
-#include <QtGui/QWidget>
+#include <QWidget>
 #include <QtCore/QMap>
 
 class QAction;

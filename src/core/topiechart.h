@@ -36,7 +36,7 @@
 #define TOPIECHART_H
 
 
-#include <QtGui/QWidget>
+#include <QWidget>
 #include <QtCore/QObject>
 #include <QtCore/QRect>
 #include <list>

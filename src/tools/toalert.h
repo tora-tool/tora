@@ -40,7 +40,7 @@
 #include <QtCore/QTimer>
 #include <QtCore/QMutex>
 #include <QtCore/QSemaphore>
-#include <QtGui/QMenu>
+#include <QMenu>
 
 #include "core/totool.h"
 

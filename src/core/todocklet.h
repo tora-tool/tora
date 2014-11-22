@@ -38,9 +38,9 @@
 
 
 #include <QtCore/QMap>
-#include <QtGui/QAction>
-#include <QtGui/QWidget>
-#include <QtGui/QDockWidget>
+#include <QAction>
+#include <QWidget>
+#include <QDockWidget>
 #include <QtCore/QRect>
 
 class toDocklet;

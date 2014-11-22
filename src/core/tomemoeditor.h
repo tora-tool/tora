@@ -38,9 +38,9 @@
 #include "editor/tomarkededitor.h"
 #include "editor/tohighlightededitor.h"
 
-#include <QtGui/QDialog>
-#include <QtGui/QLabel>
-#include <QtGui/QToolBar>
+#include <QDialog>
+#include <QLabel>
+#include <QToolBar>
 
 class QCheckBox;
 class QLabel;

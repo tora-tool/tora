@@ -38,7 +38,7 @@
 
 
 #include <QtCore/QString>
-#include <QtGui/QLineEdit>
+#include <QLineEdit>
 #include <QtGui/QFocusEvent>
 
 class QWidget;

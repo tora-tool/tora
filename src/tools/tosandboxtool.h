@@ -12,7 +12,7 @@
 #include "result/totablemodel.h"
 #include "result/totreemodel.h"
 
-#include <QtGui/QTreeView>
+#include <QTreeView>
 
 class toResultView;
 class toToolWidget;

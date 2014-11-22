@@ -35,7 +35,7 @@
 #ifndef TOWORKINGWIDGET_H
 #define TOWORKINGWIDGET_H
 
-#include <QtGui/QWidget>
+#include <QWidget>
 
 class QLabel;
 class QPushButton;

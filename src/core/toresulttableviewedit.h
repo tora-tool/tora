@@ -44,11 +44,11 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QAbstractTableModel>
-#include <QtGui/QTableView>
+#include <QTableView>
 #include <QtCore/QModelIndex>
 #include <QtCore/QList>
-#include <QtGui/QHeaderView>
-#include <QtGui/QMenu>
+#include <QHeaderView>
+#include <QMenu>
 
 class toResultModel;
 class toResultModelEdit;

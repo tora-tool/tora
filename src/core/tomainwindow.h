@@ -39,7 +39,7 @@
 #include "core/toconfenum.h"
 #include "loki/Singleton.h"
 
-#include <QtGui/QMainWindow>
+#include <QMainWindow>
 
 class toDockbar;
 class toDocklet;

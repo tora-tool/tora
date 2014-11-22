@@ -37,7 +37,7 @@
 
 #include "core/toresult.h"
 
-#include <QtGui/QSplitter>
+#include <QSplitter>
 
 class toResultTableView;
 class toStorageExtent;

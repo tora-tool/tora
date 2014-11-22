@@ -38,8 +38,8 @@
 
 #include "core/topushbutton.h"
 
-#include <QtGui/QAction>
-#include <QtGui/QToolBar>
+#include <QAction>
+#include <QToolBar>
 #include <QtCore/QMap>
 
 class toDocklet;

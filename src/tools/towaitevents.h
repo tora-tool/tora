@@ -39,7 +39,7 @@
 #include <map>
 #include <algorithm>
 
-#include <QtGui/QWidget>
+#include <QWidget>
 #include <QtCore/QString>
 
 class toTreeWidget;

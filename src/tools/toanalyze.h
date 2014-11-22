@@ -39,9 +39,9 @@
 #include "core/toeventquery.h"
 #include "core/totool.h"
 
-#include <QtGui/QAction>
-#include <QtGui/QLabel>
-#include <QtGui/QToolButton>
+#include <QAction>
+#include <QLabel>
+#include <QToolButton>
 
 class QComboBox;
 class QMenu;

@@ -38,8 +38,8 @@
 
 #include "core/todocklet.h"
 
-#include <QtGui/QListView>
-#include <QtGui/QDirModel>
+#include <QListView>
+#include <QDirModel>
 
 class toToolWidget;
 

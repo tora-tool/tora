@@ -37,8 +37,8 @@
 
 
 
-#include <QtGui/QPushButton>
-#include <QtGui/QToolButton>
+#include <QPushButton>
+#include <QToolButton>
 #include <QtCore/QMetaEnum>
 
 class QToolBar;

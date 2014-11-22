@@ -38,7 +38,7 @@
 
 #include "core/toresultmodeledit.h"
 
-#include <QtGui/QWidget>
+#include <QWidget>
 #include <QtCore/QList>
 #include <QtCore/QPointer>
 

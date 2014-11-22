@@ -39,7 +39,7 @@
 
 #include <map>
 
-#include <QtGui/QWidget>
+#include <QWidget>
 
 class QLineEdit;
 class QToolButton;

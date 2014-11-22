@@ -39,9 +39,9 @@
 #include "core/totool.h"
 #include "core/toresultlong.h"
 
-#include <QtGui/QLabel>
-#include <QtGui/QMenu>
-#include <QtGui/QAction>
+#include <QLabel>
+#include <QMenu>
+#include <QAction>
 
 #include <list>
 

@@ -38,7 +38,7 @@
 #include "core/tobarchart.h"
 #include "core/toresult.h"
 
-#include <QtGui/QMenu>
+#include <QMenu>
 
 #include <time.h>
 #include <list>

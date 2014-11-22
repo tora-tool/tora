@@ -35,8 +35,8 @@
 #ifndef TOSPLASH_H
 #define TOSPLASH_H
 
-#include <QtGui/QWidget>
-#include <QtGui/QLabel>
+#include <QWidget>
+#include <QLabel>
 
 class QLabel;
 class QProgressBar;

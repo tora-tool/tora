@@ -39,7 +39,7 @@
 #include "editor/toeditglobals.h"
 #include "core/totool.h"
 
-#include <QtGui/QWidget>
+#include <QWidget>
 
 class toListView;
 class toMarkedEditor;

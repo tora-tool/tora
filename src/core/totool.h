@@ -42,7 +42,7 @@
 #include <QtCore/QMap>
 #include <QtCore/QObject>
 #include <QtCore/QString>
-#include <QtGui/QWidget>
+#include <QWidget>
 
 class QPixmap;
 class QAction;

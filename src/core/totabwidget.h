@@ -35,7 +35,7 @@
 #ifndef TOTABWIDGET_H
 #define TOTABWIDGET_H
 
-#include <QtGui/QTabWidget>
+#include <QTabWidget>
 #include <QtCore/QMap>
 #include <QtCore/QPointer>
 #include <QtCore/QString>

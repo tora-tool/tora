@@ -39,9 +39,9 @@
 #include "editor/tohighlightededitor.h"
 #include "core/utils.h"
 
-#include <QtGui/QDialog>
-#include <QtGui/QLabel>
-#include <QtGui/QToolBar>
+#include <QDialog>
+#include <QLabel>
+#include <QToolBar>
 #include <QtCore/QModelIndex>
 
 class QCheckBox;

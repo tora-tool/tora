@@ -43,15 +43,15 @@
 #include "core/toeditwidget.h"
 
 #include <QtCore/QAbstractTableModel>
-#include <QtGui/QHeaderView>
-#include <QtGui/QItemDelegate>
-#include <QtGui/QLabel>
+#include <QHeaderView>
+#include <QItemDelegate>
+#include <QLabel>
 #include <QtCore/QList>
-#include <QtGui/QMenu>
+#include <QMenu>
 #include <QtCore/QModelIndex>
 #include <QtCore/QObject>
-#include <QtGui/QPushButton>
-#include <QtGui/QTableView>
+#include <QPushButton>
+#include <QTableView>
 
 class toResultStats;
 class toViewFilter;

@@ -44,7 +44,7 @@
 #include "core/toquery.h"
 //#include "core/totool.h"
 
-#include <QtGui/QApplication>
+#include <QApplication>
 #include <QtCore/QRegExp>
 
 // Some convenient defines

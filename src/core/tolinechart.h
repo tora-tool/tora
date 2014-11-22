@@ -35,7 +35,7 @@
 #ifndef TOLINECHART_H
 #define TOLINECHART_H
 
-#include <QtGui/QWidget>
+#include <QWidget>
 #include <QtCore/QString>
 #include <QtGui/QPaintEvent>
 #include <QtGui/QMouseEvent>

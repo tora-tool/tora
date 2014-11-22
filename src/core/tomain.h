@@ -40,7 +40,7 @@
 #include "core/toeditwidget.h"
 #include "core/tobackground.h"
 
-#include <QtGui/QLabel>
+#include <QLabel>
 #include <QtCore/QPointer>
 #include <QtCore/QMap>
 

@@ -41,9 +41,9 @@
 
 #include "ui_tohelpui.h"
 
-#include <QtGui/QProgressBar>
-#include <QtGui/QWidget>
-#include <QtGui/QTreeWidget>
+#include <QProgressBar>
+#include <QWidget>
+#include <QTreeWidget>
 
 namespace ToConfiguration {
 	class Help : public ConfigContext

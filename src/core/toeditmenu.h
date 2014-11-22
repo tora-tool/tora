@@ -38,7 +38,7 @@
 #include "core/toeditwidget.h"
 #include "loki/Singleton.h"
 
-#include <QtGui/QMenu>
+#include <QMenu>
 
 /** This singleton represents Edit menu in the main window widget
  * as this must be accessed from various pieces it was moved into singleton

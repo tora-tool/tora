@@ -35,7 +35,7 @@
 #ifndef TOCOMPLPOPUP_H
 #define TOCOMPLPOPUP_H
 
-#include <QtGui/QWidget>
+#include <QWidget>
 
 class QListWidget;
 class toWorksheetText;

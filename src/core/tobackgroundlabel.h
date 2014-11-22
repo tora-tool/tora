@@ -6,7 +6,7 @@
 #ifndef TOBACKGROUNDLABEL_H
 #define TOBACKGROUNDLABEL_H
 
-#include <QtGui/QLabel>
+#include <QLabel>
 
 class QWidget;
 class QMouseEvent;

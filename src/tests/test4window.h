@@ -38,7 +38,7 @@
 #include "ui_test4ui.h"
 
 #include <QtCore/QObject>
-#include <QtGui/QMainWindow>
+#include <QMainWindow>
 
 class toSqlText;
 class QPushButton;

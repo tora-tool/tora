@@ -38,7 +38,7 @@
 
 #include "ui_toresultlistformatui.h"
 
-#include <QtGui/QDialog>
+#include <QDialog>
 
 class toExportSettings;
 

@@ -41,9 +41,9 @@
 
 #include "loki/Singleton.h"
 
-#include <QtGui/QListView>
-#include <QtGui/QDirModel>
-#include <QtGui/QPlainTextEdit>
+#include <QListView>
+#include <QDirModel>
+#include <QPlainTextEdit>
 
 class toToolWidget;
 class QMdiSubWindow;

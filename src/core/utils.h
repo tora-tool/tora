@@ -42,8 +42,8 @@
 #include <QtCore/QThread>
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
-#include <QtGui/QMessageBox>
-#include <QtGui/QMainWindow>
+#include <QMessageBox>
+#include <QMainWindow>
 
 #include <map>
 

@@ -35,7 +35,7 @@
 #ifndef TOEDITWIDGET_H
 #define TOEDITWIDGET_H
 
-#include <QtGui/QWidget>
+#include <QWidget>
 
 #include <list>
 

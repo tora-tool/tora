@@ -45,9 +45,9 @@
 #include <QtCore/QTimer>
 #include <QtCore/QString>
 #include <QtCore/QSharedPointer>
-#include <QtGui/QLabel>
-#include <QtGui/QAction>
-#include <QtGui/QToolBar>
+#include <QLabel>
+#include <QAction>
+#include <QToolBar>
 
 #include <map>
 

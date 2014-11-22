@@ -38,7 +38,7 @@
 
 #include "core/toresult.h"
 
-#include <QtGui/QComboBox>
+#include <QComboBox>
 #include <QtCore/QStringList>
 #include <QtCore/QPointer>
 

@@ -37,7 +37,7 @@
 
 #include "core/tocache.h"
 
-#include <QtGui/QTabWidget>
+#include <QTabWidget>
 #include <QtCore/QMap>
 
 #include "loki/Factory_alt.h"

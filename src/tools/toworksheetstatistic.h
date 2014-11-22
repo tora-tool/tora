@@ -41,10 +41,10 @@
 #include <map>
 
 #include <QtCore/QString>
-#include <QtGui/QSplitter>
-#include <QtGui/QMenu>
-#include <QtGui/QLabel>
-#include <QtGui/QToolButton>
+#include <QSplitter>
+#include <QMenu>
+#include <QLabel>
+#include <QToolButton>
 
 class QLabel;
 class QSplitter;

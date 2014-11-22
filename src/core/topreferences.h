@@ -39,7 +39,7 @@
 #include "core/totool.h"
 
 #include <QtCore/QVariant>
-#include <QtGui/QDialog>
+#include <QDialog>
 
 #include <map>
 

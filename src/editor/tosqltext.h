@@ -46,7 +46,7 @@
 #include <QtCore/QTimer>
 #include <QtCore/QStringList>
 #include <QtGui/QKeyEvent>
-#include <QtGui/QWidget>
+#include <QWidget>
 
 class QListWidgetItem;
 class QsciAbstractAPIs;

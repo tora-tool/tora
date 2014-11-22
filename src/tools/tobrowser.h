@@ -41,8 +41,8 @@
 
 #include <map>
 #include <QtCore/QString>
-#include <QtGui/QMenu>
-#include <QtGui/QAction>
+#include <QMenu>
+#include <QAction>
 
 class QComboBox;
 class QTabWidget;

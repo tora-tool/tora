@@ -35,7 +35,7 @@
 #ifndef TOBROWSERSCHEMAWIDGET_H
 #define TOBROWSERSCHEMAWIDGET_H
 
-#include <QtGui/QTreeView>
+#include <QTreeView>
 
 #include "core/toresulttableview.h"
 

@@ -37,7 +37,7 @@
 
 #include "core/totool.h"
 
-#include <QtGui/QLabel>
+#include <QLabel>
 
 class QLabel;
 class QMenu;
