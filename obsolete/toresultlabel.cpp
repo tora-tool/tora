@@ -94,7 +94,7 @@ void toResultLabel::poll(void)
         {
             while (Query->hasMore())
             {
-                res << Query->readValue();
+                res << (QString)Query->readValue();
             }
             setText(res.join(QString::fromLatin1("/")));
         }

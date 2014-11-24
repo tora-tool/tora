@@ -404,7 +404,7 @@ public:
                 {
                     outputSession->execute(SQLDebugOutputPoll);
                     ret = outputSession->readValue().toInt();
-                    QString str = outputSession->readValue();
+                    QString str = (QString)outputSession->readValue();
                     if (ret == 0 || str.length())
                         insertLine(str);
                 }
@@ -633,7 +633,7 @@ void toDebug::targetTask::run(void)
 
             toLocker lock (Parent.Lock);
             Parent.DebuggerStarted = true;
-            Parent.TargetID = targetSession->readValue();
+            Parent.TargetID = (QString)targetSession->readValue();
             Parent.TargetLog += QString::fromLatin1("Debug session connected\n");
             Parent.ChildSemaphore.up(); // resume main TOra thread
         }
