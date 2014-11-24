@@ -36,7 +36,7 @@
 ///#include <kactioncollection.h>
 ///#include <kconfiggroup.h>
 
-#include <QtGui/QGraphicsView>
+#include <QGraphicsView>
 #include <QtCore/QSet>
 #include <QtCore/QMap>
 

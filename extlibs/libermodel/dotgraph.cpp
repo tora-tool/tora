@@ -44,7 +44,7 @@
 #include <QtCore/QProcess>
 #include <QtCore/QMutexLocker>
 #include <QtCore/QUuid>
-#include <QtGui/QMessageBox>
+#include <QMessageBox>
 
 using namespace boost;
 using namespace boost::spirit::classic;

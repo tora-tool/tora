@@ -49,7 +49,7 @@
 
 #include <QtGui/QMatrix>
 #include <QtGui/QPainter>
-#include <QtGui/QStyle>
+#include <QStyle>
 #include <QtGui/QImage>
 #include <QtGui/QContextMenuEvent>
 #include <QtGui/QKeyEvent>
@@ -59,13 +59,13 @@
 #include <QtGui/QFocusEvent>
 #include <QtGui/QMouseEvent>
 #include <QtGui/QWheelEvent>
-#include <QtGui/QMenu>
-#include <QtGui/QGraphicsSimpleTextItem>
-#include <QtGui/QScrollBar>
-#include <QtGui/QActionGroup>
-#include <QtGui/QInputDialog>
-#include <QtGui/QApplication>
-#include <QtGui/QFileDialog>
+#include <QMenu>
+#include <QGraphicsSimpleTextItem>
+#include <QScrollBar>
+#include <QActionGroup>
+#include <QInputDialog>
+#include <QApplication>
+#include <QFileDialog>
 
 #include <QMessageBox> // TODO just a test - remove me
 
@@ -481,7 +481,7 @@ bool DotGraphView::displayGraph()
         font->setPointSize(fontSize);
         fm = QFontMetrics(*font);
       }
-      QGraphicsSimpleTextItem* labelView = new QGraphicsSimpleTextItem(str, 0, m_canvas);
+      QGraphicsSimpleTextItem* labelView = new QGraphicsSimpleTextItem(str, 0/* obsolete parameter, m_canvas*/);
       labelView->setFont(*font);
       labelView->setPos(
                   (scaleX *
