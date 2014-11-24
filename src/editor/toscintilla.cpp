@@ -112,7 +112,7 @@ toScintilla::toScintilla(QWidget *parent, const char *name)
     super::setUtf8(true);
     setAcceptDrops(true); // QWidget::setAcceptDrops
 
-    super::setMarginWidth(0, QString::fromAscii("00"));
+    super::setMarginWidth(0, QString::fromLatin1("00"));
 }
 
 toScintilla::~toScintilla()
@@ -637,7 +637,7 @@ QString toScintilla::getSelectionAsHTML()
 	if (lexer() == NULL)
 		return QString::null;
 
-	static const QString SPAN_CLASS = QString::fromAscii("<span class=\"S%1\">");
+	static const QString SPAN_CLASS = QString::fromLatin1("<span class=\"S%1\">");
 
 	clearIndicatorRange(0, 0, lines(), lineLength(lines()-1), m_searchIndicator);
 	recolor();

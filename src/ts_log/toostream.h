@@ -98,7 +98,7 @@ private:
 
     void putChars(char const* begin, std::streamsize len)
     {
-        QString s = QString::fromAscii(begin, len);
+        QString s = QString::fromLatin1(begin, len);
         sender.emit_send(s);
     }
 
