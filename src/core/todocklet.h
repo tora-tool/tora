@@ -43,6 +43,8 @@
 #include <QDockWidget>
 #include <QtCore/QRect>
 
+#include "core/utils.h"
+
 class toDocklet;
 
 class toDockletHolder

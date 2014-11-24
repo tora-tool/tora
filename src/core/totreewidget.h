@@ -35,7 +35,7 @@
 #ifndef TOTREEWIDGET_H
 #define TOTREEWIDGET_H
 
-
+#include "core/utils.h"
 
 #include <QTreeWidget>
 #include <QTreeWidgetItem>

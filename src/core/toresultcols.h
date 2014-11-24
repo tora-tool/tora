@@ -38,6 +38,7 @@
 
 #include "core/toconnection.h"
 #include "core/toresulttableview.h"
+#include "core/utils.h"
 
 class QCheckBox;
 class QLabel;

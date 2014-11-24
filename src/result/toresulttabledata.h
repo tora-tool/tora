@@ -36,6 +36,7 @@
 #define TORESULTTABLEDATA_H
 
 #include "core/toresultmodeledit.h"
+#include "core/utils.h"
 #include "ui_toresulttabledataui.h"
 
 #include <QWidget>

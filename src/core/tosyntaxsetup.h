@@ -40,6 +40,7 @@
 #include "core/totool.h"
 #include "editor/tostyle.h"
 #include "core/toeditorsetting.h"
+#include "core/utils.h"
 
 #include <QtCore/QString>
 #include <QtCore/QMetaEnum>

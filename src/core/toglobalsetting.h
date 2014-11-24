@@ -37,6 +37,7 @@
 
 #include "core/totool.h"
 #include "core/toconfenum.h"
+#include "core/utils.h"
 
 #include "ui_toglobalsettingui.h"
 #include "ui_totoolsettingui.h"

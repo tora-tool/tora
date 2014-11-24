@@ -35,6 +35,7 @@
 #ifndef TOPIECHART_H
 #define TOPIECHART_H
 
+#include "core/utils.h"
 
 #include <QWidget>
 #include <QtCore/QObject>

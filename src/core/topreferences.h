@@ -37,6 +37,7 @@
 
 
 #include "core/totool.h"
+#include "core/utils.h"
 
 #include <QtCore/QVariant>
 #include <QDialog>

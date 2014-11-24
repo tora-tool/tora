@@ -37,6 +37,7 @@
 
 
 #include "ui_tostoragedefinitionui.h"
+#include "core/utils.h"
 
 #include <list>
 

@@ -37,6 +37,7 @@
 
 #include "core/totool.h"
 #include "core/toconfenum.h"
+#include "core/utils.h"
 
 #include "ui_todatabasesettingui.h"
 

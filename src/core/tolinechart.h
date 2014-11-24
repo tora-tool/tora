@@ -46,6 +46,8 @@
 #include <map>
 #include <algorithm>
 
+#include "core/utils.h"
+
 class QMenu;
 class QScrollBar;
 
