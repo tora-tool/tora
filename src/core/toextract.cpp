@@ -55,7 +55,7 @@ void toExtract::extractor::registerExtract(const QString &db,
     QString name = toExtract::extractorName(db, oper, type);
 
     if ((*toExtract::Extractors).find(name) != (*toExtract::Extractors).end())
-        fprintf(stderr, "Extractor %s multiply defined\n", name.toAscii().constData());
+        fprintf(stderr, "Extractor %s multiply defined\n", name.toLatin1().constData());
 
     (*toExtract::Extractors)[name] = this;
 }
@@ -69,7 +69,7 @@ void toExtract::extractor::unregisterExtract(const QString &db,
     QString name = toExtract::extractorName(db, oper, type);
     std::map<QString, extractor *>::iterator i = (*toExtract::Extractors).find(name);
     if (i == (*toExtract::Extractors).end())
-        fprintf(stderr, "Extractor %s not defined on unregistering\n", name.toAscii().constData());
+        fprintf(stderr, "Extractor %s not defined on unregistering\n", name.toLatin1().constData());
     else
         (*toExtract::Extractors).erase(i);
 }
@@ -955,8 +955,8 @@ std::list<toExtract::columnInfo> toExtract::parseColumnDescription(std::list<QSt
                     current->bNotNull = true;
                 else
                     printf("Error! Found unknown extra data for column %s -> %s\n",
-                           name.toAscii().constData(),
-                           extra.toAscii().constData());
+                           name.toLatin1().constData(),
+                           extra.toLatin1().constData());
             }
             else if (!extra.isEmpty())
             {

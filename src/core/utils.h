@@ -55,6 +55,12 @@
 #include <dlfcn.h>
 #endif
 
+#if QT_VERSION >= 0x050000
+#define TO_ESCAPE(string) string.toHtmlEscaped()
+#else
+#define TO_ESCAPE(string) Qt::escape(string)
+#endif
+  
 #define TOPrinter QPrinter
 #define TOFileDialog QFileDialog
 #define TOMessageBox QMessageBox

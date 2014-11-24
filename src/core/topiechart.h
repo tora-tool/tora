@@ -42,6 +42,8 @@
 #include <QtCore/QRect>
 #include <list>
 
+#include "core/utils.h"
+
 class QMenu;
 class toLineChart;
 class toPieTip;

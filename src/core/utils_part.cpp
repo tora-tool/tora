@@ -166,7 +166,7 @@ QTextCodec * toGetCodec(void)
     if (codecConf == "Default")
         return QTextCodec::codecForLocale();
     else
-        return QTextCodec::codecForName(codecConf.toAscii());
+        return QTextCodec::codecForName(codecConf.toLatin1());
 } // toGetCodec
 
 QString toExpandFile(const QString &file)
@@ -285,7 +285,7 @@ bool toWriteFile(const QString &filename, const QByteArray &data)
             QT_TRANSLATE_NOOP("toWriteFile", "File error"),
             QT_TRANSLATE_NOOP(
                 "toWriteFile",
-                QString("Couldn't open %1 for writing").arg(filename).toAscii().constData()));
+                QString("Couldn't open %1 for writing").arg(filename).toLatin1().constData()));
         return false;
     }
     QTextCodec *codec = toGetCodec();

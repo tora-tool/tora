@@ -41,9 +41,9 @@
 #include "core/toconf.h"
 
 #include <QtGui/QPainter>
-#include <QtGui/QPrinter>
+#include <QPrinter>
 #include <QScrollBar>
-#include <QtGui/QPrintDialog>
+#include <QPrintDialog>
 
 #include "icons/print.xpm"
 #include "icons/chart.xpm"

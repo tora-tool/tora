@@ -63,7 +63,7 @@ toWorkingWidget::toWorkingWidget(QWidget * parent)
     WorkingLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
     hbox->addWidget(WorkingLabel);
 
-    WorkingStop = new QPushButton(QIcon(stop_xpm), tr("Stop"), HWorking);
+    WorkingStop = new QPushButton(QIcon(QPixmap(stop_xpm)), tr("Stop"), HWorking);
     WorkingStop->setAutoFillBackground(true);
     WorkingStop->setBackgroundRole(QPalette::Window);
     WorkingStop->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);

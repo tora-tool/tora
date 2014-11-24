@@ -548,7 +548,8 @@ void toCodeModel::readData()
         new toCodeModelItem(item, cname, ctype, cstatus);
     }
 
-    reset();
+    beginResetModel();
+    endResetModel();
     emit dataReady();
 
     if(!query->hasMore() && query->eof())

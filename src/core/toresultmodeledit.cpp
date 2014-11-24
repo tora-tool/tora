@@ -49,7 +49,9 @@ toResultModelEdit::toResultModelEdit(toEventQuery *query,
     : toResultModel(query, parent, read)
     , PriKeys(priKeys)
 {
+#if QT_VERSION < 0x050000  
 	setSupportedDragActions(Qt::CopyAction | Qt::MoveAction);
+#endif
 }
 
 toResultModelEdit::~toResultModelEdit()

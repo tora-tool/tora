@@ -83,7 +83,7 @@ bool toSQL::updateSQL(const QString &name,
     {
         if (description.isEmpty())
         {
-            fprintf(stderr, "ERROR:Tried add new version to unknown SQL (%s)\n", name.toAscii().constData());
+            fprintf(stderr, "ERROR:Tried add new version to unknown SQL (%s)\n", name.toLatin1().constData());
             return false;
         }
         definition newDef;
@@ -107,7 +107,7 @@ bool toSQL::updateSQL(const QString &name,
                 (*i).second.Modified = modified;
             }
             if (!modified)
-                fprintf(stderr, "ERROR:Overwrite description of nonmodified (%s)\n", name.toAscii().constData());
+                fprintf(stderr, "ERROR:Overwrite description of nonmodified (%s)\n", name.toLatin1().constData());
         }
         std::list<version> &cl = (*i).second.Versions;
         for (std::list<version>::iterator j = cl.begin(); j != cl.end(); j++)

@@ -45,6 +45,7 @@
 #include "core/toconfiguration_new.h"
 
 #include <QtCore/QTimer>
+#include <QtCore/QMimeData>
 #include <QtGui/QClipboard>
 #include <QtGui/QPainter>
 #include <QProgressDialog>
@@ -407,8 +408,11 @@ int toResultViewMLCheck::realWidth(const QFontMetrics &fm, const toTreeWidget *t
         t = txt;
     int wx = top->itemMargin() * 2 - fm.minLeftBearing() - fm.minRightBearing() + 1;
     if (column == 0)
+#if QT_VERSION < 0x050000
         wx += top->style()->pixelMetric(QStyle::PM_CheckListButtonSize) + 4 + top->itemMargin();
-
+#else
+        wx += top->style()->pixelMetric(QStyle::PM_IndicatorWidth) + 4 + top->itemMargin();    
+#endif    
     return (std::min)(TextWidth(fm, t), MaxColDisp) + wx;
 }
 
@@ -425,7 +429,11 @@ int toResultViewCheck::realWidth(const QFontMetrics &fm, const toTreeWidget *top
     QRect bounds = fm.boundingRect(t);
     int wx = top->itemMargin() * 2 - fm.minLeftBearing() - fm.minRightBearing() + 1;
     if (column == 0)
+#if QT_VERSION < 0x050000      
         wx += top->style()->pixelMetric(QStyle::PM_CheckListButtonSize) + 4 + top->itemMargin();
+#else
+        wx += top->style()->pixelMetric(QStyle::PM_IndicatorWidth) + 4 + top->itemMargin();    
+#endif    
 
     return (std::min)(bounds.width(), MaxColDisp) + wx;
 }

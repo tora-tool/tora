@@ -78,8 +78,9 @@ toResultModel::toResultModel(toEventQuery *query,
             SIGNAL(done(toEventQuery*)),
             this,
             SLOT(slotFetchMore(toEventQuery*)));
-
+#if QT_VERSION < 0x050000
     setSupportedDragActions(Qt::CopyAction);
+#endif
 }
 
 toResultModel::toResultModel(const QString &owner,
@@ -97,9 +98,9 @@ toResultModel::toResultModel(const QString &owner,
 	, CurrRowKey(1)
 {
     MaxRowsToAdd = MaxRows = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::InitialFetchInt).toInt();
-
+#if QT_VERSION < 0x050000
     setSupportedDragActions(Qt::CopyAction);
-
+#endif
     // Manually add two columns (first one will be invisible)
     // NOTE: If this function is used to display say table columns from the cache
     // it will have to be modified to set header dynamically according to type of
@@ -248,7 +249,8 @@ void toResultModel::slotReadData()
                 First = !First;
 
                 // need to reset view(s) since we have to poll for data
-                reset();
+                beginResetModel();
+		endResetModel();
                 if(Query && Query->rowsProcessed() > 0)
                 {
                     emit firstResult(QString::number(Query->rowsProcessed()) +

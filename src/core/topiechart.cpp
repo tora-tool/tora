@@ -51,8 +51,8 @@
 #include <QtGui/QPixmap>
 #include <QtGui/QMouseEvent>
 #include <QMenu>
-#include <QtGui/QPrinter>
-#include <QtGui/QPrintDialog>
+#include <QPrinter>
+#include <QPrintDialog>
 
 #include "icons/chart.xpm"
 #include "icons/print.xpm"
@@ -167,7 +167,7 @@ void toPieChart::createPopupMenu(const QPoint &pos)
     {
         Menu = new QMenu(this);
 
-        Menu->addAction(QIcon(print_xpm),
+        Menu->addAction(QIcon(QPixmap(print_xpm)),
                         tr("&Print..."),
                         this,
                         SLOT(editPrint()));

@@ -51,7 +51,7 @@
 #include <QtCore/QStringList>
 #include <QMenu>
 #include <QtGui/QIcon>
-#include <QtGui/QSortFilterProxyModel>
+#include <QSortFilterProxyModel>
 
 // TODO turn these into enum (QMetaEnum)
 #define CONF_PROVIDER_LIST_SORT_OFFSET "ProvListSort" //Sort by database/connection name, asc
@@ -115,7 +115,7 @@ toNewConnection::toNewConnection(QWidget* parent, toWFlags fl)
 
     PreviousContext = new QMenu(this);
     QAction *delact = PreviousContext->addAction(
-                          QIcon(trash_xpm),
+                          QIcon(QPixmap(trash_xpm)),
                           tr("&Delete"));
     connect(delact,
             SIGNAL(triggered()),

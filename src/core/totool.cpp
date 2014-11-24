@@ -318,7 +318,7 @@ QAction *toToolWidget::activationAction()
 {
 	if (Action == NULL)
 	{
-		Action = new QAction(QIcon(Tool.pictureXPM()), windowTitle(), this);
+		Action = new QAction(QIcon(QPixmap(Tool.pictureXPM())), windowTitle(), this);
 		Action->setCheckable(true);
 	}
 	return Action;

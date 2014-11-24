@@ -43,6 +43,8 @@
 #include <QtCore/QList>
 #include <QtCore/QVariant>
 
+#include "core/utils.h"
+
 class QPainter;
 class QColorGroup;
 

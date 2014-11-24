@@ -520,7 +520,7 @@ void toResultPlan::slotChildComboChanged(int NewIndex)
 
         /*
              std::map <QString, toTreeWidgetItem *>::reverse_iterator it;
-             for (it=Parents.rbegin(); it!=Parents.rend(); it++) {printf("Aqq %s\n",it->first.toAscii().constData()); delete it->second;}
+             for (it=Parents.rbegin(); it!=Parents.rend(); it++) {printf("Aqq %s\n",it->first.toLatin1().constData()); delete it->second;}
         */
         TopItem->deleteChildren();
         LastTop = NULL;

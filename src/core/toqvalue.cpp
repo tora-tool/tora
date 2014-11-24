@@ -394,7 +394,7 @@ toQValue toQValue::createFromHex(const QString &hex)
     {
         int num;
 // qt4        char c = hex.at(i);
-        char c = hex.at(i).toAscii();
+        char c = hex.at(i).toLatin1();
         if (c >= 'a')
             num = c - 'a';
         else if (c >= 'A')
@@ -403,7 +403,7 @@ toQValue toQValue::createFromHex(const QString &hex)
             num = c - '0';
         num <<= 4;
 // qt4         c = hex.at(i + 1);
-        c = hex.at(i + 1).toAscii();
+        c = hex.at(i + 1).toLatin1();
         if (c >= 'a')
             num += c - 'a';
         else if (c >= 'A')

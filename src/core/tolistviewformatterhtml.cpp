@@ -37,6 +37,7 @@
 #include "core/tolistviewformatteridentifier.h"
 #include "core/toresultview.h"
 #include "core/toresultmodel.h"
+#include "core/utils.h"
 
 #include <QtGui/QTextDocument>
 
@@ -89,9 +90,7 @@ QString toListViewFormatterHTML::getFormattedString(toExportSettings &settings,
             output += QString("\t<TH>");
             endLine(output);
 
-            QString text(Qt::escape(model->headerData(j,
-                                    Qt::Horizontal,
-                                    Qt::DisplayRole).toString()));
+            QString text = TO_ESCAPE(QString(model->headerData(j, Qt::Horizontal, Qt::DisplayRole).toString()));
 
             output += "\t\t" + text;
 
@@ -123,7 +122,7 @@ QString toListViewFormatterHTML::getFormattedString(toExportSettings &settings,
             endLine(output);
 
             mi = model->index(row, i);
-            QString text(Qt::escape(model->data(mi, Qt::EditRole).toString()));
+            QString text = TO_ESCAPE(QString(model->data(mi, Qt::EditRole).toString()));
 
             output += "\t\t" + text;
             endLine(output);

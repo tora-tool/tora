@@ -49,14 +49,16 @@ toConnectionModel::toConnectionModel(QObject *parent)
 
 void toConnectionModel::setupData(QMap<int, toConnectionOptions> list)
 {
+    beginResetModel();
     m_data.clear();
     m_data = list;
-    reset();
+    endResetModel();
 }
 
 
 void toConnectionModel::readConfig()
 {
+    beginResetModel();  
     m_data.clear();
 
     QSettings Settings;
@@ -107,13 +109,14 @@ void toConnectionModel::readConfig()
     }
     Settings.endGroup(); // history section
 
-    reset();
+    endResetModel();    
 }
 
 void toConnectionModel::append(int ix, toConnectionOptions conn)
 {
+    beginResetModel();
     m_data[ix] = conn;
-    reset();
+    endResetModel();
 }
 
 bool toConnectionModel::removeRow(int row, const QModelIndex &parent)

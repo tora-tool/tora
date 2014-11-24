@@ -76,7 +76,7 @@ void toModelEditor::saveFile()
                 toMainWindow::lookup(),
                 QT_TRANSLATE_NOOP("toWriteFile", "File error"),
                 QT_TRANSLATE_NOOP("toWriteFile", QString("Couldn't open %1 for writing")
-                                  .arg(fn).toAscii().constData())); // TODO test this in MSVC
+                                  .arg(fn).toLatin1().constData())); // TODO test this in MSVC
             return;
         }
         offset = 0;

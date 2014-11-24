@@ -756,7 +756,7 @@ QKeySequence toKeySequence(const QString &key)
     QKeySequence ret = key;
     // TODO printf? use logging
     if (key.isEmpty() && ret.isEmpty())
-        printf("Key sequence %s is not valid\n", key.toAscii().constData());
+        printf("Key sequence %s is not valid\n", key.toLatin1().constData());
     return ret;
 }
 
