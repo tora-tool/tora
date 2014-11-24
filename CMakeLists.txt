@@ -16,6 +16,7 @@ OPTION(WANT_INTERNAL_LOKI "Use internal/bundled Loki source" OFF)
 OPTION(ENABLE_ORACLE "Enable/Disable Oracle support at all. Including detection" ON)
 OPTION(ENABLE_PGSQL "Enable/Disable PostgreSQL support. Including detection" ON)
 OPTION(ENABLE_DB2 "Enable/Disable DB2 support. Including detection" ON)
+OPTION(QT5_BUILD "Use Qt5" OFF)
 OPTION(ENABLE_TERADATA "Enable/Disable Teradata support." ON)
 OPTION(WANT_RPM "Enable additional RPM related stuff. Additional make package_rpm target" OFF)
 OPTION(USE_PCH "Use percompiled headers" OFF)
@@ -31,7 +32,7 @@ OPTION(TEST_APP6 "simple application parser" OFF)
 #Require 2.4.2 for Qt finding
 #Require 2.4.3 for moc change detection and rpath updates for custom cairo install
 #Require 2.8 for svnversion
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8 FATAL_ERROR)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.11 FATAL_ERROR) # qt5 requirement
 
 #Pretty colors
 SET(CMAKE_COLOR_MAKEFILE ON)
@@ -108,7 +109,7 @@ IF (CMAKE_COMPILER_IS_GNUCC)
   SET(CMAKE_CXX_FLAGS_RELEASE "-O2")
   SET(CMAKE_C_FLAGS_RELEASE   "-O2")
   SET(CMAKE_CXX_FLAGS         "-Wall -std=c++11 -ggdb3")
-  SET(CMAKE_C_FLAGS           "-Wall -ggdb3")
+  SET(CMAKE_C_FLAGS           "-Wall            -ggdb3")
 ENDIF (CMAKE_COMPILER_IS_GNUCC)
 
 #Convert our simpler command line option to the CMake style
@@ -158,24 +159,52 @@ ENDIF (WIN32 AND NOT DEFINED WANT_INTERNAL_QSCINTILLA)
 ##############################################################################################################
 ########## Find Dependencies                                                                        ##########
 
-SET (QT_MT_REQUIRED true)
-SET (QT_MIN_VERSION "4.8.0")
-SET (QT_USE_QTSQL TRUE)
-SET (QT_USE_QTNETWORK TRUE)
-SET (QT_USE_QTXML TRUE)
-FIND_PACKAGE(Qt4 REQUIRED)
-INCLUDE( ${QT_USE_FILE} )
+SET(QT_MT_REQUIRED true)
+SET(QT_USE_QTNETWORK TRUE)
+SET(QT_USE_QTXML TRUE)
+SET(QT_USE_QTWEBKIT TRUE)
+#SET(CMAKE_AUTOMOC ON)
+if(QT5_BUILD)
+	set (QT_FOUND true)
+	#set (CMAKE_PREFIX_PATH "C:\\Qt\\5.3\\msvc2013\\")
+        find_package(Qt5Core REQUIRED)
+        find_package(Qt5Gui REQUIRED)
+        find_package(Qt5Network REQUIRED)
+        find_package(Qt5PrintSupport REQUIRED)
+	find_package(Qt5Sql REQUIRED)
+        find_package(Qt5Widgets REQUIRED)
+        find_package(Qt5Xml REQUIRED)
+        set(QT_INCLUDES
+            ${Qt5Core_INCLUDE_DIRS}	  
+            ${Qt5Gui_INCLUDE_DIRS}
+            ${Qt5Network_INCLUDE_DIRS}
+            ${Qt5PrintSupport_INCLUDE_DIRS}
+	    ${Qt5Sql_INCLUDE_DIRS}
+            ${Qt5Widgets_INCLUDE_DIRS}
+            ${Qt5Xml_INCLUDE_DIRS}
+           )
+       include_directories(${QT_INCLUDES})
+       SET(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
+       SET(CMAKE_C_FLAGS           "${CMAKE_C_FLAGS}   ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")       
+else()
+    SET (QT_MIN_VERSION "4.8.0")
+    SET (QT_USE_QTSQL TRUE)
+    SET (QT_USE_QTNETWORK TRUE)
+    SET (QT_USE_QTXML TRUE)
+    FIND_PACKAGE(Qt4 REQUIRED)
+    INCLUDE( ${QT_USE_FILE} )
+endif()
 IF (QT_FOUND)
-  MESSAGE("Qt4 Found OK")
-  #Add our Qt definitions
-  ADD_DEFINITIONS(
-    ${QT_DEFINITIONS}
-    -DQT_CORE_LIB
-    -DQT_GUI_LIB
-    -DQT_THREAD_LIB
-    )
+   MESSAGE("Qt Found OK")
+   #Add our Qt definitions
+   ADD_DEFINITIONS(
+        ${QT_DEFINITIONS}
+             -DQT_CORE_LIB
+             -DQT_GUI_LIB
+             -DQT_THREAD_LIB
+                       )
 ELSE(QT_FOUND)
-  MESSAGE(FATAL_ERROR "No Qt4 found")
+    MESSAGE(FATAL_ERROR "No Qt found")
 ENDIF(QT_FOUND)
 
 IF (WANT_INTERNAL_QSCINTILLA)

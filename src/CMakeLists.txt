@@ -687,10 +687,17 @@ IF (WIN32 AND MINGW)
   LIST(APPEND TORA_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/tora_rc.o)
 ENDIF (WIN32 AND MINGW)
 
+if(QT5_BUILD)
+#QT5_ADD_TRANSLATION(TORA_I18N_QM ${TORA_I18N_TS} ${TORA_I18N_TS_TOAD})
+QT5_WRAP_UI(TORA_UI_SOURCES ${TORA_UI_SRC} )
+QT5_WRAP_CPP(TORA_MOC_SOURCES ${TORA_MOC_CLASSES})
+QT5_ADD_RESOURCES(TORA_RCC_SRCS ${TORA_RCC_FILES})
+else()
 QT4_ADD_TRANSLATION(TORA_I18N_QM ${TORA_I18N_TS} ${TORA_I18N_TS_TOAD})
 QT4_WRAP_UI(TORA_UI_SOURCES ${TORA_UI_SRC} )
 QT4_WRAP_CPP(TORA_MOC_SOURCES ${TORA_MOC_CLASSES})
 QT4_ADD_RESOURCES(TORA_RCC_SRCS ${TORA_RCC_FILES})
+endif()
 
 ################################################################################
 #                       Libraries and library imports                          #
@@ -729,7 +736,14 @@ ENDIF(WIN32)
 
 #Set up libraries to link with all found packages
 SET(TORA_LIBS
-  ${QT_LIBRARIES}               # dynamic
+  ${QT_LIBRARIES}               # dynamic qt4
+  ${Qt5Core_LIBRARIES}          # dynamic qt5
+  ${Qt5Gui_LIBRARIES}           # dynamic qt5
+  ${Qt5Network_LIBRARIES}       # dynamic qt5
+  ${Qt5PrintSupport_LIBRARIES}  # dynamic qt5  
+  ${Qt5Sql_LIBRARIES}           # dynamic qt5
+  ${Qt5Widgets_LIBRARIES}       # dynamic qt5
+  ${Qt5Xml_LIBRARIES}           # dynamic qt5
   ${QSCINTILLA_LIBRARIES}       # dynamic
   ${TORA_LOKI_LIB} 		# static
   )
