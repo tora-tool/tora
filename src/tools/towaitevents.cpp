@@ -405,8 +405,8 @@ void toWaitEvents::poll(void)
     {
         while (Query->hasMore())
         {
-            QString cur = Query->readValue();
-            Now = Query->readValue();
+            QString cur = (QString)Query->readValue();
+            Now = (QString)Query->readValue();
             if (First)
             {
                 Labels.insert(Labels.end(), cur);

@@ -236,7 +236,7 @@ void toResultStats::slotPollQuery(void)
 
         while (Query->hasMore())
         {
-            QString name = Query->readValue();
+            QString name = (QString)Query->readValue();
             int id = Query->readValue().toInt();
             double value = Query->readValue().toDouble();
             addValue(Reset, id, name, value);

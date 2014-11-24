@@ -381,7 +381,7 @@ void toResultItem::slotPoll(void)
                 if (ReadableColumns)
                     Utils::toReadableColumn(name);
 
-                addItem(name, Query->readValue());
+                addItem(name, (QString)Query->readValue());
             }
         }
         // Should we try to fetch any remaining values here,

@@ -540,7 +540,7 @@ QString toNow(toConnection &conn)
     try
     {
         toQList vals = toQuery::readQuery(conn, SQLNow, toQueryParams());
-        return toPop(vals);
+        return (QString)toPop(vals);
     }
     catch (...)
     {
@@ -570,7 +570,7 @@ QString toSQLString(toConnection &conn, const QString &address)
 
     for (toQList::iterator i = vals.begin(); i != vals.end(); i++)
     {
-        sql.append(*i);
+        sql.append((QString)*i);
     }
     if (sql.isEmpty())
         throw qApp->translate("toSQLString", "SQL Address not found in SGA");

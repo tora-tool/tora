@@ -228,7 +228,7 @@ void toResultLock::poll(void)
                     item = new toResultViewItem(LastItem, NULL);
                 toQColumnDescriptionList desc = Query->describe();
                 for (unsigned int pos = 0; pos < desc.size(); pos++)
-                    item->setText(int(pos), Query->readValue());
+                    item->setText(int(pos), (QString)Query->readValue());
             }
         }
     }

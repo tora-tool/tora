@@ -166,9 +166,9 @@ void toResultTableData::query(const QString &, toQueryParams const& params)
     if (params.size() == 2)
     {
         toQueryParams::const_iterator par = params.begin();
-        Owner = *par;
+        Owner = (QString)*par;
         par++;
-        Table = *par;
+        Table = (QString)*par;
     }
 
     /* Always check, if either is empty, query will fail */
@@ -553,7 +553,7 @@ unsigned toResultTableData::commitUpdate(toConnectionSubLoan &conn, toResultMode
     if (change.newValue.isNull())
     	sqlValuePlaceHolders = ASSIGNMENT.arg(change.columnName).arg("NULL");
     else
-    	sqlValuePlaceHolders = ASSIGNMENT.arg(change.columnName).arg(change.newValue);
+    	sqlValuePlaceHolders = ASSIGNMENT.arg(change.columnName).arg((QString)change.newValue);
 
     for(int i = 1; i < Model->getPriKeys().size() + 1; i++)
     {

@@ -105,7 +105,7 @@ void toResultField::slotPoll(void)
                     fieldNo--;
                     Query->readValue();
                 }
-                Unapplied += Query->readValue();
+                Unapplied += (QString)Query->readValue();
 
                 // Read any remaining columns for queries with specific field to fetch.
                 // This is primarily used for MySQL statements like "show create..." which

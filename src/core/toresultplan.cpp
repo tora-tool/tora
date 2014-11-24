@@ -396,22 +396,22 @@ void toResultPlan::slotPoll(void)
     {
         while (Query->hasMore())
         {
-            QString id = Query->readValue();
-            QString parentid = Query->readValue();
-            QString operation = Query->readValue();
-            QString options = Query->readValue();
-            QString object = Query->readValue();
-            QString optimizer = Query->readValue();
-            QString cost = Query->readValue();
-            QString iocost = Query->readValue();
+            QString id = (QString)Query->readValue();
+            QString parentid = (QString)Query->readValue();
+            QString operation = (QString)Query->readValue();
+            QString options = (QString)Query->readValue();
+            QString object = (QString)Query->readValue();
+            QString optimizer = (QString)Query->readValue();
+            QString cost = (QString)Query->readValue();
+            QString iocost = (QString)Query->readValue();
             QString bytes = Query->readValue().toSIsize();
-            QString cardinality = Query->readValue();
-            QString startpartition = Query->readValue();
-            QString endpartition = Query->readValue();
+            QString cardinality = (QString)Query->readValue();
+            QString startpartition = (QString)Query->readValue();
+            QString endpartition = (QString)Query->readValue();
             QString tempspace = Query->readValue().toSIsize();
-            QString time = Query->readValue();
-            QString accesspred = Query->readValue();
-            QString filterpred = Query->readValue();
+            QString time = (QString)Query->readValue();
+            QString accesspred = (QString)Query->readValue();
+            QString filterpred = (QString)Query->readValue();
 
             toResultViewItem *item;
             if (!parentid.isNull() && Parents[parentid])

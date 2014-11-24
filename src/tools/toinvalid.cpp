@@ -296,7 +296,7 @@ void toInvalid::changeSelection(void)
             {
                 int line = errors.readValue().toInt();
                 Errors[line] += QString::fromLatin1(" ");
-                Errors[line] += errors.readValue();
+                Errors[line] += (QString)errors.readValue();
             }
 
             Source->editor()->setErrors(Errors);

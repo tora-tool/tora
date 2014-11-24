@@ -136,8 +136,8 @@ void toResultDepend::slotPoll(void)
             while (Query->hasMore())
             {
                 toTreeWidgetItem *item;
-                QString owner = Query->readValue();
-                QString name = Query->readValue();
+                QString owner = (QString)Query->readValue();
+                QString name = (QString)Query->readValue();
                 if (!exists(owner, name))
                 {
                     if (!Current)
@@ -146,7 +146,7 @@ void toResultDepend::slotPoll(void)
                         item = new toResultViewItem(Current, NULL, owner);
                     item->setText(1, name);
                     for (int i = 2; i < cols; i++)
-                        item->setText(i, Query->readValue());
+                        item->setText(i, (QString)Query->readValue());
                 }
                 else
                 {

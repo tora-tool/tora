@@ -128,7 +128,7 @@ void toResultLine::poll(void)
         while (Query->hasMore())
         {
             unsigned int num = 0;
-            QString lab = Query->readValue();
+            QString lab = (QString)Query->readValue();
             num++;
             std::list<double> vals;
             while (!Query->eof() && num < Columns)

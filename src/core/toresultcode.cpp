@@ -77,7 +77,7 @@ void toResultCode::query(const QString &sql, toQueryParams const& param)
         QString name;
         if (i != params().end())
         {
-            owner = *i;
+            owner = (QString)*i;
             i++;
         }
         toConnection &conn = toConnection::currentConnection(parent());
@@ -91,7 +91,7 @@ void toResultCode::query(const QString &sql, toQueryParams const& param)
         }
         else
         {
-            name = *i;
+            name = (QString)*i;
             i++;
         }
 
@@ -104,10 +104,10 @@ void toResultCode::query(const QString &sql, toQueryParams const& param)
             if (query.eof())
                 throw tr("Object not found");
 
-            type = query.readValue();
+            type = (QString)query.readValue();
         }
         else
-            type = *i;
+            type = (QString)*i;
 
         std::list<QString> objects;
 

@@ -158,7 +158,7 @@ toRollbackDialog::toRollbackDialog(toConnection &Connection, QWidget* parent, co
     	toConnectionSubLoan conn(Connection);
         toQuery q(conn, SQLTablespace, toQueryParams());
         while (!q.eof())
-            Tablespace->addItem(q.readValue());
+            Tablespace->addItem((QString)q.readValue());
     }
     catch (...)
     {
@@ -436,12 +436,12 @@ public:
             {
                 toTreeWidgetItem *item = createItem(last, QString::null);
                 last = item;
-                item->setText(0, sql.readValue());
-                item->setText(1, sql.readValue());
-                item->setText(3, sql.readValue());
-                item->setText(4, sql.readValue());
-                item->setText(5, sql.readValue());
-                item->setText(6, sql.readValue());
+                item->setText(0, (QString)sql.readValue());
+                item->setText(1, (QString)sql.readValue());
+                item->setText(3, (QString)sql.readValue());
+                item->setText(4, (QString)sql.readValue());
+                item->setText(5, (QString)sql.readValue());
+                item->setText(6, (QString)sql.readValue());
             }
 
             toQuery rlb(conn, SQLCurrentExtent, toQueryParams());

@@ -212,7 +212,7 @@ public:
 
     /** Convert value to a string. If binary convert to hex.
      */
-    operator QString() const;
+    explicit operator QString() const;
 
     QString toSIsize() const;
 

@@ -82,10 +82,10 @@ void toCacheWorker::process() {
 				return;
 			}
 			// TODO #warning  "check connection's parent Abort flag"
-			QString owner = objects.readValue();
-			QString name = objects.readValue();
-			QString type = objects.readValue();
-			QString comment = objects.readValue();
+			QString owner = (QString)objects.readValue();
+			QString name = (QString)objects.readValue();
+			QString type = (QString)objects.readValue();
+			QString comment = (QString)objects.readValue();
 			toCache::CacheEntry *e = toCache::createCacheEntry(owner, name,
 					type, comment);
 			if (e)

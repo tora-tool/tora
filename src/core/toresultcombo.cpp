@@ -137,11 +137,11 @@ void toResultCombo::slotPoll(void)
         {
             while (Query->hasMore())
             {
-                QString t = Query->readValue();
+                QString t = (QString)Query->readValue();
                 QStringList l;
                 for (unsigned i = 1; i < Query->describe().size(); ++i)
                 {
-                    QString v = Query->readValue();
+                    QString v = (QString)Query->readValue();
                     l.append(v);
                 }
                 addItem(t, QVariant(l));

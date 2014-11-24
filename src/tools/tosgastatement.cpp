@@ -120,7 +120,7 @@ void toSGAStatement::changeTab(int index)
                     toQList vals = toQuery::readQuery(conn, SQLBackendSql, toQueryParams() << Address);
 
                     for (toQList::iterator i = vals.begin(); i != vals.end(); i++)
-                        sql.append(*i);
+                        sql.append((QString)*i);
                 }
 
                 // TODO: toSQLParse disabled

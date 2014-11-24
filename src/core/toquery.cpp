@@ -148,7 +148,7 @@ bool toQuery::eof(void)
 				queryImpl* Query = m_ConnectionSubLoan->createQuery(this);
 				//m_ConnectionSubLoan->setQuery(this);
 				Query->execute(sql);
-				QString schema = Query->readValue();
+				QString schema = (QString)Query->readValue();
 				m_ConnectionSubLoan->setSchema(schema);
 				delete Query;
 			}

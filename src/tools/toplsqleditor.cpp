@@ -364,16 +364,16 @@ bool toPLSQLEditor::readErrors(toConnection &conn)
 
         while (!errors.eof())
         {
-            errType = errors.readValue(); // "ERROR"/"WARNING" etc.
+            errType = (QString)errors.readValue(); // "ERROR"/"WARNING" etc.
             line = errors.readValue().toInt();
             if (errType == PLSQL_ERROR)
             {
-                Errors.insert(line, errors.readValue());
+                Errors.insert(line, (QString)errors.readValue());
                 errorCount++;
             }
             else // "WARNING"
             {
-                Warnings.insert(line, errors.readValue());
+                Warnings.insert(line, (QString)errors.readValue());
                 warningCount++;
             }
         }
@@ -406,7 +406,7 @@ bool toPLSQLEditor::readData(toConnection &conn/*, toTreeWidget *Stack*/)
                 /* Process the first line of code as the code returned may contain some extra spaces after
                 * unit type and actual name which causes irritations when saving code to code versioning systems
                  */
-                QString s = lines.readValue();
+                QString s = (QString)lines.readValue();
                 int pos;
                 if (s.startsWith("PACKAGE BODY", Qt::CaseInsensitive))
                 {
@@ -439,7 +439,7 @@ bool toPLSQLEditor::readData(toConnection &conn/*, toTreeWidget *Stack*/)
             }
             else
             {
-                str += lines.readValue();
+                str += (QString)lines.readValue();
             }
         }
         str += "\n/";

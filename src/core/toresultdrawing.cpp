@@ -229,9 +229,9 @@ void toResultDrawing::query(const QString &, toQueryParams const& params)
 
 		if( c5.isNull() && !c1.isNull()) // c5 (column_name) is null - see rollup def
 		{
-			tables.insert(c4); // table_name
-			tables.insert(c7); // r_table_name
-			references.insert( Reference( c4, c7));
+			tables.insert((QString)c4); // table_name
+			tables.insert((QString)c7); // r_table_name
+			references.insert( Reference((QString)c4, (QString)c7));
 		}
 	}
 

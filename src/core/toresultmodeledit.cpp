@@ -290,7 +290,7 @@ bool toResultModelEdit::setData(const QModelIndex &index,
 
         if(!row[index.column()].updateNewValue(newValue))
             return false;
-        qDebug() << "Value is changed from " << row[index.column()] << " to " << newValue << "At " << index;
+        qDebug() << "Value is changed from " << (QString)row[index.column()] << " to " << (QString)newValue << "At " << index;
     }
 
     // for the view

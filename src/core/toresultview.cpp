@@ -1246,7 +1246,7 @@ void toResultView::slotAddItem(void)
             else
                 LastItem->setText(columns(), QString::number(RowNumber));
             for (int j = 0; (j < Query->columns() || j == 0) && !Query->eof(); j++)
-                LastItem->setText(j + disp, Query->readValue());
+                LastItem->setText(j + disp, (QString)Query->readValue());
             if (Filter && !Filter->check(LastItem))
             {
                 delete LastItem;

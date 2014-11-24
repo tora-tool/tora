@@ -584,9 +584,9 @@ void toProfiler::refresh(void)
         int id = 1;
         while (!query.eof())
         {
-            QString runid = query.readValue();
-            QString owner = query.readValue();
-            QString comment = query.readValue();
+            QString runid = (QString)query.readValue();
+            QString owner = (QString)query.readValue();
+            QString comment = (QString)query.readValue();
             double total = query.readValue().toDouble() / 1E9;
             if (!owner.isEmpty())
                 owner = QString::fromLatin1("(") + owner + QString::fromLatin1(")");

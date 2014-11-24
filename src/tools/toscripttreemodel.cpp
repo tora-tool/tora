@@ -275,9 +275,9 @@ void toScriptTreeModel::setupModelData(const toConnectionOptions& connId, const 
     QString c3;
     while (object.size() > 0)
     {
-        c1 = Utils::toShift(object);
-        c2 = Utils::toShift(object);
-        c3 = Utils::toShift(object);
+        c1 = (QString)Utils::toShift(object);
+        c2 = (QString)Utils::toShift(object);
+        c3 = (QString)Utils::toShift(object);
 //         TLOG(2,toDecorator,__HERE__) << c1 << c2 << c3;
 
         // new schema in hierarchy

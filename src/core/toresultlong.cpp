@@ -218,11 +218,11 @@ void toResultLong::slotAddItem(void)
                     for (unsigned int j = 0; (j < cols || j == 0) && !Query->eof(); j++)
                     {
                         if (ri)
-                            ri->setText(j + disp, Query->readValue());
+                            ri->setText(j + disp, (QString)Query->readValue());
                         else if (ci)
-                            ci->setText(j + disp, Query->readValue());
+                            ci->setText(j + disp, (QString)Query->readValue());
                         else
-                            LastItem->setText(j + disp, Query->readValue());
+                            LastItem->setText(j + disp, (QString)Query->readValue());
                     }
                     if (Filter && !Filter->check(LastItem))
                     {

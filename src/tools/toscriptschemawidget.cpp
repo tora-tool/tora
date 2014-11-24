@@ -93,7 +93,7 @@ void toScriptSchemaWidget::changeConnection(int val)
     toQList schema = toQuery::readQuery(conn, SQLSchemas, toQueryParams());
     SchemaComboBox->addItem(tr("All"));
     while (schema.size() > 0)
-        SchemaComboBox->addItem(Utils::toShift(schema));
+        SchemaComboBox->addItem((QString)Utils::toShift(schema));
 
     int ix = SchemaComboBox->findText(conn.user().toUpper(), Qt::MatchExactly);
     if (ix == -1)

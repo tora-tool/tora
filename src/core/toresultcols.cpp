@@ -520,12 +520,12 @@ void toResultCols::query(const QString &sql, toQueryParams const& param)
 			    Owner = conn.database();
 		    else
 			    Owner = conn.user().toUpper();
-		    Name = param.at(0);
-		    object = param.at(0);
+		    Name = (QString)param.at(0);
+		    object = (QString)param.at(0);
 		    break;
 	    case 2:
-		    Owner = param.at(0);
-		    Name = param.at(1);
+		    Owner = (QString)param.at(0);
+		    Name = (QString)param.at(1);
 		    object = Owner + QString::fromLatin1(".") + Name;
 		    break;
 	    default:
@@ -610,7 +610,7 @@ void toResultCols::query(const QString &sql, toQueryParams const& param)
             QString t;
             if (!query.eof())
             {
-                t = query.readValue();
+                t = (QString)query.readValue();
 				EditComment->setComment(true, Object.toString()/*TableName*/, t);
             }
             Comment->setText(t);

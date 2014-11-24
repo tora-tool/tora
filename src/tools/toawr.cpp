@@ -351,7 +351,7 @@ void toAWR::execute(void)
             QString reports;
             while (!report.eof())
             {
-                QString line = report.readValue();
+                QString line = (QString)report.readValue();
                 reports += line;
                 reports += '\n';
             }

@@ -199,8 +199,8 @@ static QString toSQLToAddress(toConnection &conn, const QString &sql)
 
   for (toQList::iterator i = vals.begin(); i != vals.end(); i++)
   {
-      if (search == Utils::toSQLString(conn, *i))
-          return *i;
+      if (search == Utils::toSQLString(conn, (QString)*i))
+          return (QString)*i;
   }
   throw qApp->translate("toSQLToAddress", "SQL Query not found in SGA");
 }

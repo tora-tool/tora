@@ -97,7 +97,7 @@ void toBrowserSchemaTableView::updateCache(void)
     toQuery::RowList modelRows = this->Model->getRawData();
     for (QList<toQuery::Row>::iterator i = modelRows.begin(); i != modelRows.end(); i++)
     {
-        obj = toCache::createCacheEntry(Schema, (*i)[1], ObjectType, "");
+        obj = toCache::createCacheEntry(Schema, (QString)(*i)[1], ObjectType, "");
         if (obj != NULL) // Some objects (like DBLINKs are not held in the toCache => obj == NULL
             rows.append(obj);
     }

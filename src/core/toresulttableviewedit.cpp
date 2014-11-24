@@ -75,9 +75,9 @@ void toResultTableViewEdit::query(const QString &SQL, toQueryParams const& param
     if (params.size() == 2)
     {
         toQueryParams::const_iterator par = params.begin();
-        Owner = *par;
+        Owner = (QString)*par;
         par++;
-        Table = *par;
+        Table = (QString)*par;
         PriKeys = connection().getTraits().primaryKeys(connection(), toCache::ObjectRef(Owner, Table, Owner));
     }
 

@@ -191,9 +191,9 @@ void toERSchema::slotPoll(toEventQuery *e)
 		c4 = Query->readValue(); // r_owner
 		c5 = Query->readValue(); // r_table_name
 
-		m_Tables.insert(c3);
-		m_Tables.insert(c5);
-		m_References.insert(Reference(c3,c5));
+		m_Tables.insert((QString)c3);
+		m_Tables.insert((QString)c5);
+		m_References.insert(Reference((QString)c3, (QString)c5));
 	}
 }
 

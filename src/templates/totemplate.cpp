@@ -894,9 +894,9 @@ void toTemplateSQLObject::poll(void)
         toQColumnDescriptionList desc = Query->describe();
         while (Query->hasMore())
         {
-            toTreeWidgetItem *item = Parent->createChild(Query->readValue());
+            toTreeWidgetItem *item = Parent->createChild((QString)Query->readValue());
             for (unsigned int j = 1; j < desc.size(); j++)
-                item->setText(j, Query->readValue());
+                item->setText(j, (QString)Query->readValue());
         }
     }
     catch (const QString &str)

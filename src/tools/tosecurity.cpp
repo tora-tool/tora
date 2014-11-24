@@ -206,7 +206,7 @@ void toSecurityQuota::update(void)
         toTreeWidgetItem *item = NULL;
         while (!tablespaces.eof())
         {
-            item = new toResultViewItem(Tablespaces, item, tablespaces.readValue());
+            item = new toResultViewItem(Tablespaces, item, (QString)tablespaces.readValue());
             item->setText(1, qApp->translate("toSecurityQuota", "None"));
             item->setText(3, qApp->translate("toSecurityQuota", "None"));
         }
@@ -477,14 +477,14 @@ void toSecurityUser::update()
     	toConnectionSubLoan conn(Connection);
         toQuery profiles(conn, SQLProfiles, toQueryParams());
         while (!profiles.eof())
-            Profile->addItem(profiles.readValue());
+            Profile->addItem((QString)profiles.readValue());
 
         QString buf;
         toQuery tablespaces(conn, SQLTablespace, toQueryParams() << QString::fromLatin1("PERMANENT"));
         DefaultSpace->clear();
         while (!tablespaces.eof())
         {
-            buf = tablespaces.readValue();
+            buf = (QString)tablespaces.readValue();
             DefaultSpace->addItem(buf);
         }
 
@@ -492,7 +492,7 @@ void toSecurityUser::update()
         TempSpace->clear();
         while (!temp.eof())
         {
-            buf = temp.readValue();
+            buf = (QString)temp.readValue();
             TempSpace->addItem(buf);
         }
     }
@@ -547,8 +547,8 @@ void toSecurityUser::changeUser(const QString &user)
                 OrgLocked = true;
             }
 
-            OrgPassword = query.readValue();
-            QString pass = query.readValue();
+            OrgPassword = (QString)query.readValue();
+            QString pass = (QString)query.readValue();
             if (OrgPassword == QString::fromLatin1("GLOBAL"))
             {
                 OrgPassword = QString::null;
@@ -571,7 +571,7 @@ void toSecurityUser::changeUser(const QString &user)
             }
 
             {
-                str = query.readValue();
+                str = (QString)query.readValue();
                 for (int i = 0; i < Profile->count(); i++)
                 {
                     if (Profile->itemText(i) == str)
@@ -584,7 +584,7 @@ void toSecurityUser::changeUser(const QString &user)
             }
 
             {
-                str = query.readValue();
+                str = (QString)query.readValue();
                 for (int i = 0; i < DefaultSpace->count(); i++)
                 {
                     if (DefaultSpace->itemText(i) == str)
@@ -597,7 +597,7 @@ void toSecurityUser::changeUser(const QString &user)
             }
 
             {
-                str = query.readValue();
+                str = (QString)query.readValue();
                 for (int i = 0; i < TempSpace->count(); i++)
                 {
                     if (TempSpace->itemText(i) == str)
@@ -870,7 +870,7 @@ void toSecuritySystem::update(void)
         toQuery priv(conn, SQLListSystem, toQueryParams());
         while (!priv.eof())
         {
-            toResultViewCheck *item = new toResultViewCheck(this, priv.readValue(),
+            toResultViewCheck *item = new toResultViewCheck(this, (QString)priv.readValue(),
                     toTreeWidgetCheck::CheckBox);
             new toResultViewCheck(item, tr("Admin"), toTreeWidgetCheck::CheckBox);
         }
@@ -981,8 +981,8 @@ void toSecuritySystem::changeUser(const QString &user)
         toQuery query(conn, SQLSystemGrant, toQueryParams() << user);
         while (!query.eof())
         {
-            QString str = query.readValue();
-            QString admin = query.readValue();
+            QString str = (QString)query.readValue();
+            QString admin = (QString)query.readValue();
             for (toTreeWidgetItem *item = firstChild(); item; item = item->nextSibling())
             {
                 if (item->text(0) == str)
@@ -1027,7 +1027,7 @@ void toSecurityRoleGrant::update(void)
         toQuery priv(conn, SQLRoles, toQueryParams());
         while (!priv.eof())
         {
-            toResultViewCheck *item = new toResultViewCheck(this, priv.readValue(), toTreeWidgetCheck::CheckBox);
+            toResultViewCheck *item = new toResultViewCheck(this, (QString)priv.readValue(), toTreeWidgetCheck::CheckBox);
             new toResultViewCheck(item, tr("Admin"), toTreeWidgetCheck::CheckBox);
             new toResultViewCheck(item, tr("Default"), toTreeWidgetCheck::CheckBox);
         }
@@ -1214,9 +1214,9 @@ void toSecurityRoleGrant::changeUser(bool user, const QString &username)
         toQuery query(conn, SQLRoleGrant, toQueryParams() << username);
         while (!query.eof())
         {
-            QString str = query.readValue();
-            QString admin = query.readValue();
-            QString def = query.readValue();
+            QString str = (QString)query.readValue();
+            QString admin = (QString)query.readValue();
+            QString def = (QString)query.readValue();
             for (toTreeWidgetItem *item = firstChild(); item; item = item->nextSibling())
             {
                 if (item->text(0) == str)
@@ -1500,7 +1500,7 @@ void toSecurity::refresh(void)
         toTreeWidgetItem *item = NULL;
         while (!user.eof())
         {
-            QString tmp = user.readValue();
+            QString tmp = (QString)user.readValue();
             QString id = QString::fromLatin1("USER:");
             id += tmp;
             item = new toResultViewItem(parent, item, tmp);
@@ -1515,7 +1515,7 @@ void toSecurity::refresh(void)
         item = NULL;
         while (!roles.eof())
         {
-            QString tmp = roles.readValue();
+            QString tmp = (QString)roles.readValue();
             QString id = QString::fromLatin1("ROLE:");
             id += tmp;
             item = new toResultViewItem(parent, item, tmp);

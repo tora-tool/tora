@@ -228,9 +228,9 @@ void toCurrent::slotPoll()
                 item = new toResultViewItem(CurrentUpdate.Parent, NULL);
             else
                 item = new toResultViewItem(Grants, NULL);
-            item->setText(0, Query->readValue());
+            item->setText(0, (QString)Query->readValue());
             item->setText(1, CurrentUpdate.Type);
-            item->setText(2, Query->readValue());
+            item->setText(2, (QString)Query->readValue());
             if (CurrentUpdate.IsRole)
             {
                 // Add details of this role to the query que

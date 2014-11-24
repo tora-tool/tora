@@ -160,18 +160,18 @@ void toResultExtent::query(const QString &sql, toQueryParams const& params)
 		toQueryParams::const_iterator i = params.begin();
 		if (i == params.end())
 			return ;
-		QString owner = (*i);
+		QString owner = (QString)*i;
 
 		i++;
 		if (i == params.end())
 			return ;
-		QString table = (*i);
+		QString table = (QString)*i;
 
 		List->refreshWithParams(toQueryParams() << owner << table);
 
 		toQList res = toQuery::readQuery(connection(), SQLTableTablespace, toQueryParams() << owner << table);
 
-		Graph->setTablespace(Utils::toShift(res));
+		Graph->setTablespace((QString)Utils::toShift(res));
 		Graph->highlight(owner, table, QString::null);
 	}
 	TOCATCH
@@ -302,9 +302,9 @@ void toStorageExtent::setTablespace(const QString &tablespace)
 			}
 			++progressCurr;
 
-			cur.Owner = query.readValue();
-			cur.Table = query.readValue();
-			cur.Partition = query.readValue();
+			cur.Owner = (QString)query.readValue();
+			cur.Table = (QString)query.readValue();
+			cur.Partition = (QString)query.readValue();
 			cur.File = query.readValue().toInt();
 			cur.Block = query.readValue().toInt();
 			cur.Size = query.readValue().toInt();
@@ -356,9 +356,9 @@ void toStorageExtent::setFile(const QString &tablespace, int file)
 			}
 			++progressCurr;
 
-			cur.Owner = query.readValue();
-			cur.Table = query.readValue();
-			cur.Partition = query.readValue();
+			cur.Owner = (QString)query.readValue();
+			cur.Table = (QString)query.readValue();
+			cur.Partition = (QString)query.readValue();
 			cur.File = query.readValue().toInt();
 			cur.Block = query.readValue().toInt();
 			cur.Size = query.readValue().toInt();

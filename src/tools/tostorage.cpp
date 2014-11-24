@@ -471,8 +471,8 @@ toStorageDialog::toStorageDialog(const QString &tablespace, QWidget *parent, boo
                     throw tr("Invalid response from query");
 
                 Utils::toShift(result);
-                QString dict = Utils::toShift(result);
-                QString temp = Utils::toShift(result);
+                QString dict = (QString)Utils::toShift(result);
+                QString temp = (QString)Utils::toShift(result);
 
                 Mode = NewDatafile;
                 setWindowTitle(tr("Add datafile"));
@@ -621,8 +621,8 @@ toStorageDialog::toStorageDialog(toConnection &conn, const QString &tablespace,
             throw tr("Invalid response from query");
 
         Utils::toShift(result);
-        QString dict = Utils::toShift(result);
-        QString temp = Utils::toShift(result);
+        QString dict = (QString)Utils::toShift(result);
+        QString temp = (QString)Utils::toShift(result);
 
         Datafile = new toStorageDatafile(dict != QString::fromLatin1("DICTIONARY") &&
                                          temp != QString::fromLatin1("PERMANENT") &&
