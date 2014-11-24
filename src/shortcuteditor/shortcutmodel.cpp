@@ -45,7 +45,7 @@ QVariant ShortcutModel::data(const QModelIndex & index, int role) const
         return QVariant(index.column() == 0 ? m_values.at(index.row()).first : m_values.at(index.row()).second);
     }
     if (role == Qt::BackgroundRole && index.column() == 0 && m_values.at(index.row()).first.isEmpty())
-        return QVariant(Qt::red);
+        return QColor(Qt::red);
     return QVariant();
 }
 

@@ -43,7 +43,7 @@
 
 #include <QHeaderView>
 #include <QTableView>
-#include <QtGui/QSortFilterProxyModel>
+#include <QSortFilterProxyModel>
 
 REGISTER_VIEW("Connection", toViewConnections);
 

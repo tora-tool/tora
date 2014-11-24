@@ -334,7 +334,7 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
                                        QSizePolicy::Minimum));
 
     Stop = new QToolButton(this);
-    Stop->setIcon(QIcon(stop_xpm));
+    Stop->setIcon(QIcon(QPixmap(stop_xpm)));
     Stop->setText(tr("Stop current run"));
     Stop->setEnabled(false);
     connect(Stop, SIGNAL(triggered(QAction *)), this, SLOT(slotStop()));

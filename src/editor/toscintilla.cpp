@@ -42,12 +42,13 @@
 #include "core/toconf.h"
 
 #include <QtGui/QClipboard>
-#include <QtGui/QPrintDialog>
+#include <QPrintDialog>
 #include <QtXml/QDomDocument>
 #include <QShortcut>
 #include <QtCore/QtDebug>
 #include <QMenu>
 #include <QtGui/QClipboard>
+#include <QtCore/QMimeData>
 
 #include <Qsci/qsciprinter.h>
 #include <Qsci/qscilexersql.h>
@@ -582,22 +583,22 @@ QMenu *toScintilla::createPopupMenu(const QPoint& pos)
 
     if (!isReadOnly())
     {
-        action = popup->addAction(QIcon(undo_xpm), tr("&Undo"), this, SLOT(undo()));
+        action = popup->addAction(QIcon(QPixmap(undo_xpm)), tr("&Undo"), this, SLOT(undo()));
         action->setShortcut(QKeySequence::Undo);
         action->setEnabled(isUndoAvailable());
 
-        action = popup->addAction(QIcon(redo_xpm), tr("&Redo"), this, SLOT(redo()));
+        action = popup->addAction(QIcon(QPixmap(redo_xpm)), tr("&Redo"), this, SLOT(redo()));
         action->setShortcut(QKeySequence::Redo);
         action->setEnabled(isRedoAvailable());
 
         popup->addSeparator();
 
-        action = popup->addAction(QIcon(cut_xpm), tr("Cu&t"), this, SLOT(cut()));
+        action = popup->addAction(QIcon(QPixmap(cut_xpm)), tr("Cu&t"), this, SLOT(cut()));
         action->setShortcut(QKeySequence::Cut);
         action->setToolTip(tr("Cut to clipboard"));
         action->setEnabled(hasSelectedText());
 
-        action = popup->addAction(QIcon(copy_xpm),
+        action = popup->addAction(QIcon(QPixmap(copy_xpm)),
                                   tr("&Copy"),
                                   this,
                                   SLOT(copy()));
@@ -605,7 +606,7 @@ QMenu *toScintilla::createPopupMenu(const QPoint& pos)
         action->setToolTip(tr("Copy to clipboard"));
         action->setEnabled(hasSelectedText());
 
-        action = popup->addAction(QIcon(paste_xpm),
+        action = popup->addAction(QIcon(QPixmap(paste_xpm)),
                                   tr("&Paste"),
                                   this,
                                   SLOT(paste()));

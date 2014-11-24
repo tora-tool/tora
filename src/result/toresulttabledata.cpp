@@ -536,9 +536,9 @@ void toResultTableData::refreshWarn()
 
 unsigned toResultTableData::commitUpdate(toConnectionSubLoan &conn, toResultModelEdit::ChangeSet &change)
 {
-	static const QString UPDATE = QString::fromLatin1("UPDATE %1.%2 SET %3 WHERE 1=1 %4");
-	static const QString CONJUNCTION = QString::fromLatin1(" AND %1 = %2");
-	static const QString ASSIGNMENT = QString::fromLatin1("%1 = %2");
+	static const QString UPDATE = QString("UPDATE %1.%2 SET %3 WHERE 1=1 %4");
+	static const QString CONJUNCTION = QString(" AND %1 = %2");
+	static const QString ASSIGNMENT = QString("%1 = %2");
 
 	if (Model->getPriKeys().empty())
 	{

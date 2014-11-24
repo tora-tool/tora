@@ -304,6 +304,7 @@ void toScriptTreeModel::setupModelData(const toConnectionOptions& connId, const 
         secondLevel = c2;
     }
 
-    reset();
+    beginResetModel();
+    endResetModel();
 //     TLOG(2,toDecorator,__HERE__) << "void toScriptTreeModel::setupModelData(const QString & schema)" << "end";
 }

@@ -1497,6 +1497,7 @@ void toWorksheet::slotExecuteAll()
 		{
 			query(stat, Direct, DontSelectQueryEnum);
 		} catch ( BatchExecException const& e) {
+                        Q_UNUSED(e);
 			break;
 		}
 
@@ -2067,7 +2068,7 @@ toToolWidget* toWorksheet::fileWorksheet(const QString &file)
 void toWorksheet::slotRefreshSetup(void)
 {
     bool ok = false;
-    int num = QInputDialog::getInteger(this,
+    int num = QInputDialog::getInt(this,
                                        tr("Enter refreshrate"),
                                        tr("Refresh rate of query in seconds"),
                                        RefreshSeconds,

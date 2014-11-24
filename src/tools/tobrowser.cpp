@@ -1748,9 +1748,9 @@ void toBrowser::dropSomething(const QString &type, const QString &what)
 {
     //obsolete if (what.isEmpty())
     //     return ;
-    // if (TOMessageBox::warning(this, tr("Dropping %1?").arg(tr(type.toAscii().constData())),
+    // if (TOMessageBox::warning(this, tr("Dropping %1?").arg(tr(type.toLatin1().constData())),
     //                           tr("Are you sure you want to drop the %1 %2.%3?\n"
-    //                              "This action can not be undone!").arg(tr(type.toAscii().constData())).arg(
+    //                              "This action can not be undone!").arg(tr(type.toLatin1().constData())).arg(
     //                               Schema->selected()).arg(what),
     //                           tr("&Yes"), tr("&Cancel"), QString::null, 0) == 0)
     // {
@@ -1788,12 +1788,12 @@ void toBrowser::dropSomething(const QString &type, const QString &what)
     //         QString sql = extractor.drop(objToDrop);
 
     //         std::list<toSQLParse::statement> statements = toSQLParse::parse(sql, connection());
-    //         QProgressDialog prog(tr("Executing %1 change script").arg(tr(type.toAscii().constData())),
+    //         QProgressDialog prog(tr("Executing %1 change script").arg(tr(type.toLatin1().constData())),
     //                              tr("Stop"),
     //                              0,
     //                              statements.size(),
     //                              this);
-    //         prog.setWindowTitle(tr("Performing %1 changes").arg(tr(type.toAscii().constData())));
+    //         prog.setWindowTitle(tr("Performing %1 changes").arg(tr(type.toLatin1().constData())));
 
     //         for (std::list<toSQLParse::statement>::iterator j = statements.begin(); j != statements.end(); j++)
     //         {
@@ -1808,7 +1808,7 @@ void toBrowser::dropSomething(const QString &type, const QString &what)
     //             }
     //             qApp->processEvents();
     //             if (prog.wasCanceled())
-    //                 throw tr("Canceled ongoing %1 modification, %2 might be corrupt").arg(tr(type.toAscii().constData())).arg(tr(type.toAscii().constData()));
+    //                 throw tr("Canceled ongoing %1 modification, %2 might be corrupt").arg(tr(type.toLatin1().constData())).arg(tr(type.toLatin1().constData()));
     //         }
     //     }
     //     TOCATCH

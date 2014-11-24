@@ -36,7 +36,7 @@
 
 #include <QMessageBox>
 #include <QFileDialog>
-#include <QtXml/QXmlStreamReader>
+#include <QtCore/QXmlStreamReader>
 
 #include <QtCore/QtDebug>
 

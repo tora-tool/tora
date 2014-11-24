@@ -377,7 +377,7 @@ void toAlert::pollTask::run(void)
         {
             Parent.Lock.lock();
             Parent.Error.sprintf("Exception in alert polling:\n%s", (const char *)str.toLatin1());
-            fprintf(stderr, "%s\n", Parent.Error.toAscii().constData());
+            fprintf(stderr, "%s\n", Parent.Error.toLatin1().constData());
             fatal = true;
             Parent.Lock.unlock();
         }
@@ -385,7 +385,7 @@ void toAlert::pollTask::run(void)
         {
             Parent.Lock.lock();
             Parent.Error.sprintf("Unexpected exception in alert in polling.");
-            fprintf(stderr, "%s\n", Parent.Error.toAscii().constData());
+            fprintf(stderr, "%s\n", Parent.Error.toLatin1().constData());
             fatal = true;
             Parent.Lock.unlock();
         }

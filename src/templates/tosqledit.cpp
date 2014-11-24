@@ -98,7 +98,7 @@ public:
     virtual void customSetup()
     {
     	toEditMenuSingle::Instance().addAction(
-            QIcon(tosqledit_xpm),
+            QIcon(QPixmap(tosqledit_xpm)),
             qApp->translate("toSQLEditTool", "&Edit SQL..."),
             this,
             SLOT(createWindow()));
@@ -166,29 +166,29 @@ toSQLEdit::toSQLEdit(QWidget *main, toConnection &connection)
     QToolBar *toolbar = Utils::toAllocBar(this, tr("SQL editor"));
     layout()->addWidget(toolbar);
 
-    toolbar->addAction(QIcon(fileopen_xpm),
+    toolbar->addAction(QIcon(QPixmap(fileopen_xpm)),
                        tr("Load SQL dictionary file"),
                        this,
                        SLOT(loadSQL()));
-    toolbar->addAction(QIcon(filesave_xpm),
+    toolbar->addAction(QIcon(QPixmap(filesave_xpm)),
                        tr("Save modified SQL to dictionary file"),
                        this,
                        SLOT(saveSQL()));
     toolbar->addSeparator();
 
     CommitButton = toolbar->addAction(
-                       QIcon(commit_xpm),
+                       QIcon(QPixmap(commit_xpm)),
                        tr("Save this entry in the dictionary"),
                        this,
                        SLOT(commitChanges()));
 
     TrashButton = toolbar->addAction(
-                      QIcon(trash_xpm),
+                      QIcon(QPixmap(trash_xpm)),
                       tr("Delete this version from the SQL dictionary"),
                       this,
                       SLOT(deleteVersion()));
 
-    toolbar->addAction(QIcon(add_xpm),
+    toolbar->addAction(QIcon(QPixmap(add_xpm)),
                        tr("Start new SQL definition"),
                        this,
                        SLOT(newSQL()));

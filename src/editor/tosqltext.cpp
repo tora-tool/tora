@@ -71,7 +71,7 @@ toSqlText::toSqlText(QWidget *parent, const char *name)
     // QsciScintilla::setFolding(QsciScintilla::BoxedFoldStyle);
 
     QsciScintilla::setMarginType(2, TextMarginRightJustified);
-    QsciScintilla::setMarginWidth(2, QString::fromLatin1("009"));
+    QsciScintilla::setMarginWidth(2, QString("009"));
 
 	m_parserTimer->setInterval(5000);   // every 5s
 	m_parserTimer->setSingleShot(true); // repeat only if bg thread responded

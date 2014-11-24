@@ -46,7 +46,7 @@
 #include <QTableView>
 #include <QToolBar>
 #include <QFileDialog>
-#include <QtGui/QSortFilterProxyModel>
+#include <QSortFilterProxyModel>
 
 #include "icons/addfile.xpm"
 #include "icons/addtablespace.xpm"
@@ -1418,10 +1418,11 @@ toStorageObjectModel::~toStorageObjectModel()
 
 void toStorageObjectModel::setValues(std::list<toStorageExtent::extentTotal> const& values)
 {
+    beginResetModel();
     m_values.clear();
     for (std::list<toStorageExtent::extentTotal>::const_iterator i = values.begin(); i != values.end(); ++i)
         m_values.append((*i));
-    reset();
+    endResetModel();    
 }
 
 int toStorageObjectModel::rowCount(const QModelIndex & parent) const
