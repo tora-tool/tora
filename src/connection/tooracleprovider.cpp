@@ -137,7 +137,7 @@ bool toOracleProvider::initialize()
 
         //::trotl::g_OCIPL_BULK_ROWS = toConfigurationSingle::Instance().
 
-        dateFormat = toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::ConfDateFormat).toString().toAscii();
+        dateFormat = toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::ConfDateFormat).toString().toLatin1();
         ::trotl::g_TROTL_DEFAULT_DATE_FTM = const_cast<char*>(dateFormat.constData());
         ::trotl::OciEnvAlloc *_envallocp = new ::trotl::OciEnvAlloc;
 
