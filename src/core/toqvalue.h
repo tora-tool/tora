@@ -212,7 +212,7 @@ public:
 
     /** Convert value to a string. If binary convert to hex.
      */
-    explicit operator QString() const;
+    /*explicit MSVC 2013 bug 811334*/ operator QString() const;
 
     QString toSIsize() const;
 
