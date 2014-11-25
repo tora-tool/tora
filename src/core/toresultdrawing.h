@@ -36,6 +36,7 @@
 #define TORESULTDRAWING_H
 
 #include "core/toresult.h"
+#include "core/utils.h"
 
 class DotGraphView;
 class QSlider;
