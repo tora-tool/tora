@@ -643,7 +643,7 @@ toStorageDialog::toStorageDialog(toConnection &conn, const QString &tablespace,
         Datafile->FilenameOrig = filename;
         Datafile->Filename->setText(filename);
         Datafile->InitialSize->setValue(Datafile->InitialSizeOrig = Utils::toShift(result).toInt());
-        if (!(Utils::toShift(result) == QString::fromLatin1("NO")))
+        if (!(Utils::toShift(result).displayData() == QString::fromLatin1("NO")))
         {
             Datafile->AutoExtend->setChecked(true);
             Datafile->NextSize->setValue(Datafile->NextSizeOrig = Utils::toShift(result).toInt());
