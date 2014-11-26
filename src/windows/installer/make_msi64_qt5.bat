@@ -13,8 +13,8 @@ for /F "tokens=1,2"  %%t  in ('svn info') do @if "%%t"=="Revision:" set BUILD_NU
 
 echo Build Number: %BUILD_NUMBER%
 
-candle.exe tora.wxs
-light.exe -ext WixUIExtension -o tora3alpha.64bit.msi tora.wixobj
+candle.exe tora-qt5.wxs
+light.exe -ext WixUIExtension -o tora3alpha.64bit.msi tora-qt5.wixobj
 
 @pause
 
