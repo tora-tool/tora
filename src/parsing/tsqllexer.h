@@ -136,7 +136,7 @@ namespace SQLLexer
 		<
 			token_const_iterator
 			, Token const
-			, boost::forward_traversal_tag
+			, boost::bidirectional_traversal_tag
 		>
 		{
 		public:
