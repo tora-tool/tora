@@ -1150,7 +1150,11 @@ IF(ORACLE_FOUND)
   	"connection/tooracletraits.cpp" 
 	"connection/tooracleconnection.cpp" 
 	"connection/tooraclequery.cpp")
-  TARGET_LINK_LIBRARIES(${PROVIDER_ORACLE} ${ORACLE_LIBRARIES} ${QT_LIBRARIES} Qt5::Core Qt5::Widgets ${TORA_LIB} "trotl")
+  IF(QT5_BUILD)      
+    TARGET_LINK_LIBRARIES(${PROVIDER_ORACLE} ${ORACLE_LIBRARIES} Qt5::Core Qt5::Widgets ${TORA_LIB} "trotl")
+  ELSE()
+    TARGET_LINK_LIBRARIES(${PROVIDER_ORACLE} ${ORACLE_LIBRARIES} ${QT_LIBRARIES} ${TORA_LIB} "trotl")    
+  ENDIF()
   IF(DEFINED TORA_LIB)
     ADD_DEPENDENCIES(${PROVIDER_ORACLE} ${TORA_LIB})
   ELSE()
