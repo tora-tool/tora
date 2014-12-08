@@ -56,7 +56,7 @@
 #define PLSQL_STATIC "STATIC"
 #define PLSQL_RESULT ""
 
-
+#if TORA3_PARSING  
 static struct TypeMapType
 {
     const char *Type;
@@ -75,9 +75,9 @@ TypeMap[] = { { "FUNCTION", "Fc", ":/icons/function.png", true , true },    // M
     { "LOOP", "Loop", NULL, false, false},
     { "WHILE", "Loop", NULL, false, false},
     { "FOR", "Loop", NULL, false, false},
-    { NULL, NULL, false, false}
+    { NULL, NULL, NULL, false, false}
 };
-
+#endif
 
 static toTreeWidgetItem *toLastItem(toTreeWidgetItem *parent)
 {
