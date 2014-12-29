@@ -60,52 +60,6 @@ private slots:
     void accept();
 };
 
-namespace ToConfiguration {
-	class Global : public ConfigContext
-	{
-		Q_OBJECT;
-		Q_ENUMS(OptionTypeEnum);
-	public:
-		Global() : ConfigContext("Global", ENUM_REF(Global,OptionTypeEnum)) {};
-		enum OptionTypeEnum {
-			// Paths
-			CustomSQL = 2000        // #define CONF_SQL_FILE
-			, HelpDirectory         // #define CONF_HELP_PATH
-			, DefaultSession        // #define CONF_DEFAULT_SESSION
-			, CacheDirectory        // #define CONF_CACHE_DIR
-			, OracleHomeDirectory   // #define CONF_ORACLE_HOME
-			, MysqlHomeDirectory    // #define CONF_MYSQL_HOME
-			, PgsqlHomeDirectory    // #define CONF_PGSQL_HOME
-			, GraphvizHomeDirectory
-			// Options (1st column)
-			, ChangeConnectionBool  // #define CONF_CHANGE_CONNECTION
-			, SavePasswordBool      // #define CONF_SAVE_PWD
-			, IncludeDbCaptionBool  // #define CONF_DB_TITLE
-			, RestoreSessionBool    // #define CONF_RESTORE_SESSION
-			, ToadBindingsBool      // #define CONF_TOAD_BINDINGS
-			, CacheDiskBool         // #define CONF_CACHE_DISK
-			, DisplayGridlinesBool  // #define CONF_DISPLAY_GRIDLINES
-			, MultiLineResultsBool  // #define CONF_MULTI_LINE_RESULTS
-			, MessageStatusbarBool  // #define CONF_MESSAGE_STATUSBAR
-			, ColorizedConnectionsBool
-			, ColorizedConnectionsMap
-			// Options (2nd column)
-			, StatusMessageInt      // #define CONF_STATUS_MESSAGE
-			, HistorySizeInt        // #define CONF_STATUS_SAVE
-			, ChartSamplesInt       // #define CONF_CHART_SAMPLES
-			, DisplaySamplesInt     // #define CONF_DISPLAY_SAMPLES
-			, SizeUnit              // #define CONF_SIZE_UNIT
-			, RefreshInterval    // #define CONF_REFRESH
-			, DefaultListFormatInt  // #define CONF_DEFAULT_FORMAT
-			, Style                 // #define CONF_STYLE
-			, Translation           // #define CONF_LOCALE (Translation)
-		};
-		virtual QVariant defaultValue(int) const;
-
-		virtual QVariant toraIIValue(int) const;
-	};
-};
-
 class toGlobalSetting : public QWidget
     , public Ui::toGlobalSettingUI
     , public toSettingTab
