@@ -33,6 +33,7 @@ OPTION(TEST_APP6 "simple application parser" OFF)
 #Require 2.4.3 for moc change detection and rpath updates for custom cairo install
 #Require 2.8 for svnversion
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.11 FATAL_ERROR) # qt5 requirement
+CMAKE_POLICY(SET CMP0046 OLD) # The dependency target "revisiontag" of target "tora" does not exist
 
 #Pretty colors
 SET(CMAKE_COLOR_MAKEFILE ON)
