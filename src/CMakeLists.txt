@@ -1,3 +1,6 @@
+# Setting a cmake minimum is recommended, it produces a warning if not set
+# feel free to adjust if you believe that different version is required
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.9)
 # Precompiled headers
 IF(USE_PCH AND WIN32 AND MSVC)
   INCLUDE(PrecompiledHeader)
@@ -689,17 +692,34 @@ IF (WIN32 AND MINGW)
   LIST(APPEND TORA_SOURCES ${CMAKE_CURRENT_BINARY_DIR}/tora_rc.o)
 ENDIF (WIN32 AND MINGW)
 
-if(QT5_BUILD)
-#QT5_ADD_TRANSLATION(TORA_I18N_QM ${TORA_I18N_TS} ${TORA_I18N_TS_TOAD})
-QT5_WRAP_UI(TORA_UI_SOURCES ${TORA_UI_SRC} )
-QT5_WRAP_CPP(TORA_MOC_SOURCES ${TORA_MOC_CLASSES})
-QT5_ADD_RESOURCES(TORA_RCC_SRCS ${TORA_RCC_FILES})
+IF (QT5_BUILD)
+  find_package(Qt5Core REQUIRED)
+  find_package(Qt5Gui REQUIRED)
+  find_package(Qt5WebKit REQUIRED)
+  find_package(Qt5Xml REQUIRED)
+  find_package(Qt5Widgets REQUIRED)
+  find_package(Qt5Network REQUIRED)
+  find_package(Qt5PrintSupport REQUIRED)
+  set(QT_INCLUDES
+    ${Qt5Gui_INCLUDE_DIRS}
+    ${Qt5Widgets_INCLUDE_DIRS}
+    ${Qt5Network_INCLUDE_DIRS}
+    ${Qt5WebKit_INCLUDE_DIRS}
+    ${Qt5Xml_INCLUDE_DIRS}
+    ${Qt5Svg_INCLUDE_DIRS}
+    ${Qt5PrintSupport_INCLUDE_DIRS}
+  )
+  include_directories(${QT_INCLUDES})
+  #QT5_ADD_TRANSLATION(TORA_I18N_QM ${TORA_I18N_TS} ${TORA_I18N_TS_TOAD})
+  QT5_WRAP_UI(TORA_UI_SOURCES ${TORA_UI_SRC} )
+  QT5_WRAP_CPP(TORA_MOC_SOURCES ${TORA_MOC_CLASSES})
+  QT5_ADD_RESOURCES(TORA_RCC_SRCS ${TORA_RCC_FILES})
 else()
-QT4_ADD_TRANSLATION(TORA_I18N_QM ${TORA_I18N_TS} ${TORA_I18N_TS_TOAD})
-QT4_WRAP_UI(TORA_UI_SOURCES ${TORA_UI_SRC} )
-QT4_WRAP_CPP(TORA_MOC_SOURCES ${TORA_MOC_CLASSES})
-QT4_ADD_RESOURCES(TORA_RCC_SRCS ${TORA_RCC_FILES})
-endif()
+  QT4_ADD_TRANSLATION(TORA_I18N_QM ${TORA_I18N_TS} ${TORA_I18N_TS_TOAD})
+  QT4_WRAP_UI(TORA_UI_SOURCES ${TORA_UI_SRC} )
+  QT4_WRAP_CPP(TORA_MOC_SOURCES ${TORA_MOC_CLASSES})
+  QT4_ADD_RESOURCES(TORA_RCC_SRCS ${TORA_RCC_FILES})
+ENDIF()
 
 ################################################################################
 #                       Libraries and library imports                          #
@@ -739,13 +759,13 @@ ENDIF(WIN32)
 #Set up libraries to link with all found packages
 SET(TORA_LIBS
   ${QT_LIBRARIES}               # dynamic qt4
-  ${Qt5Core_LIBRARIES}          # dynamic qt5
-  ${Qt5Gui_LIBRARIES}           # dynamic qt5
-  ${Qt5Network_LIBRARIES}       # dynamic qt5
-  ${Qt5PrintSupport_LIBRARIES}  # dynamic qt5  
-  ${Qt5Sql_LIBRARIES}           # dynamic qt5
-  ${Qt5Widgets_LIBRARIES}       # dynamic qt5
-  ${Qt5Xml_LIBRARIES}           # dynamic qt5
+  #${Qt5Core_LIBRARIES}          # dynamic qt5
+  #${Qt5Gui_LIBRARIES}           # dynamic qt5
+  #${Qt5Network_LIBRARIES}       # dynamic qt5
+  #${Qt5PrintSupport_LIBRARIES}  # dynamic qt5  
+  #${Qt5Sql_LIBRARIES}           # dynamic qt5
+  #${Qt5Widgets_LIBRARIES}       # dynamic qt5
+  #${Qt5Xml_LIBRARIES}           # dynamic qt5
   ${QSCINTILLA_LIBRARIES}       # dynamic
   ${TORA_LOKI_LIB} 		# static
   )
@@ -765,7 +785,7 @@ ENDIF (WANT_INTERNAL_LOKI)
 # prevent opening the cmd.exe window
 IF (WIN32)
   LIST(APPEND TORA_LIBS ${WINDOWS_LIB})
-  LIST(APPEND TORA_LIBS "ws2_32.lib")
+  #LIST(APPEND TORA_LIBS "ws2_32.lib")
   # don't use console subsystem
   IF (MINGW)
     LIST(APPEND TORA_LIBS "-mwindows")
@@ -802,7 +822,8 @@ ADD_EXECUTABLE(${EXE_NAME} ${GUI_TYPE}
   )
 TARGET_LINK_LIBRARIES(${EXE_NAME} ${TORA_LIBS})
 SET_TARGET_PROPERTIES(${EXE_NAME} PROPERTIES ENABLE_EXPORTS ON)
-ADD_DEPENDENCIES(${EXE_NAME} revisiontag) # explicitly say that the executable depends on the svnheader
+# I suppose this is broken since we are not using svn now
+#ADD_DEPENDENCIES(${EXE_NAME} revisiontag) # explicitly say that the executable depends on the svnheader
 IF(PCH_DEFINED)
   # NOTE: this macro calls SET_SOURCE_FILES_PROPERTIES macro which set props for source within ALL tagets
   ADD_PRECOMPILED_HEADER(${EXE_NAME} ${PCH_HEADER} FORCEINCLUDE)
