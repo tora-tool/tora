@@ -241,7 +241,7 @@ int main(int argc, char **argv)
             qApp->processEvents();
 
             // Loop over all providers found and try to load desired Oracle client
-            // 1st try to load requested Oracle client(if set) then load thick(TNS) Oracle client
+            // 1st try to load requested Oracle client (if set) then load thick (TNS) Oracle client
             QDir oHome = toConfigurationNewSingle::Instance().option(ToConfiguration::Global::OracleHomeDirectory).toString();
             Q_FOREACH(toConnectionProviderFinder::ConnectionProvirerParams const& params, allProviders)
             {
