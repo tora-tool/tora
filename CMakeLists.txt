@@ -48,25 +48,24 @@ SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 # Check for SVN to include SVn revision in SVN based builds
 FIND_PACKAGE(Subversion)
 IF (Subversion_FOUND AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.svn")
-	# a custom target that is always built
-	add_custom_target(revisiontag ALL)
-	# creates svnheader.h using cmake script
-	add_custom_command(TARGET revisiontag COMMAND ${CMAKE_COMMAND}
-		-DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
-		-P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/getsvn.cmake)
-	ADD_DEFINITIONS("-DHAVE_SVNREVISION_H=1")
+  # a custom target that is always built
+  add_custom_target(revisiontag ALL)
+  # creates svnheader.h using cmake script
+  add_custom_command(TARGET revisiontag COMMAND ${CMAKE_COMMAND}
+  -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
+  -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/getsvn.cmake)
+  ADD_DEFINITIONS("-DHAVE_SVNREVISION_H=1")
 ENDIF()
 FIND_PACKAGE(Git)
 IF(GIT_FOUND AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
-	# a custom target that is always built
-	ADD_CUSTOM_TARGET(revisiontag ALL)
-	# creates gitrevision.h using cmake script
-	ADD_CUSTOM_COMMAND(TARGET revisiontag COMMAND ${CMAKE_COMMAND}
-	  -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
-	  -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/getgit.cmake)
-	ADD_DEFINITIONS("-DHAVE_GITREVISION_H=1")
+  # a custom target that is always built
+  ADD_CUSTOM_TARGET(revisiontag ALL)
+  # creates gitrevision.h using cmake script
+  ADD_CUSTOM_COMMAND(TARGET revisiontag COMMAND ${CMAKE_COMMAND}
+  -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
+  -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/getgit.cmake)
+  ADD_DEFINITIONS("-DHAVE_GITREVISION_H=1")
 ENDIF()
-
 
 IF(WIN32)
   # Boost headers are required to compile with -DDEBUG (see tologger.h) and also for trotl sql parser
@@ -93,9 +92,9 @@ MESSAGE(STATUS "TOra ${VERSION} will be built to install into ${CMAKE_INSTALL_PR
 FILE(WRITE  ${CMAKE_BINARY_DIR}/toversion.h "#define TOVERSION \"${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}\"\n")
 
 SET (EXE_NAME "tora")
-if (APPLE)
+IF (APPLE)
   SET(EXE_NAME "TOra")
-endif(APPLE)
+ENDIF(APPLE)
 
 # For Windows only. Plugings depend on the main program binary. Therefore we must also create .exp .lib (for each .exe)
 # The plugin's .dll must be linked against one of them (usually against tora.lib). 
@@ -126,17 +125,17 @@ ENDIF (CMAKE_COMPILER_IS_GNUCC)
 
 #Convert our simpler command line option to the CMake style
 #None, Debug, Release, .. or custom ones
-if (CMAKE_BUILD_TYPE MATCHES [Dd]ebug)
-    message(STATUS "Debug build")
-    set(CMAKE_BUILD_TYPE Debug)
-    add_definitions(-DDEBUG -DQT_DEBUG)
-    set(TORA_DEBUG TRUE)
-else()
-    message(STATUS "non-debug build")
-    set(TORA_DEBUG FALSE)
-    add_definitions(-DNDEBUG -DQT_NO_DEBUG)
-    add_definitions(-DQT_NO_DEBUG_OUTPUT)
-endif()
+IF (CMAKE_BUILD_TYPE MATCHES [Dd]ebug)
+  message(STATUS "Debug build")
+  set(CMAKE_BUILD_TYPE Debug)
+  add_definitions(-DDEBUG -DQT_DEBUG)
+  set(TORA_DEBUG TRUE)
+ELSE()
+  message(STATUS "non-debug build")
+  set(TORA_DEBUG FALSE)
+  add_definitions(-DNDEBUG -DQT_NO_DEBUG)
+  add_definitions(-DQT_NO_DEBUG_OUTPUT)
+ENDIF()
 
 
 # Lets disable Wall warnings due the MSVC too much talkative
@@ -176,59 +175,59 @@ SET(QT_USE_QTNETWORK TRUE)
 SET(QT_USE_QTXML TRUE)
 SET(QT_USE_QTWEBKIT TRUE)
 #SET(CMAKE_AUTOMOC ON)
-if(QT5_BUILD)
-	set (QT_FOUND true)
-	#set(CMAKE_PREFIX_PATH "$ENV{QTDIR}\\5.3\\msvc2013\\") # multiple paths do not work
-	set(CMAKE_PREFIX_PATH "$ENV{QTDIR}\\5.3\\msvc2013_64_opengl\\")
-        find_package(Qt5Core REQUIRED)
-        find_package(Qt5Gui REQUIRED)
-        find_package(Qt5Network REQUIRED)
-        find_package(Qt5PrintSupport REQUIRED)
-	find_package(Qt5Sql REQUIRED)
-        find_package(Qt5Widgets REQUIRED)
-        find_package(Qt5Xml REQUIRED)
-        set(QT_INCLUDES
-            ${Qt5Core_INCLUDE_DIRS}	  
-            ${Qt5Gui_INCLUDE_DIRS}
-            ${Qt5Network_INCLUDE_DIRS}
-            ${Qt5PrintSupport_INCLUDE_DIRS}
-	    ${Qt5Sql_INCLUDE_DIRS}
-            ${Qt5Widgets_INCLUDE_DIRS}
-            ${Qt5Xml_INCLUDE_DIRS}
-           )
-       include_directories(${QT_INCLUDES})
-       SET(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
-       SET(CMAKE_C_FLAGS           "${CMAKE_C_FLAGS}   ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")       
-else()
-    SET (QT_MIN_VERSION "4.8.0")
-    SET (QT_USE_QTSQL TRUE)
-    SET (QT_USE_QTNETWORK TRUE)
-    SET (QT_USE_QTXML TRUE)
-    FIND_PACKAGE(Qt4 REQUIRED)
-    INCLUDE( ${QT_USE_FILE} )
-endif()
+IF(QT5_BUILD)
+  set (QT_FOUND true)
+  #set(CMAKE_PREFIX_PATH "$ENV{QTDIR}\\5.3\\msvc2013\\") # multiple paths do not work
+  set(CMAKE_PREFIX_PATH "$ENV{QTDIR}\\5.3\\msvc2013_64_opengl\\")
+  find_package(Qt5Core REQUIRED)
+  find_package(Qt5Gui REQUIRED)
+  find_package(Qt5Network REQUIRED)
+  find_package(Qt5PrintSupport REQUIRED)
+  find_package(Qt5Sql REQUIRED)
+  find_package(Qt5Widgets REQUIRED)
+  find_package(Qt5Xml REQUIRED)
+  set(QT_INCLUDES
+    ${Qt5Core_INCLUDE_DIRS}	  
+    ${Qt5Gui_INCLUDE_DIRS}
+    ${Qt5Network_INCLUDE_DIRS}
+    ${Qt5PrintSupport_INCLUDE_DIRS}
+    ${Qt5Sql_INCLUDE_DIRS}
+    ${Qt5Widgets_INCLUDE_DIRS}
+    ${Qt5Xml_INCLUDE_DIRS}
+  )
+  include_directories(${QT_INCLUDES})
+  SET(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
+  SET(CMAKE_C_FLAGS           "${CMAKE_C_FLAGS}   ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")       
+ELSE()
+  SET (QT_MIN_VERSION "4.8.0")
+  SET (QT_USE_QTSQL TRUE)
+  SET (QT_USE_QTNETWORK TRUE)
+  SET (QT_USE_QTXML TRUE)
+  FIND_PACKAGE(Qt4 REQUIRED)
+  INCLUDE( ${QT_USE_FILE} )
+ENDIF()
 IF (QT_FOUND)
-   MESSAGE("Qt Found OK")
-   #Add our Qt definitions
-   ADD_DEFINITIONS(
-        ${QT_DEFINITIONS}
-             -DQT_CORE_LIB
-             -DQT_GUI_LIB
-             -DQT_THREAD_LIB
-                       )
+  MESSAGE("Qt Found OK")
+  #Add our Qt definitions
+  ADD_DEFINITIONS(
+    ${QT_DEFINITIONS}
+    -DQT_CORE_LIB
+    -DQT_GUI_LIB
+    -DQT_THREAD_LIB
+  )
 ELSE(QT_FOUND)
-    MESSAGE(FATAL_ERROR "No Qt found")
+  MESSAGE(FATAL_ERROR "No Qt found")
 ENDIF(QT_FOUND)
 
 IF (WANT_INTERNAL_QSCINTILLA)
   MESSAGE(STATUS "QSci: Building with internal copy of QScintilla.")
   MESSAGE(STATUS "QSci: It's recomended to use external library for it")
   INCLUDE_DIRECTORIES(BEFORE
-        ${CMAKE_SOURCE_DIR}/extlibs/qscintilla2/include
-        ${CMAKE_SOURCE_DIR}/extlibs/qscintilla2/src
-        ${CMAKE_SOURCE_DIR}/extlibs/qscintilla2/Qt4Qt5
-        ${CMAKE_SOURCE_DIR}/extlibs/qscintilla2/lexlib
-    )
+    ${CMAKE_SOURCE_DIR}/extlibs/qscintilla2/include
+    ${CMAKE_SOURCE_DIR}/extlibs/qscintilla2/src
+    ${CMAKE_SOURCE_DIR}/extlibs/qscintilla2/Qt4Qt5
+    ${CMAKE_SOURCE_DIR}/extlibs/qscintilla2/lexlib
+  )
 ELSE (WANT_INTERNAL_QSCINTILLA)
   FIND_PACKAGE(QScintilla REQUIRED)
   IF (QSCINTILLA_FOUND)
@@ -239,14 +238,11 @@ ELSE (WANT_INTERNAL_QSCINTILLA)
     MESSAGE(STATUS "QSci: You can use -DWANT_INTERNAL_QSCINTILLA=1 to build included copy of it.")
     MESSAGE(FATAL_ERROR "No QScintilla2 found")
   ENDIF (QSCINTILLA_FOUND)
-
 ENDIF (WANT_INTERNAL_QSCINTILLA)
-
 
 IF (NOT ENABLE_ORACLE)
   MESSAGE(STATUS "Oracle support is disabled by user choice")
   ADD_DEFINITIONS("-DTO_NO_ORACLE")
-
 ELSE (NOT ENABLE_ORACLE)
   FIND_PACKAGE(Oracle COMPONENTS CLNTSH XML)
   IF(ORACLE_FOUND)
@@ -257,13 +253,10 @@ ELSE (NOT ENABLE_ORACLE)
     MESSAGE(STATUS "No Oracle OCI found. TOra will be build without Oracle support")
     ADD_DEFINITIONS("-DTO_NO_ORACLE")
   ENDIF(ORACLE_FOUND)
-
 ENDIF (NOT ENABLE_ORACLE)
-
 
 IF (NOT ENABLE_PGSQL)
   MESSAGE(STATUS "PostgreSQL support is disabled by user choice")
-
 ELSE (NOT ENABLE_PGSQL)
   FIND_PACKAGE(PostgreSQL)
   IF (POSTGRESQL_FOUND)
@@ -279,13 +272,10 @@ ELSE (NOT ENABLE_PGSQL)
     #MESSAGE (STATUS "PostgreSQL libs: ${POSTGRESQL_LIBRARIES} vs. ${POSTGRESQL_PATH_LIB}")
     MESSAGE(" ")
   ENDIF (POSTGRESQL_FOUND)
-
 ENDIF (NOT ENABLE_PGSQL)
-
 
 IF (NOT ENABLE_DB2)
   MESSAGE(STATUS "DB2 support is disabled by user choice")
-
 ELSE (NOT ENABLE_DB2)
   FIND_PACKAGE(DB2)
   IF (DB2_FOUND)
@@ -298,7 +288,6 @@ ELSE (NOT ENABLE_DB2)
     MESSAGE(STATUS "     and -DDB2_PATH_LIB=path manually")
     MESSAGE(" ")
   ENDIF (DB2_FOUND)
-
 ENDIF (NOT ENABLE_DB2)
 
 IF (NOT ENABLE_TERADATA)
@@ -337,27 +326,23 @@ ADD_SUBDIRECTORY(src)
 
 
 find_package(Doxygen)
-if(DOXYGEN_FOUND)
-    message(STATUS "")
-    message(STATUS "Developer documentation (doxygen) can be generated by 'make docs'")
-    message(STATUS "")
+IF(DOXYGEN_FOUND)
+  message(STATUS "")
+  message(STATUS "Developer documentation (doxygen) can be generated by 'make docs'")
+  message(STATUS "")
 
-    configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/doc/devel/Doxyfile.in
-        ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY
-    )
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/doc/devel/Doxyfile.in
+    ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY
+  )
 
-    add_custom_target(docs
-        ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
-        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        COMMENT "Generating API documentation with Doxygen" VERBATIM
-    )
-
-endif(DOXYGEN_FOUND)
-
-
-
+  add_custom_target(docs
+    ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    COMMENT "Generating API documentation with Doxygen" VERBATIM
+  )
+ENDIF(DOXYGEN_FOUND)
 
 # packaging related stuff
 #SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Toolkit for Oracle")
