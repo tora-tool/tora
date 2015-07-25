@@ -13,64 +13,67 @@
 #include <QtCore/QVariant>
 #include <QApplication>
 
-namespace ToConfiguration {
-	class ConfigContext;
+namespace ToConfiguration
+{
+    class ConfigContext;
 };
 
 class QMetaEnum;
 
 class TORA_EXPORT toConfigurationNew: public QObject
 {
-	Q_OBJECT;
-	friend class ::ToConfiguration::ConfigContext;
-public:
-	class OptionNotFound : public std::exception
-	{};
+        Q_OBJECT;
+        friend class ::ToConfiguration::ConfigContext;
+    public:
+        class OptionNotFound : public std::exception
+    {};
 
-	toConfigurationNew(QObject *parent = 0);
-    virtual ~toConfigurationNew();
+        toConfigurationNew(QObject *parent = 0);
+        virtual ~toConfigurationNew();
 
-    QVariant option(int option);
-    QVariant option(QString const& option);
-    template <class T> void setOption(QString const& optionName, T const& newVal)
-    {
-    	if (m_optionToEnumMap.contains(optionName))
-    	{
-    		setOption(m_optionToEnumMap.value(optionName), newVal);
-    	} else {
-    		logUnknownOption(optionName);
-    	}
-    }
+        QVariant option(int option);
+        QVariant option(QString const& option);
+        template <class T> void setOption(QString const& optionName, T const& newVal)
+        {
+            if (m_optionToEnumMap.contains(optionName))
+            {
+                setOption(m_optionToEnumMap.value(optionName), newVal);
+            }
+            else
+            {
+                logUnknownOption(optionName);
+            }
+        }
 
-    template <class T> void setOption(int option, T const&)
-    {
+        template <class T> void setOption(int option, T const&)
+        {
 
-    };
+        };
 
-    void saveAll();
+        void saveAll();
 
-    /*! \brief Set the QSettings access strings.
-    QSettings uses these. It's used in the main.cpp before
-    new QApplication instance init.
-    The 2nd usage is in the toConfiguration constructor due
-    some strange loading -- values are ignored with empty
-    QSettings constructor (maybe due the Loki lib?) */
-    static void setQSettingsEnv();
+        /*! \brief Set the QSettings access strings.
+        QSettings uses these. It's used in the main.cpp before
+        new QApplication instance init.
+        The 2nd usage is in the toConfiguration constructor due
+        some strange loading -- values are ignored with empty
+        QSettings constructor (maybe due the Loki lib?) */
+        static void setQSettingsEnv();
 
-    // Application location paths
-    static QString sharePath();
-protected:
-    void registerConfigContext(QString const& context, QMetaEnum const& fields, ToConfiguration::ConfigContext const*);
-private:
-    void logUnknownOption(QString const&);
+        // Application location paths
+        static QString sharePath();
+    protected:
+        void registerConfigContext(QString const& context, QMetaEnum const& fields, ToConfiguration::ConfigContext const*);
+    private:
+        void logUnknownOption(QString const&);
 
-    QMap<unsigned, QVariant> m_configMap;
-    QMap<unsigned, ToConfiguration::ConfigContext const*> m_configContextPtrMap;
-    QMap<QString, QMetaEnum> m_contextMap;
-    QMap<QString, ToConfiguration::ConfigContext const*> m_contextSetPtrMap;
-    QMap<QString, int> m_optionToEnumMap;
-    QMap<int, QString> m_enumToOptionMap;
-    QSettings m_settings;
+        QMap<unsigned, QVariant> m_configMap;
+        QMap<unsigned, ToConfiguration::ConfigContext const*> m_configContextPtrMap;
+        QMap<QString, QMetaEnum> m_contextMap;
+        QMap<QString, ToConfiguration::ConfigContext const*> m_contextSetPtrMap;
+        QMap<QString, int> m_optionToEnumMap;
+        QMap<int, QString> m_enumToOptionMap;
+        QSettings m_settings;
 };
 
 template<> TORA_EXPORT

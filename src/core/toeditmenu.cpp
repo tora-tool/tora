@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -47,16 +47,16 @@
 #include <QtCore/QMimeData>
 
 toEditMenu::toEditMenu()
-	: QMenu(tr("&Edit"), NULL)
-	, m_clipboardContent(false)
-	, m_pasteSupported(false)
+    : QMenu(tr("&Edit"), NULL)
+    , m_clipboardContent(false)
+    , m_pasteSupported(false)
 {
-	QClipboard const *clipBoard = QApplication::clipboard();
-	QMimeData const *mimeData = clipBoard->mimeData();
-	connect(clipBoard, SIGNAL(dataChanged()), this, SLOT(clipBoardChanged()));
-	connect(this, SIGNAL(aboutToShow()), this, SLOT(slotAboutToShow()));
+    QClipboard const *clipBoard = QApplication::clipboard();
+    QMimeData const *mimeData = clipBoard->mimeData();
+    connect(clipBoard, SIGNAL(dataChanged()), this, SLOT(clipBoardChanged()));
+    connect(this, SIGNAL(aboutToShow()), this, SLOT(slotAboutToShow()));
 
-	m_clipboardContent = mimeData->hasText() && !clipBoard->text().isEmpty();
+    m_clipboardContent = mimeData->hasText() && !clipBoard->text().isEmpty();
 
     undoAct = new QAction(QPixmap(const_cast<const char**>(undo_xpm)), tr("&Undo"), this);
     undoAct->setShortcut(QKeySequence::Undo);
@@ -121,52 +121,53 @@ toEditMenu::toEditMenu()
     disableAll();
 }
 
-void toEditMenu::disableAll() {
-	undoAct->setEnabled(false);
-	redoAct->setEnabled(false);
+void toEditMenu::disableAll()
+{
+    undoAct->setEnabled(false);
+    redoAct->setEnabled(false);
 
-	cutAct->setEnabled(false);
-	copyAct->setEnabled(false);
-	pasteAct->setEnabled(false);
-	searchReplaceAct->setEnabled(false);
-	searchNextAct->setEnabled(false);
-	selectAllAct->setEnabled(false);
-	readAllAct->setEnabled(false);
-	m_pasteSupported = false;
+    cutAct->setEnabled(false);
+    copyAct->setEnabled(false);
+    pasteAct->setEnabled(false);
+    searchReplaceAct->setEnabled(false);
+    searchNextAct->setEnabled(false);
+    selectAllAct->setEnabled(false);
+    readAllAct->setEnabled(false);
+    m_pasteSupported = false;
 }
 
 toEditMenu::~toEditMenu()
 {
-	//TOTO CLEAN ALL
+    //TOTO CLEAN ALL
 }
 
 void toEditMenu::clipBoardChanged()
 {
-	QClipboard const *clipBoard = QApplication::clipboard();
-	QMimeData const *mimeData = clipBoard->mimeData();
-	m_clipboardContent = mimeData->hasText() && !clipBoard->text().isEmpty();
+    QClipboard const *clipBoard = QApplication::clipboard();
+    QMimeData const *mimeData = clipBoard->mimeData();
+    m_clipboardContent = mimeData->hasText() && !clipBoard->text().isEmpty();
 }
 
 void toEditMenu::slotAboutToShow()
 {
-	disableAll();
+    disableAll();
 
-	toEditWidget *editWidget = toEditWidget::findEdit(QApplication::focusWidget());
-	if (editWidget)
-	{
-		m_pasteSupported = editWidget->FlagSet.Paste;
-		undoAct->setEnabled(editWidget->FlagSet.Undo);
-		redoAct->setEnabled(editWidget->FlagSet.Redo);
+    toEditWidget *editWidget = toEditWidget::findEdit(QApplication::focusWidget());
+    if (editWidget)
+    {
+        m_pasteSupported = editWidget->FlagSet.Paste;
+        undoAct->setEnabled(editWidget->FlagSet.Undo);
+        redoAct->setEnabled(editWidget->FlagSet.Redo);
 
-		cutAct->setEnabled(editWidget->FlagSet.Cut);
-		copyAct->setEnabled(editWidget->FlagSet.Copy);
-		pasteAct->setEnabled(m_pasteSupported && m_clipboardContent);
-		searchReplaceAct->setEnabled(editWidget->FlagSet.Search);
-		searchNextAct->setEnabled(editWidget->FlagSet.Search);
-		selectAllAct->setEnabled(editWidget->FlagSet.SelectAll);
+        cutAct->setEnabled(editWidget->FlagSet.Cut);
+        copyAct->setEnabled(editWidget->FlagSet.Copy);
+        pasteAct->setEnabled(m_pasteSupported && m_clipboardContent);
+        searchReplaceAct->setEnabled(editWidget->FlagSet.Search);
+        searchNextAct->setEnabled(editWidget->FlagSet.Search);
+        selectAllAct->setEnabled(editWidget->FlagSet.SelectAll);
 #if 0 // TODO: this part is waiting for QScintilla backend feature (yet unimplemented).
-		selectBlockAct->setEnabled(editWidget->FlagSet.SelectAll);
+        selectBlockAct->setEnabled(editWidget->FlagSet.SelectAll);
 #endif
-		readAllAct->setEnabled(editWidget->FlagSet.ReadAll);
-	}
+        readAllAct->setEnabled(editWidget->FlagSet.ReadAll);
+    }
 }

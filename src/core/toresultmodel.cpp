@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -49,12 +49,12 @@ toResultModel::toResultModel(toEventQuery *query,
                              bool read)
     : QAbstractTableModel(parent)
     , SortedOrder(Qt::AscendingOrder)
-	, ReadableColumns(read)
-	, HeadersRead(false)
-	, First(true)
-	, ReadAll(false)
-	, SortedOnColumn(-1)
-	, CurrRowKey(1)
+    , ReadableColumns(read)
+    , HeadersRead(false)
+    , First(true)
+    , ReadAll(false)
+    , SortedOnColumn(-1)
+    , CurrRowKey(1)
 {
     MaxRowsToAdd = MaxRows = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::InitialFetchInt).toInt();
 
@@ -89,13 +89,13 @@ toResultModel::toResultModel(const QString &owner,
                              bool read)
     : QAbstractTableModel(parent)
     , SortedOrder(Qt::AscendingOrder)
-	, ReadableColumns(read)
-	, HeadersRead(false)
-	, First(true)
-	, ReadAll(false)
-	, SortedOnColumn(-1)
-	, Query(NULL)
-	, CurrRowKey(1)
+    , ReadableColumns(read)
+    , HeadersRead(false)
+    , First(true)
+    , ReadAll(false)
+    , SortedOnColumn(-1)
+    , Query(NULL)
+    , CurrRowKey(1)
 {
     MaxRowsToAdd = MaxRows = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::InitialFetchInt).toInt();
 #if QT_VERSION < 0x050000
@@ -165,7 +165,7 @@ void toResultModel::cleanup()
 
 void toResultModel::slotQueryError(toEventQuery*, const toConnection::exception &err)
 {
-    if(First)
+    if (First)
     {
         emit firstResult(err, true);
         First = !First;
@@ -178,14 +178,14 @@ void toResultModel::slotQueryError(toEventQuery*, const toConnection::exception 
 void toResultModel::readAll()
 {
     ReadAll = true;
-    if(Query)
+    if (Query)
         Query->setFetchMode(toEventQuery::READ_ALL);
 }
 
 void toResultModel::slotReadAll()
 {
     ReadAll = true;
-    if(Query)
+    if (Query)
         Query->setFetchMode(toEventQuery::READ_ALL);
 }
 
@@ -204,7 +204,7 @@ void toResultModel::slotReadData()
         Query->eof();
 
         int cols = Headers.size();
-        if(cols < 1)
+        if (cols < 1)
             return;
 
         // don't actually modify any data until we can call
@@ -213,10 +213,10 @@ void toResultModel::slotReadData()
         toQuery::RowList tmp;
         int     current = Rows.size();
 
-        while(Query->hasMore() &&
+        while (Query->hasMore() &&
                 (MaxRows < 0 || MaxRows > current))
         {
-        	toQuery::Row row;
+            toQuery::Row row;
 
             // The number column (rowKey). should never change
             toRowDesc rowDesc;
@@ -250,8 +250,8 @@ void toResultModel::slotReadData()
 
                 // need to reset view(s) since we have to poll for data
                 beginResetModel();
-		endResetModel();
-                if(Query && Query->rowsProcessed() > 0)
+                endResetModel();
+                if (Query && Query->rowsProcessed() > 0)
                 {
                     emit firstResult(QString::number(Query->rowsProcessed()) +
                                      (Query->rowsProcessed() == 1 ?
@@ -330,13 +330,13 @@ QMimeData* toResultModel::mimeData(const QModelIndexList &indexes) const
     {
         if (index.isValid())
         {
-            if(index.row() > currentRow)
+            if (index.row() > currentRow)
             {
                 currentRow = index.row();
                 rows++;
             }
 
-            if(currentCol != index.column())
+            if (currentCol != index.column())
             {
                 currentCol = index.column();
                 columns++;
@@ -349,10 +349,10 @@ QMimeData* toResultModel::mimeData(const QModelIndexList &indexes) const
         }
     }
 
-    if(valid < 1)
+    if (valid < 1)
         return 0;
 
-    if(valid == 1)
+    if (valid == 1)
     {
         mimeData->setText(text);
 
@@ -480,7 +480,7 @@ bool toResultModel::dropMimeData(const QMimeData *data,
 
 Qt::DropActions toResultModel::supportedDropActions() const
 {
-	return Qt::IgnoreAction;
+    return Qt::IgnoreAction;
 }
 
 
@@ -505,62 +505,63 @@ QVariant toResultModel::data(const QModelIndex &index, int role) const
     if (index.row() > Rows.size() - 1 || index.column() > Headers.size() - 1)
         return QVariant();
 
-	toQuery::Row const& row = Rows.at(index.row());
-	if (index.column() >= row.size())
-		return QVariant();
+    toQuery::Row const& row = Rows.at(index.row());
+    if (index.column() >= row.size())
+        return QVariant();
     toQValue const &data = row.at(index.column());
 
     toRowDesc rowDesc = row[0].getRowDesc();
     QFont fontRet;
 
-    switch(role)
+    switch (role)
     {
-    case Qt::ToolTipRole:
-        if (data.isNull())
+        case Qt::ToolTipRole:
+            if (data.isNull())
+                return data.toQVariant();
+            if (data.isComplexType())
+            {
+                toQValue::complexType *i = data.toQVariant().value<toQValue::complexType*>();
+                return QVariant(i->tooltipData());
+            }
             return data.toQVariant();
-        if (data.isComplexType())
-        {
-            toQValue::complexType *i = data.toQVariant().value<toQValue::complexType*>();
-            return QVariant(i->tooltipData());
-        }
-        return data.toQVariant();
-    case Qt::EditRole:
-        if (data.isComplexType())
-        {
-            toQValue::complexType *i = data.toQVariant().value<toQValue::complexType*>();
-            return QVariant(i->editData());
-        }
-        return QVariant(data.editData());
-    case Qt::DisplayRole:
-        if (data.isComplexType())
-        {
-            toQValue::complexType *i = data.toQVariant().value<toQValue::complexType*>();
-            return QVariant(i->displayData());
-        }
-        if (index.column() == 0)
-        	return QVariant(rowDesc.key);
-        return QVariant(data.displayData());
-    case Qt::BackgroundRole:
-        if (data.isNull() && toConfigurationNewSingle::Instance().option(ToConfiguration::Database::IndicateEmptyBool).toBool())
-            return QVariant(QColor(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::IndicateEmptyColor).toString()));
-        if (index.column() == 0) {
-            return QPalette().color(QPalette::Window);
-        }
-        return QVariant();
-    case Qt::TextAlignmentRole:
-        return (int) Headers.at(index.column()).align;
-    case Qt::UserRole:
-        return data.toQVariant();
-    case Qt::FontRole:
-        if (rowDesc.status == REMOVED)
-            fontRet.setStrikeOut(true);
-        else if (rowDesc.status == ADDED)
-            fontRet.setBold(true);
-        else if (rowDesc.status == MODIFIED)
-            fontRet.setItalic(true);
-        return fontRet;
-    default:
-        return QVariant();
+        case Qt::EditRole:
+            if (data.isComplexType())
+            {
+                toQValue::complexType *i = data.toQVariant().value<toQValue::complexType*>();
+                return QVariant(i->editData());
+            }
+            return QVariant(data.editData());
+        case Qt::DisplayRole:
+            if (data.isComplexType())
+            {
+                toQValue::complexType *i = data.toQVariant().value<toQValue::complexType*>();
+                return QVariant(i->displayData());
+            }
+            if (index.column() == 0)
+                return QVariant(rowDesc.key);
+            return QVariant(data.displayData());
+        case Qt::BackgroundRole:
+            if (data.isNull() && toConfigurationNewSingle::Instance().option(ToConfiguration::Database::IndicateEmptyBool).toBool())
+                return QVariant(QColor(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::IndicateEmptyColor).toString()));
+            if (index.column() == 0)
+            {
+                return QPalette().color(QPalette::Window);
+            }
+            return QVariant();
+        case Qt::TextAlignmentRole:
+            return (int) Headers.at(index.column()).align;
+        case Qt::UserRole:
+            return data.toQVariant();
+        case Qt::FontRole:
+            if (rowDesc.status == REMOVED)
+                fontRet.setStrikeOut(true);
+            else if (rowDesc.status == ADDED)
+                fontRet.setBold(true);
+            else if (rowDesc.status == MODIFIED)
+                fontRet.setItalic(true);
+            return fontRet;
+        default:
+            return QVariant();
     }
     return QVariant();
 }
@@ -619,20 +620,20 @@ QVariant toResultModel::headerData(int section,
             return section + 1;
         else if (role == Qt::ForegroundRole)
         {
-            if(section < 0 || section > Rows.size())
+            if (section < 0 || section > Rows.size())
                 return QVariant();
             toRowDesc rowDesc = Rows[section][0].getRowDesc();
             switch (rowDesc.status)
             {
-            case REMOVED:
-                return QBrush(Qt::red);
-            case ADDED:
-                return QBrush(Qt::green);
-            case MODIFIED:
-                return QBrush(Qt::blue);
-            case EXISTED:
-            default:
-                return QVariant();
+                case REMOVED:
+                    return QBrush(Qt::red);
+                case ADDED:
+                    return QBrush(Qt::green);
+                case MODIFIED:
+                    return QBrush(Qt::blue);
+                case EXISTED:
+                default:
+                    return QVariant();
             }
         }
     }
@@ -725,12 +726,12 @@ bool toResultModel::canFetchMore(const QModelIndex &parent) const
 
 void toResultModel::slotFetchMore(toEventQuery*)
 {
-    if(ReadAll)
+    if (ReadAll)
     {
         MaxRows = -1;
         slotReadData();
     }
-    else if(Rows.size() < MaxRows)
+    else if (Rows.size() < MaxRows)
     {
         QModelIndex ind;
         fetchMore(ind);
@@ -761,7 +762,7 @@ Qt::ItemFlags toResultModel::flags(const QModelIndex &index) const
 
     if (!index.isValid() || index.row() >= Rows.size())
     {
-    	return defaultFlags;
+        return defaultFlags;
     }
 
     toQuery::Row const& row = Rows.at(index.row());
@@ -812,7 +813,7 @@ toQuery::RowList toResultModel::mergesort(toQuery::RowList &rows,
         int column,
         Qt::SortOrder order)
 {
-    if(rows.size() <= 1)
+    if (rows.size() <= 1)
         return rows;
 
     toQuery::RowList left, right;
@@ -829,26 +830,26 @@ toQuery::RowList toResultModel::mergesort(toQuery::RowList &rows,
 
 
 toQuery::RowList toResultModel::merge(toQuery::RowList &left,
-		toQuery::RowList &right,
-        int column,
-        Qt::SortOrder order)
+                                      toQuery::RowList &right,
+                                      int column,
+                                      Qt::SortOrder order)
 {
-	toQuery::RowList result;
+    toQuery::RowList result;
 
-    while(left.size() > 0 && right.size() > 0)
+    while (left.size() > 0 && right.size() > 0)
     {
-    	// 0th column contains row description (including row number)
-    	toQValue lkey = column == 0 ? left.at(0).at(0).getRowDesc().key : left.at(0).at(column);
-    	toQValue rkey = column == 0 ? right.at(0).at(0).getRowDesc().key : right.at(0).at(column);
-    	if ((order == Qt::AscendingOrder && lkey <= rkey) || (order == Qt::DescendingOrder && lkey >= rkey))
+        // 0th column contains row description (including row number)
+        toQValue lkey = column == 0 ? left.at(0).at(0).getRowDesc().key : left.at(0).at(column);
+        toQValue rkey = column == 0 ? right.at(0).at(0).getRowDesc().key : right.at(0).at(column);
+        if ((order == Qt::AscendingOrder && lkey <= rkey) || (order == Qt::DescendingOrder && lkey >= rkey))
             result.append(left.takeAt(0));
         else
             result.append(right.takeAt(0));
     }
 
-    if(left.size() > 0)
+    if (left.size() > 0)
         result << left;
-    if(right.size() > 0)
+    if (right.size() > 0)
         result << right;
     return result;
 }
@@ -860,5 +861,5 @@ toQuery::RowList& toResultModel::getRawData(void)
 
 void toResultModel::setInitialRows(int r)
 {
-	MaxRows = r;
+    MaxRows = r;
 }

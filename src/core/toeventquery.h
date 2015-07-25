@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -58,227 +58,229 @@ class BGThread;
  */
 class toEventQuery : public QObject
 {
-	Q_OBJECT;
+        Q_OBJECT;
 
-	friend class toEventQueryWorker;
-public:
-	enum FETCH_MODE {
-		READ_FIRST,
-		READ_ALL
-	};
+        friend class toEventQueryWorker;
+    public:
+        enum FETCH_MODE
+        {
+            READ_FIRST,
+            READ_ALL
+        };
 
-	class Client
-	{
-	protected:
-		virtual ~Client() {};
+        class Client
+        {
+            protected:
+                virtual ~Client() {};
 
-		/**
-		 * Emitted when header descriptions are available
-		 */
-		virtual void eqDescriptionAvailable(toEventQuery*) {};
-		virtual void eqDescriptionAvailable(toEventQuery*, const toQColumnDescriptionList&) {};
+                /**
+                 * Emitted when header descriptions are available
+                 */
+                virtual void eqDescriptionAvailable(toEventQuery*) {};
+                virtual void eqDescriptionAvailable(toEventQuery*, const toQColumnDescriptionList&) {};
 
-		/**
-		 * Emitted when data has been read.
-		 * @param rows Number of rows to be read
-		 */
-		virtual void eqDataAvailable(toEventQuery*) = 0;
+                /**
+                 * Emitted when data has been read.
+                 * @param rows Number of rows to be read
+                 */
+                virtual void eqDataAvailable(toEventQuery*) = 0;
 
-		/**
-		 * Emitted with error string
-		 */
-		virtual void eqError(toEventQuery*, const toConnection::exception &) = 0;
+                /**
+                 * Emitted with error string
+                 */
+                virtual void eqError(toEventQuery*, const toConnection::exception &) = 0;
 
-		/**
-		 * Emitted when done
-		 */
-		virtual void eqDone(toEventQuery*) = 0;
-	};
+                /**
+                 * Emitted when done
+                 */
+                virtual void eqDone(toEventQuery*) = 0;
+        };
 
-	class WaitConditionWithMutex {
-	public:
-		QMutex Mutex;
-		QWaitCondition WaitCondition;
-	};
+        class WaitConditionWithMutex
+        {
+            public:
+                QMutex Mutex;
+                QWaitCondition WaitCondition;
+        };
 
-	/**
-	 * Create a new query.
-	 *
-	 * @param conn Connection to run on.
-	 * @param sql SQL to execute.
-	 * @param param Parameters to pass to query.
-	 * @param statistics Optional statistics widget to update with values from query.
-	 */
-	toEventQuery(QObject *parent
-			, toConnection &conn
-			, QString const &sql
-			, toQueryParams const &param
-			, FETCH_MODE
-			, QList<QString> const &init = QList<QString>()
-			//, toResultStats *statistics = NULL
-		);
+        /**
+         * Create a new query.
+         *
+         * @param conn Connection to run on.
+         * @param sql SQL to execute.
+         * @param param Parameters to pass to query.
+         * @param statistics Optional statistics widget to update with values from query.
+         */
+        toEventQuery(QObject *parent
+                     , toConnection &conn
+                     , QString const &sql
+                     , toQueryParams const &param
+                     , FETCH_MODE
+                     , QList<QString> const &init = QList<QString>()
+                             //, toResultStats *statistics = NULL
+                    );
 
-	/**
-	 * Create a new query.
-	 *
-	 * @param conn already leased Connection to run on.
-	 * @param sql SQL to execute.
-	 * @param param Parameters to pass to query.
-	 * @param statistics Optional statistics widget to update with values from query.
-	 */
-	toEventQuery(QObject *parent
-			, QSharedPointer<toConnectionSubLoan> &conn
-			, QString const &sql
-			, toQueryParams const &param
-			, FETCH_MODE
-			, QList<QString> const &init = QList<QString>()
-			//, toResultStats *statistics = NULL
-		);
+        /**
+         * Create a new query.
+         *
+         * @param conn already leased Connection to run on.
+         * @param sql SQL to execute.
+         * @param param Parameters to pass to query.
+         * @param statistics Optional statistics widget to update with values from query.
+         */
+        toEventQuery(QObject *parent
+                     , QSharedPointer<toConnectionSubLoan> &conn
+                     , QString const &sql
+                     , toQueryParams const &param
+                     , FETCH_MODE
+                     , QList<QString> const &init = QList<QString>()
+                             //, toResultStats *statistics = NULL
+                    );
 
-	virtual ~toEventQuery();
+        virtual ~toEventQuery();
 
-	/**
-	 * Start the query.
-	 * First connect all the slots and then call start
-	 * Must be called prior to any other function,
-	 */
-	void start(void);
+        /**
+         * Start the query.
+         * First connect all the slots and then call start
+         * Must be called prior to any other function,
+         */
+        void start(void);
 
-	void setFetchMode(FETCH_MODE);
+        void setFetchMode(FETCH_MODE);
 
-	/**
-	 * Get description of columns.
-	 * @return Description of columns list.
-	 */
-	toQColumnDescriptionList const& describe(void) const;
+        /**
+         * Get description of columns.
+         * @return Description of columns list.
+         */
+        toQColumnDescriptionList const& describe(void) const;
 
-	/**
-	 * Get column count
-	 */
-	unsigned columnCount(void) const;
+        /**
+         * Get column count
+         */
+        unsigned columnCount(void) const;
 
-	/**
-	 * Get the number of rows processed.
-	 * @return Number of rows processed.
-	 */
-	unsigned long rowsProcessed(void) const;
+        /**
+         * Get the number of rows processed.
+         * @return Number of rows processed.
+         */
+        unsigned long rowsProcessed(void) const;
 
-	/**
-	 * Read the next value from the query.
-	 * @return The next available value.
-	 */
-	toQValue readValue(void);
+        /**
+         * Read the next value from the query.
+         * @return The next available value.
+         */
+        toQValue readValue(void);
 
-	/**
-	 * Check if at end of query.
-	 * @return True if query is done.
-	 */
-	bool eof(void) const;
+        /**
+         * Check if at end of query.
+         * @return True if query is done.
+         */
+        bool eof(void) const;
 
-	/**
-	 * return query's sql command
-	 */
-	QString const& sql(void) const;
+        /**
+         * return query's sql command
+         */
+        QString const& sql(void) const;
 
-	/**
-	 * Returns true if more data is available for readValue()
-	 */
-	bool hasMore(void) const;
+        /**
+         * Returns true if more data is available for readValue()
+         */
+        bool hasMore(void) const;
 
-	/**
-	 * Stop reading query
-	 */
-	void stop(void);
+        /**
+         * Stop reading query
+         */
+        void stop(void);
 
-signals:
-	/**
-	 * Emitted when header descriptions are available
-	 */
-	void descriptionAvailable(toEventQuery*);
-	void descriptionAvailable(toEventQuery*, const toQColumnDescriptionList&);
-    
-	/**
-	 * Emitted when data has been read.
-	 * @param rows Number of rows to be read
-	 */
-	void dataAvailable(toEventQuery*);
-	void dataAvailable(toEventQuery*, const ValuesList&);
+    signals:
+        /**
+         * Emitted when header descriptions are available
+         */
+        void descriptionAvailable(toEventQuery*);
+        void descriptionAvailable(toEventQuery*, const toQColumnDescriptionList&);
 
-	/**
-	 * Emitted with error string
-	 */
-	void error(toEventQuery*, const toConnection::exception &);
+        /**
+         * Emitted when data has been read.
+         * @param rows Number of rows to be read
+         */
+        void dataAvailable(toEventQuery*);
+        void dataAvailable(toEventQuery*, const ValuesList&);
 
-	/**
-	 * Emitted when done
-	 */
-	void done(toEventQuery*);
+        /**
+         * Emitted with error string
+         */
+        void error(toEventQuery*, const toConnection::exception &);
 
-	/**
-	 * Signals to be sent to Worker
-	 */
-	void consumed(void);
-	void dataRequested(void);
-    void stopRequested(void);
-			    
-private slots:
-	/**
-	 * Messages received from Worker thread
-	 */
-	void slotStarted();
+        /**
+         * Emitted when done
+         */
+        void done(toEventQuery*);
 
-	// handle worker's data() signal. emits dataAvailable()
-	void slotData(const ValuesList &values);
+        /**
+         * Signals to be sent to Worker
+         */
+        void consumed(void);
+        void dataRequested(void);
+        void stopRequested(void);
 
-	// handle worker's headers() signal emits descriptionAvailable()
-	void slotDesc(toQColumnDescriptionList &desc, int columns);
+    private slots:
+        /**
+         * Messages received from Worker thread
+         */
+        void slotStarted();
 
-	// handle worker's error() signal
-	void slotError(const toConnection::exception &msg);
+        // handle worker's data() signal. emits dataAvailable()
+        void slotData(const ValuesList &values);
 
-	// handle worker's finish
-	void slotFinished(void);
+        // handle worker's headers() signal emits descriptionAvailable()
+        void slotDesc(toQColumnDescriptionList &desc, int columns);
 
-	// sets Processed. signal is sent if > 0
-	void slotRowsProcessed(unsigned long rows);
+        // handle worker's error() signal
+        void slotError(const toConnection::exception &msg);
 
-	// emitted immediately before the Thread is destroyed
-	void slotThreadEnd();
-	
-private:	
-	/** Undefined copy contructor.Don't clone me. */
-	toEventQuery(toEventQuery const& other);
+        // handle worker's finish
+        void slotFinished(void);
 
-	ValuesList Values;
+        // sets Processed. signal is sent if > 0
+        void slotRowsProcessed(unsigned long rows);
 
-	// SQL to execute.
-	QString SQL;
+        // emitted immediately before the Thread is destroyed
+        void slotThreadEnd();
 
-	// Bind parameters
-	toQueryParams Param;
+    private:
+        /** Undefined copy contructor.Don't clone me. */
+        toEventQuery(toEventQuery const& other);
 
-	// Number of columns in Description
-	unsigned ColumnCount;    
-    
-	// Number of rows processed.
-	unsigned long Processed;
+        ValuesList Values;
 
-	// Description of result
-	toQColumnDescriptionList Description;
+        // SQL to execute.
+        QString SQL;
 
-	// reference to a BG producer thread, these are deleted from event loop
-	BGThread *Thread;
-	toEventQueryWorker *Worker;
+        // Bind parameters
+        toQueryParams Param;
 
-	bool Started;
-	bool WorkDone;
+        // Number of columns in Description
+        unsigned ColumnCount;
 
-	// connection for this query
-	QSharedPointer<toConnectionSubLoan> Connection;
+        // Number of rows processed.
+        unsigned long Processed;
 
-	QSharedPointer<WaitConditionWithMutex> CancelCondition;
+        // Description of result
+        toQColumnDescriptionList Description;
 
-	FETCH_MODE Mode;
+        // reference to a BG producer thread, these are deleted from event loop
+        BGThread *Thread;
+        toEventQueryWorker *Worker;
+
+        bool Started;
+        bool WorkDone;
+
+        // connection for this query
+        QSharedPointer<toConnectionSubLoan> Connection;
+
+        QSharedPointer<WaitConditionWithMutex> CancelCondition;
+
+        FETCH_MODE Mode;
 };
 
 #endif

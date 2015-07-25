@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -44,7 +44,7 @@ toResultCombo::toResultCombo(QWidget *parent, const char *name)
     : QComboBox(parent)
     , Query(NULL)
     , SelectionPolicy(None)
-	, SelectedFound(false)
+    , SelectedFound(false)
 {
     setObjectName(name);
     connect(this, SIGNAL(activated(int)),
@@ -74,17 +74,17 @@ void toResultCombo::query(const QString &sql, toQueryParams const& param)
             if (Additional[i] == Selected)
                 setCurrentIndex(i);
         {
-			//Q_ASSERT_X(Query == NULL , qPrintable(__QHERE__), "toResultCombo query while BG is running");
-			if (Query)
-			{
-				Query->disconnect(this);
-				delete Query;
-				Query = NULL;
-			}
-			Query = new toEventQuery(this, connection(), sql, param, toEventQuery::READ_ALL);
-			connect(Query, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(slotPoll()));
-			connect(Query, SIGNAL(done(toEventQuery*)), this, SLOT(slotQueryDone()));
-			Query->start();
+            //Q_ASSERT_X(Query == NULL , qPrintable(__QHERE__), "toResultCombo query while BG is running");
+            if (Query)
+            {
+                Query->disconnect(this);
+                delete Query;
+                Query = NULL;
+            }
+            Query = new toEventQuery(this, connection(), sql, param, toEventQuery::READ_ALL);
+            connect(Query, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(slotPoll()));
+            connect(Query, SIGNAL(done(toEventQuery*)), this, SLOT(slotQueryDone()));
+            Query->start();
         }
     }
     TOCATCH
@@ -123,7 +123,7 @@ void toResultCombo::setSelectionPolicy(selectionPolicy pol)
 
 void toResultCombo::refresh(void)
 {
-       toResult::refresh();
+    toResult::refresh();
 }
 
 void toResultCombo::slotPoll(void)
@@ -165,22 +165,22 @@ void toResultCombo::slotPoll(void)
 void toResultCombo::slotQueryDone(void)
 {
     blockSignals(false);
-    switch(SelectionPolicy)
+    switch (SelectionPolicy)
     {
-    case First:
-        if (currentIndex() != 0)
-            setCurrentIndex(0);
-        break;
-    case Last:
-        if (currentIndex() != count() - 1)
-            setCurrentIndex(count() - 1);
-        break;
-    case LastButOne:
-        if (currentIndex() != count() - 2)
-            setCurrentIndex(count() - 2);
-        break;
-    case None:
-        break;
+        case First:
+            if (currentIndex() != 0)
+                setCurrentIndex(0);
+            break;
+        case Last:
+            if (currentIndex() != count() - 1)
+                setCurrentIndex(count() - 1);
+            break;
+        case LastButOne:
+            if (currentIndex() != count() - 2)
+                setCurrentIndex(count() - 2);
+            break;
+        case None:
+            break;
     };
     setFont(font()); // Small hack to invalidate size hint of combobox which should resize to needed size.
     updateGeometry();

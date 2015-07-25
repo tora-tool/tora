@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -60,38 +60,38 @@
 
 class toScriptTool : public toTool
 {
-protected:
-    virtual const char **pictureXPM(void)
-    {
-        return const_cast<const char**>(toscript_xpm);
-    }
-public:
-    toScriptTool()
-        : toTool(310, "DB Extraction/Compare/Search")
-    { }
-    virtual const char *menuItem()
-    {
-        return "DB Extraction/Compare/Search";
-    }
+    protected:
+        virtual const char **pictureXPM(void)
+        {
+            return const_cast<const char**>(toscript_xpm);
+        }
+    public:
+        toScriptTool()
+            : toTool(310, "DB Extraction/Compare/Search")
+        { }
+        virtual const char *menuItem()
+        {
+            return "DB Extraction/Compare/Search";
+        }
 
-    virtual bool canHandle(const toConnection &conn)
-    {
-        try
+        virtual bool canHandle(const toConnection &conn)
         {
-            return 
-				// toExtract::canHandle(conn) && TODO
-				conn.providerIs("Oracle"); //TODO&& !toSQL::string(SQLObjectList, conn).isEmpty();
+            try
+            {
+                return
+                    // toExtract::canHandle(conn) && TODO
+                    conn.providerIs("Oracle"); //TODO&& !toSQL::string(SQLObjectList, conn).isEmpty();
+            }
+            catch (...)
+            {
+                return false;
+            }
         }
-        catch (...)
+        virtual toToolWidget *toolWindow(QWidget *main, toConnection &connection)
         {
-            return false;
+            return new toScript(main, connection);
         }
-    }
-    virtual toToolWidget *toolWindow(QWidget *main, toConnection &connection)
-    {
-        return new toScript(main, connection);
-    }
-    virtual void closeWindow(toConnection &connection) {};
+        virtual void closeWindow(toConnection &connection) {};
 };
 
 static toScriptTool ScriptTool;
@@ -380,105 +380,105 @@ void toScript::execute(void)
 
         switch (mode)
         {
-        case MODE_EXTRACT:
-            if (ScriptUI->OutputTab->isChecked())
-                script += source.create(sourceObjects);
-            else if (ScriptUI->OutputFile->isChecked())
-            {
-                if (ScriptUI->Filename->text().isEmpty())
-                    throw tr("No filename specified");
-
-                QFile file(ScriptUI->Filename->text());
-                if (file.exists())
+            case MODE_EXTRACT:
+                if (ScriptUI->OutputTab->isChecked())
+                    script += source.create(sourceObjects);
+                else if (ScriptUI->OutputFile->isChecked())
                 {
-                    if (TOMessageBox::warning(
-                                this,
-                                tr("Overwrite file?"),
-                                tr("The file %1 already exists,\n"
-                                   "are you sure you want to continue and write over it?")
-                                .arg(ScriptUI->Filename->text()),
-                                tr("&Yes"), tr("&Cancel"), QString::null, 0) != 0)
+                    if (ScriptUI->Filename->text().isEmpty())
+                        throw tr("No filename specified");
+
+                    QFile file(ScriptUI->Filename->text());
+                    if (file.exists())
                     {
-                        return ;
+                        if (TOMessageBox::warning(
+                                    this,
+                                    tr("Overwrite file?"),
+                                    tr("The file %1 already exists,\n"
+                                       "are you sure you want to continue and write over it?")
+                                    .arg(ScriptUI->Filename->text()),
+                                    tr("&Yes"), tr("&Cancel"), QString::null, 0) != 0)
+                        {
+                            return ;
+                        }
                     }
+                    file.open(QIODevice::WriteOnly);
+
+                    if (file.error() != QFile::NoError)
+                        throw tr("Couldn't open file %1").arg(file.fileName());
+
+                    QTextStream stream(&file);
+                    source.create(stream, sourceObjects);
+
+                    if (file.error() != QFile::NoError)
+                        throw tr("Error writing to file %1").arg(file.fileName());
+
+                    script = tr("-- Script generated to file %1 successfully").arg(ScriptUI->Filename->text());
                 }
-                file.open(QIODevice::WriteOnly);
-
-                if (file.error() != QFile::NoError)
-                    throw tr("Couldn't open file %1").arg(file.fileName());
-
-                QTextStream stream(&file);
-                source.create(stream, sourceObjects);
-
-                if (file.error() != QFile::NoError)
-                    throw tr("Error writing to file %1").arg(file.fileName());
-
-                script = tr("-- Script generated to file %1 successfully").arg(ScriptUI->Filename->text());
-            }
-            else if (ScriptUI->OutputDir->isChecked())
-            {
-                if (ScriptUI->Filename->text().isEmpty())
-                    throw tr("No filename specified");
-
-                QFile file(ScriptUI->Filename->text() + QDir::separator() + "script.sql");
-                file.open(QIODevice::WriteOnly);
-
-                if (file.error() != QFile::NoError)
-                    throw QString(tr("Couldn't open file %1")).arg(file.fileName());
-
-                QTextStream stream(&file);
-
-                stream << tr("rem Master script for DDL reverse engineering by TOra\n"
-                             "\n");
-
-                QFile pfile(ScriptUI->Filename->text() + QDir::separator() + "script.tpr");
-                pfile.open(QIODevice::WriteOnly);
-
-                if (pfile.error() != QFile::NoError)
-                    throw QString(tr("Couldn't open file %1")).arg(pfile.fileName());
-
-                QTextStream pstream(&pfile);
-
-                QRegExp repl("\\W+");
-                for (std::list<QString>::iterator i = sourceObjects.begin(); i != sourceObjects.end(); i++)
+                else if (ScriptUI->OutputDir->isChecked())
                 {
-                    std::list<QString> t;
-                    t.insert(t.end(), *i);
-                    QString fn = *i;
-                    fn.replace(repl, "_");
-                    fn += ".sql";
-                    stream << "@" << fn << "\n";
+                    if (ScriptUI->Filename->text().isEmpty())
+                        throw tr("No filename specified");
 
-                    QFile tf(ScriptUI->Filename->text() + QDir::separator() + fn);
-                    tf.open(QIODevice::WriteOnly);
-                    pstream << tf.fileName() << "\n";
+                    QFile file(ScriptUI->Filename->text() + QDir::separator() + "script.sql");
+                    file.open(QIODevice::WriteOnly);
 
-                    if (tf.error() != QFile::NoError)
-                        throw QString(tr("Couldn't open file %1")).arg(tf.fileName());
+                    if (file.error() != QFile::NoError)
+                        throw QString(tr("Couldn't open file %1")).arg(file.fileName());
 
-                    QTextStream ts(&tf);
-                    source.create(ts, t);
+                    QTextStream stream(&file);
 
-                    if (tf.error() != QFile::NoError)
-                        throw QString(tr("Error writing to file %1")).arg(tf.fileName());
+                    stream << tr("rem Master script for DDL reverse engineering by TOra\n"
+                                 "\n");
+
+                    QFile pfile(ScriptUI->Filename->text() + QDir::separator() + "script.tpr");
+                    pfile.open(QIODevice::WriteOnly);
+
+                    if (pfile.error() != QFile::NoError)
+                        throw QString(tr("Couldn't open file %1")).arg(pfile.fileName());
+
+                    QTextStream pstream(&pfile);
+
+                    QRegExp repl("\\W+");
+                    for (std::list<QString>::iterator i = sourceObjects.begin(); i != sourceObjects.end(); i++)
+                    {
+                        std::list<QString> t;
+                        t.insert(t.end(), *i);
+                        QString fn = *i;
+                        fn.replace(repl, "_");
+                        fn += ".sql";
+                        stream << "@" << fn << "\n";
+
+                        QFile tf(ScriptUI->Filename->text() + QDir::separator() + fn);
+                        tf.open(QIODevice::WriteOnly);
+                        pstream << tf.fileName() << "\n";
+
+                        if (tf.error() != QFile::NoError)
+                            throw QString(tr("Couldn't open file %1")).arg(tf.fileName());
+
+                        QTextStream ts(&tf);
+                        source.create(ts, t);
+
+                        if (tf.error() != QFile::NoError)
+                            throw QString(tr("Error writing to file %1")).arg(tf.fileName());
 
 
-                    script = tr("-- Scripts generate to directory %1 successfully").arg(ScriptUI->Filename->text());
-                    ;
+                        script = tr("-- Scripts generate to directory %1 successfully").arg(ScriptUI->Filename->text());
+                        ;
+                    }
+
+                    if (file.error() != QFile::NoError)
+                        throw QString(tr("Error writing to file %1")).arg(file.fileName());
+                    if (pfile.error() != QFile::NoError)
+                        throw QString(tr("Error writing to file %1")).arg(pfile.fileName());
                 }
-
-                if (file.error() != QFile::NoError)
-                    throw QString(tr("Error writing to file %1")).arg(file.fileName());
-                if (pfile.error() != QFile::NoError)
-                    throw QString(tr("Error writing to file %1")).arg(pfile.fileName());
-            }
-            break;
-        case MODE_COMPARE:
-        case MODE_SEARCH:
-        case MODE_MIGRATE:
-        case MODE_REPORT:
-            sourceDescription = source.describe(sourceObjects);
-            break;
+                break;
+            case MODE_COMPARE:
+            case MODE_SEARCH:
+            case MODE_MIGRATE:
+            case MODE_REPORT:
+                sourceDescription = source.describe(sourceObjects);
+                break;
         }
 
         if (ScriptUI->Destination->isEnabled())
@@ -488,14 +488,14 @@ void toScript::execute(void)
             setupExtract(destination);
             switch (mode)
             {
-            case MODE_COMPARE:
-            case MODE_SEARCH:
-                destinationDescription = destination.describe(destinationObjects);
-                break;
-            case MODE_REPORT:
-            case MODE_EXTRACT:
-            case MODE_MIGRATE:
-                throw tr("Destination shouldn't be enabled now, internal error");
+                case MODE_COMPARE:
+                case MODE_SEARCH:
+                    destinationDescription = destination.describe(destinationObjects);
+                    break;
+                case MODE_REPORT:
+                case MODE_EXTRACT:
+                case MODE_MIGRATE:
+                    throw tr("Destination shouldn't be enabled now, internal error");
             }
 
             std::list<QString> drop;
@@ -541,28 +541,28 @@ void toScript::execute(void)
                 QStringList ctx = (*i).toUpper().split(QString("\01"));
                 switch (searchMode)
                 {
-                case 1:
-                case 2:
-                {
-                    int count = 0;
-                    for (int k = 0; k < words.count(); k++)
-                    {
-                        QString s = words[k];
-                        if (ctx.last().contains(s))
-                            count++;
-                    }
-                    if ((searchMode == 2 && count > 0) || (searchMode == 1 && count == words.count()))
-                        result.insert(result.end(), *i);
-                }
-                break;
-                case 4:
-                    if (ctx.last() == word)
-                        result.insert(result.end(), *i);
-                    break;
-                case 3:
-                    if (re.indexIn(ctx.last()) >= 0)
-                        result.insert(result.end(), *i);
-                    break;
+                    case 1:
+                    case 2:
+                        {
+                            int count = 0;
+                            for (int k = 0; k < words.count(); k++)
+                            {
+                                QString s = words[k];
+                                if (ctx.last().contains(s))
+                                    count++;
+                            }
+                            if ((searchMode == 2 && count > 0) || (searchMode == 1 && count == words.count()))
+                                result.insert(result.end(), *i);
+                        }
+                        break;
+                    case 4:
+                        if (ctx.last() == word)
+                            result.insert(result.end(), *i);
+                        break;
+                    case 3:
+                        if (re.indexIn(ctx.last()) >= 0)
+                            result.insert(result.end(), *i);
+                        break;
                 }
             }
             fillDifference(result, SearchList);

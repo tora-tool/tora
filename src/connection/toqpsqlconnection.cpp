@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -45,60 +45,60 @@
 #endif
 
 static toSQL SQLListObjectsDatabase("toConnection:ListObjectsInDatabase",
-		"select n.nspname, count(o.oid)                    "
-		"  from pg_namespace n                             "
-		"  left join pg_class o on n.oid=o.relnamespace    "
-		" group by 1                                       "
-		" order by count(o.oid)>0, 1                       ",
-		"",
-		"7.0",
-		"QPSQL");
+                                    "select n.nspname, count(o.oid)                    "
+                                    "  from pg_namespace n                             "
+                                    "  left join pg_class o on n.oid=o.relnamespace    "
+                                    " group by 1                                       "
+                                    " order by count(o.oid)>0, 1                       ",
+                                    "",
+                                    "7.0",
+                                    "QPSQL");
 
 static toSQL SQLConnectioId("toQSqlConnection:ConnectionID",
-		"select pg_backend_pid()                           ",
-		"Get a connection ID for a session",
-		"7.0",
-		"QPSQL");
+                            "select pg_backend_pid()                           ",
+                            "Get a connection ID for a session",
+                            "7.0",
+                            "QPSQL");
 
 
 static toSQL SQLVersionPgSQL("toQSqlConnection:Version",
-		"SELECT SUBSTR(version(), STRPOS(version(), ' ') + 1, STRPOS(version(), 'on') - STRPOS(version(), ' ') - 2)",
-        "Show version of database, "
-        "last value of first return record of result is used.",
-		"7.1",
-		"QPSQL");
+                             "SELECT SUBSTR(version(), STRPOS(version(), ' ') + 1, STRPOS(version(), 'on') - STRPOS(version(), ' ') - 2)",
+                             "Show version of database, "
+                             "last value of first return record of result is used.",
+                             "7.1",
+                             "QPSQL");
 
 static toSQL SQLColumnComments("toQSqlConnection:ColumnComments",
-		"select a.attname,b.description\n"
-		"from\n"
-		"  pg_attribute a,\n"
-		"  pg_description b,\n"
-		"  pg_class c LEFT OUTER JOIN pg_namespace n ON c.relowner=n.oid\n"
-		"where\n"
-		"  a.oid=b.objoid\n"
-		"  and c.oid=a.attrelid\n"
-		"  and (u.nspname = :owner OR u.usesysid IS NULL)\n"
-		"  and c.relname=:table",
-		"Get the available comments on columns of a table, "
-		"must have same binds and columns",
-		"7.1",
-		"QPSQL");
+                               "select a.attname,b.description\n"
+                               "from\n"
+                               "  pg_attribute a,\n"
+                               "  pg_description b,\n"
+                               "  pg_class c LEFT OUTER JOIN pg_namespace n ON c.relowner=n.oid\n"
+                               "where\n"
+                               "  a.oid=b.objoid\n"
+                               "  and c.oid=a.attrelid\n"
+                               "  and (u.nspname = :owner OR u.usesysid IS NULL)\n"
+                               "  and c.relname=:table",
+                               "Get the available comments on columns of a table, "
+                               "must have same binds and columns",
+                               "7.1",
+                               "QPSQL");
 
 static toSQL SQLColumnComments72("toQSqlConnection:ColumnComments",
-		"select a.attname,b.description\n"
-		"from\n"
-		"  pg_attribute a,\n"
-		"  pg_description b,\n"
-		"  pg_class c LEFT OUTER JOIN pg_namespace n ON c.relowner=n.oid\n"
-		"where\n"
-		"  a.attnum=b.objsubid\n"
-		"  and b.objoid=a.attrelid\n"
-		"  and c.oid=a.attrelid\n"
-		"  and (n.nspname = :owner OR u.usesysid IS NULL)\n"
-		"  and c.relname=:table",
-		"",
-		"7.2",
-		"QPSQL");
+                                 "select a.attname,b.description\n"
+                                 "from\n"
+                                 "  pg_attribute a,\n"
+                                 "  pg_description b,\n"
+                                 "  pg_class c LEFT OUTER JOIN pg_namespace n ON c.relowner=n.oid\n"
+                                 "where\n"
+                                 "  a.attnum=b.objsubid\n"
+                                 "  and b.objoid=a.attrelid\n"
+                                 "  and c.oid=a.attrelid\n"
+                                 "  and (n.nspname = :owner OR u.usesysid IS NULL)\n"
+                                 "  and c.relname=:table",
+                                 "",
+                                 "7.2",
+                                 "QPSQL");
 
 // Opening a second connection has drawbacks and can fail to
 // successfully cancel queries if there is any problem getting a
@@ -110,54 +110,54 @@ static toSQL SQLCancelPg("toQSqlConnection:Cancel",
                          "QPSQL");
 
 toQPSqlConnectionImpl::toQPSqlConnectionImpl(toConnection &conn)
-	: toQSqlConnectionImpl(conn)
+    : toQSqlConnectionImpl(conn)
 {
 }
 
 toConnectionSub *toQPSqlConnectionImpl::createConnection(void)
 {
-	// TODO shouldn't be this method reenteant?
-	static QAtomicInt ID_COUNTER(0);
-	int ID = ID_COUNTER.fetchAndAddAcquire(1);
+    // TODO shouldn't be this method reenteant?
+    static QAtomicInt ID_COUNTER(0);
+    int ID = ID_COUNTER.fetchAndAddAcquire(1);
 
-	QString dbName = QString::number(ID);
-	QSqlDatabase db = QSqlDatabase::addDatabase(parentConnection().provider(), dbName);
-	db.setDatabaseName(parentConnection().database());
-	QString host = parentConnection().host();
-	int pos = host.indexOf(QString(":"));
-	if (pos < 0)
-		db.setHostName(host);
-	else
-	{
-		db.setHostName(host.mid(0, pos));
-		db.setPort(host.mid(pos + 1).toInt());
-	}
+    QString dbName = QString::number(ID);
+    QSqlDatabase db = QSqlDatabase::addDatabase(parentConnection().provider(), dbName);
+    db.setDatabaseName(parentConnection().database());
+    QString host = parentConnection().host();
+    int pos = host.indexOf(QString(":"));
+    if (pos < 0)
+        db.setHostName(host);
+    else
+    {
+        db.setHostName(host.mid(0, pos));
+        db.setPort(host.mid(pos + 1).toInt());
+    }
 
-		QString opt;
+    QString opt;
 
-		QSet<QString> options = parentConnection().options();
-		if (options.find("Compress") != options.end())
-			opt += ";CLIENT_COMPRESS";
-		if (options.find("Ignore Space") != options.end())
-			opt += ";CLIENT_IGNORE_SPACE";
-		if (options.find("No Schema") != options.end())
-			opt += ";CLIENT_NO_SCHEMA";
-		if (options.find("SSL") != options.end())
-			opt += ";CLIENT_SSL";
+    QSet<QString> options = parentConnection().options();
+    if (options.find("Compress") != options.end())
+        opt += ";CLIENT_COMPRESS";
+    if (options.find("Ignore Space") != options.end())
+        opt += ";CLIENT_IGNORE_SPACE";
+    if (options.find("No Schema") != options.end())
+        opt += ";CLIENT_NO_SCHEMA";
+    if (options.find("SSL") != options.end())
+        opt += ";CLIENT_SSL";
 
-		if (!opt.isEmpty())
-			db.setConnectOptions(opt.mid(1)); // Strip first ; character
+    if (!opt.isEmpty())
+        db.setConnectOptions(opt.mid(1)); // Strip first ; character
 
-		db.open(parentConnection().user(), parentConnection().password());
-		if (!db.isOpen())
-		{
-			QString t = toQPSqlConnectionSub::ErrorString(db.lastError());
-			QSqlDatabase::removeDatabase(dbName);
-			throw t;
-		}
+    db.open(parentConnection().user(), parentConnection().password());
+    if (!db.isOpen())
+    {
+        QString t = toQPSqlConnectionSub::ErrorString(db.lastError());
+        QSqlDatabase::removeDatabase(dbName);
+        throw t;
+    }
 
-		toQPSqlConnectionSub *ret = new toQPSqlConnectionSub(parentConnection(), db, dbName);
-		return ret;
+    toQPSqlConnectionSub *ret = new toQPSqlConnectionSub(parentConnection(), db, dbName);
+    return ret;
 }
 
 void toQPSqlConnectionImpl::closeConnection(toConnectionSub *)
@@ -167,35 +167,35 @@ void toQPSqlConnectionImpl::closeConnection(toConnectionSub *)
 
 QString toQPSqlConnectionSub::version()
 {
-	int ver = nativeVersion();
-	if (ver)
-		return QString::number(ver);
-	else
-		return super::version();
+    int ver = nativeVersion();
+    if (ver)
+        return QString::number(ver);
+    else
+        return super::version();
 }
 
 QString toQPSqlConnectionSub::sessionId()
 {
-	int ver = nativeSessionId();
-	if (ver)
-		return QString::number(ver);
-	else
-		return super::sessionId();
+    int ver = nativeSessionId();
+    if (ver)
+        return QString::number(ver);
+    else
+        return super::sessionId();
 }
 
 queryImpl* toQPSqlConnectionSub::createQuery(toQuery *query)
 {
-	return new psqlQuery(query, this);
+    return new psqlQuery(query, this);
 }
 
 int toQPSqlConnectionSub::nativeVersion()
 {
     QVariant v = Connection.driver()->handle();
-    if(v.isValid() && v.typeName() == QString("PGconn*"))
+    if (v.isValid() && v.typeName() == QString("PGconn*"))
     {
 #ifdef HAVE_POSTGRESQL_LIBPQ_FE_H
         PGconn *handle = *static_cast<PGconn **>(v.data());
-        if(handle)
+        if (handle)
             return PQserverVersion(handle);
 #endif
     }
@@ -205,11 +205,11 @@ int toQPSqlConnectionSub::nativeVersion()
 int toQPSqlConnectionSub::nativeSessionId()
 {
     QVariant v = Connection.driver()->handle();
-    if(v.isValid() && v.typeName() == QString("PGconn*"))
+    if (v.isValid() && v.typeName() == QString("PGconn*"))
     {
 #ifdef HAVE_POSTGRESQL_LIBPQ_FE_H
         PGconn *handle = *static_cast<PGconn **>(v.data());
-        if(handle)
+        if (handle)
             return PQbackendPID(handle);
 #endif
     }
@@ -218,22 +218,22 @@ int toQPSqlConnectionSub::nativeSessionId()
 
 void toQPSqlConnectionSub::nativeCancel()
 {
-	QVariant v = Connection.driver()->handle();
-	if(v.isValid() && v.typeName() == QString("PGconn*"))
-	{
+    QVariant v = Connection.driver()->handle();
+    if (v.isValid() && v.typeName() == QString("PGconn*"))
+    {
 #ifdef LIBPQ_DECL_CANCEL
-		PGconn *handle = *static_cast<PGconn **>(v.data());
-		if(!handle)
-			return;
+        PGconn *handle = *static_cast<PGconn **>(v.data());
+        if (!handle)
+            return;
 
-		PGcancel *cancel = PQgetCancel(handle);
-		if(!cancel)
-			return;
+        PGcancel *cancel = PQgetCancel(handle);
+        if (!cancel)
+            return;
 
-		char *errbuf = new char[1024];
-		PQcancel(cancel, errbuf, 1024);
-		PQfreeCancel(cancel);
-		delete[] errbuf;
+        char *errbuf = new char[1024];
+        PQcancel(cancel, errbuf, 1024);
+        PQfreeCancel(cancel);
+        delete[] errbuf;
 #endif
-	}
+    }
 }

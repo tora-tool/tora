@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -128,7 +128,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, toWFlags fl)
     toSettingTab::loadSettings(this);
 
 #ifdef Q_OS_WIN
-	MysqlHomeDirectory->setEnabled(true);
+    MysqlHomeDirectory->setEnabled(true);
     MySQLHomeBrowse->setEnabled(true);
     PgsqlHomeDirectory->setEnabled(true);
     PgSQLHomeBrowse->setEnabled(true);
@@ -187,42 +187,42 @@ void toGlobalSetting::oracleBrowse(void)
 {
     QString str = TOFileDialog::getExistingDirectory(this, tr("Select ORACLE_HOME"), OracleHomeDirectory->text());
     if (!str.isEmpty())
-    	OracleHomeDirectory->setText(str);
+        OracleHomeDirectory->setText(str);
 }
 
 void toGlobalSetting::mysqlBrowse(void)
 {
     QString str = TOFileDialog::getExistingDirectory(this, tr("MySQL client installation"), MysqlHomeDirectory->text());
     if (str.isEmpty())
-    	return;
+        return;
     QFileInfo libmysqlopt(str + QDir::separator() + "lib" + QDir::separator() + "opt", "libmysql.dll");
     QFileInfo libmysql(str + QDir::separator() + "lib", "libmysql.dll");
-    if( Utils::toLibrary::isValidLibrary(libmysqlopt))
-    	MysqlHomeDirectory->setText(libmysqlopt.absolutePath());
-    else if( Utils::toLibrary::isValidLibrary(libmysql))
-    	MysqlHomeDirectory->setText(libmysql.absolutePath());
+    if ( Utils::toLibrary::isValidLibrary(libmysqlopt))
+        MysqlHomeDirectory->setText(libmysqlopt.absolutePath());
+    else if ( Utils::toLibrary::isValidLibrary(libmysql))
+        MysqlHomeDirectory->setText(libmysql.absolutePath());
     else
         TOMessageBox::warning(
-        		toMainWindow::lookup(),
-        		QT_TRANSLATE_NOOP("toLibraryErrorA", "Library error"),
-        		QT_TRANSLATE_NOOP("toLibraryErrorA", QString("Couldn't validate library file: %1").arg(libmysqlopt.absoluteFilePath()))
-        		);
+            toMainWindow::lookup(),
+            QT_TRANSLATE_NOOP("toLibraryErrorA", "Library error"),
+            QT_TRANSLATE_NOOP("toLibraryErrorA", QString("Couldn't validate library file: %1").arg(libmysqlopt.absoluteFilePath()))
+        );
 }
 
 void toGlobalSetting::pqsqlBrowse(void)
 {
     QString str = TOFileDialog::getExistingDirectory(this, tr("PgSQL client installation"), PgsqlHomeDirectory->text());
     if (str.isEmpty())
-    	return;
+        return;
     QFileInfo libpq(str + QDir::separator() + "lib", "libpq.dll");
-    if( Utils::toLibrary::isValidLibrary(libpq))
-    	PgsqlHomeDirectory->setText(str);
+    if ( Utils::toLibrary::isValidLibrary(libpq))
+        PgsqlHomeDirectory->setText(str);
     else
         TOMessageBox::warning(
-        		toMainWindow::lookup(),
-        		QT_TRANSLATE_NOOP("toLibraryErrorB", "Library error"),
-        		QT_TRANSLATE_NOOP("toLibraryErrorB", QString("Couldn't validate library file: %1").arg(libpq.absoluteFilePath()))
-        		);
+            toMainWindow::lookup(),
+            QT_TRANSLATE_NOOP("toLibraryErrorB", "Library error"),
+            QT_TRANSLATE_NOOP("toLibraryErrorB", QString("Couldn't validate library file: %1").arg(libpq.absoluteFilePath()))
+        );
 }
 
 #ifdef Q_OS_WIN
@@ -233,33 +233,33 @@ void toGlobalSetting::pqsqlBrowse(void)
 
 void toGlobalSetting::graphvizBrowse(void)
 {
-	QString defaultGvHome;
+    QString defaultGvHome;
 #if defined(Q_OS_WIN32)
-	defaultGvHome = "C:/Program Files/Graphviz 2.28/bin";
+    defaultGvHome = "C:/Program Files/Graphviz 2.28/bin";
 #elif defined(Q_OS_WIN64)
-	defaultGvHome = "C:/Program Files(x86)/Graphviz 2.28/bin";
+    defaultGvHome = "C:/Program Files(x86)/Graphviz 2.28/bin";
 #else
-	defaultGvHome = "/usr/bin";
+    defaultGvHome = "/usr/bin";
 #endif
 
-	QDir gvDir(GraphvizHomeDirectory->text());
-	if(GraphvizHomeDirectory->text().isEmpty() || !gvDir.exists() || !gvDir.isReadable())
-		gvDir = defaultGvHome;
+    QDir gvDir(GraphvizHomeDirectory->text());
+    if (GraphvizHomeDirectory->text().isEmpty() || !gvDir.exists() || !gvDir.isReadable())
+        gvDir = defaultGvHome;
     QString str = TOFileDialog::getExistingDirectory(this, tr("Graphviz installation"), gvDir.absolutePath());
     if (str.isEmpty())
-    	return;
+        return;
     QFileInfo bindot(str + QDir::separator() + "bin", DOT);
     QFileInfo dot(str + QDir::separator(), DOT);
-    if( bindot.isExecutable() && bindot.isFile())
-    	GraphvizHomeDirectory->setText(bindot.absoluteDir().absolutePath());
-    else if( dot.isExecutable() && dot.isFile())
-    	GraphvizHomeDirectory->setText(dot.absoluteDir().absolutePath());
+    if ( bindot.isExecutable() && bindot.isFile())
+        GraphvizHomeDirectory->setText(bindot.absoluteDir().absolutePath());
+    else if ( dot.isExecutable() && dot.isFile())
+        GraphvizHomeDirectory->setText(dot.absoluteDir().absolutePath());
     else
         TOMessageBox::warning(
-        		toMainWindow::lookup(),
-        		QT_TRANSLATE_NOOP("toLibraryErrorB", "Executable error"),
-        		QT_TRANSLATE_NOOP("toLibraryErrorB", QString("Couldn't validate executable file: %1").arg(bindot.absoluteFilePath()))
-        		);
+            toMainWindow::lookup(),
+            QT_TRANSLATE_NOOP("toLibraryErrorB", "Executable error"),
+            QT_TRANSLATE_NOOP("toLibraryErrorB", QString("Couldn't validate executable file: %1").arg(bindot.absoluteFilePath()))
+        );
 }
 
 void toGlobalSetting::ColorizedConnectionsConfigure_clicked()
@@ -270,7 +270,7 @@ void toGlobalSetting::ColorizedConnectionsConfigure_clicked()
 
 void toGlobalSetting::saveSetting(void)
 {
-	toSettingTab::saveSettings(this);
+    toSettingTab::saveSettings(this);
 
     if (UnlimitedSamples->isChecked())
         toConfigurationNewSingle::Instance().setOption(ToConfiguration::Global::ChartSamplesInt, -1);

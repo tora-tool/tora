@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -56,13 +56,13 @@
 */
 QString toOracleTraits::quote(QString const &name) const
 {
-	using namespace ToConfiguration;
+    using namespace ToConfiguration;
 
     bool mustBeQuoted = false;
 
     // Do not quote already quoted string
     if (name.at(0).toLatin1() == '\"' && name.at(name.length() - 1).toLatin1() == '\"')
-    	return name;
+        return name;
 
     // Identifiers starting with digit should be quoted
     if (name.at(0).isDigit())
@@ -86,18 +86,18 @@ QString toOracleTraits::quote(QString const &name) const
     //  i++;
     //}
     if (mustBeQuoted)
-    	return QString::fromLatin1("\"") + name + QString::fromLatin1("\"");
+        return QString::fromLatin1("\"") + name + QString::fromLatin1("\"");
 
     if (toConfigurationNewSingle::Instance().option(Editor::ObjectNamesUpperBool).toBool())
-    	return name.toUpper();
+        return name.toUpper();
     else
-    	return name.toLower();
+        return name.toLower();
 }
 
 QString toOracleTraits::unQuote(QString const &name) const
 {
-	if (name.isEmpty())
-		return name;
+    if (name.isEmpty())
+        return name;
     if (name.at(0).toLatin1() == '\"' && name.at(name.length() - 1).toLatin1() == '\"')
         return name.left(name.length() - 1).right(name.length() - 2);
     return name.toUpper();
@@ -105,25 +105,25 @@ QString toOracleTraits::unQuote(QString const &name) const
 
 QString toOracleTraits::quoteVarchar(const QString &name) const
 {
-	QString retval(name);
-	retval.replace('\'', QString::fromLatin1("\'\'"), Qt::CaseSensitive);
-	return QChar('\'') + retval + ('\'');
+    QString retval(name);
+    retval.replace('\'', QString::fromLatin1("\'\'"), Qt::CaseSensitive);
+    return QChar('\'') + retval + ('\'');
 }
 
 QString toOracleTraits::schemaSwitchSQL(QString const & schema) const
 {
-	static const QString ALTER_SESSION("ALTER SESSION SET CURRENT_SCHEMA = \"%1\"");
-	return ALTER_SESSION.arg(schema);
+    static const QString ALTER_SESSION("ALTER SESSION SET CURRENT_SCHEMA = \"%1\"");
+    return ALTER_SESSION.arg(schema);
 }
 
 QList<QString> toOracleTraits::primaryKeys(toConnection &conn, toCache::ObjectRef const&obj) const
 {
-	static const QString ROWID(QString::fromLatin1("ROWID"));
-	static const QString ORA_ROWSCN(QString::fromLatin1("ORA_ROWSCN"));
+    static const QString ROWID(QString::fromLatin1("ROWID"));
+    static const QString ORA_ROWSCN(QString::fromLatin1("ORA_ROWSCN"));
 
-	toCache::CacheEntry const* e = conn.getCache().findEntry(obj);
-	if (e && e->type == toCache::TABLE)
-		return QList<QString>() << ROWID << ORA_ROWSCN;
-	else
-		return QList<QString>(); // no primary keys for views
+    toCache::CacheEntry const* e = conn.getCache().findEntry(obj);
+    if (e && e->type == toCache::TABLE)
+        return QList<QString>() << ROWID << ORA_ROWSCN;
+    else
+        return QList<QString>(); // no primary keys for views
 }

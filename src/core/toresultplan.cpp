@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -282,7 +282,7 @@ void toResultPlan::query(const QString &sql, toQueryParams const& param)
 
     try
     {
-    	setSqlAndParams(sql, param);
+        setSqlAndParams(sql, param);
 
         toConnection &conn = connection();
         if (conn.providerIs("QMYSQL") || conn.providerIs("QPSQL"))
@@ -308,13 +308,13 @@ void toResultPlan::query(const QString &sql, toQueryParams const& param)
             Ident = sql.mid(6);
             TopItem = new toResultViewItem(this, NULL, QString::fromLatin1("DML"));
             TopItem->setText(1, QString::fromLatin1("Saved plan"));
-        	QString planTable = ToConfiguration::Oracle::planTable(connection().user());
+            QString planTable = ToConfiguration::Oracle::planTable(connection().user());
             Query = new toEventQuery(this
-				                     , connection()
-				                     // NOTE: this is special case - plan table is defined as %1. table name can not use bind variable place holder
+                                     , connection()
+                                     // NOTE: this is special case - plan table is defined as %1. table name can not use bind variable place holder
                                      , toSQL::string(SQLViewPlan, connection()).arg(planTable).arg(Ident)
                                      , toQueryParams()
-				                     , toEventQuery::READ_ALL);
+                                     , toEventQuery::READ_ALL);
             connectSlotsAndStart();
 
         }
@@ -329,11 +329,11 @@ void toResultPlan::query(const QString &sql, toQueryParams const& param)
             TopItem->setToolTip(1, queryText);
 
             CursorChildSel = new toResultCombo(this, "toResultPlan");
-            CursorChildSel->setSQL(SQLVSQLChildSel);            
+            CursorChildSel->setSQL(SQLVSQLChildSel);
             CursorChildSel->setSelectionPolicy(toResultCombo::First);
             try
             {
-				CursorChildSel->refreshWithParams(toQueryParams() << Ident);
+                CursorChildSel->refreshWithParams(toQueryParams() << Ident);
             }
             TOCATCH;
             setItemWidget(TopItem, 3, CursorChildSel);
@@ -342,24 +342,24 @@ void toResultPlan::query(const QString &sql, toQueryParams const& param)
         // Execute EXPLAIN PLAN FOR ...
         else
         {
-        	//throw QString("toResultPlan::query EXPLAIN PLAN FOR ... not implemented yet.");
-        	{
-        		QSharedPointer<toConnectionSubLoan> conn(new toConnectionSubLoan(connection()));
-        		this->LockedConnection = conn;
-        	}
+            //throw QString("toResultPlan::query EXPLAIN PLAN FOR ... not implemented yet.");
+            {
+                QSharedPointer<toConnectionSubLoan> conn(new toConnectionSubLoan(connection()));
+                this->LockedConnection = conn;
+            }
             Explaining = true;
             Ident = QString::fromLatin1("TOra ") + QString::number(QDateTime::currentMSecsSinceEpoch()/1000 + rand());
             TopItem = new toResultViewItem(this, NULL, QString::fromLatin1("EXPLAIN PLAN:"));
             TopItem->setText(1, sql.left(50).trimmed());
 
-        	QString planTable = ToConfiguration::Oracle::planTable(connection().user());
+            QString planTable = ToConfiguration::Oracle::planTable(connection().user());
 
             QString explain = QString::fromLatin1("EXPLAIN PLAN SET STATEMENT_ID = '%1' INTO %2 FOR %3").
                               arg(Ident).
                               arg(planTable).
                               arg(Utils::toSQLStripSpecifier(sql));
 
-    		Query = new toEventQuery(this, LockedConnection, explain, toQueryParams(), toEventQuery::READ_ALL);
+            Query = new toEventQuery(this, LockedConnection, explain, toQueryParams(), toEventQuery::READ_ALL);
             connectSlotsAndStart();
         }
     }
@@ -490,8 +490,8 @@ void toResultPlan::slotPoll(void)
 void toResultPlan::slotChildComboReady()
 {
     Explaining = false;
-	if(CursorChildSel->currentIndex () == -1)
-		return;
+    if (CursorChildSel->currentIndex () == -1)
+        return;
     toConnection &conn = connection();
     QStringList cur_sel = CursorChildSel->itemData(0).toStringList();
     QString ChildNumber = cur_sel.at(0);
@@ -500,10 +500,10 @@ void toResultPlan::slotChildComboReady()
     connect(CursorChildSel, SIGNAL(currentIndexChanged (int) ), this, SLOT(slotChildComboChanged(int)));
 
     Query = new toEventQuery(this
-    		                 , conn
-    		                 , toSQL::string(SQLViewVSQLPlan, connection())
+                             , conn
+                             , toSQL::string(SQLViewVSQLPlan, connection())
                              , toQueryParams() << Ident << ChildNumber
-							 , toEventQuery::READ_ALL);
+                             , toEventQuery::READ_ALL);
     connectSlotsAndStart();
 }
 
@@ -528,10 +528,10 @@ void toResultPlan::slotChildComboChanged(int NewIndex)
         Last.clear();
 
         Query = new toEventQuery(this
-        		                 , conn
+                                 , conn
                                  , toSQL::string(SQLViewVSQLPlan, connection())
                                  , toQueryParams() << Ident << ChildNumber
-								 , toEventQuery::READ_ALL);
+                                 , toEventQuery::READ_ALL);
         connectSlotsAndStart();
     }
 }
@@ -547,13 +547,13 @@ void toResultPlan::slotQueryDone()
     Query = NULL;
     if (Explaining)
     {
-    	Explaining = false;
+        Explaining = false;
         toQueryParams par;
         toConnection &conn(connection());
 
         Query = new toEventQuery(this
-        		                 , LockedConnection
-        		                 , toSQL::string(SQLViewPlan, conn).
+                                 , LockedConnection
+                                 , toSQL::string(SQLViewPlan, conn).
                                  // arg(toConfigurationNewSingle::Instance().planTable()).
                                  // Since EXPLAIN PLAN is always to conn.user() plan_table
                                  // and current_schema can be different
@@ -578,13 +578,13 @@ void toResultPlan::slotQueryDone()
         //    //    toMainWidget()->setNeedCommit(connection());
         //}
         //oracleNext();
-		LockedConnection.clear();
+        LockedConnection.clear();
     }
 } // queryDone
 
 void toResultPlan::slotErrorHanler(toEventQuery*, toConnection::exception  const &e)
 {
-	checkException(e);
+    checkException(e);
 }
 
 void toResultPlan::checkException(const QString &str)
@@ -593,10 +593,10 @@ void toResultPlan::checkException(const QString &str)
     {
         if (str.contains(QString::fromLatin1("ORA-02404")))
         {
-        	QString planTable = ToConfiguration::Oracle::planTable(connection().user());
+            QString planTable = ToConfiguration::Oracle::planTable(connection().user());
 
             // if shared plan table does not exist, do not try to create it
-            if(toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::SharedPlanBool).toBool())
+            if (toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::SharedPlanBool).toBool())
             {
                 TOMessageBox::warning(this,
                                       tr("Plan table doesn't exist"),
@@ -612,10 +612,10 @@ void toResultPlan::checkException(const QString &str)
                                                 tr("&Yes"), tr("&No"), QString::null, 0, 1);
                 if (ret == 0)
                 {
-                	Utils::toBusy busy;
-                	toConnectionSubLoan conn(connection());
-                	toQuery createPlanTable(conn, toSQL::string(toSQL::TOSQL_CREATEPLAN, connection()).arg(planTable), toQueryParams());
-                	createPlanTable.eof();
+                    Utils::toBusy busy;
+                    toConnectionSubLoan conn(connection());
+                    toQuery createPlanTable(conn, toSQL::string(toSQL::TOSQL_CREATEPLAN, connection()).arg(planTable), toQueryParams());
+                    createPlanTable.eof();
                 }
             }
         }

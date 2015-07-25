@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -79,17 +79,17 @@ static TemplatesMap DefaultText(void)
 
 QVariant ToConfiguration::Template::defaultValue(int option) const
 {
-	switch(option)
-	{
-	case TemplateMap:
-	{
-		QMap <QString, QVariant> retval;
-		return QVariant(retval);
-	}
-	default:
-		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Template un-registered enum value: %1").arg(option)));
-		return QVariant();
-	}
+    switch (option)
+    {
+        case TemplateMap:
+            {
+                QMap <QString, QVariant> retval;
+                return QVariant(retval);
+            }
+        default:
+            Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Template un-registered enum value: %1").arg(option)));
+            return QVariant();
+    }
 };
 
 toTemplateEdit::toTemplateEdit(std::map<QString, QString> &pairs,
@@ -358,8 +358,8 @@ void toTemplateAddFile::valid()
 
 toTemplateSetting::toTemplateSetting(toTool *tool, QWidget *parent, const char *name)
     : QWidget(parent)
-	, toSettingTab("template.html#setup")
-	, Tool(tool)
+    , toSettingTab("template.html#setup")
+    , Tool(tool)
 {
 
     setupUi(this);
@@ -457,67 +457,67 @@ void toTemplateSetting::delFile(void)
 
 class toTemplateTool : public toTool
 {
-    TODock *Dock;
-    toTemplate *Window;
-protected:
-    virtual const char **pictureXPM(void)
-    {
-        return const_cast<const char**>(totemplate_xpm);
-    }
-public:
-    toTemplateTool()
-        : toTool(410, "Project Manager")
-    {
-        Dock = NULL;
-        Window = NULL;
-        toTemplateProvider::setToolKey(key());
-    }
-    virtual const char *menuItem()
-    {
-        return "Project Manager";
-    }
-    void toggleWindow()
-    {
-        if (!Dock || !Window)
+        TODock *Dock;
+        toTemplate *Window;
+    protected:
+        virtual const char **pictureXPM(void)
         {
-            Dock = Utils::toAllocDock(qApp->translate("toTemplateTool", "Template"), QString::null, *toolbarImage());
-            // fixes warning from QMainWindow::saveState
-            Dock->setObjectName("Template");
-            Window = new toTemplate(Dock);
+            return const_cast<const char**>(totemplate_xpm);
         }
-        else if (Dock->isHidden())
+    public:
+        toTemplateTool()
+            : toTool(410, "Project Manager")
         {
-            Dock->show();
-            Window->showResult(true);
+            Dock = NULL;
+            Window = NULL;
+            toTemplateProvider::setToolKey(key());
         }
-        else
+        virtual const char *menuItem()
         {
-            Dock->hide();
-            Window->showResult(false);
+            return "Project Manager";
         }
-    }
-    virtual toToolWidget *toolWindow(QWidget *, toConnection &)
-    {
-        toggleWindow();
-        return NULL;
-    }
-    void closeWindow()
-    {
-        Dock = NULL;
-        Window = NULL;
-        toTemplateProvider::setShown(false);
-    }
-    virtual QWidget *configurationTab(QWidget *parent)
-    {
-        return new toTemplateSetting(this, parent);
-    }
-    virtual bool canHandle(const toConnection &)
-    {
-        return true;
-    }
-    virtual void closeWindow(toConnection &connection) {};
-private:
-    static ToConfiguration::Template s_templateConfig;
+        void toggleWindow()
+        {
+            if (!Dock || !Window)
+            {
+                Dock = Utils::toAllocDock(qApp->translate("toTemplateTool", "Template"), QString::null, *toolbarImage());
+                // fixes warning from QMainWindow::saveState
+                Dock->setObjectName("Template");
+                Window = new toTemplate(Dock);
+            }
+            else if (Dock->isHidden())
+            {
+                Dock->show();
+                Window->showResult(true);
+            }
+            else
+            {
+                Dock->hide();
+                Window->showResult(false);
+            }
+        }
+        virtual toToolWidget *toolWindow(QWidget *, toConnection &)
+        {
+            toggleWindow();
+            return NULL;
+        }
+        void closeWindow()
+        {
+            Dock = NULL;
+            Window = NULL;
+            toTemplateProvider::setShown(false);
+        }
+        virtual QWidget *configurationTab(QWidget *parent)
+        {
+            return new toTemplateSetting(this, parent);
+        }
+        virtual bool canHandle(const toConnection &)
+        {
+            return true;
+        }
+        virtual void closeWindow(toConnection &connection) {};
+    private:
+        static ToConfiguration::Template s_templateConfig;
 };
 
 ToConfiguration::Template toTemplateTool::s_templateConfig;
@@ -568,21 +568,21 @@ toTemplate *toTemplate::templateWidget(toTreeWidgetItem *item)
 
 class toTemplateResult : public QWidget
 {
-    toTemplate *Template;
-public:
-    toTemplateResult(TODock *parent, toTemplate *temp)
-        : QWidget(parent), Template(temp)
-    {
-        QVBoxLayout *box = new QVBoxLayout;
-        box->setSpacing(0);
-        box->setContentsMargins(0, 0, 0, 0);
-        setLayout(box);
-    }
+        toTemplate *Template;
+    public:
+        toTemplateResult(TODock *parent, toTemplate *temp)
+            : QWidget(parent), Template(temp)
+        {
+            QVBoxLayout *box = new QVBoxLayout;
+            box->setSpacing(0);
+            box->setContentsMargins(0, 0, 0, 0);
+            setLayout(box);
+        }
 
-    virtual ~toTemplateResult()
-    {
-        Template->closeFrame();
-    }
+        virtual ~toTemplateResult()
+        {
+            Template->closeFrame();
+        }
 };
 
 toTemplate::toTemplate(TODock *parent)
@@ -604,8 +604,8 @@ toTemplate::toTemplate(TODock *parent)
     List->setSelectionMode(toTreeWidget::Single);
     List->setResizeMode(toTreeWidget::AllColumns);
     Result = Utils::toAllocDock(tr("Template result"),
-                         QString::null,
-                         *TemplateTool.toolbarImage());
+                                QString::null,
+                                *TemplateTool.toolbarImage());
     // fixes warning from QMainWindow::saveState
     Result->setObjectName("templateResult");
     vbox->addWidget(List);
@@ -768,12 +768,12 @@ void toTemplate::setWidget(QWidget *widget)
 
 class toTextTemplate : toTemplateProvider
 {
-public:
-    toTextTemplate()
-        : toTemplateProvider("Text")
-    { }
-    void addFile(toTreeWidget *parent, const QString &root, const QString &file);
-    virtual void insertItems(toTreeWidget *parent, QToolBar *toolbar);
+    public:
+        toTextTemplate()
+            : toTemplateProvider("Text")
+        { }
+        void addFile(toTreeWidget *parent, const QString &root, const QString &file);
+        virtual void insertItems(toTreeWidget *parent, QToolBar *toolbar);
 };
 
 void toTextTemplate::insertItems(toTreeWidget *parent, QToolBar *)
@@ -872,11 +872,11 @@ void toTemplateSQLObject::expand(void)
         delete Query;
         Query = NULL;
         Query = new toEventQuery(this
-        		, Parent->connection()
-        		, Parent->SQL
-        		, toQueryParams()
-        		, toEventQuery::READ_ALL
-        		);
+                                 , Parent->connection()
+                                 , Parent->SQL
+                                 , toQueryParams()
+                                 , toEventQuery::READ_ALL
+                                );
         connect(Query, SIGNAL(dataAvailable()), this, SLOT(poll()));
         connect(Query, SIGNAL(done()), this, SLOT(queryDone()));
         Query->start();

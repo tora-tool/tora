@@ -14,18 +14,18 @@ class QMovie;
 
 class toBackgroundLabel : public QLabel
 {
-    Q_OBJECT;
+        Q_OBJECT;
 
-public:
-    toBackgroundLabel(QWidget *parent);
-    virtual ~toBackgroundLabel();
-    virtual void mouseReleaseEvent(QMouseEvent* e);
-    void unpause();
-    void pause();
-    void setTip(const QString &tip);
-    void setSpeed(int Running);
-private:
-    static QMovie* Animation;
+    public:
+        toBackgroundLabel(QWidget *parent);
+        virtual ~toBackgroundLabel();
+        virtual void mouseReleaseEvent(QMouseEvent* e);
+        void unpause();
+        void pause();
+        void setTip(const QString &tip);
+        void setSpeed(int Running);
+    private:
+        static QMovie* Animation;
 };
 
 

@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -285,85 +285,85 @@ void toSQL::loadSQL(const QString &filename)
     {
         switch (data[pos])
         {
-        case '\n':
-            if (endtag == -1)
-                throw QT_TRANSLATE_NOOP("toSQL", "Malformed tag in config file. Missing = on row.");
-            data[wpos] = 0;
-            {
-                QString nam = ((const char *)data) + bol;
-                QString val(QString::fromUtf8(((const char *)data) + endtag + 1));
-                QString ver;
-                QString prov;
-                if (vertag >= 0)
+            case '\n':
+                if (endtag == -1)
+                    throw QT_TRANSLATE_NOOP("toSQL", "Malformed tag in config file. Missing = on row.");
+                data[wpos] = 0;
                 {
-                    ver = ((const char *)data) + vertag + 1;
-                    if (provtag >= 0)
-                        prov = ((const char *)data) + provtag + 1;
-                    updateSQL(nam, val, QString::null, ver, prov, true);
+                    QString nam = ((const char *)data) + bol;
+                    QString val(QString::fromUtf8(((const char *)data) + endtag + 1));
+                    QString ver;
+                    QString prov;
+                    if (vertag >= 0)
+                    {
+                        ver = ((const char *)data) + vertag + 1;
+                        if (provtag >= 0)
+                            prov = ((const char *)data) + provtag + 1;
+                        updateSQL(nam, val, QString::null, ver, prov, true);
+                    }
+                    else
+                        updateSQL(nam, QString::null, val, "", "", true);
+                }
+                bol = pos + 1;
+                provtag = vertag = endtag = -1;
+                wpos = pos;
+                break;
+            case '=':
+                if (endtag == -1)
+                {
+                    endtag = pos;
+                    data[wpos] = 0;
+                    wpos = pos;
                 }
                 else
-                    updateSQL(nam, QString::null, val, "", "", true);
-            }
-            bol = pos + 1;
-            provtag = vertag = endtag = -1;
-            wpos = pos;
-            break;
-        case '=':
-            if (endtag == -1)
-            {
-                endtag = pos;
-                data[wpos] = 0;
-                wpos = pos;
-            }
-            else
-                data[wpos] = data[pos];
-            break;
-        case '[':
-            if (endtag == -1)
-            {
-                if (vertag >= 0)
+                    data[wpos] = data[pos];
+                break;
+            case '[':
+                if (endtag == -1)
                 {
-                    if (provtag >= 0)
-                        throw QT_TRANSLATE_NOOP("toSQL", "Malformed line in SQL dictionary file. Two '[' before '='");
-                    provtag = pos;
+                    if (vertag >= 0)
+                    {
+                        if (provtag >= 0)
+                            throw QT_TRANSLATE_NOOP("toSQL", "Malformed line in SQL dictionary file. Two '[' before '='");
+                        provtag = pos;
+                    }
+                    else
+                        vertag = pos;
+                    data[wpos] = 0;
+                    wpos = pos;
                 }
                 else
-                    vertag = pos;
-                data[wpos] = 0;
-                wpos = pos;
-            }
-            else
-                data[wpos] = data[pos];
-            break;
-        case ']':
-            if (endtag == -1)
-            {
-                data[wpos] = 0;
-                wpos = pos;
-            }
-            else
-                data[wpos] = data[pos];
-            break;
-        case '\\':
-            pos++;
-            switch (data[pos])
-            {
-            case 'n':
-                data[wpos] = '\n';
+                    data[wpos] = data[pos];
+                break;
+            case ']':
+                if (endtag == -1)
+                {
+                    data[wpos] = 0;
+                    wpos = pos;
+                }
+                else
+                    data[wpos] = data[pos];
                 break;
             case '\\':
-                if (endtag >= 0)
-                    data[wpos] = '\\';
-                else
-                    data[wpos] = ':';
+                pos++;
+                switch (data[pos])
+                {
+                    case 'n':
+                        data[wpos] = '\n';
+                        break;
+                    case '\\':
+                        if (endtag >= 0)
+                            data[wpos] = '\\';
+                        else
+                            data[wpos] = ':';
+                        break;
+                    default:
+                        throw QT_TRANSLATE_NOOP("toSQL", "Unknown escape character in string (Only \\\\ and \\n recognised)");
+                }
                 break;
             default:
-                throw QT_TRANSLATE_NOOP("toSQL", "Unknown escape character in string (Only \\\\ and \\n recognised)");
-            }
-            break;
-        default:
-            data[wpos] = data[pos];
-            break;
+                data[wpos] = data[pos];
+                break;
         }
         wpos++;
         pos++;

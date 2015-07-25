@@ -22,7 +22,7 @@
  *
  */
 // [The "BSD license"]
-// Copyright (c) 2005-2009 Gokulakannan Somasundaram. 
+// Copyright (c) 2005-2009 Gokulakannan Somasundaram.
 //
 // All rights reserved.
 //
@@ -86,171 +86,172 @@
 #pragma warning( disable : 4505 )
 #pragma warning( disable : 4701 )
 #endif
-namespace  Antlr3BackendImpl  {
-
-typedef MySQLLexerTraits MySQLLexerImplTraits;
-
-
-class MySQLLexerTokens
+namespace  Antlr3BackendImpl
 {
-public:
-	/** Symbolic definitions of all the tokens that the lexer will work with.
-	 *
-	 * Antlr will define EOF, but we can't use that as it it is too common in
-	 * in C header files and that would be confusing. There is no way to filter this out at the moment
-	 * so we just undef it here for now. That isn't the value we get back from C recognizers
-	 * anyway. We are looking for ANTLR_TOKEN_EOF.
-	 */
-	enum Tokens 
-	{
-		EOF_TOKEN = MySQLLexerImplTraits::CommonTokenType::TOKEN_EOF
-		, ALL_FIELDS = 4 
-		, AND_SYM = 5 
-		, ARROW = 6 
-		, ASTERISK = 7 
-		, BACKTICKED_ID = 8 
-		, BIND_VAR = 9 
-		, BIND_VAR_WITH_PARAMS = 10 
-		, BITAND = 11 
-		, BIT_NUM = 12 
-		, COLON = 13 
-		, COMMA = 14 
-		, COMMENT_ML = 15 
-		, COMMENT_SL = 16 
-		, DIVIDE = 17 
-		, DOT = 18 
-		, EQ_SYM = 19 
-		, GET = 20 
-		, GTH = 21 
-		, HEX_DIGIT = 22 
-		, HEX_DIGIT_FRAGMENT = 23 
-		, ID = 24 
-		, LBRACK = 25 
-		, LET = 26 
-		, LPAREN = 27 
-		, LTH = 28 
-		, MINUS = 29 
-		, MOD_SYM = 30 
-		, NEGATION = 31 
-		, NEWLINE = 32 
-		, NOT_EQ = 33 
-		, NUMBER_LIT = 34 
-		, OR_SYM = 35 
-		, PLUS = 36 
-		, POWER_OP = 37 
-		, RBRACK = 38 
-		, REAL_NUMBER = 39 
-		, REGULAR_ID = 40 
-		, RPAREN = 41 
-		, SEMI = 42 
-		, SET_VAR = 43 
-		, SHIFT_LEFT = 44 
-		, SHIFT_RIGHT = 45 
-		, SPACE_LIT = 46 
-		, STRING_LITERAL = 47 
-		, TEXT_STRING = 48 
-		, UNSIGNED_INTEGER = 49 
-		, USER_VAR = 50 
-		, USER_VAR_SUBFIX2 = 51 
-		, USER_VAR_SUBFIX3 = 52 
-		, USER_VAR_SUBFIX4 = 53 
-		, VERTBAR = 54 
-		, WHITE = 55 
-	};
-       const ANTLR_UINT8* getTokenName(ANTLR_INT32 index) const;
 
-protected:
-       static ANTLR_UINT8* TokenNames[];
-};
-
-/** Context tracking structure for MySQLLexer
- */
-class MySQLLexer : public MySQLLexerImplTraits::BaseLexerType, public MySQLLexerTokens
-{
-public:
-	typedef MySQLLexerImplTraits ImplTraits;
-	typedef MySQLLexer ComponentType;
-	typedef ComponentType::StreamType StreamType;
-	typedef MySQLLexerImplTraits::BaseLexerType BaseType;
-	typedef ImplTraits::RecognizerSharedStateType<StreamType> RecognizerSharedStateType;
-	typedef StreamType InputType;
-	static const bool IsFiltered = false;
+    typedef MySQLLexerTraits MySQLLexerImplTraits;
 
 
-private:	
-public:
-    MySQLLexer(InputType* instream);
-    MySQLLexer(InputType* instream, RecognizerSharedStateType* state);
+    class MySQLLexerTokens
+    {
+        public:
+            /** Symbolic definitions of all the tokens that the lexer will work with.
+             *
+             * Antlr will define EOF, but we can't use that as it it is too common in
+             * in C header files and that would be confusing. There is no way to filter this out at the moment
+             * so we just undef it here for now. That isn't the value we get back from C recognizers
+             * anyway. We are looking for ANTLR_TOKEN_EOF.
+             */
+            enum Tokens
+            {
+                EOF_TOKEN = MySQLLexerImplTraits::CommonTokenType::TOKEN_EOF
+                            , ALL_FIELDS = 4
+                                           , AND_SYM = 5
+                                                   , ARROW = 6
+                                                           , ASTERISK = 7
+                                                                   , BACKTICKED_ID = 8
+                                                                           , BIND_VAR = 9
+                                                                                   , BIND_VAR_WITH_PARAMS = 10
+                                                                                           , BITAND = 11
+                                                                                                   , BIT_NUM = 12
+                                                                                                           , COLON = 13
+                                                                                                                   , COMMA = 14
+                                                                                                                           , COMMENT_ML = 15
+                                                                                                                                   , COMMENT_SL = 16
+                                                                                                                                           , DIVIDE = 17
+                                                                                                                                                   , DOT = 18
+                                                                                                                                                           , EQ_SYM = 19
+                                                                                                                                                                   , GET = 20
+                                                                                                                                                                           , GTH = 21
+                                                                                                                                                                                   , HEX_DIGIT = 22
+                                                                                                                                                                                           , HEX_DIGIT_FRAGMENT = 23
+                                                                                                                                                                                                   , ID = 24
+                                                                                                                                                                                                           , LBRACK = 25
+                                                                                                                                                                                                                   , LET = 26
+                                                                                                                                                                                                                           , LPAREN = 27
+                                                                                                                                                                                                                                   , LTH = 28
+                                                                                                                                                                                                                                           , MINUS = 29
+                                                                                                                                                                                                                                                   , MOD_SYM = 30
+                                                                                                                                                                                                                                                           , NEGATION = 31
+                                                                                                                                                                                                                                                                   , NEWLINE = 32
+                                                                                                                                                                                                                                                                           , NOT_EQ = 33
+                                                                                                                                                                                                                                                                                   , NUMBER_LIT = 34
+                                                                                                                                                                                                                                                                                           , OR_SYM = 35
+                                                                                                                                                                                                                                                                                                   , PLUS = 36
+                                                                                                                                                                                                                                                                                                           , POWER_OP = 37
+                                                                                                                                                                                                                                                                                                                   , RBRACK = 38
+                                                                                                                                                                                                                                                                                                                           , REAL_NUMBER = 39
+                                                                                                                                                                                                                                                                                                                                   , REGULAR_ID = 40
+                                                                                                                                                                                                                                                                                                                                           , RPAREN = 41
+                                                                                                                                                                                                                                                                                                                                                   , SEMI = 42
+                                                                                                                                                                                                                                                                                                                                                           , SET_VAR = 43
+                                                                                                                                                                                                                                                                                                                                                                   , SHIFT_LEFT = 44
+                                                                                                                                                                                                                                                                                                                                                                           , SHIFT_RIGHT = 45
+                                                                                                                                                                                                                                                                                                                                                                                   , SPACE_LIT = 46
+                                                                                                                                                                                                                                                                                                                                                                                           , STRING_LITERAL = 47
+                                                                                                                                                                                                                                                                                                                                                                                                   , TEXT_STRING = 48
+                                                                                                                                                                                                                                                                                                                                                                                                           , UNSIGNED_INTEGER = 49
+                                                                                                                                                                                                                                                                                                                                                                                                                   , USER_VAR = 50
+                                                                                                                                                                                                                                                                                                                                                                                                                           , USER_VAR_SUBFIX2 = 51
+                                                                                                                                                                                                                                                                                                                                                                                                                                   , USER_VAR_SUBFIX3 = 52
+                                                                                                                                                                                                                                                                                                                                                                                                                                           , USER_VAR_SUBFIX4 = 53
+                                                                                                                                                                                                                                                                                                                                                                                                                                                   , VERTBAR = 54
+                                                                                                                                                                                                                                                                                                                                                                                                                                                           , WHITE = 55
+            };
+            const ANTLR_UINT8* getTokenName(ANTLR_INT32 index) const;
 
-    void init(InputType* instream  );
+        protected:
+            static ANTLR_UINT8* TokenNames[];
+    };
+
+    /** Context tracking structure for MySQLLexer
+     */
+    class MySQLLexer : public MySQLLexerImplTraits::BaseLexerType, public MySQLLexerTokens
+    {
+        public:
+            typedef MySQLLexerImplTraits ImplTraits;
+            typedef MySQLLexer ComponentType;
+            typedef ComponentType::StreamType StreamType;
+            typedef MySQLLexerImplTraits::BaseLexerType BaseType;
+            typedef ImplTraits::RecognizerSharedStateType<StreamType> RecognizerSharedStateType;
+            typedef StreamType InputType;
+            static const bool IsFiltered = false;
 
 
-    
-    void  mUNSIGNED_INTEGER( );
-    void  mREAL_NUMBER( );
-    void  mHEX_DIGIT_FRAGMENT( );
-    void  mHEX_DIGIT( );
-    void  mBIT_NUM( );
-    void  mNUMBER_LIT( );
-    void  mDIVIDE( );
-    void  mMOD_SYM( );
-    void  mOR_SYM( );
-    void  mAND_SYM( );
-    void  mARROW( );
-    void  mEQ_SYM( );
-    void  mNOT_EQ( );
-    void  mLET( );
-    void  mGET( );
-    void  mSET_VAR( );
-    void  mSHIFT_LEFT( );
-    void  mSHIFT_RIGHT( );
-    void  mALL_FIELDS( );
-    void  mSEMI( );
-    void  mCOLON( );
-    void  mDOT( );
-    void  mCOMMA( );
-    void  mASTERISK( );
-    void  mRPAREN( );
-    void  mLPAREN( );
-    void  mRBRACK( );
-    void  mLBRACK( );
-    void  mPLUS( );
-    void  mMINUS( );
-    void  mNEGATION( );
-    void  mVERTBAR( );
-    void  mBITAND( );
-    void  mPOWER_OP( );
-    void  mGTH( );
-    void  mLTH( );
-    void  mSPACE_LIT( );
-    void  mNEWLINE( );
-    void  mWHITE( );
-    void  mCOMMENT_SL( );
-    void  mCOMMENT_ML( );
-    void  mID( );
-    void  mBACKTICKED_ID( );
-    void  mREGULAR_ID( );
-    void  mTEXT_STRING( );
-    void  mUSER_VAR( );
-    void  mUSER_VAR_SUBFIX2( );
-    void  mUSER_VAR_SUBFIX3( );
-    void  mUSER_VAR_SUBFIX4( );
-    void  mSTRING_LITERAL( );
-    void  mBIND_VAR( );
-    void  mTokens( );
-    const char *    getGrammarFileName();
-    void            reset();
-    ~MySQLLexer();
+        private:
+        public:
+            MySQLLexer(InputType* instream);
+            MySQLLexer(InputType* instream, RecognizerSharedStateType* state);
 
-};
+            void init(InputType* instream  );
+
+
+
+            void  mUNSIGNED_INTEGER( );
+            void  mREAL_NUMBER( );
+            void  mHEX_DIGIT_FRAGMENT( );
+            void  mHEX_DIGIT( );
+            void  mBIT_NUM( );
+            void  mNUMBER_LIT( );
+            void  mDIVIDE( );
+            void  mMOD_SYM( );
+            void  mOR_SYM( );
+            void  mAND_SYM( );
+            void  mARROW( );
+            void  mEQ_SYM( );
+            void  mNOT_EQ( );
+            void  mLET( );
+            void  mGET( );
+            void  mSET_VAR( );
+            void  mSHIFT_LEFT( );
+            void  mSHIFT_RIGHT( );
+            void  mALL_FIELDS( );
+            void  mSEMI( );
+            void  mCOLON( );
+            void  mDOT( );
+            void  mCOMMA( );
+            void  mASTERISK( );
+            void  mRPAREN( );
+            void  mLPAREN( );
+            void  mRBRACK( );
+            void  mLBRACK( );
+            void  mPLUS( );
+            void  mMINUS( );
+            void  mNEGATION( );
+            void  mVERTBAR( );
+            void  mBITAND( );
+            void  mPOWER_OP( );
+            void  mGTH( );
+            void  mLTH( );
+            void  mSPACE_LIT( );
+            void  mNEWLINE( );
+            void  mWHITE( );
+            void  mCOMMENT_SL( );
+            void  mCOMMENT_ML( );
+            void  mID( );
+            void  mBACKTICKED_ID( );
+            void  mREGULAR_ID( );
+            void  mTEXT_STRING( );
+            void  mUSER_VAR( );
+            void  mUSER_VAR_SUBFIX2( );
+            void  mUSER_VAR_SUBFIX3( );
+            void  mUSER_VAR_SUBFIX4( );
+            void  mSTRING_LITERAL( );
+            void  mBIND_VAR( );
+            void  mTokens( );
+            const char *    getGrammarFileName();
+            void            reset();
+            ~MySQLLexer();
+
+    };
 
 // Function protoypes for the constructor functions that external translation units
 // such as delegators and delegates may wish to call.
 //
 
-/* End of token definitions for MySQLLexer
- * =============================================================================
- */
+    /* End of token definitions for MySQLLexer
+     * =============================================================================
+     */
 
 }
 

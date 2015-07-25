@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -46,21 +46,23 @@ class toCustomLexerWorker;
 
 typedef QPair<unsigned, unsigned> StmtLineRange;
 
-class toCustomLexer : public QsciLexerCustom {
+class toCustomLexer : public QsciLexerCustom
+{
         Q_OBJECT;
 
-public:
-        enum Style {
-                Default = 0,
-                Comment,
-                CommentMultiline,
-                Reserved,
-                Builtin,
-                String,
-                Failure,
-                OneLine,
-                OneLineAlt,
-                MaxStyle
+    public:
+        enum Style
+        {
+            Default = 0,
+            Comment,
+            CommentMultiline,
+            Reserved,
+            Builtin,
+            String,
+            Failure,
+            OneLine,
+            OneLineAlt,
+            MaxStyle
         };
 
         toCustomLexer(QObject *parent = 0);
@@ -78,23 +80,23 @@ public:
 
         virtual const char *wordCharacters() const
         {
-        	return "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$_#0123456789:.";
+            return "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$_#0123456789:.";
         }
 
-signals:
-		void parsingStarted();
-		void parsingFinished();
-		void parsingRequested(const char*, unsigned);
+    signals:
+        void parsingStarted();
+        void parsingFinished();
+        void parsingRequested(const char*, unsigned);
 
-private slots:
-		void process();
-		void processed();
+    private slots:
+        void process();
+        void processed();
 
-public slots:
+    public slots:
         void setOracle();
         void setMySQL();
 
-private:
+    private:
         bool pushStyle(int style);
         bool popStyle();
         int  getStyle();
@@ -107,11 +109,11 @@ private:
         unsigned lineLength, bufferLength;
 
         QMap<int,QString> styleNames;
-    	QList<int> styleStack;
-    	std::auto_ptr <SQLLexer::Lexer> lexer;
+        QList<int> styleStack;
+        std::auto_ptr <SQLLexer::Lexer> lexer;
 
-    	QThread *thread;
-    	toCustomLexerWorker *worker;
+        QThread *thread;
+        toCustomLexerWorker *worker;
 };
 
 /* Utility class for @ref toCustomLexer
@@ -120,23 +122,24 @@ private:
  *
  * NOTE: this class could by nested, but QT does not support it
  */
-class toCustomLexerWorker: public QObject {
-	Q_OBJECT;
-	friend class toCustomLexer;
-signals:
-	void finished();
-	void processed();
-	void error(QString err);
+class toCustomLexerWorker: public QObject
+{
+        Q_OBJECT;
+        friend class toCustomLexer;
+    signals:
+        void finished();
+        void processed();
+        void error(QString err);
 
-public:
-	toCustomLexerWorker(QObject *parent = 0);
-	~toCustomLexerWorker();
+    public:
+        toCustomLexerWorker(QObject *parent = 0);
+        ~toCustomLexerWorker();
 
-public slots:
-	void process(const char*, unsigned int len);
+    public slots:
+        void process(const char*, unsigned int len);
 
-protected:
-	QList<StmtLineRange> statements;
+    protected:
+        QList<StmtLineRange> statements;
 };
 
 #endif /* TOCUSTOMLEXER_H_ */

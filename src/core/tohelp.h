@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -45,19 +45,21 @@
 #include <QWidget>
 #include <QTreeWidget>
 
-namespace ToConfiguration {
-	class Help : public ConfigContext
-	{
-		Q_OBJECT;
-		Q_ENUMS(OptionTypeEnum);
-	public:
-		Help() : ConfigContext("Help", ENUM_REF(Help,OptionTypeEnum)) {};
-		enum OptionTypeEnum {
-			// Paths
-			AdditionalHelpMap = 14000
-		};
-		virtual QVariant defaultValue(int) const;
-	};
+namespace ToConfiguration
+{
+    class Help : public ConfigContext
+    {
+            Q_OBJECT;
+            Q_ENUMS(OptionTypeEnum);
+        public:
+            Help() : ConfigContext("Help", ENUM_REF(Help,OptionTypeEnum)) {};
+            enum OptionTypeEnum
+            {
+                // Paths
+                AdditionalHelpMap = 14000
+            };
+            virtual QVariant defaultValue(int) const;
+    };
 };
 
 
@@ -71,24 +73,24 @@ class toHelpSetting;
  */
 class toHelpTool : public toTool
 {
-    Q_OBJECT;
+        Q_OBJECT;
 
-public:
-    toHelpTool() : toTool(501, "Additional Help") { };
-    
-    virtual ~toHelpTool() {};
+    public:
+        toHelpTool() : toTool(501, "Additional Help") { };
 
-    virtual toToolWidget* toolWindow(QWidget *, toConnection &)
-    {
-        return NULL;
-    }
-    
-    virtual QWidget *configurationTab(QWidget *parent);
-    virtual void closeWindow(toConnection &connection) {};
-public slots:
-    void displayHelp(void);
-private:
-    static ToConfiguration::Help s_helpConfig;
+        virtual ~toHelpTool() {};
+
+        virtual toToolWidget* toolWindow(QWidget *, toConnection &)
+        {
+            return NULL;
+        }
+
+        virtual QWidget *configurationTab(QWidget *parent);
+        virtual void closeWindow(toConnection &connection) {};
+    public slots:
+        void displayHelp(void);
+    private:
+        static ToConfiguration::Help s_helpConfig;
 };
 
 /**
@@ -131,78 +133,78 @@ private:
 
 class toHelp : public QDialog, public Ui::toHelp
 {
-    Q_OBJECT;
+        Q_OBJECT;
 
-    /** @internal
-     * Pointer to open helpwindow if available, otherwise NULL
-     */
+        /** @internal
+         * Pointer to open helpwindow if available, otherwise NULL
+         */
 
-    static toHelp *Window;
+        static toHelp *Window;
 
-    /**
-     * True if you are currently searching. You can't close the window while search, would
-     * coredump.
-     */
-    bool Searching;
+        /**
+         * True if you are currently searching. You can't close the window while search, would
+         * coredump.
+         */
+        bool Searching;
 
-    /**
-     * Set selection and also update selected item in list if any item matches the
-     * selected location.
-     * @param lst Listview to update selected item in.
-     * @param str Location of next help text.
-     */
-    virtual void setSelection(QTreeWidget *lst, const QString &str);
-    /**
-     * Reimplemented for internal reasons.
-     */
-    virtual void closeEvent(QCloseEvent *e);
+        /**
+         * Set selection and also update selected item in list if any item matches the
+         * selected location.
+         * @param lst Listview to update selected item in.
+         * @param str Location of next help text.
+         */
+        virtual void setSelection(QTreeWidget *lst, const QString &str);
+        /**
+         * Reimplemented for internal reasons.
+         */
+        virtual void closeEvent(QCloseEvent *e);
 
-private slots:
-    /** Initiate a search with the parameters in the internal widgets.
-     * @internal
-     */
-    void search(void);
-    /** Remove the current selection in the sections and result lists.
-     * @internal
-     */
-    void removeSelection(void);
-    /** Item selected in left pane. Change contents of help viewer.
-     * @internal
-     */
-    void changeContent(QTreeWidgetItem * item, QTreeWidgetItem *);
-public:
-    /**
-     * Create help widget.
-     * @param parent Parent widget.
-     * @param name Name of widget.
-     * @param modal If dialog is for a modal dialog or not
-     */
-    toHelp(QWidget *parent, QString name, bool modal = true);
-    /** Help function to get a clean path from a path string. Strips trailing / etc.
-     * @param path Path to strip.
-     * @return Stripped path in string.
-     */
-    static QString path(const QString &path = QString::null);
-    virtual ~toHelp();
-    /** Display a specific help context in the internal manual. Pops up a help window that
-     * displays the selected topic.
-     * @param context Context to diaplay.
-     * @param parent If NULL use modal dialog and main window.
-     */
-    static void displayHelp(const QString &context, QWidget *parent = NULL);
-    /** Display a specific help context in the internal manual. The context is derived from
-     * the widget that currently holds the focus.
-     * @param parent If NULL use modal dialog and main window.
-     */
-    static void displayHelp(QWidget *parent = NULL);
-    /** Connect the F1 key to display help for a modal dialog. Don't use this directly,
-     * instead call displayHelp directly and bind Key_F1 to that call. This is because the
-     * help in modal dialogs are cludgy at best and should be avoided if possible.
-     * @param dialog Dialog to connect accelerator to.
-     */
-    static void connectDialog(QDialog *dialog);
+    private slots:
+        /** Initiate a search with the parameters in the internal widgets.
+         * @internal
+         */
+        void search(void);
+        /** Remove the current selection in the sections and result lists.
+         * @internal
+         */
+        void removeSelection(void);
+        /** Item selected in left pane. Change contents of help viewer.
+         * @internal
+         */
+        void changeContent(QTreeWidgetItem * item, QTreeWidgetItem *);
+    public:
+        /**
+         * Create help widget.
+         * @param parent Parent widget.
+         * @param name Name of widget.
+         * @param modal If dialog is for a modal dialog or not
+         */
+        toHelp(QWidget *parent, QString name, bool modal = true);
+        /** Help function to get a clean path from a path string. Strips trailing / etc.
+         * @param path Path to strip.
+         * @return Stripped path in string.
+         */
+        static QString path(const QString &path = QString::null);
+        virtual ~toHelp();
+        /** Display a specific help context in the internal manual. Pops up a help window that
+         * displays the selected topic.
+         * @param context Context to diaplay.
+         * @param parent If NULL use modal dialog and main window.
+         */
+        static void displayHelp(const QString &context, QWidget *parent = NULL);
+        /** Display a specific help context in the internal manual. The context is derived from
+         * the widget that currently holds the focus.
+         * @param parent If NULL use modal dialog and main window.
+         */
+        static void displayHelp(QWidget *parent = NULL);
+        /** Connect the F1 key to display help for a modal dialog. Don't use this directly,
+         * instead call displayHelp directly and bind Key_F1 to that call. This is because the
+         * help in modal dialogs are cludgy at best and should be avoided if possible.
+         * @param dialog Dialog to connect accelerator to.
+         */
+        static void connectDialog(QDialog *dialog);
 
-    friend class toHelpSetting;
+        friend class toHelpSetting;
 };
 
 #endif

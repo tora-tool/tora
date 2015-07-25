@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -78,14 +78,14 @@
 
 
 toMain::toMain()
-	: toMainWindow()
-	, BackgroundLabel(new toBackgroundLabel(statusBar()))
-	, editMenu(toEditMenuSingle::Instance())
-	, loggingWidget(toLoggingWidgetSingle::Instance())
-	, Workspace(toWorkSpaceSingle::Instance())
-	, Poll()
-	, Connections(toConnectionRegistrySing::Instance())
-	, lastToolWidget(NULL)
+    : toMainWindow()
+    , BackgroundLabel(new toBackgroundLabel(statusBar()))
+    , editMenu(toEditMenuSingle::Instance())
+    , loggingWidget(toLoggingWidgetSingle::Instance())
+    , Workspace(toWorkSpaceSingle::Instance())
+    , Poll()
+    , Connections(toConnectionRegistrySing::Instance())
+    , lastToolWidget(NULL)
 {
     loggingWidget.setMaximumBlockCount(2000);
     loggingWidget.setCenterOnScroll(true);
@@ -125,7 +125,7 @@ toMain::toMain()
             k != ToolsRegistrySing::Instance().end();
             ++k)
     {
-        if(defName.isEmpty())
+        if (defName.isEmpty())
         {
             toConfigurationNewSingle::Instance().setOption(ToConfiguration::Main::DefaultTool, QVariant(k.key()));
             defName = k.key();
@@ -137,26 +137,26 @@ toMain::toMain()
 
     // Connect this "main" window to global events dispatcher
     connect(&toGlobalEventSingle::Instance(), SIGNAL(s_addRecentFile(QString const&)),
-	    this, SLOT(addRecentFile(QString const&)));
+            this, SLOT(addRecentFile(QString const&)));
     connect(&toGlobalEventSingle::Instance(), SIGNAL(s_addCustomMenu(QMenu*)),
-	    this, SLOT(addCustomMenu(QMenu*)));
+            this, SLOT(addCustomMenu(QMenu*)));
     connect(&toGlobalEventSingle::Instance(), SIGNAL(s_setCoordinates(int,int)),
-	    this, SLOT(setCoordinates(int, int)));
+            this, SLOT(setCoordinates(int, int)));
     connect(&toGlobalEventSingle::Instance(), SIGNAL(s_createDefaultTool(void)),
-	    this, SLOT(createDefault()));
+            this, SLOT(createDefault()));
     connect(&toGlobalEventSingle::Instance(), SIGNAL(s_addConnection(toConnection*, bool)),
-	    this, SLOT(addConnection(toConnection *conn, bool)));
+            this, SLOT(addConnection(toConnection *conn, bool)));
     connect(&toGlobalEventSingle::Instance(), SIGNAL(s_setNeedCommit(toToolWidget*, bool)),
-	    this, SLOT(setNeedCommit(toToolWidget*, bool)));
+            this, SLOT(setNeedCommit(toToolWidget*, bool)));
     connect(&toGlobalEventSingle::Instance(), SIGNAL(s_checkCaching()),
-    	this, SLOT(checkCaching()));
+            this, SLOT(checkCaching()));
     connect(&toGlobalEventSingle::Instance(), SIGNAL(s_showMessage(QString, bool, bool)),
-    	this, SLOT(showMessageImpl(QString, bool, bool)), Qt::QueuedConnection);
+            this, SLOT(showMessageImpl(QString, bool, bool)), Qt::QueuedConnection);
     connect(&toGlobalEventSingle::Instance(), SIGNAL(s_editOpenFile(QString const&)),
-    		this, SLOT(editOpenFile(QString const&)));
+            this, SLOT(editOpenFile(QString const&)));
     connect(&toWorkSpaceSingle::Instance(), SIGNAL(activeToolChaged(toToolWidget*)),
-    		this, SLOT(slotActiveToolChaged(toToolWidget*)));
-    
+            this, SLOT(slotActiveToolChaged(toToolWidget*)));
+
 #ifdef TORA3_SESSION
     if (toConfigurationNewSingle::Instance().restoreSession())
     {
@@ -396,11 +396,11 @@ void toMain::createMenus()
 
     // Refresh QAction shortcuts when tools are added/removed
     connect(&toGlobalEventSingle::Instance(), SIGNAL(s_toolWidgetAdded(toToolWidget*)),
-	    this, SLOT(updateWindowsMenu()));
+            this, SLOT(updateWindowsMenu()));
     connect(&toGlobalEventSingle::Instance(), SIGNAL(s_toolWidgetRemoved(toToolWidget*)),
-	    this, SLOT(updateWindowsMenu()));
+            this, SLOT(updateWindowsMenu()));
     connect(&toGlobalEventSingle::Instance(), SIGNAL(s_toolWidgetsReordered()),
-	    this, SLOT(updateWindowsMenu()));
+            this, SLOT(updateWindowsMenu()));
 
     connect(windowsMenu,
             SIGNAL(triggered(QAction *)),
@@ -557,7 +557,7 @@ void toMain::createDockbars()
 
     foreach(toDocklet * let, toDocklet::docklets())
     {
-        if(let->isVisible())
+        if (let->isVisible())
             moveDocklet(let, dockWidgetArea(let));
 
         connect(let,
@@ -608,7 +608,7 @@ void toMain::updateRecent()
         // open the file, and is handy to know what file tora
         // is opening.
         QString caption = fi.fileName();
-        if(index < 10)
+        if (index < 10)
             caption = "&" + QString::number(index++) + "  " + caption;
 
         QAction *r = new QAction(caption, this);
@@ -649,27 +649,29 @@ void toMain::updateWindowsMenu(void)
     int index = 0;
     Q_FOREACH(toToolWidget *tool, tools)
     {
-    	QAction *action = tool->activationAction();
-    	windowsMenu->addAction(action);
-    	action->setChecked(tool == currentTool);
-    	if (index < 9)
-    	{
-    		action->setText( QString("&") + QString::number(index + 1) + QString(" ") + tool->windowTitle());
-    		//caption = "&" + QString::number(index + 1) + "  " + caption;
-    		action->setShortcut(Qt::CTRL + Qt::Key_1 + index++);
-    	}
+        QAction *action = tool->activationAction();
+        windowsMenu->addAction(action);
+        action->setChecked(tool == currentTool);
+        if (index < 9)
+        {
+            action->setText( QString("&") + QString::number(index + 1) + QString(" ") + tool->windowTitle());
+            //caption = "&" + QString::number(index + 1) + "  " + caption;
+            action->setShortcut(Qt::CTRL + Qt::Key_1 + index++);
+        }
     }
 }
 
 void toMain::updateConnectionsMenu(void)
 {
-	try
-	{
-		toConnection &conn = toConnectionRegistrySing::Instance().currentConnection();
-		conn.connectionsMenu(connectionsMenu);
-	} catch(...) {
+    try
+    {
+        toConnection &conn = toConnectionRegistrySing::Instance().currentConnection();
+        conn.connectionsMenu(connectionsMenu);
+    }
+    catch (...)
+    {
 
-	}
+    }
 }
 
 
@@ -681,14 +683,18 @@ void toMain::windowCallback(QAction *action)
 
     if (action == windowCloseAllAct)
     {
-    	toWorkSpaceSingle::Instance().closeAllToolWidgets();
-    }  else if (action == windowCloseAct) {
-    	toToolWidget *currentTool = toWorkSpaceSingle::Instance().currentTool();
-    	toWorkSpaceSingle::Instance().closeToolWidget(currentTool);
-    } else {
-    	toToolWidget *requestedTool = dynamic_cast<toToolWidget*>(action->parent());
-    	Q_ASSERT_X(requestedTool, qPrintable(__QHERE__), "QAction - invalid parent");
-    	toWorkSpaceSingle::Instance().setCurrentTool(requestedTool);
+        toWorkSpaceSingle::Instance().closeAllToolWidgets();
+    }
+    else if (action == windowCloseAct)
+    {
+        toToolWidget *currentTool = toWorkSpaceSingle::Instance().currentTool();
+        toWorkSpaceSingle::Instance().closeToolWidget(currentTool);
+    }
+    else
+    {
+        toToolWidget *requestedTool = dynamic_cast<toToolWidget*>(action->parent());
+        Q_ASSERT_X(requestedTool, qPrintable(__QHERE__), "QAction - invalid parent");
+        toWorkSpaceSingle::Instance().setCurrentTool(requestedTool);
     }
 }
 
@@ -720,16 +726,16 @@ void toMain::statusCallback(QAction *action)
 void toMain::viewCallback(QAction *action)
 {
     toDocklet *let = toDocklet::docklet(action->text());
-    if(!let)
+    if (!let)
         return;
 
     let->close();
-    if(leftDockbar->contains(let))
+    if (leftDockbar->contains(let))
     {
         leftDockbar->removeDocklet(let);
         return;
     }
-    if(rightDockbar->contains(let))
+    if (rightDockbar->contains(let))
     {
         rightDockbar->removeDocklet(let);
         return;
@@ -746,13 +752,13 @@ void toMain::viewCallback(QAction *action)
 
 void toMain::moveDocklet(toDocklet *let, Qt::DockWidgetArea area)
 {
-    if(area == Qt::RightDockWidgetArea)
+    if (area == Qt::RightDockWidgetArea)
     {
         leftDockbar->removeDocklet(let);
         rightDockbar->addDocklet(let);
     }
 
-    if(area == Qt::LeftDockWidgetArea)
+    if (area == Qt::LeftDockWidgetArea)
     {
         rightDockbar->removeDocklet(let);
         leftDockbar->addDocklet(let);
@@ -802,7 +808,7 @@ void toMain::commandCallback(QAction *action)
                                 : QsciScintillaBase::SC_SEL_STREAM;
             foreach (QWidget * i, QApplication::allWidgets())
             {
-            	toScintilla * w = qobject_cast<toScintilla*>(i);
+                toScintilla * w = qobject_cast<toScintilla*>(i);
                 if (w)
                 {
                     w->setSelectionType(selectionType);
@@ -816,7 +822,7 @@ void toMain::commandCallback(QAction *action)
             edit->editReadAll();
         else if (action == editMenu.searchReplaceAct)
         {
-        	edit->searchReplace();
+            edit->searchReplace();
         }
         else if (action == editMenu.searchNextAct)
         {
@@ -841,13 +847,13 @@ void toMain::commandCallback(QAction *action)
     {
         try
         {
-        	toWorksheet *w = dynamic_cast<toWorksheet*>(lastToolWidget);
-			toBrowser *b = dynamic_cast<toBrowser*>(lastToolWidget);
-        	Q_ASSERT_X(w || b, qPrintable(__QHERE__), "Commit on wrong tool");
-			if (w)
-				w->commitChanges();
-			//else
-			//	b->commitChanges();
+            toWorksheet *w = dynamic_cast<toWorksheet*>(lastToolWidget);
+            toBrowser *b = dynamic_cast<toBrowser*>(lastToolWidget);
+            Q_ASSERT_X(w || b, qPrintable(__QHERE__), "Commit on wrong tool");
+            if (w)
+                w->commitChanges();
+            //else
+            //	b->commitChanges();
         }
         TOCATCH;
     }
@@ -855,9 +861,9 @@ void toMain::commandCallback(QAction *action)
     {
         try
         {
-        	toWorksheet *w = dynamic_cast<toWorksheet*>(lastToolWidget);
-        	Q_ASSERT_X(w, qPrintable(__QHERE__), "Rollback on wrong tool");
-        	w->rollbackChanges();
+            toWorksheet *w = dynamic_cast<toWorksheet*>(lastToolWidget);
+            Q_ASSERT_X(w, qPrintable(__QHERE__), "Rollback on wrong tool");
+            w->rollbackChanges();
         }
         TOCATCH;
     }
@@ -879,7 +885,7 @@ void toMain::commandCallback(QAction *action)
     {
         try
         {
-        	toConnectionRegistrySing::Instance().currentConnection().getCache().rereadCache();
+            toConnectionRegistrySing::Instance().currentConnection().getCache().rereadCache();
         }
         TOCATCH;
         checkCaching();
@@ -957,21 +963,21 @@ void toMain::addConnection(toConnection *newconn)
 
 void toMain::setNeedCommit(toToolWidget *tool, bool needCommit)
 {
-	if (tool == NULL)
-	{
-	    commitAct->setDisabled(true);
-	    rollbackAct->setDisabled(true);
-	    stopAct->setDisabled(true);
-	    return;
-	}
+    if (tool == NULL)
+    {
+        commitAct->setDisabled(true);
+        rollbackAct->setDisabled(true);
+        stopAct->setDisabled(true);
+        return;
+    }
 
-	toConnection &conn = tool->connection();
+    toConnection &conn = tool->connection();
     int pos = ConnectionSelection->currentIndex();
 
 #pragma message WARN("Set need commit on connection here")
     QString dsc = conn.description();
     if (needCommit)
-    	dsc += QString::fromLatin1(" *");
+        dsc += QString::fromLatin1(" *");
     ConnectionSelection->setCurrentIndex(pos);
     ConnectionSelection->setItemText(pos, dsc);
 
@@ -984,7 +990,7 @@ bool toMain::delCurrentConnection(void)
     toConnection &conn = Connections.currentConnection();
 
     if (!conn.closeWidgets())
-    	return false;
+        return false;
 
     Connections.removeConnection(&conn);
     return true;
@@ -992,12 +998,12 @@ bool toMain::delCurrentConnection(void)
 
 void toMain::closeEvent(QCloseEvent *event)
 {
-	toWorkSpaceSingle::Instance().closeAllToolWidgets();
-	if ( toWorkSpaceSingle::Instance().currentTool() != NULL) // at least one tool window refused to be closed
-	 {
-	     event->ignore();        // stop widget refused
-	     return;
-	 }
+    toWorkSpaceSingle::Instance().closeAllToolWidgets();
+    if ( toWorkSpaceSingle::Instance().currentTool() != NULL) // at least one tool window refused to be closed
+    {
+        event->ignore();        // stop widget refused
+        return;
+    }
 
     while (!Connections.isEmpty())
     {
@@ -1038,7 +1044,7 @@ void toMain::createDefault(void)
             i != ToolsRegistrySing::Instance().end();
             ++i)
     {
-        if(defName.isEmpty() || defName == i.key())
+        if (defName.isEmpty() || defName == i.key())
         {
             DefaultTool = i.value();
             break;
@@ -1089,24 +1095,24 @@ void toMain::updateStatusMenu(void)
 
 void toMain::connectionSelectionChanged(void)
 {
-	// Handle the situation when there are no connections open
-	if(toConnectionRegistrySing::Instance().isEmpty())
-	{
-    	for (ToolsRegistrySing::ObjectType::iterator i = ToolsRegistrySing::Instance().begin(); i != ToolsRegistrySing::Instance().end(); ++i)
-    	{
-    		(*i)->enableAction(false);
-    	}
-    	closeConn->setDisabled(true);
-    	return;
-	}
+    // Handle the situation when there are no connections open
+    if (toConnectionRegistrySing::Instance().isEmpty())
+    {
+        for (ToolsRegistrySing::ObjectType::iterator i = ToolsRegistrySing::Instance().begin(); i != ToolsRegistrySing::Instance().end(); ++i)
+        {
+            (*i)->enableAction(false);
+        }
+        closeConn->setDisabled(true);
+        return;
+    }
 
-	closeConn->setEnabled(true);
+    closeConn->setEnabled(true);
 
-	toConnection const& conn = toConnectionRegistrySing::Instance().currentConnection();
-	for (ToolsRegistrySing::ObjectType::iterator i = ToolsRegistrySing::Instance().begin(); i != ToolsRegistrySing::Instance().end(); ++i)
-	{
-		(*i)->enableAction(conn);
-	}
+    toConnection const& conn = toConnectionRegistrySing::Instance().currentConnection();
+    for (ToolsRegistrySing::ObjectType::iterator i = ToolsRegistrySing::Instance().begin(); i != ToolsRegistrySing::Instance().end(); ++i)
+    {
+        (*i)->enableAction(conn);
+    }
 }
 
 void toMain::editOpenFile(const QString &file)
@@ -1116,20 +1122,20 @@ void toMain::editOpenFile(const QString &file)
 //    if(Edit)
 //        sheet = dynamic_cast<toWorksheet *>(Edit);
 
-    if(!sheet)
+    if (!sheet)
     {
         toTool *pTool = ToolsRegistrySing::Instance().value("00010SQL Editor");
-        if(pTool)
+        if (pTool)
         {
             QWidget *win = pTool->createWindow();
-            if(win)
+            if (win)
                 sheet = dynamic_cast<toWorksheet *>(win);
         }
         else
             printf("Couldn't find sql worksheet.\n");
     }
 
-    if(!sheet)
+    if (!sheet)
         return;
 
     sheet->editor()->editOpen(file);
@@ -1139,7 +1145,7 @@ void toMain::editOpenFile(const QString &file)
 
 toDockbar* toMain::dockbar(toDocklet *let)
 {
-    if(rightDockbar->contains(let))
+    if (rightDockbar->contains(let))
         return rightDockbar;
     return leftDockbar;
 }
@@ -1169,19 +1175,19 @@ void toMain::showMessageImpl(QString str, bool save, bool log)
 
 void toMain::slotActiveToolChaged(toToolWidget *tool)
 {
-	// NOTE: a call to hasTransaction gets blocked until bg query finishes
-	// TODO: implement non-blocking version of hasTransaction
-	//setNeedCommit(tool, tool ? tool->hasTransaction() : false);
-	lastToolWidget = tool;
+    // NOTE: a call to hasTransaction gets blocked until bg query finishes
+    // TODO: implement non-blocking version of hasTransaction
+    //setNeedCommit(tool, tool ? tool->hasTransaction() : false);
+    lastToolWidget = tool;
 }
 
 #ifdef QT_DEBUG
 void toMain::reportFocus()
 {
-	QWidget *focus = qApp->focusWidget();
-	TLOG(9, toDecorator, __HERE__) << (focus ? focus->metaObject()->className() : QString("NULL"))
-			<< '(' << (focus ? focus->objectName() : QString("NULL")) << ')'
-			<< std::endl;
+    QWidget *focus = qApp->focusWidget();
+    TLOG(9, toDecorator, __HERE__) << (focus ? focus->metaObject()->className() : QString("NULL"))
+                                   << '(' << (focus ? focus->objectName() : QString("NULL")) << ')'
+                                   << std::endl;
 }
 #endif
 
@@ -1439,27 +1445,28 @@ void toMain::displayMessage(void)
 /** Handle events from toEditWidget subclasses */
 void toMain::receivedFocus(toEditWidget *widget)
 {
-	if (toWorksheetEditor *sheet = dynamic_cast<toWorksheetEditor *>(widget)) {
-		RowLabel->setText("?");
-		ColumnLabel->setText("?");
-	}
+    if (toWorksheetEditor *sheet = dynamic_cast<toWorksheetEditor *>(widget))
+    {
+        RowLabel->setText("?");
+        ColumnLabel->setText("?");
+    }
 
-	openAct->setEnabled(widget->FlagSet.Open);
-	recentMenu->setEnabled(widget->FlagSet.Open);
-	saveAct->setEnabled(widget->FlagSet.Save);
-	saveAsAct->setEnabled(widget->FlagSet.Save);
-	printAct->setEnabled(widget->FlagSet.Print);
+    openAct->setEnabled(widget->FlagSet.Open);
+    recentMenu->setEnabled(widget->FlagSet.Open);
+    saveAct->setEnabled(widget->FlagSet.Save);
+    saveAsAct->setEnabled(widget->FlagSet.Save);
+    printAct->setEnabled(widget->FlagSet.Print);
 }
 
 /** Handle events from toEditWidget subclasses */
 void toMain::lostFocus(toEditWidget *widget)
 {
-	RowLabel->setText(QString::null);
-	ColumnLabel->setText(QString::null);
+    RowLabel->setText(QString::null);
+    ColumnLabel->setText(QString::null);
 
-	openAct->setEnabled(false);
-	recentMenu->setEnabled(false);
-	saveAct->setEnabled(false);
-	saveAsAct->setEnabled(false);
-	printAct->setEnabled(false);
+    openAct->setEnabled(false);
+    recentMenu->setEnabled(false);
+    saveAct->setEnabled(false);
+    saveAsAct->setEnabled(false);
+    printAct->setEnabled(false);
 }

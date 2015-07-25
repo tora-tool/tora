@@ -21,26 +21,26 @@ after pressing Tabelator in the editor.
 */
 class ShortcutEditorDialog : public QDialog, public Ui::ShortcutEditorDialog
 {
-    Q_OBJECT
+        Q_OBJECT
 
-public:
-    ShortcutEditorDialog(QWidget * parent = 0);
-    ~ShortcutEditorDialog();
+    public:
+        ShortcutEditorDialog(QWidget * parent = 0);
+        ~ShortcutEditorDialog();
 
-private:
-    ShortcutModel * model;
+    private:
+        ShortcutModel * model;
 
-private slots:
-    void removeAllButton_clicked();
-    void removeButton_clicked();
-    void addButton_clicked();
+    private slots:
+        void removeAllButton_clicked();
+        void removeButton_clicked();
+        void addButton_clicked();
 
-    void acceptDialog();
+        void acceptDialog();
 
-    void keysNotUnique(QString value);
+        void keysNotUnique(QString value);
 
-    void exportButton_clicked();
-    void importButton_clicked();
+        void exportButton_clicked();
+        void importButton_clicked();
 };
 
 #endif
