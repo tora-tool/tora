@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -157,82 +157,82 @@ toQueryParams toParamGet::getParam(toConnection &conn,
         {
             switch (state)
             {
-            case inString:
-                if (c == endString)
-                    state = normal;
-                break;
-            case comment:
-                if (c == '\n')
-                    state = normal;
-                break;
-            case multiComment:
-                if (c == '*' && nc == '/')
-                    state = normal;
-                break;
-            case normal:
-                switch (c.toLatin1())
-                {
-                case '\'':
-                case '\"':
-                    endString = c;
-                    state = inString;
+                case inString:
+                    if (c == endString)
+                        state = normal;
                     break;
-                case ':':
-                    // ignore ::
-                    // this is a type cast for postgres, not a parameter.
-                    if (nc == ':' || pc == ':')
-                        break;
+                case comment:
+                    if (c == '\n')
+                        state = normal;
+                    break;
+                case multiComment:
+                    if (c == '*' && nc == '/')
+                        state = normal;
+                    break;
+                case normal:
+                    switch (c.toLatin1())
+                    {
+                        case '\'':
+                        case '\"':
+                            endString = c;
+                            state = inString;
+                            break;
+                        case ':':
+                            // ignore ::
+                            // this is a type cast for postgres, not a parameter.
+                            if (nc == ':' || pc == ':')
+                                break;
 
-                    if (nc != '=')
-                        state = name;
-                    direction = "";
-                    fname = "";
+                            if (nc != '=')
+                                state = name;
+                            direction = "";
+                            fname = "";
+                            break;
+                        case '?':
+                            fname = QString::fromLatin1("f");
+                            fname += QString::number(colon);
+                            colon++;
+                            res += QString::fromLatin1(":");
+                            res += fname;
+                            res += def.mid(0, def.length() - 1);
+                            c = def.at(def.length() - 1);
+                            break;
+                    }
                     break;
-                case '?':
-                    fname = QString::fromLatin1("f");
-                    fname += QString::number(colon);
-                    colon++;
-                    res += QString::fromLatin1(":");
-                    res += fname;
-                    res += def.mid(0, def.length() - 1);
-                    c = def.at(def.length() - 1);
+                case name:
+                    if (c.isLetterOrNumber() || c == '_')
+                    {
+                        fname += c;
+                        break;
+                    }
+                    if (fname.isEmpty() //conn && !conn.providerIs("QMYSQL")
+                       )
+                    {
+                        Utils::toStatusMessage(tr("Missing field name"));
+                        throw tr("Missing field name");
+                    }
+                    state = afterName;
+                case afterName:
+                    if (c == '<')
+                        state = specification;
+                    else
+                    {
+                        state = normal;
+                        res += def;
+                    }
                     break;
-                }
-                break;
-            case name:
-                if (c.isLetterOrNumber() || c == '_')
-                {
-                    fname += c;
+                case specification:
+                    if (c == ',')
+                        state = endInput;
+                    else if (c == '>')
+                        state = normal;
                     break;
-                }
-                if (fname.isEmpty() //conn && !conn.providerIs("QMYSQL")
-                   )
-                {
-                    Utils::toStatusMessage(tr("Missing field name"));
-                    throw tr("Missing field name");
-                }
-                state = afterName;
-            case afterName:
-                if (c == '<')
-                    state = specification;
-                else
-                {
-                    state = normal;
-                    res += def;
-                }
-                break;
-            case specification:
-                if (c == ',')
-                    state = endInput;
-                else if (c == '>')
-                    state = normal;
-                break;
-            case endInput:
-                if (c == '>')
-                    state = normal;
-                else
-                    direction += c;
-                break;
+                case endInput:
+                    if (c == '>')
+                        state = normal;
+                    else
+                        direction += c;
+                    break;
             }
         }
 

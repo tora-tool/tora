@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -66,34 +66,34 @@
 
 class toSessionTool : public toTool
 {
-protected:
-    virtual const char **pictureXPM(void)
-    {
-        return const_cast<const char**>(tosession_xpm);
-    }
-public:
-    toSessionTool() : toTool(210, "Sessions")
-    { }
+    protected:
+        virtual const char **pictureXPM(void)
+        {
+            return const_cast<const char**>(tosession_xpm);
+        }
+    public:
+        toSessionTool() : toTool(210, "Sessions")
+        { }
 
-    virtual const char *menuItem()
-    {
-        return "Sessions";
-    }
+        virtual const char *menuItem()
+        {
+            return "Sessions";
+        }
 
-    virtual toToolWidget* toolWindow(QWidget *parent, toConnection &connection)
-    {
-        if (connection.providerIs("Oracle") || connection.providerIs("QPSQL"))
-            return new toSession(parent, connection);
+        virtual toToolWidget* toolWindow(QWidget *parent, toConnection &connection)
+        {
+            if (connection.providerIs("Oracle") || connection.providerIs("QPSQL"))
+                return new toSession(parent, connection);
 
-        return NULL;
-    }
+            return NULL;
+        }
 
-    virtual bool canHandle(const toConnection &conn)
-    {
-        return conn.providerIs("Oracle") || conn.providerIs("QPSQL");
-    }
+        virtual bool canHandle(const toConnection &conn)
+        {
+            return conn.providerIs("Oracle") || conn.providerIs("QPSQL");
+        }
 
-    virtual void closeWindow(toConnection &connection) {};
+        virtual void closeWindow(toConnection &connection) {};
 };
 
 
@@ -102,61 +102,61 @@ static toSessionTool SessionTool;
 
 class toSessionFilter  : public toViewFilter
 {
-    QRegExp Filter;
+        QRegExp Filter;
 
-public:
-    toSessionFilter()
-    {
-    }
-
-
-    virtual toViewFilter* clone()
-    {
-        toSessionFilter *f = new toSessionFilter;
-        f->Filter = Filter;
-        return f;
-    }
-
-
-    void setFilterString(const QString &f)
-    {
-        if(f.isEmpty())
+    public:
+        toSessionFilter()
         {
-            QRegExp filter;
-            Filter = filter;
         }
-        else
+
+
+        virtual toViewFilter* clone()
         {
-            QRegExp filter(QString("*") + f + QString("*"),
-                           Qt::CaseInsensitive,
-                           QRegExp::Wildcard);
-            Filter = filter;
+            toSessionFilter *f = new toSessionFilter;
+            f->Filter = Filter;
+            return f;
         }
-    }
 
 
-    /**
-     * return true to show, false to hide
-     *
-     */
-    virtual bool check(const toResultModel *model, const int row)
-    {
-        if(Filter.isEmpty())
-            return true;
-
-        int rows = model->rowCount();
-        for(int col = 0; col < rows; col++)
+        void setFilterString(const QString &f)
         {
-            QString data = model->data(row, col).toString();
-            if(data.isEmpty())
-                continue;
+            if (f.isEmpty())
+            {
+                QRegExp filter;
+                Filter = filter;
+            }
+            else
+            {
+                QRegExp filter(QString("*") + f + QString("*"),
+                               Qt::CaseInsensitive,
+                               QRegExp::Wildcard);
+                Filter = filter;
+            }
+        }
 
-            if(Filter.exactMatch(data))
+
+        /**
+         * return true to show, false to hide
+         *
+         */
+        virtual bool check(const toResultModel *model, const int row)
+        {
+            if (Filter.isEmpty())
                 return true;
-        }
 
-        return false;
-    }
+            int rows = model->rowCount();
+            for (int col = 0; col < rows; col++)
+            {
+                QString data = model->data(row, col).toString();
+                if (data.isEmpty())
+                    continue;
+
+                if (Filter.exactMatch(data))
+                    return true;
+            }
+
+            return false;
+        }
 };
 
 
@@ -274,7 +274,7 @@ static toSQL SQLSessions(
     "toSession:ListSession",
     "SELECT a.Sid \"Id\",\n"
     "       a.Serial# \"Serial#\",\n"
-	"       a.UserName \"Username\",\n"
+    "       a.UserName \"Username\",\n"
     "       a.SchemaName \"Schema\",\n"
     "       a.Status \"Status\",\n"
     "       a.Server \"Server\",\n"
@@ -375,7 +375,7 @@ toSession::toSession(QWidget *main, toConnection &connection)
                    main,
                    connection,
                    "toSession")
-	, SessionFilter(new toSessionFilter)
+    , SessionFilter(new toSessionFilter)
 {
     QToolBar *toolbar = Utils::toAllocBar(this, tr("Session manager"));
     layout()->addWidget(toolbar);
@@ -524,7 +524,7 @@ toSession::toSession(QWidget *main, toConnection &connection)
 
         StatisticSplitter = new QSplitter(Qt::Horizontal, ResultTab);
         SessionStatistics = new toResultStats(false, 0, StatisticSplitter);
-#ifdef TORA3_GRAPH	
+#ifdef TORA3_GRAPH
         WaitBar = new toResultBar(StatisticSplitter);
         WaitBar->setSQL(SQLSessionWait);
         WaitBar->setTitle(tr("Session wait states"));
@@ -533,7 +533,7 @@ toSession::toSession(QWidget *main, toConnection &connection)
         IOBar->setSQL(SQLSessionIO);
         IOBar->setTitle(tr("Session I/O"));
         IOBar->setYPostfix(QString::fromLatin1("blocks/s"));
-#endif	
+#endif
         ResultTab->addTab(StatisticSplitter, tr("Statistics"));
 
         Waits = new toWaitEvents(0, ResultTab, "waits");
@@ -573,10 +573,10 @@ toSession::toSession(QWidget *main, toConnection &connection)
         LongOps           = NULL;
         StatisticSplitter = NULL;
         SessionStatistics = NULL;
-#ifdef TORA3_GRAPH	
+#ifdef TORA3_GRAPH
         WaitBar           = NULL;
         IOBar             = NULL;
-#endif	
+#endif
         Waits             = NULL;
         ConnectInfo       = NULL;
         PendingLocks      = NULL;
@@ -625,11 +625,11 @@ toSession::toSession(QWidget *main, toConnection &connection)
 
 toSession::~toSession()
 {
-	if(SessionFilter)
-	{
-		Sessions->setFilter(NULL);
-		delete SessionFilter;
-	}
+    if (SessionFilter)
+    {
+        Sessions->setFilter(NULL);
+        delete SessionFilter;
+    }
 }
 
 bool toSession::canHandle(const toConnection &conn)
@@ -680,7 +680,7 @@ void toSession::slotWindowActivated(toToolWidget* widget)
                 ToolMenu->addSeparator();
             }
 
-	    toGlobalEventSingle::Instance().addCustomMenu(ToolMenu);
+            toGlobalEventSingle::Instance().addCustomMenu(ToolMenu);
         }
     }
     else
@@ -695,7 +695,7 @@ void toSession::slotRefresh(void)
     try
     {
         QModelIndex item = Sessions->currentIndex();
-        if(item.isValid())
+        if (item.isValid())
         {
             Session = Sessions->model()->data(item.row(), 1).toString();
             Serial  = Sessions->model()->data(item.row(), 2).toString();
@@ -707,22 +707,22 @@ void toSession::slotRefresh(void)
         if (connection().providerIs("Oracle"))
         {
             QString extra;
-            switch(Select->currentIndex())
+            switch (Select->currentIndex())
             {
-            case 0:
-                extra = "   AND a.Type != 'BACKGROUND' AND a.Status != 'INACTIVE'\n";
-                break;
-            case 1:
-                break;
-            case 2:
-                extra = "   AND a.Type != 'BACKGROUND'\n";
-                break;
-            case 3:
-                extra = "   AND a.SchemaName NOT IN ('SYS','SYSTEM')\n";
-                break;
-            default:
-                extra = "   AND a.SchemaName = '" + Select->currentText() + "'\n";
-                break;
+                case 0:
+                    extra = "   AND a.Type != 'BACKGROUND' AND a.Status != 'INACTIVE'\n";
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    extra = "   AND a.Type != 'BACKGROUND'\n";
+                    break;
+                case 3:
+                    extra = "   AND a.SchemaName NOT IN ('SYS','SYSTEM')\n";
+                    break;
+                default:
+                    extra = "   AND a.SchemaName = '" + Select->currentText() + "'\n";
+                    break;
             }
             sql = sql.arg(extra);
         }
@@ -746,7 +746,7 @@ void toSession::slotDone(void)
         QString user    = Sessions->model()->data((*it).row(), 9).toString();
         QString act     = Sessions->model()->data((*it).row(), 4).toString();
 
-        if(session == Session && serial == Serial)
+        if (session == Session && serial == Serial)
         {
             Sessions->selectionModel()->select(
                 QItemSelection(*it, *it),
@@ -755,9 +755,9 @@ void toSession::slotDone(void)
         }
 
         total++;
-        if(user != "USER")
+        if (user != "USER")
             system++;
-        else if(act == "ACTIVE")
+        else if (act == "ACTIVE")
             active++;
     }
 
@@ -774,7 +774,7 @@ void toSession::enableStatistics(bool enable)
         sql = QString::fromLatin1("ALTER SYSTEM SET TIMED_STATISTICS = FALSE");
     try
     {
-    	toConnectionSubLoan conn(connection());
+        toConnectionSubLoan conn(connection());
         conn->execute(sql);
     }
     catch (...)
@@ -792,7 +792,7 @@ void toSession::slotChangeTab(int index)
         CurrentTab = tab;
         QModelIndex item = Sessions->currentIndex();
 
-        if(!item.isValid())
+        if (!item.isValid())
             return;
 
         QString connectionId = Sessions->model()->data(item.row(), 1).toString();
@@ -824,7 +824,7 @@ void toSession::slotChangeTab(int index)
         {
             QModelIndex openitem = OpenCursors->selectedIndex(2);
             QString address;
-            if(openitem.isValid())
+            if (openitem.isValid())
                 address = openitem.data().toString();
             OpenCursors->clearParams();
             OpenCursors->refreshWithParams(toQueryParams() << connectionId);
@@ -832,7 +832,7 @@ void toSession::slotChangeTab(int index)
             {
                 for (toResultTableView::iterator it(OpenCursors); (*it).isValid(); it++)
                 {
-                    if(address == OpenCursors->model()->data(*it).toString())
+                    if (address == OpenCursors->model()->data(*it).toString())
                     {
                         OpenCursors->selectionModel()->select(
                             QItemSelection(*it, *it),
@@ -845,7 +845,7 @@ void toSession::slotChangeTab(int index)
         else if (CurrentTab == CurrentStatement)
         {
             QModelIndex sindex = Sessions->model()->index(item.row(), Sessions->model()->columnCount() - 2);
-            if(sindex.isValid())
+            if (sindex.isValid())
                 CurrentStatement->changeAddress(sindex.data().toString());
         }
         else if (CurrentTab == AccessedObjects)
@@ -859,11 +859,12 @@ void toSession::slotChangeTab(int index)
         else if (CurrentTab == PreviousStatement)
         {
             QModelIndex sindex = Sessions->model()->index(item.row(), Sessions->model()->columnCount() - 1);
-            if(sindex.isValid())
+            if (sindex.isValid())
                 PreviousStatement->changeAddress(sindex.data().toString());
-        } else if (CurrentTab == Transaction)
+        }
+        else if (CurrentTab == Transaction)
         {
-        	Transaction->refreshWithParams(toQueryParams() << connectionId << serial);
+            Transaction->refreshWithParams(toQueryParams() << connectionId << serial);
         }
     }
 }
@@ -880,12 +881,12 @@ void toSession::slotCancelBackend()
     QModelIndexList selected = Sessions->selectionModel()->selectedRows(1);
     foreach(QModelIndex item, selected)
     {
-        if(!item.isValid())
+        if (!item.isValid())
             return;
 
         try
         {
-        	toConnectionSubLoan conn(connection());
+            toConnectionSubLoan conn(connection());
             conn->execute(QString("SELECT pg_cancel_backend ( %1 )").arg(item.data().toString()));
         }
         TOCATCH;
@@ -895,7 +896,7 @@ void toSession::slotCancelBackend()
 void toSession::slotDisconnectSession()
 {
     QModelIndexList selected = Sessions->selectionModel()->selectedRows();
-    if(selected.isEmpty())
+    if (selected.isEmpty())
         return;
 
     QString str(tr("Let transaction(s) finish before disconnecting?"));
@@ -909,19 +910,19 @@ void toSession::slotDisconnectSession()
                                   tr("&No"),
                                   tr("Cancel")))
     {
-    case 0:
-        letcommit = true;
-        break;
-    case 1:
-        letcommit = false;
-        break;
-    case 2:
-        return;
+        case 0:
+            letcommit = true;
+            break;
+        case 1:
+            letcommit = false;
+            break;
+        case 2:
+            return;
     }
 
     foreach(QModelIndex item, selected)
     {
-        if(!item.isValid())
+        if (!item.isValid())
             return;
 
         QString connectionId = Sessions->model()->data(item.row(), 1).toString();
@@ -933,7 +934,7 @@ void toSession::slotDisconnectSession()
         sess.append(serial);
         sess.append(QString::fromLatin1("'"));
 
-        if(letcommit)
+        if (letcommit)
         {
             sql = QString::fromLatin1("ALTER SYSTEM DISCONNECT SESSION ");
             sql.append(sess);
@@ -949,7 +950,7 @@ void toSession::slotDisconnectSession()
         {
             // oracle can take an awful long time to return
             toEventQuery *query = new toEventQuery(this
-            		                               , connection()
+                                                   , connection()
                                                    , sql
                                                    , toQueryParams()
                                                    , toEventQuery::READ_ALL);
@@ -975,7 +976,7 @@ void toSession::slotChangeRefresh(const QString &str)
 void toSession::slotChangeItem()
 {
     QModelIndex selected = Sessions->currentIndex();
-    if(!selected.isValid())
+    if (!selected.isValid())
         return;
 
     QString item = Sessions->model()->data(selected.row(), 1).toString();
@@ -983,7 +984,7 @@ void toSession::slotChangeItem()
     {
         if (!item.isEmpty())
         {
-#ifdef TORA3_GRAPH	  
+#ifdef TORA3_GRAPH
             if (WaitBar)
                 WaitBar->refreshWithParams(toQueryParams() << item);
             if (IOBar)

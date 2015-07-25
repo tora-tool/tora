@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -74,271 +74,271 @@ class toWorkSpace;
  */
 class toMain : public toMainWindow
 {
-    Q_OBJECT;
+        Q_OBJECT;
 
-    void updateRecent(void);
+        void updateRecent(void);
 
-    /**
-     * enable or disable buttons that need an active connection
-     */
-    //    void enableConnectionActions(bool enabled);
+        /**
+         * enable or disable buttons that need an active connection
+         */
+        //    void enableConnectionActions(bool enabled);
 
-    void createActions();
-    void createMenus();
-    void createToolbars();
-    void createStatusbar();
-    void createDocklets();
-    void createDockbars();
+        void createActions();
+        void createMenus();
+        void createToolbars();
+        void createStatusbar();
+        void createDocklets();
+        void createDockbars();
 
-public:
+    public:
 
-    /**
-     * Create main window. Always NULL as parent.
-     */
-    toMain();
+        /**
+         * Create main window. Always NULL as parent.
+         */
+        toMain();
 
-    /**
-     * Get the current database connection
-     * @return Reference to current connection.
-     */
-    //toConnection &currentConnection(void);
+        /**
+         * Get the current database connection
+         * @return Reference to current connection.
+         */
+        //toConnection &currentConnection(void);
 
 #ifdef TORA3_SESSION
-    /** Export data to a map.
-     * @param data A map that can be used to recreate the session.
-     * @param prefix Prefix to add to the map.
-     */
-    virtual void exportData(std::map < QString,
-                            QString > &data,
-                            const QString &prefix);
-    /** Import data
-     * @param data Data to read from a map.
-     * @param prefix Prefix to read data from.
-     */
-    virtual void importData(std::map < QString,
-                            QString > &data,
-                            const QString &prefix);
+        /** Export data to a map.
+         * @param data A map that can be used to recreate the session.
+         * @param prefix Prefix to add to the map.
+         */
+        virtual void exportData(std::map < QString,
+                                QString > &data,
+                                const QString &prefix);
+        /** Import data
+         * @param data Data to read from a map.
+         * @param prefix Prefix to read data from.
+         */
+        virtual void importData(std::map < QString,
+                                QString > &data,
+                                const QString &prefix);
 #endif
 
 
-    /** Virtual methods inherited from toEditWidget */
+        /** Virtual methods inherited from toEditWidget */
 
-	/** Handle events from toEditWidget subclasses */
-    virtual void receivedFocus(toEditWidget *widget);
+        /** Handle events from toEditWidget subclasses */
+        virtual void receivedFocus(toEditWidget *widget);
 
-    /** Handle events from toEditWidget subclasses */
-    virtual void lostFocus(toEditWidget *widget);
+        /** Handle events from toEditWidget subclasses */
+        virtual void lostFocus(toEditWidget *widget);
 
-signals:
-    /** Invoked to start editing an SQL identifier.
-     * @param str Identifier to start editing.
-     */
-    //void sqlEditor(const QString &str);
+    signals:
+        /** Invoked to start editing an SQL identifier.
+         * @param str Identifier to start editing.
+         */
+        //void sqlEditor(const QString &str);
 
 #ifdef TORA3_CHART
-    /** Invoked when a new chart is created.
-     */
-    void chartAdded(toLineChart *chart);
-    /** Invoked before a chart is destroyed.
-     */
-    void chartSetup(toLineChart *chart);
-    /** Invoked before a chart is destroyed.
-     */
-    void chartRemoved(toLineChart *chart);
+        /** Invoked when a new chart is created.
+         */
+        void chartAdded(toLineChart *chart);
+        /** Invoked before a chart is destroyed.
+         */
+        void chartSetup(toLineChart *chart);
+        /** Invoked before a chart is destroyed.
+         */
+        void chartRemoved(toLineChart *chart);
 #endif
 
-    /**
-     * emitted when widgets related to editing.
-     */
-    void editEnabled(bool en);
+        /**
+         * emitted when widgets related to editing.
+         */
+        void editEnabled(bool en);
 
-protected slots:
-    /**
-     * Close window
-     * @param del If user interaction is allowed.
-     * @return True if close was allowed, otherwise false.
-     */
-    //bool close();
+    protected slots:
+        /**
+         * Close window
+         * @param del If user interaction is allowed.
+         * @return True if close was allowed, otherwise false.
+         */
+        //bool close();
 
-    /** Used to enable/disable entries in the windows menu */
-    void updateWindowsMenu();
+        /** Used to enable/disable entries in the windows menu */
+        void updateWindowsMenu();
 
-    void updateConnectionsMenu();
+        void updateConnectionsMenu();
 
-    /** Used to enable/disable entries in the file menu */
-    void showFileMenu(void);
+        /** Used to enable/disable entries in the file menu */
+        void showFileMenu(void);
 
-    /** Check if object caching is done. */
-    void checkCaching(void);
+        /** Check if object caching is done. */
+        void checkCaching(void);
 
 #ifdef TORA3_SESSION
-    /** Save the current TOra session
-     */
-    void saveSession(void);
-    /** Load a session (Merge with current)
-     */
-    void loadSession(void);
-    /** Close all windows and connections.
-     */
-    void closeSession(void);
+        /** Save the current TOra session
+         */
+        void saveSession(void);
+        /** Load a session (Merge with current)
+         */
+        void loadSession(void);
+        /** Close all windows and connections.
+         */
+        void closeSession(void);
 #endif
 
-    /** Change current connection
-     */
-    void connectionSelectionChanged(void);
+        /** Change current connection
+         */
+        void connectionSelectionChanged(void);
 
 
-    /** Open a file in sql worksheet */
-    void editOpenFile(const QString &file);
+        /** Open a file in sql worksheet */
+        void editOpenFile(const QString &file);
 
-    /**
-     * Return the toDockbar that manages the docklet. If none
-     * currently manages the docklet, returns what will if the docklet
-     * is shown.
-     */
-    virtual toDockbar* dockbar(toDocklet *let);
+        /**
+         * Return the toDockbar that manages the docklet. If none
+         * currently manages the docklet, returns what will if the docklet
+         * is shown.
+         */
+        virtual toDockbar* dockbar(toDocklet *let);
 
-    /** Handles moving docklet to new dockbar */
-    void moveDocklet(toDocklet *let, Qt::DockWidgetArea area);
+        /** Handles moving docklet to new dockbar */
+        void moveDocklet(toDocklet *let, Qt::DockWidgetArea area);
 
-    /** Set if a connection needs to be committed. Also updates visual feedback in interface.
-     */
-    void setNeedCommit(toToolWidget *tool, bool needCommit = true);
+        /** Set if a connection needs to be committed. Also updates visual feedback in interface.
+         */
+        void setNeedCommit(toToolWidget *tool, bool needCommit = true);
 
-    /**
-     * Add a new connection. The connection itself must already be created.
-     * Returns the connection or it's duplicate already opened connection.
-     */
-    void addConnection(toConnection *conn);
-    
-    /** Add recent file
-     */
-    void addRecentFile(const QString &filename);
-    
-    /**
-     * Set coordinates in the statusbar.
-     *
-     * Used to indicate current cursor position by child widgets.
-     */
-    void setCoordinates(int, int);
+        /**
+         * Add a new connection. The connection itself must already be created.
+         * Returns the connection or it's duplicate already opened connection.
+         */
+        void addConnection(toConnection *conn);
 
-    /**
-     * Create the default tool for the current connection.
-     *
-     * This is the tool with the highest priority, usually the SQL worksheet.
-     */
-    void createDefault(void);
+        /** Add recent file
+         */
+        void addRecentFile(const QString &filename);
 
-    /**
-     * allow tools to add custom menus (ie. File, Edit, Sql Editor)
-     * without giving away public access to menubars.
-     */
-    void addCustomMenu(QMenu *);
+        /**
+         * Set coordinates in the statusbar.
+         *
+         * Used to indicate current cursor position by child widgets.
+         */
+        void setCoordinates(int, int);
 
-    /** Add a connection */
-    void addConnection(void);
+        /**
+         * Create the default tool for the current connection.
+         *
+         * This is the tool with the highest priority, usually the SQL worksheet.
+         */
+        void createDefault(void);
 
-    /** Remove a connection */
-    bool delCurrentConnection(void);
+        /**
+         * allow tools to add custom menus (ie. File, Edit, Sql Editor)
+         * without giving away public access to menubars.
+         */
+        void addCustomMenu(QMenu *);
 
-    /** Handles menu selections
-     * @param cmd Menu entry ID selected
-     */
-    void commandCallback(QAction *);
+        /** Add a connection */
+        void addConnection(void);
 
-    /** handles callbacks for recent files menu */
-    void recentCallback(QAction *);
+        /** Remove a connection */
+        bool delCurrentConnection(void);
 
-    /** handles callbacks for the status bar */
-    void statusCallback(QAction *action);
+        /** Handles menu selections
+         * @param cmd Menu entry ID selected
+         */
+        void commandCallback(QAction *);
 
-    /** handles callbacks for the status bar */
-    void windowCallback(QAction *action);
+        /** handles callbacks for recent files menu */
+        void recentCallback(QAction *);
 
-    /** handles callbacks for the view menu */
-    void viewCallback(QAction *action);
+        /** handles callbacks for the status bar */
+        void statusCallback(QAction *action);
 
-    void updateStatusMenu(void);
+        /** handles callbacks for the status bar */
+        void windowCallback(QAction *action);
 
-    /** Display status message */
-    void displayMessage(void);
+        /** handles callbacks for the view menu */
+        void viewCallback(QAction *action);
 
-    /** Internal slot for handling status bar messages  */
-    void showMessageImpl(QString, bool save, bool log);
+        void updateStatusMenu(void);
 
-    void slotActiveToolChaged(toToolWidget*);
+        /** Display status message */
+        void displayMessage(void);
+
+        /** Internal slot for handling status bar messages  */
+        void showMessageImpl(QString, bool save, bool log);
+
+        void slotActiveToolChaged(toToolWidget*);
 
 #ifdef QT_DEBUG
-    // This function should diagnose focus "stealing"
-    void reportFocus();
+        // This function should diagnose focus "stealing"
+        void reportFocus();
 #endif
 
-protected:
-    /** intercept close event from parent */
-    void closeEvent(QCloseEvent *event);
+    protected:
+        /** intercept close event from parent */
+        void closeEvent(QCloseEvent *event);
 
-private:
-    toWorkSpace &Workspace;
-    
-    /** The connections that have been opened in TOra. */
-    toConnectionRegistry &Connections;
+    private:
+        toWorkSpace &Workspace;
 
-    /**
-     * Handles available connections list in toolbar.
-     */
-    QComboBox *ConnectionSelection;
-    /**
-     * The ID of the tool providing the SQL editor.
-     */
-    // QString SQLEditor;
+        /** The connections that have been opened in TOra. */
+        toConnectionRegistry &Connections;
 
-    /**
-     * A reference to the error dialog.
-     */
-    toMessage * Message;
+        /**
+         * Handles available connections list in toolbar.
+         */
+        QComboBox *ConnectionSelection;
+        /**
+         * The ID of the tool providing the SQL editor.
+         */
+        // QString SQLEditor;
 
-    /**
-     * Status message storage for status bar
-     */
-    std::list<QString> StatusMessages;
+        /**
+         * A reference to the error dialog.
+         */
+        toMessage * Message;
 
-    /** Toolbars, Edit, Tools, Connection */
-    QToolBar *editToolbar, *toolsToolbar, *connectionToolbar;
+        /**
+         * Status message storage for status bar
+         */
+        std::list<QString> StatusMessages;
 
-    /** Toolbars for minimizing docklets*/
-    toDockbar *leftDockbar, *rightDockbar;
+        /** Toolbars, Edit, Tools, Connection */
+        QToolBar *editToolbar, *toolsToolbar, *connectionToolbar;
 
-    /** File menu, Recent files menu (child of fileMenu). */
-    QMenu *fileMenu, *recentMenu;
+        /** Toolbars for minimizing docklets*/
+        toDockbar *leftDockbar, *rightDockbar;
 
-    /** Edit menu - reference to a value held in singleton*/
-    toEditMenu &editMenu;
+        /** File menu, Recent files menu (child of fileMenu). */
+        QMenu *fileMenu, *recentMenu;
 
-    /** View, Tools, Window, Help, Status menu. */
-    QMenu *viewMenu, *toolsMenu, *windowsMenu, *connectionsMenu, *helpMenu, *statusMenu;
+        /** Edit menu - reference to a value held in singleton*/
+        toEditMenu &editMenu;
 
-    /** Current column/row label - diplayed in bottom right,  updated by worksheet widget*/
-    QLabel *ColumnLabel, *RowLabel;
+        /** View, Tools, Window, Help, Status menu. */
+        QMenu *viewMenu, *toolsMenu, *windowsMenu, *connectionsMenu, *helpMenu, *statusMenu;
 
-    //! \brief Display current type of text edit selection (normal/block)
-    QLabel * SelectionLabel;
+        /** Current column/row label - diplayed in bottom right,  updated by worksheet widget*/
+        QLabel *ColumnLabel, *RowLabel;
 
-    toBackground Poll;
+        //! \brief Display current type of text edit selection (normal/block)
+        QLabel * SelectionLabel;
 
-    toBackgroundLabel* BackgroundLabel;
+        toBackground Poll;
 
-    QAction *newConnAct, *closeConn, *commitAct, *rollbackAct, *currentAct, *stopAct;
-    QAction *refreshAct, *openAct, *saveAct, *saveAsAct, *openSessionAct, *saveSessionAct;
-    QAction *restoreSessionAct , *closeSessionAct, *printAct, *quitAct;
-    QAction *helpCurrentAct, *helpContentsAct, *aboutAct, *aboutQtAct, *licenseAct;
-    QAction *windowCloseAct, *windowCloseAllAct;
+        toBackgroundLabel* BackgroundLabel;
 
-    QPlainTextEdit &loggingWidget;
+        QAction *newConnAct, *closeConn, *commitAct, *rollbackAct, *currentAct, *stopAct;
+        QAction *refreshAct, *openAct, *saveAct, *saveAsAct, *openSessionAct, *saveSessionAct;
+        QAction *restoreSessionAct , *closeSessionAct, *printAct, *quitAct;
+        QAction *helpCurrentAct, *helpContentsAct, *aboutAct, *aboutQtAct, *licenseAct;
+        QAction *windowCloseAct, *windowCloseAllAct;
 
-    toToolWidget *lastToolWidget;
+        QPlainTextEdit &loggingWidget;
+
+        toToolWidget *lastToolWidget;
 
 #ifdef QT_DEBUG
-    QTimer *reportTimer;
+        QTimer *reportTimer;
 #endif
 };
 

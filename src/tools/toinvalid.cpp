@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -81,30 +81,30 @@ static toSQL SQLReadErrors("toInvalid:ReadErrors",
 
 class toInvalidTool : public toTool
 {
-public:
-    toInvalidTool()
-        : toTool(130, "Invalid Objects") { }
-    virtual const char *menuItem()
-    {
-        return "Invalid Objects";
-    }
+    public:
+        toInvalidTool()
+            : toTool(130, "Invalid Objects") { }
+        virtual const char *menuItem()
+        {
+            return "Invalid Objects";
+        }
 
-    virtual bool canHandle(const toConnection &conn)
-    {
-        return (conn.providerIs("Oracle"));
-    }
+        virtual bool canHandle(const toConnection &conn)
+        {
+            return (conn.providerIs("Oracle"));
+        }
 
-    virtual toToolWidget* toolWindow(QWidget *parent, toConnection &connection)
-    {
-        return new toInvalid(parent, connection);
-    }
-    virtual void closeWindow(toConnection &connection) {};
+        virtual toToolWidget* toolWindow(QWidget *parent, toConnection &connection)
+        {
+            return new toInvalid(parent, connection);
+        }
+        virtual void closeWindow(toConnection &connection) {};
 
-private:
-    virtual const char **pictureXPM(void)
-    {
-        return const_cast<const char**>(toinvalid_xpm);
-    }
+    private:
+        virtual const char **pictureXPM(void)
+        {
+            return const_cast<const char**>(toinvalid_xpm);
+        }
 };
 
 
@@ -195,15 +195,15 @@ void toInvalid::recompileSelected(void)
         {
             // only SYS user is allowed to do ALTER PUBLIC SYNONYM ...
             // other users can only do CREATE OR REPLACE PUBLIC SYNONYM ...
-        	std::list<QString> objects;
-        	toExtract extract(const_cast<toConnection&>(conn.ParentConnection), NULL);
-        	extract.setCode(true);
-        	extract.setHeading(false);
-        	extract.setPrompt(false);
-        	extract.setReplace(true); // get create OR REPLACE statement
-        	objects.insert(objects.end(), type + QString::fromLatin1(":") + "PUBLIC" + QString::fromLatin1(".") + name);
-        	sql = extract.create(objects);
-	    throw tr("recompileSelected SYNONYM not implement yet");
+            std::list<QString> objects;
+            toExtract extract(const_cast<toConnection&>(conn.ParentConnection), NULL);
+            extract.setCode(true);
+            extract.setHeading(false);
+            extract.setPrompt(false);
+            extract.setReplace(true); // get create OR REPLACE statement
+            objects.insert(objects.end(), type + QString::fromLatin1(":") + "PUBLIC" + QString::fromLatin1(".") + name);
+            sql = extract.create(objects);
+            throw tr("recompileSelected SYNONYM not implement yet");
         }
         else
             sql = "ALTER " + Objects->model()->data((*it).row(), 3).toString() + " " +
@@ -282,15 +282,15 @@ void toInvalid::changeSelection(void)
         if (item.isValid())
         {
             Source->refreshWithParams( toQueryParams() << Objects->model()->data(item.row(), 1).toString()
-                                                       << Objects->model()->data(item.row(), 2).toString()
-                                                       << Objects->model()->data(item.row(), 3).toString());
+                                       << Objects->model()->data(item.row(), 2).toString()
+                                       << Objects->model()->data(item.row(), 3).toString());
             QMap<int, QString> Errors;
             toConnectionSubLoan conn(connection());
             toQuery errors(conn,
                            SQLReadErrors,
                            toQueryParams() << Objects->model()->data(item.row(), 1).toString()
-                                           << Objects->model()->data(item.row(), 2).toString()
-                                           << Objects->model()->data(item.row(), 3).toString());
+                           << Objects->model()->data(item.row(), 2).toString()
+                           << Objects->model()->data(item.row(), 3).toString());
 
             while (!errors.eof())
             {

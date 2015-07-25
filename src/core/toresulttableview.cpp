@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -67,11 +67,11 @@ toResultTableView::toResultTableView(QWidget * parent)
     , toEditWidget()
     , Model(NULL)
 {
-	toEditWidget::FlagSet.Save = true;
-	toEditWidget::FlagSet.Print = true;
-	toEditWidget::FlagSet.Copy = true;
-	toEditWidget::FlagSet.Search = true;
-	toEditWidget::FlagSet.SelectAll = true;
+    toEditWidget::FlagSet.Save = true;
+    toEditWidget::FlagSet.Print = true;
+    toEditWidget::FlagSet.Copy = true;
+    toEditWidget::FlagSet.Search = true;
+    toEditWidget::FlagSet.SelectAll = true;
 
     setObjectName("toResultTableView");
     setup(true, false, false);
@@ -87,11 +87,11 @@ toResultTableView::toResultTableView(bool readable,
     , toEditWidget()
     , Model(NULL)
 {
-	toEditWidget::FlagSet.Save = true;
-	toEditWidget::FlagSet.Print = true;
-	toEditWidget::FlagSet.Copy = true;
-	toEditWidget::FlagSet.Search = true;
-	toEditWidget::FlagSet.SelectAll = true;
+    toEditWidget::FlagSet.Save = true;
+    toEditWidget::FlagSet.Print = true;
+    toEditWidget::FlagSet.Copy = true;
+    toEditWidget::FlagSet.Search = true;
+    toEditWidget::FlagSet.SelectAll = true;
 
     if (name)
         setObjectName(name);
@@ -154,7 +154,7 @@ toResultTableView::~toResultTableView()
 {
     if (Model && running())
         Model->stop();
-	freeModel();
+    freeModel();
 }
 
 void toResultTableView::query(const QString &sql, toQueryParams const& param)
@@ -179,12 +179,12 @@ void toResultTableView::query(const QString &sql, toQueryParams const& param)
         t.singleShot(300, Working, SLOT(forceShow()));
 
         toEventQuery *query = new toEventQuery(this
-					       , connection()
-					       , sql
-					       , param
-					       , toEventQuery::READ_FIRST
-					       //, Statistics
-					       );
+                                               , connection()
+                                               , sql
+                                               , param
+                                               , toEventQuery::READ_FIRST
+                                               //, Statistics
+                                              );
 
         toResultModel *model = allocModel(query);
         setModel(model);
@@ -244,12 +244,12 @@ void toResultTableView::querySub(QSharedPointer<toConnectionSubLoan> &con, const
         t.singleShot(300, Working, SLOT(forceShow()));
 
         toEventQuery *query = new toEventQuery(this
-					       , con
-					       , sql
-					       , param
-					       , toEventQuery::READ_FIRST
-					       //, Statistics
-					       );
+                                               , con
+                                               , sql
+                                               , param
+                                               , toEventQuery::READ_FIRST
+                                               //, Statistics
+                                              );
 
         toResultModel *model = allocModel(query);
         setModel(model);
@@ -289,14 +289,14 @@ void toResultTableView::querySub(QSharedPointer<toConnectionSubLoan> &con, const
 
 toResultModel* toResultTableView::allocModel(toEventQuery *query)
 {
-	toResultModel *retval = new toResultModel(query, this, ReadableColumns);
-	retval->setInitialRows(visibleRows());
-	return retval;
+    toResultModel *retval = new toResultModel(query, this, ReadableColumns);
+    retval->setInitialRows(visibleRows());
+    return retval;
 }
 
 void toResultTableView::freeModel()
 {
-    if(Model)
+    if (Model)
     {
         delete Model;
         Model = NULL;
@@ -306,17 +306,17 @@ void toResultTableView::freeModel()
 
 int toResultTableView::visibleRows() const
 {
-	// TODO this is ugly hack and needs some validation
-	//this->visibleRegion();
-	int h = sizeHintForRow(0);
-	QAbstractItemDelegate *d = itemDelegate();
-	QSize s = d->sizeHint(QStyleOptionViewItem(), QModelIndex());
-	int hh = height();
-	int hhh = s.height();
-	int rows = hh / s.height() + 1;
-	if (rows < toConfigurationNewSingle::Instance().option(ToConfiguration::Database::InitialFetchInt).toInt())
-		return toConfigurationNewSingle::Instance().option(ToConfiguration::Database::InitialFetchInt).toInt();
-	return rows;
+    // TODO this is ugly hack and needs some validation
+    //this->visibleRegion();
+    int h = sizeHintForRow(0);
+    QAbstractItemDelegate *d = itemDelegate();
+    QSize s = d->sizeHint(QStyleOptionViewItem(), QModelIndex());
+    int hh = height();
+    int hhh = s.height();
+    int rows = hh / s.height() + 1;
+    if (rows < toConfigurationNewSingle::Instance().option(ToConfiguration::Database::InitialFetchInt).toInt())
+        return toConfigurationNewSingle::Instance().option(ToConfiguration::Database::InitialFetchInt).toInt();
+    return rows;
 }
 
 void toResultTableView::clearData()
@@ -392,7 +392,7 @@ int toResultTableView::sizeHintForColumn(int col) const
 
 void toResultTableView::paintEvent(QPaintEvent *event)
 {
-    if(!Ready)
+    if (!Ready)
     {
         Working->setGeometry(this->viewport()->frameGeometry());
         Working->show();
@@ -408,11 +408,11 @@ void toResultTableView::paintEvent(QPaintEvent *event)
 
 void toResultTableView::resizeEvent(QResizeEvent *event)
 {
-    if(ReadableColumns && VisibleColumns == 1)
+    if (ReadableColumns && VisibleColumns == 1)
         setColumnWidth(1, viewport()->width());
     QTableView::resizeEvent(event);
 
-    if(!Ready)
+    if (!Ready)
     {
         Working->setGeometry(this->viewport()->frameGeometry());
         Working->repaint();
@@ -433,8 +433,8 @@ void toResultTableView::keyPressEvent(QKeyEvent * event)
 
 void toResultTableView::slotApplyColumnRules()
 {
-	// TODO: call after every model reset
-	// connect(Model, SIGNAL(modelReset()), this, SLOT(slotApplyColumnRules()));
+    // TODO: call after every model reset
+    // connect(Model, SIGNAL(modelReset()), this, SLOT(slotApplyColumnRules()));
     if (!NumberColumn)
         hideColumn(0);
 
@@ -545,8 +545,8 @@ void toResultTableView::slotMenuCallback(QAction *action)
     else if (action == selectAllAct)
         editSelectAll();
     else if (action == editAct)
-		Utils::toStatusMessage("Not yet implemented editSQL(Name).");
-        //toMainWindow::lookup()->editSQL(sqlName());
+        Utils::toStatusMessage("Not yet implemented editSQL(Name).");
+    //toMainWindow::lookup()->editSQL(sqlName());
     else if (action == readAllAct || action == rowCountAct)
     {
         Model->readAll();
@@ -596,7 +596,7 @@ void toResultTableView::slotHandleReset(void)
 
 
 void toResultTableView::slotHandleFirst(const toConnection::exception &res,
-                                    bool error)
+                                        bool error)
 {
     slotApplyColumnRules();
     Ready = true;
@@ -631,7 +631,7 @@ bool toResultTableView::running(void)
 
 void toResultTableView::setFilter(toViewFilter *filter)
 {
-	// Do not delete the filter, it's parent widget's responsibility
+    // Do not delete the filter, it's parent widget's responsibility
     Filter = filter;
 }
 

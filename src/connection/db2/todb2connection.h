@@ -50,20 +50,20 @@
 
 class DB2Connection : public toConnection::connectionImpl
 {
-public:
-    toConnection * Connection;
+    public:
+        toConnection * Connection;
 
-    DB2Connection(toConnection *conn);
-    void commit(toConnectionSub * sub);
-    void rollback(toConnectionSub * sub);
-    toConnectionSub * createConnection(void);
-    void closeConnection(toConnectionSub * sub);
-    QString version(toConnectionSub * sub);
-    toQuery::queryImpl * createQuery(toQuery *query, toConnectionSub * sub);
-    void execute(toConnectionSub *conn, const QString &sql, toQList &params);
+        DB2Connection(toConnection *conn);
+        void commit(toConnectionSub * sub);
+        void rollback(toConnectionSub * sub);
+        toConnectionSub * createConnection(void);
+        void closeConnection(toConnectionSub * sub);
+        QString version(toConnectionSub * sub);
+        toQuery::queryImpl * createQuery(toQuery *query, toConnectionSub * sub);
+        void execute(toConnectionSub *conn, const QString &sql, toQList &params);
 
-    static DB2ConnectionSub * toDB2ConnectionSub(toConnectionSub *sub);
-    static void handleError(const QString & msg, SQLHANDLE handle, SQLSMALLINT handleType);
+        static DB2ConnectionSub * toDB2ConnectionSub(toConnectionSub *sub);
+        static void handleError(const QString & msg, SQLHANDLE handle, SQLSMALLINT handleType);
 };
 
 #endif

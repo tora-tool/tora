@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -65,35 +65,35 @@
 
 class toOracleInstantFinder : public  toConnectionProviderFinder
 {
-public:
-    inline toOracleInstantFinder(unsigned int i) : toConnectionProviderFinder(i) {};
+    public:
+        inline toOracleInstantFinder(unsigned int i) : toConnectionProviderFinder(i) {};
 
-    virtual QString name() const
-    {
-        return QString::fromLatin1(ORACLE_INSTANTCLIENT);
-    };
+        virtual QString name() const
+        {
+            return QString::fromLatin1(ORACLE_INSTANTCLIENT);
+        };
 
-    /** Return list of possible client locations
-     */
-    virtual QList<ConnectionProvirerParams> find();
+        /** Return list of possible client locations
+         */
+        virtual QList<ConnectionProvirerParams> find();
 
-    /**
-     * Load connection providers library
-	 */
-    virtual void load(ConnectionProvirerParams const&);
+        /**
+         * Load connection providers library
+         */
+        virtual void load(ConnectionProvirerParams const&);
 
-protected:
-    static QList<QString> const m_libname;
-    static bool m_OCILoaded;
+    protected:
+        static QList<QString> const m_libname;
+        static bool m_OCILoaded;
 
-    static QString clientVersion(QFileInfo path);
+        static QString clientVersion(QFileInfo path);
 
-    void check(ConnectionProvirerParams const&);
-    void setEnv(ConnectionProvirerParams const&);
-    void loadLib(ConnectionProvirerParams const&);
+        void check(ConnectionProvirerParams const&);
+        void setEnv(ConnectionProvirerParams const&);
+        void loadLib(ConnectionProvirerParams const&);
 
-private:
-    static QSet<QString> const m_paths;
+    private:
+        static QSet<QString> const m_paths;
 };
 
 QSet<QString> const toOracleInstantFinder::m_paths = QSet<QString>()
@@ -119,7 +119,7 @@ QSet<QString> const toOracleInstantFinder::m_paths = QSet<QString>()
         << QString::fromLatin1("E:\\oracle\\instantclient*")
         << QString::fromLatin1("D:\\devel\\instantclient*")
 #endif
-		<< QDir::currentPath() 
+        << QDir::currentPath()
         ;
 
 QList<QString> const toOracleInstantFinder::m_libname = QList<QString>()
@@ -144,18 +144,18 @@ QString toOracleInstantFinder::clientVersion(QFileInfo path)
     QTextStream s(&retval);
 
     Utils::toLibrary::LHandle hmodule = Utils::toLibrary::loadLibrary(path); // TODO this one thows, the others don't
-    if( !hmodule)
+    if ( !hmodule)
         return QString::null;
 
     pOCIClientVersion = (tpOCIClientVersion)  Utils::toLibrary::lookupSymbol( hmodule, "OCIClientVersion");
-    if( !pOCIClientVersion)
+    if ( !pOCIClientVersion)
     {
         retval = "pre-10g client";
         goto EXIT;
     }
 
     ret = pOCIClientVersion(&major, &minor, &update, &patch, &port);
-    if( ret == OCI_ERROR)
+    if ( ret == OCI_ERROR)
     {
         retval = "error calling OCIClientVersion";
         goto EXIT;
@@ -169,7 +169,7 @@ EXIT:
 
 QList<toConnectionProviderFinder::ConnectionProvirerParams>  toOracleInstantFinder::find()
 {
-	using namespace ToConfiguration;
+    using namespace ToConfiguration;
 
     QList<ConnectionProvirerParams> retval;
     QSet<QString> possibleOracleHomes;
@@ -177,33 +177,33 @@ QList<toConnectionProviderFinder::ConnectionProvirerParams>  toOracleInstantFind
 
     do
     {
-    	QString cHome = toConfigurationNewSingle::Instance().option(Global::OracleHomeDirectory).toString();
-    	if( cHome.isEmpty())
-    		continue;
-    	QDir dHome(cHome);
-    	if( !dHome.exists())
-    		continue;
-    	if( possibleOracleHomes.contains(dHome.absolutePath()))
-    		continue;
-    	TLOG(5, toNoDecorator, __HERE__) << "searching: " << dHome.absolutePath()  << std::endl;
-    	possibleOracleHomes.insert(dHome.absolutePath());
-    }
-    while(false);
-
-    do
-    {
-        QString sHome = getenv("ORACLE_HOME");
-        if( sHome.isEmpty())
+        QString cHome = toConfigurationNewSingle::Instance().option(Global::OracleHomeDirectory).toString();
+        if ( cHome.isEmpty())
             continue;
-        QDir dHome(sHome);
-        if( !dHome.exists())
+        QDir dHome(cHome);
+        if ( !dHome.exists())
             continue;
-        if( possibleOracleHomes.contains(dHome.absolutePath()))
+        if ( possibleOracleHomes.contains(dHome.absolutePath()))
             continue;
         TLOG(5, toNoDecorator, __HERE__) << "searching: " << dHome.absolutePath()  << std::endl;
         possibleOracleHomes.insert(dHome.absolutePath());
     }
-    while(false);
+    while (false);
+
+    do
+    {
+        QString sHome = getenv("ORACLE_HOME");
+        if ( sHome.isEmpty())
+            continue;
+        QDir dHome(sHome);
+        if ( !dHome.exists())
+            continue;
+        if ( possibleOracleHomes.contains(dHome.absolutePath()))
+            continue;
+        TLOG(5, toNoDecorator, __HERE__) << "searching: " << dHome.absolutePath()  << std::endl;
+        possibleOracleHomes.insert(dHome.absolutePath());
+    }
+    while (false);
 
     {
         QStringList slEnvPaths;
@@ -220,16 +220,16 @@ QList<toConnectionProviderFinder::ConnectionProvirerParams>  toOracleInstantFind
 #endif
         foreach(QString sHome, slEnvPaths)
         {
-            if( sHome.isEmpty())
+            if ( sHome.isEmpty())
                 continue;
             QDir dHome(sHome);
-            if( !dHome.exists())
+            if ( !dHome.exists())
                 continue;
-            if( possibleOracleHomes.contains(dHome.absolutePath()))
+            if ( possibleOracleHomes.contains(dHome.absolutePath()))
                 continue;
             /* we not want Oracle instalation to be listed between instant clients */
 #if defined(Q_OS_WIN32)
-            if( dHome.exists("sqlldr.exe"))
+            if ( dHome.exists("sqlldr.exe"))
                 continue;
 #endif
             TLOG(5, toNoDecorator, __HERE__) << "searching: " << dHome.absolutePath()  << std::endl;
@@ -242,12 +242,12 @@ QList<toConnectionProviderFinder::ConnectionProvirerParams>  toOracleInstantFind
     {
         /** special case, path contains a wildcard
          */
-        if( p.contains("*"))
+        if ( p.contains("*"))
         {
             /** chdir into parent dir */
             QString sParentPath = p.left( p.lastIndexOf(QDir::separator()));
             QDir dParentPath(sParentPath);
-            if( !dParentPath.exists())
+            if ( !dParentPath.exists())
                 continue;
 
             QStringList filter = QStringList() << p.mid( p.lastIndexOf(QDir::separator()) + 1);
@@ -257,7 +257,7 @@ QList<toConnectionProviderFinder::ConnectionProvirerParams>  toOracleInstantFind
                 QDir dSubDirPath(dParentPath);
                 dSubDirPath.cd(s);
                 dSubDirPath.setFilter(QDir::Files);
-                if( !dSubDirPath.exists() && !dSubDirPath.isReadable())
+                if ( !dSubDirPath.exists() && !dSubDirPath.isReadable())
                     continue;
                 TLOG(5, toNoDecorator, __HERE__) << "searching: " << dSubDirPath.absolutePath()  << std::endl;
                 possibleOracleHomes.insert(dSubDirPath.absolutePath());
@@ -267,7 +267,7 @@ QList<toConnectionProviderFinder::ConnectionProvirerParams>  toOracleInstantFind
         else     // dir path not contains wildcard
         {
             QDir dLibPath(p);
-            if( !dLibPath.exists() && !dLibPath.isReadable())
+            if ( !dLibPath.exists() && !dLibPath.isReadable())
                 continue;
             TLOG(5, toNoDecorator, __HERE__) << "searching: " << dLibPath.absolutePath()  << std::endl;
             possibleOracleHomes.insert(dLibPath.absolutePath());
@@ -283,7 +283,7 @@ QList<toConnectionProviderFinder::ConnectionProvirerParams>  toOracleInstantFind
         {
             QString sLibPath = QDir::toNativeSeparators(d.canonicalPath()) + QDir::separator() + sLibrary;
 
-            if(!Utils::toLibrary::isValidLibrary(sLibPath))
+            if (!Utils::toLibrary::isValidLibrary(sLibPath))
             {
                 TLOG(5, toNoDecorator, __HERE__) << "skipping: " << sLibPath << std::endl;
                 continue;
@@ -308,17 +308,17 @@ QList<toConnectionProviderFinder::ConnectionProvirerParams>  toOracleInstantFind
 
 void toOracleInstantFinder::check(ConnectionProvirerParams const &params)
 {
-    if( params.value("KEY") != name())
+    if ( params.value("KEY") != name())
         throw QString("toOracleInstantFinder::load - invalid key");
 
-    if( m_OCILoaded == true)
+    if ( m_OCILoaded == true)
         throw QString("toOracleInstantFinder::load - Oracle client libs are already loaded");
 }
 
 void toOracleInstantFinder::setEnv(ConnectionProvirerParams const &params)
 {
     QString ohome = params.value("ORACLE_HOME").toString();
-	qputenv("ORACLE_HOME", ohome.toLocal8Bit());
+    qputenv("ORACLE_HOME", ohome.toLocal8Bit());
     TLOG(5, toNoDecorator, __HERE__) << "export ORACLE_HOME=" << ohome << std::endl;
 
     qputenv("NLS_LANG", "AMERICAN_AMERICA.AL32UTF8"); // TODO hardcoded ATM
@@ -342,9 +342,9 @@ void toOracleInstantFinder::loadLib(ConnectionProvirerParams const &params)
     TLOG(5, toNoDecorator, __HERE__) << "Loading: " PROVIDER_LIB << std::endl;
     Utils::toLibrary::LHandle hmodulePOracle = Utils::toLibrary::loadLibrary(QFileInfo(PROVIDER_LIB));
     if ( hmodulePOracle)
-    	TLOG(5, toNoDecorator, __HERE__) << "OK" << std::endl;
+        TLOG(5, toNoDecorator, __HERE__) << "OK" << std::endl;
     else
-    	TLOG(5, toNoDecorator, __HERE__) << "Failed" << std::endl;
+        TLOG(5, toNoDecorator, __HERE__) << "Failed" << std::endl;
 
 #else
     /* Steps to load libclntsh.so on Linux
@@ -370,25 +370,25 @@ void toOracleInstantFinder::loadLib(ConnectionProvirerParams const &params)
     QDir toraHome(QDir::homePath() + QDir::separator() + QChar('.') + QString::fromLatin1(TOAPPNAME));
     QString providerPath(toraHome.absolutePath() + QDir::separator() + QString::fromLatin1("poracle"));
     TLOG(5, toNoDecorator, __HERE__) << "Creating plugin path:" << providerPath << std::endl;
-    if( !toraHome.mkpath(providerPath))
-	    throw QString("Could not create: %1").arg(providerPath);
+    if ( !toraHome.mkpath(providerPath))
+        throw QString("Could not create: %1").arg(providerPath);
 
-    if( !QDir::setCurrent(providerPath))
-	    throw QString("Could change cwd: %1").arg(toraHome.absolutePath());
-    
+    if ( !QDir::setCurrent(providerPath))
+        throw QString("Could change cwd: %1").arg(toraHome.absolutePath());
+
     TLOG(5, toNoDecorator, __HERE__) << "Re-creating symlink:" << libPath.absolutePath() << std::endl;
     retval = unlink("instantclient");
-    if(retval)
+    if (retval)
         TLOG(5, toNoDecorator, __HERE__) << strerror(retval) << std::endl;
 
     retval = symlink(libPath.absolutePath().toStdString().c_str(), "instantclient");
-    if(retval)
+    if (retval)
         TLOG(5, toNoDecorator, __HERE__) << strerror(retval) << std::endl;
 
     retval = unlink(TROTL_LIB);
     retval = symlink(PROVIDERS_PATH "/../" TROTL_LIB, TROTL_LIB);
-    if(retval)
-	    TLOG(5, toNoDecorator, __HERE__) << strerror(retval) << std::endl;
+    if (retval)
+        TLOG(5, toNoDecorator, __HERE__) << strerror(retval) << std::endl;
 
     TLOG(5, toNoDecorator, __HERE__) << "Loading: " TROTL_LIB  << std::endl;
     Utils::toLibrary::LHandle hmoduleTrotl = Utils::toLibrary::loadLibrary(QFileInfo(TROTL_LIB));
@@ -398,12 +398,12 @@ void toOracleInstantFinder::loadLib(ConnectionProvirerParams const &params)
     TLOG(5, toNoDecorator, __HERE__) << "Loading: " PROVIDER_LIB << std::endl;
     Utils::toLibrary::LHandle hmodulePOracle = Utils::toLibrary::loadLibrary(QFileInfo(QDir(PROVIDERS_PATH), PROVIDER_LIB));
     if ( hmodulePOracle)
-    	TLOG(5, toNoDecorator, __HERE__) << "OK" << std::endl;
+        TLOG(5, toNoDecorator, __HERE__) << "OK" << std::endl;
     else
-    	TLOG(5, toNoDecorator, __HERE__) << "Failed" << std::endl;
+        TLOG(5, toNoDecorator, __HERE__) << "Failed" << std::endl;
 
-    if( !QDir::setCurrent(toraHome.absolutePath()))
-    	throw QString("Could change cwd: %1").arg(toraHome.absolutePath());
+    if ( !QDir::setCurrent(toraHome.absolutePath()))
+        throw QString("Could change cwd: %1").arg(toraHome.absolutePath());
 
 #endif
 }
@@ -421,28 +421,28 @@ Util::RegisterInFactory<toOracleInstantFinder, ConnectionProviderFinderFactory> 
 
 class toOracleFinder : public  toOracleInstantFinder
 {
-public:
-    inline toOracleFinder(unsigned int i) : toOracleInstantFinder(i) {};
+    public:
+        inline toOracleFinder(unsigned int i) : toOracleInstantFinder(i) {};
 
-    virtual QString name() const
-    {
-        return QString::fromLatin1(ORACLE_TNSCLIENT);
-    };
+        virtual QString name() const
+        {
+            return QString::fromLatin1(ORACLE_TNSCLIENT);
+        };
 
-    /** Return list of possible client locations
-     */
-    virtual QList<ConnectionProvirerParams> find();
+        /** Return list of possible client locations
+         */
+        virtual QList<ConnectionProvirerParams> find();
 
-    /**
-       Load connection providers library
-    */
-    virtual void load(ConnectionProvirerParams const&);
-    void loadLib(ConnectionProvirerParams const &params);
+        /**
+           Load connection providers library
+        */
+        virtual void load(ConnectionProvirerParams const&);
+        void loadLib(ConnectionProvirerParams const &params);
 };
 
 QList<toConnectionProviderFinder::ConnectionProvirerParams> toOracleFinder::find()
 {
-	using namespace ToConfiguration;
+    using namespace ToConfiguration;
 
     QList<ConnectionProvirerParams> retval;
     QSet<QString> possibleOracleHomes;
@@ -450,55 +450,55 @@ QList<toConnectionProviderFinder::ConnectionProvirerParams> toOracleFinder::find
 
     do
     {
-    	QString cHome = toConfigurationNewSingle::Instance().option(Global::OracleHomeDirectory).toString();
-    	if( cHome.isEmpty())
-    		continue;
-    	QDir dHome(cHome);
-    	if( !dHome.exists())
-    		continue;
-    	if( possibleOracleHomes.contains(dHome.absolutePath()))
-    		continue;
-    	TLOG(5, toNoDecorator, __HERE__) << "searching: " << dHome.absolutePath()  << std::endl;
-    	possibleOracleHomes.insert(dHome.absolutePath());
-    }
-    while(false);
-
-    do
-    {
-    	QString sHome = qgetenv("ORACLE_HOME");
-        if( sHome.isEmpty())
+        QString cHome = toConfigurationNewSingle::Instance().option(Global::OracleHomeDirectory).toString();
+        if ( cHome.isEmpty())
             continue;
-        QDir dHome(sHome);
-        if( !dHome.exists())
+        QDir dHome(cHome);
+        if ( !dHome.exists())
             continue;
-        if( possibleOracleHomes.contains(dHome.absolutePath()))
+        if ( possibleOracleHomes.contains(dHome.absolutePath()))
             continue;
         TLOG(5, toNoDecorator, __HERE__) << "searching: " << dHome.absolutePath()  << std::endl;
         possibleOracleHomes.insert(dHome.absolutePath());
     }
-    while(false);
+    while (false);
+
+    do
+    {
+        QString sHome = qgetenv("ORACLE_HOME");
+        if ( sHome.isEmpty())
+            continue;
+        QDir dHome(sHome);
+        if ( !dHome.exists())
+            continue;
+        if ( possibleOracleHomes.contains(dHome.absolutePath()))
+            continue;
+        TLOG(5, toNoDecorator, __HERE__) << "searching: " << dHome.absolutePath()  << std::endl;
+        possibleOracleHomes.insert(dHome.absolutePath());
+    }
+    while (false);
 
 #ifdef Q_OS_WIN32
     QSettings settings("HKEY_LOCAL_MACHINE\\Software\\ORACLE", QSettings::NativeFormat);
     foreach(QString key, settings.childGroups())
     {
         QString sHome = settings.value(key + '/' + "ORACLE_HOME").toString();
-        if( sHome.isEmpty())
+        if ( sHome.isEmpty())
             continue;
 
         QString sHomeName = settings.value(key + '/' + "ORACLE_HOME_NAME").toString();
         QString version = settings.value(key + '/' + "VERSION").toString();
 
         QDir dHome(sHome);
-        if( !dHome.exists())
+        if ( !dHome.exists())
             continue;
-        if( possibleOracleHomes.contains(dHome.absolutePath()))
+        if ( possibleOracleHomes.contains(dHome.absolutePath()))
             continue;
 
         TLOG(5, toNoDecorator, __HERE__) << "searching oh: " << dHome.absolutePath()  << std::endl;
 
         QString sLibPath = QDir::toNativeSeparators(dHome.absolutePath() + "/bin/" + m_libname.first());
-        if( !Utils::toLibrary::isValidLibrary(sLibPath))
+        if ( !Utils::toLibrary::isValidLibrary(sLibPath))
             continue;
 
         TLOG(5, toNoDecorator, __HERE__) << "adding: " << sLibPath << ':' << version << std::endl;
@@ -519,36 +519,36 @@ QList<toConnectionProviderFinder::ConnectionProvirerParams> toOracleFinder::find
 
     foreach( QString s, possibleOracleHomes)
     {
-    	QDir ohDir(s);
+        QDir ohDir(s);
 #ifdef Q_OS_WIN32
-    	QDir ohLibDir(s + QDir::separator() + QString::fromLatin1("bin"));
+        QDir ohLibDir(s + QDir::separator() + QString::fromLatin1("bin"));
 #else
-		QDir ohLibDir(s + QDir::separator() + QString::fromLatin1("lib"));
+        QDir ohLibDir(s + QDir::separator() + QString::fromLatin1("lib"));
 #endif
-    	QStringList sLibraries = ohLibDir.entryList( m_libname);
-    	QString version;
-    	foreach( QString sLibrary, sLibraries)
-    	{
-    		QString sLibPath = QDir::toNativeSeparators(ohLibDir.canonicalPath()) + QDir::separator() + sLibrary;
+        QStringList sLibraries = ohLibDir.entryList( m_libname);
+        QString version;
+        foreach( QString sLibrary, sLibraries)
+        {
+            QString sLibPath = QDir::toNativeSeparators(ohLibDir.canonicalPath()) + QDir::separator() + sLibrary;
 
-    		if(!Utils::toLibrary::isValidLibrary(sLibPath))
-    		{
-    			TLOG(5, toNoDecorator, __HERE__) << "skipping: " << sLibPath << std::endl;
-    			continue;
-    		}
+            if (!Utils::toLibrary::isValidLibrary(sLibPath))
+            {
+                TLOG(5, toNoDecorator, __HERE__) << "skipping: " << sLibPath << std::endl;
+                continue;
+            }
 
-    		//version = clientVersion(sLibPath);
-    		TLOG(5, toNoDecorator, __HERE__) << "adding: " << sLibPath << ':' << version << std::endl;
-    		ohome.insert("PATH", QDir::toNativeSeparators(ohDir.canonicalPath()));
-    		ohome.insert("ORACLE_HOME", QDir::toNativeSeparators(ohDir.canonicalPath()));
-    		ohome.insert("LIBPATH", sLibPath);
-    		ohome.insert("VERSION", version);
-    		ohome.insert("KEY", name());
-    		ohome.insert("IS INSTANT", false);
-    		ohome.insert("PROVIDER", ORACLE_PROVIDER);
-    		retval.append(ohome);
-    		ohome.clear();
-    	}
+            //version = clientVersion(sLibPath);
+            TLOG(5, toNoDecorator, __HERE__) << "adding: " << sLibPath << ':' << version << std::endl;
+            ohome.insert("PATH", QDir::toNativeSeparators(ohDir.canonicalPath()));
+            ohome.insert("ORACLE_HOME", QDir::toNativeSeparators(ohDir.canonicalPath()));
+            ohome.insert("LIBPATH", sLibPath);
+            ohome.insert("VERSION", version);
+            ohome.insert("KEY", name());
+            ohome.insert("IS INSTANT", false);
+            ohome.insert("PROVIDER", ORACLE_PROVIDER);
+            retval.append(ohome);
+            ohome.clear();
+        }
     }
 
     return retval;
@@ -579,9 +579,9 @@ void toOracleFinder::loadLib(ConnectionProvirerParams const &params)
     TLOG(5, toNoDecorator, __HERE__) << "Loading: " PROVIDER_LIB << std::endl;
     Utils::toLibrary::LHandle hmodulePOracle = Utils::toLibrary::loadLibrary(QFileInfo(PROVIDER_LIB));
     if ( hmodulePOracle)
-    	TLOG(5, toNoDecorator, __HERE__) << "OK" << std::endl;
+        TLOG(5, toNoDecorator, __HERE__) << "OK" << std::endl;
     else
-    	TLOG(5, toNoDecorator, __HERE__) << "Failed" << std::endl;
+        TLOG(5, toNoDecorator, __HERE__) << "Failed" << std::endl;
 #else
     QFileInfo libPath(params.value("LIBPATH").toString());
     TLOG(5, toNoDecorator, __HERE__) << "Loading:" << libPath.absoluteFilePath() << std::endl;
@@ -597,9 +597,9 @@ void toOracleFinder::loadLib(ConnectionProvirerParams const &params)
     TLOG(5, toNoDecorator, __HERE__) << "Loading: " PROVIDER_LIB << std::endl;
     Utils::toLibrary::LHandle hmodulePOracle = Utils::toLibrary::loadLibrary(QFileInfo(QDir(PROVIDERS_PATH), PROVIDER_LIB));
     if ( hmodulePOracle)
-    	TLOG(5, toNoDecorator, __HERE__) << "OK" << std::endl;
+        TLOG(5, toNoDecorator, __HERE__) << "OK" << std::endl;
     else
-    	TLOG(5, toNoDecorator, __HERE__) << "Failed" << std::endl;
+        TLOG(5, toNoDecorator, __HERE__) << "Failed" << std::endl;
 #endif
 }
 

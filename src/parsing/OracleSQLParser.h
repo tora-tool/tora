@@ -4,7 +4,7 @@
  *     -  From the grammar source file : OracleSQL.g
  *     -                            On : 2011-09-20 08:47:36
  *     -                for the parser : OracleSQLParserParser *
- * Editing it, at least manually, is not wise. 
+ * Editing it, at least manually, is not wise.
  *
  * C language generator and runtime by Jim Idle, jimi|hereisanat|idle|dotgoeshere|ws.
  *
@@ -13,7 +13,7 @@
  * which will invoke the code for the associated rule in the source grammar
  * assuming that the input stream is pointing to a token/text stream that could begin
  * this rule.
- * 
+ *
  * For instance if you call the first (topmost) rule in a parser grammar, you will
  * get the results of a full parse, but calling a rule half way through the grammar will
  * allow you to pass part of a full token stream to the parser, such as for syntax checking
@@ -552,7 +552,7 @@
 #define strncasecmp _strnicmp
 #define strcasecmp _stricmp
 #endif
- 
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -571,7 +571,7 @@ typedef struct OracleSQLParser_Ctx_struct OracleSQLParser, * pOracleSQLParser;
 //          constant conditional,							- ANTLR realizes that a prediction is always true (synpred usually)
 //          initialized but unused variable					- tree rewrite variables declared but not needed
 //          Unreferenced local variable						- lexer rule declares but does not always use _type
-//          potentially unitialized variable used			- retval always returned from a rule 
+//          potentially unitialized variable used			- retval always returned from a rule
 //			unreferenced local function has been removed	- susually getTokenNames or freeScope, they can go without warnigns
 //
 // These are only really displayed at warning level /W4 but that is the code ideal I am aiming at
@@ -598,9 +598,9 @@ typedef struct OracleSQLParser_start_rule_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_start_rule_return;
+OracleSQLParser_start_rule_return;
 
 typedef struct OracleSQLParser_delete_statement_return_struct
 {
@@ -609,9 +609,9 @@ typedef struct OracleSQLParser_delete_statement_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_delete_statement_return;
+OracleSQLParser_delete_statement_return;
 
 typedef struct OracleSQLParser_merge_statement_return_struct
 {
@@ -620,9 +620,9 @@ typedef struct OracleSQLParser_merge_statement_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_merge_statement_return;
+OracleSQLParser_merge_statement_return;
 
 typedef struct OracleSQLParser_merge_update_clause_return_struct
 {
@@ -631,9 +631,9 @@ typedef struct OracleSQLParser_merge_update_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_merge_update_clause_return;
+OracleSQLParser_merge_update_clause_return;
 
 typedef struct OracleSQLParser_merge_insert_clause_return_struct
 {
@@ -642,9 +642,9 @@ typedef struct OracleSQLParser_merge_insert_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_merge_insert_clause_return;
+OracleSQLParser_merge_insert_clause_return;
 
 typedef struct OracleSQLParser_insert_statement_return_struct
 {
@@ -653,9 +653,9 @@ typedef struct OracleSQLParser_insert_statement_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_insert_statement_return;
+OracleSQLParser_insert_statement_return;
 
 typedef struct OracleSQLParser_single_table_insert_return_struct
 {
@@ -664,9 +664,9 @@ typedef struct OracleSQLParser_single_table_insert_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_single_table_insert_return;
+OracleSQLParser_single_table_insert_return;
 
 typedef struct OracleSQLParser_insert_into_clause_return_struct
 {
@@ -675,9 +675,9 @@ typedef struct OracleSQLParser_insert_into_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_insert_into_clause_return;
+OracleSQLParser_insert_into_clause_return;
 
 typedef struct OracleSQLParser_values_clause_return_struct
 {
@@ -686,9 +686,9 @@ typedef struct OracleSQLParser_values_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_values_clause_return;
+OracleSQLParser_values_clause_return;
 
 typedef struct OracleSQLParser_returning_clause_return_struct
 {
@@ -697,9 +697,9 @@ typedef struct OracleSQLParser_returning_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_returning_clause_return;
+OracleSQLParser_returning_clause_return;
 
 typedef struct OracleSQLParser_multi_table_insert_return_struct
 {
@@ -708,9 +708,9 @@ typedef struct OracleSQLParser_multi_table_insert_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_multi_table_insert_return;
+OracleSQLParser_multi_table_insert_return;
 
 typedef struct OracleSQLParser_conditional_insert_clause_return_struct
 {
@@ -719,9 +719,9 @@ typedef struct OracleSQLParser_conditional_insert_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_conditional_insert_clause_return;
+OracleSQLParser_conditional_insert_clause_return;
 
 typedef struct OracleSQLParser_dml_table_expression_clause_return_struct
 {
@@ -730,9 +730,9 @@ typedef struct OracleSQLParser_dml_table_expression_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_dml_table_expression_clause_return;
+OracleSQLParser_dml_table_expression_clause_return;
 
 typedef struct OracleSQLParser_error_logging_clause_return_struct
 {
@@ -741,9 +741,9 @@ typedef struct OracleSQLParser_error_logging_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_error_logging_clause_return;
+OracleSQLParser_error_logging_clause_return;
 
 typedef struct OracleSQLParser_data_item_return_struct
 {
@@ -752,9 +752,9 @@ typedef struct OracleSQLParser_data_item_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_data_item_return;
+OracleSQLParser_data_item_return;
 
 typedef struct OracleSQLParser_update_statement_return_struct
 {
@@ -763,9 +763,9 @@ typedef struct OracleSQLParser_update_statement_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_update_statement_return;
+OracleSQLParser_update_statement_return;
 
 typedef struct OracleSQLParser_update_set_clause_return_struct
 {
@@ -774,9 +774,9 @@ typedef struct OracleSQLParser_update_set_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_update_set_clause_return;
+OracleSQLParser_update_set_clause_return;
 
 typedef struct OracleSQLParser_update_set_clause_part1_return_struct
 {
@@ -785,9 +785,9 @@ typedef struct OracleSQLParser_update_set_clause_part1_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_update_set_clause_part1_return;
+OracleSQLParser_update_set_clause_part1_return;
 
 typedef struct OracleSQLParser_update_set_clause_part2_return_struct
 {
@@ -796,9 +796,9 @@ typedef struct OracleSQLParser_update_set_clause_part2_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_update_set_clause_part2_return;
+OracleSQLParser_update_set_clause_part2_return;
 
 typedef struct OracleSQLParser_select_statement_return_struct
 {
@@ -807,9 +807,9 @@ typedef struct OracleSQLParser_select_statement_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_select_statement_return;
+OracleSQLParser_select_statement_return;
 
 typedef struct OracleSQLParser_subquery_factoring_clause_return_struct
 {
@@ -818,9 +818,9 @@ typedef struct OracleSQLParser_subquery_factoring_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_subquery_factoring_clause_return;
+OracleSQLParser_subquery_factoring_clause_return;
 
 typedef struct OracleSQLParser_subquery_factoring_clause_part_first_return_struct
 {
@@ -829,9 +829,9 @@ typedef struct OracleSQLParser_subquery_factoring_clause_part_first_return_struc
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_subquery_factoring_clause_part_first_return;
+OracleSQLParser_subquery_factoring_clause_part_first_return;
 
 typedef struct OracleSQLParser_subquery_factoring_clause_part_next_return_struct
 {
@@ -840,9 +840,9 @@ typedef struct OracleSQLParser_subquery_factoring_clause_part_next_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_subquery_factoring_clause_part_next_return;
+OracleSQLParser_subquery_factoring_clause_part_next_return;
 
 typedef struct OracleSQLParser_search_clause_return_struct
 {
@@ -851,9 +851,9 @@ typedef struct OracleSQLParser_search_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_search_clause_return;
+OracleSQLParser_search_clause_return;
 
 typedef struct OracleSQLParser_cycle_clause_return_struct
 {
@@ -862,9 +862,9 @@ typedef struct OracleSQLParser_cycle_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_cycle_clause_return;
+OracleSQLParser_cycle_clause_return;
 
 typedef struct OracleSQLParser_select_list_return_struct
 {
@@ -873,9 +873,9 @@ typedef struct OracleSQLParser_select_list_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_select_list_return;
+OracleSQLParser_select_list_return;
 
 typedef struct OracleSQLParser_displayed_column_part_first_return_struct
 {
@@ -884,9 +884,9 @@ typedef struct OracleSQLParser_displayed_column_part_first_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_displayed_column_part_first_return;
+OracleSQLParser_displayed_column_part_first_return;
 
 typedef struct OracleSQLParser_displayed_column_part_next_return_struct
 {
@@ -895,9 +895,9 @@ typedef struct OracleSQLParser_displayed_column_part_next_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_displayed_column_part_next_return;
+OracleSQLParser_displayed_column_part_next_return;
 
 typedef struct OracleSQLParser_displayed_column_return_struct
 {
@@ -906,9 +906,9 @@ typedef struct OracleSQLParser_displayed_column_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_displayed_column_return;
+OracleSQLParser_displayed_column_return;
 
 typedef struct OracleSQLParser_sql_expression_return_struct
 {
@@ -917,9 +917,9 @@ typedef struct OracleSQLParser_sql_expression_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_sql_expression_return;
+OracleSQLParser_sql_expression_return;
 
 typedef struct OracleSQLParser_expr_add_return_struct
 {
@@ -928,9 +928,9 @@ typedef struct OracleSQLParser_expr_add_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_expr_add_return;
+OracleSQLParser_expr_add_return;
 
 typedef struct OracleSQLParser_expr_mul_return_struct
 {
@@ -939,9 +939,9 @@ typedef struct OracleSQLParser_expr_mul_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_expr_mul_return;
+OracleSQLParser_expr_mul_return;
 
 typedef struct OracleSQLParser_expr_sign_return_struct
 {
@@ -950,9 +950,9 @@ typedef struct OracleSQLParser_expr_sign_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_expr_sign_return;
+OracleSQLParser_expr_sign_return;
 
 typedef struct OracleSQLParser_expr_expr_return_struct
 {
@@ -961,9 +961,9 @@ typedef struct OracleSQLParser_expr_expr_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_expr_expr_return;
+OracleSQLParser_expr_expr_return;
 
 typedef struct OracleSQLParser_expr_paren_return_struct
 {
@@ -972,9 +972,9 @@ typedef struct OracleSQLParser_expr_paren_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_expr_paren_return;
+OracleSQLParser_expr_paren_return;
 
 typedef struct OracleSQLParser_nested_expression_return_struct
 {
@@ -983,9 +983,9 @@ typedef struct OracleSQLParser_nested_expression_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_nested_expression_return;
+OracleSQLParser_nested_expression_return;
 
 typedef struct OracleSQLParser_function_expression_return_struct
 {
@@ -994,9 +994,9 @@ typedef struct OracleSQLParser_function_expression_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_function_expression_return;
+OracleSQLParser_function_expression_return;
 
 typedef struct OracleSQLParser_call_parameters_return_struct
 {
@@ -1005,9 +1005,9 @@ typedef struct OracleSQLParser_call_parameters_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_call_parameters_return;
+OracleSQLParser_call_parameters_return;
 
 typedef struct OracleSQLParser_call_parameter_return_struct
 {
@@ -1016,9 +1016,9 @@ typedef struct OracleSQLParser_call_parameter_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_call_parameter_return;
+OracleSQLParser_call_parameter_return;
 
 typedef struct OracleSQLParser_parameter_name_return_struct
 {
@@ -1027,9 +1027,9 @@ typedef struct OracleSQLParser_parameter_name_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_parameter_name_return;
+OracleSQLParser_parameter_name_return;
 
 typedef struct OracleSQLParser_special_function_return_struct
 {
@@ -1038,9 +1038,9 @@ typedef struct OracleSQLParser_special_function_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_special_function_return;
+OracleSQLParser_special_function_return;
 
 typedef struct OracleSQLParser_case_expression_return_struct
 {
@@ -1049,9 +1049,9 @@ typedef struct OracleSQLParser_case_expression_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_case_expression_return;
+OracleSQLParser_case_expression_return;
 
 typedef struct OracleSQLParser_cursor_expression_return_struct
 {
@@ -1060,9 +1060,9 @@ typedef struct OracleSQLParser_cursor_expression_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_cursor_expression_return;
+OracleSQLParser_cursor_expression_return;
 
 typedef struct OracleSQLParser_simple_case_expression_return_struct
 {
@@ -1071,9 +1071,9 @@ typedef struct OracleSQLParser_simple_case_expression_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_simple_case_expression_return;
+OracleSQLParser_simple_case_expression_return;
 
 typedef struct OracleSQLParser_searched_case_expression_return_struct
 {
@@ -1082,9 +1082,9 @@ typedef struct OracleSQLParser_searched_case_expression_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_searched_case_expression_return;
+OracleSQLParser_searched_case_expression_return;
 
 typedef struct OracleSQLParser_else_case_expression_return_struct
 {
@@ -1093,9 +1093,9 @@ typedef struct OracleSQLParser_else_case_expression_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_else_case_expression_return;
+OracleSQLParser_else_case_expression_return;
 
 typedef struct OracleSQLParser_object_access_expression_return_struct
 {
@@ -1104,9 +1104,9 @@ typedef struct OracleSQLParser_object_access_expression_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_object_access_expression_return;
+OracleSQLParser_object_access_expression_return;
 
 typedef struct OracleSQLParser_simple_expression_return_struct
 {
@@ -1115,9 +1115,9 @@ typedef struct OracleSQLParser_simple_expression_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_simple_expression_return;
+OracleSQLParser_simple_expression_return;
 
 typedef struct OracleSQLParser_query_block_return_struct
 {
@@ -1126,9 +1126,9 @@ typedef struct OracleSQLParser_query_block_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_query_block_return;
+OracleSQLParser_query_block_return;
 
 typedef struct OracleSQLParser_subquery_return_struct
 {
@@ -1137,9 +1137,9 @@ typedef struct OracleSQLParser_subquery_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_subquery_return;
+OracleSQLParser_subquery_return;
 
 typedef struct OracleSQLParser_timestamp_expression_return_struct
 {
@@ -1148,9 +1148,9 @@ typedef struct OracleSQLParser_timestamp_expression_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_timestamp_expression_return;
+OracleSQLParser_timestamp_expression_return;
 
 typedef struct OracleSQLParser_interval_x_to_y_return_struct
 {
@@ -1159,9 +1159,9 @@ typedef struct OracleSQLParser_interval_x_to_y_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_interval_x_to_y_return;
+OracleSQLParser_interval_x_to_y_return;
 
 typedef struct OracleSQLParser_precision_return_struct
 {
@@ -1170,9 +1170,9 @@ typedef struct OracleSQLParser_precision_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_precision_return;
+OracleSQLParser_precision_return;
 
 typedef struct OracleSQLParser_extract_datetime_expression_return_struct
 {
@@ -1181,9 +1181,9 @@ typedef struct OracleSQLParser_extract_datetime_expression_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_extract_datetime_expression_return;
+OracleSQLParser_extract_datetime_expression_return;
 
 typedef struct OracleSQLParser_datetime_expression_return_struct
 {
@@ -1192,9 +1192,9 @@ typedef struct OracleSQLParser_datetime_expression_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_datetime_expression_return;
+OracleSQLParser_datetime_expression_return;
 
 typedef struct OracleSQLParser_interval_expression_return_struct
 {
@@ -1203,9 +1203,9 @@ typedef struct OracleSQLParser_interval_expression_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_interval_expression_return;
+OracleSQLParser_interval_expression_return;
 
 typedef struct OracleSQLParser_special_expression_return_struct
 {
@@ -1214,9 +1214,9 @@ typedef struct OracleSQLParser_special_expression_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_special_expression_return;
+OracleSQLParser_special_expression_return;
 
 typedef struct OracleSQLParser_cluster_set_clause_return_struct
 {
@@ -1225,9 +1225,9 @@ typedef struct OracleSQLParser_cluster_set_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_cluster_set_clause_return;
+OracleSQLParser_cluster_set_clause_return;
 
 typedef struct OracleSQLParser_cast_expression_return_struct
 {
@@ -1236,9 +1236,9 @@ typedef struct OracleSQLParser_cast_expression_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_cast_expression_return;
+OracleSQLParser_cast_expression_return;
 
 typedef struct OracleSQLParser_datatype_name_return_struct
 {
@@ -1247,9 +1247,9 @@ typedef struct OracleSQLParser_datatype_name_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_datatype_name_return;
+OracleSQLParser_datatype_name_return;
 
 typedef struct OracleSQLParser_boolean_literal_return_struct
 {
@@ -1258,9 +1258,9 @@ typedef struct OracleSQLParser_boolean_literal_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_boolean_literal_return;
+OracleSQLParser_boolean_literal_return;
 
 typedef struct OracleSQLParser_t_alias_return_struct
 {
@@ -1269,9 +1269,9 @@ typedef struct OracleSQLParser_t_alias_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_t_alias_return;
+OracleSQLParser_t_alias_return;
 
 typedef struct OracleSQLParser_c_alias_return_struct
 {
@@ -1280,9 +1280,9 @@ typedef struct OracleSQLParser_c_alias_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_c_alias_return;
+OracleSQLParser_c_alias_return;
 
 typedef struct OracleSQLParser_column_spec_return_struct
 {
@@ -1291,9 +1291,9 @@ typedef struct OracleSQLParser_column_spec_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_column_spec_return;
+OracleSQLParser_column_spec_return;
 
 typedef struct OracleSQLParser_pseudo_column_return_struct
 {
@@ -1302,9 +1302,9 @@ typedef struct OracleSQLParser_pseudo_column_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_pseudo_column_return;
+OracleSQLParser_pseudo_column_return;
 
 typedef struct OracleSQLParser_function_name_return_struct
 {
@@ -1313,9 +1313,9 @@ typedef struct OracleSQLParser_function_name_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_function_name_return;
+OracleSQLParser_function_name_return;
 
 typedef struct OracleSQLParser_function_spec_return_struct
 {
@@ -1324,9 +1324,9 @@ typedef struct OracleSQLParser_function_spec_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_function_spec_return;
+OracleSQLParser_function_spec_return;
 
 typedef struct OracleSQLParser_identifier_return_struct
 {
@@ -1335,9 +1335,9 @@ typedef struct OracleSQLParser_identifier_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_identifier_return;
+OracleSQLParser_identifier_return;
 
 typedef struct OracleSQLParser_bind_variable_return_struct
 {
@@ -1346,9 +1346,9 @@ typedef struct OracleSQLParser_bind_variable_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_bind_variable_return;
+OracleSQLParser_bind_variable_return;
 
 typedef struct OracleSQLParser_sql_identifier_return_struct
 {
@@ -1357,9 +1357,9 @@ typedef struct OracleSQLParser_sql_identifier_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_sql_identifier_return;
+OracleSQLParser_sql_identifier_return;
 
 typedef struct OracleSQLParser_table_reference_list_return_struct
 {
@@ -1368,9 +1368,9 @@ typedef struct OracleSQLParser_table_reference_list_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_table_reference_list_return;
+OracleSQLParser_table_reference_list_return;
 
 typedef struct OracleSQLParser_table_reference_return_struct
 {
@@ -1379,9 +1379,9 @@ typedef struct OracleSQLParser_table_reference_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_table_reference_return;
+OracleSQLParser_table_reference_return;
 
 typedef struct OracleSQLParser_query_table_expression_return_struct
 {
@@ -1390,9 +1390,9 @@ typedef struct OracleSQLParser_query_table_expression_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_query_table_expression_return;
+OracleSQLParser_query_table_expression_return;
 
 typedef struct OracleSQLParser_flashback_query_clause_return_struct
 {
@@ -1401,9 +1401,9 @@ typedef struct OracleSQLParser_flashback_query_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_flashback_query_clause_return;
+OracleSQLParser_flashback_query_clause_return;
 
 typedef struct OracleSQLParser_sample_clause_return_struct
 {
@@ -1412,9 +1412,9 @@ typedef struct OracleSQLParser_sample_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_sample_clause_return;
+OracleSQLParser_sample_clause_return;
 
 typedef struct OracleSQLParser_partition_extension_clause_return_struct
 {
@@ -1423,9 +1423,9 @@ typedef struct OracleSQLParser_partition_extension_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_partition_extension_clause_return;
+OracleSQLParser_partition_extension_clause_return;
 
 typedef struct OracleSQLParser_subquery_restricrion_clause_return_struct
 {
@@ -1434,9 +1434,9 @@ typedef struct OracleSQLParser_subquery_restricrion_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_subquery_restricrion_clause_return;
+OracleSQLParser_subquery_restricrion_clause_return;
 
 typedef struct OracleSQLParser_table_collection_clause_return_struct
 {
@@ -1445,9 +1445,9 @@ typedef struct OracleSQLParser_table_collection_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_table_collection_clause_return;
+OracleSQLParser_table_collection_clause_return;
 
 typedef struct OracleSQLParser_join_clause_return_struct
 {
@@ -1456,9 +1456,9 @@ typedef struct OracleSQLParser_join_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_join_clause_return;
+OracleSQLParser_join_clause_return;
 
 typedef struct OracleSQLParser_inner_cross_join_clause_return_struct
 {
@@ -1467,9 +1467,9 @@ typedef struct OracleSQLParser_inner_cross_join_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_inner_cross_join_clause_return;
+OracleSQLParser_inner_cross_join_clause_return;
 
 typedef struct OracleSQLParser_outer_join_clause_return_struct
 {
@@ -1478,9 +1478,9 @@ typedef struct OracleSQLParser_outer_join_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_outer_join_clause_return;
+OracleSQLParser_outer_join_clause_return;
 
 typedef struct OracleSQLParser_query_partition_clause_return_struct
 {
@@ -1489,9 +1489,9 @@ typedef struct OracleSQLParser_query_partition_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_query_partition_clause_return;
+OracleSQLParser_query_partition_clause_return;
 
 typedef struct OracleSQLParser_outer_join_type_return_struct
 {
@@ -1500,9 +1500,9 @@ typedef struct OracleSQLParser_outer_join_type_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_outer_join_type_return;
+OracleSQLParser_outer_join_type_return;
 
 typedef struct OracleSQLParser_joining_clause_return_struct
 {
@@ -1511,9 +1511,9 @@ typedef struct OracleSQLParser_joining_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_joining_clause_return;
+OracleSQLParser_joining_clause_return;
 
 typedef struct OracleSQLParser_sample_percent_return_struct
 {
@@ -1522,9 +1522,9 @@ typedef struct OracleSQLParser_sample_percent_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_sample_percent_return;
+OracleSQLParser_sample_percent_return;
 
 typedef struct OracleSQLParser_seed_value_return_struct
 {
@@ -1533,9 +1533,9 @@ typedef struct OracleSQLParser_seed_value_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_seed_value_return;
+OracleSQLParser_seed_value_return;
 
 typedef struct OracleSQLParser_outer_join_sign_return_struct
 {
@@ -1544,9 +1544,9 @@ typedef struct OracleSQLParser_outer_join_sign_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_outer_join_sign_return;
+OracleSQLParser_outer_join_sign_return;
 
 typedef struct OracleSQLParser_table_name_long_return_struct
 {
@@ -1555,9 +1555,9 @@ typedef struct OracleSQLParser_table_name_long_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_table_name_long_return;
+OracleSQLParser_table_name_long_return;
 
 typedef struct OracleSQLParser_table_name_return_struct
 {
@@ -1566,9 +1566,9 @@ typedef struct OracleSQLParser_table_name_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_table_name_return;
+OracleSQLParser_table_name_return;
 
 typedef struct OracleSQLParser_schema_name_return_struct
 {
@@ -1577,9 +1577,9 @@ typedef struct OracleSQLParser_schema_name_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_schema_name_return;
+OracleSQLParser_schema_name_return;
 
 typedef struct OracleSQLParser_package_name_return_struct
 {
@@ -1588,9 +1588,9 @@ typedef struct OracleSQLParser_package_name_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_package_name_return;
+OracleSQLParser_package_name_return;
 
 typedef struct OracleSQLParser_dblink_name_return_struct
 {
@@ -1599,9 +1599,9 @@ typedef struct OracleSQLParser_dblink_name_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_dblink_name_return;
+OracleSQLParser_dblink_name_return;
 
 typedef struct OracleSQLParser_column_specs_return_struct
 {
@@ -1610,9 +1610,9 @@ typedef struct OracleSQLParser_column_specs_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_column_specs_return;
+OracleSQLParser_column_specs_return;
 
 typedef struct OracleSQLParser_partition_return_struct
 {
@@ -1621,9 +1621,9 @@ typedef struct OracleSQLParser_partition_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_partition_return;
+OracleSQLParser_partition_return;
 
 typedef struct OracleSQLParser_partition_key_value_return_struct
 {
@@ -1632,9 +1632,9 @@ typedef struct OracleSQLParser_partition_key_value_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_partition_key_value_return;
+OracleSQLParser_partition_key_value_return;
 
 typedef struct OracleSQLParser_subpartition_key_value_return_struct
 {
@@ -1643,9 +1643,9 @@ typedef struct OracleSQLParser_subpartition_key_value_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_subpartition_key_value_return;
+OracleSQLParser_subpartition_key_value_return;
 
 typedef struct OracleSQLParser_constraint_return_struct
 {
@@ -1654,9 +1654,9 @@ typedef struct OracleSQLParser_constraint_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_constraint_return;
+OracleSQLParser_constraint_return;
 
 typedef struct OracleSQLParser_collection_expression_return_struct
 {
@@ -1665,9 +1665,9 @@ typedef struct OracleSQLParser_collection_expression_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_collection_expression_return;
+OracleSQLParser_collection_expression_return;
 
 typedef struct OracleSQLParser_where_clause_return_struct
 {
@@ -1676,9 +1676,9 @@ typedef struct OracleSQLParser_where_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_where_clause_return;
+OracleSQLParser_where_clause_return;
 
 typedef struct OracleSQLParser_hierarchical_query_clause_return_struct
 {
@@ -1687,9 +1687,9 @@ typedef struct OracleSQLParser_hierarchical_query_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_hierarchical_query_clause_return;
+OracleSQLParser_hierarchical_query_clause_return;
 
 typedef struct OracleSQLParser_group_by_clause_return_struct
 {
@@ -1698,9 +1698,9 @@ typedef struct OracleSQLParser_group_by_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_group_by_clause_return;
+OracleSQLParser_group_by_clause_return;
 
 typedef struct OracleSQLParser_group_by_exprs_return_struct
 {
@@ -1709,9 +1709,9 @@ typedef struct OracleSQLParser_group_by_exprs_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_group_by_exprs_return;
+OracleSQLParser_group_by_exprs_return;
 
 typedef struct OracleSQLParser_group_by_expr_return_struct
 {
@@ -1720,9 +1720,9 @@ typedef struct OracleSQLParser_group_by_expr_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_group_by_expr_return;
+OracleSQLParser_group_by_expr_return;
 
 typedef struct OracleSQLParser_rollup_cube_clause_return_struct
 {
@@ -1731,9 +1731,9 @@ typedef struct OracleSQLParser_rollup_cube_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_rollup_cube_clause_return;
+OracleSQLParser_rollup_cube_clause_return;
 
 typedef struct OracleSQLParser_grouping_sets_clause_return_struct
 {
@@ -1742,9 +1742,9 @@ typedef struct OracleSQLParser_grouping_sets_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_grouping_sets_clause_return;
+OracleSQLParser_grouping_sets_clause_return;
 
 typedef struct OracleSQLParser_grouping_sets_exprs_return_struct
 {
@@ -1753,9 +1753,9 @@ typedef struct OracleSQLParser_grouping_sets_exprs_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_grouping_sets_exprs_return;
+OracleSQLParser_grouping_sets_exprs_return;
 
 typedef struct OracleSQLParser_grouping_sets_expr_return_struct
 {
@@ -1764,9 +1764,9 @@ typedef struct OracleSQLParser_grouping_sets_expr_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_grouping_sets_expr_return;
+OracleSQLParser_grouping_sets_expr_return;
 
 typedef struct OracleSQLParser_sql_condition_return_struct
 {
@@ -1775,9 +1775,9 @@ typedef struct OracleSQLParser_sql_condition_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_sql_condition_return;
+OracleSQLParser_sql_condition_return;
 
 typedef struct OracleSQLParser_condition_or_return_struct
 {
@@ -1786,9 +1786,9 @@ typedef struct OracleSQLParser_condition_or_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_condition_or_return;
+OracleSQLParser_condition_or_return;
 
 typedef struct OracleSQLParser_condition_and_return_struct
 {
@@ -1797,9 +1797,9 @@ typedef struct OracleSQLParser_condition_and_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_condition_and_return;
+OracleSQLParser_condition_and_return;
 
 typedef struct OracleSQLParser_condition_not_return_struct
 {
@@ -1808,9 +1808,9 @@ typedef struct OracleSQLParser_condition_not_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_condition_not_return;
+OracleSQLParser_condition_not_return;
 
 typedef struct OracleSQLParser_condition_expr_return_struct
 {
@@ -1819,9 +1819,9 @@ typedef struct OracleSQLParser_condition_expr_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_condition_expr_return;
+OracleSQLParser_condition_expr_return;
 
 typedef struct OracleSQLParser_condition_exists_return_struct
 {
@@ -1830,9 +1830,9 @@ typedef struct OracleSQLParser_condition_exists_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_condition_exists_return;
+OracleSQLParser_condition_exists_return;
 
 typedef struct OracleSQLParser_condition_is_return_struct
 {
@@ -1841,9 +1841,9 @@ typedef struct OracleSQLParser_condition_is_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_condition_is_return;
+OracleSQLParser_condition_is_return;
 
 typedef struct OracleSQLParser_condition_comparison_return_struct
 {
@@ -1852,9 +1852,9 @@ typedef struct OracleSQLParser_condition_comparison_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_condition_comparison_return;
+OracleSQLParser_condition_comparison_return;
 
 typedef struct OracleSQLParser_condition_group_comparison_return_struct
 {
@@ -1863,9 +1863,9 @@ typedef struct OracleSQLParser_condition_group_comparison_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_condition_group_comparison_return;
+OracleSQLParser_condition_group_comparison_return;
 
 typedef struct OracleSQLParser_condition_in_return_struct
 {
@@ -1874,9 +1874,9 @@ typedef struct OracleSQLParser_condition_in_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_condition_in_return;
+OracleSQLParser_condition_in_return;
 
 typedef struct OracleSQLParser_condition_is_a_set_return_struct
 {
@@ -1885,9 +1885,9 @@ typedef struct OracleSQLParser_condition_is_a_set_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_condition_is_a_set_return;
+OracleSQLParser_condition_is_a_set_return;
 
 typedef struct OracleSQLParser_condition_is_any_return_struct
 {
@@ -1896,9 +1896,9 @@ typedef struct OracleSQLParser_condition_is_any_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_condition_is_any_return;
+OracleSQLParser_condition_is_any_return;
 
 typedef struct OracleSQLParser_condition_is_empty_return_struct
 {
@@ -1907,9 +1907,9 @@ typedef struct OracleSQLParser_condition_is_empty_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_condition_is_empty_return;
+OracleSQLParser_condition_is_empty_return;
 
 typedef struct OracleSQLParser_condition_is_of_type_return_struct
 {
@@ -1918,9 +1918,9 @@ typedef struct OracleSQLParser_condition_is_of_type_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_condition_is_of_type_return;
+OracleSQLParser_condition_is_of_type_return;
 
 typedef struct OracleSQLParser_condition_is_present_return_struct
 {
@@ -1929,9 +1929,9 @@ typedef struct OracleSQLParser_condition_is_present_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_condition_is_present_return;
+OracleSQLParser_condition_is_present_return;
 
 typedef struct OracleSQLParser_condition_like_return_struct
 {
@@ -1940,9 +1940,9 @@ typedef struct OracleSQLParser_condition_like_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_condition_like_return;
+OracleSQLParser_condition_like_return;
 
 typedef struct OracleSQLParser_condition_memeber_return_struct
 {
@@ -1951,9 +1951,9 @@ typedef struct OracleSQLParser_condition_memeber_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_condition_memeber_return;
+OracleSQLParser_condition_memeber_return;
 
 typedef struct OracleSQLParser_condition_between_return_struct
 {
@@ -1962,9 +1962,9 @@ typedef struct OracleSQLParser_condition_between_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_condition_between_return;
+OracleSQLParser_condition_between_return;
 
 typedef struct OracleSQLParser_condition_regexp_like_return_struct
 {
@@ -1973,9 +1973,9 @@ typedef struct OracleSQLParser_condition_regexp_like_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_condition_regexp_like_return;
+OracleSQLParser_condition_regexp_like_return;
 
 typedef struct OracleSQLParser_condition_submultiset_return_struct
 {
@@ -1984,9 +1984,9 @@ typedef struct OracleSQLParser_condition_submultiset_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_condition_submultiset_return;
+OracleSQLParser_condition_submultiset_return;
 
 typedef struct OracleSQLParser_condition_equals_path_return_struct
 {
@@ -1995,9 +1995,9 @@ typedef struct OracleSQLParser_condition_equals_path_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_condition_equals_path_return;
+OracleSQLParser_condition_equals_path_return;
 
 typedef struct OracleSQLParser_condition_under_path_return_struct
 {
@@ -2006,9 +2006,9 @@ typedef struct OracleSQLParser_condition_under_path_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_condition_under_path_return;
+OracleSQLParser_condition_under_path_return;
 
 typedef struct OracleSQLParser_levels_return_struct
 {
@@ -2017,9 +2017,9 @@ typedef struct OracleSQLParser_levels_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_levels_return;
+OracleSQLParser_levels_return;
 
 typedef struct OracleSQLParser_correlation_integer_return_struct
 {
@@ -2028,9 +2028,9 @@ typedef struct OracleSQLParser_correlation_integer_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_correlation_integer_return;
+OracleSQLParser_correlation_integer_return;
 
 typedef struct OracleSQLParser_path_string_return_struct
 {
@@ -2039,9 +2039,9 @@ typedef struct OracleSQLParser_path_string_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_path_string_return;
+OracleSQLParser_path_string_return;
 
 typedef struct OracleSQLParser_type_names_return_struct
 {
@@ -2050,9 +2050,9 @@ typedef struct OracleSQLParser_type_names_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_type_names_return;
+OracleSQLParser_type_names_return;
 
 typedef struct OracleSQLParser_integer_return_struct
 {
@@ -2061,9 +2061,9 @@ typedef struct OracleSQLParser_integer_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_integer_return;
+OracleSQLParser_integer_return;
 
 typedef struct OracleSQLParser_column_name_return_struct
 {
@@ -2072,9 +2072,9 @@ typedef struct OracleSQLParser_column_name_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_column_name_return;
+OracleSQLParser_column_name_return;
 
 typedef struct OracleSQLParser_nested_table_return_struct
 {
@@ -2083,9 +2083,9 @@ typedef struct OracleSQLParser_nested_table_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_nested_table_return;
+OracleSQLParser_nested_table_return;
 
 typedef struct OracleSQLParser_nested_table_column_name_return_struct
 {
@@ -2094,9 +2094,9 @@ typedef struct OracleSQLParser_nested_table_column_name_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_nested_table_column_name_return;
+OracleSQLParser_nested_table_column_name_return;
 
 typedef struct OracleSQLParser_sql_expressions_return_struct
 {
@@ -2105,9 +2105,9 @@ typedef struct OracleSQLParser_sql_expressions_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_sql_expressions_return;
+OracleSQLParser_sql_expressions_return;
 
 typedef struct OracleSQLParser_grouping_sets_expression_list_return_struct
 {
@@ -2116,9 +2116,9 @@ typedef struct OracleSQLParser_grouping_sets_expression_list_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_grouping_sets_expression_list_return;
+OracleSQLParser_grouping_sets_expression_list_return;
 
 typedef struct OracleSQLParser_grouping_expression_list_return_struct
 {
@@ -2127,9 +2127,9 @@ typedef struct OracleSQLParser_grouping_expression_list_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_grouping_expression_list_return;
+OracleSQLParser_grouping_expression_list_return;
 
 typedef struct OracleSQLParser_expression_list_return_struct
 {
@@ -2138,9 +2138,9 @@ typedef struct OracleSQLParser_expression_list_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_expression_list_return;
+OracleSQLParser_expression_list_return;
 
 typedef struct OracleSQLParser_cell_reference_return_struct
 {
@@ -2149,9 +2149,9 @@ typedef struct OracleSQLParser_cell_reference_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_cell_reference_return;
+OracleSQLParser_cell_reference_return;
 
 typedef struct OracleSQLParser_condition_paren_return_struct
 {
@@ -2160,9 +2160,9 @@ typedef struct OracleSQLParser_condition_paren_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_condition_paren_return;
+OracleSQLParser_condition_paren_return;
 
 typedef struct OracleSQLParser_model_clause_return_struct
 {
@@ -2171,9 +2171,9 @@ typedef struct OracleSQLParser_model_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_model_clause_return;
+OracleSQLParser_model_clause_return;
 
 typedef struct OracleSQLParser_cell_reference_options_return_struct
 {
@@ -2182,9 +2182,9 @@ typedef struct OracleSQLParser_cell_reference_options_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_cell_reference_options_return;
+OracleSQLParser_cell_reference_options_return;
 
 typedef struct OracleSQLParser_return_rows_clause_return_struct
 {
@@ -2193,9 +2193,9 @@ typedef struct OracleSQLParser_return_rows_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_return_rows_clause_return;
+OracleSQLParser_return_rows_clause_return;
 
 typedef struct OracleSQLParser_reference_model_return_struct
 {
@@ -2204,9 +2204,9 @@ typedef struct OracleSQLParser_reference_model_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_reference_model_return;
+OracleSQLParser_reference_model_return;
 
 typedef struct OracleSQLParser_reference_model_name_return_struct
 {
@@ -2215,9 +2215,9 @@ typedef struct OracleSQLParser_reference_model_name_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_reference_model_name_return;
+OracleSQLParser_reference_model_name_return;
 
 typedef struct OracleSQLParser_main_model_return_struct
 {
@@ -2226,9 +2226,9 @@ typedef struct OracleSQLParser_main_model_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_main_model_return;
+OracleSQLParser_main_model_return;
 
 typedef struct OracleSQLParser_main_model_name_return_struct
 {
@@ -2237,9 +2237,9 @@ typedef struct OracleSQLParser_main_model_name_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_main_model_name_return;
+OracleSQLParser_main_model_name_return;
 
 typedef struct OracleSQLParser_model_column_clauses_return_struct
 {
@@ -2248,9 +2248,9 @@ typedef struct OracleSQLParser_model_column_clauses_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_model_column_clauses_return;
+OracleSQLParser_model_column_clauses_return;
 
 typedef struct OracleSQLParser_model_columns_return_struct
 {
@@ -2259,9 +2259,9 @@ typedef struct OracleSQLParser_model_columns_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_model_columns_return;
+OracleSQLParser_model_columns_return;
 
 typedef struct OracleSQLParser_model_column_return_struct
 {
@@ -2270,9 +2270,9 @@ typedef struct OracleSQLParser_model_column_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_model_column_return;
+OracleSQLParser_model_column_return;
 
 typedef struct OracleSQLParser_model_rules_clause_return_struct
 {
@@ -2281,9 +2281,9 @@ typedef struct OracleSQLParser_model_rules_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_model_rules_clause_return;
+OracleSQLParser_model_rules_clause_return;
 
 typedef struct OracleSQLParser_model_rules_exprs_return_struct
 {
@@ -2292,9 +2292,9 @@ typedef struct OracleSQLParser_model_rules_exprs_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_model_rules_exprs_return;
+OracleSQLParser_model_rules_exprs_return;
 
 typedef struct OracleSQLParser_model_rules_expr_return_struct
 {
@@ -2303,9 +2303,9 @@ typedef struct OracleSQLParser_model_rules_expr_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_model_rules_expr_return;
+OracleSQLParser_model_rules_expr_return;
 
 typedef struct OracleSQLParser_cell_assignment_return_struct
 {
@@ -2314,9 +2314,9 @@ typedef struct OracleSQLParser_cell_assignment_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_cell_assignment_return;
+OracleSQLParser_cell_assignment_return;
 
 typedef struct OracleSQLParser_cell_assignment_exprs_return_struct
 {
@@ -2325,9 +2325,9 @@ typedef struct OracleSQLParser_cell_assignment_exprs_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_cell_assignment_exprs_return;
+OracleSQLParser_cell_assignment_exprs_return;
 
 typedef struct OracleSQLParser_cell_assignment_expr_return_struct
 {
@@ -2336,9 +2336,9 @@ typedef struct OracleSQLParser_cell_assignment_expr_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_cell_assignment_expr_return;
+OracleSQLParser_cell_assignment_expr_return;
 
 typedef struct OracleSQLParser_measure_column_return_struct
 {
@@ -2347,9 +2347,9 @@ typedef struct OracleSQLParser_measure_column_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_measure_column_return;
+OracleSQLParser_measure_column_return;
 
 typedef struct OracleSQLParser_single_column_for_loop_return_struct
 {
@@ -2358,9 +2358,9 @@ typedef struct OracleSQLParser_single_column_for_loop_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_single_column_for_loop_return;
+OracleSQLParser_single_column_for_loop_return;
 
 typedef struct OracleSQLParser_pattern_return_struct
 {
@@ -2369,9 +2369,9 @@ typedef struct OracleSQLParser_pattern_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_pattern_return;
+OracleSQLParser_pattern_return;
 
 typedef struct OracleSQLParser_literal_return_struct
 {
@@ -2380,9 +2380,9 @@ typedef struct OracleSQLParser_literal_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_literal_return;
+OracleSQLParser_literal_return;
 
 typedef struct OracleSQLParser_literals_return_struct
 {
@@ -2391,9 +2391,9 @@ typedef struct OracleSQLParser_literals_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_literals_return;
+OracleSQLParser_literals_return;
 
 typedef struct OracleSQLParser_multi_column_for_loop_return_struct
 {
@@ -2402,9 +2402,9 @@ typedef struct OracleSQLParser_multi_column_for_loop_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_multi_column_for_loop_return;
+OracleSQLParser_multi_column_for_loop_return;
 
 typedef struct OracleSQLParser_bracket_literals_return_struct
 {
@@ -2413,9 +2413,9 @@ typedef struct OracleSQLParser_bracket_literals_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_bracket_literals_return;
+OracleSQLParser_bracket_literals_return;
 
 typedef struct OracleSQLParser_bracket_literals_list_return_struct
 {
@@ -2424,9 +2424,9 @@ typedef struct OracleSQLParser_bracket_literals_list_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_bracket_literals_list_return;
+OracleSQLParser_bracket_literals_list_return;
 
 typedef struct OracleSQLParser_union_clause_return_struct
 {
@@ -2435,9 +2435,9 @@ typedef struct OracleSQLParser_union_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_union_clause_return;
+OracleSQLParser_union_clause_return;
 
 typedef struct OracleSQLParser_order_by_clause_return_struct
 {
@@ -2446,9 +2446,9 @@ typedef struct OracleSQLParser_order_by_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_order_by_clause_return;
+OracleSQLParser_order_by_clause_return;
 
 typedef struct OracleSQLParser_order_by_clause_part_first_return_struct
 {
@@ -2457,9 +2457,9 @@ typedef struct OracleSQLParser_order_by_clause_part_first_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_order_by_clause_part_first_return;
+OracleSQLParser_order_by_clause_part_first_return;
 
 typedef struct OracleSQLParser_order_by_clause_part_next_return_struct
 {
@@ -2468,9 +2468,9 @@ typedef struct OracleSQLParser_order_by_clause_part_next_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_order_by_clause_part_next_return;
+OracleSQLParser_order_by_clause_part_next_return;
 
 typedef struct OracleSQLParser_analytic_function_name_return_struct
 {
@@ -2479,9 +2479,9 @@ typedef struct OracleSQLParser_analytic_function_name_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_analytic_function_name_return;
+OracleSQLParser_analytic_function_name_return;
 
 typedef struct OracleSQLParser_analytic_function_call_return_struct
 {
@@ -2490,9 +2490,9 @@ typedef struct OracleSQLParser_analytic_function_call_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_analytic_function_call_return;
+OracleSQLParser_analytic_function_call_return;
 
 typedef struct OracleSQLParser_analytic_function_return_struct
 {
@@ -2501,9 +2501,9 @@ typedef struct OracleSQLParser_analytic_function_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_analytic_function_return;
+OracleSQLParser_analytic_function_return;
 
 typedef struct OracleSQLParser_count_function_return_struct
 {
@@ -2512,9 +2512,9 @@ typedef struct OracleSQLParser_count_function_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_count_function_return;
+OracleSQLParser_count_function_return;
 
 typedef struct OracleSQLParser_analytic_clause_return_struct
 {
@@ -2523,9 +2523,9 @@ typedef struct OracleSQLParser_analytic_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_analytic_clause_return;
+OracleSQLParser_analytic_clause_return;
 
 typedef struct OracleSQLParser_windowing_clause_part_return_struct
 {
@@ -2534,9 +2534,9 @@ typedef struct OracleSQLParser_windowing_clause_part_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_windowing_clause_part_return;
+OracleSQLParser_windowing_clause_part_return;
 
 typedef struct OracleSQLParser_windowing_clause_return_struct
 {
@@ -2545,9 +2545,9 @@ typedef struct OracleSQLParser_windowing_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_windowing_clause_return;
+OracleSQLParser_windowing_clause_return;
 
 typedef struct OracleSQLParser_aggregate_function_name_return_struct
 {
@@ -2556,9 +2556,9 @@ typedef struct OracleSQLParser_aggregate_function_name_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_aggregate_function_name_return;
+OracleSQLParser_aggregate_function_name_return;
 
 typedef struct OracleSQLParser_aggregate_function_return_struct
 {
@@ -2567,9 +2567,9 @@ typedef struct OracleSQLParser_aggregate_function_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_aggregate_function_return;
+OracleSQLParser_aggregate_function_return;
 
 typedef struct OracleSQLParser_percent_rank_aggregate_return_struct
 {
@@ -2578,9 +2578,9 @@ typedef struct OracleSQLParser_percent_rank_aggregate_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_percent_rank_aggregate_return;
+OracleSQLParser_percent_rank_aggregate_return;
 
 typedef struct OracleSQLParser_dense_rank_aggregate_return_struct
 {
@@ -2589,9 +2589,9 @@ typedef struct OracleSQLParser_dense_rank_aggregate_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_dense_rank_aggregate_return;
+OracleSQLParser_dense_rank_aggregate_return;
 
 typedef struct OracleSQLParser_percent_rank_analytic_return_struct
 {
@@ -2600,9 +2600,9 @@ typedef struct OracleSQLParser_percent_rank_analytic_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_percent_rank_analytic_return;
+OracleSQLParser_percent_rank_analytic_return;
 
 typedef struct OracleSQLParser_percent_cont_disc_analytic_return_struct
 {
@@ -2611,9 +2611,9 @@ typedef struct OracleSQLParser_percent_cont_disc_analytic_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_percent_cont_disc_analytic_return;
+OracleSQLParser_percent_cont_disc_analytic_return;
 
 typedef struct OracleSQLParser_dense_rank_analytic_return_struct
 {
@@ -2622,9 +2622,9 @@ typedef struct OracleSQLParser_dense_rank_analytic_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_dense_rank_analytic_return;
+OracleSQLParser_dense_rank_analytic_return;
 
 typedef struct OracleSQLParser_first_last_return_struct
 {
@@ -2633,9 +2633,9 @@ typedef struct OracleSQLParser_first_last_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_first_last_return;
+OracleSQLParser_first_last_return;
 
 typedef struct OracleSQLParser_listagg_return_struct
 {
@@ -2644,9 +2644,9 @@ typedef struct OracleSQLParser_listagg_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_listagg_return;
+OracleSQLParser_listagg_return;
 
 typedef struct OracleSQLParser_for_update_clause_return_struct
 {
@@ -2655,9 +2655,9 @@ typedef struct OracleSQLParser_for_update_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_for_update_clause_return;
+OracleSQLParser_for_update_clause_return;
 
 typedef struct OracleSQLParser_for_update_clause_part_first_return_struct
 {
@@ -2666,9 +2666,9 @@ typedef struct OracleSQLParser_for_update_clause_part_first_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_for_update_clause_part_first_return;
+OracleSQLParser_for_update_clause_part_first_return;
 
 typedef struct OracleSQLParser_for_update_clause_part_next_return_struct
 {
@@ -2677,9 +2677,9 @@ typedef struct OracleSQLParser_for_update_clause_part_next_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_for_update_clause_part_next_return;
+OracleSQLParser_for_update_clause_part_next_return;
 
 typedef struct OracleSQLParser_pivot_clause_return_struct
 {
@@ -2688,9 +2688,9 @@ typedef struct OracleSQLParser_pivot_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_pivot_clause_return;
+OracleSQLParser_pivot_clause_return;
 
 typedef struct OracleSQLParser_pivot_for_clause_return_struct
 {
@@ -2699,9 +2699,9 @@ typedef struct OracleSQLParser_pivot_for_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_pivot_for_clause_return;
+OracleSQLParser_pivot_for_clause_return;
 
 typedef struct OracleSQLParser_pivot_in_clause_return_struct
 {
@@ -2710,9 +2710,9 @@ typedef struct OracleSQLParser_pivot_in_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_pivot_in_clause_return;
+OracleSQLParser_pivot_in_clause_return;
 
 typedef struct OracleSQLParser_unpivot_clause_return_struct
 {
@@ -2721,9 +2721,9 @@ typedef struct OracleSQLParser_unpivot_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_unpivot_clause_return;
+OracleSQLParser_unpivot_clause_return;
 
 typedef struct OracleSQLParser_unpivot_in_clause_return_struct
 {
@@ -2732,9 +2732,9 @@ typedef struct OracleSQLParser_unpivot_in_clause_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_unpivot_in_clause_return;
+OracleSQLParser_unpivot_in_clause_return;
 
 typedef struct OracleSQLParser_constant_return_struct
 {
@@ -2743,9 +2743,9 @@ typedef struct OracleSQLParser_constant_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_constant_return;
+OracleSQLParser_constant_return;
 
 typedef struct OracleSQLParser_r_access_return_struct
 {
@@ -2754,9 +2754,9 @@ typedef struct OracleSQLParser_r_access_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_access_return;
+OracleSQLParser_r_access_return;
 
 typedef struct OracleSQLParser_r_add_return_struct
 {
@@ -2765,9 +2765,9 @@ typedef struct OracleSQLParser_r_add_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_add_return;
+OracleSQLParser_r_add_return;
 
 typedef struct OracleSQLParser_r_all_return_struct
 {
@@ -2776,9 +2776,9 @@ typedef struct OracleSQLParser_r_all_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_all_return;
+OracleSQLParser_r_all_return;
 
 typedef struct OracleSQLParser_r_alter_return_struct
 {
@@ -2787,9 +2787,9 @@ typedef struct OracleSQLParser_r_alter_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_alter_return;
+OracleSQLParser_r_alter_return;
 
 typedef struct OracleSQLParser_r_and_return_struct
 {
@@ -2798,9 +2798,9 @@ typedef struct OracleSQLParser_r_and_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_and_return;
+OracleSQLParser_r_and_return;
 
 typedef struct OracleSQLParser_r_any_return_struct
 {
@@ -2809,9 +2809,9 @@ typedef struct OracleSQLParser_r_any_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_any_return;
+OracleSQLParser_r_any_return;
 
 typedef struct OracleSQLParser_r_arraylen_return_struct
 {
@@ -2820,9 +2820,9 @@ typedef struct OracleSQLParser_r_arraylen_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_arraylen_return;
+OracleSQLParser_r_arraylen_return;
 
 typedef struct OracleSQLParser_r_as_return_struct
 {
@@ -2831,9 +2831,9 @@ typedef struct OracleSQLParser_r_as_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_as_return;
+OracleSQLParser_r_as_return;
 
 typedef struct OracleSQLParser_r_asc_return_struct
 {
@@ -2842,9 +2842,9 @@ typedef struct OracleSQLParser_r_asc_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_asc_return;
+OracleSQLParser_r_asc_return;
 
 typedef struct OracleSQLParser_r_audit_return_struct
 {
@@ -2853,9 +2853,9 @@ typedef struct OracleSQLParser_r_audit_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_audit_return;
+OracleSQLParser_r_audit_return;
 
 typedef struct OracleSQLParser_r_between_return_struct
 {
@@ -2864,9 +2864,9 @@ typedef struct OracleSQLParser_r_between_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_between_return;
+OracleSQLParser_r_between_return;
 
 typedef struct OracleSQLParser_r_by_return_struct
 {
@@ -2875,9 +2875,9 @@ typedef struct OracleSQLParser_r_by_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_by_return;
+OracleSQLParser_r_by_return;
 
 typedef struct OracleSQLParser_r_case_return_struct
 {
@@ -2886,9 +2886,9 @@ typedef struct OracleSQLParser_r_case_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_case_return;
+OracleSQLParser_r_case_return;
 
 typedef struct OracleSQLParser_r_char_return_struct
 {
@@ -2897,9 +2897,9 @@ typedef struct OracleSQLParser_r_char_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_char_return;
+OracleSQLParser_r_char_return;
 
 typedef struct OracleSQLParser_r_check_return_struct
 {
@@ -2908,9 +2908,9 @@ typedef struct OracleSQLParser_r_check_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_check_return;
+OracleSQLParser_r_check_return;
 
 typedef struct OracleSQLParser_r_cluster_return_struct
 {
@@ -2919,9 +2919,9 @@ typedef struct OracleSQLParser_r_cluster_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_cluster_return;
+OracleSQLParser_r_cluster_return;
 
 typedef struct OracleSQLParser_r_column_return_struct
 {
@@ -2930,9 +2930,9 @@ typedef struct OracleSQLParser_r_column_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_column_return;
+OracleSQLParser_r_column_return;
 
 typedef struct OracleSQLParser_r_comment_return_struct
 {
@@ -2941,9 +2941,9 @@ typedef struct OracleSQLParser_r_comment_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_comment_return;
+OracleSQLParser_r_comment_return;
 
 typedef struct OracleSQLParser_r_compress_return_struct
 {
@@ -2952,9 +2952,9 @@ typedef struct OracleSQLParser_r_compress_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_compress_return;
+OracleSQLParser_r_compress_return;
 
 typedef struct OracleSQLParser_r_connect_return_struct
 {
@@ -2963,9 +2963,9 @@ typedef struct OracleSQLParser_r_connect_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_connect_return;
+OracleSQLParser_r_connect_return;
 
 typedef struct OracleSQLParser_r_create_return_struct
 {
@@ -2974,9 +2974,9 @@ typedef struct OracleSQLParser_r_create_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_create_return;
+OracleSQLParser_r_create_return;
 
 typedef struct OracleSQLParser_r_current_return_struct
 {
@@ -2985,9 +2985,9 @@ typedef struct OracleSQLParser_r_current_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_current_return;
+OracleSQLParser_r_current_return;
 
 typedef struct OracleSQLParser_r_date_return_struct
 {
@@ -2996,9 +2996,9 @@ typedef struct OracleSQLParser_r_date_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_date_return;
+OracleSQLParser_r_date_return;
 
 typedef struct OracleSQLParser_r_decimal_return_struct
 {
@@ -3007,9 +3007,9 @@ typedef struct OracleSQLParser_r_decimal_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_decimal_return;
+OracleSQLParser_r_decimal_return;
 
 typedef struct OracleSQLParser_r_default_return_struct
 {
@@ -3018,9 +3018,9 @@ typedef struct OracleSQLParser_r_default_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_default_return;
+OracleSQLParser_r_default_return;
 
 typedef struct OracleSQLParser_r_delete_return_struct
 {
@@ -3029,9 +3029,9 @@ typedef struct OracleSQLParser_r_delete_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_delete_return;
+OracleSQLParser_r_delete_return;
 
 typedef struct OracleSQLParser_r_desc_return_struct
 {
@@ -3040,9 +3040,9 @@ typedef struct OracleSQLParser_r_desc_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_desc_return;
+OracleSQLParser_r_desc_return;
 
 typedef struct OracleSQLParser_r_distinct_return_struct
 {
@@ -3051,9 +3051,9 @@ typedef struct OracleSQLParser_r_distinct_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_distinct_return;
+OracleSQLParser_r_distinct_return;
 
 typedef struct OracleSQLParser_r_drop_return_struct
 {
@@ -3062,9 +3062,9 @@ typedef struct OracleSQLParser_r_drop_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_drop_return;
+OracleSQLParser_r_drop_return;
 
 typedef struct OracleSQLParser_r_else_return_struct
 {
@@ -3073,9 +3073,9 @@ typedef struct OracleSQLParser_r_else_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_else_return;
+OracleSQLParser_r_else_return;
 
 typedef struct OracleSQLParser_r_exclusive_return_struct
 {
@@ -3084,9 +3084,9 @@ typedef struct OracleSQLParser_r_exclusive_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_exclusive_return;
+OracleSQLParser_r_exclusive_return;
 
 typedef struct OracleSQLParser_r_exists_return_struct
 {
@@ -3095,9 +3095,9 @@ typedef struct OracleSQLParser_r_exists_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_exists_return;
+OracleSQLParser_r_exists_return;
 
 typedef struct OracleSQLParser_r_false_return_struct
 {
@@ -3106,9 +3106,9 @@ typedef struct OracleSQLParser_r_false_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_false_return;
+OracleSQLParser_r_false_return;
 
 typedef struct OracleSQLParser_r_file_return_struct
 {
@@ -3117,9 +3117,9 @@ typedef struct OracleSQLParser_r_file_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_file_return;
+OracleSQLParser_r_file_return;
 
 typedef struct OracleSQLParser_r_float_return_struct
 {
@@ -3128,9 +3128,9 @@ typedef struct OracleSQLParser_r_float_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_float_return;
+OracleSQLParser_r_float_return;
 
 typedef struct OracleSQLParser_r_for_return_struct
 {
@@ -3139,9 +3139,9 @@ typedef struct OracleSQLParser_r_for_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_for_return;
+OracleSQLParser_r_for_return;
 
 typedef struct OracleSQLParser_r_from_return_struct
 {
@@ -3150,9 +3150,9 @@ typedef struct OracleSQLParser_r_from_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_from_return;
+OracleSQLParser_r_from_return;
 
 typedef struct OracleSQLParser_r_grant_return_struct
 {
@@ -3161,9 +3161,9 @@ typedef struct OracleSQLParser_r_grant_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_grant_return;
+OracleSQLParser_r_grant_return;
 
 typedef struct OracleSQLParser_r_group_return_struct
 {
@@ -3172,9 +3172,9 @@ typedef struct OracleSQLParser_r_group_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_group_return;
+OracleSQLParser_r_group_return;
 
 typedef struct OracleSQLParser_r_having_return_struct
 {
@@ -3183,9 +3183,9 @@ typedef struct OracleSQLParser_r_having_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_having_return;
+OracleSQLParser_r_having_return;
 
 typedef struct OracleSQLParser_r_identified_return_struct
 {
@@ -3194,9 +3194,9 @@ typedef struct OracleSQLParser_r_identified_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_identified_return;
+OracleSQLParser_r_identified_return;
 
 typedef struct OracleSQLParser_r_immediate_return_struct
 {
@@ -3205,9 +3205,9 @@ typedef struct OracleSQLParser_r_immediate_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_immediate_return;
+OracleSQLParser_r_immediate_return;
 
 typedef struct OracleSQLParser_r_in_return_struct
 {
@@ -3216,9 +3216,9 @@ typedef struct OracleSQLParser_r_in_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_in_return;
+OracleSQLParser_r_in_return;
 
 typedef struct OracleSQLParser_r_increment_return_struct
 {
@@ -3227,9 +3227,9 @@ typedef struct OracleSQLParser_r_increment_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_increment_return;
+OracleSQLParser_r_increment_return;
 
 typedef struct OracleSQLParser_r_index_return_struct
 {
@@ -3238,9 +3238,9 @@ typedef struct OracleSQLParser_r_index_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_index_return;
+OracleSQLParser_r_index_return;
 
 typedef struct OracleSQLParser_r_initial_return_struct
 {
@@ -3249,9 +3249,9 @@ typedef struct OracleSQLParser_r_initial_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_initial_return;
+OracleSQLParser_r_initial_return;
 
 typedef struct OracleSQLParser_r_insert_return_struct
 {
@@ -3260,9 +3260,9 @@ typedef struct OracleSQLParser_r_insert_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_insert_return;
+OracleSQLParser_r_insert_return;
 
 typedef struct OracleSQLParser_r_integer_return_struct
 {
@@ -3271,9 +3271,9 @@ typedef struct OracleSQLParser_r_integer_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_integer_return;
+OracleSQLParser_r_integer_return;
 
 typedef struct OracleSQLParser_r_intersect_return_struct
 {
@@ -3282,9 +3282,9 @@ typedef struct OracleSQLParser_r_intersect_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_intersect_return;
+OracleSQLParser_r_intersect_return;
 
 typedef struct OracleSQLParser_r_into_return_struct
 {
@@ -3293,9 +3293,9 @@ typedef struct OracleSQLParser_r_into_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_into_return;
+OracleSQLParser_r_into_return;
 
 typedef struct OracleSQLParser_r_is_return_struct
 {
@@ -3304,9 +3304,9 @@ typedef struct OracleSQLParser_r_is_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_is_return;
+OracleSQLParser_r_is_return;
 
 typedef struct OracleSQLParser_r_level_return_struct
 {
@@ -3315,9 +3315,9 @@ typedef struct OracleSQLParser_r_level_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_level_return;
+OracleSQLParser_r_level_return;
 
 typedef struct OracleSQLParser_r_like_return_struct
 {
@@ -3326,9 +3326,9 @@ typedef struct OracleSQLParser_r_like_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_like_return;
+OracleSQLParser_r_like_return;
 
 typedef struct OracleSQLParser_r_lock_return_struct
 {
@@ -3337,9 +3337,9 @@ typedef struct OracleSQLParser_r_lock_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_lock_return;
+OracleSQLParser_r_lock_return;
 
 typedef struct OracleSQLParser_r_long_return_struct
 {
@@ -3348,9 +3348,9 @@ typedef struct OracleSQLParser_r_long_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_long_return;
+OracleSQLParser_r_long_return;
 
 typedef struct OracleSQLParser_r_maxextents_return_struct
 {
@@ -3359,9 +3359,9 @@ typedef struct OracleSQLParser_r_maxextents_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_maxextents_return;
+OracleSQLParser_r_maxextents_return;
 
 typedef struct OracleSQLParser_r_minus_return_struct
 {
@@ -3370,9 +3370,9 @@ typedef struct OracleSQLParser_r_minus_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_minus_return;
+OracleSQLParser_r_minus_return;
 
 typedef struct OracleSQLParser_r_mode_return_struct
 {
@@ -3381,9 +3381,9 @@ typedef struct OracleSQLParser_r_mode_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_mode_return;
+OracleSQLParser_r_mode_return;
 
 typedef struct OracleSQLParser_r_modify_return_struct
 {
@@ -3392,9 +3392,9 @@ typedef struct OracleSQLParser_r_modify_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_modify_return;
+OracleSQLParser_r_modify_return;
 
 typedef struct OracleSQLParser_r_noaudit_return_struct
 {
@@ -3403,9 +3403,9 @@ typedef struct OracleSQLParser_r_noaudit_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_noaudit_return;
+OracleSQLParser_r_noaudit_return;
 
 typedef struct OracleSQLParser_r_nocompress_return_struct
 {
@@ -3414,9 +3414,9 @@ typedef struct OracleSQLParser_r_nocompress_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_nocompress_return;
+OracleSQLParser_r_nocompress_return;
 
 typedef struct OracleSQLParser_r_not_return_struct
 {
@@ -3425,9 +3425,9 @@ typedef struct OracleSQLParser_r_not_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_not_return;
+OracleSQLParser_r_not_return;
 
 typedef struct OracleSQLParser_r_notfound_return_struct
 {
@@ -3436,9 +3436,9 @@ typedef struct OracleSQLParser_r_notfound_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_notfound_return;
+OracleSQLParser_r_notfound_return;
 
 typedef struct OracleSQLParser_r_nowait_return_struct
 {
@@ -3447,9 +3447,9 @@ typedef struct OracleSQLParser_r_nowait_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_nowait_return;
+OracleSQLParser_r_nowait_return;
 
 typedef struct OracleSQLParser_r_null_return_struct
 {
@@ -3458,9 +3458,9 @@ typedef struct OracleSQLParser_r_null_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_null_return;
+OracleSQLParser_r_null_return;
 
 typedef struct OracleSQLParser_r_number_return_struct
 {
@@ -3469,9 +3469,9 @@ typedef struct OracleSQLParser_r_number_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_number_return;
+OracleSQLParser_r_number_return;
 
 typedef struct OracleSQLParser_r_of_return_struct
 {
@@ -3480,9 +3480,9 @@ typedef struct OracleSQLParser_r_of_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_of_return;
+OracleSQLParser_r_of_return;
 
 typedef struct OracleSQLParser_r_offline_return_struct
 {
@@ -3491,9 +3491,9 @@ typedef struct OracleSQLParser_r_offline_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_offline_return;
+OracleSQLParser_r_offline_return;
 
 typedef struct OracleSQLParser_r_on_return_struct
 {
@@ -3502,9 +3502,9 @@ typedef struct OracleSQLParser_r_on_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_on_return;
+OracleSQLParser_r_on_return;
 
 typedef struct OracleSQLParser_r_online_return_struct
 {
@@ -3513,9 +3513,9 @@ typedef struct OracleSQLParser_r_online_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_online_return;
+OracleSQLParser_r_online_return;
 
 typedef struct OracleSQLParser_r_option_return_struct
 {
@@ -3524,9 +3524,9 @@ typedef struct OracleSQLParser_r_option_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_option_return;
+OracleSQLParser_r_option_return;
 
 typedef struct OracleSQLParser_r_or_return_struct
 {
@@ -3535,9 +3535,9 @@ typedef struct OracleSQLParser_r_or_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_or_return;
+OracleSQLParser_r_or_return;
 
 typedef struct OracleSQLParser_r_order_return_struct
 {
@@ -3546,9 +3546,9 @@ typedef struct OracleSQLParser_r_order_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_order_return;
+OracleSQLParser_r_order_return;
 
 typedef struct OracleSQLParser_r_pctfree_return_struct
 {
@@ -3557,9 +3557,9 @@ typedef struct OracleSQLParser_r_pctfree_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_pctfree_return;
+OracleSQLParser_r_pctfree_return;
 
 typedef struct OracleSQLParser_r_prior_return_struct
 {
@@ -3568,9 +3568,9 @@ typedef struct OracleSQLParser_r_prior_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_prior_return;
+OracleSQLParser_r_prior_return;
 
 typedef struct OracleSQLParser_r_privileges_return_struct
 {
@@ -3579,9 +3579,9 @@ typedef struct OracleSQLParser_r_privileges_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_privileges_return;
+OracleSQLParser_r_privileges_return;
 
 typedef struct OracleSQLParser_r_public_return_struct
 {
@@ -3590,9 +3590,9 @@ typedef struct OracleSQLParser_r_public_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_public_return;
+OracleSQLParser_r_public_return;
 
 typedef struct OracleSQLParser_r_raw_return_struct
 {
@@ -3601,9 +3601,9 @@ typedef struct OracleSQLParser_r_raw_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_raw_return;
+OracleSQLParser_r_raw_return;
 
 typedef struct OracleSQLParser_r_rename_return_struct
 {
@@ -3612,9 +3612,9 @@ typedef struct OracleSQLParser_r_rename_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_rename_return;
+OracleSQLParser_r_rename_return;
 
 typedef struct OracleSQLParser_r_resource_return_struct
 {
@@ -3623,9 +3623,9 @@ typedef struct OracleSQLParser_r_resource_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_resource_return;
+OracleSQLParser_r_resource_return;
 
 typedef struct OracleSQLParser_r_revoke_return_struct
 {
@@ -3634,9 +3634,9 @@ typedef struct OracleSQLParser_r_revoke_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_revoke_return;
+OracleSQLParser_r_revoke_return;
 
 typedef struct OracleSQLParser_r_row_return_struct
 {
@@ -3645,9 +3645,9 @@ typedef struct OracleSQLParser_r_row_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_row_return;
+OracleSQLParser_r_row_return;
 
 typedef struct OracleSQLParser_r_rowid_return_struct
 {
@@ -3656,9 +3656,9 @@ typedef struct OracleSQLParser_r_rowid_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_rowid_return;
+OracleSQLParser_r_rowid_return;
 
 typedef struct OracleSQLParser_r_rowlabel_return_struct
 {
@@ -3667,9 +3667,9 @@ typedef struct OracleSQLParser_r_rowlabel_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_rowlabel_return;
+OracleSQLParser_r_rowlabel_return;
 
 typedef struct OracleSQLParser_r_rownum_return_struct
 {
@@ -3678,9 +3678,9 @@ typedef struct OracleSQLParser_r_rownum_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_rownum_return;
+OracleSQLParser_r_rownum_return;
 
 typedef struct OracleSQLParser_r_rows_return_struct
 {
@@ -3689,9 +3689,9 @@ typedef struct OracleSQLParser_r_rows_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_rows_return;
+OracleSQLParser_r_rows_return;
 
 typedef struct OracleSQLParser_r_select_return_struct
 {
@@ -3700,9 +3700,9 @@ typedef struct OracleSQLParser_r_select_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_select_return;
+OracleSQLParser_r_select_return;
 
 typedef struct OracleSQLParser_r_session_return_struct
 {
@@ -3711,9 +3711,9 @@ typedef struct OracleSQLParser_r_session_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_session_return;
+OracleSQLParser_r_session_return;
 
 typedef struct OracleSQLParser_r_set_return_struct
 {
@@ -3722,9 +3722,9 @@ typedef struct OracleSQLParser_r_set_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_set_return;
+OracleSQLParser_r_set_return;
 
 typedef struct OracleSQLParser_r_share_return_struct
 {
@@ -3733,9 +3733,9 @@ typedef struct OracleSQLParser_r_share_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_share_return;
+OracleSQLParser_r_share_return;
 
 typedef struct OracleSQLParser_r_size_return_struct
 {
@@ -3744,9 +3744,9 @@ typedef struct OracleSQLParser_r_size_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_size_return;
+OracleSQLParser_r_size_return;
 
 typedef struct OracleSQLParser_r_smallint_return_struct
 {
@@ -3755,9 +3755,9 @@ typedef struct OracleSQLParser_r_smallint_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_smallint_return;
+OracleSQLParser_r_smallint_return;
 
 typedef struct OracleSQLParser_r_sqlbuf_return_struct
 {
@@ -3766,9 +3766,9 @@ typedef struct OracleSQLParser_r_sqlbuf_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_sqlbuf_return;
+OracleSQLParser_r_sqlbuf_return;
 
 typedef struct OracleSQLParser_r_start_return_struct
 {
@@ -3777,9 +3777,9 @@ typedef struct OracleSQLParser_r_start_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_start_return;
+OracleSQLParser_r_start_return;
 
 typedef struct OracleSQLParser_r_successful_return_struct
 {
@@ -3788,9 +3788,9 @@ typedef struct OracleSQLParser_r_successful_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_successful_return;
+OracleSQLParser_r_successful_return;
 
 typedef struct OracleSQLParser_r_synonym_return_struct
 {
@@ -3799,9 +3799,9 @@ typedef struct OracleSQLParser_r_synonym_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_synonym_return;
+OracleSQLParser_r_synonym_return;
 
 typedef struct OracleSQLParser_r_sysdate_return_struct
 {
@@ -3810,9 +3810,9 @@ typedef struct OracleSQLParser_r_sysdate_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_sysdate_return;
+OracleSQLParser_r_sysdate_return;
 
 typedef struct OracleSQLParser_r_table_return_struct
 {
@@ -3821,9 +3821,9 @@ typedef struct OracleSQLParser_r_table_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_table_return;
+OracleSQLParser_r_table_return;
 
 typedef struct OracleSQLParser_r_then_return_struct
 {
@@ -3832,9 +3832,9 @@ typedef struct OracleSQLParser_r_then_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_then_return;
+OracleSQLParser_r_then_return;
 
 typedef struct OracleSQLParser_r_to_return_struct
 {
@@ -3843,9 +3843,9 @@ typedef struct OracleSQLParser_r_to_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_to_return;
+OracleSQLParser_r_to_return;
 
 typedef struct OracleSQLParser_r_trigger_return_struct
 {
@@ -3854,9 +3854,9 @@ typedef struct OracleSQLParser_r_trigger_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_trigger_return;
+OracleSQLParser_r_trigger_return;
 
 typedef struct OracleSQLParser_r_true_return_struct
 {
@@ -3865,9 +3865,9 @@ typedef struct OracleSQLParser_r_true_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_true_return;
+OracleSQLParser_r_true_return;
 
 typedef struct OracleSQLParser_r_uid_return_struct
 {
@@ -3876,9 +3876,9 @@ typedef struct OracleSQLParser_r_uid_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_uid_return;
+OracleSQLParser_r_uid_return;
 
 typedef struct OracleSQLParser_r_union_return_struct
 {
@@ -3887,9 +3887,9 @@ typedef struct OracleSQLParser_r_union_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_union_return;
+OracleSQLParser_r_union_return;
 
 typedef struct OracleSQLParser_r_unique_return_struct
 {
@@ -3898,9 +3898,9 @@ typedef struct OracleSQLParser_r_unique_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_unique_return;
+OracleSQLParser_r_unique_return;
 
 typedef struct OracleSQLParser_r_update_return_struct
 {
@@ -3909,9 +3909,9 @@ typedef struct OracleSQLParser_r_update_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_update_return;
+OracleSQLParser_r_update_return;
 
 typedef struct OracleSQLParser_r_user_return_struct
 {
@@ -3920,9 +3920,9 @@ typedef struct OracleSQLParser_r_user_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_user_return;
+OracleSQLParser_r_user_return;
 
 typedef struct OracleSQLParser_r_validate_return_struct
 {
@@ -3931,9 +3931,9 @@ typedef struct OracleSQLParser_r_validate_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_validate_return;
+OracleSQLParser_r_validate_return;
 
 typedef struct OracleSQLParser_r_values_return_struct
 {
@@ -3942,9 +3942,9 @@ typedef struct OracleSQLParser_r_values_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_values_return;
+OracleSQLParser_r_values_return;
 
 typedef struct OracleSQLParser_r_varchar_return_struct
 {
@@ -3953,9 +3953,9 @@ typedef struct OracleSQLParser_r_varchar_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_varchar_return;
+OracleSQLParser_r_varchar_return;
 
 typedef struct OracleSQLParser_r_varchar2_return_struct
 {
@@ -3964,9 +3964,9 @@ typedef struct OracleSQLParser_r_varchar2_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_varchar2_return;
+OracleSQLParser_r_varchar2_return;
 
 typedef struct OracleSQLParser_r_view_return_struct
 {
@@ -3975,9 +3975,9 @@ typedef struct OracleSQLParser_r_view_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_view_return;
+OracleSQLParser_r_view_return;
 
 typedef struct OracleSQLParser_r_whenever_return_struct
 {
@@ -3986,9 +3986,9 @@ typedef struct OracleSQLParser_r_whenever_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_whenever_return;
+OracleSQLParser_r_whenever_return;
 
 typedef struct OracleSQLParser_r_where_return_struct
 {
@@ -3997,9 +3997,9 @@ typedef struct OracleSQLParser_r_where_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_where_return;
+OracleSQLParser_r_where_return;
 
 typedef struct OracleSQLParser_r_with_return_struct
 {
@@ -4008,9 +4008,9 @@ typedef struct OracleSQLParser_r_with_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_r_with_return;
+OracleSQLParser_r_with_return;
 
 typedef struct OracleSQLParser_k_a_return_struct
 {
@@ -4019,9 +4019,9 @@ typedef struct OracleSQLParser_k_a_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_a_return;
+OracleSQLParser_k_a_return;
 
 typedef struct OracleSQLParser_k_at_return_struct
 {
@@ -4030,9 +4030,9 @@ typedef struct OracleSQLParser_k_at_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_at_return;
+OracleSQLParser_k_at_return;
 
 typedef struct OracleSQLParser_k_automatic_return_struct
 {
@@ -4041,9 +4041,9 @@ typedef struct OracleSQLParser_k_automatic_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_automatic_return;
+OracleSQLParser_k_automatic_return;
 
 typedef struct OracleSQLParser_k_bfile_return_struct
 {
@@ -4052,9 +4052,9 @@ typedef struct OracleSQLParser_k_bfile_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_bfile_return;
+OracleSQLParser_k_bfile_return;
 
 typedef struct OracleSQLParser_k_binary_double_return_struct
 {
@@ -4063,9 +4063,9 @@ typedef struct OracleSQLParser_k_binary_double_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_binary_double_return;
+OracleSQLParser_k_binary_double_return;
 
 typedef struct OracleSQLParser_k_binary_float_return_struct
 {
@@ -4074,9 +4074,9 @@ typedef struct OracleSQLParser_k_binary_float_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_binary_float_return;
+OracleSQLParser_k_binary_float_return;
 
 typedef struct OracleSQLParser_k_binary_integer_return_struct
 {
@@ -4085,9 +4085,9 @@ typedef struct OracleSQLParser_k_binary_integer_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_binary_integer_return;
+OracleSQLParser_k_binary_integer_return;
 
 typedef struct OracleSQLParser_k_blob_return_struct
 {
@@ -4096,9 +4096,9 @@ typedef struct OracleSQLParser_k_blob_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_blob_return;
+OracleSQLParser_k_blob_return;
 
 typedef struct OracleSQLParser_k_block_return_struct
 {
@@ -4107,9 +4107,9 @@ typedef struct OracleSQLParser_k_block_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_block_return;
+OracleSQLParser_k_block_return;
 
 typedef struct OracleSQLParser_k_boolean_return_struct
 {
@@ -4118,9 +4118,9 @@ typedef struct OracleSQLParser_k_boolean_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_boolean_return;
+OracleSQLParser_k_boolean_return;
 
 typedef struct OracleSQLParser_k_both_return_struct
 {
@@ -4129,9 +4129,9 @@ typedef struct OracleSQLParser_k_both_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_both_return;
+OracleSQLParser_k_both_return;
 
 typedef struct OracleSQLParser_k_breadth_return_struct
 {
@@ -4140,9 +4140,9 @@ typedef struct OracleSQLParser_k_breadth_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_breadth_return;
+OracleSQLParser_k_breadth_return;
 
 typedef struct OracleSQLParser_k_byte_return_struct
 {
@@ -4151,9 +4151,9 @@ typedef struct OracleSQLParser_k_byte_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_byte_return;
+OracleSQLParser_k_byte_return;
 
 typedef struct OracleSQLParser_k_cast_return_struct
 {
@@ -4162,9 +4162,9 @@ typedef struct OracleSQLParser_k_cast_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_cast_return;
+OracleSQLParser_k_cast_return;
 
 typedef struct OracleSQLParser_k_character_return_struct
 {
@@ -4173,9 +4173,9 @@ typedef struct OracleSQLParser_k_character_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_character_return;
+OracleSQLParser_k_character_return;
 
 typedef struct OracleSQLParser_k_clob_return_struct
 {
@@ -4184,9 +4184,9 @@ typedef struct OracleSQLParser_k_clob_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_clob_return;
+OracleSQLParser_k_clob_return;
 
 typedef struct OracleSQLParser_k_cluster_set_return_struct
 {
@@ -4195,9 +4195,9 @@ typedef struct OracleSQLParser_k_cluster_set_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_cluster_set_return;
+OracleSQLParser_k_cluster_set_return;
 
 typedef struct OracleSQLParser_k_connect_by_root_return_struct
 {
@@ -4206,9 +4206,9 @@ typedef struct OracleSQLParser_k_connect_by_root_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_connect_by_root_return;
+OracleSQLParser_k_connect_by_root_return;
 
 typedef struct OracleSQLParser_k_constraint_return_struct
 {
@@ -4217,9 +4217,9 @@ typedef struct OracleSQLParser_k_constraint_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_constraint_return;
+OracleSQLParser_k_constraint_return;
 
 typedef struct OracleSQLParser_k_count_return_struct
 {
@@ -4228,9 +4228,9 @@ typedef struct OracleSQLParser_k_count_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_count_return;
+OracleSQLParser_k_count_return;
 
 typedef struct OracleSQLParser_k_cross_return_struct
 {
@@ -4239,9 +4239,9 @@ typedef struct OracleSQLParser_k_cross_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_cross_return;
+OracleSQLParser_k_cross_return;
 
 typedef struct OracleSQLParser_k_cube_return_struct
 {
@@ -4250,9 +4250,9 @@ typedef struct OracleSQLParser_k_cube_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_cube_return;
+OracleSQLParser_k_cube_return;
 
 typedef struct OracleSQLParser_k_cursor_return_struct
 {
@@ -4261,9 +4261,9 @@ typedef struct OracleSQLParser_k_cursor_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_cursor_return;
+OracleSQLParser_k_cursor_return;
 
 typedef struct OracleSQLParser_k_cycle_return_struct
 {
@@ -4272,9 +4272,9 @@ typedef struct OracleSQLParser_k_cycle_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_cycle_return;
+OracleSQLParser_k_cycle_return;
 
 typedef struct OracleSQLParser_k_day_return_struct
 {
@@ -4283,9 +4283,9 @@ typedef struct OracleSQLParser_k_day_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_day_return;
+OracleSQLParser_k_day_return;
 
 typedef struct OracleSQLParser_k_dbtimezone_return_struct
 {
@@ -4294,9 +4294,9 @@ typedef struct OracleSQLParser_k_dbtimezone_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_dbtimezone_return;
+OracleSQLParser_k_dbtimezone_return;
 
 typedef struct OracleSQLParser_k_dec_return_struct
 {
@@ -4305,9 +4305,9 @@ typedef struct OracleSQLParser_k_dec_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_dec_return;
+OracleSQLParser_k_dec_return;
 
 typedef struct OracleSQLParser_k_decrement_return_struct
 {
@@ -4316,9 +4316,9 @@ typedef struct OracleSQLParser_k_decrement_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_decrement_return;
+OracleSQLParser_k_decrement_return;
 
 typedef struct OracleSQLParser_k_dense_rank_return_struct
 {
@@ -4327,9 +4327,9 @@ typedef struct OracleSQLParser_k_dense_rank_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_dense_rank_return;
+OracleSQLParser_k_dense_rank_return;
 
 typedef struct OracleSQLParser_k_depth_return_struct
 {
@@ -4338,9 +4338,9 @@ typedef struct OracleSQLParser_k_depth_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_depth_return;
+OracleSQLParser_k_depth_return;
 
 typedef struct OracleSQLParser_k_dimension_return_struct
 {
@@ -4349,9 +4349,9 @@ typedef struct OracleSQLParser_k_dimension_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_dimension_return;
+OracleSQLParser_k_dimension_return;
 
 typedef struct OracleSQLParser_k_double_return_struct
 {
@@ -4360,9 +4360,9 @@ typedef struct OracleSQLParser_k_double_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_double_return;
+OracleSQLParser_k_double_return;
 
 typedef struct OracleSQLParser_k_empty_return_struct
 {
@@ -4371,9 +4371,9 @@ typedef struct OracleSQLParser_k_empty_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_empty_return;
+OracleSQLParser_k_empty_return;
 
 typedef struct OracleSQLParser_k_end_return_struct
 {
@@ -4382,9 +4382,9 @@ typedef struct OracleSQLParser_k_end_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_end_return;
+OracleSQLParser_k_end_return;
 
 typedef struct OracleSQLParser_k_equals_path_return_struct
 {
@@ -4393,9 +4393,9 @@ typedef struct OracleSQLParser_k_equals_path_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_equals_path_return;
+OracleSQLParser_k_equals_path_return;
 
 typedef struct OracleSQLParser_k_errors_return_struct
 {
@@ -4404,9 +4404,9 @@ typedef struct OracleSQLParser_k_errors_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_errors_return;
+OracleSQLParser_k_errors_return;
 
 typedef struct OracleSQLParser_k_escape_return_struct
 {
@@ -4415,9 +4415,9 @@ typedef struct OracleSQLParser_k_escape_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_escape_return;
+OracleSQLParser_k_escape_return;
 
 typedef struct OracleSQLParser_k_exclude_return_struct
 {
@@ -4426,9 +4426,9 @@ typedef struct OracleSQLParser_k_exclude_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_exclude_return;
+OracleSQLParser_k_exclude_return;
 
 typedef struct OracleSQLParser_k_extract_return_struct
 {
@@ -4437,9 +4437,9 @@ typedef struct OracleSQLParser_k_extract_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_extract_return;
+OracleSQLParser_k_extract_return;
 
 typedef struct OracleSQLParser_k_first_return_struct
 {
@@ -4448,9 +4448,9 @@ typedef struct OracleSQLParser_k_first_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_first_return;
+OracleSQLParser_k_first_return;
 
 typedef struct OracleSQLParser_k_following_return_struct
 {
@@ -4459,9 +4459,9 @@ typedef struct OracleSQLParser_k_following_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_following_return;
+OracleSQLParser_k_following_return;
 
 typedef struct OracleSQLParser_k_full_return_struct
 {
@@ -4470,9 +4470,9 @@ typedef struct OracleSQLParser_k_full_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_full_return;
+OracleSQLParser_k_full_return;
 
 typedef struct OracleSQLParser_k_grouping_return_struct
 {
@@ -4481,9 +4481,9 @@ typedef struct OracleSQLParser_k_grouping_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_grouping_return;
+OracleSQLParser_k_grouping_return;
 
 typedef struct OracleSQLParser_k_hour_return_struct
 {
@@ -4492,9 +4492,9 @@ typedef struct OracleSQLParser_k_hour_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_hour_return;
+OracleSQLParser_k_hour_return;
 
 typedef struct OracleSQLParser_k_ignore_return_struct
 {
@@ -4503,9 +4503,9 @@ typedef struct OracleSQLParser_k_ignore_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_ignore_return;
+OracleSQLParser_k_ignore_return;
 
 typedef struct OracleSQLParser_k_include_return_struct
 {
@@ -4514,9 +4514,9 @@ typedef struct OracleSQLParser_k_include_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_include_return;
+OracleSQLParser_k_include_return;
 
 typedef struct OracleSQLParser_k_infinite_return_struct
 {
@@ -4525,9 +4525,9 @@ typedef struct OracleSQLParser_k_infinite_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_infinite_return;
+OracleSQLParser_k_infinite_return;
 
 typedef struct OracleSQLParser_k_inner_return_struct
 {
@@ -4536,9 +4536,9 @@ typedef struct OracleSQLParser_k_inner_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_inner_return;
+OracleSQLParser_k_inner_return;
 
 typedef struct OracleSQLParser_k_int_return_struct
 {
@@ -4547,9 +4547,9 @@ typedef struct OracleSQLParser_k_int_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_int_return;
+OracleSQLParser_k_int_return;
 
 typedef struct OracleSQLParser_k_interval_return_struct
 {
@@ -4558,9 +4558,9 @@ typedef struct OracleSQLParser_k_interval_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_interval_return;
+OracleSQLParser_k_interval_return;
 
 typedef struct OracleSQLParser_k_iterate_return_struct
 {
@@ -4569,9 +4569,9 @@ typedef struct OracleSQLParser_k_iterate_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_iterate_return;
+OracleSQLParser_k_iterate_return;
 
 typedef struct OracleSQLParser_k_join_return_struct
 {
@@ -4580,9 +4580,9 @@ typedef struct OracleSQLParser_k_join_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_join_return;
+OracleSQLParser_k_join_return;
 
 typedef struct OracleSQLParser_k_keep_return_struct
 {
@@ -4591,9 +4591,9 @@ typedef struct OracleSQLParser_k_keep_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_keep_return;
+OracleSQLParser_k_keep_return;
 
 typedef struct OracleSQLParser_k_last_return_struct
 {
@@ -4602,9 +4602,9 @@ typedef struct OracleSQLParser_k_last_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_last_return;
+OracleSQLParser_k_last_return;
 
 typedef struct OracleSQLParser_k_leading_return_struct
 {
@@ -4613,9 +4613,9 @@ typedef struct OracleSQLParser_k_leading_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_leading_return;
+OracleSQLParser_k_leading_return;
 
 typedef struct OracleSQLParser_k_left_return_struct
 {
@@ -4624,9 +4624,9 @@ typedef struct OracleSQLParser_k_left_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_left_return;
+OracleSQLParser_k_left_return;
 
 typedef struct OracleSQLParser_k_like2_return_struct
 {
@@ -4635,9 +4635,9 @@ typedef struct OracleSQLParser_k_like2_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_like2_return;
+OracleSQLParser_k_like2_return;
 
 typedef struct OracleSQLParser_k_like4_return_struct
 {
@@ -4646,9 +4646,9 @@ typedef struct OracleSQLParser_k_like4_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_like4_return;
+OracleSQLParser_k_like4_return;
 
 typedef struct OracleSQLParser_k_likec_return_struct
 {
@@ -4657,9 +4657,9 @@ typedef struct OracleSQLParser_k_likec_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_likec_return;
+OracleSQLParser_k_likec_return;
 
 typedef struct OracleSQLParser_k_limit_return_struct
 {
@@ -4668,9 +4668,9 @@ typedef struct OracleSQLParser_k_limit_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_limit_return;
+OracleSQLParser_k_limit_return;
 
 typedef struct OracleSQLParser_k_listagg_return_struct
 {
@@ -4679,9 +4679,9 @@ typedef struct OracleSQLParser_k_listagg_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_listagg_return;
+OracleSQLParser_k_listagg_return;
 
 typedef struct OracleSQLParser_k_lnnvl_return_struct
 {
@@ -4690,9 +4690,9 @@ typedef struct OracleSQLParser_k_lnnvl_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_lnnvl_return;
+OracleSQLParser_k_lnnvl_return;
 
 typedef struct OracleSQLParser_k_local_return_struct
 {
@@ -4701,9 +4701,9 @@ typedef struct OracleSQLParser_k_local_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_local_return;
+OracleSQLParser_k_local_return;
 
 typedef struct OracleSQLParser_k_locked_return_struct
 {
@@ -4712,9 +4712,9 @@ typedef struct OracleSQLParser_k_locked_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_locked_return;
+OracleSQLParser_k_locked_return;
 
 typedef struct OracleSQLParser_k_log_return_struct
 {
@@ -4723,9 +4723,9 @@ typedef struct OracleSQLParser_k_log_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_log_return;
+OracleSQLParser_k_log_return;
 
 typedef struct OracleSQLParser_k_main_return_struct
 {
@@ -4734,9 +4734,9 @@ typedef struct OracleSQLParser_k_main_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_main_return;
+OracleSQLParser_k_main_return;
 
 typedef struct OracleSQLParser_k_matched_return_struct
 {
@@ -4745,9 +4745,9 @@ typedef struct OracleSQLParser_k_matched_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_matched_return;
+OracleSQLParser_k_matched_return;
 
 typedef struct OracleSQLParser_k_maxvalue_return_struct
 {
@@ -4756,9 +4756,9 @@ typedef struct OracleSQLParser_k_maxvalue_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_maxvalue_return;
+OracleSQLParser_k_maxvalue_return;
 
 typedef struct OracleSQLParser_k_measures_return_struct
 {
@@ -4767,9 +4767,9 @@ typedef struct OracleSQLParser_k_measures_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_measures_return;
+OracleSQLParser_k_measures_return;
 
 typedef struct OracleSQLParser_k_member_return_struct
 {
@@ -4778,9 +4778,9 @@ typedef struct OracleSQLParser_k_member_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_member_return;
+OracleSQLParser_k_member_return;
 
 typedef struct OracleSQLParser_k_merge_return_struct
 {
@@ -4789,9 +4789,9 @@ typedef struct OracleSQLParser_k_merge_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_merge_return;
+OracleSQLParser_k_merge_return;
 
 typedef struct OracleSQLParser_k_minute_return_struct
 {
@@ -4800,9 +4800,9 @@ typedef struct OracleSQLParser_k_minute_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_minute_return;
+OracleSQLParser_k_minute_return;
 
 typedef struct OracleSQLParser_k_mivalue_return_struct
 {
@@ -4811,9 +4811,9 @@ typedef struct OracleSQLParser_k_mivalue_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_mivalue_return;
+OracleSQLParser_k_mivalue_return;
 
 typedef struct OracleSQLParser_k_mlslabel_return_struct
 {
@@ -4822,9 +4822,9 @@ typedef struct OracleSQLParser_k_mlslabel_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_mlslabel_return;
+OracleSQLParser_k_mlslabel_return;
 
 typedef struct OracleSQLParser_k_model_return_struct
 {
@@ -4833,9 +4833,9 @@ typedef struct OracleSQLParser_k_model_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_model_return;
+OracleSQLParser_k_model_return;
 
 typedef struct OracleSQLParser_k_month_return_struct
 {
@@ -4844,9 +4844,9 @@ typedef struct OracleSQLParser_k_month_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_month_return;
+OracleSQLParser_k_month_return;
 
 typedef struct OracleSQLParser_k_multiset_return_struct
 {
@@ -4855,9 +4855,9 @@ typedef struct OracleSQLParser_k_multiset_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_multiset_return;
+OracleSQLParser_k_multiset_return;
 
 typedef struct OracleSQLParser_k_nan_return_struct
 {
@@ -4866,9 +4866,9 @@ typedef struct OracleSQLParser_k_nan_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_nan_return;
+OracleSQLParser_k_nan_return;
 
 typedef struct OracleSQLParser_k_national_return_struct
 {
@@ -4877,9 +4877,9 @@ typedef struct OracleSQLParser_k_national_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_national_return;
+OracleSQLParser_k_national_return;
 
 typedef struct OracleSQLParser_k_natural_return_struct
 {
@@ -4888,9 +4888,9 @@ typedef struct OracleSQLParser_k_natural_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_natural_return;
+OracleSQLParser_k_natural_return;
 
 typedef struct OracleSQLParser_k_nav_return_struct
 {
@@ -4899,9 +4899,9 @@ typedef struct OracleSQLParser_k_nav_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_nav_return;
+OracleSQLParser_k_nav_return;
 
 typedef struct OracleSQLParser_k_nchar_return_struct
 {
@@ -4910,9 +4910,9 @@ typedef struct OracleSQLParser_k_nchar_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_nchar_return;
+OracleSQLParser_k_nchar_return;
 
 typedef struct OracleSQLParser_k_nclob_return_struct
 {
@@ -4921,9 +4921,9 @@ typedef struct OracleSQLParser_k_nclob_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_nclob_return;
+OracleSQLParser_k_nclob_return;
 
 typedef struct OracleSQLParser_k_nocycle_return_struct
 {
@@ -4932,9 +4932,9 @@ typedef struct OracleSQLParser_k_nocycle_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_nocycle_return;
+OracleSQLParser_k_nocycle_return;
 
 typedef struct OracleSQLParser_k_nulls_return_struct
 {
@@ -4943,9 +4943,9 @@ typedef struct OracleSQLParser_k_nulls_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_nulls_return;
+OracleSQLParser_k_nulls_return;
 
 typedef struct OracleSQLParser_k_numeric_return_struct
 {
@@ -4954,9 +4954,9 @@ typedef struct OracleSQLParser_k_numeric_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_numeric_return;
+OracleSQLParser_k_numeric_return;
 
 typedef struct OracleSQLParser_k_nvarchar_return_struct
 {
@@ -4965,9 +4965,9 @@ typedef struct OracleSQLParser_k_nvarchar_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_nvarchar_return;
+OracleSQLParser_k_nvarchar_return;
 
 typedef struct OracleSQLParser_k_nvarchar2_return_struct
 {
@@ -4976,9 +4976,9 @@ typedef struct OracleSQLParser_k_nvarchar2_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_nvarchar2_return;
+OracleSQLParser_k_nvarchar2_return;
 
 typedef struct OracleSQLParser_k_only_return_struct
 {
@@ -4987,9 +4987,9 @@ typedef struct OracleSQLParser_k_only_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_only_return;
+OracleSQLParser_k_only_return;
 
 typedef struct OracleSQLParser_k_outer_return_struct
 {
@@ -4998,9 +4998,9 @@ typedef struct OracleSQLParser_k_outer_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_outer_return;
+OracleSQLParser_k_outer_return;
 
 typedef struct OracleSQLParser_k_over_return_struct
 {
@@ -5009,9 +5009,9 @@ typedef struct OracleSQLParser_k_over_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_over_return;
+OracleSQLParser_k_over_return;
 
 typedef struct OracleSQLParser_k_partition_return_struct
 {
@@ -5020,9 +5020,9 @@ typedef struct OracleSQLParser_k_partition_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_partition_return;
+OracleSQLParser_k_partition_return;
 
 typedef struct OracleSQLParser_k_percent_rank_return_struct
 {
@@ -5031,9 +5031,9 @@ typedef struct OracleSQLParser_k_percent_rank_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_percent_rank_return;
+OracleSQLParser_k_percent_rank_return;
 
 typedef struct OracleSQLParser_k_percentile_cont_return_struct
 {
@@ -5042,9 +5042,9 @@ typedef struct OracleSQLParser_k_percentile_cont_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_percentile_cont_return;
+OracleSQLParser_k_percentile_cont_return;
 
 typedef struct OracleSQLParser_k_percentile_disc_return_struct
 {
@@ -5053,9 +5053,9 @@ typedef struct OracleSQLParser_k_percentile_disc_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_percentile_disc_return;
+OracleSQLParser_k_percentile_disc_return;
 
 typedef struct OracleSQLParser_k_pivot_return_struct
 {
@@ -5064,9 +5064,9 @@ typedef struct OracleSQLParser_k_pivot_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_pivot_return;
+OracleSQLParser_k_pivot_return;
 
 typedef struct OracleSQLParser_k_pls_integer_return_struct
 {
@@ -5075,9 +5075,9 @@ typedef struct OracleSQLParser_k_pls_integer_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_pls_integer_return;
+OracleSQLParser_k_pls_integer_return;
 
 typedef struct OracleSQLParser_k_positive_return_struct
 {
@@ -5086,9 +5086,9 @@ typedef struct OracleSQLParser_k_positive_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_positive_return;
+OracleSQLParser_k_positive_return;
 
 typedef struct OracleSQLParser_k_preceding_return_struct
 {
@@ -5097,9 +5097,9 @@ typedef struct OracleSQLParser_k_preceding_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_preceding_return;
+OracleSQLParser_k_preceding_return;
 
 typedef struct OracleSQLParser_k_precision_return_struct
 {
@@ -5108,9 +5108,9 @@ typedef struct OracleSQLParser_k_precision_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_precision_return;
+OracleSQLParser_k_precision_return;
 
 typedef struct OracleSQLParser_k_present_return_struct
 {
@@ -5119,9 +5119,9 @@ typedef struct OracleSQLParser_k_present_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_present_return;
+OracleSQLParser_k_present_return;
 
 typedef struct OracleSQLParser_k_range_return_struct
 {
@@ -5130,9 +5130,9 @@ typedef struct OracleSQLParser_k_range_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_range_return;
+OracleSQLParser_k_range_return;
 
 typedef struct OracleSQLParser_k_read_return_struct
 {
@@ -5141,9 +5141,9 @@ typedef struct OracleSQLParser_k_read_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_read_return;
+OracleSQLParser_k_read_return;
 
 typedef struct OracleSQLParser_k_real_return_struct
 {
@@ -5152,9 +5152,9 @@ typedef struct OracleSQLParser_k_real_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_real_return;
+OracleSQLParser_k_real_return;
 
 typedef struct OracleSQLParser_k_reference_return_struct
 {
@@ -5163,9 +5163,9 @@ typedef struct OracleSQLParser_k_reference_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_reference_return;
+OracleSQLParser_k_reference_return;
 
 typedef struct OracleSQLParser_k_regexp_like_return_struct
 {
@@ -5174,9 +5174,9 @@ typedef struct OracleSQLParser_k_regexp_like_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_regexp_like_return;
+OracleSQLParser_k_regexp_like_return;
 
 typedef struct OracleSQLParser_k_reject_return_struct
 {
@@ -5185,9 +5185,9 @@ typedef struct OracleSQLParser_k_reject_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_reject_return;
+OracleSQLParser_k_reject_return;
 
 typedef struct OracleSQLParser_k_respect_return_struct
 {
@@ -5196,9 +5196,9 @@ typedef struct OracleSQLParser_k_respect_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_respect_return;
+OracleSQLParser_k_respect_return;
 
 typedef struct OracleSQLParser_k_return_return_struct
 {
@@ -5207,9 +5207,9 @@ typedef struct OracleSQLParser_k_return_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_return_return;
+OracleSQLParser_k_return_return;
 
 typedef struct OracleSQLParser_k_returning_return_struct
 {
@@ -5218,9 +5218,9 @@ typedef struct OracleSQLParser_k_returning_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_returning_return;
+OracleSQLParser_k_returning_return;
 
 typedef struct OracleSQLParser_k_right_return_struct
 {
@@ -5229,9 +5229,9 @@ typedef struct OracleSQLParser_k_right_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_right_return;
+OracleSQLParser_k_right_return;
 
 typedef struct OracleSQLParser_k_rollup_return_struct
 {
@@ -5240,9 +5240,9 @@ typedef struct OracleSQLParser_k_rollup_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_rollup_return;
+OracleSQLParser_k_rollup_return;
 
 typedef struct OracleSQLParser_k_rules_return_struct
 {
@@ -5251,9 +5251,9 @@ typedef struct OracleSQLParser_k_rules_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_rules_return;
+OracleSQLParser_k_rules_return;
 
 typedef struct OracleSQLParser_k_sample_return_struct
 {
@@ -5262,9 +5262,9 @@ typedef struct OracleSQLParser_k_sample_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_sample_return;
+OracleSQLParser_k_sample_return;
 
 typedef struct OracleSQLParser_k_scn_return_struct
 {
@@ -5273,9 +5273,9 @@ typedef struct OracleSQLParser_k_scn_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_scn_return;
+OracleSQLParser_k_scn_return;
 
 typedef struct OracleSQLParser_k_search_return_struct
 {
@@ -5284,9 +5284,9 @@ typedef struct OracleSQLParser_k_search_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_search_return;
+OracleSQLParser_k_search_return;
 
 typedef struct OracleSQLParser_k_second_return_struct
 {
@@ -5295,9 +5295,9 @@ typedef struct OracleSQLParser_k_second_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_second_return;
+OracleSQLParser_k_second_return;
 
 typedef struct OracleSQLParser_k_seed_return_struct
 {
@@ -5306,9 +5306,9 @@ typedef struct OracleSQLParser_k_seed_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_seed_return;
+OracleSQLParser_k_seed_return;
 
 typedef struct OracleSQLParser_k_sequential_return_struct
 {
@@ -5317,9 +5317,9 @@ typedef struct OracleSQLParser_k_sequential_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_sequential_return;
+OracleSQLParser_k_sequential_return;
 
 typedef struct OracleSQLParser_k_sessiontimezone_return_struct
 {
@@ -5328,9 +5328,9 @@ typedef struct OracleSQLParser_k_sessiontimezone_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_sessiontimezone_return;
+OracleSQLParser_k_sessiontimezone_return;
 
 typedef struct OracleSQLParser_k_sets_return_struct
 {
@@ -5339,9 +5339,9 @@ typedef struct OracleSQLParser_k_sets_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_sets_return;
+OracleSQLParser_k_sets_return;
 
 typedef struct OracleSQLParser_k_siblings_return_struct
 {
@@ -5350,9 +5350,9 @@ typedef struct OracleSQLParser_k_siblings_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_siblings_return;
+OracleSQLParser_k_siblings_return;
 
 typedef struct OracleSQLParser_k_single_return_struct
 {
@@ -5361,9 +5361,9 @@ typedef struct OracleSQLParser_k_single_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_single_return;
+OracleSQLParser_k_single_return;
 
 typedef struct OracleSQLParser_k_skip_return_struct
 {
@@ -5372,9 +5372,9 @@ typedef struct OracleSQLParser_k_skip_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_skip_return;
+OracleSQLParser_k_skip_return;
 
 typedef struct OracleSQLParser_k_some_return_struct
 {
@@ -5383,9 +5383,9 @@ typedef struct OracleSQLParser_k_some_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_some_return;
+OracleSQLParser_k_some_return;
 
 typedef struct OracleSQLParser_k_sql_return_struct
 {
@@ -5394,9 +5394,9 @@ typedef struct OracleSQLParser_k_sql_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_sql_return;
+OracleSQLParser_k_sql_return;
 
 typedef struct OracleSQLParser_k_submultiset_return_struct
 {
@@ -5405,9 +5405,9 @@ typedef struct OracleSQLParser_k_submultiset_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_submultiset_return;
+OracleSQLParser_k_submultiset_return;
 
 typedef struct OracleSQLParser_k_subpartition_return_struct
 {
@@ -5416,9 +5416,9 @@ typedef struct OracleSQLParser_k_subpartition_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_subpartition_return;
+OracleSQLParser_k_subpartition_return;
 
 typedef struct OracleSQLParser_k_the_return_struct
 {
@@ -5427,9 +5427,9 @@ typedef struct OracleSQLParser_k_the_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_the_return;
+OracleSQLParser_k_the_return;
 
 typedef struct OracleSQLParser_k_time_return_struct
 {
@@ -5438,9 +5438,9 @@ typedef struct OracleSQLParser_k_time_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_time_return;
+OracleSQLParser_k_time_return;
 
 typedef struct OracleSQLParser_k_timestamp_return_struct
 {
@@ -5449,9 +5449,9 @@ typedef struct OracleSQLParser_k_timestamp_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_timestamp_return;
+OracleSQLParser_k_timestamp_return;
 
 typedef struct OracleSQLParser_k_timezone_hour_return_struct
 {
@@ -5460,9 +5460,9 @@ typedef struct OracleSQLParser_k_timezone_hour_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_timezone_hour_return;
+OracleSQLParser_k_timezone_hour_return;
 
 typedef struct OracleSQLParser_k_timezone_minute_return_struct
 {
@@ -5471,9 +5471,9 @@ typedef struct OracleSQLParser_k_timezone_minute_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_timezone_minute_return;
+OracleSQLParser_k_timezone_minute_return;
 
 typedef struct OracleSQLParser_k_timezone_region_return_struct
 {
@@ -5482,9 +5482,9 @@ typedef struct OracleSQLParser_k_timezone_region_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_timezone_region_return;
+OracleSQLParser_k_timezone_region_return;
 
 typedef struct OracleSQLParser_k_timezone_abbr_return_struct
 {
@@ -5493,9 +5493,9 @@ typedef struct OracleSQLParser_k_timezone_abbr_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_timezone_abbr_return;
+OracleSQLParser_k_timezone_abbr_return;
 
 typedef struct OracleSQLParser_k_to_return_struct
 {
@@ -5504,9 +5504,9 @@ typedef struct OracleSQLParser_k_to_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_to_return;
+OracleSQLParser_k_to_return;
 
 typedef struct OracleSQLParser_k_trailing_return_struct
 {
@@ -5515,9 +5515,9 @@ typedef struct OracleSQLParser_k_trailing_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_trailing_return;
+OracleSQLParser_k_trailing_return;
 
 typedef struct OracleSQLParser_k_trim_return_struct
 {
@@ -5526,9 +5526,9 @@ typedef struct OracleSQLParser_k_trim_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_trim_return;
+OracleSQLParser_k_trim_return;
 
 typedef struct OracleSQLParser_k_type_return_struct
 {
@@ -5537,9 +5537,9 @@ typedef struct OracleSQLParser_k_type_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_type_return;
+OracleSQLParser_k_type_return;
 
 typedef struct OracleSQLParser_k_unbounded_return_struct
 {
@@ -5548,9 +5548,9 @@ typedef struct OracleSQLParser_k_unbounded_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_unbounded_return;
+OracleSQLParser_k_unbounded_return;
 
 typedef struct OracleSQLParser_k_under_path_return_struct
 {
@@ -5559,9 +5559,9 @@ typedef struct OracleSQLParser_k_under_path_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_under_path_return;
+OracleSQLParser_k_under_path_return;
 
 typedef struct OracleSQLParser_k_unlimited_return_struct
 {
@@ -5570,9 +5570,9 @@ typedef struct OracleSQLParser_k_unlimited_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_unlimited_return;
+OracleSQLParser_k_unlimited_return;
 
 typedef struct OracleSQLParser_k_unpivot_return_struct
 {
@@ -5581,9 +5581,9 @@ typedef struct OracleSQLParser_k_unpivot_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_unpivot_return;
+OracleSQLParser_k_unpivot_return;
 
 typedef struct OracleSQLParser_k_until_return_struct
 {
@@ -5592,9 +5592,9 @@ typedef struct OracleSQLParser_k_until_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_until_return;
+OracleSQLParser_k_until_return;
 
 typedef struct OracleSQLParser_k_updated_return_struct
 {
@@ -5603,9 +5603,9 @@ typedef struct OracleSQLParser_k_updated_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_updated_return;
+OracleSQLParser_k_updated_return;
 
 typedef struct OracleSQLParser_k_upsert_return_struct
 {
@@ -5614,9 +5614,9 @@ typedef struct OracleSQLParser_k_upsert_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_upsert_return;
+OracleSQLParser_k_upsert_return;
 
 typedef struct OracleSQLParser_k_urowid_return_struct
 {
@@ -5625,9 +5625,9 @@ typedef struct OracleSQLParser_k_urowid_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_urowid_return;
+OracleSQLParser_k_urowid_return;
 
 typedef struct OracleSQLParser_k_using_return_struct
 {
@@ -5636,9 +5636,9 @@ typedef struct OracleSQLParser_k_using_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_using_return;
+OracleSQLParser_k_using_return;
 
 typedef struct OracleSQLParser_k_value_return_struct
 {
@@ -5647,9 +5647,9 @@ typedef struct OracleSQLParser_k_value_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_value_return;
+OracleSQLParser_k_value_return;
 
 typedef struct OracleSQLParser_k_varying_return_struct
 {
@@ -5658,9 +5658,9 @@ typedef struct OracleSQLParser_k_varying_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_varying_return;
+OracleSQLParser_k_varying_return;
 
 typedef struct OracleSQLParser_k_versions_return_struct
 {
@@ -5669,9 +5669,9 @@ typedef struct OracleSQLParser_k_versions_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_versions_return;
+OracleSQLParser_k_versions_return;
 
 typedef struct OracleSQLParser_k_wait_return_struct
 {
@@ -5680,9 +5680,9 @@ typedef struct OracleSQLParser_k_wait_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_wait_return;
+OracleSQLParser_k_wait_return;
 
 typedef struct OracleSQLParser_k_when_return_struct
 {
@@ -5691,9 +5691,9 @@ typedef struct OracleSQLParser_k_when_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_when_return;
+OracleSQLParser_k_when_return;
 
 typedef struct OracleSQLParser_k_within_return_struct
 {
@@ -5702,9 +5702,9 @@ typedef struct OracleSQLParser_k_within_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_within_return;
+OracleSQLParser_k_within_return;
 
 typedef struct OracleSQLParser_k_xml_return_struct
 {
@@ -5713,9 +5713,9 @@ typedef struct OracleSQLParser_k_xml_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_xml_return;
+OracleSQLParser_k_xml_return;
 
 typedef struct OracleSQLParser_k_year_return_struct
 {
@@ -5724,9 +5724,9 @@ typedef struct OracleSQLParser_k_year_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_year_return;
+OracleSQLParser_k_year_return;
 
 typedef struct OracleSQLParser_k_zone_return_struct
 {
@@ -5735,9 +5735,9 @@ typedef struct OracleSQLParser_k_zone_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_k_zone_return;
+OracleSQLParser_k_zone_return;
 
 typedef struct OracleSQLParser_keyword_return_struct
 {
@@ -5746,9 +5746,9 @@ typedef struct OracleSQLParser_keyword_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_keyword_return;
+OracleSQLParser_keyword_return;
 
 typedef struct OracleSQLParser_quoted_string_return_struct
 {
@@ -5757,9 +5757,9 @@ typedef struct OracleSQLParser_quoted_string_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_quoted_string_return;
+OracleSQLParser_quoted_string_return;
 
 typedef struct OracleSQLParser_doublevertbar_return_struct
 {
@@ -5768,9 +5768,9 @@ typedef struct OracleSQLParser_doublevertbar_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_doublevertbar_return;
+OracleSQLParser_doublevertbar_return;
 
 typedef struct OracleSQLParser_not_equal_return_struct
 {
@@ -5779,9 +5779,9 @@ typedef struct OracleSQLParser_not_equal_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_not_equal_return;
+OracleSQLParser_not_equal_return;
 
 typedef struct OracleSQLParser_leq_return_struct
 {
@@ -5790,9 +5790,9 @@ typedef struct OracleSQLParser_leq_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_leq_return;
+OracleSQLParser_leq_return;
 
 typedef struct OracleSQLParser_geq_return_struct
 {
@@ -5801,9 +5801,9 @@ typedef struct OracleSQLParser_geq_return_struct
     pANTLR3_COMMON_TOKEN    start;
     pANTLR3_COMMON_TOKEN    stop;
     pANTLR3_BASE_TREE	tree;
-   
+
 }
-    OracleSQLParser_geq_return;
+OracleSQLParser_geq_return;
 
 
 
@@ -5817,733 +5817,733 @@ struct OracleSQLParser_Ctx_struct
     pANTLR3_PARSER   pParser;
 
 
-     OracleSQLParser_start_rule_return (*start_rule)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_delete_statement_return (*delete_statement)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_merge_statement_return (*merge_statement)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_merge_update_clause_return (*merge_update_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_merge_insert_clause_return (*merge_insert_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_insert_statement_return (*insert_statement)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_single_table_insert_return (*single_table_insert)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_insert_into_clause_return (*insert_into_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_values_clause_return (*values_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_returning_clause_return (*returning_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_multi_table_insert_return (*multi_table_insert)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_conditional_insert_clause_return (*conditional_insert_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_dml_table_expression_clause_return (*dml_table_expression_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_error_logging_clause_return (*error_logging_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_data_item_return (*data_item)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_update_statement_return (*update_statement)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_update_set_clause_return (*update_set_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_update_set_clause_part1_return (*update_set_clause_part1)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_update_set_clause_part2_return (*update_set_clause_part2)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_select_statement_return (*select_statement)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_subquery_factoring_clause_return (*subquery_factoring_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_subquery_factoring_clause_part_first_return (*subquery_factoring_clause_part_first)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_subquery_factoring_clause_part_next_return (*subquery_factoring_clause_part_next)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_search_clause_return (*search_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_cycle_clause_return (*cycle_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_select_list_return (*select_list)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_displayed_column_part_first_return (*displayed_column_part_first)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_displayed_column_part_next_return (*displayed_column_part_next)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_displayed_column_return (*displayed_column)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_sql_expression_return (*sql_expression)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_expr_add_return (*expr_add)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_expr_mul_return (*expr_mul)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_expr_sign_return (*expr_sign)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_expr_expr_return (*expr_expr)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_expr_paren_return (*expr_paren)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_nested_expression_return (*nested_expression)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_function_expression_return (*function_expression)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_call_parameters_return (*call_parameters)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_call_parameter_return (*call_parameter)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_parameter_name_return (*parameter_name)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_special_function_return (*special_function)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_case_expression_return (*case_expression)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_cursor_expression_return (*cursor_expression)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_simple_case_expression_return (*simple_case_expression)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_searched_case_expression_return (*searched_case_expression)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_else_case_expression_return (*else_case_expression)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_object_access_expression_return (*object_access_expression)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_simple_expression_return (*simple_expression)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_query_block_return (*query_block)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_subquery_return (*subquery)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_timestamp_expression_return (*timestamp_expression)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_interval_x_to_y_return (*interval_x_to_y)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_precision_return (*precision)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_extract_datetime_expression_return (*extract_datetime_expression)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_datetime_expression_return (*datetime_expression)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_interval_expression_return (*interval_expression)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_special_expression_return (*special_expression)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_cluster_set_clause_return (*cluster_set_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_cast_expression_return (*cast_expression)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_datatype_name_return (*datatype_name)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_boolean_literal_return (*boolean_literal)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_t_alias_return (*t_alias)	(struct OracleSQLParser_Ctx_struct * ctx, int aliasUsage);
-     OracleSQLParser_c_alias_return (*c_alias)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_column_spec_return (*column_spec)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_pseudo_column_return (*pseudo_column)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_function_name_return (*function_name)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_function_spec_return (*function_spec)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_identifier_return (*identifier)	(struct OracleSQLParser_Ctx_struct * ctx, int identifierClass, int usageType);
-     OracleSQLParser_bind_variable_return (*bind_variable)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_sql_identifier_return (*sql_identifier)	(struct OracleSQLParser_Ctx_struct * ctx, int identifierClass, int usageType);
-     OracleSQLParser_table_reference_list_return (*table_reference_list)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_table_reference_return (*table_reference)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_query_table_expression_return (*query_table_expression)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_flashback_query_clause_return (*flashback_query_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_sample_clause_return (*sample_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_partition_extension_clause_return (*partition_extension_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_subquery_restricrion_clause_return (*subquery_restricrion_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_table_collection_clause_return (*table_collection_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_join_clause_return (*join_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_inner_cross_join_clause_return (*inner_cross_join_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_outer_join_clause_return (*outer_join_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_query_partition_clause_return (*query_partition_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_outer_join_type_return (*outer_join_type)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_joining_clause_return (*joining_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_sample_percent_return (*sample_percent)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_seed_value_return (*seed_value)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_outer_join_sign_return (*outer_join_sign)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_table_name_long_return (*table_name_long)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_table_name_return (*table_name)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_schema_name_return (*schema_name)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_package_name_return (*package_name)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_dblink_name_return (*dblink_name)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_column_specs_return (*column_specs)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_partition_return (*partition)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_partition_key_value_return (*partition_key_value)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_subpartition_key_value_return (*subpartition_key_value)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_constraint_return (*constraint)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_collection_expression_return (*collection_expression)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_where_clause_return (*where_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_hierarchical_query_clause_return (*hierarchical_query_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_group_by_clause_return (*group_by_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_group_by_exprs_return (*group_by_exprs)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_group_by_expr_return (*group_by_expr)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_rollup_cube_clause_return (*rollup_cube_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_grouping_sets_clause_return (*grouping_sets_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_grouping_sets_exprs_return (*grouping_sets_exprs)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_grouping_sets_expr_return (*grouping_sets_expr)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_sql_condition_return (*sql_condition)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_condition_or_return (*condition_or)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_condition_and_return (*condition_and)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_condition_not_return (*condition_not)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_condition_expr_return (*condition_expr)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_condition_exists_return (*condition_exists)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_condition_is_return (*condition_is)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_condition_comparison_return (*condition_comparison)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_condition_group_comparison_return (*condition_group_comparison)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_condition_in_return (*condition_in)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_condition_is_a_set_return (*condition_is_a_set)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_condition_is_any_return (*condition_is_any)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_condition_is_empty_return (*condition_is_empty)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_condition_is_of_type_return (*condition_is_of_type)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_condition_is_present_return (*condition_is_present)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_condition_like_return (*condition_like)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_condition_memeber_return (*condition_memeber)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_condition_between_return (*condition_between)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_condition_regexp_like_return (*condition_regexp_like)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_condition_submultiset_return (*condition_submultiset)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_condition_equals_path_return (*condition_equals_path)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_condition_under_path_return (*condition_under_path)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_levels_return (*levels)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_correlation_integer_return (*correlation_integer)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_path_string_return (*path_string)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_type_names_return (*type_names)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_integer_return (*integer)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_column_name_return (*column_name)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_nested_table_return (*nested_table)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_nested_table_column_name_return (*nested_table_column_name)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_sql_expressions_return (*sql_expressions)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_grouping_sets_expression_list_return (*grouping_sets_expression_list)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_grouping_expression_list_return (*grouping_expression_list)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_expression_list_return (*expression_list)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_cell_reference_return (*cell_reference)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_condition_paren_return (*condition_paren)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_model_clause_return (*model_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_cell_reference_options_return (*cell_reference_options)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_return_rows_clause_return (*return_rows_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_reference_model_return (*reference_model)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_reference_model_name_return (*reference_model_name)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_main_model_return (*main_model)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_main_model_name_return (*main_model_name)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_model_column_clauses_return (*model_column_clauses)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_model_columns_return (*model_columns)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_model_column_return (*model_column)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_model_rules_clause_return (*model_rules_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_model_rules_exprs_return (*model_rules_exprs)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_model_rules_expr_return (*model_rules_expr)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_cell_assignment_return (*cell_assignment)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_cell_assignment_exprs_return (*cell_assignment_exprs)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_cell_assignment_expr_return (*cell_assignment_expr)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_measure_column_return (*measure_column)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_single_column_for_loop_return (*single_column_for_loop)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_pattern_return (*pattern)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_literal_return (*literal)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_literals_return (*literals)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_multi_column_for_loop_return (*multi_column_for_loop)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_bracket_literals_return (*bracket_literals)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_bracket_literals_list_return (*bracket_literals_list)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_union_clause_return (*union_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_order_by_clause_return (*order_by_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_order_by_clause_part_first_return (*order_by_clause_part_first)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_order_by_clause_part_next_return (*order_by_clause_part_next)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_analytic_function_name_return (*analytic_function_name)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_analytic_function_call_return (*analytic_function_call)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_analytic_function_return (*analytic_function)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_count_function_return (*count_function)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_analytic_clause_return (*analytic_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_windowing_clause_part_return (*windowing_clause_part)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_windowing_clause_return (*windowing_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_aggregate_function_name_return (*aggregate_function_name)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_aggregate_function_return (*aggregate_function)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_percent_rank_aggregate_return (*percent_rank_aggregate)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_dense_rank_aggregate_return (*dense_rank_aggregate)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_percent_rank_analytic_return (*percent_rank_analytic)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_percent_cont_disc_analytic_return (*percent_cont_disc_analytic)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_dense_rank_analytic_return (*dense_rank_analytic)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_first_last_return (*first_last)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_listagg_return (*listagg)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_for_update_clause_return (*for_update_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_for_update_clause_part_first_return (*for_update_clause_part_first)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_for_update_clause_part_next_return (*for_update_clause_part_next)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_pivot_clause_return (*pivot_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_pivot_for_clause_return (*pivot_for_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_pivot_in_clause_return (*pivot_in_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_unpivot_clause_return (*unpivot_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_unpivot_in_clause_return (*unpivot_in_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_constant_return (*constant)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_access_return (*r_access)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_add_return (*r_add)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_all_return (*r_all)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_alter_return (*r_alter)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_and_return (*r_and)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_any_return (*r_any)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_arraylen_return (*r_arraylen)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_as_return (*r_as)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_asc_return (*r_asc)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_audit_return (*r_audit)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_between_return (*r_between)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_by_return (*r_by)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_case_return (*r_case)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_char_return (*r_char)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_check_return (*r_check)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_cluster_return (*r_cluster)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_column_return (*r_column)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_comment_return (*r_comment)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_compress_return (*r_compress)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_connect_return (*r_connect)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_create_return (*r_create)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_current_return (*r_current)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_date_return (*r_date)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_decimal_return (*r_decimal)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_default_return (*r_default)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_delete_return (*r_delete)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_desc_return (*r_desc)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_distinct_return (*r_distinct)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_drop_return (*r_drop)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_else_return (*r_else)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_exclusive_return (*r_exclusive)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_exists_return (*r_exists)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_false_return (*r_false)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_file_return (*r_file)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_float_return (*r_float)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_for_return (*r_for)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_from_return (*r_from)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_grant_return (*r_grant)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_group_return (*r_group)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_having_return (*r_having)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_identified_return (*r_identified)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_immediate_return (*r_immediate)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_in_return (*r_in)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_increment_return (*r_increment)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_index_return (*r_index)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_initial_return (*r_initial)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_insert_return (*r_insert)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_integer_return (*r_integer)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_intersect_return (*r_intersect)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_into_return (*r_into)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_is_return (*r_is)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_level_return (*r_level)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_like_return (*r_like)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_lock_return (*r_lock)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_long_return (*r_long)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_maxextents_return (*r_maxextents)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_minus_return (*r_minus)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_mode_return (*r_mode)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_modify_return (*r_modify)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_noaudit_return (*r_noaudit)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_nocompress_return (*r_nocompress)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_not_return (*r_not)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_notfound_return (*r_notfound)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_nowait_return (*r_nowait)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_null_return (*r_null)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_number_return (*r_number)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_of_return (*r_of)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_offline_return (*r_offline)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_on_return (*r_on)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_online_return (*r_online)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_option_return (*r_option)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_or_return (*r_or)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_order_return (*r_order)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_pctfree_return (*r_pctfree)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_prior_return (*r_prior)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_privileges_return (*r_privileges)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_public_return (*r_public)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_raw_return (*r_raw)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_rename_return (*r_rename)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_resource_return (*r_resource)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_revoke_return (*r_revoke)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_row_return (*r_row)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_rowid_return (*r_rowid)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_rowlabel_return (*r_rowlabel)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_rownum_return (*r_rownum)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_rows_return (*r_rows)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_select_return (*r_select)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_session_return (*r_session)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_set_return (*r_set)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_share_return (*r_share)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_size_return (*r_size)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_smallint_return (*r_smallint)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_sqlbuf_return (*r_sqlbuf)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_start_return (*r_start)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_successful_return (*r_successful)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_synonym_return (*r_synonym)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_sysdate_return (*r_sysdate)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_table_return (*r_table)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_then_return (*r_then)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_to_return (*r_to)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_trigger_return (*r_trigger)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_true_return (*r_true)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_uid_return (*r_uid)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_union_return (*r_union)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_unique_return (*r_unique)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_update_return (*r_update)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_user_return (*r_user)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_validate_return (*r_validate)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_values_return (*r_values)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_varchar_return (*r_varchar)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_varchar2_return (*r_varchar2)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_view_return (*r_view)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_whenever_return (*r_whenever)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_where_return (*r_where)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_r_with_return (*r_with)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_a_return (*k_a)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_at_return (*k_at)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_automatic_return (*k_automatic)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_bfile_return (*k_bfile)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_binary_double_return (*k_binary_double)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_binary_float_return (*k_binary_float)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_binary_integer_return (*k_binary_integer)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_blob_return (*k_blob)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_block_return (*k_block)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_boolean_return (*k_boolean)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_both_return (*k_both)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_breadth_return (*k_breadth)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_byte_return (*k_byte)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_cast_return (*k_cast)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_character_return (*k_character)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_clob_return (*k_clob)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_cluster_set_return (*k_cluster_set)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_connect_by_root_return (*k_connect_by_root)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_constraint_return (*k_constraint)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_count_return (*k_count)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_cross_return (*k_cross)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_cube_return (*k_cube)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_cursor_return (*k_cursor)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_cycle_return (*k_cycle)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_day_return (*k_day)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_dbtimezone_return (*k_dbtimezone)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_dec_return (*k_dec)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_decrement_return (*k_decrement)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_dense_rank_return (*k_dense_rank)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_depth_return (*k_depth)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_dimension_return (*k_dimension)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_double_return (*k_double)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_empty_return (*k_empty)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_end_return (*k_end)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_equals_path_return (*k_equals_path)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_errors_return (*k_errors)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_escape_return (*k_escape)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_exclude_return (*k_exclude)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_extract_return (*k_extract)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_first_return (*k_first)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_following_return (*k_following)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_full_return (*k_full)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_grouping_return (*k_grouping)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_hour_return (*k_hour)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_ignore_return (*k_ignore)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_include_return (*k_include)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_infinite_return (*k_infinite)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_inner_return (*k_inner)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_int_return (*k_int)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_interval_return (*k_interval)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_iterate_return (*k_iterate)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_join_return (*k_join)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_keep_return (*k_keep)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_last_return (*k_last)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_leading_return (*k_leading)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_left_return (*k_left)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_like2_return (*k_like2)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_like4_return (*k_like4)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_likec_return (*k_likec)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_limit_return (*k_limit)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_listagg_return (*k_listagg)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_lnnvl_return (*k_lnnvl)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_local_return (*k_local)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_locked_return (*k_locked)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_log_return (*k_log)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_main_return (*k_main)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_matched_return (*k_matched)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_maxvalue_return (*k_maxvalue)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_measures_return (*k_measures)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_member_return (*k_member)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_merge_return (*k_merge)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_minute_return (*k_minute)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_mivalue_return (*k_mivalue)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_mlslabel_return (*k_mlslabel)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_model_return (*k_model)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_month_return (*k_month)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_multiset_return (*k_multiset)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_nan_return (*k_nan)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_national_return (*k_national)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_natural_return (*k_natural)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_nav_return (*k_nav)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_nchar_return (*k_nchar)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_nclob_return (*k_nclob)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_nocycle_return (*k_nocycle)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_nulls_return (*k_nulls)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_numeric_return (*k_numeric)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_nvarchar_return (*k_nvarchar)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_nvarchar2_return (*k_nvarchar2)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_only_return (*k_only)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_outer_return (*k_outer)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_over_return (*k_over)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_partition_return (*k_partition)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_percent_rank_return (*k_percent_rank)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_percentile_cont_return (*k_percentile_cont)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_percentile_disc_return (*k_percentile_disc)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_pivot_return (*k_pivot)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_pls_integer_return (*k_pls_integer)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_positive_return (*k_positive)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_preceding_return (*k_preceding)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_precision_return (*k_precision)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_present_return (*k_present)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_range_return (*k_range)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_read_return (*k_read)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_real_return (*k_real)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_reference_return (*k_reference)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_regexp_like_return (*k_regexp_like)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_reject_return (*k_reject)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_respect_return (*k_respect)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_return_return (*k_return)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_returning_return (*k_returning)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_right_return (*k_right)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_rollup_return (*k_rollup)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_rules_return (*k_rules)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_sample_return (*k_sample)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_scn_return (*k_scn)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_search_return (*k_search)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_second_return (*k_second)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_seed_return (*k_seed)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_sequential_return (*k_sequential)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_sessiontimezone_return (*k_sessiontimezone)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_sets_return (*k_sets)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_siblings_return (*k_siblings)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_single_return (*k_single)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_skip_return (*k_skip)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_some_return (*k_some)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_sql_return (*k_sql)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_submultiset_return (*k_submultiset)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_subpartition_return (*k_subpartition)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_the_return (*k_the)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_time_return (*k_time)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_timestamp_return (*k_timestamp)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_timezone_hour_return (*k_timezone_hour)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_timezone_minute_return (*k_timezone_minute)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_timezone_region_return (*k_timezone_region)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_timezone_abbr_return (*k_timezone_abbr)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_to_return (*k_to)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_trailing_return (*k_trailing)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_trim_return (*k_trim)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_type_return (*k_type)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_unbounded_return (*k_unbounded)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_under_path_return (*k_under_path)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_unlimited_return (*k_unlimited)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_unpivot_return (*k_unpivot)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_until_return (*k_until)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_updated_return (*k_updated)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_upsert_return (*k_upsert)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_urowid_return (*k_urowid)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_using_return (*k_using)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_value_return (*k_value)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_varying_return (*k_varying)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_versions_return (*k_versions)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_wait_return (*k_wait)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_when_return (*k_when)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_within_return (*k_within)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_xml_return (*k_xml)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_year_return (*k_year)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_k_zone_return (*k_zone)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_keyword_return (*keyword)	(struct OracleSQLParser_Ctx_struct * ctx, int identifierClass, int usageType);
-     OracleSQLParser_quoted_string_return (*quoted_string)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_doublevertbar_return (*doublevertbar)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_not_equal_return (*not_equal)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_leq_return (*leq)	(struct OracleSQLParser_Ctx_struct * ctx);
-     OracleSQLParser_geq_return (*geq)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred8_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred15_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred17_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred33_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred35_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred54_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred58_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred59_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred60_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred62_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred63_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred73_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred79_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred87_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred88_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred89_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred92_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred93_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred94_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred95_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred96_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred103_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred121_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred123_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred128_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred129_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred130_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred131_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred132_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred133_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred134_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred135_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred136_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred137_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred138_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred139_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred140_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred141_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred142_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred144_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred145_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred150_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred151_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred152_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred155_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred157_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred162_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred163_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred170_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred171_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred182_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred183_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred186_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred187_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred188_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred189_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred190_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred191_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred192_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred195_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred196_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred197_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred198_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred199_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred202_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred203_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred204_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred206_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred208_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred209_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred210_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred212_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred213_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred214_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred215_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred216_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred219_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred220_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred221_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred222_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred223_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred224_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred225_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred226_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred227_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred230_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred231_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred232_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred233_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred240_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred247_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred248_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred249_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred250_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred251_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred252_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred254_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred258_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred264_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred268_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred270_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred275_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred277_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred281_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred282_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred304_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred307_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred309_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred311_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred315_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred316_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred317_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred318_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred321_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred322_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred323_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred331_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred344_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred345_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred346_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred347_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred348_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred349_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred350_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred352_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred353_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred354_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred356_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred357_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred358_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred359_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred363_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred364_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred365_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred367_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred368_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred373_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred380_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred382_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred383_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred384_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred385_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred386_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred388_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred389_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred390_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred395_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred396_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred410_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred411_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred413_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred414_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred415_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred416_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred417_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred418_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred419_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred420_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred423_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred424_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred425_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred427_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred428_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred429_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred430_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred431_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred432_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred433_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred434_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred435_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred436_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred437_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred438_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred439_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred440_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred441_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred442_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred443_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred444_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred449_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred455_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred456_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred457_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred464_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred465_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred466_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred470_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred471_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred479_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred481_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred482_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred484_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred485_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred496_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred499_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred506_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred508_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred511_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred512_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred514_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred515_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred516_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred517_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred518_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred520_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred521_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred522_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred523_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred524_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred539_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred551_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred552_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred566_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred568_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred569_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred570_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred571_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred572_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred573_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred574_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred575_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred576_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred584_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred585_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred586_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred587_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred588_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred605_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred606_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred607_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred608_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred609_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred615_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred616_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred618_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred619_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred620_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred622_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred623_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred624_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred625_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred627_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred628_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred629_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred631_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred632_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred633_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred643_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred647_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred648_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred650_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred657_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
-     ANTLR3_BOOLEAN (*synpred662_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_start_rule_return (*start_rule)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_delete_statement_return (*delete_statement)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_merge_statement_return (*merge_statement)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_merge_update_clause_return (*merge_update_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_merge_insert_clause_return (*merge_insert_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_insert_statement_return (*insert_statement)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_single_table_insert_return (*single_table_insert)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_insert_into_clause_return (*insert_into_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_values_clause_return (*values_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_returning_clause_return (*returning_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_multi_table_insert_return (*multi_table_insert)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_conditional_insert_clause_return (*conditional_insert_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_dml_table_expression_clause_return (*dml_table_expression_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_error_logging_clause_return (*error_logging_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_data_item_return (*data_item)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_update_statement_return (*update_statement)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_update_set_clause_return (*update_set_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_update_set_clause_part1_return (*update_set_clause_part1)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_update_set_clause_part2_return (*update_set_clause_part2)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_select_statement_return (*select_statement)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_subquery_factoring_clause_return (*subquery_factoring_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_subquery_factoring_clause_part_first_return (*subquery_factoring_clause_part_first)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_subquery_factoring_clause_part_next_return (*subquery_factoring_clause_part_next)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_search_clause_return (*search_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_cycle_clause_return (*cycle_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_select_list_return (*select_list)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_displayed_column_part_first_return (*displayed_column_part_first)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_displayed_column_part_next_return (*displayed_column_part_next)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_displayed_column_return (*displayed_column)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_sql_expression_return (*sql_expression)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_expr_add_return (*expr_add)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_expr_mul_return (*expr_mul)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_expr_sign_return (*expr_sign)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_expr_expr_return (*expr_expr)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_expr_paren_return (*expr_paren)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_nested_expression_return (*nested_expression)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_function_expression_return (*function_expression)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_call_parameters_return (*call_parameters)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_call_parameter_return (*call_parameter)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_parameter_name_return (*parameter_name)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_special_function_return (*special_function)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_case_expression_return (*case_expression)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_cursor_expression_return (*cursor_expression)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_simple_case_expression_return (*simple_case_expression)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_searched_case_expression_return (*searched_case_expression)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_else_case_expression_return (*else_case_expression)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_object_access_expression_return (*object_access_expression)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_simple_expression_return (*simple_expression)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_query_block_return (*query_block)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_subquery_return (*subquery)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_timestamp_expression_return (*timestamp_expression)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_interval_x_to_y_return (*interval_x_to_y)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_precision_return (*precision)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_extract_datetime_expression_return (*extract_datetime_expression)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_datetime_expression_return (*datetime_expression)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_interval_expression_return (*interval_expression)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_special_expression_return (*special_expression)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_cluster_set_clause_return (*cluster_set_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_cast_expression_return (*cast_expression)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_datatype_name_return (*datatype_name)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_boolean_literal_return (*boolean_literal)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_t_alias_return (*t_alias)	(struct OracleSQLParser_Ctx_struct * ctx, int aliasUsage);
+    OracleSQLParser_c_alias_return (*c_alias)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_column_spec_return (*column_spec)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_pseudo_column_return (*pseudo_column)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_function_name_return (*function_name)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_function_spec_return (*function_spec)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_identifier_return (*identifier)	(struct OracleSQLParser_Ctx_struct * ctx, int identifierClass, int usageType);
+    OracleSQLParser_bind_variable_return (*bind_variable)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_sql_identifier_return (*sql_identifier)	(struct OracleSQLParser_Ctx_struct * ctx, int identifierClass, int usageType);
+    OracleSQLParser_table_reference_list_return (*table_reference_list)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_table_reference_return (*table_reference)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_query_table_expression_return (*query_table_expression)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_flashback_query_clause_return (*flashback_query_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_sample_clause_return (*sample_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_partition_extension_clause_return (*partition_extension_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_subquery_restricrion_clause_return (*subquery_restricrion_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_table_collection_clause_return (*table_collection_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_join_clause_return (*join_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_inner_cross_join_clause_return (*inner_cross_join_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_outer_join_clause_return (*outer_join_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_query_partition_clause_return (*query_partition_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_outer_join_type_return (*outer_join_type)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_joining_clause_return (*joining_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_sample_percent_return (*sample_percent)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_seed_value_return (*seed_value)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_outer_join_sign_return (*outer_join_sign)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_table_name_long_return (*table_name_long)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_table_name_return (*table_name)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_schema_name_return (*schema_name)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_package_name_return (*package_name)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_dblink_name_return (*dblink_name)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_column_specs_return (*column_specs)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_partition_return (*partition)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_partition_key_value_return (*partition_key_value)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_subpartition_key_value_return (*subpartition_key_value)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_constraint_return (*constraint)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_collection_expression_return (*collection_expression)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_where_clause_return (*where_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_hierarchical_query_clause_return (*hierarchical_query_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_group_by_clause_return (*group_by_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_group_by_exprs_return (*group_by_exprs)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_group_by_expr_return (*group_by_expr)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_rollup_cube_clause_return (*rollup_cube_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_grouping_sets_clause_return (*grouping_sets_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_grouping_sets_exprs_return (*grouping_sets_exprs)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_grouping_sets_expr_return (*grouping_sets_expr)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_sql_condition_return (*sql_condition)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_condition_or_return (*condition_or)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_condition_and_return (*condition_and)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_condition_not_return (*condition_not)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_condition_expr_return (*condition_expr)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_condition_exists_return (*condition_exists)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_condition_is_return (*condition_is)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_condition_comparison_return (*condition_comparison)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_condition_group_comparison_return (*condition_group_comparison)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_condition_in_return (*condition_in)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_condition_is_a_set_return (*condition_is_a_set)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_condition_is_any_return (*condition_is_any)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_condition_is_empty_return (*condition_is_empty)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_condition_is_of_type_return (*condition_is_of_type)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_condition_is_present_return (*condition_is_present)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_condition_like_return (*condition_like)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_condition_memeber_return (*condition_memeber)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_condition_between_return (*condition_between)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_condition_regexp_like_return (*condition_regexp_like)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_condition_submultiset_return (*condition_submultiset)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_condition_equals_path_return (*condition_equals_path)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_condition_under_path_return (*condition_under_path)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_levels_return (*levels)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_correlation_integer_return (*correlation_integer)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_path_string_return (*path_string)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_type_names_return (*type_names)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_integer_return (*integer)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_column_name_return (*column_name)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_nested_table_return (*nested_table)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_nested_table_column_name_return (*nested_table_column_name)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_sql_expressions_return (*sql_expressions)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_grouping_sets_expression_list_return (*grouping_sets_expression_list)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_grouping_expression_list_return (*grouping_expression_list)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_expression_list_return (*expression_list)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_cell_reference_return (*cell_reference)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_condition_paren_return (*condition_paren)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_model_clause_return (*model_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_cell_reference_options_return (*cell_reference_options)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_return_rows_clause_return (*return_rows_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_reference_model_return (*reference_model)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_reference_model_name_return (*reference_model_name)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_main_model_return (*main_model)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_main_model_name_return (*main_model_name)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_model_column_clauses_return (*model_column_clauses)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_model_columns_return (*model_columns)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_model_column_return (*model_column)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_model_rules_clause_return (*model_rules_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_model_rules_exprs_return (*model_rules_exprs)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_model_rules_expr_return (*model_rules_expr)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_cell_assignment_return (*cell_assignment)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_cell_assignment_exprs_return (*cell_assignment_exprs)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_cell_assignment_expr_return (*cell_assignment_expr)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_measure_column_return (*measure_column)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_single_column_for_loop_return (*single_column_for_loop)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_pattern_return (*pattern)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_literal_return (*literal)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_literals_return (*literals)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_multi_column_for_loop_return (*multi_column_for_loop)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_bracket_literals_return (*bracket_literals)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_bracket_literals_list_return (*bracket_literals_list)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_union_clause_return (*union_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_order_by_clause_return (*order_by_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_order_by_clause_part_first_return (*order_by_clause_part_first)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_order_by_clause_part_next_return (*order_by_clause_part_next)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_analytic_function_name_return (*analytic_function_name)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_analytic_function_call_return (*analytic_function_call)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_analytic_function_return (*analytic_function)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_count_function_return (*count_function)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_analytic_clause_return (*analytic_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_windowing_clause_part_return (*windowing_clause_part)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_windowing_clause_return (*windowing_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_aggregate_function_name_return (*aggregate_function_name)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_aggregate_function_return (*aggregate_function)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_percent_rank_aggregate_return (*percent_rank_aggregate)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_dense_rank_aggregate_return (*dense_rank_aggregate)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_percent_rank_analytic_return (*percent_rank_analytic)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_percent_cont_disc_analytic_return (*percent_cont_disc_analytic)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_dense_rank_analytic_return (*dense_rank_analytic)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_first_last_return (*first_last)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_listagg_return (*listagg)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_for_update_clause_return (*for_update_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_for_update_clause_part_first_return (*for_update_clause_part_first)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_for_update_clause_part_next_return (*for_update_clause_part_next)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_pivot_clause_return (*pivot_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_pivot_for_clause_return (*pivot_for_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_pivot_in_clause_return (*pivot_in_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_unpivot_clause_return (*unpivot_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_unpivot_in_clause_return (*unpivot_in_clause)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_constant_return (*constant)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_access_return (*r_access)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_add_return (*r_add)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_all_return (*r_all)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_alter_return (*r_alter)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_and_return (*r_and)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_any_return (*r_any)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_arraylen_return (*r_arraylen)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_as_return (*r_as)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_asc_return (*r_asc)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_audit_return (*r_audit)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_between_return (*r_between)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_by_return (*r_by)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_case_return (*r_case)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_char_return (*r_char)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_check_return (*r_check)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_cluster_return (*r_cluster)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_column_return (*r_column)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_comment_return (*r_comment)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_compress_return (*r_compress)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_connect_return (*r_connect)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_create_return (*r_create)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_current_return (*r_current)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_date_return (*r_date)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_decimal_return (*r_decimal)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_default_return (*r_default)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_delete_return (*r_delete)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_desc_return (*r_desc)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_distinct_return (*r_distinct)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_drop_return (*r_drop)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_else_return (*r_else)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_exclusive_return (*r_exclusive)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_exists_return (*r_exists)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_false_return (*r_false)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_file_return (*r_file)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_float_return (*r_float)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_for_return (*r_for)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_from_return (*r_from)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_grant_return (*r_grant)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_group_return (*r_group)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_having_return (*r_having)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_identified_return (*r_identified)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_immediate_return (*r_immediate)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_in_return (*r_in)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_increment_return (*r_increment)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_index_return (*r_index)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_initial_return (*r_initial)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_insert_return (*r_insert)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_integer_return (*r_integer)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_intersect_return (*r_intersect)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_into_return (*r_into)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_is_return (*r_is)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_level_return (*r_level)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_like_return (*r_like)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_lock_return (*r_lock)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_long_return (*r_long)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_maxextents_return (*r_maxextents)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_minus_return (*r_minus)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_mode_return (*r_mode)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_modify_return (*r_modify)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_noaudit_return (*r_noaudit)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_nocompress_return (*r_nocompress)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_not_return (*r_not)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_notfound_return (*r_notfound)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_nowait_return (*r_nowait)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_null_return (*r_null)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_number_return (*r_number)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_of_return (*r_of)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_offline_return (*r_offline)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_on_return (*r_on)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_online_return (*r_online)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_option_return (*r_option)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_or_return (*r_or)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_order_return (*r_order)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_pctfree_return (*r_pctfree)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_prior_return (*r_prior)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_privileges_return (*r_privileges)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_public_return (*r_public)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_raw_return (*r_raw)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_rename_return (*r_rename)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_resource_return (*r_resource)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_revoke_return (*r_revoke)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_row_return (*r_row)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_rowid_return (*r_rowid)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_rowlabel_return (*r_rowlabel)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_rownum_return (*r_rownum)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_rows_return (*r_rows)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_select_return (*r_select)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_session_return (*r_session)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_set_return (*r_set)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_share_return (*r_share)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_size_return (*r_size)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_smallint_return (*r_smallint)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_sqlbuf_return (*r_sqlbuf)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_start_return (*r_start)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_successful_return (*r_successful)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_synonym_return (*r_synonym)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_sysdate_return (*r_sysdate)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_table_return (*r_table)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_then_return (*r_then)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_to_return (*r_to)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_trigger_return (*r_trigger)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_true_return (*r_true)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_uid_return (*r_uid)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_union_return (*r_union)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_unique_return (*r_unique)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_update_return (*r_update)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_user_return (*r_user)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_validate_return (*r_validate)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_values_return (*r_values)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_varchar_return (*r_varchar)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_varchar2_return (*r_varchar2)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_view_return (*r_view)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_whenever_return (*r_whenever)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_where_return (*r_where)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_r_with_return (*r_with)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_a_return (*k_a)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_at_return (*k_at)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_automatic_return (*k_automatic)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_bfile_return (*k_bfile)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_binary_double_return (*k_binary_double)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_binary_float_return (*k_binary_float)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_binary_integer_return (*k_binary_integer)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_blob_return (*k_blob)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_block_return (*k_block)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_boolean_return (*k_boolean)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_both_return (*k_both)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_breadth_return (*k_breadth)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_byte_return (*k_byte)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_cast_return (*k_cast)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_character_return (*k_character)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_clob_return (*k_clob)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_cluster_set_return (*k_cluster_set)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_connect_by_root_return (*k_connect_by_root)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_constraint_return (*k_constraint)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_count_return (*k_count)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_cross_return (*k_cross)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_cube_return (*k_cube)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_cursor_return (*k_cursor)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_cycle_return (*k_cycle)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_day_return (*k_day)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_dbtimezone_return (*k_dbtimezone)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_dec_return (*k_dec)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_decrement_return (*k_decrement)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_dense_rank_return (*k_dense_rank)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_depth_return (*k_depth)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_dimension_return (*k_dimension)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_double_return (*k_double)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_empty_return (*k_empty)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_end_return (*k_end)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_equals_path_return (*k_equals_path)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_errors_return (*k_errors)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_escape_return (*k_escape)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_exclude_return (*k_exclude)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_extract_return (*k_extract)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_first_return (*k_first)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_following_return (*k_following)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_full_return (*k_full)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_grouping_return (*k_grouping)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_hour_return (*k_hour)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_ignore_return (*k_ignore)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_include_return (*k_include)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_infinite_return (*k_infinite)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_inner_return (*k_inner)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_int_return (*k_int)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_interval_return (*k_interval)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_iterate_return (*k_iterate)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_join_return (*k_join)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_keep_return (*k_keep)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_last_return (*k_last)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_leading_return (*k_leading)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_left_return (*k_left)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_like2_return (*k_like2)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_like4_return (*k_like4)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_likec_return (*k_likec)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_limit_return (*k_limit)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_listagg_return (*k_listagg)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_lnnvl_return (*k_lnnvl)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_local_return (*k_local)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_locked_return (*k_locked)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_log_return (*k_log)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_main_return (*k_main)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_matched_return (*k_matched)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_maxvalue_return (*k_maxvalue)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_measures_return (*k_measures)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_member_return (*k_member)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_merge_return (*k_merge)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_minute_return (*k_minute)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_mivalue_return (*k_mivalue)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_mlslabel_return (*k_mlslabel)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_model_return (*k_model)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_month_return (*k_month)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_multiset_return (*k_multiset)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_nan_return (*k_nan)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_national_return (*k_national)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_natural_return (*k_natural)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_nav_return (*k_nav)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_nchar_return (*k_nchar)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_nclob_return (*k_nclob)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_nocycle_return (*k_nocycle)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_nulls_return (*k_nulls)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_numeric_return (*k_numeric)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_nvarchar_return (*k_nvarchar)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_nvarchar2_return (*k_nvarchar2)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_only_return (*k_only)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_outer_return (*k_outer)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_over_return (*k_over)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_partition_return (*k_partition)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_percent_rank_return (*k_percent_rank)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_percentile_cont_return (*k_percentile_cont)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_percentile_disc_return (*k_percentile_disc)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_pivot_return (*k_pivot)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_pls_integer_return (*k_pls_integer)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_positive_return (*k_positive)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_preceding_return (*k_preceding)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_precision_return (*k_precision)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_present_return (*k_present)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_range_return (*k_range)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_read_return (*k_read)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_real_return (*k_real)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_reference_return (*k_reference)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_regexp_like_return (*k_regexp_like)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_reject_return (*k_reject)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_respect_return (*k_respect)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_return_return (*k_return)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_returning_return (*k_returning)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_right_return (*k_right)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_rollup_return (*k_rollup)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_rules_return (*k_rules)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_sample_return (*k_sample)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_scn_return (*k_scn)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_search_return (*k_search)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_second_return (*k_second)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_seed_return (*k_seed)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_sequential_return (*k_sequential)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_sessiontimezone_return (*k_sessiontimezone)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_sets_return (*k_sets)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_siblings_return (*k_siblings)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_single_return (*k_single)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_skip_return (*k_skip)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_some_return (*k_some)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_sql_return (*k_sql)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_submultiset_return (*k_submultiset)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_subpartition_return (*k_subpartition)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_the_return (*k_the)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_time_return (*k_time)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_timestamp_return (*k_timestamp)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_timezone_hour_return (*k_timezone_hour)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_timezone_minute_return (*k_timezone_minute)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_timezone_region_return (*k_timezone_region)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_timezone_abbr_return (*k_timezone_abbr)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_to_return (*k_to)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_trailing_return (*k_trailing)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_trim_return (*k_trim)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_type_return (*k_type)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_unbounded_return (*k_unbounded)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_under_path_return (*k_under_path)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_unlimited_return (*k_unlimited)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_unpivot_return (*k_unpivot)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_until_return (*k_until)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_updated_return (*k_updated)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_upsert_return (*k_upsert)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_urowid_return (*k_urowid)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_using_return (*k_using)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_value_return (*k_value)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_varying_return (*k_varying)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_versions_return (*k_versions)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_wait_return (*k_wait)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_when_return (*k_when)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_within_return (*k_within)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_xml_return (*k_xml)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_year_return (*k_year)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_k_zone_return (*k_zone)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_keyword_return (*keyword)	(struct OracleSQLParser_Ctx_struct * ctx, int identifierClass, int usageType);
+    OracleSQLParser_quoted_string_return (*quoted_string)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_doublevertbar_return (*doublevertbar)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_not_equal_return (*not_equal)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_leq_return (*leq)	(struct OracleSQLParser_Ctx_struct * ctx);
+    OracleSQLParser_geq_return (*geq)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred8_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred15_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred17_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred33_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred35_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred54_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred58_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred59_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred60_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred62_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred63_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred73_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred79_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred87_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred88_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred89_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred92_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred93_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred94_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred95_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred96_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred103_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred121_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred123_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred128_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred129_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred130_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred131_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred132_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred133_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred134_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred135_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred136_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred137_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred138_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred139_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred140_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred141_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred142_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred144_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred145_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred150_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred151_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred152_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred155_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred157_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred162_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred163_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred170_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred171_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred182_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred183_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred186_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred187_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred188_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred189_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred190_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred191_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred192_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred195_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred196_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred197_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred198_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred199_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred202_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred203_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred204_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred206_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred208_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred209_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred210_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred212_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred213_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred214_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred215_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred216_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred219_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred220_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred221_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred222_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred223_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred224_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred225_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred226_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred227_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred230_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred231_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred232_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred233_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred240_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred247_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred248_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred249_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred250_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred251_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred252_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred254_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred258_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred264_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred268_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred270_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred275_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred277_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred281_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred282_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred304_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred307_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred309_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred311_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred315_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred316_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred317_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred318_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred321_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred322_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred323_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred331_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred344_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred345_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred346_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred347_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred348_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred349_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred350_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred352_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred353_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred354_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred356_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred357_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred358_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred359_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred363_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred364_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred365_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred367_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred368_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred373_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred380_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred382_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred383_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred384_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred385_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred386_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred388_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred389_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred390_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred395_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred396_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred410_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred411_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred413_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred414_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred415_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred416_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred417_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred418_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred419_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred420_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred423_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred424_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred425_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred427_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred428_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred429_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred430_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred431_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred432_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred433_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred434_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred435_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred436_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred437_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred438_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred439_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred440_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred441_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred442_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred443_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred444_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred449_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred455_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred456_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred457_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred464_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred465_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred466_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred470_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred471_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred479_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred481_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred482_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred484_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred485_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred496_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred499_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred506_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred508_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred511_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred512_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred514_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred515_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred516_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred517_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred518_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred520_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred521_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred522_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred523_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred524_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred539_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred551_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred552_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred566_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred568_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred569_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred570_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred571_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred572_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred573_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred574_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred575_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred576_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred584_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred585_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred586_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred587_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred588_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred605_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred606_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred607_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred608_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred609_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred615_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred616_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred618_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred619_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred620_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred622_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred623_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred624_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred625_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred627_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred628_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred629_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred631_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred632_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred633_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred643_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred647_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred648_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred650_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred657_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
+    ANTLR3_BOOLEAN (*synpred662_OracleSQL)	(struct OracleSQLParser_Ctx_struct * ctx);
     // Delegated rules
 
     const char * (*getGrammarFileName)();
@@ -6574,7 +6574,7 @@ ANTLR3_API pOracleSQLParser OracleSQLParserNewSSD      (pANTLR3_COMMON_TOKEN_STR
 #endif
 #ifdef	Tokens
 #undef	Tokens
-#endif 
+#endif
 #define EOF      -1
 #define T__114      114
 #define T__115      115

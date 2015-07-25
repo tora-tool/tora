@@ -82,10 +82,10 @@ struct IndexOf<Typelist<T, Tail>, T>
 template <class Head, class Tail, class T>
 struct IndexOf<Typelist<Head, Tail>, T>
 {
-private:
-    enum { temp = IndexOf<Tail, T>::value };
-public:
-    enum { value = (temp == -1 ? -1 : 1 + temp) };
+    private:
+        enum { temp = IndexOf<Tail, T>::value };
+    public:
+        enum { value = (temp == -1 ? -1 : 1 + temp) };
 };
 
 template< int i> struct int_to_type
@@ -102,11 +102,11 @@ template< int i> struct int_to_type
  ********************************************************************************/
 class decoratorInterface
 {
-public:
-    static inline void decorate(std::ostream &s)
-    {};
-    static inline void decorate(std::ostream &s, const std::string & here)
-    {};
+    public:
+        static inline void decorate(std::ostream &s)
+        {};
+        static inline void decorate(std::ostream &s, const std::string & here)
+        {};
 };
 
 class null_decorator : public decoratorInterface
@@ -117,47 +117,47 @@ class hereDecorator;
 template<class X> // Typelist
 class Tdecorator: public decoratorInterface
 {
-public:
-    enum { needs_here = IndexOf<X, hereDecorator>::value >= 0 };
-    static inline void decorate(std::ostream &s)
-    {
-        typedef typename X::Head Head;
-        typedef typename X::Tail Tail;
-        Head::decorate(s);
-        Tdecorator<Tail>::decorate(s);
-    }
-
-    static inline void decorate(std::ostream &s, const std::string & here)
-    {
-        typedef typename X::Head Head;
-        typedef typename X::Tail Tail;
-        if( IsSameType<Head, hereDecorator>::value) // do use SuperSubclass instead of IsSameType
+    public:
+        enum { needs_here = IndexOf<X, hereDecorator>::value >= 0 };
+        static inline void decorate(std::ostream &s)
         {
-            Head::decorate(s, here);
-        }
-        else
-        {
+            typedef typename X::Head Head;
+            typedef typename X::Tail Tail;
             Head::decorate(s);
-        }
-        if( IndexOf<Tail, hereDecorator>::value >= 0 )
-        {
-            Tdecorator<Tail>::decorate(s, here);
-        }
-        else
-        {
             Tdecorator<Tail>::decorate(s);
         }
-    }
+
+        static inline void decorate(std::ostream &s, const std::string & here)
+        {
+            typedef typename X::Head Head;
+            typedef typename X::Tail Tail;
+            if ( IsSameType<Head, hereDecorator>::value) // do use SuperSubclass instead of IsSameType
+            {
+                Head::decorate(s, here);
+            }
+            else
+            {
+                Head::decorate(s);
+            }
+            if ( IndexOf<Tail, hereDecorator>::value >= 0 )
+            {
+                Tdecorator<Tail>::decorate(s, here);
+            }
+            else
+            {
+                Tdecorator<Tail>::decorate(s);
+            }
+        }
 };
 
 template<>
 class Tdecorator<NullType>: public decoratorInterface
 {
-public:
-    static inline void decorate(std::ostream &s)
-    {};
-    static inline void decorate(std::ostream &s, const std::string & here)
-    {};
+    public:
+        static inline void decorate(std::ostream &s)
+        {};
+        static inline void decorate(std::ostream &s, const std::string & here)
+        {};
 };
 
 /********************************************************************************
@@ -169,103 +169,104 @@ public:
 template<unsigned cnt>
 class dashDecorator : public decoratorInterface
 {
-public:
-    static inline void decorate(std::ostream &s)
-    {
+    public:
+        static inline void decorate(std::ostream &s)
+        {
 #ifndef min
 #define min(a,b) ((a < b) ? (a) : (b))
 #endif
-        static char c[] = "--------------------------------------------------------------------------------";
-        s << (c + sizeof(c) - 1 - min(sizeof(c) - 1, cnt));
+            static char c[] = "--------------------------------------------------------------------------------";
+            s << (c + sizeof(c) - 1 - min(sizeof(c) - 1, cnt));
 #undef min
-    };
+        };
 
-    static inline void decorate(std::ostream &s, const std::string & here)
-    {};
+        static inline void decorate(std::ostream &s, const std::string & here)
+        {};
 };
 
 template<const char *c>
 class wordDecorator : public decoratorInterface
 {
-public:
-    static inline void decorate(std::ostream &s)
-    {
-        s << c;
-    };
+    public:
+        static inline void decorate(std::ostream &s)
+        {
+            s << c;
+        };
 
-    static inline void decorate(std::ostream &s, const std::string & here)
-    {};
+        static inline void decorate(std::ostream &s, const std::string & here)
+        {};
 };
 
 template<const char c>
 class charDecorator : public decoratorInterface
 {
-public:
-    static inline void decorate(std::ostream &s)
-    {
-        s << c;
-    };
+    public:
+        static inline void decorate(std::ostream &s)
+        {
+            s << c;
+        };
 
-    static inline void decorate(std::ostream &s, const std::string & here)
-    {};
+        static inline void decorate(std::ostream &s, const std::string & here)
+        {};
 };
 
 // The only decorator that uses second argument - __LINE__
 class hereDecorator : public decoratorInterface
 {
-public:
-    static inline void decorate(std::ostream &s)
-    {
-        s << "Internal error: " << __HERE__;
-    }
-    static inline void decorate(std::ostream &s, const std::string & here)
-    {
-        s << here;
-    }
+    public:
+        static inline void decorate(std::ostream &s)
+        {
+            s << "Internal error: " << __HERE__;
+        }
+        static inline void decorate(std::ostream &s, const std::string & here)
+        {
+            s << here;
+        }
 };
 
 template<class thread_manager, int colorize = 1>
 class tidDecorator : public decoratorInterface
 {
-public:
-    static inline void decorate(std::ostream &s)
-    {
-        const std::string &tid = thread_manager::tid();
+    public:
+        static inline void decorate(std::ostream &s)
+        {
+            const std::string &tid = thread_manager::tid();
 #if defined(__linux__)
-        unsigned int color = 31;
-        if(colorize)
-	{	   
-            const unsigned int fnv_prime = 31;
-            unsigned int hash      = 0;
-            unsigned int i         = 0;
-
-            for(i = 0; i < tid.length(); i++)
+            unsigned int color = 31;
+            if (colorize)
             {
-                hash *= fnv_prime;
-                hash ^= tid.at(i) - '0';
+                const unsigned int fnv_prime = 31;
+                unsigned int hash      = 0;
+                unsigned int i         = 0;
+
+                for (i = 0; i < tid.length(); i++)
+                {
+                    hash *= fnv_prime;
+                    hash ^= tid.at(i) - '0';
+                }
+                hash &= 7;
+                color += hash;
             }
-            hash &= 7;
-            color += hash;
-        }
-        /* End Of FNV Hash Function */
+            /* End Of FNV Hash Function */
 #endif
 
-	if(colorize)
-	{
-        	s
+            if (colorize)
+            {
+                s
 #if defined(__linux__)
-                	<< "\x1B" "[" << color << ";1m"
+                        << "\x1B" "[" << color << ";1m"
 #endif
-                	<< tid
+                        << tid
 #if defined(__linux__)
-                	<< "\x1B" "[0m"
+                        << "\x1B" "[0m"
 #endif
-		;
-	} else
-		s << tid;
-    }
-    static inline void decorate(std::ostream &s, const std::string & here)
-    {};
+                        ;
+            }
+            else
+                s << tid;
+        }
+        static inline void decorate(std::ostream &s, const std::string & here)
+        {};
 };
 
 #endif

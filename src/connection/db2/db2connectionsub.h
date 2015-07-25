@@ -8,21 +8,21 @@
 
 class DB2ConnectionSub : public toConnectionSub
 {
-public:
-    DB2ConnectionSub(toConnection & conn);
-    ~DB2ConnectionSub();
-    void cancel();
-    void commit();
-    void rollback();
-    QString version();
+    public:
+        DB2ConnectionSub(toConnection & conn);
+        ~DB2ConnectionSub();
+        void cancel();
+        void commit();
+        void rollback();
+        QString version();
 
-    SQLHANDLE getHdbc();
+        SQLHANDLE getHdbc();
 
-private:
-    static SQLCHAR* qstringToSql(const QString & s);
+    private:
+        static SQLCHAR* qstringToSql(const QString & s);
 
-    SQLHANDLE henv;     /* environment handle */
-    SQLHANDLE hdbc;     /* connection handle */
+        SQLHANDLE henv;     /* environment handle */
+        SQLHANDLE hdbc;     /* connection handle */
 };
 
 #endif // DB2CONNECTIONSUB_H

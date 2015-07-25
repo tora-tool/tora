@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -46,12 +46,12 @@ using namespace ToConfiguration;
 
 toWorksheetText::toWorksheetText(QWidget *parent, const char *name)
     : toSqlText(parent, name)
-	, m_bookmarkMarginHandle(QsciScintilla::markerDefine(QsciScintilla::RightTriangle))
-	, m_bookmarkHandle(QsciScintilla::markerDefine(QsciScintilla::Background))
-	, m_complAPI(NULL)
-	, complTimer(new QTimer(this))
-	, editorType(SciTe)
-	, popup(new toComplPopup(this))
+    , m_bookmarkMarginHandle(QsciScintilla::markerDefine(QsciScintilla::RightTriangle))
+    , m_bookmarkHandle(QsciScintilla::markerDefine(QsciScintilla::Background))
+    , m_complAPI(NULL)
+    , complTimer(new QTimer(this))
+    , editorType(SciTe)
+    , popup(new toComplPopup(this))
 {
     QsciScintilla::setAutoCompletionThreshold(0);
     QsciScintilla::setAutoCompletionSource(QsciScintilla::AcsAPIs);
@@ -69,20 +69,20 @@ toWorksheetText::toWorksheetText(QWidget *parent, const char *name)
     // handle "max text width" mark
     if (toConfigurationNewSingle::Instance().option(Editor::UseMaxTextWidthMarkBool).toBool())
     {
-    	QsciScintilla::setEdgeColumn(toConfigurationNewSingle::Instance().option(Editor::MaxTextWidthMarkInt).toInt());
-    	// TODO setEdgeColor(DefaultAnalyzer.getColor(toSyntaxAnalyzer::CurrentLineMarker).darker(150));
-    	QsciScintilla::setEdgeMode(QsciScintilla::EdgeLine);
+        QsciScintilla::setEdgeColumn(toConfigurationNewSingle::Instance().option(Editor::MaxTextWidthMarkInt).toInt());
+        // TODO setEdgeColor(DefaultAnalyzer.getColor(toSyntaxAnalyzer::CurrentLineMarker).darker(150));
+        QsciScintilla::setEdgeMode(QsciScintilla::EdgeLine);
     }
     else
-    	QsciScintilla::setEdgeMode(QsciScintilla::EdgeNone);
+        QsciScintilla::setEdgeMode(QsciScintilla::EdgeNone);
 
     connect (this, SIGNAL(cursorPositionChanged(int, int)), this, SLOT(positionChanged(int, int)));
     connect( complTimer, SIGNAL(timeout()), this, SLOT(autoCompleteFromAPIs()) );
 
-	connect(&toEditorTypeButtonSingle::Instance(),
-			SIGNAL(toggled(int)),
-			this,
-			SLOT(setEditorType(int)));
+    connect(&toEditorTypeButtonSingle::Instance(),
+            SIGNAL(toggled(int)),
+            this,
+            SLOT(setEditorType(int)));
 
     popup->hide();
     connect(popup->list(),
@@ -101,13 +101,15 @@ toWorksheetText::~toWorksheetText()
 
 void toWorksheetText::setHighlighter(toSqlText::HighlighterTypeEnum e)
 {
-	super::setHighlighter(e);
-	if(super::lexer())
-	{
-		m_complAPI = super::lexer()->apis();
-	} else {
-		m_complAPI = NULL;
-	}
+    super::setHighlighter(e);
+    if (super::lexer())
+    {
+        m_complAPI = super::lexer()->apis();
+    }
+    else
+    {
+        m_complAPI = NULL;
+    }
 }
 
 void toWorksheetText::keyPressEvent(QKeyEvent * e)
@@ -129,33 +131,35 @@ void toWorksheetText::keyPressEvent(QKeyEvent * e)
             insert(shorts.value(key).toString(), false);
             pos = SendScintilla(SCI_GETCURRENTPOS);
             SendScintilla(SCI_SETEMPTYSELECTION, pos + shorts.value(key).toByteArray().length());
-    		e->accept();
+            e->accept();
             return;
         }
-    } else if (e->modifiers() == Qt::ControlModifier && e->key() == Qt::Key_T) {
+    }
+    else if (e->modifiers() == Qt::ControlModifier && e->key() == Qt::Key_T)
+    {
         autoCompleteFromAPIs();
         e->accept();
         return;
     }
-	super::keyPressEvent(e);
+    super::keyPressEvent(e);
 }
 
 void toWorksheetText::positionChanged(int row, int col)
 {
-	if (col > 0)
-	{
-		int position = this->SendScintilla(SCI_GETCURRENTPOS);
-		position = SendScintilla(QsciScintilla::SCI_POSITIONBEFORE, position);
-		char c = getByteAt(position);
-		// TODO use getWCharAt and handle multibyte characters here
-		if (c == '.')
-			complTimer->start(500);
-	}
-	else
-	{
-		if (complTimer->isActive())
-			complTimer->stop();
-	}
+    if (col > 0)
+    {
+        int position = this->SendScintilla(SCI_GETCURRENTPOS);
+        position = SendScintilla(QsciScintilla::SCI_POSITIONBEFORE, position);
+        char c = getByteAt(position);
+        // TODO use getWCharAt and handle multibyte characters here
+        if (c == '.')
+            complTimer->start(500);
+    }
+    else
+    {
+        if (complTimer->isActive())
+            complTimer->stop();
+    }
 // FIXME: disabled due repainting issues
 //    current line marker (margin arrow)
 //    markerDeleteAll(m_currentLineMarginHandle);
@@ -167,10 +171,10 @@ void toWorksheetText::positionChanged(int row, int col)
 void toWorksheetText::autoCompleteFromAPIs()
 {
     complTimer->stop(); // it's a must to prevent infinite reopening
-	{
-		toScintilla::autoCompleteFromAPIs();
-		return;
-	}
+    {
+        toScintilla::autoCompleteFromAPIs();
+        return;
+    }
 }
 #endif
 
@@ -190,7 +194,9 @@ void toWorksheetText::autoCompleteFromAPIs()
     if (compleList.count() == 1 /*&& compleList.first() == partial*/)
     {
         completeWithText(compleList.first());
-    } else {
+    }
+    else
+    {
         long position, posx, posy;
         int curCol, curRow;
         this->getCursorPosition(&curRow, &curCol);
@@ -235,7 +241,7 @@ void toWorksheetText::completeFromAPI(QListWidgetItem* item)
 {
     if (item)
     {
-    	completeWithText(item->text());
+        completeWithText(item->text());
     }
     popup->hide();
 }
@@ -399,13 +405,13 @@ QStringList toWorksheetText::getCompletionList(QString &partial)
         {
             toConnection &conn = toConnection::currentConnection(this);
             toConnection::objectName object = conn.realName(name, false);
-            if(object.Type == "DATABASE")
+            if (object.Type == "DATABASE")
             {
                 std::list<toConnection::objectName> list = conn.tables(object);
                 Q_FOREACH(toConnection::objectName table, list)
                 {
                     QString t = conn.quote(table.Name, false);
-                    if(t.indexOf(*partial) == 0)
+                    if (t.indexOf(*partial) == 0)
                         retval.append(t);
                 }
             }
@@ -455,10 +461,10 @@ QStringList toWorksheetText::getCompletionList(QString &partial)
     QString word = wordAtLineIndex(curline, curcol);
     retval = toConnection::currentConnection(this).getCache().completeEntry(word);
     if (retval.size() <= 100) // Do not waste CPU on sorting huge completition list TODO: limit the amount of returned entries
-    	retval.sort();
+        retval.sort();
     Q_FOREACH(QString t, retval)
     {
-    	TLOG(0, toNoDecorator, __HERE__) << " Tab: " << t << std::endl;
+        TLOG(0, toNoDecorator, __HERE__) << " Tab: " << t << std::endl;
     }
 
     return retval;
@@ -466,15 +472,15 @@ QStringList toWorksheetText::getCompletionList(QString &partial)
 
 void toWorksheetText::focusInEvent(QFocusEvent *e)
 {
-	toEditorTypeButtonSingle::Instance().setEnabled(true);
-	toEditorTypeButtonSingle::Instance().setValue(editorType);
-	super::focusInEvent(e);
+    toEditorTypeButtonSingle::Instance().setEnabled(true);
+    toEditorTypeButtonSingle::Instance().setValue(editorType);
+    super::focusInEvent(e);
 }
 
 void toWorksheetText::focusOutEvent(QFocusEvent *e)
 {
-	toEditorTypeButtonSingle::Instance().setDisabled(true);
-	super::focusOutEvent(e);
+    toEditorTypeButtonSingle::Instance().setDisabled(true);
+    super::focusOutEvent(e);
 }
 
 #ifdef TORA3_SESSION
@@ -503,16 +509,16 @@ void toWorksheetText::importData(std::map<QString, QString> &data, const QString
 #endif
 
 toEditorTypeButton::toEditorTypeButton(QWidget *parent, const char *name)
-	: toToggleButton(toWorksheetText::staticMetaObject.enumerator(toWorksheetText::staticMetaObject.indexOfEnumerator("EditorTypeEnum"))
-	, parent
-	, name
-	)
+    : toToggleButton(toWorksheetText::staticMetaObject.enumerator(toWorksheetText::staticMetaObject.indexOfEnumerator("EditorTypeEnum"))
+                     , parent
+                     , name
+                    )
 {
 }
 
 toEditorTypeButton::toEditorTypeButton()
-	: toToggleButton(toWorksheetText::staticMetaObject.enumerator(toWorksheetText::staticMetaObject.indexOfEnumerator("EditorTypeEnum"))
-	, NULL
-	)
+    : toToggleButton(toWorksheetText::staticMetaObject.enumerator(toWorksheetText::staticMetaObject.indexOfEnumerator("EditorTypeEnum"))
+                     , NULL
+                    )
 {
 }

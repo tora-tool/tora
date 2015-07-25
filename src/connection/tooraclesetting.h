@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -43,35 +43,36 @@
 
 namespace ToConfiguration
 {
-	class Oracle : public ConfigContext
-	{
-		Q_OBJECT;
-		Q_ENUMS(OptionTypeEnum);
-	public:
-		Oracle() : ConfigContext("Oracle", ENUM_REF(Oracle,OptionTypeEnum)) {};
-		enum OptionTypeEnum {
-			ConfDateFormat = 5000 // #define CONF_DATE_FORMAT
-			, ConfTimestampFormat // #define CONF_TIMESTAMP_FORMAT
-			, MaxLong             // #define CONF_MAX_LONG
-			, PlanTable           // #define CONF_PLAN_TABLE
-			, KeepPlansBool           // #define CONF_KEEP_PLANS  // default: false
-			, VSqlPlansBool           // #define CONF_VSQL_PLANS  // default: true
-			, SharedPlanBool          // #define CONF_SHARED_PLAN // default: false
-			// Extractor. Controls the method used to produce database object extracts
-			// as well as extraction settings (which information should be extracted).
-			, UseDbmsMetadataBool      // #define CONF_USE_DBMS_METADATA
-			, IncludeStorageBool       // #define CONF_EXT_INC_STORAGE
-			, SkipOrgMonBool           // #define CONF_EXT_SKIP_ORGMON
-			, SkipStorageExceptTablespaceBool // #define CONF_EXT_SKIP_STORAGE_EX_TABLESPACE
-			, IncludeParallelBool      // #define CONF_EXT_INC_PARALLEL
-			, IncludePartitionBool     // #define CONF_EXT_INC_PARTITION
-			, IncludeCodeBool          // #define CONF_EXT_INC_CODE
-			, IncludeHeaderBool        // #define CONF_EXT_INC_HEADER
-			, IncludePromptBool        // #define CONF_EXT_INC_PROMPT
-		};
-		virtual QVariant defaultValue(int option) const;
-		static QString planTable(QString const& schema);
-	};
+    class Oracle : public ConfigContext
+    {
+            Q_OBJECT;
+            Q_ENUMS(OptionTypeEnum);
+        public:
+            Oracle() : ConfigContext("Oracle", ENUM_REF(Oracle,OptionTypeEnum)) {};
+            enum OptionTypeEnum
+            {
+                ConfDateFormat = 5000 // #define CONF_DATE_FORMAT
+                                 , ConfTimestampFormat // #define CONF_TIMESTAMP_FORMAT
+                , MaxLong             // #define CONF_MAX_LONG
+                , PlanTable           // #define CONF_PLAN_TABLE
+                , KeepPlansBool           // #define CONF_KEEP_PLANS  // default: false
+                , VSqlPlansBool           // #define CONF_VSQL_PLANS  // default: true
+                , SharedPlanBool          // #define CONF_SHARED_PLAN // default: false
+                // Extractor. Controls the method used to produce database object extracts
+                // as well as extraction settings (which information should be extracted).
+                , UseDbmsMetadataBool      // #define CONF_USE_DBMS_METADATA
+                , IncludeStorageBool       // #define CONF_EXT_INC_STORAGE
+                , SkipOrgMonBool           // #define CONF_EXT_SKIP_ORGMON
+                , SkipStorageExceptTablespaceBool // #define CONF_EXT_SKIP_STORAGE_EX_TABLESPACE
+                , IncludeParallelBool      // #define CONF_EXT_INC_PARALLEL
+                , IncludePartitionBool     // #define CONF_EXT_INC_PARTITION
+                , IncludeCodeBool          // #define CONF_EXT_INC_CODE
+                , IncludeHeaderBool        // #define CONF_EXT_INC_HEADER
+                , IncludePromptBool        // #define CONF_EXT_INC_PROMPT
+            };
+            virtual QVariant defaultValue(int option) const;
+            static QString planTable(QString const& schema);
+    };
 };
 
 /** Instance of this class is returned by dll class toOracleProvider.
@@ -81,23 +82,23 @@ namespace ToConfiguration
   * the class toOracleProvider is not visible from this context.
   * Whole application must be restarted to apply the changes.
   */
-class TORA_EXPORT toOracleSetting 
+class TORA_EXPORT toOracleSetting
     : public QWidget
     , public Ui::toOracleSettingUI
     , public toSettingTab
 {
-    Q_OBJECT;
+        Q_OBJECT;
 
-public:
-    toOracleSetting(QWidget *parent);
+    public:
+        toOracleSetting(QWidget *parent);
 
-public slots:
-    virtual void saveSetting(void);
-    void createPlanTable(void);
+    public slots:
+        virtual void saveSetting(void);
+        void createPlanTable(void);
 
-    void dbmsMetadataClicked(bool);
-private:
-    static ToConfiguration::Oracle s_oracleConf;
+        void dbmsMetadataClicked(bool);
+    private:
+        static ToConfiguration::Oracle s_oracleConf;
 };
 
 #endif

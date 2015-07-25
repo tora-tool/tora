@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -77,7 +77,7 @@ toQValue::toQValue(const toQValue &copy): Value(copy.Value)
      *  but toQValue is also used for query parameters(toQList and others)
      *  and these are copied often (toNoBlockQuery.Params => toQuery.Params)
      */
-    if(isComplexType())
+    if (isComplexType())
         const_cast<toQValue&>(copy).Value = "deleted value(clone)";
 }
 
@@ -89,7 +89,7 @@ const toQValue &toQValue::operator = (const toQValue & copy)
      *  but toQValue is also used for query parameters(toQList and others)
      *  and these are copied often (toNoBlockQuery.Params => toQuery.Params)
      */
-    if(isComplexType())
+    if (isComplexType())
         const_cast<toQValue&>(copy).Value = "deleted value(assign)";
     return *this;
 }
@@ -105,10 +105,10 @@ toQValue::toQValue()
 
 toQValue::~toQValue()
 {
-    if(isComplexType())
+    if (isComplexType())
     {
         complexType *i = Value.value<toQValue::complexType*>();
-        if(i)
+        if (i)
             delete i;
     }
 }
@@ -243,12 +243,12 @@ const QByteArray toQValue::toByteArray() const
 
 QString toQValue::displayData() const
 {
-    if( isNull() && toConfigurationNewSingle::Instance().option(ToConfiguration::Database::IndicateEmptyBool).toBool())
+    if ( isNull() && toConfigurationNewSingle::Instance().option(ToConfiguration::Database::IndicateEmptyBool).toBool())
     {
         return QString::fromLatin1("{null}");
     }
 
-    if( isBinary())
+    if ( isBinary())
     {
         QByteArray const &raw = Value.toByteArray();
         return raw.toHex();
@@ -259,7 +259,7 @@ QString toQValue::displayData() const
 
 QString toQValue::editData() const
 {
-    if( isComplexType())
+    if ( isComplexType())
     {
         complexType *i = Value.value<toQValue::complexType*>();
         return i->editData();
@@ -273,7 +273,7 @@ QString toQValue::userData() const
     if (isNull() )
         return QString::fromLatin1("NULL");
 
-    if( isComplexType())
+    if ( isComplexType())
     {
         complexType *i = Value.value<toQValue::complexType*>();
         return i->userData();
@@ -319,20 +319,20 @@ QString toQValue::formatNumber(double number)
         return QString::number(number);
     switch (NumberFormat)
     {
-    case 1:
-    {
-        char buf[100];
-        sprintf(buf, "%E", number);
-        return buf;
-    }
-    case 2:
-    {
-        char buf[100];
-        sprintf(buf, "%0.*f", NumberDecimals, number);
-        return buf;
-    }
-    default:
-        return QString::number(number);
+        case 1:
+            {
+                char buf[100];
+                sprintf(buf, "%E", number);
+                return buf;
+            }
+        case 2:
+            {
+                char buf[100];
+                sprintf(buf, "%0.*f", NumberDecimals, number);
+                return buf;
+            }
+        default:
+            return QString::number(number);
     }
 }
 
@@ -438,26 +438,26 @@ QString toQValue::toSIsize() const
 
     switch (i)
     {
-    case 0:
-        break;
-    case 1:
-        s.append("K");
-        break;
-    case 2:
-        s.append("M");
-        break;
-    case 3:
-        s.append("G");
-        break;
-    case 4:
-        s.append("T");
-        break;
-    case 5:
-        s.append("P");
-        break;
-    default:
-        s.append("E");
-        break;
+        case 0:
+            break;
+        case 1:
+            s.append("K");
+            break;
+        case 2:
+            s.append("M");
+            break;
+        case 3:
+            s.append("G");
+            break;
+        case 4:
+            s.append("T");
+            break;
+        case 5:
+            s.append("P");
+            break;
+        default:
+            s.append("E");
+            break;
     }
 
     return s.arg(size, 0, 'f', 0);
@@ -467,7 +467,7 @@ bool toQValue::updateNewValue(toQValue value)
 {
     if (Value.type() == QVariant::UserType)
         return false;
-    if(value.isComplexType())
+    if (value.isComplexType())
         return false;
     Value = value.Value;
     return true;

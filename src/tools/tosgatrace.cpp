@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -54,54 +54,54 @@
 #include "icons/tosgatrace.xpm"
 
 class toSGATraceSetting
-	: public QWidget
-	, public Ui::toSGATraceSettingUI
-	, public toSettingTab
+    : public QWidget
+    , public Ui::toSGATraceSettingUI
+    , public toSettingTab
 {
-    toTool *Tool;
+        toTool *Tool;
 
-public:
-    toSGATraceSetting(toTool *tool, QWidget* parent = 0, const char* name = 0)
-	: QWidget(parent)
-	, toSettingTab("trace.html"), Tool(tool)
-    {
-    	setupUi(this);
-        if (name)
-            setObjectName(name);
+    public:
+        toSGATraceSetting(toTool *tool, QWidget* parent = 0, const char* name = 0)
+            : QWidget(parent)
+            , toSettingTab("trace.html"), Tool(tool)
+        {
+            setupUi(this);
+            if (name)
+                setObjectName(name);
 
-        toSettingTab::loadSettings(this);
-    }
-    virtual void saveSetting(void)
-    {
-    	toSettingTab::saveSettings(this);
-    }
+            toSettingTab::loadSettings(this);
+        }
+        virtual void saveSetting(void)
+        {
+            toSettingTab::saveSettings(this);
+        }
 };
 
 class toSGATraceTool : public toTool
 {
-protected:
-    virtual const char **pictureXPM(void)
-    {
-        return const_cast<const char**>(tosgatrace_xpm);
-    }
-public:
-    toSGATraceTool()
-        : toTool(230, "SGA Trace") { }
-    virtual const char *menuItem()
-    {
-        return "SGA Trace";
-    }
-    virtual toToolWidget* toolWindow(QWidget *parent, toConnection &connection)
-    {
-        return new toSGATrace(parent, connection);
-    }
-    virtual QWidget *configurationTab(QWidget *parent)
-    {
-        return new toSGATraceSetting(this, parent);
-    }
-    virtual void closeWindow(toConnection &connection) {};
-private:
-    static ToConfiguration::SgaTrace s_sgaTraceConf;
+    protected:
+        virtual const char **pictureXPM(void)
+        {
+            return const_cast<const char**>(tosgatrace_xpm);
+        }
+    public:
+        toSGATraceTool()
+            : toTool(230, "SGA Trace") { }
+        virtual const char *menuItem()
+        {
+            return "SGA Trace";
+        }
+        virtual toToolWidget* toolWindow(QWidget *parent, toConnection &connection)
+        {
+            return new toSGATrace(parent, connection);
+        }
+        virtual QWidget *configurationTab(QWidget *parent)
+        {
+            return new toSGATraceSetting(this, parent);
+        }
+        virtual void closeWindow(toConnection &connection) {};
+    private:
+        static ToConfiguration::SgaTrace s_sgaTraceConf;
 };
 
 ToConfiguration::SgaTrace toSGATraceTool::s_sgaTraceConf;
@@ -292,15 +292,15 @@ void toSGATrace::refresh(void)
         QString select;
         switch (Type->currentIndex())
         {
-        case 0:
-            select = toSQL::string(SQLSGATrace, connection());
-            break;
-        case 1:
-            select = toSQL::string(SQLLongOps, connection());
-            break;
-        default:
-            Utils::toStatusMessage(tr("Unknown type of trace"));
-            return ;
+            case 0:
+                select = toSQL::string(SQLSGATrace, connection());
+                break;
+            case 1:
+                select = toSQL::string(SQLLongOps, connection());
+                break;
+            default:
+                Utils::toStatusMessage(tr("Unknown type of trace"));
+                return ;
         }
         if (!CurrentSchema.isEmpty())
             select.append(QString::fromLatin1("\n   and b.username = :f1<char[101]>"));
@@ -308,50 +308,50 @@ void toSGATrace::refresh(void)
         QString order;
         switch (Limit->currentIndex())
         {
-        case 0:
-            break;
-        case 1:
-            if (Type->currentIndex() == 1)
-                select += QString::fromLatin1("\n   and b.sofar != b.totalwork");
-            else
-                Utils::toStatusMessage(tr("Unfinished is only available for long operations"));
-            break;
-        case 2:
-            select += QString::fromLatin1("\n   and a.executions = 1 and a.parse = 1");
-            break;
-        case 3:
-            order = QString::fromLatin1("a.Executions");
-            break;
-        case 4:
-            order = QString::fromLatin1("a.Sorts");
-            break;
-        case 5:
-            order = QString::fromLatin1("a.Disk_Reads");
-            break;
-        case 6:
-            order = QString::fromLatin1("a.Buffer_Gets");
-            break;
-        case 7:
-            order = QString::fromLatin1("a.Rows_Processed");
-            break;
-        case 8:
-            order = QString::fromLatin1("DECODE(a.Executions,0,0,a.Sorts/a.Executions)");
-            break;
-        case 9:
-            order = QString::fromLatin1("DECODE(a.Executions,0,0,a.Disk_Reads/a.Executions)");
-            break;
-        case 10:
-            order = QString::fromLatin1("DECODE(a.Executions,0,0,a.Buffer_Gets/a.Executions)");
-            break;
-        case 11:
-            order = QString::fromLatin1("DECODE(a.Executions,0,0,a.Rows_Processed/a.Executions)");
-            break;
-        case 12:
-            order = QString::fromLatin1("DECODE(a.Rows_Processed,0,0,a.Buffer_Gets/a.Rows_Processed)");
-            break;
-        default:
-            Utils::toStatusMessage(tr("Unknown selection"));
-            break;
+            case 0:
+                break;
+            case 1:
+                if (Type->currentIndex() == 1)
+                    select += QString::fromLatin1("\n   and b.sofar != b.totalwork");
+                else
+                    Utils::toStatusMessage(tr("Unfinished is only available for long operations"));
+                break;
+            case 2:
+                select += QString::fromLatin1("\n   and a.executions = 1 and a.parse = 1");
+                break;
+            case 3:
+                order = QString::fromLatin1("a.Executions");
+                break;
+            case 4:
+                order = QString::fromLatin1("a.Sorts");
+                break;
+            case 5:
+                order = QString::fromLatin1("a.Disk_Reads");
+                break;
+            case 6:
+                order = QString::fromLatin1("a.Buffer_Gets");
+                break;
+            case 7:
+                order = QString::fromLatin1("a.Rows_Processed");
+                break;
+            case 8:
+                order = QString::fromLatin1("DECODE(a.Executions,0,0,a.Sorts/a.Executions)");
+                break;
+            case 9:
+                order = QString::fromLatin1("DECODE(a.Executions,0,0,a.Disk_Reads/a.Executions)");
+                break;
+            case 10:
+                order = QString::fromLatin1("DECODE(a.Executions,0,0,a.Buffer_Gets/a.Executions)");
+                break;
+            case 11:
+                order = QString::fromLatin1("DECODE(a.Executions,0,0,a.Rows_Processed/a.Executions)");
+                break;
+            case 12:
+                order = QString::fromLatin1("DECODE(a.Rows_Processed,0,0,a.Buffer_Gets/a.Rows_Processed)");
+                break;
+            default:
+                Utils::toStatusMessage(tr("Unknown selection"));
+                break;
         }
 
         if (!order.isEmpty())

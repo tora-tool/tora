@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -56,28 +56,28 @@
 
 class toAnalyzeTool : public toTool
 {
-    virtual const char **pictureXPM(void)
-    {
-        return const_cast<const char**>(toanalyze_xpm);
-    }
-public:
-    toAnalyzeTool()
-        : toTool(320, "Statistics Manager") { }
+        virtual const char **pictureXPM(void)
+        {
+            return const_cast<const char**>(toanalyze_xpm);
+        }
+    public:
+        toAnalyzeTool()
+            : toTool(320, "Statistics Manager") { }
 
-    virtual void closeWindow(toConnection &connection) {};
+        virtual void closeWindow(toConnection &connection) {};
 
-    virtual const char *menuItem()
-    {
-        return "Statistics Manager";
-    }
-    virtual toToolWidget* toolWindow(QWidget *parent, toConnection &connection)
-    {
-        return new toAnalyze(parent, connection);
-    }
-    virtual bool canHandle(const toConnection &conn)
-    {
-        return conn.providerIs("Oracle") || conn.providerIs("QMYSQL") || conn.providerIs("QPSQL");
-    }
+        virtual const char *menuItem()
+        {
+            return "Statistics Manager";
+        }
+        virtual toToolWidget* toolWindow(QWidget *parent, toConnection &connection)
+        {
+            return new toAnalyze(parent, connection);
+        }
+        virtual bool canHandle(const toConnection &conn)
+        {
+            return conn.providerIs("Oracle") || conn.providerIs("QMYSQL") || conn.providerIs("QPSQL");
+        }
 };
 
 
@@ -224,7 +224,7 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
     Schema->additionalItem(tr("All"));
     Schema->setSelected(tr("All"));
     toolbar->addWidget(Schema);
-       Schema->refresh();
+    Schema->refresh();
 
     if (connection.providerIs("Oracle"))
     {
@@ -448,38 +448,38 @@ QStringList toAnalyze::getSQL(void)
                 {
                     switch (For->currentIndex())
                     {
-                    case 0:
-                        forc = QString::null;
-                        break;
-                    case 1:
-                        forc = QString::fromLatin1(" FOR TABLE");
-                        break;
-                    case 2:
-                        forc = QString::fromLatin1(" FOR ALL INDEXED COLUMNS");
-                        break;
-                    case 3:
-                        forc = QString::fromLatin1(" FOR ALL LOCAL INDEXES");
-                        break;
+                        case 0:
+                            forc = QString::null;
+                            break;
+                        case 1:
+                            forc = QString::fromLatin1(" FOR TABLE");
+                            break;
+                        case 2:
+                            forc = QString::fromLatin1(" FOR ALL INDEXED COLUMNS");
+                            break;
+                        case 3:
+                            forc = QString::fromLatin1(" FOR ALL LOCAL INDEXES");
+                            break;
                     }
                 }
 
                 switch (Operation->currentIndex())
                 {
-                case 0:
-                    sql += QString::fromLatin1("COMPUTE STATISTICS");
-                    sql += forc;
-                    break;
-                case 1:
-                    sql += QString::fromLatin1("ESTIMATE STATISTICS");
-                    sql += forc;
-                    sql += QString::fromLatin1(" SAMPLE %1 PERCENT").arg(Sample->value());
-                    break;
-                case 2:
-                    sql += QString::fromLatin1("DELETE STATISTICS");
-                    break;
-                case 3:
-                    sql += QString::fromLatin1("VALIDATE REF UPDATE");
-                    break;
+                    case 0:
+                        sql += QString::fromLatin1("COMPUTE STATISTICS");
+                        sql += forc;
+                        break;
+                    case 1:
+                        sql += QString::fromLatin1("ESTIMATE STATISTICS");
+                        sql += forc;
+                        sql += QString::fromLatin1(" SAMPLE %1 PERCENT").arg(Sample->value());
+                        break;
+                    case 2:
+                        sql += QString::fromLatin1("DELETE STATISTICS");
+                        break;
+                    case 3:
+                        sql += QString::fromLatin1("VALIDATE REF UPDATE");
+                        break;
                 }
                 ret.append(
                     sql.arg(Statistics->model()->data((*it).row(), 2).toString())
@@ -493,15 +493,15 @@ QStringList toAnalyze::getSQL(void)
 
                 switch (Operation->currentIndex())
                 {
-                case 0:
-                    sql += QString("VACUUM FULL VERBOSE %1.%2");
-                    break;
-                case 1:
-                    sql += QString("ANALYZE VERBOSE %1.%2");
-                    break;
-                default:
-                    Utils::toStatusMessage(tr("Internal Error"));
-                    continue;
+                    case 0:
+                        sql += QString("VACUUM FULL VERBOSE %1.%2");
+                        break;
+                    case 1:
+                        sql += QString("ANALYZE VERBOSE %1.%2");
+                        break;
+                    default:
+                        Utils::toStatusMessage(tr("Internal Error"));
+                        continue;
                 }
 
                 QString table = Statistics->model()->data((*it).row(), 3).toString();
@@ -513,12 +513,12 @@ QStringList toAnalyze::getSQL(void)
                 QString sql;
                 switch (Operation->currentIndex())
                 {
-                case 0:
-                    sql = QString::fromLatin1("ANALYZE TABLE %1.%2 ");
-                    break;
-                case 1:
-                    sql = QString::fromLatin1("OPTIMIZE TABLE %1.%2 ");
-                    break;
+                    case 0:
+                        sql = QString::fromLatin1("ANALYZE TABLE %1.%2 ");
+                        break;
+                    case 1:
+                        sql = QString::fromLatin1("OPTIMIZE TABLE %1.%2 ");
+                        break;
                 }
                 QString owner = Statistics->model()->data((*it).row(), 2).toString();
                 if (owner.isNull())
@@ -561,7 +561,7 @@ void toAnalyze::slotExecute(void)
             if (!Pending.isEmpty())
             {
                 QString sql = Pending.takeFirst();
-				toEventQuery * q = new toEventQuery(this, connection(), sql, toQueryParams(), toEventQuery::READ_ALL);
+                toEventQuery * q = new toEventQuery(this, connection(), sql, toQueryParams(), toEventQuery::READ_ALL);
                 Running.append(q);
                 startQuery(q);
             }
@@ -594,7 +594,7 @@ void toAnalyze::slotQueryDone(toEventQuery* q)
     if (!Pending.isEmpty())
     {
         QString sql = Pending.takeFirst();
-		toEventQuery * q = new toEventQuery(this, connection(), sql, toQueryParams(), toEventQuery::READ_ALL);
+        toEventQuery * q = new toEventQuery(this, connection(), sql, toQueryParams(), toEventQuery::READ_ALL);
         startQuery(q);
         Running.append(q);
         Current->setText(tr("Running %1 Pending %2").arg(Running.size()).arg(Pending.size()));
@@ -666,14 +666,14 @@ void toAnalyze::slotRefresh(void)
         {
             switch (Analyzed->currentIndex())
             {
-            default:
-                break;
-            case 1:
-                sql += QString::fromLatin1("\n  AND Last_Analyzed IS NULL");
-                break;
-            case 2:
-                sql += QString::fromLatin1("\n  AND Last_Analyzed IS NOT NULL");
-                break;
+                default:
+                    break;
+                case 1:
+                    sql += QString::fromLatin1("\n  AND Last_Analyzed IS NULL");
+                    break;
+                case 2:
+                    sql += QString::fromLatin1("\n  AND Last_Analyzed IS NOT NULL");
+                    break;
             }
         }
 

@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -82,30 +82,30 @@ class toConnectionSubLoan;
 */
 class toConnectionProviderFinder
 {
-public:
-    /** Each location of database client location is described by a set of parameters
-        like name, path, ORACLE_HOME, ORACLE_HOME_NAME, TNS_ADMIN, INFORMIXDIR, or whatever.
-    */
-    typedef QMap<QString, QVariant> ConnectionProvirerParams;
+    public:
+        /** Each location of database client location is described by a set of parameters
+            like name, path, ORACLE_HOME, ORACLE_HOME_NAME, TNS_ADMIN, INFORMIXDIR, or whatever.
+        */
+        typedef QMap<QString, QVariant> ConnectionProvirerParams;
 
-    virtual QString name() const = 0;
+        virtual QString name() const = 0;
 
-    /** Return list of possible client locations
-     */
-    virtual QList<ConnectionProvirerParams> find() = 0;
+        /** Return list of possible client locations
+         */
+        virtual QList<ConnectionProvirerParams> find() = 0;
 
-    /**
-       Load connection providers library
-    */
-    virtual void load(ConnectionProvirerParams const&) = 0;
+        /**
+           Load connection providers library
+        */
+        virtual void load(ConnectionProvirerParams const&) = 0;
 
-    inline toConnectionProviderFinder(unsigned int i)
-    {
-    };
+        inline toConnectionProviderFinder(unsigned int i)
+        {
+        };
 
-    virtual ~toConnectionProviderFinder() {};
+        virtual ~toConnectionProviderFinder() {};
 
-    inline toConnectionProviderFinder() {};
+        inline toConnectionProviderFinder() {};
 };
 
 /** Declare datatype for finder factory */
@@ -117,22 +117,22 @@ typedef Loki::SingletonHolder<ConnectionProvirerFinderFact> ConnectionProviderFi
 */
 class toConnectionProviderRegistry
 {
-public:
-    toConnectionProvider& get(QString const &provider);
-    toConnectionProvider const& get(QString const &provider) const;
+    public:
+        toConnectionProvider& get(QString const &provider);
+        toConnectionProvider const& get(QString const &provider) const;
 
-    void load(toConnectionProviderFinder::ConnectionProvirerParams const& provider);
+        void load(toConnectionProviderFinder::ConnectionProvirerParams const& provider);
 
-    QList<QString> providers() const;
+        QList<QString> providers() const;
 
-protected:
-    /** only singleton @ref toConnectionProviderRegistrySing can create a instance of this class */
-    friend class toConnectionProviderRegistrySing;
-    friend struct ::Loki::CreateUsingNew<toConnectionProviderRegistry>;
-    friend struct ::Loki::CreateUsingMalloc<toConnectionProviderRegistry>;
-    toConnectionProviderRegistry() {};
-private:
-    QMap<QString, toConnectionProvider*> m_registry;
+    protected:
+        /** only singleton @ref toConnectionProviderRegistrySing can create a instance of this class */
+        friend class toConnectionProviderRegistrySing;
+        friend struct ::Loki::CreateUsingNew<toConnectionProviderRegistry>;
+        friend struct ::Loki::CreateUsingMalloc<toConnectionProviderRegistry>;
+        toConnectionProviderRegistry() {};
+    private:
+        QMap<QString, toConnectionProvider*> m_registry;
 };
 
 class toConnectionProviderRegistrySing: public Loki::SingletonHolder<toConnectionProviderRegistry> {};
@@ -142,64 +142,64 @@ class toConnectionProviderRegistrySing: public Loki::SingletonHolder<toConnectio
 */
 class toConnectionProvider
 {
-public:
-    virtual ~toConnectionProvider() {};
+    public:
+        virtual ~toConnectionProvider() {};
 
-    /** initialize connection provider
-    */
-    virtual bool initialize() = 0;
+        /** initialize connection provider
+        */
+        virtual bool initialize() = 0;
 
-    /** @return name of connection provider class (the key in toConnectionProviderRegistry)
-    */
-    virtual QString const& name () const = 0;
+        /** @return name of connection provider class (the key in toConnectionProviderRegistry)
+        */
+        virtual QString const& name () const = 0;
 
-    /** @return name of connection provider class (as shown in new connection combobox
-     */
-    virtual QString const& displayName () const = 0;
+        /** @return name of connection provider class (as shown in new connection combobox
+         */
+        virtual QString const& displayName () const = 0;
 
-    /** List the available hosts this database provider knows about.
-    * @return A list of hosts.
-    */
-    virtual QList<QString> hosts() = 0;
+        /** List the available hosts this database provider knows about.
+        * @return A list of hosts.
+        */
+        virtual QList<QString> hosts() = 0;
 
-    /** List the available databases this provider knows about for a given host.
-    * @param host Host to return connections for.
-    * @param user That might be needed.
-    * @param password That might be needed.
-    * @return A list of databases available for a given host.
-    */
-    virtual QList<QString> databases(const QString &host, const QString &user, const QString &pwd) = 0;
+        /** List the available databases this provider knows about for a given host.
+        * @param host Host to return connections for.
+        * @param user That might be needed.
+        * @param password That might be needed.
+        * @return A list of databases available for a given host.
+        */
+        virtual QList<QString> databases(const QString &host, const QString &user, const QString &pwd) = 0;
 
-    /** Get a list of options available for the connection. An option with the name
-    * "-" indicates a break should be made to separate the rest of the options from the previous
-    * options. An option preceded by "*" means selected by default. The * shoul be stripped before
-    * before passing it to the connection call.
-    */
-    virtual QList<QString> options() = 0;
+        /** Get a list of options available for the connection. An option with the name
+        * "-" indicates a break should be made to separate the rest of the options from the previous
+        * options. An option preceded by "*" means selected by default. The * shoul be stripped before
+        * before passing it to the connection call.
+        */
+        virtual QList<QString> options() = 0;
 
-    /**
-    * Create and return configuration tab for this connectiontype. The returned widget should also
-    * be a childclass of @ref toSettingTab.
-    *
-    * @return A pointer to the widget containing the setup tab for this tool or NULL of
-    * no settings are available.
-    */
-    virtual QWidget *configurationTab(QWidget *parent) = 0;
+        /**
+        * Create and return configuration tab for this connectiontype. The returned widget should also
+        * be a childclass of @ref toSettingTab.
+        *
+        * @return A pointer to the widget containing the setup tab for this tool or NULL of
+        * no settings are available.
+        */
+        virtual QWidget *configurationTab(QWidget *parent) = 0;
 
-    /** create @ref toConnection's helper class. */
-    virtual toConnection::connectionImpl* createConnectionImpl(toConnection&) = 0;
+        /** create @ref toConnection's helper class. */
+        virtual toConnection::connectionImpl* createConnectionImpl(toConnection&) = 0;
 
-    /** create @ref toConnection's helper class. */
-    virtual toConnectionTraits* createConnectionTrait(void) = 0;
+        /** create @ref toConnection's helper class. */
+        virtual toConnectionTraits* createConnectionTrait(void) = 0;
 
-protected:
-    /** only singleton @ref ConnectionProvirerFact can create a instance of this class
-    */
-    friend struct ::Loki::CreateUsingNew<toConnectionProvider>;
-    friend struct ::Loki::CreateUsingMalloc<toConnectionProvider>;
+    protected:
+        /** only singleton @ref ConnectionProvirerFact can create a instance of this class
+        */
+        friend struct ::Loki::CreateUsingNew<toConnectionProvider>;
+        friend struct ::Loki::CreateUsingMalloc<toConnectionProvider>;
 
-    toConnectionProvider(toConnectionProviderFinder::ConnectionProvirerParams const&) {};
-    toConnectionProvider();
+        toConnectionProvider(toConnectionProviderFinder::ConnectionProvirerParams const&) {};
+        toConnectionProvider();
 };
 
 /** \warning this class represents a list of all the connections providers found

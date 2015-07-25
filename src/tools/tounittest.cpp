@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -98,31 +98,31 @@ static toSQL SQLListPackage("toUnitTest:ListPackageMethods",
 
 class toUnitTestTool : public toTool
 {
-protected:
-    virtual const char **pictureXPM(void)
-    {
-        return const_cast<const char**>(unittest_xpm);
-    }
-public:
-    toUnitTestTool()
-        : toTool(120, "PL/SQL Unit Tester") { }
-    virtual const char *menuItem()
-    {
-        return "PL/SQL Unit Tester";
-    }
-    virtual toToolWidget* toolWindow(QWidget *parent, toConnection &connection)
-    {
-        return new toUnitTest(parent, connection);
-    }
+    protected:
+        virtual const char **pictureXPM(void)
+        {
+            return const_cast<const char**>(unittest_xpm);
+        }
+    public:
+        toUnitTestTool()
+            : toTool(120, "PL/SQL Unit Tester") { }
+        virtual const char *menuItem()
+        {
+            return "PL/SQL Unit Tester";
+        }
+        virtual toToolWidget* toolWindow(QWidget *parent, toConnection &connection)
+        {
+            return new toUnitTest(parent, connection);
+        }
 //         virtual QWidget *configurationTab(QWidget *parent)
 //         {
 //             return new toSGATracePrefs(this, parent);
 //         }
-    virtual bool canHandle(const toConnection &conn)
-    {
-        return conn.providerIs("Oracle");
-    }
-    virtual void closeWindow(toConnection &connection) {};
+        virtual bool canHandle(const toConnection &conn)
+        {
+            return conn.providerIs("Oracle");
+        }
+        virtual void closeWindow(toConnection &connection) {};
 };
 
 
@@ -253,7 +253,7 @@ void toUnitTest::slotChangePackage(const QModelIndex &current)
     if (item && item->parent())
     {
         m_type = item->parent()->display();
-        if(m_type.isEmpty() || m_type == "Code")
+        if (m_type.isEmpty() || m_type == "Code")
             return;
         m_type = m_type.toUpper();
         m_name = item->display();
@@ -290,10 +290,10 @@ void toUnitTest::slotPackageListSelectionChanged()
     editor->editor()->setText("-- getting the script...");
     try
     {
-    	toConnectionSubLoan conn(toToolWidget::connection());
-    	toQuery q(conn, (m_type == "PACKAGE" ? SQLPackageParams : SQLUnitParams), params);
+        toConnectionSubLoan conn(toToolWidget::connection());
+        toQuery q(conn, (m_type == "PACKAGE" ? SQLPackageParams : SQLUnitParams), params);
         toEventQuery * query = new toEventQuery(this
-        		                                , toToolWidget::connection()
+                                                , toToolWidget::connection()
                                                 , q.sql()
                                                 , params
                                                 , toEventQuery::READ_ALL);

@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -52,38 +52,38 @@
 
 class toWaitEventsItem : public toResultViewItem
 {
-    int Color;
-public:
-    toWaitEventsItem(toTreeWidget *parent, toTreeWidgetItem *after, const QString &buf = QString::null)
-        : toResultViewItem(parent, after, QString::null)
-    {
-        Color = 0;
-        setText(1, buf);
-        int num = 1;
-        if (after)
-            num = after->text(0).toInt() + 1;
-        setText(0, QString::number(num));
-    }
-    void setColor(int color)
-    {
-        Color = color;
-    }
-#if 0                           // disabled, wrong override
-    virtual void paintCell(QPainter * p, const QColorGroup & cg, int column, int width, int align)
-    {
-        if (column == 0)
+        int Color;
+    public:
+        toWaitEventsItem(toTreeWidget *parent, toTreeWidgetItem *after, const QString &buf = QString::null)
+            : toResultViewItem(parent, after, QString::null)
         {
-            QString ct = text(column);
-
-            QBrush brush(isSelected() ? toChartBrush(Color) : QBrush(cg.base()));
-
-            p->fillRect(0, 0, width, height(), QBrush(brush.color()));
-            if (brush.style() != Qt::SolidPattern)
-                p->fillRect(0, 0, width, height(), QBrush(Qt::white, brush.style()));
+            Color = 0;
+            setText(1, buf);
+            int num = 1;
+            if (after)
+                num = after->text(0).toInt() + 1;
+            setText(0, QString::number(num));
         }
-        else
-            toTreeWidgetItem::paintCell(p, cg, column, width, align);
-    }
+        void setColor(int color)
+        {
+            Color = color;
+        }
+#if 0                           // disabled, wrong override
+        virtual void paintCell(QPainter * p, const QColorGroup & cg, int column, int width, int align)
+        {
+            if (column == 0)
+            {
+                QString ct = text(column);
+
+                QBrush brush(isSelected() ? toChartBrush(Color) : QBrush(cg.base()));
+
+                p->fillRect(0, 0, width, height(), QBrush(brush.color()));
+                if (brush.style() != Qt::SolidPattern)
+                    p->fillRect(0, 0, width, height(), QBrush(Qt::white, brush.style()));
+            }
+            else
+                toTreeWidgetItem::paintCell(p, cg, column, width, align);
+        }
 #endif
 };
 
@@ -166,7 +166,7 @@ void toWaitEvents::setup(int session)
         Types->setFont(font);
     }
     connect(Types, SIGNAL(selectionChanged()), this, SLOT(changeSelection()));
-    
+
     QFrame *frame = new QFrame(splitter);
     QGridLayout *layout = new QGridLayout(frame);
 
@@ -230,7 +230,7 @@ void toWaitEvents::setup(int session)
 void toWaitEvents::changeType(int item)
 {
     ShowTimes = item;
-#ifdef TORA3_GRAPH    
+#ifdef TORA3_GRAPH
     if (ShowTimes)
     {
         DeltaTimes->show();
@@ -324,7 +324,7 @@ void toWaitEvents::changeSelection(void)
 #ifdef TORA3_GRAPH
         Delta->setEnabledCharts(Enabled);
         DeltaTimes->setEnabledCharts(Enabled);
-#endif	
+#endif
 
         std::list<double> absolute;
         std::list<double> relative;
@@ -358,7 +358,7 @@ void toWaitEvents::changeSelection(void)
             for (std::list<double>::iterator i = absolute.begin(); i != absolute.end(); i++)
                 total += *i;
         }
-#ifdef TORA3_GRAPH 	
+#ifdef TORA3_GRAPH
         AbsolutePie->setValues(absolute, Labels);
         AbsolutePie->setTitle(tr("Absolute system wait events\nTotal %1%2").
                               arg(total / 1000).arg(QString::fromLatin1(ShowTimes ? "" : " s")));
@@ -470,10 +470,10 @@ void toWaitEvents::queryDone(void )
     }
     if (First)
     {
-#ifdef TORA3_GRAPH      
+#ifdef TORA3_GRAPH
         Delta->setLabels(Labels);
         DeltaTimes->setLabels(Labels);
-#endif	
+#endif
         First = false;
     }
 
@@ -532,14 +532,14 @@ void toWaitEvents::queryDone(void )
     LastTimes = CurrentTimes;
     LastCurrent = Current;
 
-#ifdef TORA3_GRAPH    
+#ifdef TORA3_GRAPH
     if (Relative.begin() != Relative.end())
     {
         Delta->addValues(Relative, Now);
         DeltaTimes->addValues(RelativeTimes, Now);
     }
 #endif
-    
+
     changeSelection();
 
     delete Query;
@@ -623,7 +623,7 @@ void toWaitEvents::refresh(void)
 {
     try
     {
-      if (Query || LastTime == QDateTime::currentMSecsSinceEpoch()/1000)
+        if (Query || LastTime == QDateTime::currentMSecsSinceEpoch()/1000)
             return ;
 
         toConnection &conn = toToolWidget::currentTool(this)->connection();

@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -53,98 +53,101 @@
 
 QVariant ToConfiguration::Output::defaultValue(int option) const
 {
-	switch(option)
-	{
-	case PollingInterval:  return QVariant(QString("10 seconds"));
-	case SourceTypeInt:          return QVariant((int)0);
-	case LogUser:          return QVariant(QString("ULOG"));
-	default:
-		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Output un-registered enum value: %1").arg(option)));
-		return QVariant();
-	}
+    switch (option)
+    {
+        case PollingInterval:
+            return QVariant(QString("10 seconds"));
+        case SourceTypeInt:
+            return QVariant((int)0);
+        case LogUser:
+            return QVariant(QString("ULOG"));
+        default:
+            Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Output un-registered enum value: %1").arg(option)));
+            return QVariant();
+    }
 };
 
 class toOutputSetting
-	: public QWidget
-	, Ui::toOutputSettingUI
-	, public toSettingTab
+    : public QWidget
+    , Ui::toOutputSettingUI
+    , public toSettingTab
 {
-    toTool *Tool;
-public:
-    toOutputSetting(toTool *tool, QWidget* parent = 0, const char* name = 0)
-	: QWidget(parent)
-    , toSettingTab("output.html")
-	, Tool(tool)
-    {
-    	using namespace ToConfiguration;
-    	setupUi(this);
-        if (name)
-            setObjectName(name);
+        toTool *Tool;
+    public:
+        toOutputSetting(toTool *tool, QWidget* parent = 0, const char* name = 0)
+            : QWidget(parent)
+            , toSettingTab("output.html")
+            , Tool(tool)
+        {
+            using namespace ToConfiguration;
+            setupUi(this);
+            if (name)
+                setObjectName(name);
 
-        Utils::toRefreshCreate(this,
-        		"toRefreshCreate",
-        		toConfigurationNewSingle::Instance().option(Output::PollingInterval).toString(),
-        		PollingInterval);
+            Utils::toRefreshCreate(this,
+                                   "toRefreshCreate",
+                                   toConfigurationNewSingle::Instance().option(Output::PollingInterval).toString(),
+                                   PollingInterval);
 
-        toSettingTab::loadSettings(this);
-    }
-    virtual void saveSetting(void)
-    {
-    	toSettingTab::saveSettings(this);
-    }
+            toSettingTab::loadSettings(this);
+        }
+        virtual void saveSetting(void)
+        {
+            toSettingTab::saveSettings(this);
+        }
 };
 
 class toOutputTool : public toTool
 {
-protected:
-    std::map<toConnection *, QWidget *> Windows;
+    protected:
+        std::map<toConnection *, QWidget *> Windows;
 
-    virtual const char **pictureXPM(void)
-    {
-        return const_cast<const char**>(tooutput_xpm);
-    }
-
-public:
-    toOutputTool()
-        : toTool(340, "SQL Output")
-    {
-    }
-
-    virtual const char *menuItem()
-    {
-        return "SQL Output";
-    }
-
-    virtual toToolWidget *toolWindow(QWidget *parent, toConnection &connection)
-    {
-        std::map<toConnection *, QWidget *>::iterator i = Windows.find(&connection);
-        if (i != Windows.end())
+        virtual const char **pictureXPM(void)
         {
-            (*i).second->raise();
-            (*i).second->setFocus();
-            return NULL;
+            return const_cast<const char**>(tooutput_xpm);
         }
-        else
+
+    public:
+        toOutputTool()
+            : toTool(340, "SQL Output")
         {
-            toToolWidget* window = new toLogOutput(parent, connection);
-            Windows[&connection] = window;
-            return window;
         }
-    }
 
-    void closeWindow(toConnection &connection)
-    {
-        std::map<toConnection *, QWidget *>::iterator i = Windows.find(&connection);
-        if (i != Windows.end())
-            Windows.erase(i);
-    }
+        virtual const char *menuItem()
+        {
+            return "SQL Output";
+        }
 
-    virtual QWidget *configurationTab(QWidget *parent)
-    {
-        return new toOutputSetting(this, parent);
-    }
-private:
-    static ToConfiguration::Output s_outputConf;
+        virtual toToolWidget *toolWindow(QWidget *parent, toConnection &connection)
+        {
+            std::map<toConnection *, QWidget *>::iterator i = Windows.find(&connection);
+            if (i != Windows.end())
+            {
+                (*i).second->raise();
+                (*i).second->setFocus();
+                return NULL;
+            }
+            else
+            {
+                toToolWidget* window = new toLogOutput(parent, connection);
+                Windows[&connection] = window;
+                return window;
+            }
+        }
+
+        void closeWindow(toConnection &connection)
+        {
+            std::map<toConnection *, QWidget *>::iterator i = Windows.find(&connection);
+            if (i != Windows.end())
+                Windows.erase(i);
+        }
+
+        virtual QWidget *configurationTab(QWidget *parent)
+        {
+            return new toOutputSetting(this, parent);
+        }
+    private:
+        static ToConfiguration::Output s_outputConf;
 };
 
 ToConfiguration::Output toOutputTool::s_outputConf;
@@ -229,29 +232,29 @@ toOutput::toOutput(QWidget *main, toConnection &connection, bool enabled)
 
 void toOutput::slotWindowActivated(toToolWidget* widget)
 {
-	if (!widget)
-		return;
-	if (widget == this)
-	{
-		if (!ToolMenu)
-		{
-			ToolMenu = new QMenu(tr("&Output"), this);
+    if (!widget)
+        return;
+    if (widget == this)
+    {
+        if (!ToolMenu)
+        {
+            ToolMenu = new QMenu(tr("&Output"), this);
 
-			ToolMenu->addAction(refreshAct);
+            ToolMenu->addAction(refreshAct);
 
-			ToolMenu->addSeparator();
+            ToolMenu->addSeparator();
 
-			ToolMenu->addAction(enableAct);
-			ToolMenu->addAction(clearAct);
+            ToolMenu->addAction(enableAct);
+            ToolMenu->addAction(clearAct);
 
-			toGlobalEventSingle::Instance().addCustomMenu(ToolMenu);
-		}
-	}
-	else
-	{
-		delete ToolMenu;
-		ToolMenu = NULL;
-	}
+            toGlobalEventSingle::Instance().addCustomMenu(ToolMenu);
+        }
+    }
+    else
+    {
+        delete ToolMenu;
+        ToolMenu = NULL;
+    }
 }
 
 static toSQL SQLEnable("toOutput:Enable",
@@ -281,9 +284,9 @@ void toOutput::disable(bool dis)
         QString str;
 
         if (dis)
-        	str = toSQL::string(SQLDisable, connection());
+            str = toSQL::string(SQLDisable, connection());
         else
-        	str = toSQL::string(SQLEnable, connection());
+            str = toSQL::string(SQLEnable, connection());
         connection().setInit("OUTPUT", str);
 //        if (dis)
 //            connection().delInit("OUTPUT");
@@ -330,8 +333,8 @@ void toOutput::poll()
         bool any;
         do
         {
-        	toConnectionSubLoan c(connection());
-        	toQuery query(c, SQLLines, toQueryParams());  // TODO FETCH FROM ALL THE CONNECTIONS IN THE POOL - impossible
+            toConnectionSubLoan c(connection());
+            toQuery query(c, SQLLines, toQueryParams());  // TODO FETCH FROM ALL THE CONNECTIONS IN THE POOL - impossible
 
             any = false;
             while (!query.eof())
@@ -415,18 +418,18 @@ void toLogOutput::refresh(void)
 {
     if (Type->currentIndex() == 1)
     {
-    	toConnection &con = connection();
+        toConnection &con = connection();
 
         Log->removeSQL();
 
         // Ugly woodo to replace %1 with the configured logging table name
         customizedLogSQL.updateSQL(
-        		SQLLog.name(), // "toLogOutput:Poll"
-        		toSQL::string(SQLLog.name(), connection()).arg( toConfigurationNewSingle::Instance().option(ToConfiguration::Output::LogUser).toString()),
-        		toSQL::description(SQLLog.name()),
-        		connection().version(),
-        		connection().provider(),
-                true);
+            SQLLog.name(), // "toLogOutput:Poll"
+            toSQL::string(SQLLog.name(), connection()).arg( toConfigurationNewSingle::Instance().option(ToConfiguration::Output::LogUser).toString()),
+            toSQL::description(SQLLog.name()),
+            connection().version(),
+            connection().provider(),
+            true);
         Log->setSQL(customizedLogSQL);
         Log->refresh();
     }

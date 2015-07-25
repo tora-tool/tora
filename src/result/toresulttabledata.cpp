@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -66,11 +66,11 @@
 toResultTableData::toResultTableData(QWidget *parent, const char *name, toWFlags f)
     : QWidget(parent, f)
     , Model(NULL)
-	, AllFilter(false)
+    , AllFilter(false)
 {
-	setupUi(this);
-	Logging->setHidden(true);
-	ProgressBar->setHidden(true);
+    setupUi(this);
+    Logging->setHidden(true);
+    ProgressBar->setHidden(true);
 
     connect(Edit,
             SIGNAL(firstResult(
@@ -187,7 +187,7 @@ void toResultTableData::query(const QString &, toQueryParams const& params)
     SQL = "SELECT ";
     Q_FOREACH(QString c, priKeys)
     {
-    	SQL += c + ",";
+        SQL += c + ",";
     }
     SQL = SQL + " t.* FROM %1.%2 t ";
     SQL = SQL.arg(conn.getTraits().quote(Owner)).arg(conn.getTraits().quote(Table));
@@ -228,11 +228,11 @@ void toResultTableData::closeEvent(QCloseEvent *event)
 
 void toResultTableData::setModel(toResultModel *model)
 {
-	if (model == NULL)
-		Model = NULL;
-	Model = dynamic_cast<toResultModelEdit *>(model);
-	Q_ASSERT_X(Model != NULL || model == NULL, qPrintable(__QHERE__), "Invalid subclass of toResultModel");
-	connect(Model, SIGNAL(changed(bool)), saveAct, SLOT(setEnabled(bool)));
+    if (model == NULL)
+        Model = NULL;
+    Model = dynamic_cast<toResultModelEdit *>(model);
+    Q_ASSERT_X(Model != NULL || model == NULL, qPrintable(__QHERE__), "Invalid subclass of toResultModel");
+    connect(Model, SIGNAL(changed(bool)), saveAct, SLOT(setEnabled(bool)));
 }
 
 void toResultTableData::navigate(QAction *action)
@@ -251,9 +251,9 @@ void toResultTableData::navigate(QAction *action)
     if (action == firstAct)
         row = 0;
     else if (action == previousAct)
-    	row = (std::max)(--row, 0);
+        row = (std::max)(--row, 0);
     else if (action == nextAct)
-    	row = (std::min)(++row, Edit->model()->rowCount() - 1);
+        row = (std::min)(++row, Edit->model()->rowCount() - 1);
     else if (action == lastAct)
         row = Edit->model()->rowCount() - 1;
     else
@@ -295,17 +295,17 @@ void toResultTableData::removeFilter(bool)
                     tr("Remove the filter for this table only or for all tables?"),
                     tr("&All"), tr("&This"), tr("Cancel"), 0))
         {
-        case 0:
-            Criteria.clear();
-            Order.clear();
-            // Intentionally no break
-        case 1:
-            Criteria.remove(FilterName);
-            Order.remove(FilterName);
-            filterAct->setChecked(false);
-            break;
-        case 2:
-            return;
+            case 0:
+                Criteria.clear();
+                Order.clear();
+                // Intentionally no break
+            case 1:
+                Criteria.remove(FilterName);
+                Order.remove(FilterName);
+                filterAct->setChecked(false);
+                break;
+            case 2:
+                return;
         }
     }
     else
@@ -334,7 +334,7 @@ void toResultTableData::changeFilter(bool checked)
     filter.Order->setText(Order[FilterName]);
     filter.Criteria->sciEditor()->setText(Criteria[FilterName]);
 
-	filter.Columns->changeObject(toCache::ObjectRef(Owner, Table, Owner));
+    filter.Columns->changeObject(toCache::ObjectRef(Owner, Table, Owner));
 
     if (dialog.exec())
     {
@@ -358,7 +358,7 @@ void toResultTableData::changeFilter(bool checked)
 bool toResultTableData::maybeSave(void)
 {
     if (Edit->editModel() == NULL)
-    	return true;
+        return true;
     if (!Edit->editModel()->changed())
         return true;
 
@@ -373,94 +373,94 @@ bool toResultTableData::maybeSave(void)
                   QMessageBox::Discard |
                   QMessageBox::Cancel);
 
-    switch(ret)
+    switch (ret)
     {
-    case QMessageBox::Save:
-        if (commitChanges())
-            emit changesSaved();
-        return true;
-    case QMessageBox::Discard:
-    	return true;
-    case QMessageBox::Cancel:
-        return false;
+        case QMessageBox::Save:
+            if (commitChanges())
+                emit changesSaved();
+            return true;
+        case QMessageBox::Discard:
+            return true;
+        case QMessageBox::Cancel:
+            return false;
     }
-	Q_ASSERT_X(false, qPrintable(__QHERE__), "Invalid Message box response");
-	return true; // never reached
+    Q_ASSERT_X(false, qPrintable(__QHERE__), "Invalid Message box response");
+    return true; // never reached
 }
 
 bool toResultTableData::commitChanges()
 {
-	// Check to make sure some changes were actually made
-	Q_ASSERT_X(Model, qPrintable(__QHERE__), "toResultModelEdit == NULL");
-	if (!Model)
-		return false;
+    // Check to make sure some changes were actually made
+    Q_ASSERT_X(Model, qPrintable(__QHERE__), "toResultModelEdit == NULL");
+    if (!Model)
+        return false;
 
-	QList<struct toResultModelEdit::ChangeSet>& Changes = Model->changes();
+    QList<struct toResultModelEdit::ChangeSet>& Changes = Model->changes();
 
-	if (Changes.empty())
-	{
-		Utils::toStatusMessage(tr("No changes made"), false, false);
-		return false;
-	}
+    if (Changes.empty())
+    {
+        Utils::toStatusMessage(tr("No changes made"), false, false);
+        return false;
+    }
 
-	ProgressBar->setVisible(true);
-	ProgressBar->setMaximum(Changes.size());
-	Logging->setVisible(true);
+    ProgressBar->setVisible(true);
+    ProgressBar->setMaximum(Changes.size());
+    Logging->setVisible(true);
 
-	bool error = false;
-	unsigned updated = 0, added = 0, deleted = 0;
+    bool error = false;
+    unsigned updated = 0, added = 0, deleted = 0;
 
 
-	toConnectionSubLoan conn(connection());
-	// No primary keys
-	for (int changeIndex = 0; changeIndex < Changes.size(); changeIndex++)
-	{
-		ProgressBar->setValue(changeIndex);
+    toConnectionSubLoan conn(connection());
+    // No primary keys
+    for (int changeIndex = 0; changeIndex < Changes.size(); changeIndex++)
+    {
+        ProgressBar->setValue(changeIndex);
 
-		try
-		{
-			struct toResultModelEdit::ChangeSet &change = Changes[changeIndex];
+        try
+        {
+            struct toResultModelEdit::ChangeSet &change = Changes[changeIndex];
 
-			switch (change.kind)
-			{
-			case toResultModelEdit::Delete:
-				deleted += commitDelete(conn, change);
-				break;
-			case toResultModelEdit::Add:
-				added += commitAdd(conn, change);
-				break;
-			case toResultModelEdit::Update:
-				updated += commitUpdate(conn, change);
-				break;
-			default:
-				Utils::toStatusMessage(tr("Internal error."));
-				break;
-			}
-		}
-		catch (const QString &str)
-		{
-			conn->rollback();
-			Utils::toStatusMessage(str);
-			error = true;
-			break;
-		}
-	}
+            switch (change.kind)
+            {
+                case toResultModelEdit::Delete:
+                    deleted += commitDelete(conn, change);
+                    break;
+                case toResultModelEdit::Add:
+                    added += commitAdd(conn, change);
+                    break;
+                case toResultModelEdit::Update:
+                    updated += commitUpdate(conn, change);
+                    break;
+                default:
+                    Utils::toStatusMessage(tr("Internal error."));
+                    break;
+            }
+        }
+        catch (const QString &str)
+        {
+            conn->rollback();
+            Utils::toStatusMessage(str);
+            error = true;
+            break;
+        }
+    }
 
-	if (!error)
-	{
-		conn->commit();
-		ProgressBar->setValue(Changes.size());
-		Changes.clear();
-	}
+    if (!error)
+    {
+        conn->commit();
+        ProgressBar->setValue(Changes.size());
+        Changes.clear();
+    }
 
-	Utils::toStatusMessage(tr("Saved %1 changes(updated %2, added %3, deleted %4)")
-			.arg(Changes.size(), 0, 10)
-			.arg(updated, 0, 10)
-			.arg(added, 0, 10)
-			.arg(deleted, 0, 10)
-			, false, false);
+    Utils::toStatusMessage(tr("Saved %1 changes(updated %2, added %3, deleted %4)")
+                           .arg(Changes.size(), 0, 10)
+                           .arg(updated, 0, 10)
+                           .arg(added, 0, 10)
+                           .arg(deleted, 0, 10)
+                           , false, false);
 
-	return !error;
+    return !error;
 }
 
 void toResultTableData::singleRecordForm(bool display)
@@ -478,7 +478,7 @@ void toResultTableData::singleRecordForm(bool display)
     }
     else
     {
-        if(Form->currentRow() >= 0)
+        if (Form->currentRow() >= 0)
         {
             // set selection to same as the form's
             QModelIndex left = Edit->model()->createIndex(Form->currentRow(), 1);
@@ -521,12 +521,12 @@ void toResultTableData::refreshWarn()
                     QMessageBox::Ok | QMessageBox::Cancel,
                     this).exec())
         {
-        case QMessageBox::Ok:
-            break;
-        case QMessageBox::Cancel:
-            return;
-        default:
-            return;
+            case QMessageBox::Ok:
+                break;
+            case QMessageBox::Cancel:
+                return;
+            default:
+                return;
         }
     }
 
@@ -536,53 +536,53 @@ void toResultTableData::refreshWarn()
 
 unsigned toResultTableData::commitUpdate(toConnectionSubLoan &conn, toResultModelEdit::ChangeSet &change)
 {
-	static const QString UPDATE = QString("UPDATE %1.%2 SET %3 WHERE 1=1 %4");
-	static const QString CONJUNCTION = QString(" AND %1 = %2");
-	static const QString ASSIGNMENT = QString("%1 = %2");
+    static const QString UPDATE = QString("UPDATE %1.%2 SET %3 WHERE 1=1 %4");
+    static const QString CONJUNCTION = QString(" AND %1 = %2");
+    static const QString ASSIGNMENT = QString("%1 = %2");
 
-	if (Model->getPriKeys().empty())
-	{
+    if (Model->getPriKeys().empty())
+    {
         Utils::toStatusMessage(tr("This table has no known primary keys"));
         return 0;
-	}
+    }
 
     toConnectionTraits const& connTraits = conn.ParentConnection.getTraits();
     QString sqlValuePlaceHolders, sqlCondPlaceHolders;
 
     // set new value in update statement
     if (change.newValue.isNull())
-    	sqlValuePlaceHolders = ASSIGNMENT.arg(change.columnName).arg("NULL");
+        sqlValuePlaceHolders = ASSIGNMENT.arg(change.columnName).arg("NULL");
     else
-    	sqlValuePlaceHolders = ASSIGNMENT.arg(change.columnName).arg((QString)change.newValue);
+        sqlValuePlaceHolders = ASSIGNMENT.arg(change.columnName).arg((QString)change.newValue);
 
-    for(int i = 1; i < Model->getPriKeys().size() + 1; i++)
+    for (int i = 1; i < Model->getPriKeys().size() + 1; i++)
     {
-    	sqlCondPlaceHolders += CONJUNCTION
-    			.arg(connTraits.quote(Model->headerData(
-    					i,
-    					Qt::Horizontal,
-    					Qt::DisplayRole).toString()))
-    	        .arg(connTraits.quoteVarchar(change.row[i].editData()));
+        sqlCondPlaceHolders += CONJUNCTION
+                               .arg(connTraits.quote(Model->headerData(
+                                           i,
+                                           Qt::Horizontal,
+                                           Qt::DisplayRole).toString()))
+                               .arg(connTraits.quoteVarchar(change.row[i].editData()));
     }
 
     QString sql = UPDATE.arg(connTraits.quote(Owner)).arg(connTraits.quote(Table)).arg(sqlValuePlaceHolders).arg(sqlCondPlaceHolders);
     Logging->appendPlainText(sql);
     {
-    	toQuery q(conn, sql, toQueryParams());
-		q.eof();
-    	if (q.rowsProcessed() > 1)
-    	{
-    	    Logging->appendPlainText("Rollback;");
-    		conn->rollback();
-    		return 0;
-    	}
-    	return q.rowsProcessed();
+        toQuery q(conn, sql, toQueryParams());
+        q.eof();
+        if (q.rowsProcessed() > 1)
+        {
+            Logging->appendPlainText("Rollback;");
+            conn->rollback();
+            return 0;
+        }
+        return q.rowsProcessed();
     }
 }
 
 unsigned toResultTableData::commitAdd(toConnectionSubLoan &conn, toResultModelEdit::ChangeSet &change)
 {
-	static const QString INSERT = QString("INSERT INTO %1.%2 ( %3 ) VALUES( %4 ) ");
+    static const QString INSERT = QString("INSERT INTO %1.%2 ( %3 ) VALUES( %4 ) ");
 
     toConnectionTraits const& connTraits = conn.ParentConnection.getTraits();
     const toResultModel::HeaderList & Headers = Model->headers();
@@ -594,9 +594,9 @@ unsigned toResultTableData::commitAdd(toConnectionSubLoan &conn, toResultModelEd
         if (col > 0)
             sqlColumns += ", ";
         sqlColumns += connTraits.quote(Model->headerData(
-        		i,
-        		Qt::Horizontal,
-        		Qt::DisplayRole).toString());
+                                           i,
+                                           Qt::Horizontal,
+                                           Qt::DisplayRole).toString());
 
         toQValue const &val = change.row[i].editData();
         if (val.isComplexType()) // If it's a complex type then it's not NULL
@@ -613,7 +613,7 @@ unsigned toResultTableData::commitAdd(toConnectionSubLoan &conn, toResultModelEd
         {
             if (Headers[i].datatype.toUpper().contains("LOB"))
             {
-            	sqlValuePlaceHolders += ("empty_blob()");
+                sqlValuePlaceHolders += ("empty_blob()");
                 continue;
             }
 
@@ -636,48 +636,48 @@ unsigned toResultTableData::commitAdd(toConnectionSubLoan &conn, toResultModelEd
     QString sql = INSERT.arg(connTraits.quote(Owner)).arg(connTraits.quote(Table)).arg(sqlColumns).arg(sqlValuePlaceHolders);
     Logging->appendPlainText(sql);
 
-	{
-    	// TODO use event query
-		toQuery q(conn, sql, toQueryParams());
-		q.eof();
-		return q.rowsProcessed();
-	}
+    {
+        // TODO use event query
+        toQuery q(conn, sql, toQueryParams());
+        q.eof();
+        return q.rowsProcessed();
+    }
 }
 
 unsigned toResultTableData::commitDelete(toConnectionSubLoan &conn, toResultModelEdit::ChangeSet &change)
 {
-	static const QString DELETESTAT = QString::fromLatin1("DELETE FROM %1.%2 WHERE 1=1 %3");
-	static const QString CONJUNCTION = QString::fromLatin1(" AND %1 = %2");
-	if (Model->getPriKeys().empty())
-	{
+    static const QString DELETESTAT = QString::fromLatin1("DELETE FROM %1.%2 WHERE 1=1 %3");
+    static const QString CONJUNCTION = QString::fromLatin1(" AND %1 = %2");
+    if (Model->getPriKeys().empty())
+    {
         Utils::toStatusMessage(tr("This table has no known primary keys"));
         return 0;
-	}
+    }
 
     toConnectionTraits const& connTraits = conn.ParentConnection.getTraits();
     QString sqlValuePlaceHolders;
-    for(int i = 1; i < Model->getPriKeys().size() + 1; i++)
+    for (int i = 1; i < Model->getPriKeys().size() + 1; i++)
     {
-    	sqlValuePlaceHolders += CONJUNCTION
-    			.arg(connTraits.quote(Model->headerData(
-    					i,
-    					Qt::Horizontal,
-    					Qt::DisplayRole).toString()))
-    	        .arg(connTraits.quoteVarchar(change.row[i].editData()));
+        sqlValuePlaceHolders += CONJUNCTION
+                                .arg(connTraits.quote(Model->headerData(
+                                            i,
+                                            Qt::Horizontal,
+                                            Qt::DisplayRole).toString()))
+                                .arg(connTraits.quoteVarchar(change.row[i].editData()));
     }
 
     QString sql = DELETESTAT.arg(connTraits.quote(Owner)).arg(connTraits.quote(Table)).arg(sqlValuePlaceHolders);
     Logging->appendPlainText(sql);
 
     {
-    	toQuery q(conn, sql, toQueryParams());
-		q.eof();
-    	if (q.rowsProcessed() > 1)
-    	{
-    	    Logging->appendPlainText("Rollback;");
-    		conn->rollback();
-    		return 0;
-    	}
-    	return q.rowsProcessed();
+        toQuery q(conn, sql, toQueryParams());
+        q.eof();
+        if (q.rowsProcessed() > 1)
+        {
+            Logging->appendPlainText("Rollback;");
+            conn->rollback();
+            return 0;
+        }
+        return q.rowsProcessed();
     }
 }

@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -58,108 +58,108 @@ class toEventQueryWorker;
 /* This class is just a temporary wrapper for QThread */
 class BGThread : public QThread
 {
-    Q_OBJECT;
-public:
-	BGThread(QObject* parent) : QThread(parent), Slave(NULL), Parent((toEventQuery*)parent) {};
-	~BGThread() {};
-	// These two pointers are for debugging purposes only
-	toEventQueryWorker* Slave;
-	toEventQuery* Parent;
+        Q_OBJECT;
+    public:
+        BGThread(QObject* parent) : QThread(parent), Slave(NULL), Parent((toEventQuery*)parent) {};
+        ~BGThread() {};
+        // These two pointers are for debugging purposes only
+        toEventQueryWorker* Slave;
+        toEventQuery* Parent;
 
-	static void msleep (unsigned long s)
-	{
-		QThread::msleep(s);
-	}
-protected:
-	void run(void)
-	{
-		Utils::toSetThreadName(*this);
-		QThread::run();
-	}
+        static void msleep (unsigned long s)
+        {
+            QThread::msleep(s);
+        }
+    protected:
+        void run(void)
+        {
+            Utils::toSetThreadName(*this);
+            QThread::run();
+        }
 };
 
 
 class toEventQueryWorker : public QObject
 {
-	friend class toEventQuery;
-	Q_OBJECT;
-public:
-	toEventQueryWorker(toEventQuery*
-			, QSharedPointer<toConnectionSubLoan> &
-			, QSharedPointer<toEventQuery::WaitConditionWithMutex> &
-			, QString &
-			, toQueryParams&);
-											
-	virtual ~toEventQueryWorker();											
+        friend class toEventQuery;
+        Q_OBJECT;
+    public:
+        toEventQueryWorker(toEventQuery*
+                           , QSharedPointer<toConnectionSubLoan> &
+                           , QSharedPointer<toEventQuery::WaitConditionWithMutex> &
+                           , QString &
+                           , toQueryParams&);
 
-public slots:
-	void init(void);
-	
-	void slotStop();
+        virtual ~toEventQueryWorker();
 
-signals:
-	/** started */
-	void started();
+    public slots:
+        void init(void);
 
-	/**
-	* A read was requested
-	*/
-	void readRequested();
+        void slotStop();
 
-	/**
-	* Error message
-	*/
-	void error(toConnection::exception const &msg);
+    signals:
+        /** started */
+        void started();
 
-	/**
-	* Result headers
-	*
-	* @param desc list of header values
-	* @param columns number of columns in result
-	*/
-	void headers(toQColumnDescriptionList &desc, int columns);
+        /**
+        * A read was requested
+        */
+        void readRequested();
 
-	// must be careful when defining signals. passing by reference
-	// will share memory between threads.
-	// also QObject's will have it's affinity set to background thread
-	// and should be disposed within the context of the main thread
-	/**
-	* Data read from query
-	*/
-	void data(const ValuesList &values);
+        /**
+        * Error message
+        */
+        void error(toConnection::exception const &msg);
 
-	/**
-	* Emitted when sql query is done
-	*/
-	void workDone();
-	void finished();
+        /**
+        * Result headers
+        *
+        * @param desc list of header values
+        * @param columns number of columns in result
+        */
+        void headers(toQColumnDescriptionList &desc, int columns);
 
-	/**
-	* Emitted if query.rowsProcessed() > 0. Number of affected rows.
-	*/
-	void rowsProcessed(unsigned long rows);
+        // must be careful when defining signals. passing by reference
+        // will share memory between threads.
+        // also QObject's will have it's affinity set to background thread
+        // and should be disposed within the context of the main thread
+        /**
+        * Data read from query
+        */
+        void data(const ValuesList &values);
 
-private slots:
-	void slotRead();
-	
-private:
-	void close(void);
+        /**
+        * Emitted when sql query is done
+        */
+        void workDone();
+        void finished();
 
-	toEventQuery *Consumer;
+        /**
+        * Emitted if query.rowsProcessed() > 0. Number of affected rows.
+        */
+        void rowsProcessed(unsigned long rows);
 
-	// sql and bind parameters
-	QString SQL;
-	toQueryParams Params;
+    private slots:
+        void slotRead();
 
-	QSharedPointer<toConnectionSubLoan> Connection;
-	QSharedPointer<toEventQuery::WaitConditionWithMutex> CancelCondition;
+    private:
+        void close(void);
 
-	unsigned ColumnCount;
+        toEventQuery *Consumer;
 
-	bool Stopped, Closed;
+        // sql and bind parameters
+        QString SQL;
+        toQueryParams Params;
 
-	// the real query object
-	toQuery Query;
+        QSharedPointer<toConnectionSubLoan> Connection;
+        QSharedPointer<toEventQuery::WaitConditionWithMutex> CancelCondition;
+
+        unsigned ColumnCount;
+
+        bool Stopped, Closed;
+
+        // the real query object
+        toQuery Query;
 };
 
 #endif

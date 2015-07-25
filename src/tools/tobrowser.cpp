@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -90,17 +90,22 @@
 
 QVariant ToConfiguration::Browser::defaultValue(int option) const
 {
-	switch(option)
-	{
-	case FilterIgnoreCase:       return QVariant((bool)false);
-	case FilterInvert:           return QVariant((bool)false);
-	case FilterType:             return QVariant((int)0);
-	case FilterTablespaceType:   return QVariant((int)0);
-	case FilterText:             return QVariant(QString(""));
-	default:
-		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Browser un-registered enum value: %1").arg(option)));
-		return QVariant();
-	}
+    switch (option)
+    {
+        case FilterIgnoreCase:
+            return QVariant((bool)false);
+        case FilterInvert:
+            return QVariant((bool)false);
+        case FilterType:
+            return QVariant((int)0);
+        case FilterTablespaceType:
+            return QVariant((int)0);
+        case FilterText:
+            return QVariant(QString(""));
+        default:
+            Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Browser un-registered enum value: %1").arg(option)));
+            return QVariant();
+    }
 }
 
 const char **toBrowserTool::pictureXPM(void)
@@ -166,7 +171,7 @@ void toBrowserTool::addIndex(void)
     //                                 toMainWidget());
     // }
     // TOCATCH
-    throw tr("toBrowserTool::addIndex(void) not implement yet");  
+    throw tr("toBrowserTool::addIndex(void) not implement yet");
 }
 
 void toBrowserTool::addConstraint(void)
@@ -194,171 +199,171 @@ static toSQL SQLListTablespaces("toBrowser:ListTablespaces",
                                 "List the available tablespaces in a database.");
 
 class toBrowserFilter
-	: public toViewFilter
+    : public toViewFilter
 {
-	enum FilterType // see toBrowserFilterSetup::ButtonsGroup
-	{
-        FilterNone = 0,
-        FilterStartsWith,
-        FilterEndsWith,
-        FilterContains,
-        FilterCommaSeparated,
-        FilterRegExp,
-	};
-	FilterType         Type;
-    bool               IgnoreCase;
-    bool               Invert;
-    QString            Text;
-    int                TablespaceType;
-    std::list<QString> Tablespaces;
-    QRegExp            Match;
-    bool               OnlyOwnSchema;
-    bool               Empty;
-
-    std::map<QString, bool> RemoveDuplicates;
-
-public:
-    toBrowserFilter(FilterType type,
-                    bool cas,
-                    bool invert,
-                    const QString &str,
-                    int tablespace,
-                    const std::list<QString> &tablespaces,
-                    bool onlyOwnSchema = false)
-        : toViewFilter()
-        , Type(type)
-        , IgnoreCase(cas)
-        , Invert(invert)
-        , Text(cas ? str.toUpper() : str)
-        , TablespaceType(tablespace)
-        , Tablespaces(tablespaces)
-        , OnlyOwnSchema(onlyOwnSchema)
-        , Empty(false)
-    {
-
-        if (!str.isEmpty())
+        enum FilterType // see toBrowserFilterSetup::ButtonsGroup
         {
-            Match.setPattern(str);
-            Match.setCaseSensitivity(cas ? Qt::CaseSensitive : Qt::CaseInsensitive);
+            FilterNone = 0,
+            FilterStartsWith,
+            FilterEndsWith,
+            FilterContains,
+            FilterCommaSeparated,
+            FilterRegExp,
+        };
+        FilterType         Type;
+        bool               IgnoreCase;
+        bool               Invert;
+        QString            Text;
+        int                TablespaceType;
+        std::list<QString> Tablespaces;
+        QRegExp            Match;
+        bool               OnlyOwnSchema;
+        bool               Empty;
+
+        std::map<QString, bool> RemoveDuplicates;
+
+    public:
+        toBrowserFilter(FilterType type,
+                        bool cas,
+                        bool invert,
+                        const QString &str,
+                        int tablespace,
+                        const std::list<QString> &tablespaces,
+                        bool onlyOwnSchema = false)
+            : toViewFilter()
+            , Type(type)
+            , IgnoreCase(cas)
+            , Invert(invert)
+            , Text(cas ? str.toUpper() : str)
+            , TablespaceType(tablespace)
+            , Tablespaces(tablespaces)
+            , OnlyOwnSchema(onlyOwnSchema)
+            , Empty(false)
+        {
+
+            if (!str.isEmpty())
+            {
+                Match.setPattern(str);
+                Match.setCaseSensitivity(cas ? Qt::CaseSensitive : Qt::CaseInsensitive);
+            }
+
+            storeFilterSettings();
         }
 
-        storeFilterSettings();
-    }
+        toBrowserFilter(bool empty = true)
+            : Type(FilterNone),
+              IgnoreCase(true),
+              Invert(false),
+              TablespaceType(0)
+        {
 
-    toBrowserFilter(bool empty = true)
-        : Type(FilterNone),
-          IgnoreCase(true),
-          Invert(false),
-          TablespaceType(0)
-    {
+            Empty = empty;
+            if (!empty)
+                readFilterSettings();
+            else
+                toConfigurationNewSingle::Instance().setOption(ToConfiguration::Browser::FilterType, FilterNone);  // No filter type
+        }
 
-        Empty = empty;
-        if (!empty)
-            readFilterSettings();
-        else
-            toConfigurationNewSingle::Instance().setOption(ToConfiguration::Browser::FilterType, FilterNone);  // No filter type
-    }
+        virtual ~toBrowserFilter() {};
 
-    virtual ~toBrowserFilter() {};
+        virtual bool isEmpty(void)
+        {
+            return Empty;
+        }
 
-    virtual bool isEmpty(void)
-    {
-        return Empty;
-    }
+        virtual void storeFilterSettings(void)
+        {
+            using namespace ToConfiguration;
+            toConfigurationNewSingle::Instance().setOption(Browser::FilterIgnoreCase, IgnoreCase);
+            toConfigurationNewSingle::Instance().setOption(Browser::FilterInvert, Invert);
+            toConfigurationNewSingle::Instance().setOption(Browser::FilterType, Type);
+            toConfigurationNewSingle::Instance().setOption(Browser::FilterTablespaceType, TablespaceType);
+            toConfigurationNewSingle::Instance().setOption(Browser::FilterText, Text);
+            toConfigurationNewSingle::Instance().saveAll();
+        }
 
-    virtual void storeFilterSettings(void)
-    {
-    	using namespace ToConfiguration;
-        toConfigurationNewSingle::Instance().setOption(Browser::FilterIgnoreCase, IgnoreCase);
-        toConfigurationNewSingle::Instance().setOption(Browser::FilterInvert, Invert);
-        toConfigurationNewSingle::Instance().setOption(Browser::FilterType, Type);
-        toConfigurationNewSingle::Instance().setOption(Browser::FilterTablespaceType, TablespaceType);
-        toConfigurationNewSingle::Instance().setOption(Browser::FilterText, Text);
-        toConfigurationNewSingle::Instance().saveAll();
-    }
-
-    virtual void readFilterSettings(void)
-    {
-    	using namespace ToConfiguration;
-        QString t;
-        Text = toConfigurationNewSingle::Instance().option(Browser::FilterText).toString();
-        IgnoreCase = toConfigurationNewSingle::Instance().option(ToConfiguration::Browser::FilterIgnoreCase).toBool();
-        Invert = toConfigurationNewSingle::Instance().option(Browser::FilterInvert).toBool();
-        OnlyOwnSchema = false;
-        Type = (FilterType) toConfigurationNewSingle::Instance().option(Browser::FilterType).toInt();
-        TablespaceType = toConfigurationNewSingle::Instance().option(Browser::FilterTablespaceType).toInt();
-    }
+        virtual void readFilterSettings(void)
+        {
+            using namespace ToConfiguration;
+            QString t;
+            Text = toConfigurationNewSingle::Instance().option(Browser::FilterText).toString();
+            IgnoreCase = toConfigurationNewSingle::Instance().option(ToConfiguration::Browser::FilterIgnoreCase).toBool();
+            Invert = toConfigurationNewSingle::Instance().option(Browser::FilterInvert).toBool();
+            OnlyOwnSchema = false;
+            Type = (FilterType) toConfigurationNewSingle::Instance().option(Browser::FilterType).toInt();
+            TablespaceType = toConfigurationNewSingle::Instance().option(Browser::FilterTablespaceType).toInt();
+        }
 
 #ifdef TORA3_SESSION
-    virtual void exportData(std::map<QString, QString> &data, const QString &prefix)
-    {
-        data[prefix + ":Type"] = QString::number(Type);
-        if (IgnoreCase)
-            data[prefix + ":Ignore"] = "Yes";
-        if (Invert)
-            data[prefix + ":Invert"] = "Yes";
-        data[prefix + ":SpaceType"] = QString::number(TablespaceType);
-        data[prefix + ":Text"] = Text;
-        int id = 1;
-        for (std::list<QString>::iterator i = Tablespaces.begin(); i != Tablespaces.end(); i++, id++)
-            data[prefix + ":Space:" + QString::number(id).toLatin1()] = *i;
-        if (OnlyOwnSchema)
-            data[prefix + ":OwnlyOwnSchema"] = "Yes";
-    }
+        virtual void exportData(std::map<QString, QString> &data, const QString &prefix)
+        {
+            data[prefix + ":Type"] = QString::number(Type);
+            if (IgnoreCase)
+                data[prefix + ":Ignore"] = "Yes";
+            if (Invert)
+                data[prefix + ":Invert"] = "Yes";
+            data[prefix + ":SpaceType"] = QString::number(TablespaceType);
+            data[prefix + ":Text"] = Text;
+            int id = 1;
+            for (std::list<QString>::iterator i = Tablespaces.begin(); i != Tablespaces.end(); i++, id++)
+                data[prefix + ":Space:" + QString::number(id).toLatin1()] = *i;
+            if (OnlyOwnSchema)
+                data[prefix + ":OwnlyOwnSchema"] = "Yes";
+        }
 
-    virtual void importData(std::map<QString, QString> &data, const QString &prefix)
-    {
-        Type = data[prefix + ":Type"].toInt();
-        OnlyOwnSchema = !data[prefix + ":OnlyOwnSchema"].isEmpty();
-        TablespaceType = data[prefix + ":SpaceType"].toInt();
-        IgnoreCase = !data[prefix + ":Ignore"].isEmpty();
-        Invert = !data[prefix + ":Invert"].isEmpty();
-        Text = data[prefix + ":Text"];
-        if (!Text.isEmpty())
+        virtual void importData(std::map<QString, QString> &data, const QString &prefix)
         {
-            Match.setPattern(Text);
-            Match.setCaseSensitivity(IgnoreCase ? Qt::CaseSensitive : Qt::CaseInsensitive);
+            Type = data[prefix + ":Type"].toInt();
+            OnlyOwnSchema = !data[prefix + ":OnlyOwnSchema"].isEmpty();
+            TablespaceType = data[prefix + ":SpaceType"].toInt();
+            IgnoreCase = !data[prefix + ":Ignore"].isEmpty();
+            Invert = !data[prefix + ":Invert"].isEmpty();
+            Text = data[prefix + ":Text"];
+            if (!Text.isEmpty())
+            {
+                Match.setPattern(Text);
+                Match.setCaseSensitivity(IgnoreCase ? Qt::CaseSensitive : Qt::CaseInsensitive);
+            }
+            int id = 1;
+            std::map<QString, QString>::iterator i;
+            Tablespaces.clear();
+            while ((i = data.find(prefix + ":Space:" + QString::number(id).toLatin1())) != data.end())
+            {
+                Tablespaces.insert(Tablespaces.end(), (*i).second);
+                i++;
+                id++;
+            }
         }
-        int id = 1;
-        std::map<QString, QString>::iterator i;
-        Tablespaces.clear();
-        while ((i = data.find(prefix + ":Space:" + QString::number(id).toLatin1())) != data.end())
-        {
-            Tablespaces.insert(Tablespaces.end(), (*i).second);
-            i++;
-            id++;
-        }
-    }
 #endif
 
-    bool onlyOwnSchema(void)
-    {
-        return OnlyOwnSchema;
-    }
-
-    virtual QString wildCard(void)
-    {
-        switch (Type)
+        bool onlyOwnSchema(void)
         {
-        case FilterStartsWith:
-            return Text.toUpper() + QString::fromLatin1("%");
-        case FilterEndsWith:
-            return QString::fromLatin1("%") + Text.toUpper();
-        case FilterContains:
-            return QString::fromLatin1("%") + Text.toUpper() + QString::fromLatin1("%");
-        case FilterNone:
-        case FilterCommaSeparated:
-        case FilterRegExp:
-            return QString::fromLatin1("%");
-		default:
-			throw QString("Unknown filter type: %1").arg((int)Type);
+            return OnlyOwnSchema;
         }
-    }
 
-    virtual void startingQuery()
-    {
-        RemoveDuplicates.clear();
-    }
+        virtual QString wildCard(void)
+        {
+            switch (Type)
+            {
+                case FilterStartsWith:
+                    return Text.toUpper() + QString::fromLatin1("%");
+                case FilterEndsWith:
+                    return QString::fromLatin1("%") + Text.toUpper();
+                case FilterContains:
+                    return QString::fromLatin1("%") + Text.toUpper() + QString::fromLatin1("%");
+                case FilterNone:
+                case FilterCommaSeparated:
+                case FilterRegExp:
+                    return QString::fromLatin1("%");
+                default:
+                    throw QString("Unknown filter type: %1").arg((int)Type);
+            }
+        }
+
+        virtual void startingQuery()
+        {
+            RemoveDuplicates.clear();
+        }
 
 //    virtual bool check(const toTreeWidgetItem *item)
 //    {
@@ -367,220 +372,220 @@ public:
 //                     item->text(2));
 //    }
 
-    virtual bool check(const toResultModel *model, const int row)
-    {
-        return check(model->data(row, 1).toString(),
-                     model->data(row, 2).toString(),
-                     model->data(row, 3).toString());
-    }
-
-    bool check(QString one, QString two, QString three)
-    {
-        QString key = one + "." + two;
-        if (RemoveDuplicates.find(key) != RemoveDuplicates.end())
-            return false;
-        else
-            RemoveDuplicates[key] = true;
-
-        QString str = one;
-        QString tablespace = three;
-        if (!tablespace.isEmpty())
+        virtual bool check(const toResultModel *model, const int row)
         {
-            switch (TablespaceType)
+            return check(model->data(row, 1).toString(),
+                         model->data(row, 2).toString(),
+                         model->data(row, 3).toString());
+        }
+
+        bool check(QString one, QString two, QString three)
+        {
+            QString key = one + "." + two;
+            if (RemoveDuplicates.find(key) != RemoveDuplicates.end())
+                return false;
+            else
+                RemoveDuplicates[key] = true;
+
+            QString str = one;
+            QString tablespace = three;
+            if (!tablespace.isEmpty())
             {
-            case 1:
-            {
-                bool ok = false;
-                for (std::list<QString>::iterator i = Tablespaces.begin(); i != Tablespaces.end(); i++)
+                switch (TablespaceType)
                 {
-                    if (*i == tablespace)
-                    {
-                        ok = true;
+                    case 1:
+                        {
+                            bool ok = false;
+                            for (std::list<QString>::iterator i = Tablespaces.begin(); i != Tablespaces.end(); i++)
+                            {
+                                if (*i == tablespace)
+                                {
+                                    ok = true;
+                                    break;
+                                }
+                            }
+                            if (!ok)
+                                return false;
+                        }
                         break;
+                    case 2:
+                        for (std::list<QString>::iterator i = Tablespaces.begin(); i != Tablespaces.end(); i++)
+                            if (*i == tablespace)
+                                return false;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            switch (Type)
+            {
+                case FilterNone:
+                    return true;
+                case FilterStartsWith:
+                    if (IgnoreCase)
+                    {
+                        if (str.toUpper().startsWith(Text))
+                            return !Invert;
                     }
-                }
-                if (!ok)
-                    return false;
-            }
-            break;
-            case 2:
-                for (std::list<QString>::iterator i = Tablespaces.begin(); i != Tablespaces.end(); i++)
-                    if (*i == tablespace)
-                        return false;
-                break;
-            default:
-                break;
-            }
-        }
-        switch (Type)
-        {
-        case FilterNone:
-            return true;
-        case FilterStartsWith:
-            if (IgnoreCase)
-            {
-                if (str.toUpper().startsWith(Text))
-                    return !Invert;
-            }
-            else if (str.startsWith(Text))
-                return !Invert;
-            break;
-        case FilterEndsWith:
-            if (IgnoreCase)
-            {
-                if (str.right(Text.length()).toUpper() == Text)
-                    return !Invert;
-            }
-            else if (str.right(Text.length()) == Text)
-                return !Invert;
-            break;
-        case FilterContains:
-            if (str.contains(Text, IgnoreCase ? Qt::CaseSensitive : Qt::CaseInsensitive))
-                return !Invert;
-            break;
-        case FilterCommaSeparated:
-        {
-            QStringList lst = Text.split(QRegExp(QString("\\s*,\\s*")));
-            for (int i = 0; i < lst.count(); i++)
-                if (IgnoreCase)
-                {
-                    if (str.toUpper() == lst[i])
+                    else if (str.startsWith(Text))
                         return !Invert;
-                }
-                else if (str == lst[i])
-                    return !Invert;
-        }
-        break;
-        case FilterRegExp:
+                    break;
+                case FilterEndsWith:
+                    if (IgnoreCase)
+                    {
+                        if (str.right(Text.length()).toUpper() == Text)
+                            return !Invert;
+                    }
+                    else if (str.right(Text.length()) == Text)
+                        return !Invert;
+                    break;
+                case FilterContains:
+                    if (str.contains(Text, IgnoreCase ? Qt::CaseSensitive : Qt::CaseInsensitive))
+                        return !Invert;
+                    break;
+                case FilterCommaSeparated:
+                    {
+                        QStringList lst = Text.split(QRegExp(QString("\\s*,\\s*")));
+                        for (int i = 0; i < lst.count(); i++)
+                            if (IgnoreCase)
+                            {
+                                if (str.toUpper() == lst[i])
+                                    return !Invert;
+                            }
+                            else if (str == lst[i])
+                                return !Invert;
+                    }
+                    break;
+                case FilterRegExp:
 // qt4             if (Match.match(str) >= 0)
-            if (Match.indexIn(str) >= 0)
-                return !Invert;
-            break;
+                    if (Match.indexIn(str) >= 0)
+                        return !Invert;
+                    break;
+            }
+            return Invert;
         }
-        return Invert;
-    }
 
-    virtual toViewFilter *clone(void)
-    {
-        return new toBrowserFilter(*this);
-    }
+        virtual toViewFilter *clone(void)
+        {
+            return new toBrowserFilter(*this);
+        }
 
-    friend class toBrowserFilterSetup;
+        friend class toBrowserFilterSetup;
 };
 
 class toBrowserFilterSetup
-	: public QDialog
-	, public Ui::toBrowserFilterUI
+    : public QDialog
+    , public Ui::toBrowserFilterUI
 {
-private:
-    QButtonGroup *ButtonsGroup;
-    QButtonGroup *TypeGroup;
+    private:
+        QButtonGroup *ButtonsGroup;
+        QButtonGroup *TypeGroup;
 
-public:
-    void setup(bool temp)
-    {
-        toHelp::connectDialog(this);
-
-        // qbuttongroup is not a widget. awesome. guess they'll fix
-        // that in qt5.
-        ButtonsGroup = new QButtonGroup(ButtonsBox);
-        ButtonsGroup->addButton(None, toBrowserFilter::FilterNone);
-        ButtonsGroup->addButton(StartWith, toBrowserFilter::FilterStartsWith);
-        ButtonsGroup->addButton(EndWith, toBrowserFilter::FilterEndsWith);
-        ButtonsGroup->addButton(Contains, toBrowserFilter::FilterContains);
-        ButtonsGroup->addButton(CommaSeparate, toBrowserFilter::FilterCommaSeparated);
-        ButtonsGroup->addButton(RegExp, toBrowserFilter::FilterRegExp);
-
-        TypeGroup = new QButtonGroup(TablespaceType);
-        TypeGroup->addButton(IncludeAll, 0);
-        TypeGroup->addButton(Include, 1);
-        TypeGroup->addButton(Exclude, 2);
-
-        if (!temp)
+    public:
+        void setup(bool temp)
         {
-            OnlyOwnSchema->hide();
-            Tablespaces->setNumberColumn(false);
-            Tablespaces->setReadableColumns(true);
-            Tablespaces->setSQL(SQLListTablespaces);
-            try
+            toHelp::connectDialog(this);
+
+            // qbuttongroup is not a widget. awesome. guess they'll fix
+            // that in qt5.
+            ButtonsGroup = new QButtonGroup(ButtonsBox);
+            ButtonsGroup->addButton(None, toBrowserFilter::FilterNone);
+            ButtonsGroup->addButton(StartWith, toBrowserFilter::FilterStartsWith);
+            ButtonsGroup->addButton(EndWith, toBrowserFilter::FilterEndsWith);
+            ButtonsGroup->addButton(Contains, toBrowserFilter::FilterContains);
+            ButtonsGroup->addButton(CommaSeparate, toBrowserFilter::FilterCommaSeparated);
+            ButtonsGroup->addButton(RegExp, toBrowserFilter::FilterRegExp);
+
+            TypeGroup = new QButtonGroup(TablespaceType);
+            TypeGroup->addButton(IncludeAll, 0);
+            TypeGroup->addButton(Include, 1);
+            TypeGroup->addButton(Exclude, 2);
+
+            if (!temp)
             {
-				// TODO: WTF is this? the query is executed twice?
-                //toConnection &conn = toConnection::currentConnection(this);
-                //toQuery query(conn, toSQL::string(SQLListTablespaces, conn), toQueryParams());
-                //Tablespaces->query(SQLListTablespaces);
+                OnlyOwnSchema->hide();
+                Tablespaces->setNumberColumn(false);
+                Tablespaces->setReadableColumns(true);
+                Tablespaces->setSQL(SQLListTablespaces);
+                try
+                {
+                    // TODO: WTF is this? the query is executed twice?
+                    //toConnection &conn = toConnection::currentConnection(this);
+                    //toQuery query(conn, toSQL::string(SQLListTablespaces, conn), toQueryParams());
+                    //Tablespaces->query(SQLListTablespaces);
 
-            	Tablespaces->refresh();
+                    Tablespaces->refresh();
+                }
+                catch (...)
+                {
+                    TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
+                }
+                Tablespaces->setSelectionMode(toTreeWidget::Multi);
             }
-            catch (...)
+            else
             {
-                TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
+                TablespaceType->hide();
             }
-            Tablespaces->setSelectionMode(toTreeWidget::Multi);
         }
-        else
+        toBrowserFilterSetup(bool temp, QWidget *parent)
+            : QDialog(parent)
         {
-            TablespaceType->hide();
+            setupUi(this);
+            setup(temp);
         }
-    }
-    toBrowserFilterSetup(bool temp, QWidget *parent)
-        : QDialog(parent)
-    {
-        setupUi(this);
-        setup(temp);
-    }
-    toBrowserFilterSetup(bool temp, toBrowserFilter &cur, QWidget *parent)
-        : QDialog(parent)
-    {
-        setupUi(this);
-        setup(temp);
-
-        QAbstractButton *b = ButtonsGroup->button(cur.Type);
-        if (b)
-            b->setChecked(true);
-
-        if (!TablespaceType->isHidden())
+        toBrowserFilterSetup(bool temp, toBrowserFilter &cur, QWidget *parent)
+            : QDialog(parent)
         {
-            b = TypeGroup->button(cur.TablespaceType);
+            setupUi(this);
+            setup(temp);
+
+            QAbstractButton *b = ButtonsGroup->button(cur.Type);
             if (b)
                 b->setChecked(true);
 
-            for (std::list<QString>::iterator i = cur.Tablespaces.begin();
-                    i != cur.Tablespaces.end();
-                    i++)
+            if (!TablespaceType->isHidden())
             {
-                for (toTreeWidgetItemIterator it(Tablespaces); (*it); it++)
+                b = TypeGroup->button(cur.TablespaceType);
+                if (b)
+                    b->setChecked(true);
+
+                for (std::list<QString>::iterator i = cur.Tablespaces.begin();
+                        i != cur.Tablespaces.end();
+                        i++)
                 {
-                    if ((*it)->text(0) == *i)
+                    for (toTreeWidgetItemIterator it(Tablespaces); (*it); it++)
                     {
-                        (*it)->setSelected(true);
-                        break;
+                        if ((*it)->text(0) == *i)
+                        {
+                            (*it)->setSelected(true);
+                            break;
+                        }
                     }
                 }
+                String->setText(cur.Text);
+                Invert->setChecked(cur.Invert);
+                IgnoreCase->setChecked(cur.IgnoreCase);
+                OnlyOwnSchema->setChecked(cur.OnlyOwnSchema);
             }
-            String->setText(cur.Text);
-            Invert->setChecked(cur.Invert);
-            IgnoreCase->setChecked(cur.IgnoreCase);
-            OnlyOwnSchema->setChecked(cur.OnlyOwnSchema);
         }
-    }
 
-    toBrowserFilter *getSetting(void)
-    {
-        std::list<QString> tablespaces;
-        for (toTreeWidgetItemIterator it(Tablespaces); (*it); it++)
+        toBrowserFilter *getSetting(void)
         {
-            if ((*it)->isSelected())
-                tablespaces.insert(tablespaces.end(), (*it)->text(0));
-        }
+            std::list<QString> tablespaces;
+            for (toTreeWidgetItemIterator it(Tablespaces); (*it); it++)
+            {
+                if ((*it)->isSelected())
+                    tablespaces.insert(tablespaces.end(), (*it)->text(0));
+            }
 
-        return new toBrowserFilter((toBrowserFilter::FilterType) ButtonsGroup->id(ButtonsGroup->checkedButton()),
-                                   IgnoreCase->isChecked(),
-                                   Invert->isChecked(),
-                                   String->text(),
-                                   TypeGroup->id(TypeGroup->checkedButton()),
-                                   tablespaces,
-                                   OnlyOwnSchema->isChecked());
-    }
+            return new toBrowserFilter((toBrowserFilter::FilterType) ButtonsGroup->id(ButtonsGroup->checkedButton()),
+                                       IgnoreCase->isChecked(),
+                                       Invert->isChecked(),
+                                       String->text(),
+                                       TypeGroup->id(TypeGroup->checkedButton()),
+                                       tablespaces,
+                                       OnlyOwnSchema->isChecked());
+        }
 };
 
 // toBrowseButton::toBrowseButton(const QIcon &iconSet,
@@ -876,7 +881,7 @@ static toSQL SQLDropUser("toBrowser:DropUser",
 
 toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     : toToolWidget(BrowserTool, "browser.html", parent, connection, "toBrowser")
-	, Filter(new toBrowserFilter(false))
+    , Filter(new toBrowserFilter(false))
 {
     // man toolbar of the tool
     QToolBar *toolbar = Utils::toAllocBar(this, tr("DB Browser"));
@@ -1322,7 +1327,9 @@ void toBrowser::mainTab_currentChanged(int /*ix*/, Caching caching) // caching =
             m_objectsMap[ix]->forceRequery();
         m_objectsMap[ix]->refreshWithParams(schema(), Filter ? Filter->wildCard() : "%");
         changeItem();
-    } else {
+    }
+    else
+    {
         TLOG(2, toDecorator, __HERE__) << "mainTab_currentChanged unhandled index:" << ix;
     }
 }
@@ -1337,10 +1344,10 @@ void toBrowser::slotSelected(const QString& object)
     QSplitter * ix = qobject_cast<QSplitter*>(m_mainTab->currentWidget());
     if (m_objectsMap.contains(ix) && m_browsersMap.contains(ix))
     {
-    	toBrowserSchemaBase *b = m_objectsMap[ix];
-    	if (QTableView *tv = dynamic_cast<QTableView*>(b))
-    	{
-    		QAbstractItemModel *model = tv->model();
+        toBrowserSchemaBase *b = m_objectsMap[ix];
+        if (QTableView *tv = dynamic_cast<QTableView*>(b))
+        {
+            QAbstractItemModel *model = tv->model();
 
 //    		QSortFilterProxyModel proxy;
 //    		proxy.setSourceModel(model);
@@ -1353,15 +1360,15 @@ void toBrowser::slotSelected(const QString& object)
 //    			tv->setCurrentIndex(matchingIndex);
 //    		}
 
-    		QModelIndexList matches = model->match(model->index(0,1), Qt::DisplayRole, object, 1, Qt::MatchExactly);
-    		if (!matches.isEmpty() && matches.first().isValid())
-    		{
-    			//tv->setCurrentIndex(matches.first());
-    			//tv->selectRow(matches.first().row());
-    			tv->selectionModel()->setCurrentIndex(matches.first(), QItemSelectionModel::ClearAndSelect|QItemSelectionModel::Current);
-    			tv->selectionModel()->select(matches.first(), QItemSelectionModel::ClearAndSelect|QItemSelectionModel::Current);
-    		}
-    	}
+            QModelIndexList matches = model->match(model->index(0,1), Qt::DisplayRole, object, 1, Qt::MatchExactly);
+            if (!matches.isEmpty() && matches.first().isValid())
+            {
+                //tv->setCurrentIndex(matches.first());
+                //tv->selectRow(matches.first().row());
+                tv->selectionModel()->setCurrentIndex(matches.first(), QItemSelectionModel::ClearAndSelect|QItemSelectionModel::Current);
+                tv->selectionModel()->select(matches.first(), QItemSelectionModel::ClearAndSelect|QItemSelectionModel::Current);
+            }
+        }
     }
 
 }
@@ -1383,7 +1390,7 @@ void toBrowser::slotWindowActivated(toToolWidget* widget)
             ToolMenu->addAction(FilterButton);
             ToolMenu->addAction(clearFilterAct);
 
-	    toGlobalEventSingle::Instance().addCustomMenu(ToolMenu);
+            toGlobalEventSingle::Instance().addCustomMenu(ToolMenu);
         }
     }
     else
@@ -1477,42 +1484,42 @@ void toBrowser::refresh(void)
 
 void toBrowser::changeConnection(void)
 {
-	try
-	{
-		m_mainTab->blockSignals(true);
+    try
+    {
+        m_mainTab->blockSignals(true);
 
-		// enable/disable main tabs depending on DB
-		m_mainTab->clear();
-		addTab(tableSplitter, tr("T&ables"), true);
-		addTab(viewSplitter, tr("&Views"), !connection().providerIs("QMYSQL"));
-		addTab(indexSplitter, tr("Inde&xes"), true);
-		addTab(sequenceSplitter, tr("Se&quences"), connection().providerIs("Oracle") || connection().providerIs("QPSQL"));
-		addTab(synonymSplitter, tr("S&ynonyms"), connection().providerIs("Oracle"));
+        // enable/disable main tabs depending on DB
+        m_mainTab->clear();
+        addTab(tableSplitter, tr("T&ables"), true);
+        addTab(viewSplitter, tr("&Views"), !connection().providerIs("QMYSQL"));
+        addTab(indexSplitter, tr("Inde&xes"), true);
+        addTab(sequenceSplitter, tr("Se&quences"), connection().providerIs("Oracle") || connection().providerIs("QPSQL"));
+        addTab(synonymSplitter, tr("S&ynonyms"), connection().providerIs("Oracle"));
 
-		// 2010-03-31
-		// Starting with version 5.0 MySQL supports stored functions/procedures
-		// If TOra is used a lot with older versions of MySQL the "true" parameter
-		// should be enhanced with a check for MySQL version
-		addTab(codeSplitter, tr("Cod&e"), true);
-		addTab(triggerSplitter, tr("Tri&ggers"), !connection().providerIs("QMYSQL") && !connection().providerIs("QPSQL"));
-		addTab(dblinkSplitter, tr("DBLinks"), connection().providerIs("Oracle"));
-		addTab(directoriesSplitter, tr("Directories"), connection().providerIs("Oracle"));
-		addTab(accessSplitter, tr("Access"), connection().providerIs("QMYSQL"));
+        // 2010-03-31
+        // Starting with version 5.0 MySQL supports stored functions/procedures
+        // If TOra is used a lot with older versions of MySQL the "true" parameter
+        // should be enhanced with a check for MySQL version
+        addTab(codeSplitter, tr("Cod&e"), true);
+        addTab(triggerSplitter, tr("Tri&ggers"), !connection().providerIs("QMYSQL") && !connection().providerIs("QPSQL"));
+        addTab(dblinkSplitter, tr("DBLinks"), connection().providerIs("Oracle"));
+        addTab(directoriesSplitter, tr("Directories"), connection().providerIs("Oracle"));
+        addTab(accessSplitter, tr("Access"), connection().providerIs("QMYSQL"));
 
-		foreach (toBrowserBaseWidget * w, m_browsersMap.values())
-			w->changeConnection();
+        foreach (toBrowserBaseWidget * w, m_browsersMap.values())
+        w->changeConnection();
 
-		toToolWidget::setCaption(QString());
+        toToolWidget::setCaption(QString());
 
-		m_mainTab->setCurrentIndex(0);
+        m_mainTab->setCurrentIndex(0);
 
-		m_mainTab->blockSignals(false);
-	}
-	catch(...)
-	{
-		m_mainTab->blockSignals(false);
-		throw;
-	}
+        m_mainTab->blockSignals(false);
+    }
+    catch (...)
+    {
+        m_mainTab->blockSignals(false);
+        throw;
+    }
 
     refresh();
 }
@@ -1564,7 +1571,9 @@ void toBrowser::changeItem()
             m_browsersMap[ix]->changeParams(schema(), currentItemText(), browser->objectType());
         }
         toToolWidget::setCaption(currentItemText());
-    } else {
+    }
+    else
+    {
         TLOG(2, toDecorator, __HERE__) << "changeItem() unhandled index" << ix;
     }
 }
@@ -1633,12 +1642,12 @@ bool toBrowser::canHandle(const toConnection &conn)
 
 void toBrowser::commitChanges()
 {
-	//TODO
+    //TODO
 }
 
 void toBrowser::rollbackChanges()
 {
-	//TODO
+    //TODO
 }
 
 #if TORA3_BROWSER_TOOLS
@@ -1673,7 +1682,7 @@ void toBrowser::modifyConstraint(void)
     //                                       tableBrowserWidget->object(),
     //                                       this);
     // refresh();
-    throw tr("toBrowser::modifyConstraint(void) not implement yet");  
+    throw tr("toBrowser::modifyConstraint(void) not implement yet");
 }
 
 void toBrowser::modifyIndex(void)
@@ -1694,7 +1703,7 @@ void toBrowser::addIndex(void)
     //                          tableBrowserWidget->object(),
     //                          this);
     // refresh();
-    throw tr("toBrowser::addIndex(void) not implement yet");  
+    throw tr("toBrowser::addIndex(void) not implement yet");
 }
 
 void toBrowser::displayTableMenu(QMenu *menu)
@@ -1813,8 +1822,8 @@ void toBrowser::dropSomething(const QString &type, const QString &what)
     //     }
     //     TOCATCH
     // }
-  throw tr("toBrowser::dropSomething(const QString &type, const QString &what)");
-  
+    throw tr("toBrowser::dropSomething(const QString &type, const QString &what)");
+
 //     refresh(); no refresh goes here as it can be called from loop
 }
 
@@ -1860,19 +1869,19 @@ void toBrowser::truncateTable(void)
                         schema()).arg((*it).data(Qt::EditRole).toString()),
                     tr("&Yes"), tr("Yes to &all"), tr("&Cancel"), 0))
             {
-            case 1 :
-                force = true;
-                // Intentionally no break here.
-            case 0:
-            {
-                toConnectionSubLoan connSub(connection());
-                connSub->execute(toSQL::string(SQLTruncateTable, connection()).
-                                 arg(connection().getTraits().quote(schema())).
-                                 arg(connection().getTraits().quote((*it).data(Qt::EditRole).toString())));
-            }
-            break;
-            case 2:
-                return;
+                case 1 :
+                    force = true;
+                    // Intentionally no break here.
+                case 0:
+                    {
+                        toConnectionSubLoan connSub(connection());
+                        connSub->execute(toSQL::string(SQLTruncateTable, connection()).
+                                         arg(connection().getTraits().quote(schema())).
+                                         arg(connection().getTraits().quote((*it).data(Qt::EditRole).toString())));
+                    }
+                    break;
+                case 2:
+                    return;
             }
         }
     }

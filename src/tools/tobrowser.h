@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -79,22 +79,24 @@ class toBrowserSchemaBase;
 class toBrowserSchemaCodeBrowser;
 class toBrowserSchemaTableView;
 
-namespace ToConfiguration {
-	class Browser : public ConfigContext
-	{
-		Q_OBJECT;
-		Q_ENUMS(OptionTypeEnum);
-	public:
-		Browser() : ConfigContext("Browser", ENUM_REF(Browser,OptionTypeEnum)) {};
-	    enum OptionTypeEnum {
-		    FilterIgnoreCase  = 9000  // #define CONF_FILTER_IGNORE_CASE
-		    , FilterInvert            // #define CONF_FILTER_INVERT
-		    , FilterType              // #define CONF_FILTER_TYPE
-		    , FilterTablespaceType    // #define CONF_FILTER_TABLESPACE_TYPE
-		    , FilterText              // #define CONF_FILTER_TEXT
-	    };
-	    virtual QVariant defaultValue(int option) const;
-	};
+namespace ToConfiguration
+{
+    class Browser : public ConfigContext
+    {
+            Q_OBJECT;
+            Q_ENUMS(OptionTypeEnum);
+        public:
+            Browser() : ConfigContext("Browser", ENUM_REF(Browser,OptionTypeEnum)) {};
+            enum OptionTypeEnum
+            {
+                FilterIgnoreCase  = 9000  // #define CONF_FILTER_IGNORE_CASE
+                                    , FilterInvert            // #define CONF_FILTER_INVERT
+                , FilterType              // #define CONF_FILTER_TYPE
+                , FilterTablespaceType    // #define CONF_FILTER_TABLESPACE_TYPE
+                , FilterText              // #define CONF_FILTER_TEXT
+            };
+            virtual QVariant defaultValue(int option) const;
+    };
 };
 
 /*! \brief Main GUI for Schema Browser.
@@ -127,179 +129,180 @@ resfresh.
 */
 class toBrowser : public toToolWidget
 {
-    Q_OBJECT;
+        Q_OBJECT;
 
-	enum Caching {
-		USE_CACHE = 0,
-		NO_USE_CACHE
-	};
+        enum Caching
+        {
+            USE_CACHE = 0,
+            NO_USE_CACHE
+        };
 
 #ifdef TOEXTENDED_MYSQL
-    toMySQLUser *UserPanel;
-    toMySQLUserAccess *AccessPanel;
+        toMySQLUser *UserPanel;
+        toMySQLUserAccess *AccessPanel;
 #endif
 
-public:
-    toBrowser(QWidget *parent, toConnection &connection);
-    virtual ~toBrowser();
+    public:
+        toBrowser(QWidget *parent, toConnection &connection);
+        virtual ~toBrowser();
 
-	void setNewFilter(toBrowserFilter *filter);
+        void setNewFilter(toBrowserFilter *filter);
 
-	QString schema(void);
+        QString schema(void);
 
-	/*! \brief Get text from the active "object browser" (toResultTableView).
-	\see m_objectsMap.
-	\param col a column name. It's 1 by default
-	 */
-	QString currentItemText(int col = 1);
+        /*! \brief Get text from the active "object browser" (toResultTableView).
+        \see m_objectsMap.
+        \param col a column name. It's 1 by default
+         */
+        QString currentItemText(int col = 1);
 
-	/*! \brief Add a page to the m_mainTab widget;
-	\see changeConnection().
-	\param page a QSplitter main widget (tableSplitter etc.)
-	\param label text to display as a tab title
-	\param enable true when it should be visible. False on missing feature.
-	 */
-	int addTab(QSplitter * page, const QString & label, bool enable);
+        /*! \brief Add a page to the m_mainTab widget;
+        \see changeConnection().
+        \param page a QSplitter main widget (tableSplitter etc.)
+        \param label text to display as a tab title
+        \param enable true when it should be visible. False on missing feature.
+         */
+        int addTab(QSplitter * page, const QString & label, bool enable);
 
-    virtual bool canHandle(const toConnection &conn);
+        virtual bool canHandle(const toConnection &conn);
 
-    void commitChanges();
-    void rollbackChanges();
+        void commitChanges();
+        void rollbackChanges();
 
 #ifdef TORA3_SESSION
-    virtual void exportData(std::map<QString, QString> &data,
-                            const QString &prefix);
-    virtual void importData(std::map<QString, QString> &data,
-                            const QString &prefix);
+        virtual void exportData(std::map<QString, QString> &data,
+                                const QString &prefix);
+        virtual void importData(std::map<QString, QString> &data,
+                                const QString &prefix);
 #endif
-    virtual bool close();
+        virtual bool close();
 
-public slots:
-    void refresh(void);
-    void changeSchema(int);
-    void changeItem();
-    void changeItem(const QModelIndex &);
-    void clearFilter(void);
-    void defineFilter(void);
-    virtual void slotWindowActivated(toToolWidget*);
+    public slots:
+        void refresh(void);
+        void changeSchema(int);
+        void changeItem();
+        void changeItem(const QModelIndex &);
+        void clearFilter(void);
+        void defineFilter(void);
+        virtual void slotWindowActivated(toToolWidget*);
 
-    void changeConnection(void);
+        void changeConnection(void);
 
 #if TORA3_BROWSER_TOOLS
-	/*! \brief A wrapper method to drop any object from DB.
-	\param type a uppercase string with e.g. 'TABLE', 'INDEX', etc.
-				Only objects supported by toExtract can be dropped.
-	\param what a object name to drop.
-	 */
-	void dropSomething(const QString & type, const QString & what);
+        /*! \brief A wrapper method to drop any object from DB.
+        \param type a uppercase string with e.g. 'TABLE', 'INDEX', etc.
+        			Only objects supported by toExtract can be dropped.
+        \param what a object name to drop.
+         */
+        void dropSomething(const QString & type, const QString & what);
 
-    void modifyTable(void);
-    void addTable(void);
-    void addIndex(void);
-    void modifyConstraint(void);
-    void modifyIndex(void);
+        void modifyTable(void);
+        void addTable(void);
+        void addIndex(void);
+        void modifyConstraint(void);
+        void modifyIndex(void);
 
-    void changeType(void);
-    void dropTable(void);
-    void truncateTable(void);
+        void changeType(void);
+        void dropTable(void);
+        void truncateTable(void);
 
-    void checkTable(void);
-    void optimizeTable(void);
-    void analyzeTable(void);
+        void checkTable(void);
+        void optimizeTable(void);
+        void analyzeTable(void);
 
-    void dropView(void);
+        void dropView(void);
 
-    void dropIndex(void);
+        void dropIndex(void);
 
-    void enableConstraints(void);
-    void disableConstraints(void);
+        void enableConstraints(void);
+        void disableConstraints(void);
 
-    void displayTableMenu(QMenu *menu);
-    void displayViewMenu(QMenu *menu);
-    void displayIndexMenu(QMenu *menu);
+        void displayTableMenu(QMenu *menu);
+        void displayViewMenu(QMenu *menu);
+        void displayIndexMenu(QMenu *menu);
 
-    void addUser(void);
-    void dropUser(void);
+        void addUser(void);
+        void dropUser(void);
 #endif
 
-private slots:
-    /** Handle main tabwidget and its tabs switch
-     * @param int Tab which has been activated
-     * @param Caching caching Do(not) try using the cache but query the database instead
-     */
-    void mainTab_currentChanged(int, Caching caching = USE_CACHE);
+    private slots:
+        /** Handle main tabwidget and its tabs switch
+         * @param int Tab which has been activated
+         * @param Caching caching Do(not) try using the cache but query the database instead
+         */
+        void mainTab_currentChanged(int, Caching caching = USE_CACHE);
 
-    void slotSelected(const QString&);
-signals:
-	void filterChanged(toViewFilter*);
+        void slotSelected(const QString&);
+    signals:
+        void filterChanged(toViewFilter*);
 
-protected:
-    virtual void closeEvent(QCloseEvent *);
+    protected:
+        virtual void closeEvent(QCloseEvent *);
 
-private:
-	toResultSchema *Schema;
-	QTabWidget   *m_mainTab;
-	QMenu         *ToolMenu;
+    private:
+        toResultSchema *Schema;
+        QTabWidget   *m_mainTab;
+        QMenu         *ToolMenu;
 
-	QSplitter * tableSplitter;
-	toBrowserSchemaTableView *tableView;
-	toBrowserTableWidget * tableBrowserWidget;
+        QSplitter * tableSplitter;
+        toBrowserSchemaTableView *tableView;
+        toBrowserTableWidget * tableBrowserWidget;
 
-	QSplitter * viewSplitter;
-	toBrowserSchemaTableView * viewView;
-	toBrowserViewWidget * viewBrowserWidget;
+        QSplitter * viewSplitter;
+        toBrowserSchemaTableView * viewView;
+        toBrowserViewWidget * viewBrowserWidget;
 
-	QSplitter * indexSplitter;
-	toBrowserSchemaTableView * indexView;
-	toBrowserIndexWidget * indexBrowserWidget;
+        QSplitter * indexSplitter;
+        toBrowserSchemaTableView * indexView;
+        toBrowserIndexWidget * indexBrowserWidget;
 
-	QSplitter * sequenceSplitter;
-	toBrowserSchemaTableView * sequenceView;
-	toBrowserSequenceWidget * sequenceBrowserWidget;
+        QSplitter * sequenceSplitter;
+        toBrowserSchemaTableView * sequenceView;
+        toBrowserSequenceWidget * sequenceBrowserWidget;
 
-	QSplitter * synonymSplitter;
-	toBrowserSchemaTableView * synonymView;
-	toBrowserSynonymWidget * synonymBrowserWidget;
+        QSplitter * synonymSplitter;
+        toBrowserSchemaTableView * synonymView;
+        toBrowserSynonymWidget * synonymBrowserWidget;
 
-	QSplitter * codeSplitter;
-	toBrowserSchemaCodeBrowser * codeView;
-	toBrowserCodeWidget * codeBrowserWidget;
+        QSplitter * codeSplitter;
+        toBrowserSchemaCodeBrowser * codeView;
+        toBrowserCodeWidget * codeBrowserWidget;
 
-	QSplitter * triggerSplitter;
-	toBrowserSchemaTableView * triggerView;
-	toBrowserTriggerWidget * triggerBrowserWidget;
+        QSplitter * triggerSplitter;
+        toBrowserSchemaTableView * triggerView;
+        toBrowserTriggerWidget * triggerBrowserWidget;
 
-	QSplitter * dblinkSplitter;
-	toBrowserSchemaTableView * dblinkView;
-	toBrowserDBLinksWidget * dblinkBrowserWidget;
+        QSplitter * dblinkSplitter;
+        toBrowserSchemaTableView * dblinkView;
+        toBrowserDBLinksWidget * dblinkBrowserWidget;
 
-	QSplitter * directoriesSplitter;
-	toBrowserSchemaTableView * directoriesView;
-	toBrowserDirectoriesWidget * directoriesBrowserWidget;
+        QSplitter * directoriesSplitter;
+        toBrowserSchemaTableView * directoriesView;
+        toBrowserDirectoriesWidget * directoriesBrowserWidget;
 
-	QSplitter * accessSplitter;
-	toBrowserSchemaTableView * accessView;
-	toBrowserAccessWidget * accessBrowserWidget;
+        QSplitter * accessSplitter;
+        toBrowserSchemaTableView * accessView;
+        toBrowserAccessWidget * accessBrowserWidget;
 
-	QMap<QSplitter*, toBrowserSchemaBase*> m_objectsMap;
-	QMap<QSplitter*, toBrowserBaseWidget*> m_browsersMap;
+        QMap<QSplitter*, toBrowserSchemaBase*> m_objectsMap;
+        QMap<QSplitter*, toBrowserBaseWidget*> m_browsersMap;
 
-	toBrowserFilter   *Filter;
+        toBrowserFilter   *Filter;
 
-	QAction *refreshAct;
-	QAction *FilterButton;
-	QAction *clearFilterAct;
-	QAction *addTableAct;
-	QAction *modTableAct;
-	QAction *modConstraintAct;
-	QAction *modIndexAct;
-	QAction *addIndexesAct;
-	QAction *dropIndexesAct;
-	QAction *dropTableAct;
-	QAction *dropViewAct;
-	QAction *enableConstraintAct;
-	QAction *disableConstraintAct;
-	QAction *testDBLinkAct;
+        QAction *refreshAct;
+        QAction *FilterButton;
+        QAction *clearFilterAct;
+        QAction *addTableAct;
+        QAction *modTableAct;
+        QAction *modConstraintAct;
+        QAction *modIndexAct;
+        QAction *addIndexesAct;
+        QAction *dropIndexesAct;
+        QAction *dropTableAct;
+        QAction *dropViewAct;
+        QAction *enableConstraintAct;
+        QAction *disableConstraintAct;
+        QAction *testDBLinkAct;
 };
 
 // class toBrowseTemplate : public QObject, public toTemplateProvider
@@ -357,27 +360,27 @@ private:
 
 class toBrowserTool : public toTool
 {
-    Q_OBJECT;
+        Q_OBJECT;
 
-protected:
-    virtual const char **pictureXPM(void);
+    protected:
+        virtual const char **pictureXPM(void);
 
-public:
-    toBrowserTool();
-    virtual const char *menuItem();
-    virtual toToolWidget *toolWindow(QWidget *parent, toConnection &connection);
-    virtual bool canHandle(const toConnection &conn);
-    virtual void customSetup(void);
-    virtual void closeWindow(toConnection &connection) {};
+    public:
+        toBrowserTool();
+        virtual const char *menuItem();
+        virtual toToolWidget *toolWindow(QWidget *parent, toConnection &connection);
+        virtual bool canHandle(const toConnection &conn);
+        virtual void customSetup(void);
+        virtual void closeWindow(toConnection &connection) {};
 
-public slots:
+    public slots:
 #ifdef TORA3_BROWSER_TOOLS
-    void addTable(void);
-    void addConstraint(void);
-    void addIndex(void);
+        void addTable(void);
+        void addConstraint(void);
+        void addIndex(void);
 #endif
-private:
-    static ToConfiguration::Browser s_browserConf;
+    private:
+        static ToConfiguration::Browser s_browserConf;
 };
 
 
