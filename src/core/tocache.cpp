@@ -902,80 +902,68 @@ toCacheEntryTable::toCacheEntryTable(const QString &owner, const QString &name,
     toCache::CacheEntry(owner, name, toCache::TABLE, comment)
 {
 }
-;
 
 toCacheEntryView::toCacheEntryView(const QString &owner, const QString &name,
                                    const QString &comment) :
     toCache::CacheEntry(owner, name, toCache::VIEW, comment)
 {
 }
-;
 
 toCacheEntrySynonym::toCacheEntrySynonym(const QString &owner,
         const QString &name, const QString &comment) :
     toCache::CacheEntry(owner, name, toCache::SYNONYM, comment)
 {
 }
-;
 
 toCacheEntryProcedure::toCacheEntryProcedure(const QString &owner,
         const QString &name, const QString &comment) :
     toCache::CacheEntry(owner, name, toCache::PROCEDURE, comment)
 {
 }
-;
 
 toCacheEntryFunction::toCacheEntryFunction(const QString &owner,
         const QString &name, const QString &comment) :
     toCache::CacheEntry(owner, name, toCache::FUNCTION, comment)
 {
 }
-;
 
 toCacheEntryPackage::toCacheEntryPackage(const QString &owner,
         const QString &name, const QString &comment) :
     toCache::CacheEntry(owner, name, toCache::PACKAGE, comment)
 {
 }
-;
 
 toCacheEntryPackageBody::toCacheEntryPackageBody(const QString &owner,
         const QString &name, const QString &comment) :
     toCache::CacheEntry(owner, name, toCache::PACKAGE_BODY, comment)
 {
 }
-;
 
 toCacheEntryIndex::toCacheEntryIndex(const QString &owner, const QString &name,
                                      const QString &comment) :
     toCache::CacheEntry(owner, name, toCache::INDEX, comment)
 {
 }
-;
 
 toCacheEntrySequence::toCacheEntrySequence(const QString &owner,
         const QString &name, const QString &comment) :
     toCache::CacheEntry(owner, name, toCache::SEQUENCE, comment)
 {
 }
-;
 
 toCacheEntryTrigger::toCacheEntryTrigger(const QString &owner,
         const QString &name, const QString &comment) :
     toCache::CacheEntry(owner, name, toCache::TRIGGER, comment)
 {
 }
-;
 
 toCacheEntryDatabase::toCacheEntryDatabase(const QString &owner,
         const QString &name, const QString &comment) :
     toCache::CacheEntry(owner, name, toCache::DATABASE, comment)
 {
 }
-;
 
 toCacheEntryUser::toCacheEntryUser(const QString &schema) :
     toCache::CacheEntry(schema, schema, toCache::USER, "")
 {
 }
-;
