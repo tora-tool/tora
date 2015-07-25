@@ -35,7 +35,7 @@
 #include "core/toconnectionmodel.h"
 #include "core/tonewconnection.h"
 #include "core/toconfiguration_new.h"
-#include "core/toglobalsetting.h"
+#include "core/toglobalsettingenum.h"
 #include "core/utils.h"
 #include "core/tooracleconst.h"
 

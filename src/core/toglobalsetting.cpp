@@ -33,6 +33,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "core/toglobalsetting.h"
+#include "core/toglobalsettingenum.h"
 #include "core/utils.h"
 #include "core/toconfenum.h"
 #include "core/toconfiguration_new.h"

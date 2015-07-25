@@ -37,7 +37,7 @@
 #include "core/toconnection.h"
 #include "core/toeditmenu.h"
 #include "core/toconfiguration_new.h"
-#include "core/toglobalsetting.h"
+#include "core/toglobalsettingenum.h"
 #include "editor/tohighlightededitor.h"
 #include "tools/toworksheeteditor.h"
 #include "core/tomainwindow.h"

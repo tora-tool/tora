@@ -47,13 +47,17 @@
 #include "core/tomainwindow.h"
 #include "core/toconfiguration_new.h"
 #include "core/toglobalevent.h"
-#include "core/toglobalsetting.h"
+#include "core/toglobalsettingenum.h"
 
 #include <QToolBar>
 #include <QMenu>
 #include <QBoxLayout>
 #include <QAction>
+#include <QComboBox>
 #include <QtDebug>
+#include <QSpinBox>
+#include <QLineEdit>
+#include <QCheckBox>
 
 // A little magic to get lrefresh to work and get a check on qApp
 #undef QT_TRANSLATE_NOOP

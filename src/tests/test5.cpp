@@ -43,7 +43,7 @@
 #include "core/tosplash.h"
 #include "core/utils.h"
 #include "core/toconfiguration_new.h"
-#include "core/toglobalsetting.h"
+#include "core/toglobalsettingenum.h"
 
 #include <QtCore/QDir>
 #include <QtCore/QLibrary>

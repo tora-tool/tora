@@ -39,7 +39,7 @@
 #include "connection/toqmysqlprovider.h"
 #include "connection/toqodbcprovider.h"
 #include "core/toconfiguration_new.h"
-#include "core/toglobalsetting.h"
+#include "core/toglobalsettingenum.h"
 
 #include <QtCore/QDir>
 #include <QtSql/QSqlDatabase>

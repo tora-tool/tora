@@ -36,7 +36,7 @@
 #include "core/utils.h"
 #include "core/toeventquery.h"
 #include "core/toconfiguration_new.h"
-#include "core/toglobalsetting.h"
+#include "core/toglobalsettingenum.h"
 
 #include <QtGui/QPainter>
 #include <QItemDelegate>

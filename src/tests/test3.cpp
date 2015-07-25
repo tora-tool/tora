@@ -37,7 +37,7 @@
 #include "core/tocache.h"
 #include "core/toconfiguration.h"
 #include "core/toconfiguration_new.h"
-#include "core/toglobalsetting.h"
+#include "core/toglobalsettingenum.h"
 #include "core/toconnectionprovider.h"
 #include "core/tologger.h"
 #include "core/tooracleconst.h"

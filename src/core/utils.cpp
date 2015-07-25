@@ -38,7 +38,7 @@
 #include "core/toconfiguration_new.h"
 #include "core/totimer.h"
 #include "core/toglobalevent.h"
-#include "core/toglobalsetting.h"
+#include "core/toglobalsettingenum.h"
 #include "core/toqvalue.h"
 #include "core/toquery.h"
 

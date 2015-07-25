@@ -45,7 +45,7 @@
 #include "core/tomain.h"
 #include "core/utils.h"
 #include "core/tologger.h"
-#include "core/toglobalsetting.h"
+#include "core/toglobalsettingenum.h"
 #include "core/todatabasesetting.h"
 
 #ifndef Q_OS_WIN32

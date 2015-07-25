@@ -39,7 +39,7 @@
 #include "core/tomemoeditor.h"
 #include "core/toresultlistformat.h"
 #include "core/toconfiguration_new.h"
-#include "core/toglobalsetting.h"
+#include "core/toglobalsettingenum.h"
 #include "core/todatabasesetting.h"
 #include "core/toeditorsetting.h"
 #include "core/toconfiguration_new.h"

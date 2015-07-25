@@ -45,7 +45,7 @@
 #include "core/totimer.h"
 #include "core/toglobalevent.h"
 #include "core/toconfiguration_new.h"
-#include "core/toglobalsetting.h"
+#include "core/toglobalsettingenum.h"
 
 #include <QWidget>
 

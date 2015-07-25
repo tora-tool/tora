@@ -42,7 +42,7 @@
 #include "core/toconnection.h"
 #include "core/tooracleconst.h"
 #include "core/toconfiguration_new.h"
-#include "core/toglobalsetting.h"
+#include "core/toglobalsettingenum.h"
 
 #include "icons/trash.xpm"
 

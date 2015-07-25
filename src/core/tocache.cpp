@@ -42,7 +42,7 @@
 #include "core/toraversion.h"
 #include "core/utils.h"
 #include "core/toglobalevent.h"
-#include "core/toglobalsetting.h"
+#include "core/toglobalsettingenum.h"
 #include "core/todatabasesetting.h"
 
 #include <QtCore/QtDebug>
