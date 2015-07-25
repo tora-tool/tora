@@ -56,6 +56,17 @@ IF (Subversion_FOUND AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.svn")
 		-P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/getsvn.cmake)
 	ADD_DEFINITIONS("-DHAVE_SVNREVISION_H=1")
 ENDIF()
+FIND_PACKAGE(Git)
+IF(GIT_FOUND AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
+	# a custom target that is always built
+	ADD_CUSTOM_TARGET(revisiontag ALL)
+	# creates gitrevision.h using cmake script
+	ADD_CUSTOM_COMMAND(TARGET revisiontag COMMAND ${CMAKE_COMMAND}
+	  -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
+	  -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/getgit.cmake)
+	ADD_DEFINITIONS("-DHAVE_GITREVISION_H=1")
+ENDIF()
+
 
 IF(WIN32)
   # Boost headers are required to compile with -DDEBUG (see tologger.h) and also for trotl sql parser
