@@ -33,16 +33,22 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #ifndef  TOVERSION
-#include "toversion.h"
+# include "toversion.h"
 #endif
 
 #if defined(HAVE_SVNREVISION_H) && !defined(SVNREVISION)
-#include "svnrevision.h"
+# include "svnrevision.h"
+#endif
+
+#if defined(HAVE_GITREVISION_H) && !defined(GITVERSION)
+# include "gitrevision.h"
 #endif
 
 #if defined(SVNREVISION)
-#define TORAVERSION TOVERSION "." "(" SVNREVISION "svn)"
+# define TORAVERSION TOVERSION "." "(" SVNREVISION "svn)"
+#elif defined(GITVERSION)
+# define TORAVERSION GITVERSION
 #else
-#define TORAVERSION TOVERSION
+# define TORAVERSION TOVERSION
 #endif
 
