@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -63,55 +63,55 @@ class toOracleConnectionSub;
 
 class toOracleProvider : public  toConnectionProvider
 {
-public:
-    toOracleProvider(toConnectionProviderFinder::ConnectionProvirerParams const& p);
+    public:
+        toOracleProvider(toConnectionProviderFinder::ConnectionProvirerParams const& p);
 
-    /** see: @ref toConnectionProvider::initialize() */
-    virtual bool initialize();
+        /** see: @ref toConnectionProvider::initialize() */
+        virtual bool initialize();
 
-    /** see: @ref toConnectionProvider::name() */
-    virtual QString const& name() const
-    {
-        return m_name;
-    };
+        /** see: @ref toConnectionProvider::name() */
+        virtual QString const& name() const
+        {
+            return m_name;
+        };
 
-    virtual QString const& displayName() const
-    {
-        return m_display_name;
-    };
+        virtual QString const& displayName() const
+        {
+            return m_display_name;
+        };
 
-    /** see: @ref toConnectionProvider::hosts() */
-    virtual QList<QString> hosts();
+        /** see: @ref toConnectionProvider::hosts() */
+        virtual QList<QString> hosts();
 
-    /** see: @ref toConnectionProvider::databases() */
-    virtual QList<QString> databases(const QString &host, const QString &user, const QString &pwd);
+        /** see: @ref toConnectionProvider::databases() */
+        virtual QList<QString> databases(const QString &host, const QString &user, const QString &pwd);
 
-    /** see: @ref toConnectionProvider::options() */
-    virtual QList<QString> options();
+        /** see: @ref toConnectionProvider::options() */
+        virtual QList<QString> options();
 
-    /** see: @ref toConnectionProvider::configurationTab() */
-    virtual QWidget *configurationTab(QWidget *parent);
+        /** see: @ref toConnectionProvider::configurationTab() */
+        virtual QWidget *configurationTab(QWidget *parent);
 
-    /** see: @ref toConnection */
-    virtual toConnection::connectionImpl* createConnectionImpl(toConnection&);
+        /** see: @ref toConnection */
+        virtual toConnection::connectionImpl* createConnectionImpl(toConnection&);
 
-    /** see: @ref toConnection */
-    virtual toConnectionTraits* createConnectionTrait(void);
+        /** see: @ref toConnection */
+        virtual toConnectionTraits* createConnectionTrait(void);
 
-private:
-    static QString m_name, m_display_name;
-    ::trotl::OciEnv *_envp;
-    qint64 toMaxLong;
-    QByteArray dateFormat;
+    private:
+        static QString m_name, m_display_name;
+        ::trotl::OciEnv *_envp;
+        qint64 toMaxLong;
+        QByteArray dateFormat;
 };
 
 QString toOracleProvider::m_name = ORACLE_PROVIDER;
 QString toOracleProvider::m_display_name = ORACLE_PROVIDER;
 
 toOracleProvider::toOracleProvider(toConnectionProviderFinder::ConnectionProvirerParams const& p)
-	: toConnectionProvider(p)
-	, _envp(0)
-	, toMaxLong(0L)
+    : toConnectionProvider(p)
+    , _envp(0)
+    , toMaxLong(0L)
 {
 }
 
@@ -172,18 +172,18 @@ QList<QString> toOracleProvider::databases(const QString &host, const QString &u
         foreach(QString key, settings.childGroups())
         {
             QString sHome = settings.value(key + '/' + "ORACLE_HOME").toString();
-            if( sHome.isEmpty())
+            if ( sHome.isEmpty())
                 continue;
 
             QString sHomeName = settings.value(key + '/' + "ORACLE_HOME_NAME").toString();
             QString version = settings.value(key + '/' + "VERSION").toString();
 
             QDir dHome(sHome);
-            if( !dHome.exists())
+            if ( !dHome.exists())
                 continue;
 
             QFileInfo tnsPath(dHome.absolutePath() + "/network/admin/tnsnames.ora");
-            if( !tnsPath.exists() || !tnsPath.isFile() || !tnsPath.isReadable())
+            if ( !tnsPath.exists() || !tnsPath.isFile() || !tnsPath.isReadable())
                 continue;
 
             TLOG(5, toNoDecorator, __HERE__) << "add tnsnames: " << tnsPath.absoluteFilePath()  << std::endl;
@@ -196,7 +196,7 @@ QList<QString> toOracleProvider::databases(const QString &host, const QString &u
 
         str = QDir::homePath() + QDir::separator() + ".tnsnames.ora";
         QFileInfo home(str);
-        if(home.exists() && home.isFile() && home.isReadable())
+        if (home.exists() && home.isFile() && home.isReadable())
         {
             TLOG(5, toNoDecorator, __HERE__) << "add tnsnames: " << home.absoluteFilePath()  << std::endl;
             tnsnames.insert(home.absoluteFilePath());
@@ -205,7 +205,7 @@ QList<QString> toOracleProvider::databases(const QString &host, const QString &u
 
         str = "/etc/tnsnames.ora";
         QFileInfo etc(str);
-        if(etc.exists() && etc.isFile() && etc.isReadable())
+        if (etc.exists() && etc.isFile() && etc.isReadable())
         {
             TLOG(5, toNoDecorator, __HERE__) << "add tnsnames: " << etc.absoluteFilePath()  << std::endl;
             tnsnames.insert(etc.absoluteFilePath());
@@ -213,12 +213,12 @@ QList<QString> toOracleProvider::databases(const QString &host, const QString &u
     }
 #endif
 
-    if(getenv("TNS_ADMIN"))
+    if (getenv("TNS_ADMIN"))
     {
         str = getenv("TNS_ADMIN");
         str += "/tnsnames.ora";
     }
-    else if( getenv("ORACLE_HOME"))
+    else if ( getenv("ORACLE_HOME"))
     {
         str = getenv("ORACLE_HOME");
         str + "/network/admin/tnsnames.ora";
@@ -229,7 +229,7 @@ QList<QString> toOracleProvider::databases(const QString &host, const QString &u
     }
 
     QFileInfo ohome_net_adm(str);
-    if(!str.isEmpty() && ohome_net_adm.exists() && ohome_net_adm.isFile() && ohome_net_adm.isReadable())
+    if (!str.isEmpty() && ohome_net_adm.exists() && ohome_net_adm.isFile() && ohome_net_adm.isReadable())
     {
         TLOG(5, toNoDecorator, __HERE__) << "add tnsnames: " << ohome_net_adm.absoluteFilePath()  << std::endl;
         tnsnames.insert(ohome_net_adm.absoluteFilePath());
@@ -255,7 +255,7 @@ QList<QString> toOracleProvider::databases(const QString &host, const QString &u
                     << "--------------------------------------------------------------------------------" << std::endl
                     << "File read: " << filename << std::endl;
         }
-        catch( QString const &e )
+        catch ( QString const &e )
         {
             TOMessageBox::warning(
                 Utils::toQMainWindow(),
@@ -304,7 +304,7 @@ QList<QString> toOracleProvider::databases(const QString &host, const QString &u
             }
             pos++;
         }
-next:
+    next:
         ;;
     } // foreach(QString str, tnsnames)
 
@@ -325,7 +325,7 @@ QList<QString> toOracleProvider::options()
 
 QWidget* toOracleProvider::configurationTab(QWidget *parent)
 {
-	return new toOracleSetting(parent);
+    return new toOracleSetting(parent);
 }
 
 toConnection::connectionImpl* toOracleProvider::createConnectionImpl(toConnection &con)
@@ -336,7 +336,7 @@ toConnection::connectionImpl* toOracleProvider::createConnectionImpl(toConnectio
 // TODO return reference into static instance of toOracleTraits
 toConnectionTraits* toOracleProvider::createConnectionTrait(void)
 {
-	static toOracleTraits* t = new toOracleTraits();
+    static toOracleTraits* t = new toOracleTraits();
     return t;
 }
 

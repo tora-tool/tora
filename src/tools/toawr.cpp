@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -200,50 +200,50 @@ static toSQL SQLCheckSnaps("toAWR:CheckSnaps",
 
 class toAWRTool : public toTool
 {
-protected:
-    std::map<toConnection *, QWidget *> Windows;
+    protected:
+        std::map<toConnection *, QWidget *> Windows;
 
-    virtual const char **pictureXPM(void);
-public:
-    toAWRTool()
-        : toTool(10003, "AWR")
-    { }
+        virtual const char **pictureXPM(void);
+    public:
+        toAWRTool()
+            : toTool(10003, "AWR")
+        { }
 
-    virtual const char *menuItem()
-    {
-        return "AWR Report";
-    }
-
-    virtual bool canHandle(const toConnection &conn)
-    {
-		return conn.providerIs("Oracle");
-    }
-
-    virtual toToolWidget* toolWindow(QWidget *parent, toConnection &connection)
-    {
-        std::map<toConnection *, QWidget *>::iterator i = Windows.find(&connection);
-        if (i != Windows.end())
+        virtual const char *menuItem()
         {
-            (*i).second->raise();
-            (*i).second->setFocus();
-            return NULL;
+            return "AWR Report";
         }
-        else
+
+        virtual bool canHandle(const toConnection &conn)
         {
-            toToolWidget* window = new toAWR(parent, connection);
-            Windows[&connection] = window;
-            return window;
+            return conn.providerIs("Oracle");
         }
-    }
-    virtual void closeWindow(toConnection &connection)
-    {
-        std::map<toConnection *, QWidget *>::iterator i = Windows.find(&connection);
-        if (i != Windows.end())
+
+        virtual toToolWidget* toolWindow(QWidget *parent, toConnection &connection)
         {
-            std::cerr << "Window deleted:" << std::endl;
-            Windows.erase(i);
+            std::map<toConnection *, QWidget *>::iterator i = Windows.find(&connection);
+            if (i != Windows.end())
+            {
+                (*i).second->raise();
+                (*i).second->setFocus();
+                return NULL;
+            }
+            else
+            {
+                toToolWidget* window = new toAWR(parent, connection);
+                Windows[&connection] = window;
+                return window;
+            }
         }
-    }
+        virtual void closeWindow(toConnection &connection)
+        {
+            std::map<toConnection *, QWidget *>::iterator i = Windows.find(&connection);
+            if (i != Windows.end())
+            {
+                std::cerr << "Window deleted:" << std::endl;
+                Windows.erase(i);
+            }
+        }
 };
 
 const char **toAWRTool::pictureXPM(void)
@@ -264,10 +264,10 @@ toAWR::toAWR(/*toTool *tool,*/ QWidget *parent, toConnection &_connection)
     dbid->setSQL(toSQL::sql("toAWR:DBInstances", connection()));
     fsnap = new toResultCombo(toolbar, "AWR toolbar");
     fsnap->setSelectionPolicy(toResultCombo::LastButOne);
-	fsnap->setSQL(SQLSnaps);
+    fsnap->setSQL(SQLSnaps);
     tsnap = new toResultCombo(toolbar, "AWR toolbar");
     tsnap->setSelectionPolicy(toResultCombo::Last);
-	tsnap->setSQL(SQLSnaps);
+    tsnap->setSQL(SQLSnaps);
 
     startdate = new QDateTimeEdit(QDate::currentDate());
     startdate->setCalendarPopup(true);
@@ -335,7 +335,7 @@ void toAWR::execute(void)
 
         try
         {
-			toConnectionSubLoan c(connection());
+            toConnectionSubLoan c(connection());
             toQuery checkSnaps(c, SQLCheckSnaps, toQueryParams() << dbids << insts << fsnaps << tsnaps);
 
             toQuery report(c,
@@ -411,7 +411,7 @@ void toAWR::startDateChanged(QDate date)
     QVariant d = dbid->itemData(pos);
     QStringList l = d.toStringList();
     std::stringstream s;
-    for(QList<QString>::iterator i = l.begin(); i != l.end(); ++i)
+    for (QList<QString>::iterator i = l.begin(); i != l.end(); ++i)
     {
         s << ":\'" << (*i).toLatin1().constData() << '\'';
     }
@@ -423,7 +423,7 @@ void toAWR::startDateChanged(QDate date)
         toQueryParams params;
         params << dbid << inst << date.toString("yyyy:MM:dd") << date.toString("yyyy:MM:dd");
         fsnap->setSelectionPolicy(toResultCombo::None);
-		fsnap->refreshWithParams(params);
+        fsnap->refreshWithParams(params);
     }
     TOCATCH;
 }
@@ -436,7 +436,7 @@ void toAWR::endDateChanged(QDate date)
     QVariant d = dbid->itemData(pos);
     QStringList l = d.toStringList();
     std::stringstream s;
-    for(QList<QString>::iterator i = l.begin(); i != l.end(); ++i)
+    for (QList<QString>::iterator i = l.begin(); i != l.end(); ++i)
     {
         s << ":\'" << (*i).toLatin1().constData() << '\'';
     }
@@ -445,7 +445,7 @@ void toAWR::endDateChanged(QDate date)
     QString inst = l.at(1);
     try
     {
-        toQueryParams params;		
+        toQueryParams params;
         params << dbid << inst << date.toString("yyyy:MM:dd") << date.toString("yyyy:MM:dd");
         tsnap->setSelectionPolicy(toResultCombo::None);
         tsnap->refreshWithParams(params);
@@ -459,7 +459,7 @@ void toAWR::instanceChanged(int pos)
     QVariant d = dbid->itemData(pos);
     QStringList l = d.toStringList();
     std::stringstream s;
-    for(QList<QString>::iterator i = l.begin(); i != l.end(); ++i)
+    for (QList<QString>::iterator i = l.begin(); i != l.end(); ++i)
     {
         s << ":\'" << (*i).toLatin1().constData() << '\'';
     }
@@ -471,7 +471,7 @@ void toAWR::instanceChanged(int pos)
         toQueryParams sparams, eparams;
         sparams <<  dbid << inst << startdate->date().toString("yyyy:MM:dd") << startdate->date().toString("yyyy:MM:dd");
         TLOG(1, toDecorator, __HERE__) << "FSNAP: ("  << sparams.size() << ")" << std::endl;
-		fsnap->refreshWithParams(sparams);
+        fsnap->refreshWithParams(sparams);
 
 
         eparams << dbid << inst << enddate->date().toString("yyyy:MM:dd") << enddate->date().toString("yyyy:MM:dd");
@@ -485,18 +485,18 @@ void toAWR::instanceRead(void)
 {
     dbid->setCurrentIndex(0);
 
-	try
-	{
-		QVariant vdbid = dbid->itemData(dbid->currentIndex());
-		QString dbids( vdbid.toStringList().at(0) );
-		QString insts( vdbid.toStringList().at(1) );
-		
-		toQueryParams params;
-		params << dbids << insts << QDate::currentDate().toString("yyyy:MM:dd") << QDate::currentDate().toString("yyyy:MM:dd");
+    try
+    {
+        QVariant vdbid = dbid->itemData(dbid->currentIndex());
+        QString dbids( vdbid.toStringList().at(0) );
+        QString insts( vdbid.toStringList().at(1) );
+
+        toQueryParams params;
+        params << dbids << insts << QDate::currentDate().toString("yyyy:MM:dd") << QDate::currentDate().toString("yyyy:MM:dd");
         //fsnap->setSelectionPolicy(toResultCombo::None);
-		fsnap->refreshWithParams(params);
-		tsnap->refreshWithParams(params);
-	}
-	TOCATCH;
+        fsnap->refreshWithParams(params);
+        tsnap->refreshWithParams(params);
+    }
+    TOCATCH;
 
 };

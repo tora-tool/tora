@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -416,25 +416,25 @@ static toSQL SQLTableColumnsMySql(
 
 toResultCols::toResultCols(QWidget *parent, const char *name, toWFlags f)
     : QWidget(parent, f)
-	, SQL(SQLTableColumns)
+    , SQL(SQLTableColumns)
 {
     if (name)
         setObjectName(name);
-	setup();
+    setup();
 }
 
 toResultCols::toResultCols(toSQL const& sql, QWidget *parent, const char *name, toWFlags f)
     : QWidget(parent, f)
-	, SQL(sql) // SQL(SQLTableColumns)
+    , SQL(sql) // SQL(SQLTableColumns)
 {
     if (name)
         setObjectName(name);
-	setup();
+    setup();
 }
 
 void toResultCols::setup()
 {
-	toResult::setSQL(SQL);
+    toResult::setSQL(SQL);
 
     QVBoxLayout *vbox = new QVBoxLayout;
     QWidget     *box  = new QWidget(this);
@@ -513,26 +513,26 @@ void toResultCols::query(const QString &sql, toQueryParams const& param)
 
     try
     {
-	    switch(param.size())
-	    {
-	    case 1:
-		    if(conn.providerIs("QMYSQL"))
-			    Owner = conn.database();
-		    else
-			    Owner = conn.user().toUpper();
-		    Name = (QString)param.at(0);
-		    object = (QString)param.at(0);
-		    break;
-	    case 2:
-		    Owner = (QString)param.at(0);
-		    Name = (QString)param.at(1);
-		    object = Owner + QString::fromLatin1(".") + Name;
-		    break;
-	    default:
-		    Q_ASSERT_X(false, qPrintable(__QHERE__), "Invalid size for params");
-		    break;
-	    }	    
-			    
+        switch (param.size())
+        {
+            case 1:
+                if (conn.providerIs("QMYSQL"))
+                    Owner = conn.database();
+                else
+                    Owner = conn.user().toUpper();
+                Name = (QString)param.at(0);
+                object = (QString)param.at(0);
+                break;
+            case 2:
+                Owner = (QString)param.at(0);
+                Name = (QString)param.at(1);
+                object = Owner + QString::fromLatin1(".") + Name;
+                break;
+            default:
+                Q_ASSERT_X(false, qPrintable(__QHERE__), "Invalid size for params");
+                break;
+        }
+
         // TODO call this only if cache entry is not "described"
         Columns->refreshWithParams(toQueryParams() << Owner << Name);
     }
@@ -588,30 +588,30 @@ void toResultCols::query(const QString &sql, toQueryParams const& param)
 
     Title->setToolTip(""); // Clear previous tooltip 1st
     toCache::CacheEntry const*e =  conn.getCache().findEntry(toCache::ObjectRef(Owner, Name, Owner));
-    if(e)
+    if (e)
     {
-		// TODO this is sync db request evaluated in the main (UI) thread - no async approach yet
-		conn.getCache().describeEntry(e);
-		if ( e->description.contains("TOOLTIP"))
-			Title->setToolTip(e->description.value("TOOLTIP").toString());
+        // TODO this is sync db request evaluated in the main (UI) thread - no async approach yet
+        conn.getCache().describeEntry(e);
+        if ( e->description.contains("TOOLTIP"))
+            Title->setToolTip(e->description.value("TOOLTIP").toString());
     }
 
     /* table label, including the comment */
     QString label = QString::fromLatin1("<B>");
     label += object;
     label += QString::fromLatin1("</B>");
-    Title->setText(label);    
+    Title->setText(label);
     try
-    {	
+    {
         if (conn.getTraits().hasTableComments())
         {
-			toConnectionSubLoan c(conn);
+            toConnectionSubLoan c(conn);
             toQuery query(c, SQLTableComment, toQueryParams() << Owner << Name);
             QString t;
             if (!query.eof())
             {
                 t = (QString)query.readValue();
-				EditComment->setComment(true, Object.toString()/*TableName*/, t);
+                EditComment->setComment(true, Object.toString()/*TableName*/, t);
             }
             Comment->setText(t);
             editComment(Edit->isChecked());
@@ -646,7 +646,7 @@ void toResultCols::clearData()
 
 void toResultCols::editComment(bool val)
 {
-	toConnection &conn = toConnection::currentConnection(this);
+    toConnection &conn = toConnection::currentConnection(this);
     setUpdatesEnabled(false);
 
     // setup the comments
@@ -676,7 +676,7 @@ void toResultCols::editComment(bool val)
             toResultColsComment *com = new toResultColsComment(container);
             com->setComment(false,
                             //TableName + "." + conn.getTraits().quote(column),
-							Object.toString() + "." + conn.getTraits().quote(column),
+                            Object.toString() + "." + conn.getTraits().quote(column),
                             comment);
             grid->addWidget(new QLabel(column));
             grid->addWidget(com, row, 1);

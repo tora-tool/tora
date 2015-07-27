@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -64,127 +64,127 @@ class QChar;
 
 class toHtml
 {
-    /** Actual data of file.
-     */
-    QString Data;
-    /** Length of the data.
-     */
-    int Length;
-    /** Current position in data.
-     */
-    int Position;
-
-    /** Last character that was at the end of text written over by call to @ref mid.
-     * This is a real cludge, but what don't you do for performance.
-     */
-    QChar LastChar;
-
-    /** List of qualifiers for tab. This is not a list because of performance as well.
-     * Not really a lot of memory wasted this way, in fact it is probably more efficient
-     * than a dynamic list.
-     */
-    struct
-    {
-        /** Name of qualifier. Always lowercase, points into @ref Data.
+        /** Actual data of file.
          */
-        QString Name;
-        /** Value of qualifier. Points into @ref Data.
+        QString Data;
+        /** Length of the data.
          */
-        QString Value;
-    }
-    Qualifiers[TO_HTML_MAX_QUAL];
+        int Length;
+        /** Current position in data.
+         */
+        int Position;
 
-    /** Number of qualifiers used.
-     */
-    int QualifierNum;
-    /** If last token read was a tag or plain text.
-     */
-    bool IsTag;
-    /** Last tag read was an open tag. Only valid if @ref isTag is true.
-     */
-    bool Open;
-    /** Name of tag. NULL terminated, points into @ref Data.
-     */
-    QString Tag;
-    /** Text if not tag. NULL terminated, points into @ref Data.
-     */
-    QString Text;
+        /** Last character that was at the end of text written over by call to @ref mid.
+         * This is a real cludge, but what don't you do for performance.
+         */
+        QChar LastChar;
 
-    /** Walk forward in @ref Data until not whitespace.
-     */
-    void skipSpace(void);
-    /** Extract a string from @ref Data. Insert 0 at end of string, store overwritten char
-     * in LastChar.
-     * @param start Start position of string to extract.
-     * @param size Size of string to extract.
-     * @return Pointer to string (Points into @ref Data)
-     */
-    QString mid(int start, int size);
-public:
-    /** Create a HTML parser.
-     * @param data Data to parse.
-     */
-    toHtml(const QString &data);
-    ~toHtml();
+        /** List of qualifiers for tab. This is not a list because of performance as well.
+         * Not really a lot of memory wasted this way, in fact it is probably more efficient
+         * than a dynamic list.
+         */
+        struct
+        {
+            /** Name of qualifier. Always lowercase, points into @ref Data.
+             */
+            QString Name;
+            /** Value of qualifier. Points into @ref Data.
+             */
+            QString Value;
+        }
+        Qualifiers[TO_HTML_MAX_QUAL];
 
-    /** Read the next token which can be either a open tag, close tag or text.
-     *
-     * Observe that nextToken destroys the data it has parsed, so you
-     * can't search it later. Searhing must be done on an new toHtml,
-     * several serches can be made though on the same toHtml.
-     */
+        /** Number of qualifiers used.
+         */
+        int QualifierNum;
+        /** If last token read was a tag or plain text.
+         */
+        bool IsTag;
+        /** Last tag read was an open tag. Only valid if @ref isTag is true.
+         */
+        bool Open;
+        /** Name of tag. NULL terminated, points into @ref Data.
+         */
+        QString Tag;
+        /** Text if not tag. NULL terminated, points into @ref Data.
+         */
+        QString Text;
 
-    void nextToken(void);
+        /** Walk forward in @ref Data until not whitespace.
+         */
+        void skipSpace(void);
+        /** Extract a string from @ref Data. Insert 0 at end of string, store overwritten char
+         * in LastChar.
+         * @param start Start position of string to extract.
+         * @param size Size of string to extract.
+         * @return Pointer to string (Points into @ref Data)
+         */
+        QString mid(int start, int size);
+    public:
+        /** Create a HTML parser.
+         * @param data Data to parse.
+         */
+        toHtml(const QString &data);
+        ~toHtml();
 
-    /** Get value of a qualifier.
-     * @param name Name of qualifier in lowercase.
-     * @return Value of qualifier or NULL.
-     */
-    QString value(const QString &name);
-    /** Return true if current token is a tag.
-     * @return True if tag.
-     */
-    bool isTag(void)
-    {
-        return IsTag;
-    }
-    /** Return true if open tag. Only valid if @ref isTag is true.
-     * @return True if open tag.
-     */
-    bool open(void)
-    {
-        return Open;
-    }
+        /** Read the next token which can be either a open tag, close tag or text.
+         *
+         * Observe that nextToken destroys the data it has parsed, so you
+         * can't search it later. Searhing must be done on an new toHtml,
+         * several serches can be made though on the same toHtml.
+         */
 
-    /** Get bread text if available. Expands &# characters are expanded before returned.
-     * Only valid if @ref isTag returns false.
-     * @return The parsed text.
-     */
+        void nextToken(void);
 
-    QString text(void);
+        /** Get value of a qualifier.
+         * @param name Name of qualifier in lowercase.
+         * @return Value of qualifier or NULL.
+         */
+        QString value(const QString &name);
+        /** Return true if current token is a tag.
+         * @return True if tag.
+         */
+        bool isTag(void)
+        {
+            return IsTag;
+        }
+        /** Return true if open tag. Only valid if @ref isTag is true.
+         * @return True if open tag.
+         */
+        bool open(void)
+        {
+            return Open;
+        }
 
-    /** Get name of tag in lowercase. Only valid if @ref isTag returns true.
-     * @return Name of tag (Excluding / if close tag).
-     */
-    QString tag(void)
-    {
-        return Tag;
-    }
+        /** Get bread text if available. Expands &# characters are expanded before returned.
+         * Only valid if @ref isTag returns false.
+         * @return The parsed text.
+         */
 
-    /** Check if at end of data
-     * @return True if at end of data.
-     */
-    bool eof(void);
+        QString text(void);
 
-    /** Search data for a simple text.
-     * @param data Data to search.
-     * @param str Substring to search for in data.
-     */
-    static bool search(const QString &data, const QString &str);
+        /** Get name of tag in lowercase. Only valid if @ref isTag returns true.
+         * @return Name of tag (Excluding / if close tag).
+         */
+        QString tag(void)
+        {
+            return Tag;
+        }
 
-    /** Escape text to be HTML.
-     */
-    static QString escape(const QString &html);
+        /** Check if at end of data
+         * @return True if at end of data.
+         */
+        bool eof(void);
+
+        /** Search data for a simple text.
+         * @param data Data to search.
+         * @param str Substring to search for in data.
+         */
+        static bool search(const QString &data, const QString &str);
+
+        /** Escape text to be HTML.
+         */
+        static QString escape(const QString &html);
 };
 
 #endif

@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -65,122 +65,122 @@
 */
 class toResultStorageItem : public toResultViewItem
 {
-    bool AvailableGraph;
-public:
-    toResultStorageItem(bool available, toTreeWidget *parent, toTreeWidgetItem *after,
-                        const QString &buf = QString::null)
-        : toResultViewItem(parent, after, buf), AvailableGraph(available)
-    { }
-    toResultStorageItem(bool available, toTreeWidgetItem *parent, toTreeWidgetItem *after,
-                        const QString &buf = QString::null)
-        : toResultViewItem(parent, after, buf), AvailableGraph(available)
-    { }
+        bool AvailableGraph;
+    public:
+        toResultStorageItem(bool available, toTreeWidget *parent, toTreeWidgetItem *after,
+                            const QString &buf = QString::null)
+            : toResultViewItem(parent, after, buf), AvailableGraph(available)
+        { }
+        toResultStorageItem(bool available, toTreeWidgetItem *parent, toTreeWidgetItem *after,
+                            const QString &buf = QString::null)
+            : toResultViewItem(parent, after, buf), AvailableGraph(available)
+        { }
 
-    //! Try to guess real type of the value taken from DB
-    void setSortValue(int col, const QVariant & v)
-    {
-        bool ok;
-        qulonglong i = v.toULongLong(&ok);
-        if (ok)
+        //! Try to guess real type of the value taken from DB
+        void setSortValue(int col, const QVariant & v)
         {
-            m_sortValues[col] = i;
-            return;
+            bool ok;
+            qulonglong i = v.toULongLong(&ok);
+            if (ok)
+            {
+                m_sortValues[col] = i;
+                return;
+            }
+            double d = v.toDouble(&ok);
+            if (ok)
+            {
+                m_sortValues[col] = d;
+                return;
+            }
+            m_sortValues[col] = v;
         }
-        double d = v.toDouble(&ok);
-        if (ok)
+
+        //! See operator<
+        QVariant sortValue(int i) const
         {
-            m_sortValues[col] = d;
-            return;
+            return m_sortValues[i];
         }
-        m_sortValues[col] = v;
-    }
 
-    //! See operator<
-    QVariant sortValue(int i) const
-    {
-        return m_sortValues[i];
-    }
-
-    /*! Operator used for sorting. Original operator handles
-      only string-based sorting. Now it supports int and double
-      for numeric columns.
-    */
-    bool operator<(const QTreeWidgetItem &other) const
-    {
-        int column = treeWidget()->sortColumn();
-        QVariant v(m_sortValues[column]);
-
-        const toResultStorageItem * o = dynamic_cast<const toResultStorageItem*>(&other);
-        Q_ASSERT_X(o, "cast", "only toResultStorageItem are supported");
-
-        switch (v.type())
+        /*! Operator used for sorting. Original operator handles
+          only string-based sorting. Now it supports int and double
+          for numeric columns.
+        */
+        bool operator<(const QTreeWidgetItem &other) const
         {
-        case QVariant::ULongLong:
-            return v.toULongLong() < o->sortValue(column).toULongLong();
-        case QVariant::Int:
-            return v.toInt() < o->sortValue(column).toInt();
-        case QVariant::Double:
-            return v.toDouble() < o->sortValue(column).toDouble();
-        case QVariant::String:
-            return v.toString() < o->sortValue(column).toString();
-        default:
-            Q_ASSERT_X(0, "compare", "more comparation is not supported now");
-            break;
-        };
-        // never reached
-        return false;
-    }
+            int column = treeWidget()->sortColumn();
+            QVariant v(m_sortValues[column]);
 
-private:
-    //! Store the value used for sorting for every column
-    QHash<int, QVariant> m_sortValues;
+            const toResultStorageItem * o = dynamic_cast<const toResultStorageItem*>(&other);
+            Q_ASSERT_X(o, "cast", "only toResultStorageItem are supported");
+
+            switch (v.type())
+            {
+                case QVariant::ULongLong:
+                    return v.toULongLong() < o->sortValue(column).toULongLong();
+                case QVariant::Int:
+                    return v.toInt() < o->sortValue(column).toInt();
+                case QVariant::Double:
+                    return v.toDouble() < o->sortValue(column).toDouble();
+                case QVariant::String:
+                    return v.toString() < o->sortValue(column).toString();
+                default:
+                    Q_ASSERT_X(0, "compare", "more comparation is not supported now");
+                    break;
+            };
+            // never reached
+            return false;
+        }
+
+    private:
+        //! Store the value used for sorting for every column
+        QHash<int, QVariant> m_sortValues;
 };
 
 class toResultStorageItemDelegate: public QItemDelegate
 {
-public:
-    toResultStorageItemDelegate()
-    {
-    }
-
-    void paint(QPainter *painter, const QStyleOptionViewItem &option,
-               const QModelIndex & index ) const
-    {
-        if(index.column() == COL_USED_FREE_AUTO )
+    public:
+        toResultStorageItemDelegate()
         {
-            int left   = option.rect.left();
-            int top    = option.rect.top();
-            int width  = option.rect.width();
-            int height = option.rect.height();
+        }
 
-            QString str = index.model()->data(index, Qt::DisplayRole).toString();
-            QStringList pct = str.split(QRegExp("/"));
-
-            if (pct.count() == 3)
+        void paint(QPainter *painter, const QStyleOptionViewItem &option,
+                   const QModelIndex & index ) const
+        {
+            if (index.column() == COL_USED_FREE_AUTO )
             {
-                int w_used = (int) (pct.at(0).toDouble() * width / 100);
-                int w_free = (int) (pct.at(1).toDouble() * width / 100);
-                int w_auto = width - w_used - w_free;
+                int left   = option.rect.left();
+                int top    = option.rect.top();
+                int width  = option.rect.width();
+                int height = option.rect.height();
 
-                painter->fillRect(left, top,
-                                  w_used, height, QBrush(Qt::darkRed/*Qt::red*/));
-                painter->fillRect(left + w_used, top,
-                                  w_free, height, QBrush(Qt::darkGreen/*Qt::green*/));
-                painter->fillRect(left + w_used + w_free, top,
-                                  w_auto, height, QBrush(Qt::darkBlue/*Qt::blue*/));
-                painter->setPen(Qt::white);
-                painter->drawText(option.rect, Qt::TextSingleLine, str);
+                QString str = index.model()->data(index, Qt::DisplayRole).toString();
+                QStringList pct = str.split(QRegExp("/"));
+
+                if (pct.count() == 3)
+                {
+                    int w_used = (int) (pct.at(0).toDouble() * width / 100);
+                    int w_free = (int) (pct.at(1).toDouble() * width / 100);
+                    int w_auto = width - w_used - w_free;
+
+                    painter->fillRect(left, top,
+                                      w_used, height, QBrush(Qt::darkRed/*Qt::red*/));
+                    painter->fillRect(left + w_used, top,
+                                      w_free, height, QBrush(Qt::darkGreen/*Qt::green*/));
+                    painter->fillRect(left + w_used + w_free, top,
+                                      w_auto, height, QBrush(Qt::darkBlue/*Qt::blue*/));
+                    painter->setPen(Qt::white);
+                    painter->drawText(option.rect, Qt::TextSingleLine, str);
+                }
+                else
+                {
+                    QItemDelegate::paint(painter, option, index);
+                }
             }
             else
             {
                 QItemDelegate::paint(painter, option, index);
             }
         }
-        else
-        {
-            QItemDelegate::paint(painter, option, index);
-        }
-    }
 };
 
 bool toResultStorage::canHandle(const toConnection &conn)
@@ -634,8 +634,8 @@ void toResultStorage::saveSelected(void)
 
 void toResultStorage::query(const QString &sql, toQueryParams const& param)
 {
-	Q_UNUSED(sql);
-	Q_UNUSED(param);
+    Q_UNUSED(sql);
+    Q_UNUSED(param);
 
     if (!handled() || Tablespaces || Files)
         return ;
@@ -654,19 +654,19 @@ void toResultStorage::query(const QString &sql, toQueryParams const& param)
         FileValues.clear();
 
         Tablespaces = new toEventQuery(this
-				       , conn
-                       , toSQL::string(ShowCoalesced ? SQLShowCoalesced : SQLNoShowCoalesced, connection())
-				       , args
-				       , toEventQuery::READ_ALL);
+                                       , conn
+                                       , toSQL::string(ShowCoalesced ? SQLShowCoalesced : SQLNoShowCoalesced, connection())
+                                       , args
+                                       , toEventQuery::READ_ALL);
         connect(Tablespaces, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(slotPollTablespaces()));
         connect(Tablespaces, SIGNAL(done(toEventQuery*)), this, SLOT(slotDoneTablespaces()));
         Tablespaces->start();
 
         Files = new toEventQuery(this
-				 , conn
-                 , toSQL::string(SQLDatafile, connection())
-				 , args
-				 , toEventQuery::READ_ALL);
+                                 , conn
+                                 , toSQL::string(SQLDatafile, connection())
+                                 , args
+                                 , toEventQuery::READ_ALL);
         connect(Files, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(slotPollFiles()));
         connect(Files, SIGNAL(done(toEventQuery*)), this, SLOT(slotDoneFiles()));
         Files->start();

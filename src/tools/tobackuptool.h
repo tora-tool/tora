@@ -21,15 +21,15 @@ class toConnection;
 
 class toBackupTool : public toTool
 {
-    Q_OBJECT;  
-public:
-    toBackupTool();
-    virtual const char *menuItem();
-    virtual toToolWidget* toolWindow(QWidget *parent, toConnection &connection);
-    void closeWindow(toConnection &connection);
-protected:
-    std::map<toConnection *, QWidget *> Windows;
-    virtual const char **pictureXPM(void);    
+        Q_OBJECT;
+    public:
+        toBackupTool();
+        virtual const char *menuItem();
+        virtual toToolWidget* toolWindow(QWidget *parent, toConnection &connection);
+        void closeWindow(toConnection &connection);
+    protected:
+        std::map<toConnection *, QWidget *> Windows;
+        virtual const char **pictureXPM(void);
 };
 
 #endif

@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -46,59 +46,59 @@ See its usage in toResultTableView or toScriptSchemaWidget for example.
 */
 class toWorkingWidget : public QWidget
 {
-    Q_OBJECT;
+        Q_OBJECT;
 
-public:
-    /*! Interactive allows user to stop running action
-    (it has to be handled in code). NonInteractive disables
-    the stop widget. */
-    enum WorkingWidgetType
-    {
-        Interactive,
-        NonInteractive
-    };
+    public:
+        /*! Interactive allows user to stop running action
+        (it has to be handled in code). NonInteractive disables
+        the stop widget. */
+        enum WorkingWidgetType
+        {
+            Interactive,
+            NonInteractive
+        };
 
-    toWorkingWidget(QWidget * parent = 0);
+        toWorkingWidget(QWidget * parent = 0);
 
-    //! \brief Set the text for display label
-    void setText(const QString & text);
-    //! \brief Set the widget behaviour. See WorkingWidgetType enum.
-    void setType(WorkingWidgetType type = Interactive);
+        //! \brief Set the text for display label
+        void setText(const QString & text);
+        //! \brief Set the widget behaviour. See WorkingWidgetType enum.
+        void setType(WorkingWidgetType type = Interactive);
 
-signals:
-    //! \brief This is emitted when user requested "stop/cancel" action.
-    void stop();
+    signals:
+        //! \brief This is emitted when user requested "stop/cancel" action.
+        void stop();
 
-public slots:
-    /*! \brief Show this widget.
-    It just prepare itself for showing if it's in the
-    WorkingWidgetType Interactive mode (CurrentType). There has to be
-    a forceShow() call connected to QTimer shot to show all
-    internal widgets (see toResultTableView for example).
-    The widget is shown normally if it's in the NonInteractive mode.
-    */
-    void show();
-    /*! \brief Really show all subwidgets.
-    See show() docs.
-    */
-    void forceShow();
+    public slots:
+        /*! \brief Show this widget.
+        It just prepare itself for showing if it's in the
+        WorkingWidgetType Interactive mode (CurrentType). There has to be
+        a forceShow() call connected to QTimer shot to show all
+        internal widgets (see toResultTableView for example).
+        The widget is shown normally if it's in the NonInteractive mode.
+        */
+        void show();
+        /*! \brief Really show all subwidgets.
+        See show() docs.
+        */
+        void forceShow();
 
-private:
-    // Remember current internal type
-    WorkingWidgetType CurrentType;
+    private:
+        // Remember current internal type
+        WorkingWidgetType CurrentType;
 
-    // horizontal container for WorkingLabel and WorkingStop
-    QWidget *HWorking;
+        // horizontal container for WorkingLabel and WorkingStop
+        QWidget *HWorking;
 
-    // label displayed by Working
-    QLabel *WorkingLabel;
+        // label displayed by Working
+        QLabel *WorkingLabel;
 
-    // stop button displayed by Working
-    QPushButton *WorkingStop;
+        // stop button displayed by Working
+        QPushButton *WorkingStop;
 
-private slots:
-    //! Handle the stop/cancel button press.
-    void stopWorking();
+    private slots:
+        //! Handle the stop/cancel button press.
+        void stopWorking();
 };
 
 #endif

@@ -36,35 +36,35 @@ using namespace boost::iostreams;
 // TLOG(1, toDecorator, __HERE__) << "The value for a is:" << a << std::endl;
 // TLOG(5, toNoDecorator, __HERE__) << "The value for a is:" << a << std::endl;
 ////////////////////////////////////////////////////////////////////////////////
-#define TLOG(lognumber, decorator, where) get_log(lognumber).ts<decorator>( where)
+#define TLOG(lognumber, decorator, where) get_log(lognumber).ts<decorator>(where)
 
-#define DISABLE_LOG(lognumber)                                                        \
-       template<>                                                                     \
-       inline thread_safe_log templ_get_log_ownthread(int_to_type<lognumber>*)        \
-       {                                                                              \
-               static s_null_sink nsink;                                              \
-               static std::ostream out(&nsink);                                       \
-               static internal_thread_safe_log_ownthread log( out );                  \
-               return thread_safe_log( log);                                          \
-       };
+#define DISABLE_LOG(lognumber)                                                 \
+    template<>                                                                 \
+    inline thread_safe_log templ_get_log_ownthread(int_to_type<lognumber>*)    \
+    {                                                                          \
+        static s_null_sink nsink;                                              \
+        static std::ostream out(&nsink);                                       \
+        static internal_thread_safe_log_ownthread log(out);                    \
+        return thread_safe_log(log);                                           \
+    };
 /** Wrapper class for Boost's null_sink ostream
 */
 struct s_null_sink : public boost::iostreams::stream_buffer<boost::iostreams::null_sink>
 {
-       s_null_sink()
-       {
-               open(boost::iostreams::null_sink() );
-       }
+    s_null_sink()
+    {
+        open(boost::iostreams::null_sink() );
+    }
 };
 
-#define DOCKLET_LOG(lognumber)                                                        \
-	template<>                                                                    \
-	inline thread_safe_log templ_get_log_ownthread(int_to_type<lognumber>*)       \
-	{                                                                             \
-		static toOStream out;                                                 \
-		static internal_thread_safe_log_ownthread log( out );                 \
-		return thread_safe_log( log);                                         \
-	};
+#define DOCKLET_LOG(lognumber)                                                \
+    template<>                                                                \
+    inline thread_safe_log templ_get_log_ownthread(int_to_type<lognumber>*)   \
+    {                                                                         \
+        static toOStream out;                                                 \
+        static internal_thread_safe_log_ownthread log(out);                   \
+        return thread_safe_log(log);                                          \
+    };
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -120,19 +120,19 @@ inline thread_safe_log templ_get_log_ownthread( int_to_type< idxLog> *i = NULL )
        useColor = is_color_terminal(tsLog);
        }
      */
-    return thread_safe_log( log);
+    return thread_safe_log(log);
 }
 
-//DISABLE_LOG(0); // generic debug <0>
-//DISABLE_LOG(1); // exceptions debug<1>
-DISABLE_LOG(2);
-DISABLE_LOG(3);   // debuger(disabled)
-DISABLE_LOG(4);   // data read(disabled)
-DOCKLET_LOG(5);   // connection provider finder
-DISABLE_LOG(6);   //
-DOCKLET_LOG(7);   //
-DOCKLET_LOG(8);   //
-DISABLE_LOG(9);   // report focus
+//DISABLE_LOG(0) // generic debug <0>
+//DISABLE_LOG(1) // exceptions debug<1>
+DISABLE_LOG(2)
+DISABLE_LOG(3)   // debuger(disabled)
+DISABLE_LOG(4)   // data read(disabled)
+DOCKLET_LOG(5)   // connection provider finder
+DISABLE_LOG(6)   //
+DOCKLET_LOG(7)   //
+DOCKLET_LOG(8)   //
+DISABLE_LOG(9)   // report focus
 
 ////////////////////////////////////////////////////////////////////////////////
 // EXAMPLE USAGE
@@ -148,23 +148,33 @@ DISABLE_LOG(9);   // report focus
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-inline thread_safe_log get_log( int idxLog)
+inline thread_safe_log get_log(int idxLog)
 {
-    switch( idxLog)
+    switch (idxLog)
     {
-    case 0: return templ_get_log_ownthread< 0>(NULL); // tooracleconnection log
-    case 1: return templ_get_log_ownthread< 1>(NULL); // exception log
-    case 2: return templ_get_log_ownthread< 2>(NULL); // qDebug log
-    case 3: return templ_get_log_ownthread< 3>(NULL); // tonoblockquery log
-    case 4: return templ_get_log_ownthread< 4>(NULL); // data read log
-    case 5: return templ_get_log_ownthread< 5>(NULL); // logger docket log
-    case 6: return templ_get_log_ownthread< 6>(NULL); // not used yet
-    case 7: return templ_get_log_ownthread< 7>(NULL); // toEventQuery
-    case 8: return templ_get_log_ownthread< 8>(NULL); // browser, other tools
-    case 9: return templ_get_log_ownthread< 9>(NULL); // focus switching
-    default:
-        assert( false);
-        return templ_get_log_ownthread< 0>(NULL);
+        case 0:
+            return templ_get_log_ownthread<0>(NULL); // tooracleconnection log
+        case 1:
+            return templ_get_log_ownthread<1>(NULL); // exception log
+        case 2:
+            return templ_get_log_ownthread<2>(NULL); // qDebug log
+        case 3:
+            return templ_get_log_ownthread<3>(NULL); // tonoblockquery log
+        case 4:
+            return templ_get_log_ownthread<4>(NULL); // data read log
+        case 5:
+            return templ_get_log_ownthread<5>(NULL); // logger docket log
+        case 6:
+            return templ_get_log_ownthread<6>(NULL); // not used yet
+        case 7:
+            return templ_get_log_ownthread<7>(NULL); // toEventQuery
+        case 8:
+            return templ_get_log_ownthread<8>(NULL); // browser, other tools
+        case 9:
+            return templ_get_log_ownthread<9>(NULL); // focus switching
+        default:
+            assert(false);
+            return templ_get_log_ownthread<0>(NULL);
     }
 }
 
@@ -179,20 +189,20 @@ inline thread_safe_log get_log( int idxLog)
 class NullLogger;
 
 template<typename C>
-inline NullLogger& operator<<( NullLogger& stream, const C &str);
+inline NullLogger& operator<<(NullLogger& stream, const C &str);
 
 class NullLogger : public NullType
 {
-public:
-    inline NullLogger&  operator<<(std::ostream & (*f)(std::ostream&))
-    {
-        return *this;
-    }
-    template<class C> friend NullLogger& operator<<(NullLogger& stream, const C &str);
+    public:
+        inline NullLogger&  operator<<(std::ostream & (*f)(std::ostream&))
+        {
+            return *this;
+        }
+        template<class C> friend NullLogger& operator<<(NullLogger& stream, const C &str);
 };
 
 template<typename C>
-inline NullLogger& operator<<( NullLogger& stream, const C &str)
+inline NullLogger& operator<<(NullLogger& stream, const C &str)
 {
     return stream;
 };
@@ -207,8 +217,8 @@ inline NullLogger& get_null_log()
 
 inline std::ostream& operator<<(std::ostream & stream, const QString & str)
 {
-	stream << qPrintable(str);
-	return stream;
+    stream << qPrintable(str);
+    return stream;
 }
 
 

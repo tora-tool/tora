@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -71,51 +71,51 @@
 
 class toSQLEditTool : public toTool
 {
-protected:
-	toToolWidget *Window;
+    protected:
+        toToolWidget *Window;
 
-public:
-    toSQLEditTool()
-        : toTool(920, "SQL Dictionary Editor")
-		, Window(NULL)
-    {
-    }
-
-    virtual toToolWidget *toolWindow(QWidget *parent, toConnection &connection)
-    {
-        if (Window)
+    public:
+        toSQLEditTool()
+            : toTool(920, "SQL Dictionary Editor")
+            , Window(NULL)
         {
-            Window->setFocus(Qt::OtherFocusReason);
-            // already opened, prevent creating new sub window
-            return 0;
         }
 
-        Window = new toSQLEdit(parent, connection);
-        Window->setWindowIcon(QPixmap(const_cast<const char**>(tosqledit_xpm)));
-        return Window;
-    }
+        virtual toToolWidget *toolWindow(QWidget *parent, toConnection &connection)
+        {
+            if (Window)
+            {
+                Window->setFocus(Qt::OtherFocusReason);
+                // already opened, prevent creating new sub window
+                return 0;
+            }
 
-    virtual void customSetup()
-    {
-    	toEditMenuSingle::Instance().addAction(
-            QIcon(QPixmap(tosqledit_xpm)),
-            qApp->translate("toSQLEditTool", "&Edit SQL..."),
-            this,
-            SLOT(createWindow()));
-        ////toMainWidget()->registerSQLEditor(key());
-    }
+            Window = new toSQLEdit(parent, connection);
+            Window->setWindowIcon(QPixmap(const_cast<const char**>(tosqledit_xpm)));
+            return Window;
+        }
 
-    void closeWindow(void)
-    {
-        Window = NULL;
-    }
+        virtual void customSetup()
+        {
+            toEditMenuSingle::Instance().addAction(
+                QIcon(QPixmap(tosqledit_xpm)),
+                qApp->translate("toSQLEditTool", "&Edit SQL..."),
+                this,
+                SLOT(createWindow()));
+            ////toMainWidget()->registerSQLEditor(key());
+        }
 
-    virtual bool canHandle(const toConnection &)
-    {
-        return true;
-    }
+        void closeWindow(void)
+        {
+            Window = NULL;
+        }
 
-    virtual void closeWindow(toConnection &connection) {};
+        virtual bool canHandle(const toConnection &)
+        {
+            return true;
+        }
+
+        virtual void closeWindow(toConnection &connection) {};
 };
 
 static toSQLEditTool SQLEditTool;
@@ -274,10 +274,13 @@ void toSQLEdit::connectList(bool conn)
 toSQLEdit::~toSQLEdit()
 {
     SQLEditTool.closeWindow();
-    try {
+    try
+    {
         toSQL::saveSQL(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::CustomSQL).toString());
-    } catch (...) {
-    	// no exception thrown from destructor
+    }
+    catch (...)
+    {
+        // no exception thrown from destructor
     }
 
 }
@@ -447,17 +450,17 @@ bool toSQLEdit::checkStore(bool justVer)
                                           tr("Save changes into the SQL dictionary"),
                                           tr("&Yes"), tr("&No"), tr("Cancel"), 0, 2))
         {
-        case 0:
-            commitChanges(false);
-            break;
-        case 1:
-            Name->setModified(false);
-            Description->setModified(false);
-            Worksheet->editor()->sciEditor()->setModified(false);
-            LastVersion = Version->currentText();
-            return true;
-        case 2:
-            return false;
+            case 0:
+                commitChanges(false);
+                break;
+            case 1:
+                Name->setModified(false);
+                Description->setModified(false);
+                Worksheet->editor()->sciEditor()->setModified(false);
+                LastVersion = Version->currentText();
+                return true;
+            case 2:
+                return false;
         }
     }
     return true;
@@ -603,7 +606,7 @@ static toSQLTemplate SQLTemplate;
 
 toSQLTemplateItem::toSQLTemplateItem(toTreeWidget *parent)
     : toTemplateItem(SQLTemplate, parent, qApp->translate("toSQL", "SQL Dictionary"))
-	, conn( toConnection::currentConnection(parent))
+    , conn( toConnection::currentConnection(parent))
 {
     setExpandable(true);
 }
@@ -619,7 +622,7 @@ static QString JustLast(const QString &str)
 toSQLTemplateItem::toSQLTemplateItem(toSQLTemplateItem *parent,
                                      const QString &name)
     : toTemplateItem(parent, JustLast(name))
-	, conn(parent->connetion())
+    , conn(parent->connetion())
 {
     Name = name;
     std::list<QString> def = toSQL::range(Name + ":");

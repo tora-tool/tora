@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -89,7 +89,7 @@ toConnectionSub* toOracleConnectionImpl::createConnection(void)
     if (!sqlNet)
     {
         oldSid = qgetenv("ORACLE_SID");
-		qputenv("ORACLE_SID", parentConnection().database().toLatin1());
+        qputenv("ORACLE_SID", parentConnection().database().toLatin1());
     }
     try
     {
@@ -168,7 +168,7 @@ toConnectionSub* toOracleConnectionImpl::createConnection(void)
                     if (newpass2 != newpass)
                         throw qApp->translate("toOracleConnection", "The two passwords doesn't match");
                     QString nputf = newpass;
-                    if( login ) delete login;
+                    if ( login ) delete login;
                     login = new ::trotl::OciLogin(_env,
                                                   ::trotl::LoginAndPChangePara(
                                                       user.isEmpty() ? "" : user.toUtf8().constData(),
@@ -237,33 +237,33 @@ toConnectionSub* toOracleConnectionImpl::createConnection(void)
     }
     catch (::trotl::OciException const& e)
     {
-	    TLOG(5, toDecorator, __HERE__)
-		    << "Failed to set new default timestmp format for session: "
-		    << toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::ConfTimestampFormat).toString()
-		    << std::endl
-		    << e.what();
-	    Utils::toStatusMessage(QObject::tr("Failed to set new default timestamp format for session: %1")
-				   .arg(toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::ConfTimestampFormat).toString()));
-    }    
+        TLOG(5, toDecorator, __HERE__)
+                << "Failed to set new default timestmp format for session: "
+                << toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::ConfTimestampFormat).toString()
+                << std::endl
+                << e.what();
+        Utils::toStatusMessage(QObject::tr("Failed to set new default timestamp format for session: %1")
+                               .arg(toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::ConfTimestampFormat).toString()));
+    }
     catch (...)
     {
-	    TLOG(5, toDecorator, __HERE__)
-		    << "Failed to set new default timestmp format for session: "
-		    << toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::ConfTimestampFormat).toString()
-		    << std::endl;
-	    Utils::toStatusMessage(QObject::tr("Failed to set new default timestamp format for session: %1")
-				   .arg(toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::ConfTimestampFormat).toString()));
+        TLOG(5, toDecorator, __HERE__)
+                << "Failed to set new default timestmp format for session: "
+                << toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::ConfTimestampFormat).toString()
+                << std::endl;
+        Utils::toStatusMessage(QObject::tr("Failed to set new default timestamp format for session: %1")
+                               .arg(toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::ConfTimestampFormat).toString()));
     }
 
     try
     {
-      oracleQuery::trotlQuery info(*conn,
-				   "BEGIN\n"
-				   "  SYS.DBMS_APPLICATION_INFO.SET_CLIENT_INFO('" TOAPPNAME " " TORAVERSION
-				   " (http://tora.sf.net)"
-				   "');\n"
-				   "  SYS.DBMS_APPLICATION_INFO.SET_MODULE('" TOAPPNAME "','Access Database');\n"
-				   "END;");
+        oracleQuery::trotlQuery info(*conn,
+                                     "BEGIN\n"
+                                     "  SYS.DBMS_APPLICATION_INFO.SET_CLIENT_INFO('" TOAPPNAME " " TORAVERSION
+                                     " (http://tora.sf.net)"
+                                     "');\n"
+                                     "  SYS.DBMS_APPLICATION_INFO.SET_MODULE('" TOAPPNAME "','Access Database');\n"
+                                     "END;");
     }
     catch (::trotl::OciException const& e)
     {
@@ -284,23 +284,26 @@ void toOracleConnectionImpl::closeConnection(toConnectionSub *)
 toOracleConnectionSub::toOracleConnectionSub(::trotl::OciConnection *conn, ::trotl::OciLogin *login)
     : _conn(conn)
     , _login(login)
-	, _hasTransactionStat(new ::trotl::SqlStatement(*_conn, "select nvl2(dbms_transaction.local_transaction_id, 1, 0) from dual"))
-	, _hasTransaction(NO_TRANSACTION)
+    , _hasTransactionStat(new ::trotl::SqlStatement(*_conn, "select nvl2(dbms_transaction.local_transaction_id, 1, 0) from dual"))
+    , _hasTransaction(NO_TRANSACTION)
 {
 }
 
 toOracleConnectionSub::~toOracleConnectionSub()
 {
-	delete _hasTransactionStat;
+    delete _hasTransactionStat;
 }
 
 void toOracleConnectionSub::cancel()
 {
-	try {
-		_conn->cancel();
-		_conn->reset();
-	}   catch (const ::trotl::OciException &exc)  {
-		ReThrowException(exc);
+    try
+    {
+        _conn->cancel();
+        _conn->reset();
+    }
+    catch (const ::trotl::OciException &exc)
+    {
+        ReThrowException(exc);
     }
 
     TLOG(0, toDecorator, __HERE__) << ":oracleConn::cancel(conn=" <<_conn << ", this=" << Query << ")" << std::endl;
@@ -312,160 +315,171 @@ void toOracleConnectionSub::close()
 
 void toOracleConnectionSub::commit()
 {
-	try {
-		_conn->commit();
-	} catch (const ::trotl::OciException &exc) {
-		if(exc.is_critical())
-			Broken = true;
-		_hasTransaction = NO_TRANSACTION;
-		ReThrowException(exc);
-	}
-	_hasTransaction = NO_TRANSACTION;
+    try
+    {
+        _conn->commit();
+    }
+    catch (const ::trotl::OciException &exc)
+    {
+        if (exc.is_critical())
+            Broken = true;
+        _hasTransaction = NO_TRANSACTION;
+        ReThrowException(exc);
+    }
+    _hasTransaction = NO_TRANSACTION;
 }
 
 void toOracleConnectionSub::rollback()
 {
-	try {
-		_conn->rollback();
-	} catch (const ::trotl::OciException &exc) {
-		if(exc.is_critical())
-			Broken = true;
-		_hasTransaction = NO_TRANSACTION;
-		ReThrowException(exc);
-	}
-	_hasTransaction = NO_TRANSACTION;
+    try
+    {
+        _conn->rollback();
+    }
+    catch (const ::trotl::OciException &exc)
+    {
+        if (exc.is_critical())
+            Broken = true;
+        _hasTransaction = NO_TRANSACTION;
+        ReThrowException(exc);
+    }
+    _hasTransaction = NO_TRANSACTION;
 }
 
 QString toOracleConnectionSub::version()
 {
-	QString ver("%1%2");
-	return ver
-			.arg((int)_login->_server.versionNumber(), 2, 10, QChar('0'))
-			.arg((int)_login->_server.releaseNumber(), 2, 10, QChar('0'));
+    QString ver("%1%2");
+    return ver
+           .arg((int)_login->_server.versionNumber(), 2, 10, QChar('0'))
+           .arg((int)_login->_server.releaseNumber(), 2, 10, QChar('0'));
 }
 
 QString toOracleConnectionSub::sessionId()
 {
-	QString retval("(%1, %2)");
-	return retval.arg(_login->sid()).arg(_login->serial());
+    QString retval("(%1, %2)");
+    return retval.arg(_login->sid()).arg(_login->serial());
 }
 
 bool toOracleConnectionSub::hasTransaction()
 {
-	// NOTE: do not use OCI_ATTR_TRANSACTION_IN_PROGRESS, it is Oracle 12c feature
-	if (_hasTransaction != DIRTY_FLAG)
-		return _hasTransaction;
-	try
-	{
-		int i;
-		*_hasTransactionStat >> i;
-		_hasTransaction = i ? HAS_TRANSACTION : NO_TRANSACTION;
-		return i;
-	} catch (const ::trotl::OciException &exc) {
-		if(exc.is_critical())
-			Broken = true;
-		ReThrowException(exc);
-	}
+    // NOTE: do not use OCI_ATTR_TRANSACTION_IN_PROGRESS, it is Oracle 12c feature
+    if (_hasTransaction != DIRTY_FLAG)
+        return _hasTransaction;
+    try
+    {
+        int i;
+        *_hasTransactionStat >> i;
+        _hasTransaction = i ? HAS_TRANSACTION : NO_TRANSACTION;
+        return i;
+    }
+    catch (const ::trotl::OciException &exc)
+    {
+        if (exc.is_critical())
+            Broken = true;
+        ReThrowException(exc);
+    }
 }
 
 queryImpl * toOracleConnectionSub::createQuery(toQuery *query)
 {
-	_hasTransaction = DIRTY_FLAG;
-	return new oracleQuery(query, this);
+    _hasTransaction = DIRTY_FLAG;
+    return new oracleQuery(query, this);
 }
 
 toQAdditionalDescriptions* toOracleConnectionSub::decribe(toCache::ObjectRef const& objectName)
 {
-	toQAdditionalDescriptions *retval = new toQAdditionalDescriptions();
-	::trotl::Describe *d = ::trotl::Describe::createDescription(*_conn, qPrintable(objectName.toString()));
+    toQAdditionalDescriptions *retval = new toQAdditionalDescriptions();
+    ::trotl::Describe *d = ::trotl::Describe::createDescription(*_conn, qPrintable(objectName.toString()));
 
-	switch (d->whatIsThis()) {
-	case ::trotl::Describe::O_SYNONYM:
-		retval->insert("TOOLTIP", QString(d->toString().c_str()));
-		break;
-	case ::trotl::Describe::O_PUBLIC_SYNONYM:
-		retval->insert("TOOLTIP", QString(d->toString().c_str()));
-		break;
-	case ::trotl::Describe::O_VIEW:
-	case ::trotl::Describe::O_TABLE:
-		{
-			retval->insert("TOOLTIP", QString(d->toString().c_str()));
-						
-			toQColumnDescriptionList targetCols;
-			std::vector<trotl::DescribeColumn*> &sourceCols = (d->whatIsThis() == ::trotl::Describe::O_VIEW) ?
-					static_cast<trotl::DescribeView*>(d)->_columns :
-					static_cast<trotl::DescribeTable*>(d)->_columns;
-			foreach(::trotl::DescribeColumn *dc, sourceCols)
-			{
-				targetCols.append(toCache::ColumnDescription());
-				toCache::ColumnDescription &lastColumn = targetCols.last();
-				lastColumn.Name = dc->_name.c_str();
-				lastColumn.Null = dc->_is_null;
-				lastColumn.Datatype = dc->typeName().c_str();
-				lastColumn.ToolTip = dc->toString().c_str();
-			}
-			retval->insert("COLUMNLIST", QVariant::fromValue(targetCols));
-		}
-		break;
-	case ::trotl::Describe::O_COLUMN:
-		retval->insert("TOOLTIP", QString(d->toString().c_str()));
-		break;
-	case ::trotl::Describe::O_TYPE:
-		retval->insert("TOOLTIP", QString(d->toString().c_str()));
-		break;
-	case ::trotl::Describe::O_SEQUENCE:
-		retval->insert("TOOLTIP", QString(d->toString().c_str()));
-		break;
-	case ::trotl::Describe::O_PROCEDURE:
-		retval->insert("TOOLTIP", QString(d->toString().c_str()));
-		break;
-	case ::trotl::Describe::O_FUNCTION:
-		retval->insert("TOOLTIP", QString(d->toString().c_str()));
-		break;
-	case ::trotl::Describe::O_PACKAGE:
-		retval->insert("TOOLTIP", QString(d->toString().c_str()));
-		break;
-	default:
-		break;
-	}
+    switch (d->whatIsThis())
+    {
+        case ::trotl::Describe::O_SYNONYM:
+            retval->insert("TOOLTIP", QString(d->toString().c_str()));
+            break;
+        case ::trotl::Describe::O_PUBLIC_SYNONYM:
+            retval->insert("TOOLTIP", QString(d->toString().c_str()));
+            break;
+        case ::trotl::Describe::O_VIEW:
+        case ::trotl::Describe::O_TABLE:
+            {
+                retval->insert("TOOLTIP", QString(d->toString().c_str()));
 
-	delete d;
-	return retval;
+                toQColumnDescriptionList targetCols;
+                std::vector<trotl::DescribeColumn*> &sourceCols = (d->whatIsThis() == ::trotl::Describe::O_VIEW) ?
+                        static_cast<trotl::DescribeView*>(d)->_columns :
+                        static_cast<trotl::DescribeTable*>(d)->_columns;
+                foreach(::trotl::DescribeColumn *dc, sourceCols)
+                {
+                    targetCols.append(toCache::ColumnDescription());
+                    toCache::ColumnDescription &lastColumn = targetCols.last();
+                    lastColumn.Name = dc->_name.c_str();
+                    lastColumn.Null = dc->_is_null;
+                    lastColumn.Datatype = dc->typeName().c_str();
+                    lastColumn.ToolTip = dc->toString().c_str();
+                }
+                retval->insert("COLUMNLIST", QVariant::fromValue(targetCols));
+            }
+            break;
+        case ::trotl::Describe::O_COLUMN:
+            retval->insert("TOOLTIP", QString(d->toString().c_str()));
+            break;
+        case ::trotl::Describe::O_TYPE:
+            retval->insert("TOOLTIP", QString(d->toString().c_str()));
+            break;
+        case ::trotl::Describe::O_SEQUENCE:
+            retval->insert("TOOLTIP", QString(d->toString().c_str()));
+            break;
+        case ::trotl::Describe::O_PROCEDURE:
+            retval->insert("TOOLTIP", QString(d->toString().c_str()));
+            break;
+        case ::trotl::Describe::O_FUNCTION:
+            retval->insert("TOOLTIP", QString(d->toString().c_str()));
+            break;
+        case ::trotl::Describe::O_PACKAGE:
+            retval->insert("TOOLTIP", QString(d->toString().c_str()));
+            break;
+        default:
+            break;
+    }
+
+    delete d;
+    return retval;
 }
 
 toCache::ObjectRef toOracleConnectionSub::resolve(toCache::ObjectRef const& objectName)
 {
-	toCache::ObjectRef retval;
-	retval.context = objectName.context;
-	try
-	{
-		// TODO set context as current schema
-		toQAdditionalDescriptions *descr = new toQAdditionalDescriptions();
-		::trotl::Describe *d = ::trotl::Describe::createDescription(*_conn, qPrintable(objectName.toString()));
-		switch (d->whatIsThis()) {
-		case ::trotl::Describe::O_SYNONYM:
-		case ::trotl::Describe::O_PUBLIC_SYNONYM:
-		{
-			trotl::DescribeSynonym *s = static_cast<trotl::DescribeSynonym*>(d);
-			retval.first = s->_schema.c_str();
-			retval.second= s->_name.c_str();
-			if (!s->_link.empty())
-			{
-				retval.second += "@";
-				retval.second += s->_link.c_str();
-			}
-		}
-		break;
-		default:
-			break;
-		}
-		delete d;
-	} catch (trotl::OciException const &exc)
-	{
-		// ignore OCI exception here (object to be described does not exist)
-		if(exc.is_critical())
-			Broken = true;
-	}
-	return retval;
+    toCache::ObjectRef retval;
+    retval.context = objectName.context;
+    try
+    {
+        // TODO set context as current schema
+        toQAdditionalDescriptions *descr = new toQAdditionalDescriptions();
+        ::trotl::Describe *d = ::trotl::Describe::createDescription(*_conn, qPrintable(objectName.toString()));
+        switch (d->whatIsThis())
+        {
+            case ::trotl::Describe::O_SYNONYM:
+            case ::trotl::Describe::O_PUBLIC_SYNONYM:
+                {
+                    trotl::DescribeSynonym *s = static_cast<trotl::DescribeSynonym*>(d);
+                    retval.first = s->_schema.c_str();
+                    retval.second= s->_name.c_str();
+                    if (!s->_link.empty())
+                    {
+                        retval.second += "@";
+                        retval.second += s->_link.c_str();
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+        delete d;
+    }
+    catch (trotl::OciException const &exc)
+    {
+        // ignore OCI exception here (object to be described does not exist)
+        if (exc.is_critical())
+            Broken = true;
+    }
+    return retval;
 }
 

@@ -25,44 +25,44 @@ QVariant due the QSettings limitations.
 */
 class ShortcutModel : public QAbstractTableModel
 {
-    Q_OBJECT
+        Q_OBJECT
 
-public:
-    ShortcutModel(QObject * parent = 0);
-    ~ShortcutModel();
+    public:
+        ShortcutModel(QObject * parent = 0);
+        ~ShortcutModel();
 
-    int rowCount(const QModelIndex & parent = QModelIndex()) const;
-    int columnCount(const QModelIndex & parent = QModelIndex()) const;
+        int rowCount(const QModelIndex & parent = QModelIndex()) const;
+        int columnCount(const QModelIndex & parent = QModelIndex()) const;
 
-    QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const;
-    bool setData(const QModelIndex & index, const QVariant & value, int role = Qt::EditRole);
+        QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const;
+        bool setData(const QModelIndex & index, const QVariant & value, int role = Qt::EditRole);
 
-    Qt::ItemFlags flags(const QModelIndex & index) const;
+        Qt::ItemFlags flags(const QModelIndex & index) const;
 
-    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+        QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
-    bool removeRows(int row, int count, const QModelIndex & parent = QModelIndex());
-    bool insertRows( int row, int count, const QModelIndex & parent = QModelIndex());
-    void insertRow();
-    void insertRow(QString key, QString value);
+        bool removeRows(int row, int count, const QModelIndex & parent = QModelIndex());
+        bool insertRows( int row, int count, const QModelIndex & parent = QModelIndex());
+        void insertRow();
+        void insertRow(QString key, QString value);
 
-    QList<QPair<QString, QString> > values()
-    {
-        return m_values;
-    };
-    //! \brief Check emptiness of keys and save it by Preferences.
-    void saveValues();
+        QList<QPair<QString, QString> > values()
+        {
+            return m_values;
+        };
+        //! \brief Check emptiness of keys and save it by Preferences.
+        void saveValues();
 
-signals:
-    /*! \brief Signal emmitted when the user finish the editation of one value.
-    */
-    void valueChanged();
-    /*! \brief Emitted when user enters duplicate key value.
-    QString is the duplicate value. It's handled in the GUI with message box */
-    void keysNotUnique(QString);
+    signals:
+        /*! \brief Signal emmitted when the user finish the editation of one value.
+        */
+        void valueChanged();
+        /*! \brief Emitted when user enters duplicate key value.
+        QString is the duplicate value. It's handled in the GUI with message box */
+        void keysNotUnique(QString);
 
-private:
-    QList<QPair<QString, QString> > m_values;
+    private:
+        QList<QPair<QString, QString> > m_values;
 };
 
 #endif

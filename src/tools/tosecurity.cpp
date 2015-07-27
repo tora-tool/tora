@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -128,24 +128,24 @@ static toSQL SQLRoleGrant("toSecurity:RoleGrant",
 
 class toSecurityTool : public toTool
 {
-protected:
-    virtual const char **pictureXPM(void)
-    {
-        return const_cast<const char**>(tosecurity_xpm);
-    }
-public:
-    toSecurityTool()
-        : toTool(40, "Security Manager")
-    { }
-    virtual const char *menuItem()
-    {
-        return "Security Manager";
-    }
-    virtual toToolWidget* toolWindow(QWidget *parent, toConnection &connection)
-    {
-        return new toSecurity(parent, connection);
-    }
-    virtual void closeWindow(toConnection &connection) {};
+    protected:
+        virtual const char **pictureXPM(void)
+        {
+            return const_cast<const char**>(tosecurity_xpm);
+        }
+    public:
+        toSecurityTool()
+            : toTool(40, "Security Manager")
+        { }
+        virtual const char *menuItem()
+        {
+            return "Security Manager";
+        }
+        virtual toToolWidget* toolWindow(QWidget *parent, toConnection &connection)
+        {
+            return new toSecurity(parent, connection);
+        }
+        virtual void closeWindow(toConnection &connection) {};
 };
 
 static toSecurityTool SecurityTool;
@@ -201,7 +201,7 @@ void toSecurityQuota::update(void)
     Tablespaces->clear();
     try
     {
-    	toConnectionSubLoan conn(toConnection::currentConnection(this));
+        toConnectionSubLoan conn(toConnection::currentConnection(this));
         toQuery tablespaces(conn, SQLTablespace, toQueryParams() << QString::fromLatin1("PERMANENT"));
         toTreeWidgetItem *item = NULL;
         while (!tablespaces.eof())
@@ -239,7 +239,7 @@ void toSecurityQuota::changeUser(const QString &user)
     {
         try
         {
-        	toConnectionSubLoan conn(toConnection::currentConnection(this));
+            toConnectionSubLoan conn(toConnection::currentConnection(this));
             toQuery quota(conn, SQLQuota, toQueryParams() << user);
             while (!quota.eof())
             {
@@ -328,46 +328,46 @@ QString toSecurityQuota::sql(void)
 
 class toSecurityUpper : public QValidator
 {
-public:
-    toSecurityUpper(QWidget *parent)
-        : QValidator(parent)
-    { }
-    virtual State validate(QString &str, int &) const
-    {
-        str = str.toUpper();
-        return Acceptable;
-    }
+    public:
+        toSecurityUpper(QWidget *parent)
+            : QValidator(parent)
+        { }
+        virtual State validate(QString &str, int &) const
+        {
+            str = str.toUpper();
+            return Acceptable;
+        }
 };
 
 class toSecurityUser : public QWidget, public Ui::toSecurityUserUI
 {
-    toConnection &Connection;
+        toConnection &Connection;
 
-    toSecurityQuota *Quota;
-    enum
-    {
-        password,
-        global,
-        external
-    } AuthType;
-    QString OrgProfile;
-    QString OrgDefault;
-    QString OrgTemp;
-    QString OrgGlobal;
-    QString OrgPassword;
+        toSecurityQuota *Quota;
+        enum
+        {
+            password,
+            global,
+            external
+        } AuthType;
+        QString OrgProfile;
+        QString OrgDefault;
+        QString OrgTemp;
+        QString OrgGlobal;
+        QString OrgPassword;
 
-    bool OrgLocked;
-    bool OrgExpired;
-public:
-    toSecurityUser(toSecurityQuota *quota, toConnection &conn, QWidget *parent);
-    void clear(bool all = true);
-    void update();
-    void changeUser(const QString &);
-    QString name(void)
-    {
-        return Name->text();
-    }
-    QString sql(void);
+        bool OrgLocked;
+        bool OrgExpired;
+    public:
+        toSecurityUser(toSecurityQuota *quota, toConnection &conn, QWidget *parent);
+        void clear(bool all = true);
+        void update();
+        void changeUser(const QString &);
+        QString name(void)
+        {
+            return Name->text();
+        }
+        QString sql(void);
 };
 
 QString toSecurityUser::sql(void)
@@ -383,10 +383,10 @@ QString toSecurityUser::sql(void)
                                           qApp->translate("toSecurityUser", "Don't save"),
                                           qApp->translate("toSecurityUser", "Cancel")))
             {
-            case 0:
-                return QString::null;
-            case 1:
-                throw qApp->translate("toSecurityUser", "Passwords don't match");
+                case 0:
+                    return QString::null;
+                case 1:
+                    throw qApp->translate("toSecurityUser", "Passwords don't match");
             }
         }
         if (Password->text() != OrgPassword)
@@ -474,7 +474,7 @@ void toSecurityUser::update()
 {
     try
     {
-    	toConnectionSubLoan conn(Connection);
+        toConnectionSubLoan conn(Connection);
         toQuery profiles(conn, SQLProfiles, toQueryParams());
         while (!profiles.eof())
             Profile->addItem((QString)profiles.readValue());
@@ -527,7 +527,7 @@ void toSecurityUser::changeUser(const QString &user)
     clear();
     try
     {
-    	toConnectionSubLoan conn(Connection);
+        toConnectionSubLoan conn(Connection);
         toQuery query(conn, SQLUserInfo, toQueryParams() << user);
         if (!query.eof())
         {
@@ -615,32 +615,32 @@ void toSecurityUser::changeUser(const QString &user)
 
 class toSecurityRole : public QWidget, public Ui::toSecurityRoleUI
 {
-    toConnection &Connection;
-    toSecurityQuota *Quota;
-    enum
-    {
-        password,
-        global,
-        external,
-        none
-    } AuthType;
-public:
-    toSecurityRole(toSecurityQuota *quota, toConnection &conn, QWidget *parent)
-        : QWidget(parent), Connection(conn)
-    	, Quota(quota)
-    	, AuthType(password)
-    {
-        setupUi(this);
-        Name->setValidator(new toSecurityUpper(Name));
-        setFocusProxy(Name);
-    }
-    void clear(void);
-    void changeRole(const QString &);
-    QString sql(void);
-    QString name(void)
-    {
-        return Name->text();
-    }
+        toConnection &Connection;
+        toSecurityQuota *Quota;
+        enum
+        {
+            password,
+            global,
+            external,
+            none
+        } AuthType;
+    public:
+        toSecurityRole(toSecurityQuota *quota, toConnection &conn, QWidget *parent)
+            : QWidget(parent), Connection(conn)
+            , Quota(quota)
+            , AuthType(password)
+        {
+            setupUi(this);
+            Name->setValidator(new toSecurityUpper(Name));
+            setFocusProxy(Name);
+        }
+        void clear(void);
+        void changeRole(const QString &);
+        QString sql(void);
+        QString name(void)
+        {
+            return Name->text();
+        }
 };
 
 QString toSecurityRole::sql(void)
@@ -656,10 +656,10 @@ QString toSecurityRole::sql(void)
                                           qApp->translate("toSecurityRole", "Don't save"),
                                           qApp->translate("toSecurityRole", "Cancel")))
             {
-            case 0:
-                return QString::null;
-            case 1:
-                throw qApp->translate("toSecurityRole", "Passwords don't match");
+                case 0:
+                    return QString::null;
+                case 1:
+                    throw qApp->translate("toSecurityRole", "Passwords don't match");
             }
         }
         if (Password->text().length() > 0)
@@ -706,7 +706,7 @@ void toSecurityRole::changeRole(const QString &role)
 {
     try
     {
-    	toConnectionSubLoan conn(Connection);
+        toConnectionSubLoan conn(Connection);
         toQuery query(conn, SQLRoleInfo, toQueryParams() << role);
         Password->setText(QString::null);
         Password2->setText(QString::null);
@@ -750,74 +750,74 @@ void toSecurityRole::changeRole(const QString &role)
 
 class toSecurityPage : public QWidget
 {
-    toSecurityRole *Role;
-    toSecurityUser *User;
+        toSecurityRole *Role;
+        toSecurityUser *User;
 
-public:
-    toSecurityPage(toSecurityQuota *quota, toConnection &conn, QWidget *parent)
-        : QWidget(parent)
-    {
-        QVBoxLayout *vbox = new QVBoxLayout;
-        vbox->setSpacing(0);
-        vbox->setContentsMargins(0, 0, 0, 0);
-        setLayout(vbox);
-
-        Role = new toSecurityRole(quota, conn, this);
-        vbox->addWidget(Role);
-        Role->hide();
-        User = new toSecurityUser(quota, conn, this);
-        vbox->addWidget(User);
-        setFocusProxy(User);
-    }
-    void changePage(const QString &nam, bool user)
-    {
-        if (user)
+    public:
+        toSecurityPage(toSecurityQuota *quota, toConnection &conn, QWidget *parent)
+            : QWidget(parent)
         {
+            QVBoxLayout *vbox = new QVBoxLayout;
+            vbox->setSpacing(0);
+            vbox->setContentsMargins(0, 0, 0, 0);
+            setLayout(vbox);
+
+            Role = new toSecurityRole(quota, conn, this);
+            vbox->addWidget(Role);
             Role->hide();
-            User->show();
-            User->changeUser(nam);
+            User = new toSecurityUser(quota, conn, this);
+            vbox->addWidget(User);
             setFocusProxy(User);
         }
-        else
+        void changePage(const QString &nam, bool user)
         {
-            User->hide();
-            Role->show();
-            Role->changeRole(nam);
-            setFocusProxy(Role);
+            if (user)
+            {
+                Role->hide();
+                User->show();
+                User->changeUser(nam);
+                setFocusProxy(User);
+            }
+            else
+            {
+                User->hide();
+                Role->show();
+                Role->changeRole(nam);
+                setFocusProxy(Role);
+            }
         }
-    }
-    QString name(void)
-    {
-        if (User->isHidden())
-            return Role->name();
-        else
-            return User->name();
-    }
-    void clear(void)
-    {
-        if (User->isHidden())
-            Role->clear();
-        else
-            User->clear(false);
-    }
-    bool user(void)
-    {
-        if (User->isHidden())
-            return false;
-        return true;
-    }
-    QString sql(void)
-    {
-        if (User->isHidden())
-            return Role->sql();
-        else
-            return User->sql();
-    }
-    void update()
-    {
-        User->update();
-        Role->update();
-    }
+        QString name(void)
+        {
+            if (User->isHidden())
+                return Role->name();
+            else
+                return User->name();
+        }
+        void clear(void)
+        {
+            if (User->isHidden())
+                Role->clear();
+            else
+                User->clear(false);
+        }
+        bool user(void)
+        {
+            if (User->isHidden())
+                return false;
+            return true;
+        }
+        QString sql(void)
+        {
+            if (User->isHidden())
+                return Role->sql();
+            else
+                return User->sql();
+        }
+        void update()
+        {
+            User->update();
+            Role->update();
+        }
 };
 
 toSecurityObject::toSecurityObject(QWidget *parent)
@@ -866,7 +866,7 @@ void toSecuritySystem::update(void)
     clear();
     try
     {
-    	toConnectionSubLoan conn(toConnection::currentConnection(this));
+        toConnectionSubLoan conn(toConnection::currentConnection(this));
         toQuery priv(conn, SQLListSystem, toQueryParams());
         while (!priv.eof())
         {
@@ -977,7 +977,7 @@ void toSecuritySystem::changeUser(const QString &user)
     eraseUser();
     try
     {
-    	toConnectionSubLoan conn(toConnection::currentConnection(this));
+        toConnectionSubLoan conn(toConnection::currentConnection(this));
         toQuery query(conn, SQLSystemGrant, toQueryParams() << user);
         while (!query.eof())
         {
@@ -1023,7 +1023,7 @@ void toSecurityRoleGrant::update(void)
     clear();
     try
     {
-    	toConnectionSubLoan conn(toConnection::currentConnection(this));
+        toConnectionSubLoan conn(toConnection::currentConnection(this));
         toQuery priv(conn, SQLRoles, toQueryParams());
         while (!priv.eof())
         {
@@ -1210,7 +1210,7 @@ void toSecurityRoleGrant::changeUser(bool user, const QString &username)
     eraseUser(user);
     try
     {
-    	toConnectionSubLoan conn(toConnection::currentConnection(this));
+        toConnectionSubLoan conn(toConnection::currentConnection(this));
         toQuery query(conn, SQLRoleGrant, toQueryParams() << username);
         while (!query.eof())
         {
@@ -1368,7 +1368,7 @@ void toSecurity::slotWindowActivated(toToolWidget *widget)
 
             ToolMenu->addAction(DisplaySQLAct);
 
-	    toGlobalEventSingle::Instance().addCustomMenu(ToolMenu);
+            toGlobalEventSingle::Instance().addCustomMenu(ToolMenu);
         }
     }
     else
@@ -1433,13 +1433,13 @@ void toSecurity::changeUser(bool ask)
                                               tr("Save the changes made to this user?"),
                                               tr("Save"), tr("Discard"), tr("Cancel")))
                 {
-                case 0:
-                    saveChanges();
-                    return ;
-                case 1:
-                    break;
-                case 2:
-                    return ;
+                    case 0:
+                        saveChanges();
+                        return ;
+                    case 1:
+                        break;
+                    case 2:
+                        return ;
                 }
             }
         }
@@ -1564,7 +1564,7 @@ void toSecurity::drop()
         str += QString::fromLatin1("\"");
         try
         {
-        	toConnectionSubLoan conn(connection());
+            toConnectionSubLoan conn(connection());
             conn->execute(str);
             refresh();
             changeUser(false);
@@ -1576,19 +1576,19 @@ void toSecurity::drop()
                                           tr("The user still owns objects, add the cascade option?"),
                                           tr("Yes"), tr("No")))
             {
-            case 0:
-                str += QString::fromLatin1(" CASCADE");
-                try
-                {
-                	toConnectionSubLoan conn(connection());
-                    conn->execute(str);
-                    refresh();
-                    changeUser(false);
-                }
-                TOCATCH
-                return ;
-            case 1:
-                break;
+                case 0:
+                    str += QString::fromLatin1(" CASCADE");
+                    try
+                    {
+                        toConnectionSubLoan conn(connection());
+                        conn->execute(str);
+                        refresh();
+                        changeUser(false);
+                    }
+                    TOCATCH
+                    return ;
+                case 1:
+                    break;
             }
         }
     }

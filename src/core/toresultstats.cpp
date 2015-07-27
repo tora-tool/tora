@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -72,7 +72,7 @@ toResultStats::toResultStats(bool onlyChanged
                              , QWidget *parent
                              , const char *name)
     : toResultView(false, false, parent, name)
-	, OnlyChanged(onlyChanged)
+    , OnlyChanged(onlyChanged)
 {
     if (!handled())
         return ;
@@ -84,11 +84,11 @@ toResultStats::toResultStats(bool onlyChanged
 }
 
 toResultStats::toResultStats(bool onlyChanged
-		                     , QWidget *parent
-		                     , const char *name)
+                             , QWidget *parent
+                             , const char *name)
     : toResultView(false, false, parent, name)
-	, OnlyChanged(onlyChanged)
-	, m_sessionID(-2)
+    , OnlyChanged(onlyChanged)
+    , m_sessionID(-2)
 {
     if (!handled())
         return ;
@@ -99,7 +99,7 @@ toResultStats::toResultStats(bool onlyChanged
 }
 
 toResultStats::toResultStats(QWidget *parent
-		                     , const char *name)
+                             , const char *name)
     : toResultView(false, false, parent, name)
     , OnlyChanged(false)
 {
@@ -198,11 +198,11 @@ void toResultStats::slotRefreshStats(bool reset)
         if (!System)
             args << sid();
         Query = new toEventQuery(this
-				 , conn
+                                 , conn
                                  , toSQL::string(System ? SQLSystemStatisticName : SQLStatisticName, connection())
                                  , args
-				 , toEventQuery::READ_ALL
-				 );
+                                 , toEventQuery::READ_ALL
+                                );
         connect(Query, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(slotPollQuery()));
         connect(Query, SIGNAL(done(toEventQuery*)), this, SLOT(slotQueryDone()));
         Query->start();
@@ -210,11 +210,11 @@ void toResultStats::slotRefreshStats(bool reset)
         if (!System)
         {
             SessionIO = new toEventQuery(this
-					 , conn
+                                         , conn
                                          , toSQL::string(SQLSessionIO, connection())
                                          , args
-					 , toEventQuery::READ_ALL
-					 );
+                                         , toEventQuery::READ_ALL
+                                        );
             connect(SessionIO, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(slotPollSystem()));
             connect(SessionIO, SIGNAL(done(toEventQuery*)), this, SLOT(slotSystemDone()));
             SessionIO->start();
@@ -317,21 +317,21 @@ void toResultStats::setup(void)
 
 int toResultStats::sid()
 {
-	// TODO: this is non-sense here we store SID of randomly borrowed session
-	if (m_sessionID == -2)
-	try
-	{
-			toConnectionSubLoan conn(connection());
-			toQuery query(conn, SQLSession, toQueryParams());
-			m_sessionID = query.readValue().toInt();
-	}
-	catch (...)
-	{
-		TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
-		m_sessionID = -1;
-	}
+    // TODO: this is non-sense here we store SID of randomly borrowed session
+    if (m_sessionID == -2)
+        try
+        {
+            toConnectionSubLoan conn(connection());
+            toQuery query(conn, SQLSession, toQueryParams());
+            m_sessionID = query.readValue().toInt();
+        }
+        catch (...)
+        {
+            TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
+            m_sessionID = -1;
+        }
 
-	return m_sessionID;
+    return m_sessionID;
 }
 
 void toResultStats::addValue(bool reset, int id, const QString &name, double value)

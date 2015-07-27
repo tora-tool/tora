@@ -22,7 +22,7 @@
  *
  */
 // [The "BSD license"]
-// Copyright (c) 2005-2009 Gokulakannan Somasundaram. 
+// Copyright (c) 2005-2009 Gokulakannan Somasundaram.
 //
 // All rights reserved.
 //
@@ -60,14 +60,14 @@
  */
 
 
-	#include "UserTraits.hpp"
-	#include "PLSQLLexer.hpp"
+#include "UserTraits.hpp"
+#include "PLSQLLexer.hpp"
 
 
 
 
 /**
- * Oracle(c) PL/SQL 11g Parser  
+ * Oracle(c) PL/SQL 11g Parser
  *
  * Copyright (c) 2009-2011 Alexandre Porcelli <alexandre.porcelli@gmail.com>
  *
@@ -111,586 +111,587 @@
  * ========================
  */
 
-namespace  Antlr3BackendImpl  {
+namespace  Antlr3BackendImpl
+{
 
 // Include delegator definition classes
 //
-class PLSQLParser; 
+    class PLSQLParser;
 
-typedef PLSQLParser_PLSQL_DMLParserTraits PLSQLParser_PLSQL_DMLParserImplTraits;
+    typedef PLSQLParser_PLSQL_DMLParserTraits PLSQLParser_PLSQL_DMLParserImplTraits;
 
- struct synpred1_PLSQL_DMLParser {}; 
- struct synpred2_PLSQL_DMLParser {}; 
- struct synpred3_PLSQL_DMLParser {}; 
- struct synpred4_PLSQL_DMLParser {}; 
- struct synpred5_PLSQL_DMLParser {}; 
- struct synpred6_PLSQL_DMLParser {}; 
- struct synpred7_PLSQL_DMLParser {}; 
- struct synpred8_PLSQL_DMLParser {}; 
- struct synpred9_PLSQL_DMLParser {}; 
- struct synpred10_PLSQL_DMLParser {}; 
- struct synpred11_PLSQL_DMLParser {}; 
- struct synpred12_PLSQL_DMLParser {}; 
- struct synpred13_PLSQL_DMLParser {}; 
- struct synpred14_PLSQL_DMLParser {}; 
- struct synpred15_PLSQL_DMLParser {}; 
- struct synpred16_PLSQL_DMLParser {}; 
- struct synpred17_PLSQL_DMLParser {}; 
- struct synpred18_PLSQL_DMLParser {}; 
- struct synpred19_PLSQL_DMLParser {}; 
- struct synpred20_PLSQL_DMLParser {}; 
- struct synpred21_PLSQL_DMLParser {}; 
- struct synpred22_PLSQL_DMLParser {}; 
- struct synpred23_PLSQL_DMLParser {}; 
- struct synpred24_PLSQL_DMLParser {}; 
- struct synpred25_PLSQL_DMLParser {}; 
- struct synpred26_PLSQL_DMLParser {}; 
- struct synpred27_PLSQL_DMLParser {}; 
- struct synpred28_PLSQL_DMLParser {}; 
- struct synpred29_PLSQL_DMLParser {}; 
- struct synpred30_PLSQL_DMLParser {}; 
- struct synpred31_PLSQL_DMLParser {}; 
- struct synpred36_PLSQL_DMLParser {}; 
- struct synpred38_PLSQL_DMLParser {}; 
- struct synpred39_PLSQL_DMLParser {}; 
- struct synpred40_PLSQL_DMLParser {}; 
- struct synpred41_PLSQL_DMLParser {}; 
- struct synpred42_PLSQL_DMLParser {}; 
- struct synpred43_PLSQL_DMLParser {}; 
- struct synpred45_PLSQL_DMLParser {}; 
- struct synpred46_PLSQL_DMLParser {}; 
- struct synpred47_PLSQL_DMLParser {}; 
- struct synpred48_PLSQL_DMLParser {}; 
- struct synpred49_PLSQL_DMLParser {}; 
- struct synpred50_PLSQL_DMLParser {}; 
- struct synpred51_PLSQL_DMLParser {}; 
+    struct synpred1_PLSQL_DMLParser {};
+    struct synpred2_PLSQL_DMLParser {};
+    struct synpred3_PLSQL_DMLParser {};
+    struct synpred4_PLSQL_DMLParser {};
+    struct synpred5_PLSQL_DMLParser {};
+    struct synpred6_PLSQL_DMLParser {};
+    struct synpred7_PLSQL_DMLParser {};
+    struct synpred8_PLSQL_DMLParser {};
+    struct synpred9_PLSQL_DMLParser {};
+    struct synpred10_PLSQL_DMLParser {};
+    struct synpred11_PLSQL_DMLParser {};
+    struct synpred12_PLSQL_DMLParser {};
+    struct synpred13_PLSQL_DMLParser {};
+    struct synpred14_PLSQL_DMLParser {};
+    struct synpred15_PLSQL_DMLParser {};
+    struct synpred16_PLSQL_DMLParser {};
+    struct synpred17_PLSQL_DMLParser {};
+    struct synpred18_PLSQL_DMLParser {};
+    struct synpred19_PLSQL_DMLParser {};
+    struct synpred20_PLSQL_DMLParser {};
+    struct synpred21_PLSQL_DMLParser {};
+    struct synpred22_PLSQL_DMLParser {};
+    struct synpred23_PLSQL_DMLParser {};
+    struct synpred24_PLSQL_DMLParser {};
+    struct synpred25_PLSQL_DMLParser {};
+    struct synpred26_PLSQL_DMLParser {};
+    struct synpred27_PLSQL_DMLParser {};
+    struct synpred28_PLSQL_DMLParser {};
+    struct synpred29_PLSQL_DMLParser {};
+    struct synpred30_PLSQL_DMLParser {};
+    struct synpred31_PLSQL_DMLParser {};
+    struct synpred36_PLSQL_DMLParser {};
+    struct synpred38_PLSQL_DMLParser {};
+    struct synpred39_PLSQL_DMLParser {};
+    struct synpred40_PLSQL_DMLParser {};
+    struct synpred41_PLSQL_DMLParser {};
+    struct synpred42_PLSQL_DMLParser {};
+    struct synpred43_PLSQL_DMLParser {};
+    struct synpred45_PLSQL_DMLParser {};
+    struct synpred46_PLSQL_DMLParser {};
+    struct synpred47_PLSQL_DMLParser {};
+    struct synpred48_PLSQL_DMLParser {};
+    struct synpred49_PLSQL_DMLParser {};
+    struct synpred50_PLSQL_DMLParser {};
+    struct synpred51_PLSQL_DMLParser {};
 
-class PLSQLParser_PLSQL_DMLParserTokens
-{
-public:
-	/** Symbolic definitions of all the tokens that the parser will work with.
-	 *
-	 * Antlr will define EOF, but we can't use that as it it is too common in
-	 * in C header files and that would be confusing. There is no way to filter this out at the moment
-	 * so we just undef it here for now. That isn't the value we get back from C recognizers
-	 * anyway. We are looking for ANTLR_TOKEN_EOF.
-	 */
-	enum Tokens 
-	{
-		EOF_TOKEN = PLSQLParser_PLSQL_DMLParserImplTraits::CommonTokenType::TOKEN_EOF
-		, AMPERSAND = 4 
-		, APPROXIMATE_NUM_LIT = 5 
-		, ASSIGN_OP = 6 
-		, ASTERISK = 7 
-		, AT_SIGN = 8 
-		, BINDVAR = 9 
-		, BIT_STRING_LIT = 10 
-		, CARRET_OPERATOR_PART = 11 
-		, CHAR_STRING = 12 
-		, CHAR_STRING_PERL = 13 
-		, COLON = 14 
-		, COMMA = 15 
-		, COMMENT = 16 
-		, CONCATENATION_OP = 17 
-		, DELIMITED_ID = 18 
-		, DOUBLE_ASTERISK = 19 
-		, DOUBLE_PERIOD = 20 
-		, EQUALS_OP = 21 
-		, EXACT_NUM_LIT = 22 
-		, EXCLAMATION_OPERATOR_PART = 23 
-		, FOR_NOTATION = 24 
-		, GREATER_THAN_OP = 25 
-		, GREATER_THAN_OR_EQUALS_OP = 26 
-		, HEX_STRING_LIT = 27 
-		, INTRODUCER = 28 
-		, LEFT_BRACKET = 29 
-		, LEFT_PAREN = 30 
-		, LESS_THAN_OP = 31 
-		, LESS_THAN_OR_EQUALS_OP = 32 
-		, MINUS_SIGN = 33 
-		, NATIONAL_CHAR_STRING_LIT = 34 
-		, NEWLINE = 35 
-		, NOT_EQUAL_OP = 36 
-		, PERCENT = 37 
-		, PERIOD = 38 
-		, PLSQL_NON_RESERVED_CONNECT_BY_ROOT = 39 
-		, PLSQL_NON_RESERVED_ELSIF = 40 
-		, PLSQL_NON_RESERVED_MODEL = 41 
-		, PLSQL_NON_RESERVED_PIVOT = 42 
-		, PLSQL_NON_RESERVED_UNPIVOT = 43 
-		, PLSQL_NON_RESERVED_USING = 44 
-		, PLSQL_RESERVED_CLUSTERS = 45 
-		, PLSQL_RESERVED_COLAUTH = 46 
-		, PLSQL_RESERVED_COMPRESS = 47 
-		, PLSQL_RESERVED_CRASH = 48 
-		, PLSQL_RESERVED_EXCLUSIVE = 49 
-		, PLSQL_RESERVED_IDENTIFIED = 50 
-		, PLSQL_RESERVED_IF = 51 
-		, PLSQL_RESERVED_INDEX = 52 
-		, PLSQL_RESERVED_INDEXES = 53 
-		, PLSQL_RESERVED_LOCK = 54 
-		, PLSQL_RESERVED_MINUS = 55 
-		, PLSQL_RESERVED_MODE = 56 
-		, PLSQL_RESERVED_NOCOMPRESS = 57 
-		, PLSQL_RESERVED_NOWAIT = 58 
-		, PLSQL_RESERVED_RESOURCE = 59 
-		, PLSQL_RESERVED_SHARE = 60 
-		, PLSQL_RESERVED_START = 61 
-		, PLSQL_RESERVED_TABAUTH = 62 
-		, PLSQL_RESERVED_VIEWS = 63 
-		, PLUS_SIGN = 64 
-		, PROMPT = 65 
-		, QS_ANGLE = 66 
-		, QS_BRACE = 67 
-		, QS_BRACK = 68 
-		, QS_OTHER = 69 
-		, QS_OTHER_CH = 70 
-		, QS_PAREN = 71 
-		, QUESTION_MARK = 72 
-		, QUOTE = 73 
-		, REGULAR_ID = 74 
-		, RIGHT_BRACKET = 75 
-		, RIGHT_PAREN = 76 
-		, SEMICOLON = 77 
-		, SEPARATOR = 78 
-		, SIMPLE_LETTER = 79 
-		, SOLIDUS = 80 
-		, SPACE = 81 
-		, SQL92_RESERVED_ALL = 82 
-		, SQL92_RESERVED_ALTER = 83 
-		, SQL92_RESERVED_AND = 84 
-		, SQL92_RESERVED_ANY = 85 
-		, SQL92_RESERVED_AS = 86 
-		, SQL92_RESERVED_ASC = 87 
-		, SQL92_RESERVED_BEGIN = 88 
-		, SQL92_RESERVED_BETWEEN = 89 
-		, SQL92_RESERVED_BY = 90 
-		, SQL92_RESERVED_CASE = 91 
-		, SQL92_RESERVED_CHECK = 92 
-		, SQL92_RESERVED_CONNECT = 93 
-		, SQL92_RESERVED_CREATE = 94 
-		, SQL92_RESERVED_CURRENT = 95 
-		, SQL92_RESERVED_CURSOR = 96 
-		, SQL92_RESERVED_DATE = 97 
-		, SQL92_RESERVED_DECLARE = 98 
-		, SQL92_RESERVED_DEFAULT = 99 
-		, SQL92_RESERVED_DELETE = 100 
-		, SQL92_RESERVED_DESC = 101 
-		, SQL92_RESERVED_DISTINCT = 102 
-		, SQL92_RESERVED_DROP = 103 
-		, SQL92_RESERVED_ELSE = 104 
-		, SQL92_RESERVED_END = 105 
-		, SQL92_RESERVED_EXCEPTION = 106 
-		, SQL92_RESERVED_EXISTS = 107 
-		, SQL92_RESERVED_FALSE = 108 
-		, SQL92_RESERVED_FETCH = 109 
-		, SQL92_RESERVED_FOR = 110 
-		, SQL92_RESERVED_FROM = 111 
-		, SQL92_RESERVED_GOTO = 112 
-		, SQL92_RESERVED_GRANT = 113 
-		, SQL92_RESERVED_GROUP = 114 
-		, SQL92_RESERVED_HAVING = 115 
-		, SQL92_RESERVED_IN = 116 
-		, SQL92_RESERVED_INSERT = 117 
-		, SQL92_RESERVED_INTERSECT = 118 
-		, SQL92_RESERVED_INTO = 119 
-		, SQL92_RESERVED_IS = 120 
-		, SQL92_RESERVED_LIKE = 121 
-		, SQL92_RESERVED_NOT = 122 
-		, SQL92_RESERVED_NULL = 123 
-		, SQL92_RESERVED_OF = 124 
-		, SQL92_RESERVED_ON = 125 
-		, SQL92_RESERVED_OPTION = 126 
-		, SQL92_RESERVED_OR = 127 
-		, SQL92_RESERVED_ORDER = 128 
-		, SQL92_RESERVED_OVERLAPS = 129 
-		, SQL92_RESERVED_PRIOR = 130 
-		, SQL92_RESERVED_PROCEDURE = 131 
-		, SQL92_RESERVED_PUBLIC = 132 
-		, SQL92_RESERVED_REVOKE = 133 
-		, SQL92_RESERVED_SELECT = 134 
-		, SQL92_RESERVED_SIZE = 135 
-		, SQL92_RESERVED_TABLE = 136 
-		, SQL92_RESERVED_THE = 137 
-		, SQL92_RESERVED_THEN = 138 
-		, SQL92_RESERVED_TO = 139 
-		, SQL92_RESERVED_TRUE = 140 
-		, SQL92_RESERVED_UNION = 141 
-		, SQL92_RESERVED_UNIQUE = 142 
-		, SQL92_RESERVED_UPDATE = 143 
-		, SQL92_RESERVED_VALUES = 144 
-		, SQL92_RESERVED_VIEW = 145 
-		, SQL92_RESERVED_WHEN = 146 
-		, SQL92_RESERVED_WHERE = 147 
-		, SQL92_RESERVED_WITH = 148 
-		, TILDE_OPERATOR_PART = 149 
-		, UNDERSCORE = 150 
-		, UNSIGNED_INTEGER = 151 
-		, VERTICAL_BAR = 152 
-		, ZV = 153 
-	};
-};
+    class PLSQLParser_PLSQL_DMLParserTokens
+    {
+        public:
+            /** Symbolic definitions of all the tokens that the parser will work with.
+             *
+             * Antlr will define EOF, but we can't use that as it it is too common in
+             * in C header files and that would be confusing. There is no way to filter this out at the moment
+             * so we just undef it here for now. That isn't the value we get back from C recognizers
+             * anyway. We are looking for ANTLR_TOKEN_EOF.
+             */
+            enum Tokens
+            {
+                EOF_TOKEN = PLSQLParser_PLSQL_DMLParserImplTraits::CommonTokenType::TOKEN_EOF
+                            , AMPERSAND = 4
+                                          , APPROXIMATE_NUM_LIT = 5
+                                                  , ASSIGN_OP = 6
+                                                          , ASTERISK = 7
+                                                                  , AT_SIGN = 8
+                                                                          , BINDVAR = 9
+                                                                                  , BIT_STRING_LIT = 10
+                                                                                          , CARRET_OPERATOR_PART = 11
+                                                                                                  , CHAR_STRING = 12
+                                                                                                          , CHAR_STRING_PERL = 13
+                                                                                                                  , COLON = 14
+                                                                                                                          , COMMA = 15
+                                                                                                                                  , COMMENT = 16
+                                                                                                                                          , CONCATENATION_OP = 17
+                                                                                                                                                  , DELIMITED_ID = 18
+                                                                                                                                                          , DOUBLE_ASTERISK = 19
+                                                                                                                                                                  , DOUBLE_PERIOD = 20
+                                                                                                                                                                          , EQUALS_OP = 21
+                                                                                                                                                                                  , EXACT_NUM_LIT = 22
+                                                                                                                                                                                          , EXCLAMATION_OPERATOR_PART = 23
+                                                                                                                                                                                                  , FOR_NOTATION = 24
+                                                                                                                                                                                                          , GREATER_THAN_OP = 25
+                                                                                                                                                                                                                  , GREATER_THAN_OR_EQUALS_OP = 26
+                                                                                                                                                                                                                          , HEX_STRING_LIT = 27
+                                                                                                                                                                                                                                  , INTRODUCER = 28
+                                                                                                                                                                                                                                          , LEFT_BRACKET = 29
+                                                                                                                                                                                                                                                  , LEFT_PAREN = 30
+                                                                                                                                                                                                                                                          , LESS_THAN_OP = 31
+                                                                                                                                                                                                                                                                  , LESS_THAN_OR_EQUALS_OP = 32
+                                                                                                                                                                                                                                                                          , MINUS_SIGN = 33
+                                                                                                                                                                                                                                                                                  , NATIONAL_CHAR_STRING_LIT = 34
+                                                                                                                                                                                                                                                                                          , NEWLINE = 35
+                                                                                                                                                                                                                                                                                                  , NOT_EQUAL_OP = 36
+                                                                                                                                                                                                                                                                                                          , PERCENT = 37
+                                                                                                                                                                                                                                                                                                                  , PERIOD = 38
+                                                                                                                                                                                                                                                                                                                          , PLSQL_NON_RESERVED_CONNECT_BY_ROOT = 39
+                                                                                                                                                                                                                                                                                                                                  , PLSQL_NON_RESERVED_ELSIF = 40
+                                                                                                                                                                                                                                                                                                                                          , PLSQL_NON_RESERVED_MODEL = 41
+                                                                                                                                                                                                                                                                                                                                                  , PLSQL_NON_RESERVED_PIVOT = 42
+                                                                                                                                                                                                                                                                                                                                                          , PLSQL_NON_RESERVED_UNPIVOT = 43
+                                                                                                                                                                                                                                                                                                                                                                  , PLSQL_NON_RESERVED_USING = 44
+                                                                                                                                                                                                                                                                                                                                                                          , PLSQL_RESERVED_CLUSTERS = 45
+                                                                                                                                                                                                                                                                                                                                                                                  , PLSQL_RESERVED_COLAUTH = 46
+                                                                                                                                                                                                                                                                                                                                                                                          , PLSQL_RESERVED_COMPRESS = 47
+                                                                                                                                                                                                                                                                                                                                                                                                  , PLSQL_RESERVED_CRASH = 48
+                                                                                                                                                                                                                                                                                                                                                                                                          , PLSQL_RESERVED_EXCLUSIVE = 49
+                                                                                                                                                                                                                                                                                                                                                                                                                  , PLSQL_RESERVED_IDENTIFIED = 50
+                                                                                                                                                                                                                                                                                                                                                                                                                          , PLSQL_RESERVED_IF = 51
+                                                                                                                                                                                                                                                                                                                                                                                                                                  , PLSQL_RESERVED_INDEX = 52
+                                                                                                                                                                                                                                                                                                                                                                                                                                          , PLSQL_RESERVED_INDEXES = 53
+                                                                                                                                                                                                                                                                                                                                                                                                                                                  , PLSQL_RESERVED_LOCK = 54
+                                                                                                                                                                                                                                                                                                                                                                                                                                                          , PLSQL_RESERVED_MINUS = 55
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , PLSQL_RESERVED_MODE = 56
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , PLSQL_RESERVED_NOCOMPRESS = 57
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , PLSQL_RESERVED_NOWAIT = 58
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , PLSQL_RESERVED_RESOURCE = 59
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , PLSQL_RESERVED_SHARE = 60
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , PLSQL_RESERVED_START = 61
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , PLSQL_RESERVED_TABAUTH = 62
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , PLSQL_RESERVED_VIEWS = 63
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , PLUS_SIGN = 64
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , PROMPT = 65
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , QS_ANGLE = 66
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , QS_BRACE = 67
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , QS_BRACK = 68
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , QS_OTHER = 69
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , QS_OTHER_CH = 70
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , QS_PAREN = 71
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , QUESTION_MARK = 72
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , QUOTE = 73
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , REGULAR_ID = 74
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , RIGHT_BRACKET = 75
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , RIGHT_PAREN = 76
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , SEMICOLON = 77
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , SEPARATOR = 78
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , SIMPLE_LETTER = 79
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , SOLIDUS = 80
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , SPACE = 81
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , SQL92_RESERVED_ALL = 82
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , SQL92_RESERVED_ALTER = 83
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , SQL92_RESERVED_AND = 84
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , SQL92_RESERVED_ANY = 85
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , SQL92_RESERVED_AS = 86
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , SQL92_RESERVED_ASC = 87
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , SQL92_RESERVED_BEGIN = 88
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , SQL92_RESERVED_BETWEEN = 89
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , SQL92_RESERVED_BY = 90
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , SQL92_RESERVED_CASE = 91
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , SQL92_RESERVED_CHECK = 92
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , SQL92_RESERVED_CONNECT = 93
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , SQL92_RESERVED_CREATE = 94
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , SQL92_RESERVED_CURRENT = 95
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , SQL92_RESERVED_CURSOR = 96
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , SQL92_RESERVED_DATE = 97
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , SQL92_RESERVED_DECLARE = 98
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , SQL92_RESERVED_DEFAULT = 99
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , SQL92_RESERVED_DELETE = 100
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , SQL92_RESERVED_DESC = 101
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , SQL92_RESERVED_DISTINCT = 102
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , SQL92_RESERVED_DROP = 103
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , SQL92_RESERVED_ELSE = 104
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , SQL92_RESERVED_END = 105
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , SQL92_RESERVED_EXCEPTION = 106
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , SQL92_RESERVED_EXISTS = 107
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , SQL92_RESERVED_FALSE = 108
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , SQL92_RESERVED_FETCH = 109
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , SQL92_RESERVED_FOR = 110
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , SQL92_RESERVED_FROM = 111
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , SQL92_RESERVED_GOTO = 112
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , SQL92_RESERVED_GRANT = 113
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , SQL92_RESERVED_GROUP = 114
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , SQL92_RESERVED_HAVING = 115
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , SQL92_RESERVED_IN = 116
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , SQL92_RESERVED_INSERT = 117
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , SQL92_RESERVED_INTERSECT = 118
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , SQL92_RESERVED_INTO = 119
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , SQL92_RESERVED_IS = 120
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , SQL92_RESERVED_LIKE = 121
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , SQL92_RESERVED_NOT = 122
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , SQL92_RESERVED_NULL = 123
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , SQL92_RESERVED_OF = 124
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , SQL92_RESERVED_ON = 125
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , SQL92_RESERVED_OPTION = 126
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , SQL92_RESERVED_OR = 127
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , SQL92_RESERVED_ORDER = 128
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , SQL92_RESERVED_OVERLAPS = 129
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , SQL92_RESERVED_PRIOR = 130
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , SQL92_RESERVED_PROCEDURE = 131
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , SQL92_RESERVED_PUBLIC = 132
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , SQL92_RESERVED_REVOKE = 133
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , SQL92_RESERVED_SELECT = 134
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , SQL92_RESERVED_SIZE = 135
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , SQL92_RESERVED_TABLE = 136
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , SQL92_RESERVED_THE = 137
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , SQL92_RESERVED_THEN = 138
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , SQL92_RESERVED_TO = 139
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , SQL92_RESERVED_TRUE = 140
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , SQL92_RESERVED_UNION = 141
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , SQL92_RESERVED_UNIQUE = 142
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , SQL92_RESERVED_UPDATE = 143
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , SQL92_RESERVED_VALUES = 144
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , SQL92_RESERVED_VIEW = 145
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , SQL92_RESERVED_WHEN = 146
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , SQL92_RESERVED_WHERE = 147
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , SQL92_RESERVED_WITH = 148
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , TILDE_OPERATOR_PART = 149
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , UNDERSCORE = 150
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , UNSIGNED_INTEGER = 151
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  , VERTICAL_BAR = 152
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          , ZV = 153
+            };
+    };
 
-/** Context tracking structure for PLSQLParser_PLSQL_DMLParser
- */
-class PLSQLParser_PLSQL_DMLParser : public PLSQLParser_PLSQL_DMLParserImplTraits::BaseParserType, public PLSQLParser_PLSQL_DMLParserTokens
-{
-public:
-	typedef PLSQLParser_PLSQL_DMLParserImplTraits ImplTraits;
-	typedef PLSQLParser_PLSQL_DMLParser ComponentType;
-	typedef ComponentType::StreamType StreamType;
-	typedef PLSQLParser_PLSQL_DMLParserImplTraits::BaseParserType BaseType;
-	typedef ImplTraits::RecognizerSharedStateType<StreamType> RecognizerSharedStateType;
-	typedef StreamType InputType;
-	static const bool IsFiltered = false;
-
-	/* ruleAttributeScopeDecl(scope)
-	 */
-	/* makeScopeSet()
-	 */
-	 /** Definition of the case_statement scope variable tracking
-	 *  structure. An instance of this structure is created by calling
-	 *  PLSQLParser_PLSQL_DMLParser_case_statementPush().
-	 */
-	struct  case_statementScope
-	{
-	    /* =============================================================================
-	     * Programmer defined variables...
-	     */
-	    int isStatement;
-
-	    /* End of programmer defined variables
-	     * =============================================================================
-	     */
-	};
-
-
-
-private:	
-	PLSQLParser*	 m_gPLSQLParser;
-    /* ruleAttributeScopeDef(scope)
+    /** Context tracking structure for PLSQLParser_PLSQL_DMLParser
      */
-    StackType< case_statementScope >  m_case_statement_stack;
+    class PLSQLParser_PLSQL_DMLParser : public PLSQLParser_PLSQL_DMLParserImplTraits::BaseParserType, public PLSQLParser_PLSQL_DMLParserTokens
+    {
+        public:
+            typedef PLSQLParser_PLSQL_DMLParserImplTraits ImplTraits;
+            typedef PLSQLParser_PLSQL_DMLParser ComponentType;
+            typedef ComponentType::StreamType StreamType;
+            typedef PLSQLParser_PLSQL_DMLParserImplTraits::BaseParserType BaseType;
+            typedef ImplTraits::RecognizerSharedStateType<StreamType> RecognizerSharedStateType;
+            typedef StreamType InputType;
+            static const bool IsFiltered = false;
+
+            /* ruleAttributeScopeDecl(scope)
+             */
+            /* makeScopeSet()
+             */
+            /** Definition of the case_statement scope variable tracking
+            *  structure. An instance of this structure is created by calling
+            *  PLSQLParser_PLSQL_DMLParser_case_statementPush().
+            */
+            struct  case_statementScope
+            {
+                /* =============================================================================
+                 * Programmer defined variables...
+                 */
+                int isStatement;
+
+                /* End of programmer defined variables
+                 * =============================================================================
+                 */
+            };
 
 
 
-public:
-    PLSQLParser_PLSQL_DMLParser(InputType* instream, PLSQLParser* gPLSQLParser);
-    PLSQLParser_PLSQL_DMLParser(InputType* instream, RecognizerSharedStateType* state, PLSQLParser* gPLSQLParser);
-
-    void init(InputType* instream , PLSQLParser* gPLSQLParser );
-
-
-     void explain_statement (); 
-     void select_statement (); 
-     void subquery_factoring_clause (); 
-     void factoring_element (); 
-     void search_clause (); 
-     void cycle_clause (); 
-     void subquery (); 
-     void subquery_operation_part (); 
-     void subquery_basic_elements (); 
-     void query_block (); 
-     void selected_element (); 
-     void from_clause (); 
-     void select_list_elements (); 
-     void table_ref_list (); 
-     void table_ref (); 
-     void table_ref_aux (); 
-     void join_clause (); 
-     void join_on_part (); 
-     void join_using_part (); 
-     void outer_join_type (); 
-     void query_partition_clause (); 
-     void flashback_query_clause (); 
-     void pivot_clause (); 
-     void pivot_element (); 
-     void pivot_for_clause (); 
-     void pivot_in_clause (); 
-     void pivot_in_clause_element (); 
-     void pivot_in_clause_elements (); 
-     void unpivot_clause (); 
-     void unpivot_in_clause (); 
-     void unpivot_in_elements (); 
-     void hierarchical_query_clause (); 
-     void start_part (); 
-     void group_by_clause (); 
-     void group_by_elements (); 
-     void rollup_cube_clause (); 
-     void grouping_sets_clause (); 
-     void grouping_sets_elements (); 
-     void having_clause (); 
-     void model_clause (); 
-     void cell_reference_options (); 
-     void return_rows_clause (); 
-     void reference_model (); 
-     void main_model (); 
-     void model_column_clauses (); 
-     void model_column_partition_part (); 
-     void model_column_list (); 
-     void model_column (); 
-     void model_rules_clause (); 
-     void model_rules_part (); 
-     void model_rules_element (); 
-     void cell_assignment (); 
-     void model_iterate_clause (); 
-     void until_part (); 
-     void order_by_clause (); 
-     void order_by_elements (); 
-     void for_update_clause (); 
-     void for_update_of_part (); 
-     void for_update_options (); 
-     void update_statement (); 
-     void update_set_clause (); 
-     void column_based_update_set_clause (); 
-     void delete_statement (); 
-     void insert_statement (); 
-     void single_table_insert (); 
-     void multi_table_insert (); 
-     void multi_table_element (); 
-     void conditional_insert_clause (); 
-     void conditional_insert_when_part (); 
-     void conditional_insert_else_part (); 
-     void insert_into_clause (); 
-     void values_clause (); 
-     void merge_statement (); 
-     void merge_update_clause (); 
-     void merge_element (); 
-     void merge_update_delete_part (); 
-     void merge_insert_clause (); 
-     void selected_tableview (); 
-     void lock_table_statement (); 
-     void wait_nowait_part (); 
-     void lock_table_element (); 
-     void lock_mode (); 
-     void general_table_ref (); 
-     void static_returning_clause (); 
-     void error_logging_clause (); 
-     void error_logging_into_part (); 
-     void error_logging_reject_part (); 
-     void dml_table_expression_clause (); 
-     void table_collection_expression (); 
-     void subquery_restriction_clause (); 
-     void sample_clause (); 
-     void seed_part (); 
-     void cursor_expression (); 
-     void expression_list (); 
-     void condition (); 
-     void condition_wrapper (); 
-     void expression (); 
-     void expression_wrapper (); 
-     void logical_and_expression (); 
-     void negated_expression (); 
-     void equality_expression (); 
-     void multiset_comparsion (); 
-     void multiset_type (); 
-     void relational_expression (); 
-     void compound_expression (); 
-     void like_type (); 
-     void like_escape_part (); 
-     void in_elements (); 
-     void between_elements (); 
-     void concatenation (); 
-     void concatenation_wrapper (); 
-     void additive_expression (); 
-     void multiply_expression (); 
-     void datetime_expression (); 
-     void interval_expression (); 
-     void model_expression (); 
-     void model_expression_element (); 
-     void single_column_for_loop (); 
-     void for_like_part (); 
-     void for_increment_decrement_type (); 
-     void multi_column_for_loop (); 
-     void multiset_expression (); 
-     void unary_expression (); 
-     void case_statement (int isStatementParameter); 
-     void simple_case_statement (); 
-     void simple_case_when_part (); 
-     void searched_case_statement (); 
-     void searched_case_when_part (); 
-     void case_else_part (); 
-     void atom (); 
-     void expression_or_vector (); 
-     void vector_expr (); 
-     void quantified_expression (); 
-     void standard_function (); 
-     void stantard_function_enabling_over (); 
-     void stantard_function_enabling_using (); 
-     void stantard_function_enabling_within_or_over (); 
-     void stantard_function_pedictions (); 
-     void over_clause (); 
-     void windowing_clause (); 
-     void windowing_type (); 
-     void windowing_elements (); 
-     void using_clause (); 
-     void using_element (); 
-     void collect_order_by_part (); 
-     void within_or_over_part (); 
-     void cost_matrix_clause (); 
-     void xml_passing_clause (); 
-     void xml_attributes_clause (); 
-     void xml_namespaces_clause (); 
-     void xml_table_column (); 
-     void xml_general_default_part (); 
-     void xml_multiuse_expression_element (); 
-     void xmlroot_param_version_part (); 
-     void xmlroot_param_standalone_part (); 
-     void xmlserialize_param_enconding_part (); 
-     void xmlserialize_param_version_part (); 
-     void xmlserialize_param_ident_part (); 
+        private:
+            PLSQLParser*	 m_gPLSQLParser;
+            /* ruleAttributeScopeDef(scope)
+             */
+            StackType< case_statementScope >  m_case_statement_stack;
 
 
 
+        public:
+            PLSQLParser_PLSQL_DMLParser(InputType* instream, PLSQLParser* gPLSQLParser);
+            PLSQLParser_PLSQL_DMLParser(InputType* instream, RecognizerSharedStateType* state, PLSQLParser* gPLSQLParser);
+
+            void init(InputType* instream , PLSQLParser* gPLSQLParser );
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            void explain_statement ();
+            void select_statement ();
+            void subquery_factoring_clause ();
+            void factoring_element ();
+            void search_clause ();
+            void cycle_clause ();
+            void subquery ();
+            void subquery_operation_part ();
+            void subquery_basic_elements ();
+            void query_block ();
+            void selected_element ();
+            void from_clause ();
+            void select_list_elements ();
+            void table_ref_list ();
+            void table_ref ();
+            void table_ref_aux ();
+            void join_clause ();
+            void join_on_part ();
+            void join_using_part ();
+            void outer_join_type ();
+            void query_partition_clause ();
+            void flashback_query_clause ();
+            void pivot_clause ();
+            void pivot_element ();
+            void pivot_for_clause ();
+            void pivot_in_clause ();
+            void pivot_in_clause_element ();
+            void pivot_in_clause_elements ();
+            void unpivot_clause ();
+            void unpivot_in_clause ();
+            void unpivot_in_elements ();
+            void hierarchical_query_clause ();
+            void start_part ();
+            void group_by_clause ();
+            void group_by_elements ();
+            void rollup_cube_clause ();
+            void grouping_sets_clause ();
+            void grouping_sets_elements ();
+            void having_clause ();
+            void model_clause ();
+            void cell_reference_options ();
+            void return_rows_clause ();
+            void reference_model ();
+            void main_model ();
+            void model_column_clauses ();
+            void model_column_partition_part ();
+            void model_column_list ();
+            void model_column ();
+            void model_rules_clause ();
+            void model_rules_part ();
+            void model_rules_element ();
+            void cell_assignment ();
+            void model_iterate_clause ();
+            void until_part ();
+            void order_by_clause ();
+            void order_by_elements ();
+            void for_update_clause ();
+            void for_update_of_part ();
+            void for_update_options ();
+            void update_statement ();
+            void update_set_clause ();
+            void column_based_update_set_clause ();
+            void delete_statement ();
+            void insert_statement ();
+            void single_table_insert ();
+            void multi_table_insert ();
+            void multi_table_element ();
+            void conditional_insert_clause ();
+            void conditional_insert_when_part ();
+            void conditional_insert_else_part ();
+            void insert_into_clause ();
+            void values_clause ();
+            void merge_statement ();
+            void merge_update_clause ();
+            void merge_element ();
+            void merge_update_delete_part ();
+            void merge_insert_clause ();
+            void selected_tableview ();
+            void lock_table_statement ();
+            void wait_nowait_part ();
+            void lock_table_element ();
+            void lock_mode ();
+            void general_table_ref ();
+            void static_returning_clause ();
+            void error_logging_clause ();
+            void error_logging_into_part ();
+            void error_logging_reject_part ();
+            void dml_table_expression_clause ();
+            void table_collection_expression ();
+            void subquery_restriction_clause ();
+            void sample_clause ();
+            void seed_part ();
+            void cursor_expression ();
+            void expression_list ();
+            void condition ();
+            void condition_wrapper ();
+            void expression ();
+            void expression_wrapper ();
+            void logical_and_expression ();
+            void negated_expression ();
+            void equality_expression ();
+            void multiset_comparsion ();
+            void multiset_type ();
+            void relational_expression ();
+            void compound_expression ();
+            void like_type ();
+            void like_escape_part ();
+            void in_elements ();
+            void between_elements ();
+            void concatenation ();
+            void concatenation_wrapper ();
+            void additive_expression ();
+            void multiply_expression ();
+            void datetime_expression ();
+            void interval_expression ();
+            void model_expression ();
+            void model_expression_element ();
+            void single_column_for_loop ();
+            void for_like_part ();
+            void for_increment_decrement_type ();
+            void multi_column_for_loop ();
+            void multiset_expression ();
+            void unary_expression ();
+            void case_statement (int isStatementParameter);
+            void simple_case_statement ();
+            void simple_case_when_part ();
+            void searched_case_statement ();
+            void searched_case_when_part ();
+            void case_else_part ();
+            void atom ();
+            void expression_or_vector ();
+            void vector_expr ();
+            void quantified_expression ();
+            void standard_function ();
+            void stantard_function_enabling_over ();
+            void stantard_function_enabling_using ();
+            void stantard_function_enabling_within_or_over ();
+            void stantard_function_pedictions ();
+            void over_clause ();
+            void windowing_clause ();
+            void windowing_type ();
+            void windowing_elements ();
+            void using_clause ();
+            void using_element ();
+            void collect_order_by_part ();
+            void within_or_over_part ();
+            void cost_matrix_clause ();
+            void xml_passing_clause ();
+            void xml_attributes_clause ();
+            void xml_namespaces_clause ();
+            void xml_table_column ();
+            void xml_general_default_part ();
+            void xml_multiuse_expression_element ();
+            void xmlroot_param_version_part ();
+            void xmlroot_param_standalone_part ();
+            void xmlserialize_param_enconding_part ();
+            void xmlserialize_param_version_part ();
+            void xmlserialize_param_ident_part ();
 
 
 
 
-      bool msynpred( antlr3::ClassForwarder< synpred1_PLSQL_DMLParser > );
-        void msynpred1_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred2_PLSQL_DMLParser > );
-        void msynpred2_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred3_PLSQL_DMLParser > );
-        void msynpred3_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred4_PLSQL_DMLParser > );
-        void msynpred4_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred5_PLSQL_DMLParser > );
-        void msynpred5_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred6_PLSQL_DMLParser > );
-        void msynpred6_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred7_PLSQL_DMLParser > );
-        void msynpred7_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred8_PLSQL_DMLParser > );
-        void msynpred8_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred9_PLSQL_DMLParser > );
-        void msynpred9_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred10_PLSQL_DMLParser > );
-        void msynpred10_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred11_PLSQL_DMLParser > );
-        void msynpred11_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred12_PLSQL_DMLParser > );
-        void msynpred12_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred13_PLSQL_DMLParser > );
-        void msynpred13_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred14_PLSQL_DMLParser > );
-        void msynpred14_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred15_PLSQL_DMLParser > );
-        void msynpred15_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred16_PLSQL_DMLParser > );
-        void msynpred16_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred17_PLSQL_DMLParser > );
-        void msynpred17_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred18_PLSQL_DMLParser > );
-        void msynpred18_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred19_PLSQL_DMLParser > );
-        void msynpred19_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred20_PLSQL_DMLParser > );
-        void msynpred20_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred21_PLSQL_DMLParser > );
-        void msynpred21_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred22_PLSQL_DMLParser > );
-        void msynpred22_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred23_PLSQL_DMLParser > );
-        void msynpred23_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred24_PLSQL_DMLParser > );
-        void msynpred24_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred25_PLSQL_DMLParser > );
-        void msynpred25_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred26_PLSQL_DMLParser > );
-        void msynpred26_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred27_PLSQL_DMLParser > );
-        void msynpred27_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred28_PLSQL_DMLParser > );
-        void msynpred28_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred29_PLSQL_DMLParser > );
-        void msynpred29_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred30_PLSQL_DMLParser > );
-        void msynpred30_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred31_PLSQL_DMLParser > );
-        void msynpred31_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred36_PLSQL_DMLParser > );
-        void msynpred36_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred38_PLSQL_DMLParser > );
-        void msynpred38_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred39_PLSQL_DMLParser > );
-        void msynpred39_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred40_PLSQL_DMLParser > );
-        void msynpred40_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred41_PLSQL_DMLParser > );
-        void msynpred41_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred42_PLSQL_DMLParser > );
-        void msynpred42_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred43_PLSQL_DMLParser > );
-        void msynpred43_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred45_PLSQL_DMLParser > );
-        void msynpred45_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred46_PLSQL_DMLParser > );
-        void msynpred46_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred47_PLSQL_DMLParser > );
-        void msynpred47_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred48_PLSQL_DMLParser > );
-        void msynpred48_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred49_PLSQL_DMLParser > );
-        void msynpred49_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred50_PLSQL_DMLParser > );
-        void msynpred50_PLSQL_DMLParser_fragment ();
-      bool msynpred( antlr3::ClassForwarder< synpred51_PLSQL_DMLParser > );
-        void msynpred51_PLSQL_DMLParser_fragment ();
-    // Delegated rules
 
-    const char *    getGrammarFileName();
-    void            reset();
-    ~PLSQLParser_PLSQL_DMLParser();
 
-};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            bool msynpred( antlr3::ClassForwarder< synpred1_PLSQL_DMLParser > );
+            void msynpred1_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred2_PLSQL_DMLParser > );
+            void msynpred2_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred3_PLSQL_DMLParser > );
+            void msynpred3_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred4_PLSQL_DMLParser > );
+            void msynpred4_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred5_PLSQL_DMLParser > );
+            void msynpred5_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred6_PLSQL_DMLParser > );
+            void msynpred6_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred7_PLSQL_DMLParser > );
+            void msynpred7_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred8_PLSQL_DMLParser > );
+            void msynpred8_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred9_PLSQL_DMLParser > );
+            void msynpred9_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred10_PLSQL_DMLParser > );
+            void msynpred10_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred11_PLSQL_DMLParser > );
+            void msynpred11_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred12_PLSQL_DMLParser > );
+            void msynpred12_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred13_PLSQL_DMLParser > );
+            void msynpred13_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred14_PLSQL_DMLParser > );
+            void msynpred14_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred15_PLSQL_DMLParser > );
+            void msynpred15_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred16_PLSQL_DMLParser > );
+            void msynpred16_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred17_PLSQL_DMLParser > );
+            void msynpred17_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred18_PLSQL_DMLParser > );
+            void msynpred18_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred19_PLSQL_DMLParser > );
+            void msynpred19_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred20_PLSQL_DMLParser > );
+            void msynpred20_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred21_PLSQL_DMLParser > );
+            void msynpred21_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred22_PLSQL_DMLParser > );
+            void msynpred22_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred23_PLSQL_DMLParser > );
+            void msynpred23_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred24_PLSQL_DMLParser > );
+            void msynpred24_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred25_PLSQL_DMLParser > );
+            void msynpred25_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred26_PLSQL_DMLParser > );
+            void msynpred26_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred27_PLSQL_DMLParser > );
+            void msynpred27_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred28_PLSQL_DMLParser > );
+            void msynpred28_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred29_PLSQL_DMLParser > );
+            void msynpred29_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred30_PLSQL_DMLParser > );
+            void msynpred30_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred31_PLSQL_DMLParser > );
+            void msynpred31_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred36_PLSQL_DMLParser > );
+            void msynpred36_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred38_PLSQL_DMLParser > );
+            void msynpred38_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred39_PLSQL_DMLParser > );
+            void msynpred39_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred40_PLSQL_DMLParser > );
+            void msynpred40_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred41_PLSQL_DMLParser > );
+            void msynpred41_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred42_PLSQL_DMLParser > );
+            void msynpred42_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred43_PLSQL_DMLParser > );
+            void msynpred43_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred45_PLSQL_DMLParser > );
+            void msynpred45_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred46_PLSQL_DMLParser > );
+            void msynpred46_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred47_PLSQL_DMLParser > );
+            void msynpred47_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred48_PLSQL_DMLParser > );
+            void msynpred48_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred49_PLSQL_DMLParser > );
+            void msynpred49_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred50_PLSQL_DMLParser > );
+            void msynpred50_PLSQL_DMLParser_fragment ();
+            bool msynpred( antlr3::ClassForwarder< synpred51_PLSQL_DMLParser > );
+            void msynpred51_PLSQL_DMLParser_fragment ();
+            // Delegated rules
+
+            const char *    getGrammarFileName();
+            void            reset();
+            ~PLSQLParser_PLSQL_DMLParser();
+
+    };
 
 // Function protoypes for the constructor functions that external translation units
 // such as delegators and delegates may wish to call.
 //
-extern ANTLR_UINT8*   PLSQLParserTokenNames[];
+    extern ANTLR_UINT8*   PLSQLParserTokenNames[];
 
 
-/* End of token definitions for PLSQLParser_PLSQL_DMLParser
- * =============================================================================
- */
+    /* End of token definitions for PLSQLParser_PLSQL_DMLParser
+     * =============================================================================
+     */
 
 }
 

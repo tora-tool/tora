@@ -58,20 +58,20 @@ static const char * tosimplequery_xpm[] =
 
 class toSandboxTool : public toTool
 {
-protected:
-    virtual const char **pictureXPM(void);
-public:
-    toSandboxTool() : toTool(10003, "Sandbox")
-    { }
-    virtual const char *menuItem()
-    {
-        return "Simple Query";
-    }
-    virtual toToolWidget *toolWindow(QWidget *parent, toConnection &connection)
-    {
-        return new toSandbox(/*this,*/ parent, connection);
-    }
-    virtual void closeWindow(toConnection &connection) {};
+    protected:
+        virtual const char **pictureXPM(void);
+    public:
+        toSandboxTool() : toTool(10003, "Sandbox")
+        { }
+        virtual const char *menuItem()
+        {
+            return "Simple Query";
+        }
+        virtual toToolWidget *toolWindow(QWidget *parent, toConnection &connection)
+        {
+            return new toSandbox(/*this,*/ parent, connection);
+        }
+        virtual void closeWindow(toConnection &connection) {};
 };
 
 const char **toSandboxTool::pictureXPM(void)
@@ -119,15 +119,15 @@ void toSandbox::execute(void)
 {
     try
     {
-    	QString sql = m_statement->text();
-    	m_eventQuery = new toEventQuery(this
-    			, toConnectionRegistrySing::Instance().currentConnection()
-    			, sql
-    			, toQueryParams()
-    			, toEventQuery::READ_FIRST);
-    	//toQList params=toParamGet::getParam(this,sql);
+        QString sql = m_statement->text();
+        m_eventQuery = new toEventQuery(this
+                                        , toConnectionRegistrySing::Instance().currentConnection()
+                                        , sql
+                                        , toQueryParams()
+                                        , toEventQuery::READ_FIRST);
+        //toQList params=toParamGet::getParam(this,sql);
 
-    	m_mvc->setQuery(m_eventQuery);
+        m_mvc->setQuery(m_eventQuery);
 
     }
     TOCATCH

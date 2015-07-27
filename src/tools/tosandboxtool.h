@@ -25,56 +25,57 @@ class toEventQuery;
 
 struct SandboxViewTraits : public MVCTraits
 {
-	enum {
-		AlternatingRowColorsEnabled = true,
-		ShowRowNumber = NoRowNumber,
-		ColumnResize = RowColumResize
-	};
-	//typedef toComboBoxView    View;
-	typedef toTreeViewPriv View;
+    enum
+    {
+        AlternatingRowColorsEnabled = true,
+        ShowRowNumber = NoRowNumber,
+        ColumnResize = RowColumResize
+    };
+    //typedef toComboBoxView    View;
+    typedef toTreeViewPriv View;
 };
 
 class SandboxMVC
-	: public TOMVC<
-	  	  SandboxViewTraits,
-	  	  //::DefaultComboBoxViewPolicy,
-	  	  ::DefaultTreeViewPolicy,
-	  	  ::DefaultDataProviderPolicy
-	  	  >
+    : public TOMVC<
+    SandboxViewTraits,
+    //::DefaultComboBoxViewPolicy,
+    ::DefaultTreeViewPolicy,
+     ::DefaultDataProviderPolicy
+     >
 {
-	Q_OBJECT;
-public:
-	typedef TOMVC<
-			SandboxViewTraits,
-			//::DefaultComboBoxViewPolicy,
-			::DefaultTreeViewPolicy,
-			::DefaultDataProviderPolicy
-			> _s;
-	SandboxMVC(QWidget *parent) : _s(parent) 
-	{};
-	virtual ~SandboxMVC() {};
+        Q_OBJECT;
+    public:
+        typedef TOMVC<
+        SandboxViewTraits,
+        //::DefaultComboBoxViewPolicy,
+        ::DefaultTreeViewPolicy,
+        ::DefaultDataProviderPolicy
+        > _s;
+        SandboxMVC(QWidget *parent) : _s(parent)
+        {};
+        virtual ~SandboxMVC() {};
 };
 
 class toSandbox : public toToolWidget //, toEventQuery::Client
 {
-    Q_OBJECT;
+        Q_OBJECT;
 
-public:
+    public:
 
-    toSandbox(/*toTool *tool,*/ QWidget *parent, toConnection &connection);
-    virtual ~toSandbox() {};
-    virtual void slotWindowActivated(toToolWidget*){};
+        toSandbox(/*toTool *tool,*/ QWidget *parent, toConnection &connection);
+        virtual ~toSandbox() {};
+        virtual void slotWindowActivated(toToolWidget*) {};
 
-private slots:
-    void execute(void);
+    private slots:
+        void execute(void);
 
-private:
-    QLineEdit    *m_statement;
-    QAction      *m_updateAct;
-    toTableModelPriv *m_tableModel;
-	QTableView   *m_tableView;
-	toEventQuery *m_eventQuery;
-	SandboxMVC   *m_mvc;
+    private:
+        QLineEdit    *m_statement;
+        QAction      *m_updateAct;
+        toTableModelPriv *m_tableModel;
+        QTableView   *m_tableView;
+        toEventQuery *m_eventQuery;
+        SandboxMVC   *m_mvc;
 };
 
 #endif

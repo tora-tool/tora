@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -48,28 +48,28 @@
 #include <QVBoxLayout>
 
 toBaseEditor::toBaseEditor(toScintilla *editor, QWidget *parent)
-	: QWidget(parent)
-	, m_editor(editor)
+    : QWidget(parent)
+    , m_editor(editor)
 {
-	setObjectName("toBaseEditor");
+    setObjectName("toBaseEditor");
 #pragma message WARN("TODO/FIXME: fix this ugly types based init")
-	m_editor->setParent(this);
+    m_editor->setParent(this);
 
-	Q_ASSERT_X(m_editor, "toBaseEditor init", "editor must be existing instance of toMarkedTextEditor");
+    Q_ASSERT_X(m_editor, "toBaseEditor init", "editor must be existing instance of toMarkedTextEditor");
 
-	QVBoxLayout *l = new QVBoxLayout();
-	l->setSpacing(0);
-	l->setContentsMargins(0, 0, 0, 0);
+    QVBoxLayout *l = new QVBoxLayout();
+    l->setSpacing(0);
+    l->setContentsMargins(0, 0, 0, 0);
 
-	l->addWidget(m_editor);
-	m_editor->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+    l->addWidget(m_editor);
+    m_editor->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-	m_search = new toSearchReplace(this);
-	m_search->hide();
+    m_search = new toSearchReplace(this);
+    m_search->hide();
 //	m_editor->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::MinimumExpanding);
-	l->addWidget(m_search);
+    l->addWidget(m_search);
 
-	setLayout(l);
+    setLayout(l);
 
     setEditFlags();
 
@@ -86,7 +86,7 @@ toBaseEditor::toBaseEditor(toScintilla *editor, QWidget *parent)
             this, SLOT(setCoordinates(int, int)));
 
     connect(m_search, SIGNAL(searchNext(Search::SearchFlags)),
-    		this, SLOT(handleSearching(Search::SearchFlags)));
+            this, SLOT(handleSearching(Search::SearchFlags)));
     connect(m_search, SIGNAL(windowClosed()),
             this, SLOT(setEditorFocus()));
     setFocusProxy(m_editor);
@@ -94,42 +94,42 @@ toBaseEditor::toBaseEditor(toScintilla *editor, QWidget *parent)
 
 QString toBaseEditor::editText()
 {
-	return m_editor->text();
+    return m_editor->text();
 }
 
 void toBaseEditor::editUndo(void)
 {
-	m_editor->undo();
+    m_editor->undo();
 }
 
 void toBaseEditor::editRedo(void)
 {
-	m_editor->redo();
+    m_editor->redo();
 }
 
 void toBaseEditor::editCut(void)
 {
-	m_editor->cut();
+    m_editor->cut();
 }
 
 void toBaseEditor::editCopy(void)
 {
-	m_editor->copy();
+    m_editor->copy();
 }
 
 void toBaseEditor::editPaste(void)
 {
-	m_editor->paste();
+    m_editor->paste();
 }
 
 void toBaseEditor::editSelectAll(void)
 {
-	m_editor->selectAll(false);
+    m_editor->selectAll(false);
 }
 
 void toBaseEditor::editPrint(void)
 {
-	m_editor->print(Filename);
+    m_editor->print(Filename);
 }
 
 bool toBaseEditor::editOpen(const QString &suggestedFile)
@@ -176,14 +176,14 @@ bool toBaseEditor::editSave(bool askfile)
 
     QString fn;
     QFileInfo file(filename());
-    if(!filename().isEmpty() && file.exists() && file.isWritable())
-      fn = file.absoluteFilePath();
+    if (!filename().isEmpty() && file.exists() && file.isWritable())
+        fn = file.absoluteFilePath();
 
-    if(!filename().isEmpty() && fn.isEmpty() && file.dir().exists())
-      fn = file.absoluteFilePath();
+    if (!filename().isEmpty() && fn.isEmpty() && file.dir().exists())
+        fn = file.absoluteFilePath();
 
     if (askfile || fn.isEmpty())
-      fn = Utils::toSaveFilename(fn, QString::null, this);
+        fn = Utils::toSaveFilename(fn, QString::null, this);
 
     if (!fn.isEmpty() && Utils::toWriteFile(fn, m_editor->text()))
     {
@@ -200,12 +200,12 @@ bool toBaseEditor::editSave(bool askfile)
 
 bool toBaseEditor::searchNext()
 {
-	if (!m_search->isVisible())
-	{
-		m_search->show();
-		m_search->setReadOnly(m_editor->isReadOnly());
-	}
-	return true;
+    if (!m_search->isVisible())
+    {
+        m_search->show();
+        m_search->setReadOnly(m_editor->isReadOnly());
+    }
+    return true;
 }
 
 void toBaseEditor::searchReplace()
@@ -216,18 +216,18 @@ void toBaseEditor::searchReplace()
 
 void toBaseEditor::editReadAll()
 {
-	qDebug() << "toBaseEditor::editReadAll() not implemented";
+    qDebug() << "toBaseEditor::editReadAll() not implemented";
 }
 
 void toBaseEditor::setEditFlags()
 {
     if (m_editor->isReadOnly())
     {
-    	FlagSet.Save = true;
-    	FlagSet.Print = true;
-    	FlagSet.Copy = m_editor->hasSelectedText();
-    	FlagSet.Search = true;
-    	FlagSet.SelectAll = true;
+        FlagSet.Save = true;
+        FlagSet.Print = true;
+        FlagSet.Copy = m_editor->hasSelectedText();
+        FlagSet.Search = true;
+        FlagSet.SelectAll = true;
     }
     else
     {
@@ -235,7 +235,7 @@ void toBaseEditor::setEditFlags()
         FlagSet.Save = true;
         FlagSet.Print = true;
         FlagSet.Undo = m_editor->isUndoAvailable();
-		FlagSet.Redo = m_editor->isRedoAvailable();
+        FlagSet.Redo = m_editor->isRedoAvailable();
         FlagSet.Cut = m_editor->hasSelectedText();
         FlagSet.Copy = m_editor->hasSelectedText();
         FlagSet.Paste = true;
@@ -258,7 +258,7 @@ void toBaseEditor::m_fsWatcher_fileChanged(const QString & filename)
 
     try
     {
-    	openFilename(filename);
+        openFilename(filename);
     }
     TOCATCH;
 
@@ -274,12 +274,12 @@ void toBaseEditor::fsWatcherClear()
 
 void toBaseEditor::gotFocus()
 {
-	TLOG(9, toDecorator, __HERE__) << this << std::endl;
+    TLOG(9, toDecorator, __HERE__) << this << std::endl;
 }
 
 void toBaseEditor::lostFocus()
 {
-	TLOG(9, toDecorator, __HERE__) << this << std::endl;
+    TLOG(9, toDecorator, __HERE__) << this << std::endl;
 }
 
 void toBaseEditor::clear(void)
@@ -309,24 +309,26 @@ void toBaseEditor::openFilename(const QString &file)
 
 void toBaseEditor::handleSearching(Search::SearchFlags flags)
 {
-	qDebug() << "toBaseEditor::handleSearchin" << m_search->searchText() << m_search->replaceText() << flags;
-	bool ret = m_editor->findText(m_search->searchText(),
-								  m_search->replaceText(),
-								  flags);
-	if (!ret)
-		qWarning() << "TODO/FIXME" << "toBaseEditor::handleSearching return value";
+    qDebug() << "toBaseEditor::handleSearchin" << m_search->searchText() << m_search->replaceText() << flags;
+    bool ret = m_editor->findText(m_search->searchText(),
+                                  m_search->replaceText(),
+                                  flags);
+    if (!ret)
+        qWarning() << "TODO/FIXME" << "toBaseEditor::handleSearching return value";
 }
 
 void toBaseEditor::setCoordinates(int line, int column)
 {
-	toGlobalEventSingle::Instance().setCoordinates(line + 1, column + 1);
+    toGlobalEventSingle::Instance().setCoordinates(line + 1, column + 1);
 }
 
 void toBaseEditor::setEditorFocus()
 {
-	m_editor->findStop();
+    m_editor->findStop();
     m_editor->setFocus(Qt::OtherFocusReason);
 }
 
 void toBaseEditor::setWordWrap(bool wrap)
-{ m_editor->setWordWrap(wrap); };
+{
+    m_editor->setWordWrap(wrap);
+};

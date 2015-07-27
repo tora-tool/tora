@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -81,8 +81,8 @@ void toModelEditor::saveFile()
         }
         offset = 0;
         bool retval = Utils::toWriteLargeFile(file, *this, /*progressbar*/false, /*parent*/this);
-        if(retval)
-	    toGlobalEventSingle::Instance().addRecentFile(fn);
+        if (retval)
+            toGlobalEventSingle::Instance().addRecentFile(fn);
     }
     else
     {
@@ -309,14 +309,14 @@ void toModelEditor::changePosition(QModelIndex index)
 {
     Current = index;
     QVariant const &data = Model->data(Current, Qt::UserRole);
-    if(data.type() == QVariant::UserType && data.canConvert<toQValue::complexType*>() )
+    if (data.type() == QVariant::UserType && data.canConvert<toQValue::complexType*>() )
     {
         toQValue::complexType *i = data.value<toQValue::complexType*>();
         setText(i->editData());
         return;
     }
 
-    if(Editable)
+    if (Editable)
         setText(Model->data(Current, Qt::EditRole).toString());
     else
     {
@@ -333,7 +333,7 @@ void toModelEditor::firstColumn()
 
 void toModelEditor::previousColumn()
 {
-    if(Current.column() <= 1)
+    if (Current.column() <= 1)
         return;
 
     QModelIndex index = Model->index(Current.row(), Current.column() - 1);
@@ -343,7 +343,7 @@ void toModelEditor::previousColumn()
 
 void toModelEditor::nextColumn()
 {
-    if(Current.column() >= Model->columnCount() - 1)
+    if (Current.column() >= Model->columnCount() - 1)
     {
         printf("ignore\n");
         return;

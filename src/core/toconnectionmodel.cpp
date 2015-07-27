@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -43,7 +43,7 @@
 
 
 toConnectionModel::toConnectionModel(QObject *parent)
-	: QAbstractTableModel(parent)
+    : QAbstractTableModel(parent)
 {
 }
 
@@ -58,7 +58,7 @@ void toConnectionModel::setupData(QMap<int, toConnectionOptions> list)
 
 void toConnectionModel::readConfig()
 {
-    beginResetModel();  
+    beginResetModel();
     m_data.clear();
 
     QSettings Settings;
@@ -109,7 +109,7 @@ void toConnectionModel::readConfig()
     }
     Settings.endGroup(); // history section
 
-    endResetModel();    
+    endResetModel();
 }
 
 void toConnectionModel::append(int ix, toConnectionOptions conn)
@@ -138,18 +138,18 @@ QVariant toConnectionModel::headerData(int section, Qt::Orientation orientation,
         return section + 1;
     switch (section)
     {
-    case 0 :
-        return "#";
-    case 1 :
-        return "Provider";
-    case 2 :
-        return "Host";
-    case 3 :
-        return "Database";
-    case 4 :
-        return "Username";
-    case 5 :
-        return "Schema";
+        case 0 :
+            return "#";
+        case 1 :
+            return "Provider";
+        case 2 :
+            return "Host";
+        case 3 :
+            return "Database";
+        case 4 :
+            return "Username";
+        case 5 :
+            return "Schema";
     }
     return "oops!";
 }
@@ -163,29 +163,29 @@ QVariant toConnectionModel::data(const QModelIndex & index, int role) const
     toConnectionOptions opt = m_data[index.row()];
     switch (role)
     {
-    case Qt::DisplayRole:
-        switch (index.column())
-        {
-        case 0 :
-            return index.row();
-        case 1 :
-            return opt.provider;
-        case 2 :
-            return opt.host;
-        case 3 :
-            return opt.database;
-        case 4 :
-            return opt.username;
-        case 5 :
-            return opt.schema;
-        default :
-            return "oops!";
-        }
-        break;
-    case Qt::DecorationRole:
-        if (index.column() == 1 && toConfigurationNewSingle::Instance().option(ToConfiguration::Global::ColorizedConnectionsBool).toBool())
-            return Utils::connectionColorPixmap(opt.color);
-        break;
+        case Qt::DisplayRole:
+            switch (index.column())
+            {
+                case 0 :
+                    return index.row();
+                case 1 :
+                    return opt.provider;
+                case 2 :
+                    return opt.host;
+                case 3 :
+                    return opt.database;
+                case 4 :
+                    return opt.username;
+                case 5 :
+                    return opt.schema;
+                default :
+                    return "oops!";
+            }
+            break;
+        case Qt::DecorationRole:
+            if (index.column() == 1 && toConfigurationNewSingle::Instance().option(ToConfiguration::Global::ColorizedConnectionsBool).toBool())
+                return Utils::connectionColorPixmap(opt.color);
+            break;
     }
     return QVariant();
 }

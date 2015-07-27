@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -213,23 +213,23 @@ static toSQL SQLStopProfiler("toProfiler:StopProfiler",
 
 class toProfilerTool : public toTool
 {
-    virtual const char **pictureXPM(void)
-    {
-        return const_cast<const char**>(clock_xpm);
-    }
-public:
-    toProfilerTool()
-        : toTool(120, "PL/SQL Profiler")
-    { }
-    virtual const char *menuItem()
-    {
-        return "PL/SQL Profiler";
-    }
-    virtual toToolWidget* toolWindow(QWidget *parent, toConnection &connection)
-    {
-        return new toProfiler(parent, connection);
-    }
-    virtual void closeWindow(toConnection &connection) {};
+        virtual const char **pictureXPM(void)
+        {
+            return const_cast<const char**>(clock_xpm);
+        }
+    public:
+        toProfilerTool()
+            : toTool(120, "PL/SQL Profiler")
+        { }
+        virtual const char *menuItem()
+        {
+            return "PL/SQL Profiler";
+        }
+        virtual toToolWidget* toolWindow(QWidget *parent, toConnection &connection)
+        {
+            return new toProfiler(parent, connection);
+        }
+        virtual void closeWindow(toConnection &connection) {};
 };
 
 static toProfilerTool ProfilerTool;
@@ -259,197 +259,197 @@ static QString FormatTime(double tim)
 
 class toProfilerUnits : public toResultLong
 {
-    double Total;
-public:
-    class unitsItem : public toResultViewItem
-    {
+        double Total;
     public:
-        unitsItem(toTreeWidget *parent, toTreeWidgetItem *after, const QString &buf = QString::null)
-            : toResultViewItem(parent, after, buf)
-        { }
-        virtual void paintCell(QPainter *p, const QColorGroup &cg,
-                               int column, int width, int alignment)
+        class unitsItem : public toResultViewItem
         {
-#if 0                           // disabled - not overriding correct method
-            if (column == 2)
-            {
-                toProfilerUnits *units = dynamic_cast<toProfilerUnits *>(listView());
-                if (!units)
+            public:
+                unitsItem(toTreeWidget *parent, toTreeWidgetItem *after, const QString &buf = QString::null)
+                    : toResultViewItem(parent, after, buf)
+                { }
+                virtual void paintCell(QPainter *p, const QColorGroup &cg,
+                                       int column, int width, int alignment)
                 {
-                    toTreeWidgetItem::paintCell(p, cg, column, width, alignment);
-                    return ;
-                }
-                double total = allText(column).toDouble();
-                QString timstr = FormatTime(total / 1E9);
-                double val = total / units->total();
+#if 0                           // disabled - not overriding correct method
+                    if (column == 2)
+                    {
+                        toProfilerUnits *units = dynamic_cast<toProfilerUnits *>(listView());
+                        if (!units)
+                        {
+                            toTreeWidgetItem::paintCell(p, cg, column, width, alignment);
+                            return ;
+                        }
+                        double total = allText(column).toDouble();
+                        QString timstr = FormatTime(total / 1E9);
+                        double val = total / units->total();
 
-                p->fillRect(0, 0, int(val * width), height(), QBrush(Qt::blue));
-                p->fillRect(int(val * width), 0, width, height(),
-                            QBrush(isSelected() ? cg.highlight() : cg.base()));
+                        p->fillRect(0, 0, int(val * width), height(), QBrush(Qt::blue));
+                        p->fillRect(int(val * width), 0, width, height(),
+                                    QBrush(isSelected() ? cg.highlight() : cg.base()));
 
-                QPen pen(isSelected() ? cg.highlightedText() : cg.foreground());
-                p->setPen(pen);
-                p->drawText(0, 0, width, height(), Qt::AlignRight, timstr);
-            }
-            else
-            {
-                toTreeWidgetItem::paintCell(p, cg, column, width, alignment);
-            }
+                        QPen pen(isSelected() ? cg.highlightedText() : cg.foreground());
+                        p->setPen(pen);
+                        p->drawText(0, 0, width, height(), Qt::AlignRight, timstr);
+                    }
+                    else
+                    {
+                        toTreeWidgetItem::paintCell(p, cg, column, width, alignment);
+                    }
 #endif
-        }
-    };
+                }
+        };
 
-    virtual toTreeWidgetItem *createItem(toTreeWidgetItem *last, const QString &str)
-    {
-        return new unitsItem(this, last, str);
-    }
-    toProfilerUnits(QWidget *parent)
-        : toResultLong(true, false, parent)
-    {
-        setColumnAlignment(3, Qt::AlignRight);
-        setSQL(SQLListUnits);
-    }
-    double total(void) const
-    {
-        return Total;
-    }
-    void setTotal(double total)
-    {
-        Total = total;
-        update();
-    }
+        virtual toTreeWidgetItem *createItem(toTreeWidgetItem *last, const QString &str)
+        {
+            return new unitsItem(this, last, str);
+        }
+        toProfilerUnits(QWidget *parent)
+            : toResultLong(true, false, parent)
+        {
+            setColumnAlignment(3, Qt::AlignRight);
+            setSQL(SQLListUnits);
+        }
+        double total(void) const
+        {
+            return Total;
+        }
+        void setTotal(double total)
+        {
+            Total = total;
+            update();
+        }
 };
 
 class toProfilerSource : public toResultLong
 {
-    double TotalOccur;
-    double TotalTime;
-    double MaxTime;
-    double MinTime;
-public:
-    class listItem : public toResultViewItem
-    {
+        double TotalOccur;
+        double TotalTime;
+        double MaxTime;
+        double MinTime;
     public:
-        listItem(toTreeWidget *parent, toTreeWidgetItem *after, const QString &buf = QString::null)
-            : toResultViewItem(parent, after, buf)
-        { }
-        virtual QString text(int col) const
+        class listItem : public toResultViewItem
         {
-            if (col == 2 || col == 3 || col == 4)
-                return FormatTime(allText(col).toDouble() / 1E9);
-            else
-                return toResultViewItem::text(col);
-        }
+            public:
+                listItem(toTreeWidget *parent, toTreeWidgetItem *after, const QString &buf = QString::null)
+                    : toResultViewItem(parent, after, buf)
+                { }
+                virtual QString text(int col) const
+                {
+                    if (col == 2 || col == 3 || col == 4)
+                        return FormatTime(allText(col).toDouble() / 1E9);
+                    else
+                        return toResultViewItem::text(col);
+                }
 
-        bool operator<(const toTreeWidgetItem &other)
-        {
+                bool operator<(const toTreeWidgetItem &other)
+                {
 #if 0                           // todo tree
-            int col = treeWidget()->sortColumn();
-            if (col == 2 || col == 3 || col == 4)
-            {
-                toProfilerSource::listItem *item =
-                    dynamic_cast<toProfilerSource::listItem>(&other);
-                if (!i)
-                    return toTreeWidgetItem::operator<(other);
-                else
-                {
-                    double val_in = allText(col).toDouble();
-                    double val_out = item->allText(col).toDouble();
-                    return val_in < val_out;
-                }
-            }
-            else
+                    int col = treeWidget()->sortColumn();
+                    if (col == 2 || col == 3 || col == 4)
+                    {
+                        toProfilerSource::listItem *item =
+                            dynamic_cast<toProfilerSource::listItem>(&other);
+                        if (!i)
+                            return toTreeWidgetItem::operator<(other);
+                        else
+                        {
+                            double val_in = allText(col).toDouble();
+                            double val_out = item->allText(col).toDouble();
+                            return val_in < val_out;
+                        }
+                    }
+                    else
 #endif
-                return toTreeWidgetItem::operator<(other);
-        }
+                        return toTreeWidgetItem::operator<(other);
+                }
 
-        virtual void paintCell(QPainter *p, const QColorGroup &cg,
-                               int column, int width, int alignment)
-        {
+                virtual void paintCell(QPainter *p, const QColorGroup &cg,
+                                       int column, int width, int alignment)
+                {
 #if 0                           // disabled - not overriding correct class
-            if (column == 1 || column == 2 || column == 3 || column == 4)
-            {
-                toProfilerSource *source = dynamic_cast<toProfilerSource *>(listView());
-                if (!source)
-                {
-                    toTreeWidgetItem::paintCell(p, cg, column, width, alignment);
-                    return ;
-                }
-                double total = allText(column).toDouble();
-                double val;
-                switch (column)
-                {
-                case 1:
-                    val = total / source->TotalOccur;
-                    break;
-                case 2:
-                    val = total / source->TotalTime;
-                    break;
-                case 3:
-                    val = total / source->MaxTime;
-                    break;
-                case 4:
-                    val = total / source->MinTime;
-                    break;
-                default:
-                    val = 0;
-                }
+                    if (column == 1 || column == 2 || column == 3 || column == 4)
+                    {
+                        toProfilerSource *source = dynamic_cast<toProfilerSource *>(listView());
+                        if (!source)
+                        {
+                            toTreeWidgetItem::paintCell(p, cg, column, width, alignment);
+                            return ;
+                        }
+                        double total = allText(column).toDouble();
+                        double val;
+                        switch (column)
+                        {
+                            case 1:
+                                val = total / source->TotalOccur;
+                                break;
+                            case 2:
+                                val = total / source->TotalTime;
+                                break;
+                            case 3:
+                                val = total / source->MaxTime;
+                                break;
+                            case 4:
+                                val = total / source->MinTime;
+                                break;
+                            default:
+                                val = 0;
+                        }
 
-                p->fillRect(0, 0, int(val * width), height(), QBrush(Qt::blue));
-                p->fillRect(int(val * width), 0, width, height(),
-                            QBrush(isSelected() ? cg.highlight() : cg.base()));
+                        p->fillRect(0, 0, int(val * width), height(), QBrush(Qt::blue));
+                        p->fillRect(int(val * width), 0, width, height(),
+                                    QBrush(isSelected() ? cg.highlight() : cg.base()));
 
-                QPen pen(isSelected() ? cg.highlightedText() : cg.foreground());
-                p->setPen(pen);
-                p->drawText(0, 0, width, height(), Qt::AlignRight, text(column));
-            }
-            else
-            {
-                toTreeWidgetItem::paintCell(p, cg, column, width, alignment);
-            }
+                        QPen pen(isSelected() ? cg.highlightedText() : cg.foreground());
+                        p->setPen(pen);
+                        p->drawText(0, 0, width, height(), Qt::AlignRight, text(column));
+                    }
+                    else
+                    {
+                        toTreeWidgetItem::paintCell(p, cg, column, width, alignment);
+                    }
 #endif
-        }
-    };
+                }
+        };
 
-    virtual toTreeWidgetItem *createItem(toTreeWidgetItem *last, const QString &str)
-    {
-        return new listItem(this, last, str);
-    }
-    void clearTotals(void)
-    {
-        TotalOccur = TotalTime = MaxTime = MinTime = 0;
-    }
-    toProfilerSource(QWidget *parent)
-        : toResultLong(true, false, parent)
-    {
-        setColumnAlignment(1, Qt::AlignRight);
-        setColumnAlignment(2, Qt::AlignRight);
-        setColumnAlignment(3, Qt::AlignRight);
-        setColumnAlignment(4, Qt::AlignRight);
-        clearTotals();
-    }
-    void calcTotals(void)
-    {
-        clearTotals();
-        for (toTreeWidgetItem *qi = firstChild(); qi; qi = qi->nextSibling())
+        virtual toTreeWidgetItem *createItem(toTreeWidgetItem *last, const QString &str)
         {
-            toResultViewItem * item = dynamic_cast<toResultViewItem *>(qi);
-            if (item)
-            {
-                TotalOccur += item->allText(1).toDouble();
-                TotalTime += item->allText(2).toDouble();
-                double t;
-                t = item->allText(3).toDouble();
-                if (t > MaxTime)
-                    MaxTime = t;
-                t = item->allText(4).toDouble();
-                if (t > MinTime)
-                    MinTime = t;
-            }
+            return new listItem(this, last, str);
         }
-        update();
-    }
-    friend class toProfilerSource::listItem;
+        void clearTotals(void)
+        {
+            TotalOccur = TotalTime = MaxTime = MinTime = 0;
+        }
+        toProfilerSource(QWidget *parent)
+            : toResultLong(true, false, parent)
+        {
+            setColumnAlignment(1, Qt::AlignRight);
+            setColumnAlignment(2, Qt::AlignRight);
+            setColumnAlignment(3, Qt::AlignRight);
+            setColumnAlignment(4, Qt::AlignRight);
+            clearTotals();
+        }
+        void calcTotals(void)
+        {
+            clearTotals();
+            for (toTreeWidgetItem *qi = firstChild(); qi; qi = qi->nextSibling())
+            {
+                toResultViewItem * item = dynamic_cast<toResultViewItem *>(qi);
+                if (item)
+                {
+                    TotalOccur += item->allText(1).toDouble();
+                    TotalTime += item->allText(2).toDouble();
+                    double t;
+                    t = item->allText(3).toDouble();
+                    if (t > MaxTime)
+                        MaxTime = t;
+                    t = item->allText(4).toDouble();
+                    if (t > MinTime)
+                        MinTime = t;
+                }
+            }
+            update();
+        }
+        friend class toProfilerSource::listItem;
 };
 
 toProfiler::toProfiler(QWidget *parent, toConnection &connection)
@@ -536,7 +536,7 @@ toProfiler::toProfiler(QWidget *parent, toConnection &connection)
 
     try
     {
-		toConnectionSubLoan con(connection);
+        toConnectionSubLoan con(connection);
         toQuery query(con, SQLProfilerDetect, toQueryParams());
     }
     catch (const QString &)
@@ -550,15 +550,15 @@ toProfiler::toProfiler(QWidget *parent, toConnection &connection)
         {
             try
             {
-            	toConnectionSubLoan con(connection);
-            	toQuery runs(con, SQLProfilerRuns, toQueryParams());
-            	toQuery units(con, SQLProfilerUnits, toQueryParams());
-            	toQuery data(con, SQLProfilerData, toQueryParams());
-            	toQuery number(con, SQLProfilerNumber, toQueryParams());
+                toConnectionSubLoan con(connection);
+                toQuery runs(con, SQLProfilerRuns, toQueryParams());
+                toQuery units(con, SQLProfilerUnits, toQueryParams());
+                toQuery data(con, SQLProfilerData, toQueryParams());
+                toQuery number(con, SQLProfilerNumber, toQueryParams());
             }
             catch (const QString &str)
             {
-            	Utils::toStatusMessage(str);
+                Utils::toStatusMessage(str);
                 QTimer::singleShot(0, this, SLOT(noTables()));
                 return ;
             }
@@ -579,7 +579,7 @@ void toProfiler::refresh(void)
     Run->addItem(tr("Select run"));
     try
     {
-		toConnectionSubLoan con(connection());
+        toConnectionSubLoan con(connection());
         toQuery query(con, SQLListRuns, toQueryParams());
         int id = 1;
         while (!query.eof())
@@ -608,7 +608,7 @@ void toProfiler::execute(void)
     try
     {
         QString exc;
-		toConnectionSubLoan con(connection());
+        toConnectionSubLoan con(connection());
         exc = toSQL::string(SQLStartProfiler, connection());
         for (int i = 0; i < Repeat->value(); i++)
         {
@@ -619,7 +619,7 @@ void toProfiler::execute(void)
 
         toQuery query(con,
                       exc,
-					  toQueryParams() << Comment->text() << tr("%1 runs").arg(Repeat->value()));
+                      toQueryParams() << Comment->text() << tr("%1 runs").arg(Repeat->value()));
         CurrentRun = query.readValue().toInt();
         if (CurrentRun > 0)
         {
@@ -627,7 +627,7 @@ void toProfiler::execute(void)
             refresh();
         }
         else
-        	Utils::toStatusMessage(tr("Something went wrong collecting statistics"));
+            Utils::toStatusMessage(tr("Something went wrong collecting statistics"));
     }
     TOCATCH
 }
@@ -663,11 +663,11 @@ void toProfiler::changeObject(void)
     if (item)
     {
         toQueryParams par = toQueryParams()
-        		<< toQValue(item->allText(0))
-        		<< toQValue(item->allText(1))
-        		<< toQValue(item->allText(4))
-        		<< toQValue(item->allText(5))
-        		<< toQValue(item->allText(6));
+                            << toQValue(item->allText(0))
+                            << toQValue(item->allText(1))
+                            << toQValue(item->allText(4))
+                            << toQValue(item->allText(5))
+                            << toQValue(item->allText(6));
         Lines->clearTotals();
         try
         {

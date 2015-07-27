@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -59,35 +59,40 @@
 
 QVariant ToConfiguration::Rollback::defaultValue(int option) const
 {
-	switch(option)
-	{
-	case OldEnableBool:    return QVariant((bool)false);
-	case AlignLeftBool:    return QVariant((bool)true);
-	case NoExecBool:       return QVariant((bool)true);
-	case NeedReadBool:     return QVariant((bool)true);
-	case NeedTwoBool:      return QVariant((bool)true);
-	default:
-		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Rollback un-registered enum value: %1").arg(option)));
-		return QVariant();
-	}
+    switch (option)
+    {
+        case OldEnableBool:
+            return QVariant((bool)false);
+        case AlignLeftBool:
+            return QVariant((bool)true);
+        case NoExecBool:
+            return QVariant((bool)true);
+        case NeedReadBool:
+            return QVariant((bool)true);
+        case NeedTwoBool:
+            return QVariant((bool)true);
+        default:
+            Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Rollback un-registered enum value: %1").arg(option)));
+            return QVariant();
+    }
 }
 
 class toRollbackSetting
-	: public QWidget
+    : public QWidget
     , public Ui::toRollbackSettingUI
-	, public toSettingTab
+    , public toSettingTab
 {
-public:
-    toRollbackSetting(toTool *tool, QWidget* parent = 0, const char* name = 0);
-    virtual void saveSetting(void);
-protected:
-	toTool *Tool;
+    public:
+        toRollbackSetting(toTool *tool, QWidget* parent = 0, const char* name = 0);
+        virtual void saveSetting(void);
+    protected:
+        toTool *Tool;
 };
 
 toRollbackSetting::toRollbackSetting(toTool *tool, QWidget* parent, const char* name)
-	: QWidget(parent)
-	, toSettingTab("rollback.html#options")
-	, Tool(tool)
+    : QWidget(parent)
+    , toSettingTab("rollback.html#options")
+    , Tool(tool)
 {
     setupUi(this);
     if (name)
@@ -107,35 +112,35 @@ toRollbackSetting::toRollbackSetting(toTool *tool, QWidget* parent, const char* 
 
 void toRollbackSetting::saveSetting(void)
 {
-	toSettingTab::saveSettings(this);
+    toSettingTab::saveSettings(this);
 }
 
 class toRollbackTool : public toTool
 {
-protected:
-    virtual const char **pictureXPM(void)
-    {
-        return const_cast<const char**>(torollback_xpm);
-    }
-public:
-    toRollbackTool()
-        : toTool(220, "Rollback Segments")
-    { }
-    virtual const char *menuItem()
-    {
-        return "Rollback Segments";
-    }
-    virtual toToolWidget* toolWindow(QWidget *parent, toConnection &connection)
-    {
-        return new toRollback(parent, connection);
-    }
-    virtual QWidget* configurationTab(QWidget *parent)
-    {
-        return new toRollbackSetting(this, parent);
-    }
-    virtual void closeWindow(toConnection &connection) {};
-private:
-    static ToConfiguration::Rollback s_rollbackConfig;
+    protected:
+        virtual const char **pictureXPM(void)
+        {
+            return const_cast<const char**>(torollback_xpm);
+        }
+    public:
+        toRollbackTool()
+            : toTool(220, "Rollback Segments")
+        { }
+        virtual const char *menuItem()
+        {
+            return "Rollback Segments";
+        }
+        virtual toToolWidget* toolWindow(QWidget *parent, toConnection &connection)
+        {
+            return new toRollback(parent, connection);
+        }
+        virtual QWidget* configurationTab(QWidget *parent)
+        {
+            return new toRollbackSetting(this, parent);
+        }
+        virtual void closeWindow(toConnection &connection) {};
+    private:
+        static ToConfiguration::Rollback s_rollbackConfig;
 };
 
 ToConfiguration::Rollback toRollbackTool::s_rollbackConfig;
@@ -155,7 +160,7 @@ toRollbackDialog::toRollbackDialog(toConnection &Connection, QWidget* parent, co
 
     try
     {
-    	toConnectionSubLoan conn(Connection);
+        toConnectionSubLoan conn(Connection);
         toQuery q(conn, SQLTablespace, toQueryParams());
         while (!q.eof())
             Tablespace->addItem((QString)q.readValue());
@@ -349,175 +354,175 @@ static toSQL SQLCurrentExtent("toRollback:CurrentExtent",
 
 class toRollbackOpen : public toResultView
 {
-    struct statementData
-    {
-        std::list<double> OpenExt;
-        QString Opened;
-        int Executed;
-        int BufferGets;
-        int Shown;
-    };
-
-    typedef std::map<QString, statementData> statements;
-    statements Statements;
-    int NumExtents;
-    std::list<double> CurExt;
-    std::list<double> MaxExt;
-public:
-    class openItem : public toResultViewItem
-    {
-        toRollbackOpen *parent(void)
+        struct statementData
         {
-            return (toRollbackOpen *)listView();
-        }
+            std::list<double> OpenExt;
+            QString Opened;
+            int Executed;
+            int BufferGets;
+            int Shown;
+        };
+
+        typedef std::map<QString, statementData> statements;
+        statements Statements;
+        int NumExtents;
+        std::list<double> CurExt;
+        std::list<double> MaxExt;
     public:
-        openItem(toTreeWidget *parent, toTreeWidgetItem *after, const QString &buf = QString::null)
-            : toResultViewItem(parent, after, buf)
-        { }
-        virtual void paintCell (QPainter *pnt, const QColorGroup & cg,
-                                int column, int width, int alignment)
+        class openItem : public toResultViewItem
         {
-            if (column == 2)
-            {
-                QString address = text(4);
-                std::list<double> &StartExt = parent()->Statements[address].OpenExt;
-                PaintBars(this, pnt, cg, width, StartExt, parent()->MaxExt, parent()->CurExt);
-            }
-            else
-                toResultViewItem::paintCell(pnt, cg, column, width, alignment);
-        }
-
-        virtual int width(const QFontMetrics &fm, const toTreeWidget *top, int column) const
-        {
-            if (column == 2)
-                return 100;
-            else
-                return toResultViewItem::width(fm, top, column);
-        }
-
-        virtual void setup(void)
-        {
-            QString address = text(3);
-            statementData &data = parent()->Statements[address];
-            toResultViewItem::setup();
-            setHeight((std::max)(toResultViewItem::height(), int(MIN_HEIGHT * data.OpenExt.size())));
-        }
-    };
-
-    friend class openItem;
-
-    virtual toTreeWidgetItem *createItem(toTreeWidgetItem *last, const QString &str)
-    {
-        return new openItem(this, last, str);
-    }
-
-    toRollbackOpen(QWidget *parent)
-        : toResultView(false, false, parent)
-    {
-        addColumn(qApp->translate("toRollbackOpen", "Started"));
-        addColumn(qApp->translate("toRollbackOpen", "User"));
-        addColumn(qApp->translate("toRollbackOpen", "Snapshot"));
-        addColumn(qApp->translate("toRollbackOpen", "SQL"));
-        setSorting(0);
-        NumExtents = 0;
-        setSQLName(QString::fromLatin1("toRollbackOpen"));
-    }
-
-    virtual void query(const QString &, const toQueryParams &)
-    {
-        try
-        {
-            clear();
-            toConnectionSubLoan conn(connection());
-            Utils::toBusy busy;
-            toQuery sql(conn, SQLStatementInfo, toQueryParams());
-            toTreeWidgetItem *last = NULL;
-            while (!sql.eof())
-            {
-                toTreeWidgetItem *item = createItem(last, QString::null);
-                last = item;
-                item->setText(0, (QString)sql.readValue());
-                item->setText(1, (QString)sql.readValue());
-                item->setText(3, (QString)sql.readValue());
-                item->setText(4, (QString)sql.readValue());
-                item->setText(5, (QString)sql.readValue());
-                item->setText(6, (QString)sql.readValue());
-            }
-
-            toQuery rlb(conn, SQLCurrentExtent, toQueryParams());
-
-            CurExt.clear();
-            MaxExt.clear();
-
-            int num = 0;
-            while (!rlb.eof())
-            {
-                MaxExt.insert(MaxExt.end(), rlb.readValue().toDouble());
-                CurExt.insert(CurExt.end(), rlb.readValue().toDouble());
-                num++;
-            }
-            statementData data;
-            data.Shown = 0;
-            data.OpenExt = CurExt;
-            if (num != NumExtents)
-            {
-                Statements.clear();
-                NumExtents = num;
-            }
-
-            bool noExec = toConfigurationNewSingle::Instance().option(ToConfiguration::Rollback::NoExecBool).toBool();
-            bool needRead = toConfigurationNewSingle::Instance().option(ToConfiguration::Rollback::NeedReadBool).toBool();
-            bool needTwo = toConfigurationNewSingle::Instance().option(ToConfiguration::Rollback::NeedTwoBool).toBool();
-
-            std::map<QString, int> Exists;
-            for (toTreeWidgetItem *i = firstChild(); i;)
-            {
-                QString address = i->text(4);
-                Exists[address] = 1;
-                statements::iterator j = Statements.find(address);
-                int exec = i->text(5).toInt();
-                int bufget = i->text(6).toInt();
-                if (j == Statements.end() ||
-                        ((*j).second.Executed != exec && noExec))
+                toRollbackOpen *parent(void)
                 {
-                    data.Opened = i->text(0);
-                    data.Executed = exec;
-                    data.BufferGets = bufget;
-                    Statements[address] = data;
-                    toTreeWidgetItem *next = i->nextSibling();
-                    if (needTwo)
+                    return (toRollbackOpen *)listView();
+                }
+            public:
+                openItem(toTreeWidget *parent, toTreeWidgetItem *after, const QString &buf = QString::null)
+                    : toResultViewItem(parent, after, buf)
+                { }
+                virtual void paintCell (QPainter *pnt, const QColorGroup & cg,
+                                        int column, int width, int alignment)
+                {
+                    if (column == 2)
+                    {
+                        QString address = text(4);
+                        std::list<double> &StartExt = parent()->Statements[address].OpenExt;
+                        PaintBars(this, pnt, cg, width, StartExt, parent()->MaxExt, parent()->CurExt);
+                    }
+                    else
+                        toResultViewItem::paintCell(pnt, cg, column, width, alignment);
+                }
+
+                virtual int width(const QFontMetrics &fm, const toTreeWidget *top, int column) const
+                {
+                    if (column == 2)
+                        return 100;
+                    else
+                        return toResultViewItem::width(fm, top, column);
+                }
+
+                virtual void setup(void)
+                {
+                    QString address = text(3);
+                    statementData &data = parent()->Statements[address];
+                    toResultViewItem::setup();
+                    setHeight((std::max)(toResultViewItem::height(), int(MIN_HEIGHT * data.OpenExt.size())));
+                }
+        };
+
+        friend class openItem;
+
+        virtual toTreeWidgetItem *createItem(toTreeWidgetItem *last, const QString &str)
+        {
+            return new openItem(this, last, str);
+        }
+
+        toRollbackOpen(QWidget *parent)
+            : toResultView(false, false, parent)
+        {
+            addColumn(qApp->translate("toRollbackOpen", "Started"));
+            addColumn(qApp->translate("toRollbackOpen", "User"));
+            addColumn(qApp->translate("toRollbackOpen", "Snapshot"));
+            addColumn(qApp->translate("toRollbackOpen", "SQL"));
+            setSorting(0);
+            NumExtents = 0;
+            setSQLName(QString::fromLatin1("toRollbackOpen"));
+        }
+
+        virtual void query(const QString &, const toQueryParams &)
+        {
+            try
+            {
+                clear();
+                toConnectionSubLoan conn(connection());
+                Utils::toBusy busy;
+                toQuery sql(conn, SQLStatementInfo, toQueryParams());
+                toTreeWidgetItem *last = NULL;
+                while (!sql.eof())
+                {
+                    toTreeWidgetItem *item = createItem(last, QString::null);
+                    last = item;
+                    item->setText(0, (QString)sql.readValue());
+                    item->setText(1, (QString)sql.readValue());
+                    item->setText(3, (QString)sql.readValue());
+                    item->setText(4, (QString)sql.readValue());
+                    item->setText(5, (QString)sql.readValue());
+                    item->setText(6, (QString)sql.readValue());
+                }
+
+                toQuery rlb(conn, SQLCurrentExtent, toQueryParams());
+
+                CurExt.clear();
+                MaxExt.clear();
+
+                int num = 0;
+                while (!rlb.eof())
+                {
+                    MaxExt.insert(MaxExt.end(), rlb.readValue().toDouble());
+                    CurExt.insert(CurExt.end(), rlb.readValue().toDouble());
+                    num++;
+                }
+                statementData data;
+                data.Shown = 0;
+                data.OpenExt = CurExt;
+                if (num != NumExtents)
+                {
+                    Statements.clear();
+                    NumExtents = num;
+                }
+
+                bool noExec = toConfigurationNewSingle::Instance().option(ToConfiguration::Rollback::NoExecBool).toBool();
+                bool needRead = toConfigurationNewSingle::Instance().option(ToConfiguration::Rollback::NeedReadBool).toBool();
+                bool needTwo = toConfigurationNewSingle::Instance().option(ToConfiguration::Rollback::NeedTwoBool).toBool();
+
+                std::map<QString, int> Exists;
+                for (toTreeWidgetItem *i = firstChild(); i;)
+                {
+                    QString address = i->text(4);
+                    Exists[address] = 1;
+                    statements::iterator j = Statements.find(address);
+                    int exec = i->text(5).toInt();
+                    int bufget = i->text(6).toInt();
+                    if (j == Statements.end() ||
+                            ((*j).second.Executed != exec && noExec))
+                    {
+                        data.Opened = i->text(0);
+                        data.Executed = exec;
+                        data.BufferGets = bufget;
+                        Statements[address] = data;
+                        toTreeWidgetItem *next = i->nextSibling();
+                        if (needTwo)
+                            delete i;
+                        i = next;
+                    }
+                    else if ((*j).second.BufferGets == bufget && needRead)
+                    {
+                        // Don't reset, just don't show
+                        toTreeWidgetItem *next = i->nextSibling();
                         delete i;
-                    i = next;
+                        i = next;
+                    }
+                    else
+                    {
+                        i->setText(0, (*j).second.Opened);
+                        i = i->nextSibling();
+                        (*j).second.BufferGets = bufget;
+                    }
                 }
-                else if ((*j).second.BufferGets == bufget && needRead)
+                sort();
+
+                // Erase unused
+
+                for (statements::iterator j = Statements.begin(); j != Statements.end(); j++)
                 {
-                    // Don't reset, just don't show
-                    toTreeWidgetItem *next = i->nextSibling();
-                    delete i;
-                    i = next;
-                }
-                else
-                {
-                    i->setText(0, (*j).second.Opened);
-                    i = i->nextSibling();
-                    (*j).second.BufferGets = bufget;
+                    if (Exists.find((*j).first) == Exists.end())
+                    {
+                        Statements.erase((*j).first);
+                        j = Statements.begin();
+                    }
                 }
             }
-            sort();
-
-            // Erase unused
-
-            for (statements::iterator j = Statements.begin(); j != Statements.end(); j++)
-            {
-                if (Exists.find((*j).first) == Exists.end())
-                {
-                    Statements.erase((*j).first);
-                    j = Statements.begin();
-                }
-            }
+            TOCATCH
         }
-        TOCATCH
-    }
 };
 
 toSQL SQLTransactionUsers("toRollback:TransactionUsers",
@@ -533,7 +538,7 @@ toSQL SQLTransactionUsers("toRollback:TransactionUsers",
 
 toRollback::toRollback(QWidget *main, toConnection &connection)
     : toToolWidget(RollbackTool, "rollback.html", main, connection, "toRollback")
-	, ToolMenu(NULL)
+    , ToolMenu(NULL)
 {
     QToolBar *toolbar = Utils::toAllocBar(this, tr("Rollback analyzer"));
     layout()->addWidget(toolbar);
@@ -657,7 +662,7 @@ void toRollback::slotWindowActivated(toToolWidget *widget)
 
             ToolMenu->addSeparator();
 
-	    toGlobalEventSingle::Instance().addCustomMenu(ToolMenu);
+            toGlobalEventSingle::Instance().addCustomMenu(ToolMenu);
         }
     }
     else
@@ -728,11 +733,11 @@ void toRollback::addSegment(void)
         if (newSegment.exec())
         {
             std::list<QString> sql = newSegment.sql();
-			toConnectionSubLoan conn(connection());
+            toConnectionSubLoan conn(connection());
             for (std::list<QString>::iterator i = sql.begin(); i != sql.end(); i++)
-			{
-				toQuery q(conn, *i, toQueryParams());
-			}
+            {
+                toQuery q(conn, *i, toQueryParams());
+            }
             refresh();
         }
     }
@@ -748,7 +753,7 @@ void toRollback::offline(void)
         str = QString::fromLatin1("ALTER ROLLBACK SEGMENT \"");
         str.append(currentSegment());
         str.append(QString::fromLatin1("\" OFFLINE"));
-		toQuery q(conn, str, toQueryParams());
+        toQuery q(conn, str, toQueryParams());
         refresh();
     }
     TOCATCH

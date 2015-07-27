@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -67,34 +67,38 @@
 
 QVariant ToConfiguration::Storage::defaultValue(int option) const
 {
-	switch(option)
-	{
-	case DispTablespacesBool:  return QVariant((bool)true);
-	case DispCoalescedBool:    return QVariant((bool)false);
-	case DispExtentsBool:      return QVariant((bool)false);
-	case DispAvailableGraphBool:   return QVariant((bool)true);
-	default:
-		Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Storage un-registered enum value: %1").arg(option)));
-		return QVariant();
-	}
+    switch (option)
+    {
+        case DispTablespacesBool:
+            return QVariant((bool)true);
+        case DispCoalescedBool:
+            return QVariant((bool)false);
+        case DispExtentsBool:
+            return QVariant((bool)false);
+        case DispAvailableGraphBool:
+            return QVariant((bool)true);
+        default:
+            Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Storage un-registered enum value: %1").arg(option)));
+            return QVariant();
+    }
 }
 
 class toStorageSetting
-	: public QWidget
-	, public Ui::toStoragePrefsUI
-	, public toSettingTab
+    : public QWidget
+    , public Ui::toStoragePrefsUI
+    , public toSettingTab
 {
-    toTool *Tool;
+        toTool *Tool;
 
-public:
-    toStorageSetting(toTool *tool, QWidget* parent = 0, const char* name = 0);
-    virtual void saveSetting(void);
+    public:
+        toStorageSetting(toTool *tool, QWidget* parent = 0, const char* name = 0);
+        virtual void saveSetting(void);
 };
 
 toStorageSetting::toStorageSetting(toTool *tool, QWidget* parent, const char* name)
     : QWidget(parent)
-	, toSettingTab("storage.html")
-	, Tool(tool)
+    , toSettingTab("storage.html")
+    , Tool(tool)
 {
     setupUi(this);
     if (name)
@@ -104,35 +108,35 @@ toStorageSetting::toStorageSetting(toTool *tool, QWidget* parent, const char* na
 
 void toStorageSetting::saveSetting(void)
 {
-	toSettingTab::saveSettings(this);
+    toSettingTab::saveSettings(this);
 }
 
 class toStorageTool : public toTool
 {
-protected:
-    virtual const char **pictureXPM(void)
-    {
-        return const_cast<const char**>(tostorage_xpm);
-    }
-public:
-    toStorageTool()
-        : toTool(50, "Storage Manager")
-    { }
-    virtual const char *menuItem()
-    {
-        return "Storage Manager";
-    }
-    virtual toToolWidget* toolWindow(QWidget *parent, toConnection &connection)
-    {
-        return new toStorage(parent, connection);
-    }
-    virtual QWidget *configurationTab(QWidget *parent)
-    {
-        return new toStorageSetting(this, parent);
-    }
-    virtual void closeWindow(toConnection &connection) {};
-private:
-    static ToConfiguration::Storage s_storageConf;
+    protected:
+        virtual const char **pictureXPM(void)
+        {
+            return const_cast<const char**>(tostorage_xpm);
+        }
+    public:
+        toStorageTool()
+            : toTool(50, "Storage Manager")
+        { }
+        virtual const char *menuItem()
+        {
+            return "Storage Manager";
+        }
+        virtual toToolWidget* toolWindow(QWidget *parent, toConnection &connection)
+        {
+            return new toStorage(parent, connection);
+        }
+        virtual QWidget *configurationTab(QWidget *parent)
+        {
+            return new toStorageSetting(this, parent);
+        }
+        virtual void closeWindow(toConnection &connection) {};
+    private:
+        static ToConfiguration::Storage s_storageConf;
 };
 
 toDropTablespace::toDropTablespace(QWidget* parent, const char* name, toWFlags fl)
@@ -708,106 +712,106 @@ std::list<QString> toStorageDialog::sql(void)
         std::list<QString> ret;
         switch (Mode)
         {
-        case DropTablespace:
-        {
-            QString start = QString::fromLatin1("DROP TABLESPACE \"");
-            start += TablespaceOrig;
-            start += QString::fromLatin1("\" ");
-            if (Drop)
-            {
-                std::list<QString> lst = Drop->sql();
-                for (std::list<QString>::iterator i = lst.begin(); i != lst.end(); i++)
+            case DropTablespace:
                 {
-                    start += QString::fromLatin1(" ");
-                    start += *i;
+                    QString start = QString::fromLatin1("DROP TABLESPACE \"");
+                    start += TablespaceOrig;
+                    start += QString::fromLatin1("\" ");
+                    if (Drop)
+                    {
+                        std::list<QString> lst = Drop->sql();
+                        for (std::list<QString>::iterator i = lst.begin(); i != lst.end(); i++)
+                        {
+                            start += QString::fromLatin1(" ");
+                            start += *i;
+                        }
+                    }
+                    Utils::toPush(ret, start);
                 }
-            }
-            Utils::toPush(ret, start);
-        }
-        break;
-        case ModifyDatafile:
-        {
-            QString start = QString::fromLatin1("ALTER DATABASE ");
-            std::list<QString> lst = Datafile->sql();
-            for (std::list<QString>::iterator i = lst.begin(); i != lst.end(); i++)
-            {
-                QString t = start;
-                t += *i;
-                Utils::toPush(ret, t);
-            }
-        }
-        break;
-        case ModifyTablespace:
-        {
-            QString start = QString::fromLatin1("ALTER TABLESPACE \"");
-            start += TablespaceOrig;
-            start += QString::fromLatin1("\" ");
-            std::list<QString> lst = Tablespace->sql();
-            for (std::list<QString>::iterator i = lst.begin(); i != lst.end(); i++)
-            {
-                QString t = start;
-                t += *i;
-                Utils::toPush(ret, t);
-            }
-            if (Tablespace->allowStorage())
-            {
-                start += QString::fromLatin1("DEFAULT ");
-                std::list<QString> lst = Default->sql();
-                for (std::list<QString>::iterator i = lst.begin(); i != lst.end(); i++)
+                break;
+            case ModifyDatafile:
                 {
-                    QString t = start;
-                    t += *i;
-                    Utils::toPush(ret, t);
+                    QString start = QString::fromLatin1("ALTER DATABASE ");
+                    std::list<QString> lst = Datafile->sql();
+                    for (std::list<QString>::iterator i = lst.begin(); i != lst.end(); i++)
+                    {
+                        QString t = start;
+                        t += *i;
+                        Utils::toPush(ret, t);
+                    }
                 }
-            }
-        }
-        break;
-        case NewDatafile:
-        {
-            QString start = QString::fromLatin1("ALTER TABLESPACE \"");
-            start += TablespaceOrig;
-            start += QString::fromLatin1("\" ADD ");
-            std::list<QString> lst = Datafile->sql();
-            for (std::list<QString>::iterator i = lst.begin(); i != lst.end(); i++)
-            {
-                start += QString::fromLatin1(" ");
-                start += *i;
-            }
-            Utils::toPush(ret, start);
-        }
-        break;
-        case NewTablespace:
-        {
-            QString start = QString::fromLatin1("CREATE TABLESPACE \"");
-            start += Datafile->getName().toUpper();
-            start += QString::fromLatin1("\" ");
-            std::list<QString> lst = Datafile->sql();
-            {
-                for (std::list<QString>::iterator i = lst.begin(); i != lst.end(); i++)
+                break;
+            case ModifyTablespace:
                 {
-                    start += QString::fromLatin1(" ");
-                    start += *i;
+                    QString start = QString::fromLatin1("ALTER TABLESPACE \"");
+                    start += TablespaceOrig;
+                    start += QString::fromLatin1("\" ");
+                    std::list<QString> lst = Tablespace->sql();
+                    for (std::list<QString>::iterator i = lst.begin(); i != lst.end(); i++)
+                    {
+                        QString t = start;
+                        t += *i;
+                        Utils::toPush(ret, t);
+                    }
+                    if (Tablespace->allowStorage())
+                    {
+                        start += QString::fromLatin1("DEFAULT ");
+                        std::list<QString> lst = Default->sql();
+                        for (std::list<QString>::iterator i = lst.begin(); i != lst.end(); i++)
+                        {
+                            QString t = start;
+                            t += *i;
+                            Utils::toPush(ret, t);
+                        }
+                    }
                 }
-            }
-            lst = Tablespace->sql();
-            for (std::list<QString>::iterator i = lst.begin(); i != lst.end(); i++)
-            {
-                start += QString::fromLatin1(" ");
-                start += *i;
-            }
-            if (Tablespace->allowStorage())
-            {
-                start += QString::fromLatin1(" DEFAULT");
-                lst = Default->sql();
-                for (std::list<QString>::iterator i = lst.begin(); i != lst.end(); i++)
+                break;
+            case NewDatafile:
                 {
-                    start += QString::fromLatin1(" ");
-                    start += *i;
+                    QString start = QString::fromLatin1("ALTER TABLESPACE \"");
+                    start += TablespaceOrig;
+                    start += QString::fromLatin1("\" ADD ");
+                    std::list<QString> lst = Datafile->sql();
+                    for (std::list<QString>::iterator i = lst.begin(); i != lst.end(); i++)
+                    {
+                        start += QString::fromLatin1(" ");
+                        start += *i;
+                    }
+                    Utils::toPush(ret, start);
                 }
-            }
-            Utils::toPush(ret, start);
-        }
-        break;
+                break;
+            case NewTablespace:
+                {
+                    QString start = QString::fromLatin1("CREATE TABLESPACE \"");
+                    start += Datafile->getName().toUpper();
+                    start += QString::fromLatin1("\" ");
+                    std::list<QString> lst = Datafile->sql();
+                    {
+                        for (std::list<QString>::iterator i = lst.begin(); i != lst.end(); i++)
+                        {
+                            start += QString::fromLatin1(" ");
+                            start += *i;
+                        }
+                    }
+                    lst = Tablespace->sql();
+                    for (std::list<QString>::iterator i = lst.begin(); i != lst.end(); i++)
+                    {
+                        start += QString::fromLatin1(" ");
+                        start += *i;
+                    }
+                    if (Tablespace->allowStorage())
+                    {
+                        start += QString::fromLatin1(" DEFAULT");
+                        lst = Default->sql();
+                        for (std::list<QString>::iterator i = lst.begin(); i != lst.end(); i++)
+                        {
+                            start += QString::fromLatin1(" ");
+                            start += *i;
+                        }
+                    }
+                    Utils::toPush(ret, start);
+                }
+                break;
         }
         return ret;
     }
@@ -826,7 +830,7 @@ static toStorageTool StorageTool;
 toStorage::toStorage(QWidget *main, toConnection &connection)
     : toToolWidget(StorageTool, "storage.html", main, connection, "toStorage")
 {
-	using namespace ToConfiguration;
+    using namespace ToConfiguration;
 
     QToolBar *toolbar = Utils::toAllocBar(this, tr("Storage manager"));
     layout()->addWidget(toolbar);
@@ -1021,7 +1025,7 @@ void toStorage::slotWindowActivated(toToolWidget* widget)
             ToolMenu->addAction(CoalesceAct);
             ToolMenu->addAction(MoveFileAct);
 
-	    toGlobalEventSingle::Instance().addCustomMenu(ToolMenu);
+            toGlobalEventSingle::Instance().addCustomMenu(ToolMenu);
         }
     }
     else
@@ -1138,14 +1142,14 @@ void toStorage::offline(void)
                                           dsc,
                                           tr("Normal"), tr("Temporary"), tr("Cancel")))
         {
-        case 0:
-            reason = QString::fromLatin1("NORMAL");
-            break;
-        case 1:
-            reason = QString::fromLatin1("TEMPORARY");
-            break;
-        default:
-            return ;
+            case 0:
+                reason = QString::fromLatin1("NORMAL");
+                break;
+            case 1:
+                reason = QString::fromLatin1("TEMPORARY");
+                break;
+            default:
+                return ;
         }
         QString str;
         toConnectionSubLoan connSub(connection());
@@ -1422,7 +1426,7 @@ void toStorageObjectModel::setValues(std::list<toStorageExtent::extentTotal> con
     m_values.clear();
     for (std::list<toStorageExtent::extentTotal>::const_iterator i = values.begin(); i != values.end(); ++i)
         m_values.append((*i));
-    endResetModel();    
+    endResetModel();
 }
 
 int toStorageObjectModel::rowCount(const QModelIndex & parent) const
@@ -1453,23 +1457,23 @@ QVariant toStorageObjectModel::data(const QModelIndex & index, int role) const
         toStorageExtent::extentTotal e = m_values.at(index.row());
         switch (index.column())
         {
-        case 0:
-            return e.Owner;
-            break;
-        case 1:
-            return e.Table;
-            break;
-        case 2:
-            return e.Partition;
-            break;
-        case 3:
-            return e.Extents;
-            break;
-        case 4:
-            return e.Size;
-            break;
-        default:
-            return "Never should go here";
+            case 0:
+                return e.Owner;
+                break;
+            case 1:
+                return e.Table;
+                break;
+            case 2:
+                return e.Partition;
+                break;
+            case 3:
+                return e.Extents;
+                break;
+            case 4:
+                return e.Size;
+                break;
+            default:
+                return "Never should go here";
         };
     };
     // safe return

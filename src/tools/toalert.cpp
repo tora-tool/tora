@@ -2,32 +2,32 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
- * 
+ *
  * Shared/mixed copyright is held throughout files in this product
- * 
+ *
  * Portions Copyright (C) 2000-2001 Underscore AB
  * Portions Copyright (C) 2003-2005 Quest Software, Inc.
  * Portions Copyright (C) 2004-2013 Numerous Other Contributors
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation;  only version 2 of
  * the License is valid for this program.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program as the file COPYING.txt; if not, please see
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt.
- * 
+ *
  *      As a special exception, you have permission to link this program
  *      with the Oracle Client libraries and distribute executables, as long
  *      as you follow the requirements of the GNU GPL in regard to all of the
  *      software in the executable aside from Oracle client libraries.
- * 
+ *
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
@@ -64,42 +64,42 @@
 
 class toAlertTool : public toTool
 {
-protected:
-    std::map<toConnection *, QWidget *> Windows;
+    protected:
+        std::map<toConnection *, QWidget *> Windows;
 
-    virtual const char **pictureXPM(void)
-    {
-        return const_cast<const char**>(toalert_xpm);
-    }
-public:
-    toAlertTool()
-        : toTool(330, "Alert Messenger")
-    { }
-    virtual const char *menuItem()
-    {
-        return "Alert Messenger";
-    }
-    virtual toToolWidget *toolWindow(QWidget *parent, toConnection &connection)
-    {
-        std::map<toConnection *, QWidget *>::iterator i = Windows.find(&connection);
-        if (i != Windows.end())
+        virtual const char **pictureXPM(void)
         {
-            (*i).second->setFocus();
-            return NULL;
+            return const_cast<const char**>(toalert_xpm);
         }
-        else
+    public:
+        toAlertTool()
+            : toTool(330, "Alert Messenger")
+        { }
+        virtual const char *menuItem()
         {
-            QWidget *window = new toAlert(parent, connection);
-            Windows[&connection] = window;
-            return window;
+            return "Alert Messenger";
         }
-    }
-    virtual void closeWindow(toConnection &connection)
-    {
-        std::map<toConnection *, QWidget *>::iterator i = Windows.find(&connection);
-        if (i != Windows.end())
-            Windows.erase(i);
-    }
+        virtual toToolWidget *toolWindow(QWidget *parent, toConnection &connection)
+        {
+            std::map<toConnection *, QWidget *>::iterator i = Windows.find(&connection);
+            if (i != Windows.end())
+            {
+                (*i).second->setFocus();
+                return NULL;
+            }
+            else
+            {
+                QWidget *window = new toAlert(parent, connection);
+                Windows[&connection] = window;
+                return window;
+            }
+        }
+        virtual void closeWindow(toConnection &connection)
+        {
+            std::map<toConnection *, QWidget *>::iterator i = Windows.find(&connection);
+            if (i != Windows.end())
+                Windows.erase(i);
+        }
 };
 
 static toAlertTool AlertTool;
@@ -216,7 +216,7 @@ toAlert::toAlert(QWidget *main, toConnection &connection)
     {
         TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
         Utils::toStatusMessage(tr("Failed to start polling thread, try closing "
-                           "some other tools and restart Alert Messenger"));
+                                  "some other tools and restart Alert Messenger"));
         State = Done;
     }
 
@@ -258,7 +258,7 @@ toAlert::~toAlert()
 
 void toAlert::closeEvent(QCloseEvent *event)
 {
-    if(State == Done)
+    if (State == Done)
     {
         AlertTool.closeWindow(connection());
         return;
