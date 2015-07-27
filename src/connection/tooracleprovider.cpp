@@ -239,57 +239,74 @@ QList<QString> toOracleProvider::databases(const QString &host, const QString &u
 
     foreach(QString filename, tnsnames)
     {
+        // This block of code parses TNS file and extract all DB's from it
         QFile file(filename);
         int begname = -1;
         int parambeg = -1;
         int pos = 0;
         int param = 0;
-        QByteArray barray;
-        const char *buf;
+        QString tns_file;
 
         try
         {
-            barray = Utils::toReadFileB(filename);
-            buf = barray.constData();
+            // we read the tns file as a QString this should be safe for all possible encodings this file might have,
+            // unlike if we read it as a byte data using QByteArray.
+            tns_file = Utils::toReadFile(filename);
             TLOG(0, toDecorator, __HERE__)
                     << "--------------------------------------------------------------------------------" << std::endl
                     << "File read: " << filename << std::endl;
         }
         catch ( QString const &e )
         {
+            // If we can't open the file we throw an exception with information why it failed
             TOMessageBox::warning(
                 Utils::toQMainWindow(),
-                QT_TRANSLATE_NOOP("toReadFileB", "File error"),
-                QT_TRANSLATE_NOOP("toReadFileB", QString("Couldn't open %1 for readonly: %2").arg(filename).arg(e)));
+                QT_TRANSLATE_NOOP("toReadFile", "File error"),
+                QT_TRANSLATE_NOOP("toReadFile", QString("Couldn't open %1 for readonly: %2").arg(filename).arg(e)));
             goto next;
         }
 
-        while (pos < barray.size())
+        // Parse the TNS file and get a list of database instances we have in it
+        while (pos < tns_file.size())
         {
-            if (buf[pos] == '#')
+            if (tns_file[pos] == '#')
             {
-                while (pos < barray.size() && buf[pos] != '\n')
+                // Comment line can be skipped, move to end of line and continue with a next one
+                while (pos < tns_file.size() && tns_file[pos] != '\n')
                     pos++;
             }
-            else if (buf[pos] == '=')
+            else if (tns_file[pos] == '=')
             {
-                if (param == 0)
+                // If there is an equal sign we process this line
+                // For every parameter in brackets we increment the param variable so that if there is 0 it means we are in lowest level which is
+                // name of database in tns file
+                if (param == 0 && begname >= 0)
                 {
-                    if (begname >= 0 && !host.isEmpty())
-                        ret.insert(ret.end(), QString::fromLatin1(buf + begname, pos - begname));
+                    QString line = tns_file.mid(begname, pos - begname);
+                    // If there is some garbage in name of DB, such as newlines, we probably parsed something we didn't want to,
+                    // we should skip this
+                    if (line.contains('\n'))
+                        TLOG(0, toDecorator, __HERE__) << "Garbage TNS database name skipped: " << line << std::endl;
+                    else if (ret.contains(line))
+                        TLOG(0, toDecorator, __HERE__) << "Duplicate TNS database name skipped: " << line << std::endl;
+                    else if (begname >= 0 && !host.isEmpty())
+                        ret.insert(ret.end(), line);
                 }
             }
-            else if (buf[pos] == '(')
+            else if (tns_file[pos] == '(')
             {
+                // We entered some subparameter of tns record
                 begname = -1;
                 parambeg = pos + 1;
                 param++;
             }
-            else if (buf[pos] == ')')
+            else if (tns_file[pos] == ')')
             {
+                // We left a subparameter of tns record
                 if (parambeg >= 0 && host.isEmpty())
                 {
-                    QString tmp = QString::fromLatin1(buf + parambeg, pos - parambeg);
+                    // If the database has no name but has some SID, we use its SID instead:
+                    QString tmp = tns_file.mid(parambeg, pos - parambeg);
                     tmp.replace(QRegExp(QString::fromLatin1("\\s+")), QString::null);
                     if (tmp.toLower().startsWith(QString::fromLatin1("sid=")))
                         ret.insert(ret.end(), tmp.mid(4));
@@ -298,7 +315,7 @@ QList<QString> toOracleProvider::databases(const QString &host, const QString &u
                 parambeg = -1;
                 param--;
             }
-            else if (!isspace(buf[pos]) && begname < 0)
+            else if (!tns_file[pos].isSpace() && begname < 0)
             {
                 begname = pos;
             }
@@ -306,8 +323,12 @@ QList<QString> toOracleProvider::databases(const QString &host, const QString &u
         }
     next:
         ;;
-    } // foreach(QString str, tnsnames)
+    }
 
+    // This returns only a list of databases that are in TNS file, with no other information, which is likely somewhat ineffective given that we already processed
+    // whole file and have all that information.
+    //! \todo The information of all databases should be stored in some structure in memory that contains all stuff that is in TNS file, so that we for example
+    //        know the hostname of database, port and so on.
     qSort(ret);
     return ret;
 }
