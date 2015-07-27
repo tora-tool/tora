@@ -390,7 +390,7 @@ namespace Utils
     * @return Contents of file.
     * @exception QString describing I/O problem.
     */
-    QString toReadFile(const QString &filename);
+    TORA_EXPORT QString toReadFile(const QString &filename);
 
     /** Read file from filename and return it as binary data (no decoding).
     * @param filename Filename to read file from.
