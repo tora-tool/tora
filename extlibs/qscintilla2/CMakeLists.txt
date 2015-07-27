@@ -7,8 +7,8 @@ ADD_DEFINITIONS("-DQSCINTILLA_MAKE_DLL")
 ADD_DEFINITIONS("-DSCINTILLA_QT")
 
 SET(qsciscintilla_VERSION_MAJOR 2)
-SET(qsciscintilla_VERSION_MINOR 8)
-SET(qsciscintilla_VERSION_PATCH 4)
+SET(qsciscintilla_VERSION_MINOR 9)
+SET(qsciscintilla_VERSION_PATCH 0)
 SET(qsciscintilla_VERSION ${qsciscintilla_VERSION_MAJOR}.${qsciscintilla_VERSION_MINOR}.${qsciscintilla_VERSION_PATCH})
 
 FILE(GLOB TORA_QSCINTILLA2_MOC_CLASSES "include/*.h" "lexlib/*.h" "Qt4Qt5/*.h" "Qt4Qt5/Qsci/*.h" "src/*.h")
