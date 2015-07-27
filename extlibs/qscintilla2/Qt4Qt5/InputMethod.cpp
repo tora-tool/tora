@@ -1,4 +1,4 @@
-// Copyright (c) 2014 Riverbank Computing Limited
+// Copyright (c) 2015 Riverbank Computing Limited
 // Copyright (c) 2011 Archaeopteryx Software, Inc.
 // Copyright (c) 1990-2011, Scientific Toolworks, Inc.
 //
@@ -7,7 +7,6 @@
 
 
 #include <qglobal.h>
-
 
 #include "Qsci/qsciscintillabase.h"
 
@@ -137,7 +136,7 @@ QVariant QsciScintillaBase::inputMethodQuery(Qt::InputMethodQuery query) const
         {
             char fontName[64];
             int style = SendScintilla(SCI_GETSTYLEAT, pos);
-            int len = SendScintilla(SCI_STYLEGETFONT, style, (sptr_t)fontName);
+            int len = SendScintilla(SCI_STYLEGETFONT, style, (void*)fontName);
             int size = SendScintilla(SCI_STYLEGETSIZE, style);
             bool italic = SendScintilla(SCI_STYLEGETITALIC, style);
             int weight = SendScintilla(SCI_STYLEGETBOLD, style) ? QFont::Bold : -1;
@@ -181,4 +180,3 @@ QVariant QsciScintillaBase::inputMethodQuery(Qt::InputMethodQuery query) const
             return QVariant();
     }
 }
-
