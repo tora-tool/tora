@@ -1,0 +1,33 @@
+########################################
+#             MSVC Build               #
+########################################
+
+**/*.cxx
+**/*.cxx_parameters
+**/*.vcxproj
+**/*.vcxproj.filters
+**/CMakeFiles/
+*/Debug
+*/*/Debug
+*/*/*_lib.dir
+extlibs/trotl/src/trotl.dir/
+#**/Release/
+**/cmake_install.cmake
+**/*.depends
+**/*.sln
+CMakeCache.txt
+CPackConfig.cmake
+CPackSourceConfig.cmake
+TOra.opensdf
+TOra.sdf
+cmake_uninstall.cmake
+# generated source(s)
+toversion.h
+gitrevision.h
+gitrevision.h.txt
+gitrevision.txt
+src/ui_*.h
+src/tora_toad.qm
+
+
+.gitignore~
