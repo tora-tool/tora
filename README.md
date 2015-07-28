@@ -104,11 +104,11 @@ features that are available so far is (As of version 1.2):
 * Full UNICODE support
 * Printing of any list, text or chart
 
-For installation instructions se the file INSTALL.
+For installation instructions see the file INSTALL.
 
 TOra is developed by a community of Open Source developers. The original 
 (pre 1.3.15) development was done by Henrik Johnson of Quest Software, Inc.
 
-The homepage for the TOra project is http://tora.sourceforge.net. If you 
-encounter problems you can find both mailinglists and bugtracking tools 
-from this page.
+The homepage for the TOra project is at http://torasql.com/
+
+If you encounter problems you can send an e-mail to tora-develop@lists.sourceforge.net or create a ticket on github.
