@@ -1,0 +1,32 @@
+sudo: required
+language: cpp
+
+env:
+  - THENEEDFORTHIS=FAIL
+
+branches:
+  except:
+    - debian
+    - nightly/debian
+    - nightly/ubuntu
+    - ubuntu
+
+matrix:
+  include:
+    - env: QTTYPE=4
+    - env: QTTYPE=5
+  exclude:
+    - env: THENEEDFORTHIS=FAIL
+
+before_install: bash ./travis/before_install.sh
+install: bash ./travis/install.sh
+
+before_script: bash ./travis/before_script.sh
+script: bash ./travis/script.sh
+
+notifications:
+  irc:
+    channels:
+      - "chat.freenode.net#tora"
+    on_failure: always
+    on_success: change
