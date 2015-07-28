@@ -535,13 +535,13 @@ void toSecurityUser::changeUser(const QString &user)
             Name->setText(user);
 
             QString str(query.readValue());
-            if (str.startsWith(QString::fromLatin1("EXPIRED")))
+            if (str.contains(QString::fromLatin1("EXPIRED")))
             {
                 ExpirePassword->setChecked(true);
                 ExpirePassword->setEnabled(false);
                 OrgExpired = true;
             }
-            else if (str.startsWith(QString::fromLatin1("LOCKED")))
+            if (str.contains(QString::fromLatin1("LOCKED")))
             {
                 Locked->setChecked(true);
                 OrgLocked = true;
