@@ -7,17 +7,13 @@
 # QSCINTILLA_LIBRARY - where to find the QScintilla library (not for general use)
 
 # copyright (c) 2007 Thomas Moenicke thomas.moenicke@kdemail.net
+# copyright (c) 2015 swaechter (unknown SO hero)
 #
 # Redistribution and use is allowed according to the terms of the FreeBSD license.
-
-IF(NOT QT4_FOUND)
-    INCLUDE(FindQt4)
-ENDIF(NOT QT4_FOUND)
 
 SET(QSCINTILLA_FOUND FALSE)
 
 IF(QT4_FOUND)
-
     # macosx specific tests for frameworks and include paths
     set (FRAMEWORK_INCLUDE_DIR "")
     if (APPLE)
@@ -63,6 +59,46 @@ IF(QT4_FOUND)
 
     ENDIF (QSCINTILLA_LIBRARY AND QSCINTILLA_INCLUDE_DIR)
 ENDIF(QT4_FOUND)
+
+# Check
+IF(Qt5Widgets_FOUND)
+  # Iterate over the include list of the Qt5Widgets module
+  FOREACH(TEMPPATH ${Qt5Widgets_INCLUDE_DIRS})
+    # Check for a Qsci directory
+    FIND_PATH(QSCINTILLA_INCLUDE_DIR qsciglobal.h ${TEMPPATH}/Qsci)
+
+    # Found - break loop
+    IF(QSCINTILLA_INCLUDE_DIR)
+      BREAK()
+    ENDIF()
+  ENDFOREACH()
+
+  # Check
+  IF(QSCINTILLA_INCLUDE_DIR)
+
+    # Get Qt5Widgets library and cut off the library name
+    GET_TARGET_PROPERTY(QT5_WIDGETSLIBRARY Qt5::Widgets LOCATION)
+    GET_FILENAME_COMPONENT(QT5_WIDGETSLIBRARYPATH ${QT5_WIDGETSLIBRARY} PATH)
+
+    # Add library
+    SET(LIBRARYPATH ${QT5_WIDGETSLIBRARYPATH} "/usr/lib/" "/usr/local/lib")
+    MESSAGE(WARNING "LIBPATH \"${LIBRARYPATH}\"")
+
+    FIND_LIBRARY(QSCINTILLA_LIBRARY NAMES qt5scintilla2 libqscintilla2.a qscintilla2.lib PATHS ${LIBRARYPATH})
+
+    # Check
+    IF(QSCINTILLA_LIBRARY)
+      # Enable library
+      SET(QSCINTILLA_LIBRARIES ${QSCINTILLA_LIBRARY})
+      SET(QSCINTILLA_FOUND true)
+      MARK_AS_ADVANCED(QSCINTILLA_INCLUDE_DIR QSCINTILLA_LIBRARY)
+    ELSE()
+      MESSAGE(FATAL_ERROR "QScintilla2 library not found")
+    ENDIF()
+  ELSE()
+    MESSAGE(FATAL_ERROR "Cannot find QScintilla2 header")
+  ENDIF()
+ENDIF(Qt5Widgets_FOUND)
 
 IF (QSCINTILLA_FOUND)
   IF (NOT QScintilla_FIND_QUIETLY)
