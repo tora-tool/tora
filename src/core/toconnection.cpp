@@ -54,7 +54,8 @@ toConnection::toConnection(const QString &provider,
                            const QString &schema,
                            const QString &color,
                            const QSet<QString> &options)
-    : Provider(provider)
+    : Abort(false)
+    , Provider(provider)
     , User(user)
     , Password(password)
     , Host(host)
@@ -62,11 +63,10 @@ toConnection::toConnection(const QString &provider,
     , Color(color)
     , Options(options)
     , pConnectionImpl(NULL)
-    , pCache(NULL)
     , pTrait(NULL)
-    , Abort(false)
-    , LoanCnt(0)
     , ConnectionOptions(provider, host, database, user, password, schema, color , 0, options)
+    , pCache(NULL)
+    , LoanCnt(0)
 {
     pConnectionImpl = toConnectionProviderRegistrySing::Instance().get(provider).createConnectionImpl(*this);
     pTrait = toConnectionProviderRegistrySing::Instance().get(provider).createConnectionTrait();
@@ -89,7 +89,8 @@ toConnection::toConnection(const QString &provider,
 }
 
 toConnection::toConnection(const toConnectionOptions &opts)
-    : Provider(opts.provider)
+    : Abort(false)
+    , Provider(opts.provider)
     , User(opts.username)
     , Password(opts.password)
     , Host(opts.host)
@@ -97,11 +98,10 @@ toConnection::toConnection(const toConnectionOptions &opts)
     , Color(opts.color)
     , Options(opts.options)
     , pConnectionImpl(NULL)
-    , pCache(NULL)
     , pTrait(NULL)
-    , Abort(false)
-    , LoanCnt(0)
     , ConnectionOptions(opts)
+    , pCache(NULL)
+    , LoanCnt(0)
 {
     pConnectionImpl = toConnectionProviderRegistrySing::Instance().get(Provider).createConnectionImpl(*this);
     pTrait = toConnectionProviderRegistrySing::Instance().get(Provider).createConnectionTrait();
@@ -124,21 +124,21 @@ toConnection::toConnection(const toConnectionOptions &opts)
 }
 
 toConnection::toConnection(const toConnection &other)
-    : Provider(other.Provider)
+    : Abort(other.Abort)
+    , Provider(other.Provider)
     , User(other.User)
     , Password(other.Password)
     , Host(other.Host)
     , Database(other.Database)
-    , Version(other.Version)
     , Schema(other.Schema)
+    , Version(other.Version)
     , Color(other.Color)
     , Options(other.Options)
     , pConnectionImpl(NULL)
-    , pCache(NULL)
     , pTrait(other.pTrait)
-    , Abort(other.Abort)
-    , LoanCnt(0)
     , ConnectionOptions(other.ConnectionOptions)
+    , pCache(NULL)
+    , LoanCnt(0)
 {
     //tool Connection = toConnectionProvider::connection(Provider, this);
     //ConnectionPool = new toConnectionPool(this);

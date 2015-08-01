@@ -37,12 +37,12 @@
 
 toDebugText::toDebugText(QWidget *parent, const char *name)
     : toSqlText(parent)
-    , m_errorMarginHandle(QsciScintilla::markerDefine(QsciScintilla::Circle))
-    , m_errorHandle(QsciScintilla::markerDefine(QsciScintilla::Background))
-    , m_debugMarginHandle(QsciScintilla::markerDefine(QsciScintilla::Rectangle))
     , m_debugHandle(QsciScintilla::markerDefine(QsciScintilla::Background))
-    , m_staticMarginHandle(QsciScintilla::markerDefine(QsciScintilla::Circle))
+    , m_debugMarginHandle(QsciScintilla::markerDefine(QsciScintilla::Rectangle))
+    , m_errorHandle(QsciScintilla::markerDefine(QsciScintilla::Background))
+    , m_errorMarginHandle(QsciScintilla::markerDefine(QsciScintilla::Circle))
     , m_staticHandle(QsciScintilla::markerDefine(QsciScintilla::Background))
+    , m_staticMarginHandle(QsciScintilla::markerDefine(QsciScintilla::Circle))
 {
     connect(this, SIGNAL(cursorPositionChanged(int, int)), this, SLOT(setStatusMessage(void )));
 }

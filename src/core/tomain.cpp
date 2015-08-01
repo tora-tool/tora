@@ -79,12 +79,12 @@
 
 toMain::toMain()
     : toMainWindow()
-    , BackgroundLabel(new toBackgroundLabel(statusBar()))
-    , editMenu(toEditMenuSingle::Instance())
-    , loggingWidget(toLoggingWidgetSingle::Instance())
     , Workspace(toWorkSpaceSingle::Instance())
-    , Poll()
     , Connections(toConnectionRegistrySing::Instance())
+    , editMenu(toEditMenuSingle::Instance())
+    , Poll()
+    , BackgroundLabel(new toBackgroundLabel(statusBar()))
+    , loggingWidget(toLoggingWidgetSingle::Instance())
     , lastToolWidget(NULL)
 {
     loggingWidget.setMaximumBlockCount(2000);

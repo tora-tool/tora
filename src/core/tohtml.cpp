@@ -40,13 +40,13 @@
 #include <QtCore/QChar>
 
 toHtml::toHtml(const QString &data)
-    : Length(data.length())
-    , QualifierNum(0)
-    , Data(data)
+    : Data(data)
+    , Length(data.length())
     , Position(0)
     , LastChar(0)
-    , Open(false)
+    , QualifierNum(0)
     , IsTag(false)
+    , Open(false)
 {
 }
 

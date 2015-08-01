@@ -57,8 +57,8 @@ toResultViewItem::toResultViewItem(toTreeWidget *parent
                                    , toTreeWidgetItem *after
                                    , const QString &buf)
     : toTreeWidgetItem(parent, after, QString::null)
-    , ColumnData(NULL)
     , ColumnCount(0)
+    , ColumnData(NULL)
 {
     if (!buf.isNull())
         setText(0, buf);
@@ -68,8 +68,8 @@ toResultViewItem::toResultViewItem(toTreeWidgetItem *parent
                                    , toTreeWidgetItem *after
                                    , const QString &buf)
     : toTreeWidgetItem(parent, after, QString::null)
-    , ColumnData(NULL)
     , ColumnCount(0)
+    , ColumnData(NULL)
 {
     if (!buf.isNull())
         setText(0, buf);
@@ -472,6 +472,7 @@ toListView::toListView(QWidget *parent, const char *name, toWFlags f)
     , toEditWidget()
     , AllTip(NULL)
     , MenuItem(NULL)
+    , MenuColumn(0)
     , Menu(NULL)
     , displayAct(NULL)
     , leftAct(NULL)
@@ -483,7 +484,6 @@ toListView::toListView(QWidget *parent, const char *name, toWFlags f)
     , selectAllAct(NULL)
     , exportAct(NULL)
     , editAct(NULL)
-    , MenuColumn(0)
 {
     toEditWidget::FlagSet.Save = true;
     toEditWidget::FlagSet.Print = true;
@@ -1253,7 +1253,7 @@ void toResultView::slotAddItem(void)
             }
             else
                 LastItem->setText(columns(), QString::number(RowNumber));
-            for (int j = 0; (j < Query->columns() || j == 0) && !Query->eof(); j++)
+            for (unsigned j = 0; (j < Query->columns() || j == 0) && !Query->eof(); j++)
                 LastItem->setText(j + disp, (QString)Query->readValue());
             if (Filter && !Filter->check(LastItem))
             {

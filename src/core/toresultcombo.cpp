@@ -42,9 +42,9 @@
 
 toResultCombo::toResultCombo(QWidget *parent, const char *name)
     : QComboBox(parent)
-    , Query(NULL)
     , SelectionPolicy(None)
     , SelectedFound(false)
+    , Query(NULL)
 {
     setObjectName(name);
     connect(this, SIGNAL(activated(int)),

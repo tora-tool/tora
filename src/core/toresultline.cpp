@@ -44,12 +44,12 @@
 
 toResultLine::toResultLine(QWidget *parent, const char *name)
     : toLineChart(parent, name)
-    , LastStamp(0)
     , Flow(true)
-    , First(true)
-    , Columns(0)
-    , Query(NULL)
     , Started(false)
+    , LastStamp(0)
+    , First(true)
+    , Query(NULL)
+    , Columns(0)
 {}
 
 toResultLine::~toResultLine()
