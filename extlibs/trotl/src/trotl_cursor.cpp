@@ -126,8 +126,8 @@ tstring BindParCursor::get_string(unsigned int i) const
 
 
 SqlCursor::SqlCursor()
-	: c(NULL)
-	, handle(NULL)
+	: handle(NULL)
+    , c(NULL)
 {
 }
 

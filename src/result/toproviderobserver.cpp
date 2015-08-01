@@ -38,8 +38,8 @@
 toEventQueryObserverObject::toEventQueryObserverObject(Observer &o, QObject *parent)
     : QObject(parent)
     , toEventQuery::Client()
-    , m_observer(o)
     , m_eventQuery(NULL)
+    , m_observer(o)
 {}
 
 toEventQueryObserverObject::~toEventQueryObserverObject()

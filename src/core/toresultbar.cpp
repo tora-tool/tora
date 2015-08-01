@@ -42,12 +42,12 @@
 
 toResultBar::toResultBar(QWidget *parent, const char *name)
     : toBarChart(parent, name)
-    , First(true)
-    , LastStamp(0)
     , Flow(true)
-    , Columns(0)
-    , Query(NULL)
     , Started(false)
+    , LastStamp(0)
+    , First(true)
+    , Query(NULL)
+    , Columns(0)
 {}
 
 toResultBar::~toResultBar()

@@ -53,11 +53,11 @@
 
 toLexerOracle::toLexerOracle(QObject *parent)
     : QsciLexerCustom(parent)
-    , lexer(LexerFactTwoParmSing::Instance().create("OracleGuiLexer", "", "toLexerOracle - OracleGuiLexer"))
-    , lineLength(32)
-    , bufferLength(1024)
     , lineText(NULL)
     , bufferText(NULL)
+    , lineLength(32)
+    , bufferLength(1024)
+    , lexer(LexerFactTwoParmSing::Instance().create("OracleGuiLexer", "", "toLexerOracle - OracleGuiLexer"))
 {
     using namespace ToConfiguration;
 

@@ -53,8 +53,8 @@ using namespace ToConfiguration;
 toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, toWFlags fl)
     : QWidget(parent)
     , toSettingTab("fonts.html")
-    , WordClassEnum(ENUM_REF(toSyntaxAnalyzer,WordClassEnum))
     , Current(NULL)
+    , WordClassEnum(ENUM_REF(toSyntaxAnalyzer,WordClassEnum))
     , Styles(toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::EditStyleMap).value<toStylesMap>())
 {
     using namespace ToConfiguration;

@@ -575,8 +575,8 @@ namespace SQLParser
 
             Statement(const QString &statement, const QString &name)
                 : _mStatement(statement)
-                , _mStatementType(S_NONE)
                 , _mname(name)
+                , _mStatementType(S_NONE)
                 , _mState(P_INIT)
                 , _mAST(NULL)
                 , _mEnd(NULL)

@@ -129,12 +129,12 @@ QString toCache::ObjectRef::toString() const
 
 toCache::toCache(toConnection &parentConnection, QString const &description)
     : QObject(NULL)
-    , ConnectionDescription(description)
-    , refCount(1) // we assume that we were created from 1st toConnection
     , state(NOT_STARTED)
     , ownersRead(false)
     , usersRead(false)
     , parentConn(parentConnection)
+    , ConnectionDescription(description)
+    , refCount(1) // we assume that we were created from 1st toConnection
     , m_threadWorker(new QThread(this))
     , m_cacheWorker(new toCacheWorker(parentConn))
     , m_trie(new QmlJS::PersistentTrie::Trie())

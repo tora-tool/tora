@@ -43,9 +43,9 @@
 #include "core/tosql.h"
 
 toQSqlConnectionSub::toQSqlConnectionSub(toConnection const& parent, QSqlDatabase const& db, QString const& dbname)
-    : ParentConnection(parent)
-    , Connection(db)
+    : Connection(db)
     , Name(dbname)
+    , ParentConnection(parent)
     , HasTransactions(false)
 {
     ConnectionID = sessionId();

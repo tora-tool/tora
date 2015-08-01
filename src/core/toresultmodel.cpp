@@ -48,13 +48,14 @@ toResultModel::toResultModel(toEventQuery *query,
                              QObject *parent,
                              bool read)
     : QAbstractTableModel(parent)
-    , SortedOrder(Qt::AscendingOrder)
-    , ReadableColumns(read)
-    , HeadersRead(false)
-    , First(true)
-    , ReadAll(false)
+    , Query(NULL)
     , SortedOnColumn(-1)
+    , SortedOrder(Qt::AscendingOrder)
     , CurrRowKey(1)
+    , ReadableColumns(read)
+    , First(true)
+    , HeadersRead(false)
+    , ReadAll(false)
 {
     MaxRowsToAdd = MaxRows = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::InitialFetchInt).toInt();
 
@@ -88,14 +89,14 @@ toResultModel::toResultModel(const QString &owner,
                              QObject *parent,
                              bool read)
     : QAbstractTableModel(parent)
-    , SortedOrder(Qt::AscendingOrder)
-    , ReadableColumns(read)
-    , HeadersRead(false)
-    , First(true)
-    , ReadAll(false)
-    , SortedOnColumn(-1)
     , Query(NULL)
+    , SortedOnColumn(-1)
+    , SortedOrder(Qt::AscendingOrder)
     , CurrRowKey(1)
+    , ReadableColumns(read)
+    , First(true)
+    , HeadersRead(false)
+    , ReadAll(false)
 {
     MaxRowsToAdd = MaxRows = toConfigurationNewSingle::Instance().option(ToConfiguration::Database::InitialFetchInt).toInt();
 #if QT_VERSION < 0x050000

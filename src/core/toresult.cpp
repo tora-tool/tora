@@ -78,12 +78,13 @@ void toResultObject::setup(void)
 
 toResult::toResult()
     : Slots(this)
-    , Handled(true)
     , NeedsRefresh(true)
     , QueryReady(false)
+    , Params()
     , FromSQL(false)
     , IsCriticalTab(true)
-    , Params()
+    , Handled(true)
+
 {
     //see EventDispatcherWin32Private::registerTimer time should be either 0 or >20
     //otherwise the application hungs windows - bacause QT starts a new thread with RT priority
