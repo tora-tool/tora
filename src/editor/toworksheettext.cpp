@@ -46,12 +46,12 @@ using namespace ToConfiguration;
 
 toWorksheetText::toWorksheetText(QWidget *parent, const char *name)
     : toSqlText(parent, name)
-    , m_bookmarkMarginHandle(QsciScintilla::markerDefine(QsciScintilla::RightTriangle))
-    , m_bookmarkHandle(QsciScintilla::markerDefine(QsciScintilla::Background))
-    , m_complAPI(NULL)
-    , complTimer(new QTimer(this))
     , editorType(SciTe)
     , popup(new toComplPopup(this))
+    , m_complAPI(NULL)
+    , complTimer(new QTimer(this))
+    , m_bookmarkHandle(QsciScintilla::markerDefine(QsciScintilla::Background))
+    , m_bookmarkMarginHandle(QsciScintilla::markerDefine(QsciScintilla::RightTriangle))
 {
     QsciScintilla::setAutoCompletionThreshold(0);
     QsciScintilla::setAutoCompletionSource(QsciScintilla::AcsAPIs);

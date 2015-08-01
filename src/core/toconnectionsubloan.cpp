@@ -38,15 +38,15 @@
 
 toConnectionSubLoan::toConnectionSubLoan(toConnection &con)
     : ParentConnection(con)
-    , ConnectionSub(con.borrowSub())
     , SchemaInitialized(false)
+    , ConnectionSub(con.borrowSub())
 {}
 
 toConnectionSubLoan::toConnectionSubLoan(toConnection &con, QString const & schema)
     : ParentConnection(con)
-    , ConnectionSub(con.borrowSub())
     , SchemaInitialized(false)
     , Schema(schema)
+    , ConnectionSub(con.borrowSub())
 {
     Q_ASSERT_X(!schema.isEmpty(), qPrintable(__QHERE__), "schema is empty");
     SchemaInitialized = ConnectionSub->schema() == schema;
@@ -55,8 +55,8 @@ toConnectionSubLoan::toConnectionSubLoan(toConnection &con, QString const & sche
 /** This special kind of constructor is used by @ref toQuery while testing the connections*/
 toConnectionSubLoan::toConnectionSubLoan(toConnection &con, int*)
     : ParentConnection(con)
-    , ConnectionSub(NULL)
     , SchemaInitialized(false)
+    , ConnectionSub(NULL)
 {}
 
 toConnectionSubLoan::~toConnectionSubLoan()

@@ -109,8 +109,8 @@ class TORA_EXPORT toConnectionSub
         }
 
     protected:
-        bool Broken, Initialized;
         toQuery *Query;
+        bool Broken, Initialized;
         QString Schema;
         QDateTime LastUsed; // last time this db connection was actually used
 };

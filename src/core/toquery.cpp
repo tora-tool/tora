@@ -46,9 +46,9 @@ toQuery::toQuery(toConnectionSubLoan &conn, const toSQL &sql, toQueryParams cons
     : m_ConnectionSubLoan(conn)
     , m_Params(params)
     , m_SQL(sql(conn.ParentConnection).toLatin1())
-    , m_Query(NULL)
     , m_eof(false)
     , m_rowsProcessed(0)
+    , m_Query(NULL)
 {
     init();
 }
@@ -57,9 +57,9 @@ toQuery::toQuery(toConnectionSubLoan &conn, QString const& sql, toQueryParams co
     : m_ConnectionSubLoan(conn)
     , m_Params(params)
     , m_SQL(sql)
-    , m_Query(NULL)
     , m_eof(false)
     , m_rowsProcessed(0)
+    , m_Query(NULL)
 {
     init();
 }

@@ -1,9 +1,11 @@
 ########################################
 #             MSVC Build               #
 ########################################
-
+**/qrc_*.cpp
 **/*.cxx
 **/*.cxx_parameters
+**/moc_*.cpp
+**/moc_*.cpp_parameters
 **/*.vcxproj
 **/*.vcxproj.filters
 **/CMakeFiles/

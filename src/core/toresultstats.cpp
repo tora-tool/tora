@@ -87,8 +87,8 @@ toResultStats::toResultStats(bool onlyChanged
                              , QWidget *parent
                              , const char *name)
     : toResultView(false, false, parent, name)
-    , OnlyChanged(onlyChanged)
     , m_sessionID(-2)
+    , OnlyChanged(onlyChanged)
 {
     if (!handled())
         return ;
