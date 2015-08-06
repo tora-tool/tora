@@ -279,7 +279,7 @@ void toSqlText::setFont (const QFont & font)
     super::setFont(font);
 }
 
-void toSqlText::tableAtCursor(toCache::ObjectRef &table)
+void toSqlText::tableAtCursor(toSqlText::Word &schema, toSqlText::Word &table)
 {
     /**
      * Theoretically I could use here SQLLexer::Lexer API if it was implemented for current database.
@@ -299,14 +299,13 @@ void toSqlText::tableAtCursor(toCache::ObjectRef &table)
         int pos = positionFromLineIndex(curline, curcol);
         int line_end = SendScintilla(QsciScintilla::SCI_GETLINEENDPOSITION, curline);
         int line_start = positionFromLineIndex(curline, 0);
-
         {
             // Line buffer
             char *buf = new char[line_end - line_start + 1];
             // Buffer markers, r = word start, p = word end
             int p = line_start, r = line_start;
-            QStringList words;
-            words << QString::null << QString::null;
+            QList<Word> words; // Pair word(QString), start position, end position
+            words << Word() << Word();
             // pointer onto "current" word in the words list;
             int idx = -1;
             CharClassify::cc cls =	m_charClasifier.GetClass(getByteAt(line_start));
@@ -326,13 +325,13 @@ void toSqlText::tableAtCursor(toCache::ObjectRef &table)
                     // new token starts
                     SendScintilla(QsciScintilla::SCI_GETTEXTRANGE, r, p, buf);
                     QString s = convertTextS2Q(buf);
-                    r = p;
                     if (cls == CharClassify::ccPunctuation || cls == CharClassify::ccWord)
                     {
-                        words << s;
+                        words << std::make_tuple(s, r, p);
                         if (p >= pos && idx == -1)
                             idx = words.size() -1;
                     }
+                    r = p;
                     cls = new_cls;
                 }
                 // Advance to next char
@@ -345,7 +344,7 @@ void toSqlText::tableAtCursor(toCache::ObjectRef &table)
                     {
                         SendScintilla(QsciScintilla::SCI_GETTEXTRANGE, r, p, buf);
                         QString s = convertTextS2Q(buf);
-                        words << s;
+                        words << std::make_tuple(s, r, p);
                         if (p >= pos && idx == -1)
                             idx = words.size() -1;
                     }
@@ -353,30 +352,30 @@ void toSqlText::tableAtCursor(toCache::ObjectRef &table)
                 }
             }
             delete []buf;
-            words << QString::null << QString::null;
-            QString sa = words.at((std::max)(idx-2, 0));
-            QString sb = words.at((std::max)(idx-1, 0)); // prev word
-            QString sc = words.at((std::max)(idx, 0));  // "current" word
-            QString sd = words.at((std::min)(idx+1, words.size() -1)); // next word
-            QString se = words.at((std::min)(idx+2, words.size() -1));
-            if ( sc == ".")
+            words << Word() << Word();
+            auto sa = words.at((std::max)(idx-2, 0));
+            auto sb = words.at((std::max)(idx-1, 0)); // prev word
+            auto sc = words.at((std::max)(idx, 0));  // "current" word
+            auto sd = words.at((std::min)(idx+1, words.size() -1)); // next word
+            auto se = words.at((std::min)(idx+2, words.size() -1));
+            if ( sc.text() == ".")
             {
-                table.first  = sb;
-                table.second = sd;
+            	schema = sb;
+            	table = sd;
             }
-            else if ( sb == "." && !sa.isEmpty())
+            else if ( sb.text() == "." && !sa.text().isEmpty())
             {
-                table.first  = sa;
-                table.second = sc;
+                schema  = sa;
+                table = sc;
             }
-            else if ( sd == "." && !se.isEmpty())
+            else if ( sd.text() == "." && !se.text().isEmpty())
             {
-                table.first  = sc;
-                table.second = se;
+                schema = sc;
+                table = se;
             }
             else
             {
-                table.second = sc;
+            	table = sc;
             }
         }
     }
@@ -384,6 +383,14 @@ void toSqlText::tableAtCursor(toCache::ObjectRef &table)
     {
         TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
     }
+}
+
+void toSqlText::tableAtCursor(toCache::ObjectRef &objectRef)
+{
+	Word schema, table;
+	tableAtCursor(schema,table);
+	objectRef.first = schema.text();
+	objectRef.second = table.text();
 }
 
 toSyntaxAnalyzer* toSqlText::analyzer()

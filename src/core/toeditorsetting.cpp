@@ -61,6 +61,8 @@ QVariant ToConfiguration::Editor::defaultValue(int option) const
             return QVariant((bool) true);
         case CompleteSortBool:
             return QVariant((bool) true);
+        case CodeCompleteDelayInt:
+        	return QVariant(500);
         case UseEditorShortcutsBool:
             return QVariant((bool) false);
         case EditorShortcutsMap:

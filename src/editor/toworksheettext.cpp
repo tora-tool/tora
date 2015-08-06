@@ -39,6 +39,7 @@
 #include "core/toconfiguration_new.h"
 #include "core/toeditorsetting.h"
 #include "core/toconnection.h"
+#include "core/toconnectiontraits.h"
 #include "core/tologger.h"
 #include "shortcuteditor/shortcutmodel.h"
 
@@ -148,33 +149,34 @@ void toWorksheetText::keyPressEvent(QKeyEvent * e)
 
 void toWorksheetText::positionChanged(int row, int col)
 {
-    if (col > 0)
+    int position = currentPosition();
+    wchar_t currentChar = getWCharAt(position);
+	TLOG(0, toNoDecorator, __HERE__) << currentChar << std::endl;
+
+	if (col <= 0)
     {
-        int position = this->SendScintilla(SCI_GETCURRENTPOS);
-        position = SendScintilla(QsciScintilla::SCI_POSITIONBEFORE, position);
-        char c = getByteAt(position);
-        // TODO use getWCharAt and handle multibyte characters here
-        if (c == '.')
-            complTimer->start(500);
-
-        position = SendScintilla(QsciScintilla::SCI_POSITIONBEFORE, position);
-        c = getByteAt(position);
-        // TODO use getWCharAt and handle multibyte characters here
-        if (c == '.')
-            complTimer->start(500);
-
-        position = SendScintilla(QsciScintilla::SCI_POSITIONBEFORE, position);
-        c = getByteAt(position);
-        // TODO use getWCharAt and handle multibyte characters here
-        if (c == '.')
-            complTimer->start(500);
-
+    	complTimer->stop();
+    	return;
     }
-    else
-    {
-        if (complTimer->isActive())
-            complTimer->stop();
+
+	// Cursor is not at EOL, not before any word character
+	if( currentChar != 0 && CharClass(currentChar) != CharClassify::ccWord && CharClass(currentChar) != CharClassify::ccSpace) {
+    	complTimer->stop();
+    	return;
     }
+
+	for(int i=1, c=col; i<3 && c; i++, c--)
+	{
+		position = SendScintilla(QsciScintilla::SCI_POSITIONBEFORE, position);
+		currentChar = getWCharAt(position);
+		if (currentChar == L'.')
+		{
+			complTimer->start(toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::CodeCompleteDelayInt).toInt());
+			return;
+		}
+		if (CharClass(currentChar) != CharClassify::ccWord)
+			break;
+	}
 // FIXME: disabled due repainting issues
 //    current line marker (margin arrow)
 //    markerDeleteAll(m_currentLineMarginHandle);
@@ -199,12 +201,37 @@ void toWorksheetText::autoCompleteFromAPIs()
     complTimer->stop(); // it's a must to prevent infinite reopening
 
     Utils::toBusy busy;
-    QListWidget *list = popup->list();
-    QString partial; // TODO never used, never assigned
-    QStringList compleList = this->getCompletionList(partial);
+    toConnection &connection = toConnection::currentConnection(this);
+
+    TLOG(0, toTimeStart, __HERE__) << "Start" << std::endl;
+    int position = currentPosition();
+    toSqlText::Word schemaWord, tableWord;
+    tableAtCursor(schemaWord, tableWord);
+
+    QString schema = connection.getTraits().unQuote(schemaWord.text());          // possibly unquote schema name
+    QString table = tableWord.start() > position ? QString() : tableWord.text(); // possible tableAtCursor matched some distant work (behind spaces)
+
+    TLOG(0, toTimeDelta, __HERE__) << "Table at indexb: " << '"' << schemaWord.text() << '"' << ':' << '"' << tableWord.text() << '"' << std::endl;
+
+    setSelection(schemaWord.start(), position);
+
+    QStringList compleList;
+    if (schema.isEmpty())
+    	compleList = connection.getCache().completeEntry(toToolWidget::currentSchema(this), table);
+    else
+    	compleList = connection.getCache().completeEntry(schema, table);
+
+    TLOG(0, toTimeDelta, __HERE__) << "Complete entry" << std::endl;
+
+    if (compleList.size() <= 100) // Do not waste CPU on sorting huge completition list TODO: limit the amount of returned entries
+    	compleList.sort();
+    TLOG(0, toTimeDelta, __HERE__) << "Sort" << std::endl;
 
     if (compleList.isEmpty())
+    {
+    	this->SendScintilla(SCI_SETEMPTYSELECTION, position);
         return;
+    }
 
     if (compleList.count() == 1 /*&& compleList.first() == partial*/)
     {
@@ -222,21 +249,9 @@ void toWorksheetText::autoCompleteFromAPIs()
         QPoint p(posx, posy);
         p = mapToGlobal(p);
         popup->move(p);
+        QListWidget *list = popup->list();
         list->clear();
         list->addItems(compleList);
-//        if (!partial.isNull() && partial.length() > 0)
-//        {
-//            int i;
-//            for (i = 0; i < list->model()->rowCount(); i++)
-//            {
-//                if (list->item(i)->text().indexOf(partial) == 0)
-//                {
-//                    list->item(i)->setSelected(true);
-//                    list->setCurrentItem(list->item(i));
-//                    break;
-//                }
-//            }
-//        }
 
         // if there's no current selection, select the first
         // item. that way arrow keys work as intended.
@@ -249,6 +264,7 @@ void toWorksheetText::autoCompleteFromAPIs()
 
         popup->show();
         popup->setFocus();
+        TLOG(0, toTimeTotal, __HERE__) << "End" << std::endl;
     }
 }
 
@@ -266,7 +282,11 @@ void toWorksheetText::completeWithText(QString const& text)
     long pos = currentPosition();
     int start = SendScintilla(SCI_WORDSTARTPOSITION, pos, true);
     int end = SendScintilla(SCI_WORDENDPOSITION, pos, true);
-    setSelection(start, end);
+    // The text might be already selected by tableAtCursor
+	if (!hasSelectedText())
+	{
+		setSelection(start, end);
+	}
     removeSelectedText();
     insert(text);
     SendScintilla(SCI_SETCURRENTPOS,
@@ -339,142 +359,11 @@ void toWorksheetText::gotoNextBookmark()
 
 QStringList toWorksheetText::getCompletionList(QString &partial)
 {
-#if 0
-    int curline, curcol;
-    // used as a flag to prevent completion popup when there is
-    // an orphan comma. In short - be less agressive on popup.
-    bool showDefault = false;
-    getCursorPosition (&curline, &curcol);
-
-    QString line = text(curline);
-
-    if (isReadOnly() || curcol == 0 || !toConfigurationSingle::Instance().codeCompletion())
-        return retval;
-
-    //throw QString("QStringList toHighlightedTextEditor::getCompletionList ... not implemented yet.");
-
-    toSQLParse::editorTokenizer tokens(this, curcol, curline);
-    if (curcol > 0 && line[curcol - 1] != '.')
-    {
-        partial = tokens.getToken(false);
-        showDefault = true;
-    }
-    else
-    {
-        partial = "";
-    }
-
-    QString name = tokens.getToken(false);
-    QString owner;
-    if (name == ".")
-    {
-        name = tokens.getToken(false);
-    }
-
-    QString token = tokens.getToken(false);
-
-    if (token == ".")
-        owner = tokens.getToken(false);
-    else
-    {
-        QString cmp = UpperIdent(name);
-        QString lastToken;
-        while ((invalidToken(tokens.line(), tokens.offset() + token.length()) || UpperIdent(token) != cmp || lastToken == ".") && token != ";" && token != "~~~" && !token.isEmpty())
-        {
-            lastToken = token;
-            token = tokens.getToken(false);
-        }
-
-        if (token == ";" || token.isEmpty())
-        {
-            tokens.setLine(curline);
-            tokens.setOffset(curcol);
-            token = tokens.getToken();
-            while ((invalidToken(tokens.line(), tokens.offset()) || (UpperIdent(token) != cmp && lastToken != ".")) && token != ";" && !token.isEmpty())
-                token = tokens.getToken();
-            lastToken = token;
-            tokens.getToken(false);
-        }
-        if (token != ";" && !token.isEmpty())
-        {
-            token = tokens.getToken(false);
-            if (token != "TABLE" && token != "UPDATE" && token != "FROM" && token != "INTO" && (Utils::toIsIdent(token[0]) || token[0] == '\"'))
-            {
-                name = token;
-                token = tokens.getToken(false);
-                if (token == ".")
-                    owner = tokens.getToken(false);
-            }
-            else if (token == ")")
-                return retval;
-        }
-    }
-    if (!owner.isEmpty())
-    {
-        name = owner + QString::fromLatin1(".") + name;
-    }
-    if (!name.isEmpty())
-    {
-        try
-        {
-            toConnection &conn = toConnection::currentConnection(this);
-            toConnection::objectName object = conn.realName(name, false);
-            if (object.Type == "DATABASE")
-            {
-                std::list<toConnection::objectName> list = conn.tables(object);
-                Q_FOREACH(toConnection::objectName table, list)
-                {
-                    QString t = conn.quote(table.Name, false);
-                    if (t.indexOf(*partial) == 0)
-                        retval.append(t);
-                }
-            }
-            else
-            {
-                ///const toQDescList &desc = conn.columns(object);
-                for (toQDescList::const_iterator i = desc.begin(); i != desc.end(); i++)
-                {
-                    QString t;
-                    int ind = (*i).Name.indexOf("(");
-                    if (ind < 0)
-                        ind = (*i).Name.indexOf("RETURNING") - 1; //it could be a function or procedure without parameters. -1 to remove the space
-                    if (ind >= 0)
-                        t = conn.quote((*i).Name.mid(0, ind), false) + (*i).Name.mid(ind);
-                    else
-                        t = conn.quote((*i).Name, false);
-                    if (t.indexOf(*partial) == 0)
-                        retval.append(t);
-                }
-            }
-        }
-        catch (QString const &e)
-        {
-            TLOG(2, toDecorator, __HERE__) << "toHighlightedTextEditor::getCompletionList:" << e << std::endl;
-        }
-        catch (...)
-        {
-            TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
-            TLOG(2, toDecorator, __HERE__) << "toHighlightedTextEditor::getCompletionList: Unknown error.";
-        }
-    }
-
-    // if is toReturn empty fill it with keywords...
-    if (showDefault && retval.count() == 0)
-    {
-        for (int i = 0; i < defaultCompletion.size(); ++i)
-        {
-            if (defaultCompletion.at(i).startsWith(partial, Qt::CaseInsensitive))
-                retval.append(defaultCompletion.at(i));
-        }
-    }
-
-    retval.sort();
-#endif
-    TLOG(0, toTimeStart, __HERE__) << "Start" << std::endl;
+	TLOG(0, toTimeStart, __HERE__) << "Start" << std::endl;
     int curline, curcol;
     getCursorPosition (&curline, &curcol);
     QString word = wordAtLineIndex(curline, curcol);
-    TLOG(0, toTimeDelta, __HERE__) << "Word at index " << std::endl;
+    TLOG(0, toTimeDelta, __HERE__) << "Word at index: " << word << std::endl;
 	QStringList retval = toConnection::currentConnection(this).getCache().completeEntry("" , word);
     TLOG(0, toTimeDelta, __HERE__) << "Complete entry" << std::endl;
 	QStringList retval2;
