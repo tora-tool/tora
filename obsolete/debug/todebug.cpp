@@ -866,7 +866,7 @@ QString toDebug::editorName(toDebugText *text)
     return editorName(text->schema(), text->object(), text->type());
 }
 
-QString toDebug::currentSchema(void)
+QString toDebug::schema(void)
 {
     return Schema->selected();
 }

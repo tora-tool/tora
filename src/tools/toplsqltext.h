@@ -119,7 +119,7 @@ class toPLSQL : public toToolWidget
         virtual ~toPLSQL();
 
         toPLSQLWidget *currentEditor(void);
-        QString currentSchema(void);
+        QString schema(void) const override;
         toPLSQLEditor *getAnotherPart(QString &pSchema, QString &pObject, QString &pType);
 
     public slots:

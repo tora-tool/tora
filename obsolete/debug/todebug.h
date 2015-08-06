@@ -282,7 +282,7 @@ public:
 
     toTreeWidgetItem *contents(void);
     toDebugText *currentEditor(void);
-    QString currentSchema(void);
+    QString schema(void) override;
     toQuery * debugSession; // Main oracle session for debugger. All debug related actions
     // all calls of DBMS_DEBUG should be done from this session as
     // this specific session has target session attached.

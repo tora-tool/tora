@@ -203,6 +203,11 @@ toSGATrace::toSGATrace(QWidget *main, toConnection &connection)
     setFocusProxy(Trace);
 }
 
+QString toSGATrace::schema() const
+{
+	return CurrentSchema;
+}
+
 void toSGATrace::changeRefresh(const QString &str)
 {
     try

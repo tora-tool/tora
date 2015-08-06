@@ -859,7 +859,7 @@ void toWorksheet::slotSchemaChanged(const QString &)
     if (LockedConnection)
     {
         (*LockedConnection).SchemaInitialized = false;
-        (*LockedConnection).Schema = currentSchema();
+        (*LockedConnection).Schema = schema();
     }
 }
 
@@ -980,11 +980,11 @@ bool toWorksheet::describe(toSyntaxAnalyzer::statement const& query)
             {
                 if (parts.count() == 2)
                 {
-                    Columns->changeObject(toCache::ObjectRef(currentSchema(), unQuote(parts[1]), currentSchema()));
+                    Columns->changeObject(toCache::ObjectRef(schema(), unQuote(parts[1]), schema()));
                 }
                 else if (parts.count() == 3)
                 {
-                    Columns->changeObject(toCache::ObjectRef(unQuote(parts[1]), unQuote(parts[2]), currentSchema()));
+                    Columns->changeObject(toCache::ObjectRef(unQuote(parts[1]), unQuote(parts[2]), schema()));
                 }
                 else
                     throw tr("Wrong number of parameters for describe");
@@ -993,7 +993,7 @@ bool toWorksheet::describe(toSyntaxAnalyzer::statement const& query)
             {
                 if (parts.count() == 2)
                 {
-                    Columns->changeObject(toCache::ObjectRef(currentSchema(), parts[1], currentSchema()));
+                    Columns->changeObject(toCache::ObjectRef(schema(), parts[1], schema()));
                 }
                 else
                     throw tr("Wrong number of parameters for describe");
@@ -1008,7 +1008,7 @@ bool toWorksheet::describe(toSyntaxAnalyzer::statement const& query)
     return false;
 }
 
-QString toWorksheet::currentSchema() const
+QString toWorksheet::schema() const
 {
     return Schema->currentText();
 }
@@ -1199,7 +1199,7 @@ void toWorksheet::query(toSyntaxAnalyzer::statement const& statement, execTypeEn
                     QString buffer;
                     if (!toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::HistoryErrorBool).toBool())
                     {
-                        toConnectionSubLoan conn(connection(), currentSchema());
+                        toConnectionSubLoan conn(connection(), schema());
                         toQuery query(conn, statement.sql, toQueryParams());
                         if (query.rowsProcessed() > 0)
                             buffer = tr("%1 rows processed").arg((int)query.rowsProcessed());
@@ -1588,7 +1588,7 @@ void toWorksheet::slotQueryDone(void)
     //     EXECUTE IMMEDIATE 'ALTER SESSION SET CURRENT_SCHEMA=ABC';
     //   END;
     // was executed
-    if (LockedConnection && !(*LockedConnection)->schema().isEmpty() && (*LockedConnection)->schema() != currentSchema())
+    if (LockedConnection && !(*LockedConnection)->schema().isEmpty() && (*LockedConnection)->schema() != schema())
     {
         Schema->setSelected((*LockedConnection)->schema());
         Schema->refresh();
@@ -1662,7 +1662,7 @@ void toWorksheet::slotDescribe(void)
 {
     toCache::ObjectRef table;
     Editor->editor()->tableAtCursor(table);
-    table.context = currentSchema();
+    table.context = schema();
     table.first = connection().getTraits().unQuote(table.first);
     table.second = connection().getTraits().unQuote(table.second);
 
@@ -2195,7 +2195,7 @@ void toWorksheet::lockConnection()
 
     try
     {
-        QSharedPointer<toConnectionSubLoan> conn(new toConnectionSubLoan(connection(), currentSchema()));
+        QSharedPointer<toConnectionSubLoan> conn(new toConnectionSubLoan(connection(), schema()));
         this->LockedConnection = conn;
 
         //Utils::toBusy busy;

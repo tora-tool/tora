@@ -122,7 +122,7 @@ QString toPLSQL::editorName(toPLSQLWidget *text)
                       text->editor()->type());
 }
 
-QString toPLSQL::currentSchema(void)
+QString toPLSQL::schema(void) const
 {
     return Schema->selected();
 }
@@ -604,7 +604,7 @@ void toPLSQL::closeEditor(toPLSQLWidget* &editor)
 void toPLSQL::describe()
 {
     toCache::ObjectRef table;
-    table.context = currentSchema();
+    table.context = schema();
     toPLSQLEditor *marked = currentEditor()->editor();
     marked->editor()->tableAtCursor(table);
     if (table.first.isEmpty())
