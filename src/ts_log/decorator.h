@@ -269,4 +269,81 @@ class tidDecorator : public decoratorInterface
         {};
 };
 
+template<class thread_manager>
+class timeStartDecorator : public decoratorInterface
+{
+protected:
+	// NOTE: use function here to wrap static thread_local variable into header file
+	static inline long long& getDeltaTimer() {
+// Visual Studio 2013
+#if (_MSC_VER <= 1800)
+		__declspec(thread) static long long time;
+#else
+		thread_local static long long time;
 #endif
+        return time;
+    };
+	static inline long long& getTotalTimer() {
+// Visual Studio 2013
+#if (_MSC_VER <= 1800)
+		__declspec(thread) static long long time;
+#else
+		thread_local static long long time;
+#endif
+        return time;
+    };
+
+public:
+    static inline void decorate(std::ostream &s)
+    {
+    	long long& timeDelta = getDeltaTimer();
+    	long long& timeTotal = getTotalTimer();
+    	timeDelta = timeTotal = thread_manager::getTimeOfDay();
+    	s << "Time: " << 0L << "us";
+    }
+
+    static inline void decorate(std::ostream &s, const std::string & here)
+    {
+    	decorate(s);
+    };
+};
+
+template<class thread_manager>
+class timeDeltaDecorator : public timeStartDecorator<thread_manager>
+{
+public:
+    static inline void decorate(std::ostream &s)
+    {
+    	long long& time = getDeltaTimer();
+    	long long now = thread_manager::getTimeOfDay();
+    	s << "Time: " << thread_manager::timeDeltaHook(now - time) << "us";
+    	time = now;
+    }
+
+    static inline void decorate(std::ostream &s, const std::string & here)
+    {
+    	decorate(s);
+    };
+};
+
+template<class thread_manager>
+class timeTotalDecorator : public timeStartDecorator<thread_manager>
+{
+public:
+    static inline void decorate(std::ostream &s)
+    {
+    	long long& time1 = getDeltaTimer();
+    	long long& time2 = getTotalTimer();
+    	long long now = thread_manager::getTimeOfDay();
+		s << "Time: " << thread_manager::timeDeltaHook(now - time1) << "us\t" << "Total: " << thread_manager::timeDeltaHook(now - time2) << "us";
+    	time1 = now;
+    }
+
+    static inline void decorate(std::ostream &s, const std::string & here)
+    {
+    	decorate(s);
+    };
+};
+
+#endif
+

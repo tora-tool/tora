@@ -97,6 +97,28 @@ typedef Tdecorator <
 TSLOG_TYPELIST_1(charDecorator < ' ' >
                 ) > toNoDecorator;
 
+// timed decorator, display delta time since last time TLOG was called (should be thread afinite)
+typedef Tdecorator <
+TSLOG_TYPELIST_2(timeStartDecorator<DEFAULT_THREAD_MANAGER>,
+                 //dashDecorator<4>,
+				 //hereDecorator,
+				 charDecorator < ' ' >
+                ) > toTimeStart;
+
+typedef Tdecorator <
+TSLOG_TYPELIST_2(timeDeltaDecorator<DEFAULT_THREAD_MANAGER>,
+                 //dashDecorator<4>,
+				 //hereDecorator,
+				 charDecorator < ' ' >
+                ) > toTimeDelta;
+
+typedef Tdecorator <
+TSLOG_TYPELIST_2(timeTotalDecorator<DEFAULT_THREAD_MANAGER>,
+                 //dashDecorator<4>,
+				 //hereDecorator,
+				 charDecorator < ' ' >
+                ) > toTimeTotal;
+
 ////////////////////////////////////////////////////////////////////////////////
 // default templatetized log channel, by default it prints onto STDOUT
 //

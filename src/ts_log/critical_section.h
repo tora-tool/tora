@@ -47,6 +47,24 @@ struct win32_thread_manager
         {
             Sleep( nMillisecs);
         }
+
+        static inline long long getTimeOfDay()
+        {
+        	LARGE_INTEGER now;
+        	QueryPerformanceCounter(&now);
+        	return now.QuadPart;
+        }
+
+        static inline long long timeDeltaHook(long long delta)
+        {
+            static LARGE_INTEGER s_frequency;
+            static BOOL s_use_qpc = QueryPerformanceFrequency(&s_frequency);
+
+            delta *= 1000000;               // times microseconds
+            delta /= s_frequency.QuadPart;  // divide by performance ticks
+            return delta;
+        }
+
         static void create_thread( win32_thread_obj & obj)
         {
             obj.hHandle = CreateThread( NULL, 0, win32_thread_manager::ThreadProc, &obj, 0, &obj.dwThreadID);
