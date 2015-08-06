@@ -48,6 +48,8 @@
 #include <QtGui/QKeyEvent>
 #include <QWidget>
 
+#include <tuple>
+
 class QListWidgetItem;
 class QsciAbstractAPIs;
 
@@ -83,6 +85,29 @@ class toSqlText : public toScintilla
             OneLineAlt = 151,
             MaxStyle
         };
+
+        // Word in SQL text a string literal, start position, end position
+        class Word : public std::tuple<QString, int, int>
+        {
+        	typedef std::tuple<QString, int, int> super;
+        public:
+        	Word(QString text, int start, int end)
+            : super(std::make_tuple(text, start, end))
+        	{}
+        	Word(super const& other)
+        	: super(other)
+        	{}
+
+        	Word()
+        	: super(std::make_tuple(QString(), 0, 0))
+        	{}
+
+        	QString const& text() const { return std::get<0>(*this); };
+        	QString & text() { return std::get<0>(*this); };
+        	int start() const { return std::get<1>(*this); };
+        	int end() const { return std::get<2>(*this); };
+        };
+
         static QColor lightCyan;
         static QColor lightMagenta;
 
@@ -107,11 +132,13 @@ class toSqlText : public toScintilla
          */
         void setFont (const QFont & font);
 
-        /** Get the tablename currently under the cursor.
-         * @param owner Filled with owner or table or QString::null if no owner specified.
+        /** Get the tablename currently under the cursor
          * @param table Filled with tablename
+         * @param mark select table name
          */
         void tableAtCursor(toCache::ObjectRef &table);
+
+        void tableAtCursor(Word &schema, Word &table);
 
         toSyntaxAnalyzer* analyzer();
 

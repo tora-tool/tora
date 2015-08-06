@@ -103,8 +103,11 @@ class toScintilla: public QsciScintilla //, public toEditWidget
 
         QString convertTextS2Q(const char *s) const;
 
-        int NextWordStart(int pos, int delta);
-        int NextWordEnd(int pos, int delta);
+        int PrevWordStart(int pos);
+        int PrevWordEnd(int pos);
+
+        int NextWordStart(int pos, int delta = 1);
+        int NextWordEnd(int pos, int delta = 1);
 
 #if 0
 // TODO: this part is waiting for QScintilla backend feature (yet unimplemented).
@@ -201,6 +204,9 @@ class toScintilla: public QsciScintilla //, public toEditWidget
 
         void gotFocus();
         void lostFocus();
+
+    public:
+        static CharClassify::cc CharClass(char);
 
     protected:
         virtual void newLine(void);

@@ -244,7 +244,7 @@ QStringList toCache::completeEntry(QString const& schema, QString const& object)
     	//retvalSchema.append(retvalPublic);
     	return retvalSchema;
     }
-    return m_trie->complete(object, schema, LookupFlags(CaseInsensitive));
+    return QStringList();
 }
 
 QList<toCache::CacheEntry const*> toCache::getEntriesInSchema(QString const& schema, CacheEntryType type) const

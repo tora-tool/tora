@@ -1257,6 +1257,16 @@ void toScintilla::insert(const QString &str, bool select)
     QsciScintilla::endUndoAction();
 }
 
+int toScintilla::PrevWordStart(int pos)
+{
+	return NextWordStart(pos, -1);
+}
+
+int toScintilla::PrevWordEnd(int pos)
+{
+	return NextWordEnd(pos, -1);
+}
+
 /**
  * Find the start of the next word in either a forward (delta >= 0) or backwards direction
  * (delta < 0).
@@ -1493,6 +1503,11 @@ wchar_t toScintilla::getWCharAt(int pos)
 #endif
 
     return byte;
+}
+
+toScintilla::CharClassify::cc toScintilla::CharClass(char c)
+{
+	return m_charClasifier.GetClass(c);
 }
 
 toScintilla::CharClassify toScintilla::m_charClasifier;
