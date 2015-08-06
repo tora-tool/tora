@@ -217,6 +217,21 @@ class boost_thread_manager
             boost::thread *_me;
         };
 
+	static inline long long getTimeOfDay()
+	{
+	    long            ns; // nanoseconds
+	    time_t          s;  // Seconds
+	    struct timespec monotime;
+	    clock_gettime(CLOCK_MONOTONIC, &monotime);
+	    s  = spec.tv_sec;
+	    return = s * 1.0e9 + ns;
+	}
+
+        static inline long long timeDeltaHook(long long delta)
+        {
+            return delta / 1.0e3; // get microseconds from nanoseconds
+        }
+	
     private:
         struct function_wrapper
         {
@@ -320,6 +335,17 @@ class qt_thread_manager
             thread_obj_base::msleep( nMillisecs);
         }
 
+	static inline long long getTimeOfDay()
+        {
+	    // TODO use QElapsedTimer
+	    return QDateTime::currentMSecsSinceEpoch() * 1.0e3; // get microseconds from miliseconds
+        }
+
+        static inline long long timeDeltaHook(long long delta)
+        {
+	    return delta;
+        }
+
         static void create_thread( thread_obj_base & obj)
         {
             obj.start();
@@ -332,12 +358,22 @@ class qt_thread_manager
 
         static std::string tid(void)
         {
-            //char buffer[24];
-            //int len = snprintf(buffer, sizeof(buffer), "%#lx", pthread_self());
-            ::std::stringstream s;
-            //s << QThread::currentThreadId();
-            s << qPrintable(QThread::currentThread()->objectName());
-            return s.str();
+// Visual Studio 2013
+#if (defined _MSC_VER) && (_MSC_VER <= 1800)
+	    __declspec(thread) static ::std::string stid;
+#else
+	    thread_local static std::string stid;
+#endif
+	    if (stid.empty())
+	    {
+	      //char buffer[24];
+	      //int len = snprintf(buffer, sizeof(buffer), "%#lx", pthread_self());
+	      ::std::stringstream s;
+	      //s << QThread::currentThreadId();
+	      s << qPrintable(QThread::currentThread()->objectName());
+	      stid = s.str();
+	    }
+            return stid;
         }
 
         class critical_section : public QMutex

@@ -276,7 +276,7 @@ protected:
 	// NOTE: use function here to wrap static thread_local variable into header file
 	static inline long long& getDeltaTimer() {
 // Visual Studio 2013
-#if (_MSC_VER <= 1800)
+#if (defined _MSC_VER) && (_MSC_VER <= 1800)
 		__declspec(thread) static long long time;
 #else
 		thread_local static long long time;
@@ -285,7 +285,7 @@ protected:
     };
 	static inline long long& getTotalTimer() {
 // Visual Studio 2013
-#if (_MSC_VER <= 1800)
+#if (defined _MSC_VER) && (_MSC_VER <= 1800)
 		__declspec(thread) static long long time;
 #else
 		thread_local static long long time;
@@ -312,9 +312,11 @@ template<class thread_manager>
 class timeDeltaDecorator : public timeStartDecorator<thread_manager>
 {
 public:
+    typedef timeStartDecorator<thread_manager> super;
+    
     static inline void decorate(std::ostream &s)
     {
-    	long long& time = getDeltaTimer();
+        long long& time = super::getDeltaTimer();
     	long long now = thread_manager::getTimeOfDay();
     	s << "Time: " << thread_manager::timeDeltaHook(now - time) << "us";
     	time = now;
@@ -330,10 +332,12 @@ template<class thread_manager>
 class timeTotalDecorator : public timeStartDecorator<thread_manager>
 {
 public:
+    typedef timeStartDecorator<thread_manager> super;
+    
     static inline void decorate(std::ostream &s)
     {
-    	long long& time1 = getDeltaTimer();
-    	long long& time2 = getTotalTimer();
+        long long& time1 = super::getDeltaTimer();
+    	long long& time2 = super::getTotalTimer();
     	long long now = thread_manager::getTimeOfDay();
 		s << "Time: " << thread_manager::timeDeltaHook(now - time1) << "us\t" << "Total: " << thread_manager::timeDeltaHook(now - time2) << "us";
     	time1 = now;
