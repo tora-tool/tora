@@ -231,10 +231,20 @@ toCache::CacheEntry const* toCache::findEntry(toCache::ObjectRef const& o) const
     return entryMap.value(o, NULL);
 }
 
-QStringList toCache::completeEntry(QString const& tab) const
+QStringList toCache::completeEntry(QString const& schema, QString const& object) const
 {
     using namespace QmlJS::PersistentTrie;
-    return m_trie->complete(tab, "", LookupFlags(CaseInsensitive));
+    auto i(m_schemaTrie.find(schema));
+    if (i != m_schemaTrie.end())
+    {
+    	QStringList retvalSchema = m_schemaTrie.value(schema).complete(object, schema + '.', LookupFlags(CaseInsensitive));
+    	//QStringList retvalPublic = m_schemaTrie.value("PUBLIC").complete(object, "PUBLIC.", LookupFlags(CaseInsensitive));
+    	if(retvalSchema.size() < 200) retvalSchema.sort();
+    	//if(retvalPublic.size() < 800) retvalPublic.sort();
+    	//retvalSchema.append(retvalPublic);
+    	return retvalSchema;
+    }
+    return m_trie->complete(object, schema, LookupFlags(CaseInsensitive));
 }
 
 QList<toCache::CacheEntry const*> toCache::getEntriesInSchema(QString const& schema, CacheEntryType type) const
@@ -338,6 +348,11 @@ void toCache::upsertEntry(toCache::CacheEntry* e)
         case TABLE:
         case VIEW:
             m_trie->insert(e->name.second);
+            {
+            	if(!m_schemaTrie.contains(e->name.first))
+            		m_schemaTrie.insert(e->name.first, QmlJS::PersistentTrie::Trie());
+                m_schemaTrie[e->name.first].insert(e->name.second);
+            }
             // no break
         case PROCEDURE:
         case FUNCTION:
@@ -768,6 +783,7 @@ void toCache::clearCache()
     usersMap.clear();
 
     m_trie = QSharedPointer<QmlJS::PersistentTrie::Trie>(new QmlJS::PersistentTrie::Trie());
+    m_schemaTrie.clear();
 }
 ;
 

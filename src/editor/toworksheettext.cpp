@@ -33,6 +33,8 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "editor/toworksheettext.h"
+#include "tools/toworksheeteditor.h"
+#include "tools/toworksheet.h"
 #include "editor/tocomplpopup.h"
 #include "core/toconfiguration_new.h"
 #include "core/toeditorsetting.h"
@@ -154,6 +156,19 @@ void toWorksheetText::positionChanged(int row, int col)
         // TODO use getWCharAt and handle multibyte characters here
         if (c == '.')
             complTimer->start(500);
+
+        position = SendScintilla(QsciScintilla::SCI_POSITIONBEFORE, position);
+        c = getByteAt(position);
+        // TODO use getWCharAt and handle multibyte characters here
+        if (c == '.')
+            complTimer->start(500);
+
+        position = SendScintilla(QsciScintilla::SCI_POSITIONBEFORE, position);
+        c = getByteAt(position);
+        // TODO use getWCharAt and handle multibyte characters here
+        if (c == '.')
+            complTimer->start(500);
+
     }
     else
     {
@@ -324,7 +339,6 @@ void toWorksheetText::gotoNextBookmark()
 
 QStringList toWorksheetText::getCompletionList(QString &partial)
 {
-    QStringList retval;
 #if 0
     int curline, curcol;
     // used as a flag to prevent completion popup when there is
@@ -456,18 +470,32 @@ QStringList toWorksheetText::getCompletionList(QString &partial)
 
     retval.sort();
 #endif
+    TLOG(0, toTimeStart, __HERE__) << "Start" << std::endl;
     int curline, curcol;
     getCursorPosition (&curline, &curcol);
     QString word = wordAtLineIndex(curline, curcol);
-    retval = toConnection::currentConnection(this).getCache().completeEntry(word);
-    if (retval.size() <= 100) // Do not waste CPU on sorting huge completition list TODO: limit the amount of returned entries
-        retval.sort();
+    TLOG(0, toTimeDelta, __HERE__) << "Word at index " << std::endl;
+	QStringList retval = toConnection::currentConnection(this).getCache().completeEntry("" , word);
+    TLOG(0, toTimeDelta, __HERE__) << "Complete entry" << std::endl;
+	QStringList retval2;
+	{
+		//QWidget * parent = parentWidget();
+		//QWidget * parent2 = parent->parentWidget();
+		//if (toWorksheetEditor *editor = dynamic_cast<toWorksheetEditor*>(parentWidget()))
+		//	if(toWorksheet *worksheet = dynamic_cast<toWorksheet*>(editor))
+		//		retval2 = toConnection::currentConnection(this).getCache().completeEntry(worksheet->currentSchema()+'.' ,word);
+		retval2 = toConnection::currentConnection(this).getCache().completeEntry(toToolWidget::currentSchema(this), word);
+	}
+
+    if (retval2.size() <= 100) // Do not waste CPU on sorting huge completition list TODO: limit the amount of returned entries
+        retval2.sort();
+    TLOG(0, toTimeDelta, __HERE__) << "Sort" << std::endl;
     Q_FOREACH(QString t, retval)
     {
-        TLOG(0, toNoDecorator, __HERE__) << " Tab: " << t << std::endl;
+        //TLOG(0, toNoDecorator, __HERE__) << " Tab: " << t << std::endl;
     }
-
-    return retval;
+    TLOG(0, toTimeTotal, __HERE__) << "End" << std::endl;
+    return retval2;
 }
 
 void toWorksheetText::focusInEvent(QFocusEvent *e)
