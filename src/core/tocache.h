@@ -312,7 +312,7 @@ class TORA_EXPORT toCache : public QObject
          */
         CacheEntry const* findEntry(ObjectRef const&) const;
 
-        QStringList completeEntry(QString const&) const;
+        QStringList completeEntry(QString const& schema, QString const&object) const;
 
         /** Query the cache for entries of particular type
          */
@@ -446,6 +446,7 @@ class TORA_EXPORT toCache : public QObject
         toCacheWorker *m_cacheWorker;
 
         QSharedPointer<QmlJS::PersistentTrie::Trie> m_trie;
+        QMap<QString,QmlJS::PersistentTrie::Trie> m_schemaTrie;
 
     signals:
         void userListRefreshed(void);

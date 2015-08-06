@@ -379,7 +379,7 @@ class toToolWidget : public QWidget
          *   Subclass of toToolWidget has to override schema() method
          * @return QString schema name closest to the current.
          */
-        static QString currentSchema(QObject *cur);
+        static QString currentSchema(QWidget *cur);
 
         /** Change connection of tool.
          */
