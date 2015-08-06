@@ -84,7 +84,7 @@ class toSGATrace : public toToolWidget
         Q_OBJECT;
     public:
         toSGATrace(QWidget *parent, toConnection &connection);
-
+        QString schema() const override;
     public slots:
         void changeSchema(const QString &str);
         void changeItem(void);

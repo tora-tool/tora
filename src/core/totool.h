@@ -370,6 +370,17 @@ class toToolWidget : public QWidget
             return toConnectionWidget::connection();
         }
 
+        virtual QString schema() const
+        {
+        	return "";
+        }
+
+        /** Return the schema name most closely associated with a widget.
+         *   Subclass of toToolWidget has to override schema() method
+         * @return QString schema name closest to the current.
+         */
+        static QString currentSchema(QObject *cur);
+
         /** Change connection of tool.
          */
         void setConnection(toConnection &conn);

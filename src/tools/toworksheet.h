@@ -124,6 +124,7 @@ class toWorksheet : public toToolWidget
         virtual void rollbackChanges();
 
         toSyntaxAnalyzer::statement currentStatement() const;
+        QString schema() const override;
 
         enum execTypeEnum
         {
@@ -209,8 +210,6 @@ class toWorksheet : public toToolWidget
         };
 
         bool describe(toSyntaxAnalyzer::statement const&);
-
-        QString currentSchema() const;
 
         QString duration(int, bool hundreds = true);
         void saveHistory(void);

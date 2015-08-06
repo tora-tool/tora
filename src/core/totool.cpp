@@ -297,6 +297,19 @@ toToolWidget::~toToolWidget()
     // toGlobalEventSingle::Instance().toolWidgetRemoved(this);
 }
 
+QString toToolWidget::currentSchema(QObject *cur)
+{
+    while (cur)
+    {
+    	toToolWidget *widget = dynamic_cast<toToolWidget *>(cur);
+        if (widget)
+            return widget->schema();
+        cur = cur->parent();
+    }
+    TLOG(2, toDecorator, __HERE__) << "Couldn't find parent toToolWidget. Internal error." << std::endl;
+    return "";
+}
+
 void toToolWidget::setConnection(toConnection &conn)
 {
     bool connCap = false;
