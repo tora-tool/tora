@@ -37,7 +37,7 @@
 #include "core/toconnectionoptions.h"
 #include "core/toconnectionregistry.h"
 #include "core/tomainwindow.h"
-#include "core/totool.h"
+#include "widgets/totoolwidget.h"
 #include "core/tologger.h"
 #include "core/utils.h"
 

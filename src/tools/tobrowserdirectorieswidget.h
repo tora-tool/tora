@@ -35,7 +35,7 @@
 #ifndef TOBROWSERDIRECTORIESWIDGET_H
 #define TOBROWSERDIRECTORIESWIDGET_H
 
-#include "core/tobrowserbasewidget.h"
+#include "widgets/tobrowserbasewidget.h"
 
 class toResultTableView;
 class toResultCode;

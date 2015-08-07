@@ -36,7 +36,7 @@
 
 #include "core/utils.h"
 #include "core/tologger.h"
-#include "core/toconfiguration_new.h"
+#include "core/toconfiguration.h"
 
 #include <QApplication>
 #include <QtCore/QLibrary>

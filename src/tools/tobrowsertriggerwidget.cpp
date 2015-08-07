@@ -33,12 +33,12 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "tools/tobrowsertriggerwidget.h"
-#include "core/toresultcols.h"
-#include "core/toresultdepend.h"
-#include "core/toresultcode.h"
-#include "core/toresultfield.h"
-#include "core/toresultitem.h"
-#include "core/toresultgrants.h"
+#include "widgets/toresultcols.h"
+#include "widgets/toresultdepend.h"
+#include "widgets/toresultcode.h"
+#include "widgets/toresultfield.h"
+#include "widgets/toresultitem.h"
+#include "widgets/toresultgrants.h"
 #include "core/utils.h"
 
 Util::RegisterInFactory<toBrowserTriggerWidget, toBrowserWidgetFactory, toCache::CacheEntryType> regToBrowserTriggerWidget(toCache::TRIGGER);

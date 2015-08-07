@@ -35,10 +35,11 @@
 //
 #include "tools/toscript.h"
 #include "core/utils.h"
+#include "core/totool.h"
 //#include "core/toextract.h"
 #include "core/tomainwindow.h"
 //#include "core/toreport.h"
-#include "core/toresultview.h"
+#include "widgets/toresultview.h"
 #include "core/totextview.h"
 #include "tools/toworksheet.h"
 #include "tools/toscripttreeitem.h"

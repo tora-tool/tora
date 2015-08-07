@@ -35,10 +35,8 @@
 #ifndef TOTEMPORARY_H
 #define TOTEMPORARY_H
 
-#include "core/totool.h"
-#include "core/totreewidget.h"
-
-#include <list>
+#include "widgets/totoolwidget.h"
+#include "widgets/totreewidget.h"
 
 class toResultLong;
 class toTask;

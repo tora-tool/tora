@@ -35,8 +35,8 @@
 #include "tools/toresultstorage.h"
 #include "core/utils.h"
 #include "core/toeventquery.h"
-#include "core/toconfiguration_new.h"
-#include "core/toglobalsettingenum.h"
+#include "core/toconfiguration.h"
+#include "core/toglobalconfiguration.h"
 
 #include <QtGui/QPainter>
 #include <QItemDelegate>

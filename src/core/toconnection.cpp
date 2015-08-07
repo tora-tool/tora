@@ -40,10 +40,10 @@
 #include "core/tocache.h"
 #include "core/toqvalue.h"
 #include "core/toquery.h"
-#include "core/totool.h"
-#include "core/toconfiguration_new.h"
+#include "widgets/totoolwidget.h"
+#include "core/toconfiguration.h"
 #include "core/toconnectionprovider.h"
-#include "core/toworkspace.h"
+#include "widgets/toworkspace.h"
 #include "core/todatabasesetting.h"
 
 #include <QMenu>

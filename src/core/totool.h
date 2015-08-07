@@ -55,35 +55,6 @@ class toTimer;
 class toToolWidget;
 
 /**
- * This class is used to indicate a help context of an object. When
- * the current context is to be determined you start at the widget
- * that currently has focus and walk upwards to it's parent until you
- * find a widget that also inherits this class which specify the
- * context of all underlying widgets.
- */
-class toHelpContext
-{
-    public:
-        /** Create a context.
-         * @param file File in the help directory that describes the current context.
-         */
-        toHelpContext(const QString &file) : Context(file) { }
-
-        virtual ~toHelpContext() { }
-        /**
-         * Get this context
-         * @return The location of a file that describes the current context.
-         */
-        virtual const QString &context(void) const
-        {
-            return Context;
-        }
-    private:
-        /** The current context. */
-        QString Context;
-};
-
-/**
  * Abstract baseclass for tools.
  *
  * This class is the baseclass of all classes defining tools. It
@@ -258,41 +229,7 @@ class toTool : public QObject
         QAction *toolAction;     // For inserting into menus and toolbars
 };
 
-/**
- * Abstract baseclass for widgets defining tool settings.
- */
-class TORA_EXPORT toSettingTab : public toHelpContext
-{
-    public:
-        /**
-         * Default constructor.
-         * @param ctx Help context for this setting tab.
-         */
-        toSettingTab(const QString &ctx)
-            : toHelpContext(ctx)
-        { }
-        /**
-         * This function is called to save the contents of the widget when
-         * a user has pressed the ok button of the dialog. It should simply
-         * save the values in the dialog to the appropriate configuration
-         * entry using the @ref toTool::setConfig function.
-         */
-        virtual void saveSetting(void) = 0;
-
-        /*
-         * This function iterates over all child widgets an tries to find matching config option.
-         * Based on objectName and Widget type. Then configuration option's values are load from configuration into Widgets
-         */
-        virtual void loadSettings(QWidget*);
-
-        /*
-         * This function iterates over all child widgets an tries to find matching config option.
-         * Based on objectName and Widget type. Then configuration option's values are save into configuration from Widgets
-         */
-        virtual void saveSettings(QWidget*);
-
-};
-
+#if 0
 /** This class is used to hold connections for @ref toResult classes.
  * Must be multiply inherited by a widget otherwise it will go kaboom.
  * It will dynamic cast itself to a QWidget from time to time so if that
@@ -457,6 +394,7 @@ class toToolWidget : public QWidget
         toTool &Tool;
         QAction *Action;
 };
+#endif
 
 /*
  * Get access to the map of tools. Don't modify it. Observe that the index string is not

@@ -37,7 +37,7 @@
 
 
 #include "core/toeventquery.h"
-#include "core/totool.h"
+#include "widgets/totoolwidget.h"
 
 #include <QAction>
 #include <QLabel>

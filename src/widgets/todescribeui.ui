@@ -1,0 +1,37 @@
+<ui version="4.0" >
+ <class>toDescribe</class>
+ <widget class="QDialog" name="toDescribe" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>751</width>
+    <height>330</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Describe</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout" >
+   <property name="margin" >
+    <number>0</number>
+   </property>
+   <property name="spacing" >
+    <number>0</number>
+   </property>
+   <item row="0" column="0" >
+    <widget class="toBrowserBaseWidget" native="1" name="widget" />
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>toBrowserBaseWidget</class>
+   <extends>QWidget</extends>
+   <header>widgets/tobrowserbasewidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

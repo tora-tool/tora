@@ -185,3 +185,5 @@ void ToConfiguration::Editor::loadUserType(QSettings &s, QVariant &val, int key)
     }
     val = QVariant::fromValue(dMap);
 }
+
+ToConfiguration::Editor s_editorConfig;

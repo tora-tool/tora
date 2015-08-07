@@ -35,7 +35,7 @@
 #ifndef TODATABASESETTING_H
 #define TODATABASESETTING_H
 
-#include "core/totool.h"
+#include "core/tosettingtab.h"
 #include "core/toconfenum.h"
 #include "core/utils.h"
 

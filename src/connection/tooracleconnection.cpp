@@ -44,7 +44,7 @@
 #include "connection/tooraclequery.h"
 
 #include "core/toconf.h"       // TOAPPNAME
-#include "core/toconfiguration_new.h"
+#include "core/toconfiguration.h"
 #include "core/toraversion.h"
 #include "core/tologger.h"
 #include "connection/tooraclesetting.h"

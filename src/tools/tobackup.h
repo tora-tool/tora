@@ -35,9 +35,7 @@
 #ifndef TOBACKUP_H
 #define TOBACKUP_H
 
-#include "core/totool.h"
-
-#include <QLabel>
+#include "widgets/totoolwidget.h"
 
 class QLabel;
 class QMenu;

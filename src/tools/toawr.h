@@ -35,7 +35,7 @@
 #ifndef TOAWR_H
 #define TOAWR_H
 
-#include "core/totool.h"
+#include "widgets/totoolwidget.h"
 
 #include <iostream>
 #include <QtCore/QDate>

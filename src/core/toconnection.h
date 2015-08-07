@@ -41,7 +41,6 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QPointer>
-#include <QWidget>
 #include <QtCore/QSet>
 #include <QtCore/QMap>
 #include <QtCore/QMetaType>
@@ -52,6 +51,10 @@
 #include <QtCore/QVariant>
 #include <QtCore/QMutex>
 
+class QWidget;
+class QAction;
+class QMenu;
+
 class toConnectionSub;
 class toConnectionTraits;
 class toCache;           // defined in tocache.h
@@ -59,8 +62,6 @@ class toQuery;           // defined in toquery.h
 class queryImpl;         // defined in toqueryimpl.h
 class toConnectionSubLoan;
 class toSQL;
-
-class QMenu;
 
 /** Represent a database connection in TOra. Observe that this can mean several actual
  * connections to the database as queries that are expected to run a long time are sometimes

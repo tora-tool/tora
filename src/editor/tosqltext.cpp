@@ -37,7 +37,7 @@
 #include "core/toconnectiontraits.h"
 #include "core/tologger.h"
 #include "core/utils.h"
-#include "core/toconfiguration_new.h"
+#include "core/toconfiguration.h"
 #include "editor/toworksheettext.h"
 
 #include <QListWidget>

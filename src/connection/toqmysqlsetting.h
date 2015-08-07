@@ -35,7 +35,7 @@
 #ifndef TOQMYSQLSETTING_H
 #define TOQMYSQLSETTING_H
 
-#include "core/totool.h"
+#include "core/tosettingtab.h"
 #include "core/toconfenum.h"
 #include "ts_log/ts_log_utils.h"
 

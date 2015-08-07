@@ -35,7 +35,7 @@
 #ifndef TOPROFILER_H
 #define TOPROFILER_H
 
-#include "core/totool.h"
+#include "widgets/totoolwidget.h"
 
 class QComboBox;
 class QLineEdit;

@@ -34,14 +34,14 @@
 
 #include "tests/test3window.h"
 
-#include "core/toabout.h"
+#include "widgets/toabout.h"
 #include "core/toconf.h"
 #include "core/toconnection.h"
 #include "core/toconnectionregistry.h"
 #include "core/todocklet.h"
 #include "core/toconfiguration.h"
 #include "core/toraversion.h"
-#include "core/toworkspace.h"
+#include "widgets/toworkspace.h"
 #include "core/tologger.h"
 #include "tools/toworksheet.h"
 

@@ -34,14 +34,15 @@
 
 #include "tools/tounittest.h"
 #include "core/utils.h"
+#include "core/totool.h"
 #include "core/tologger.h"
 #include "core/toeventquery.h"
-#include "core/toresultcombo.h"
-#include "core/toresultschema.h"
+#include "widgets/toresultcombo.h"
+#include "widgets/toresultschema.h"
 #include "core/tochangeconnection.h"
 #include "core/tocodemodel.h"
 #include "core/toeventquery.h"
-#include "core/toresulttableview.h"
+#include "widgets/toresulttableview.h"
 #include "editor/tohighlightededitor.h"
 #include "editor/tosqltext.h"
 

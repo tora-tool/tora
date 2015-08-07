@@ -35,6 +35,8 @@
 #include "core/toeditwidget.h"
 #include "core/tomainwindow.h"
 
+#include <QWidget>
+
 toEditWidget::toEditWidget()
     : FlagSet()
 {

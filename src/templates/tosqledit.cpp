@@ -34,17 +34,18 @@
 
 #include "templates/tosqledit.h"
 #include "core/utils.h"
+#include "core/totool.h"
 #include "core/toconnection.h"
 #include "core/toeditmenu.h"
-#include "core/toconfiguration_new.h"
-#include "core/toglobalsettingenum.h"
+#include "core/toconfiguration.h"
+#include "core/toglobalconfiguration.h"
 #include "editor/tohighlightededitor.h"
 #include "tools/toworksheeteditor.h"
 #include "core/tomainwindow.h"
-#include "core/toresultview.h"
+#include "widgets/toresultview.h"
 #include "core/tosql.h"
 #include "tools/toworksheet.h"
-#include "core/totreewidget.h"
+#include "widgets/totreewidget.h"
 
 #include <QtCore/QString>
 #include <QtCore/QFileInfo>

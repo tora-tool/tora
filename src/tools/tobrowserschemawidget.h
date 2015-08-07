@@ -37,7 +37,7 @@
 
 #include <QTreeView>
 
-#include "core/toresulttableview.h"
+#include "widgets/toresulttableview.h"
 
 class toCodeModel;
 

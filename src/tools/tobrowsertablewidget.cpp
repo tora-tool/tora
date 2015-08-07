@@ -33,14 +33,14 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "tools/tobrowsertablewidget.h"
-#include "core/tobrowserbasewidget.h"
+#include "widgets/tobrowserbasewidget.h"
 #include "tools/tostorage.h"
-#include "core/toresultcols.h"
-#include "core/toresultcode.h"
-#include "core/toresultitem.h"
-#include "core/toresulttableview.h"
-#include "core/toresultgrants.h"
-#include "core/toresultextent.h"
+#include "widgets/toresultcols.h"
+#include "widgets/toresultcode.h"
+#include "widgets/toresultitem.h"
+#include "widgets/toresulttableview.h"
+#include "widgets/toresultgrants.h"
+#include "widgets/toresultextent.h"
 #include "core/utils.h"
 //#include "core/toextract.h"
 #include "core/toconnection.h"
@@ -50,7 +50,7 @@
 
 #include "result/toresulttabledata.h"
 
-#include "core/toresultdrawing.h"
+#include "widgets/toresultdrawing.h"
 #ifdef TORA_EXPERIMENTAL
 #include "dotgraphview.h"
 #include "dotgraph.h"

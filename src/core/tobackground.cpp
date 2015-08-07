@@ -38,7 +38,7 @@
 
 
 #include "core/tobackground.h"
-#include "core/tobackgroundlabel.h"
+#include "widgets/tobackgroundlabel.h"
 #include "core/tomainwindow.h"
 
 int toBackground::Running = 0;

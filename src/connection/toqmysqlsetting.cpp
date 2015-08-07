@@ -34,7 +34,7 @@
 
 #include "connection/toqmysqlsetting.h"
 #include "connection/toqmysqlprovider.h"
-#include "core/toconfiguration_new.h"
+#include "core/toconfiguration.h"
 
 #include <QVBoxLayout>
 #include <QGroupBox>

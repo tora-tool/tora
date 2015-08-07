@@ -37,8 +37,8 @@
 
 #include "core/tomainwindow.h"
 //#include "core/toworksheet.h"
-#include "core/todockbar.h"
-#include "core/tobackgroundlabel.h"
+#include "widgets/todockbar.h"
+#include "widgets/tobackgroundlabel.h"
 
 #include <QtCore/QObject>
 #include <QMdiArea>
@@ -89,7 +89,7 @@ class Test5Window : public toMainWindow
 
         QAction * m_describeAction;
     public:
-        Test5Window(QString, QString, QString, QSet<QString>&);
+        Test5Window(QString const&, QString const&, QString const&, QSet<QString>&);
 
         void createDockbars();
         void createDocklets();

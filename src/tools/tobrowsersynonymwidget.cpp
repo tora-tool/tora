@@ -33,10 +33,10 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "tools/tobrowsersynonymwidget.h"
-#include "core/toresultcode.h"
-#include "core/toresultgrants.h"
+#include "widgets/toresultcode.h"
+#include "widgets/toresultgrants.h"
 #include "core/utils.h"
-#include "core/toresultitem.h"
+#include "widgets/toresultitem.h"
 
 Util::RegisterInFactory<toBrowserSynonymWidget, toBrowserWidgetFactory, toCache::CacheEntryType> regToBrowserSynonymWidget(toCache::SYNONYM);
 

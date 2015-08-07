@@ -35,7 +35,7 @@
 #ifndef TOER_H
 #define TOER_H
 
-#include "core/totool.h"
+#include "widgets/totoolwidget.h"
 
 #include <QtCore/QDate>
 #include <QtCore/QMap>

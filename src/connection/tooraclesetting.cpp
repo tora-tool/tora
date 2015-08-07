@@ -33,7 +33,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "connection/tooraclesetting.h"
-#include "core/toconfiguration_new.h"
+#include "core/toconfiguration.h"
 
 #include "core/tologger.h"
 #include "core/utils.h"

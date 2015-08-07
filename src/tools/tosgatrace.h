@@ -35,7 +35,7 @@
 #ifndef TOSGATRACE_H
 #define TOSGATRACE_H
 
-#include "core/totool.h"
+#include "widgets/totoolwidget.h"
 #include "core/toconfenum.h"
 #include "ts_log/ts_log_utils.h"
 

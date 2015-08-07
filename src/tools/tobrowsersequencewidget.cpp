@@ -33,10 +33,10 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "tools/tobrowsersequencewidget.h"
-#include "core/toresultcode.h"
-#include "core/toresultitem.h"
-#include "core/toresulttableview.h"
-#include "core/toresultgrants.h"
+#include "widgets/toresultcode.h"
+#include "widgets/toresultitem.h"
+#include "widgets/toresulttableview.h"
+#include "widgets/toresultgrants.h"
 #include "core/utils.h"
 
 Util::RegisterInFactory<toBrowserSequenceWidget, toBrowserWidgetFactory, toCache::CacheEntryType> regToBrowserSequenceWidget(toCache::SEQUENCE);

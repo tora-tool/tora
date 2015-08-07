@@ -34,10 +34,11 @@
 
 #include "tools/toprofiler.h"
 #include "core/utils.h"
+#include "core/totool.h"
 #include "core/tochangeconnection.h"
 #include "core/toconnection.h"
-#include "core/toresultitem.h"
-#include "core/toresultlong.h"
+#include "widgets/toresultitem.h"
+#include "widgets/toresultlong.h"
 #include "core/tosql.h"
 #include "editor/tohighlightededitor.h"
 #include "editor/tosqltext.h"

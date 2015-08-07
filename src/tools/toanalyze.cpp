@@ -34,12 +34,13 @@
 
 #include "tools/toanalyze.h"
 #include "core/utils.h"
-#include "core/tomemoeditor.h"
-#include "core/toresultschema.h"
-#include "core/toresulttableview.h"
-#include "core/toresultplan.h"
+#include "core/totool.h"
+#include "editor/tomemoeditor.h"
+#include "widgets/toresultschema.h"
+#include "widgets/toresulttableview.h"
+#include "widgets/toresultplan.h"
 #include "tools/toworksheetstatistic.h"
-//#include "core/toconfiguration_new.h"
+//#include "core/toconfiguration.h"
 #include "connection/tooraclesetting.h"
 
 #include <QComboBox>

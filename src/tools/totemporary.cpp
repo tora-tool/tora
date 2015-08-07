@@ -34,13 +34,14 @@
 
 #include "tools/totemporary.h"
 #include "core/utils.h"
+#include "core/totool.h"
 #include "core/tochangeconnection.h"
 #include "core/toconnection.h"
-#include "core/toresultlong.h"
+#include "widgets/toresultlong.h"
 #include "tools/tosgastatement.h"
 #include "core/toglobalevent.h"
-#include "core/toconfiguration_new.h"
-#include "core/toglobalsettingenum.h"
+#include "core/toconfiguration.h"
+#include "core/toglobalconfiguration.h"
 
 #include <QToolBar>
 #include <QLayout>

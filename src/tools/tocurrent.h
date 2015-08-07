@@ -35,9 +35,9 @@
 #ifndef TOCURRENT_H
 #define TOCURRENT_H
 
-#include "core/totool.h"
+#include "widgets/totoolwidget.h"
 #include "core/tosql.h"
-#include "core/toresultview.h"
+#include "widgets/toresultview.h"
 
 class QTabWidget;
 class toEventQuery;

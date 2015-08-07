@@ -36,7 +36,7 @@
 #define TOPSQLSETTING_H
 
 #include "core/tora_export.h"
-#include "core/totool.h"
+#include "core/tosettingtab.h"
 
 #include "ui_toqpsqlsettingui.h"
 

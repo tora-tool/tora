@@ -114,7 +114,7 @@
   <customwidget>
    <class>toWorkingWidget</class>
    <extends>QWidget</extends>
-   <header>core/toworkingwidget.h</header>
+   <header>widgets/toworkingwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

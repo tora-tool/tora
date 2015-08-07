@@ -35,7 +35,7 @@
 #ifndef TOBROWSERDBLINKSWIDGET_H
 #define TOBROWSERDBLINKSWIDGET_H
 
-#include "core/tobrowserbasewidget.h"
+#include "widgets/tobrowserbasewidget.h"
 
 class toResultItem;
 class toResultTableView;

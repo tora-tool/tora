@@ -35,7 +35,7 @@
 #ifndef TOSQLEDIT_H
 #define TOSQLEDIT_H
 
-#include "core/totool.h"
+#include "widgets/totoolwidget.h"
 #include "templates/totemplate.h"
 
 #include <QtCore/QString>

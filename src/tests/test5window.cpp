@@ -34,7 +34,7 @@
 
 #include "tests/test5window.h"
 
-#include "core/toabout.h"
+#include "widgets/toabout.h"
 #include "core/toconf.h"
 #include "core/tologger.h"
 #include "core/toconnection.h"
@@ -44,7 +44,7 @@
 #include "core/toconfiguration.h"
 #include "core/toraversion.h"
 
-#include "core/toworkspace.h"
+#include "widgets/toworkspace.h"
 //#include "tools/toworksheet.h"
 #include "tools/toplsqleditor.h"
 #include "tools/toplsqltext.h"
@@ -55,7 +55,7 @@
 #include <QScrollArea>
 #include <QSplitter>
 
-Test5Window::Test5Window(QString user, QString password, QString connect, QSet<QString>& options)
+Test5Window::Test5Window(QString const&user, QString const&password, QString const&connect, QSet<QString>& options)
     : toMainWindow()
     , Workspace(toWorkSpaceSingle::Instance())
 {
@@ -143,8 +143,9 @@ void Test5Window::createDockbars()
                 SLOT(moveDocklet(toDocklet *, Qt::DockWidgetArea)));
     }
 
-    leftDockbar->restoreState(toConfigurationSingle::Instance().leftDockbarState());
-    rightDockbar->restoreState(toConfigurationSingle::Instance().rightDockbarState());
+    leftDockbar->restoreState(toConfigurationNewSingle::Instance().option(ToConfiguration::Main::LeftDockbarState).toByteArray());
+    rightDockbar->restoreState(toConfigurationNewSingle::Instance().option(ToConfiguration::Main::RightDockbarState).toByteArray());
+
 }
 
 void Test5Window::createActions()

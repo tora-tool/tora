@@ -40,7 +40,7 @@
 #include "core/toconnectionsubloan.h"
 #include "core/toqvalue.h"
 #include "core/toquery.h"
-#include "core/totreewidget.h"
+#include "widgets/totreewidget.h"
 #include "core/tosql.h"
 #include "core/toglobalevent.h"
 #include "editor/toscintilla.h"

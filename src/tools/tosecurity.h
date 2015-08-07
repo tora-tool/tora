@@ -35,9 +35,9 @@
 #ifndef TOSECURITY_H
 #define TOSECURITY_H
 
-#include "core/totool.h"
+#include "widgets/totoolwidget.h"
 // due the toListView
-#include "core/toresultview.h"
+#include "widgets/toresultview.h"
 #include "ui_tosecurityquotaui.h"
 #include "tools/tosecuritytreemodel.h"
 

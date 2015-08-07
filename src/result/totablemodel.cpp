@@ -34,7 +34,7 @@
 
 #include "result/totablemodel.h"
 
-#include "core/toconfiguration_new.h"
+#include "core/toconfiguration.h"
 #include "core/todatabasesetting.h"
 #include "core/toqvalue.h"
 #include "ts_log/ts_log_utils.h"

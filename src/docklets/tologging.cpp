@@ -35,7 +35,6 @@
 #include "docklets/tologging.h"
 #include "core/tologger.h"
 #include "core/utils.h"
-#include "core/tomain.h"
 #include "editor/tosearchreplace.h"
 
 #include <QPlainTextEdit>

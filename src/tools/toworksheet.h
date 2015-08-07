@@ -37,7 +37,8 @@
 
 #include "core/toconnection.h"
 #include "core/toconfenum.h"
-#include "core/totool.h"
+#include "core/tosettingtab.h"
+#include "widgets/totoolwidget.h"
 #include "parsing/tosyntaxanalyzer.h"
 
 #include "ui_toworksheetsetupui.h"

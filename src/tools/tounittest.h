@@ -35,7 +35,7 @@
 #ifndef TOUNITTEST_H
 #define TOUNITTEST_H
 
-#include "core/totool.h"
+#include "widgets/totoolwidget.h"
 
 class QSplitter;
 class QTreeView;

@@ -308,7 +308,7 @@
   <customwidget>
    <class>toResultView</class>
    <extends>QWidget</extends>
-   <header>core/toresultview.h</header>
+   <header>widgets/toresultview.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

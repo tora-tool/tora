@@ -32,7 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "core/toabout.h"
+#include "widgets/toabout.h"
 #include "core/tocache.h"
 #include "core/toconf.h"
 #include "core/toconfiguration.h"
@@ -45,7 +45,7 @@
 #include "core/toquery.h"
 #include "core/toqvalue.h"
 #include "core/toraversion.h"
-#include "core/tosplash.h"
+#include "widgets/tosplash.h"
 #include "core/tosql.h"
 #include "core/utils.h"
 #include "editor/tomarkededitor.h"

@@ -37,7 +37,7 @@
 
 #include "ui_tosearchreplaceui.h"
 #include "editor/toeditglobals.h"
-#include "core/totool.h"
+#include "core/tohelpcontext.h"
 
 #include <QWidget>
 

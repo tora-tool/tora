@@ -36,8 +36,8 @@
 #define TOSTORAGE_H
 
 #include "tools/toresultstorage.h"
-#include "core/toresultextent.h"
-#include "core/totool.h"
+#include "widgets/toresultextent.h"
+#include "widgets/totoolwidget.h"
 #include "core/toconfenum.h"
 
 #include "ui_tostoragedatafileui.h"

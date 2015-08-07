@@ -35,7 +35,7 @@
 #ifndef TOINVALID_H
 #define TOINVALID_H
 
-#include "core/totool.h"
+#include "widgets/totoolwidget.h"
 
 class toResultCode;
 class toResultTableView;

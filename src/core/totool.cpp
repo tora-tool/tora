@@ -42,12 +42,12 @@
 
 #include "core/toconnection.h"
 #include "core/toconnectionregistry.h"
-#include "core/toworkspace.h"
+#include "widgets/toworkspace.h"
 #include "core/totimer.h"
 #include "core/tomainwindow.h"
-#include "core/toconfiguration_new.h"
+#include "core/toconfiguration.h"
 #include "core/toglobalevent.h"
-#include "core/toglobalsettingenum.h"
+#include "core/toglobalconfiguration.h"
 
 #include <QToolBar>
 #include <QMenu>
@@ -78,123 +78,7 @@ const int toTool::priority() const
     return Priority;
 }
 
-void toSettingTab::loadSettings(QWidget *widget)
-{
-    static QRegExp any(".*");
-    QList<QWidget*> lst = widget->findChildren<QWidget*>(any);
-    Q_FOREACH(QWidget *w, lst)
-    {
-        qDebug() << w->objectName();
-        if (w->objectName() == "qt_spinbox_lineedit") // internal widget inside QSpinBox
-            continue;
-        if (QComboBox *combo = qobject_cast<QComboBox*>(w))
-        {
-            try
-            {
-                QVariant v = toConfigurationNewSingle::Instance().option(combo->objectName());
-                if (combo->objectName().endsWith("Int"))
-                    combo->setCurrentIndex(v.toInt());
-                else
-                    combo->setCurrentIndex(combo->findText(v.toString()));
-            }
-            catch (...)
-            {
-                qDebug() << w->objectName() << '*';
-                combo->setDisabled(true);
-            }
-        }
-        else if (QSpinBox *spin = qobject_cast<QSpinBox*>(w))
-        {
-            try
-            {
-                QVariant v = toConfigurationNewSingle::Instance().option(spin->objectName());
-                if (v.type() == QVariant::Int)
-                {
-                    spin->setValue(v.toInt());
-                }
-                else
-                {
-                    spin->setDisabled(true);
-                }
-            }
-            catch (...)
-            {
-                qDebug() << w->objectName() << '#';
-                spin->setDisabled(true);
-            }
-        }
-        else if (QLineEdit *edit = qobject_cast<QLineEdit*>(w))
-        {
-            try
-            {
-                QVariant v = toConfigurationNewSingle::Instance().option(edit->objectName());
-                edit->setText(v.toString());
-            }
-            catch (...)
-            {
-                qDebug() << w->objectName() << '&';
-                edit->setDisabled(true);
-            }
-        }
-        else if (QCheckBox *checkbox = qobject_cast<QCheckBox*>(w))
-        {
-            try
-            {
-                QVariant v = toConfigurationNewSingle::Instance().option(checkbox->objectName());
-                if (v.type() == QVariant::Bool)
-                {
-                    checkbox->setChecked(v.toBool());
-                }
-                else
-                {
-                    checkbox->setDisabled(true);
-                }
-            }
-            catch (...)
-            {
-                qDebug() << w->objectName() << '%';
-                checkbox->setDisabled(true);
-            }
-        }
-
-    }
-}
-
-void toSettingTab::saveSettings(QWidget *widget)
-{
-    static QRegExp any(".*");
-    QList<QWidget*> lst = widget->findChildren<QWidget*>(any);
-    Q_FOREACH(QWidget *w, lst)
-    {
-        qDebug() << w->objectName();
-        if (w->objectName() == "qt_spinbox_lineedit") // internal widget inside QSpinBox
-            continue;
-        if (QComboBox *combo = qobject_cast<QComboBox*>(w))
-        {
-            if (combo->objectName().endsWith("Int"))
-                toConfigurationNewSingle::Instance().setOption(combo->objectName(), combo->currentIndex());
-            else
-                toConfigurationNewSingle::Instance().setOption(combo->objectName(), combo->currentText());
-        }
-        else if (QSpinBox *spin = qobject_cast<QSpinBox*>(w))
-        {
-            toConfigurationNewSingle::Instance().setOption(spin->objectName(), spin->value());
-        }
-        else if (QLineEdit *edit = qobject_cast<QLineEdit*>(w))
-        {
-            if (edit->objectName().endsWith("Int"))
-                toConfigurationNewSingle::Instance().setOption(edit->objectName(), edit->text().toInt());
-            else
-                toConfigurationNewSingle::Instance().setOption(edit->objectName(), edit->text());
-        }
-        else if (QCheckBox *checkbox = qobject_cast<QCheckBox*>(w))
-        {
-            toConfigurationNewSingle::Instance().setOption(checkbox->objectName(), /*checkbox->isEnabled() &&*/ checkbox->isChecked());
-        }
-
-    }
-}
-
+#if 0
 toConnectionWidget::toConnectionWidget(toConnection &conn, QWidget *widget)
     : Connection(&conn), Widget(widget)
 {
@@ -467,6 +351,7 @@ toToolWidget* toToolWidget::currentTool(QObject *cur)
     }
     throw qApp->translate("toCurrentTool", "Couldn't find parent tool. Internal error.");
 }
+#endif
 
 const char **toTool::pictureXPM(void)
 {

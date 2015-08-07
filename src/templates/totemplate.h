@@ -35,8 +35,9 @@
 #ifndef TOTEMPLATE_H
 #define TOTEMPLATE_H
 
-#include "core/tohelp.h"
-#include "core/toresultview.h"
+#include "core/tohelpcontext.h"
+#include "widgets/toresultview.h"
+#include "core/tosettingtab.h"
 // due the TODock
 #include "core/utils.h"
 
@@ -52,6 +53,7 @@
 #include "ui_totemplateaddfileui.h"
 #include "ui_totemplatesetupui.h"
 
+class toTool;
 class toTreeWidget;
 class toTreeWidgetItem;
 class QSplitter;

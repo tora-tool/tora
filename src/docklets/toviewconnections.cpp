@@ -34,7 +34,7 @@
 
 #include "docklets/toviewconnections.h"
 #include "core/toconnectionmodel.h"
-#include "core/tonewconnection.h"
+#include "widgets/tonewconnection.h"
 #include "core/toconnection.h"
 #include "core/toconnectionregistry.h"
 #include "core/tooracleconst.h"
