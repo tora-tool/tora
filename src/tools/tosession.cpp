@@ -36,17 +36,18 @@
 
 #include "core/utils.h"
 #include "core/tochangeconnection.h"
-#include "core/toresultschema.h"
-#include "core/toresultlock.h"
-#include "core/toresultitem.h"
-#include "core/toresultstats.h"
+#include "widgets/toresultschema.h"
+#include "widgets/toresultlock.h"
+#include "widgets/toresultitem.h"
+#include "widgets/toresultstats.h"
 #include "tools/tosgastatement.h"
 #include "tools/tosgatrace.h"
 #include "tools/towaitevents.h"
-#include "core/toresulttableview.h"
+#include "widgets/toresulttableview.h"
 #include "core/toeventquery.h"
 #include "core/totimer.h"
 #include "core/toglobalevent.h"
+#include "core/totool.h"
 
 #include <QLayout>
 #include <QLineEdit>

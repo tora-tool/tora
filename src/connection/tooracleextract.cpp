@@ -36,7 +36,7 @@
 #include "connection/tooraclesetting.h"
 #include "core/toconnectiontraits.h"
 #include "core/utils.h"
-#include "core/toconfiguration_new.h"
+#include "core/toconfiguration.h"
 #include "core/toquery.h"
 #include "core/toextract.h"
 #include "core/tosql.h"

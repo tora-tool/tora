@@ -34,10 +34,10 @@
 
 #include "tools/toawr.h"
 #include "core/tologger.h"
-#include "core/toresultcombo.h"
+#include "widgets/toresultcombo.h"
 #include "core/utils.h"
 #include "core/totool.h"
-#include "core/toparamget.h"
+#include "widgets/toparamget.h"
 #include "core/tochangeconnection.h"
 #include "core/toquery.h"
 #include "core/totextview.h"

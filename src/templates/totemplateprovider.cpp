@@ -33,6 +33,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "templates/totemplate.h"
+#include "core/totool.h"
 #include "core/utils.h"
 #include "core/tologger.h"
 

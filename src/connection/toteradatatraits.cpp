@@ -34,7 +34,7 @@
 
 #include "connection/toteradatatraits.h"
 #include "core/utils.h"
-#include "core/toconfiguration_new.h"
+#include "core/toconfiguration.h"
 #include "editor/toworksheettext.h"
 
 /** Return a string representation to address an object.

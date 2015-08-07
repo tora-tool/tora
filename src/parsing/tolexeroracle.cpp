@@ -35,7 +35,7 @@
 #include "parsing/tolexeroracle.h"
 #include "parsing/tolexeroracleapis.h"
 #include "core/utils.h"
-#include "core/toconfiguration_new.h"
+#include "core/toconfiguration.h"
 #include "editor/toworksheettext.h"
 
 #include <QtCore/QDebug>

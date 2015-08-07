@@ -35,10 +35,7 @@
 #ifndef TOEDITWIDGET_H
 #define TOEDITWIDGET_H
 
-#include <QWidget>
-
-#include <list>
-
+class QWidget;
 
 /** This is an abstract base class for any widget (Not included in object) that wants to
  * access copy, cut, paste, open, save commands of the user interface.

@@ -35,10 +35,10 @@
 #include "tools/toworksheetstatistic.h"
 #include "core/utils.h"
 #include "tools/toanalyze.h"
-//obsolete #include "core/tobarchart.h"
+//obsolete #include "widgets/tobarchart.h"
 #include "core/toconf.h"
-#include "core/toresultview.h"
-#include "core/toconfiguration_new.h"
+#include "widgets/toresultview.h"
+#include "core/toconfiguration.h"
 
 #include <QCheckBox>
 #include <QToolBar>

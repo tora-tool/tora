@@ -36,7 +36,7 @@
 #define TOCHANGECONNECTION_H
 
 
-#include "core/topushbutton.h"
+#include "widgets/topushbutton.h"
 
 class QAction;
 

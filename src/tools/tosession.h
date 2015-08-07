@@ -35,9 +35,8 @@
 #ifndef TOSESSION_H
 #define TOSESSION_H
 
-
-#include "core/totool.h"
-#include "core/toresultlong.h"
+#include "widgets/totoolwidget.h"
+#include "widgets/toresultlong.h"
 
 #include <QLabel>
 #include <QMenu>

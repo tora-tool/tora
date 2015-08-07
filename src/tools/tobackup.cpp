@@ -36,7 +36,8 @@
 #include "core/utils.h"
 #include "core/tologger.h"
 #include "core/tochangeconnection.h"
-#include "core/toresulttableview.h"
+#include "core/totool.h"
+#include "widgets/toresulttableview.h"
 #include "core/toglobalevent.h"
 
 #include <QToolBar>

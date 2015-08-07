@@ -34,9 +34,9 @@
 
 #include "core/toresult.h"
 #include "core/utils.h"
-#include "core/totabwidget.h"
-#include "core/totool.h"
-#include "core/toconfiguration_new.h"
+#include "widgets/totabwidget.h"
+#include "widgets/totoolwidget.h"
+#include "core/toconfiguration.h"
 #include "core/tomainwindow.h"
 
 #include <QtCore/QTimer>

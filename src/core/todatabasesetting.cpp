@@ -35,7 +35,7 @@
 #include "core/todatabasesetting.h"
 #include "core/utils.h"
 #include "core/toconfenum.h"
-#include "core/toconfiguration_new.h"
+#include "core/toconfiguration.h"
 #include "core/tomainwindow.h"
 #include "core/toqvalue.h"
 #include "ts_log/ts_log_utils.h"

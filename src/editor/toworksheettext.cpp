@@ -36,7 +36,7 @@
 #include "tools/toworksheeteditor.h"
 #include "tools/toworksheet.h"
 #include "editor/tocomplpopup.h"
-#include "core/toconfiguration_new.h"
+#include "core/toconfiguration.h"
 #include "core/toeditorsetting.h"
 #include "core/toconnection.h"
 #include "core/toconnectiontraits.h"

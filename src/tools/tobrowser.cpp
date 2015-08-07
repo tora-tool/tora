@@ -49,13 +49,13 @@
 
 #include "core/utils.h"
 #include "core/tochangeconnection.h"
-#include "core/tohelp.h"
-#include "core/toresultschema.h"
-#include "core/toresultview.h"
+#include "tools/tohelp.h"
+#include "widgets/toresultschema.h"
+#include "widgets/toresultview.h"
 #include "core/toconnectionsub.h"
 #include "core/toconnectiontraits.h"
 #include "core/toglobalevent.h"
-#include "core/toconfiguration_new.h"
+#include "core/toconfiguration.h"
 
 #ifdef TOEXTENDED_MYSQL
 #  include "core/tomysqluser.h"

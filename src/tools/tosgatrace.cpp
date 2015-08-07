@@ -36,12 +36,14 @@
 #include "ui_tosgatracesettingui.h"
 #include "tools/tosgastatement.h"
 #include "core/tochangeconnection.h"
-#include "core/toresultschema.h"
-#include "core/toresulttableview.h"
+#include "widgets/toresultschema.h"
+#include "widgets/toresulttableview.h"
 #include "core/utils.h"
 #include "core/totimer.h"
-#include "core/toconfiguration_new.h"
-#include "core/toglobalsettingenum.h"
+#include "core/toconfiguration.h"
+#include "core/toglobalconfiguration.h"
+#include "core/tosettingtab.h"
+#include "core/totool.h"
 
 #include <QComboBox>
 #include <QCheckBox>

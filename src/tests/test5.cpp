@@ -40,10 +40,10 @@
 #include "core/tologger.h"
 #include "core/tooracleconst.h"
 #include "core/toqvalue.h"
-#include "core/tosplash.h"
+#include "widgets/tosplash.h"
 #include "core/utils.h"
-#include "core/toconfiguration_new.h"
-#include "core/toglobalsettingenum.h"
+#include "core/toconfiguration.h"
+#include "core/toglobalconfiguration.h"
 
 #include <QtCore/QDir>
 #include <QtCore/QLibrary>

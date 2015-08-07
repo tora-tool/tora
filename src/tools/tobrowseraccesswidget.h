@@ -35,7 +35,7 @@
 #ifndef TOBROWSERACCESSWIDGET_H
 #define TOBROWSERACCESSWIDGET_H
 
-#include "core/tobrowserbasewidget.h"
+#include "widgets/tobrowserbasewidget.h"
 
 class toResultTableData;
 

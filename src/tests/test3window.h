@@ -37,8 +37,8 @@
 
 #include "core/tomainwindow.h"
 //#include "core/toworksheet.h"
-#include "core/todockbar.h"
-#include "core/tobackgroundlabel.h"
+#include "widgets/todockbar.h"
+#include "widgets/tobackgroundlabel.h"
 
 #include <QtCore/QObject>
 #include <QMdiArea>

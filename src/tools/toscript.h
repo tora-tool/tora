@@ -35,7 +35,7 @@
 #ifndef TOSCRIPT_H
 #define TOSCRIPT_H
 
-#include "core/tohelp.h"
+#include "widgets/totoolwidget.h"
 #include "ui_toscriptui.h"
 
 #include <list>

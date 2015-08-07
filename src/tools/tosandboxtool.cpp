@@ -1,5 +1,6 @@
 
 #include "tools/tosandboxtool.h"
+#include "core/totool.h"
 #include "core/tochangeconnection.h"
 #include "core/toconnectionregistry.h"
 

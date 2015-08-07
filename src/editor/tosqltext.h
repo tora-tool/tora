@@ -36,7 +36,7 @@
 #define TOSQLTEXT_H
 
 #include "editor/toscintilla.h"
-#include "core/topushbutton.h"
+#include "widgets/topushbutton.h"
 #include "core/tocache.h"
 #include "parsing/tosyntaxanalyzer.h"
 

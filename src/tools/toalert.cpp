@@ -39,8 +39,8 @@
 
 #include "core/toconf.h"
 #include "core/tomainwindow.h"
-#include "core/tomemoeditor.h"
-#include "core/toresultview.h"
+#include "editor/tomemoeditor.h"
+#include "widgets/toresultview.h"
 #include "core/toconnection.h"
 #include "core/toquery.h"
 

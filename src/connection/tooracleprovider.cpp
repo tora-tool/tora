@@ -43,7 +43,7 @@
 #include "core/toconnectionprovider.h"
 #include "core/tologger.h"
 #include "core/tooracleconst.h"
-#include "core/toconfiguration_new.h"
+#include "core/toconfiguration.h"
 
 #include "connection/absfact.h"
 

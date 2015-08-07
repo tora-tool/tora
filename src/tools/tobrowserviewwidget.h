@@ -35,7 +35,7 @@
 #ifndef TOBROWSERVIEWWIDGET_H
 #define TOBROWSERVIEWWIDGET_H
 
-#include "core/tobrowserbasewidget.h"
+#include "widgets/tobrowserbasewidget.h"
 
 class toResultCols;
 class toResultTableView;

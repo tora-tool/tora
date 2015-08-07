@@ -33,12 +33,13 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "tools/tosecurity.h"
+#include "core/totool.h"
 #include "ui_tosecurityuserui.h"
 #include "ui_tosecurityroleui.h"
 
 #include "core/utils.h"
 #include "core/tochangeconnection.h"
-#include "core/tomemoeditor.h"
+#include "editor/tomemoeditor.h"
 #include "core/toconnectionsub.h"
 #include "core/toglobalevent.h"
 

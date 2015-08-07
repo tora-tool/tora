@@ -36,7 +36,7 @@
 #define TOOUTPUT_H
 
 
-#include "core/totool.h"
+#include "widgets/totoolwidget.h"
 #include "editor/tomarkededitor.h"
 #include "core/tosql.h"
 #include "core/toconfenum.h"

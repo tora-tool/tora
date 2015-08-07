@@ -36,7 +36,7 @@
 #include "core/utils.h"
 #include "core/tologger.h"
 #include "core/toeventqueryworker.h"
-//#include "core/toresultstats.h"
+//#include "widgets/toresultstats.h"
 #include "core/toconnection.h"
 #include "core/toconnectionsub.h"
 #include "core/toconnectionsubloan.h"

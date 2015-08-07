@@ -35,7 +35,7 @@
 #ifndef TOBROWSERSYNONYMWIDGET_H
 #define TOBROWSERSYNONYMWIDGET_H
 
-#include "core/tobrowserbasewidget.h"
+#include "widgets/tobrowserbasewidget.h"
 
 class toResultItem;
 class toResultCode;

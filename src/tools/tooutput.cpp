@@ -34,11 +34,13 @@
 
 #include "tools/tooutput.h"
 #include "ui_tooutputsettingui.h"
-#include "core/toresultview.h"
+#include "widgets/toresultview.h"
 #include "core/totimer.h"
+#include "core/totool.h"
 #include "core/toglobalevent.h"
-#include "core/toconfiguration_new.h"
+#include "core/toconfiguration.h"
 #include "core/utils.h"
+#include "core/tosettingtab.h"
 #include "editor/toscintilla.h"
 
 #include <map>

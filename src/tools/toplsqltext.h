@@ -35,8 +35,7 @@
 #ifndef TOPLSQLTEXT_H
 #define TOPLSQLTEXT_H
 
-
-#include "core/totool.h"
+#include "widgets/totoolwidget.h"
 //#include "editor/tosqltext.h"
 //#include "tosqlparse.h"
 //#include "tools/toplsqltext.h"

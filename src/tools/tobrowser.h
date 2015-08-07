@@ -36,6 +36,7 @@
 #define TOBROWSER_H
 
 //template #include "core/totemplate.h"
+#include "widgets/totoolwidget.h"
 #include "core/totool.h"
 #include "core/toconfenum.h"
 

@@ -36,12 +36,12 @@
 
 #include "core/utils.h"
 #include "core/tologger.h"
-#include "core/toconfiguration_new.h"
+#include "core/toconfiguration.h"
 #include "core/toconnection.h"
-#include "core/tohelp.h"
+#include "tools/tohelp.h"
 #include "editor/toscintilla.h"
 #include "core/toeventquery.h"
-#include "core/toresultview.h"
+#include "widgets/toresultview.h"
 #include "core/totool.h"
 
 #include <QtCore/QString>

@@ -33,13 +33,13 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "tools/tosgastatement.h"
-#include "core/toresultfield.h"
-#include "core/toresultitem.h"
-#include "core/toresultplan.h"
-#include "core/toresultresources.h"
+#include "widgets/toresultfield.h"
+#include "widgets/toresultitem.h"
+#include "widgets/toresultplan.h"
+#include "widgets/toresultresources.h"
 //#include "core/tosqlparse.h"
 #include "core/tosql.h"
-#include "core/toconfiguration_new.h"
+#include "core/toconfiguration.h"
 #include "core/utils.h"
 #include "editor/toscintilla.h"
 #include "connection/tooraclesetting.h"

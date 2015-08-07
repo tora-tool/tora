@@ -838,7 +838,7 @@
   <customwidget>
    <class>toTreeWidget</class>
    <extends>QTreeWidget</extends>
-   <header>core/totreewidget.h</header>
+   <header>widgets/totreewidget.h</header>
   </customwidget>
   <customwidget>
    <class>toFilesize</class>

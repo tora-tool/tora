@@ -37,7 +37,7 @@
 
 #include "core/tora_export.h"
 #include "core/toconfenum.h"
-#include "core/totool.h"
+#include "core/tosettingtab.h"
 
 #include "ui_tooraclesettingui.h"
 

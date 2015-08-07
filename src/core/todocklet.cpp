@@ -32,10 +32,10 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "core/todockbar.h"
+#include "widgets/todockbar.h"
 #include "core/todocklet.h"
 #include "core/tomainwindow.h"
-#include "core/toworkspace.h"
+#include "widgets/toworkspace.h"
 #include "core/utils.h"
 
 #include <QApplication>

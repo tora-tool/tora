@@ -98,25 +98,25 @@ ENDIF()
 #                              User interface files                            #
 ################################################################################
 SET(TORA_UI_SRC
-  core/toaboutui.ui
-  core/todatabasesettingui.ui
-  core/toglobalsettingui.ui
-  core/tomessageui.ui
-  core/topreferencesui.ui
+  widgets/connectioncolorsdialogui.ui
+  widgets/toaboutui.ui
+  widgets/todatabasesettingui.ui
+  widgets/todescribeui.ui
+  widgets/toglobalsettingui.ui
+  widgets/tohelpaddfileui.ui
+  widgets/tohelpsetupui.ui
+  widgets/tohelpui.ui
+  widgets/tolinechartsetupui.ui	
+  widgets/tomessageui.ui
+  widgets/tonewconnectionui.ui
+  widgets/topreferencesui.ui
+  widgets/toresultcontentfilterui.ui
+  widgets/toresultlistformatui.ui
+  widgets/tosyntaxsetupui.ui
+  widgets/toworksheetsetupui.ui
   editor/tosearchreplaceui.ui
-  core/tosyntaxsetupui.ui
-  core/totoolsettingui.ui
-  core/connectioncolorsdialogui.ui
-  core/tonewconnectionui.ui
-  core/toconnectionimportui.ui
-  core/tohelpui.ui
-  core/tohelpaddfileui.ui
-  core/tohelpsetupui.ui
-  core/toresultlistformatui.ui
-  core/toworksheetsetupui.ui
-  core/tolinechartsetupui.ui	
-  core/todescribeui.ui
-  core/toresultcontentfilterui.ui
+  widgets/toconnectionimportui.ui
+  widgets/totoolsettingui.ui
 
   #obsolete tools/tobrowserconstraintui.ui
   tools/tobrowserfilterui.ui
@@ -189,25 +189,20 @@ SET(TORA_MOC_CLASSES
   #obsolete core/totaskrunner.h
   #obsolete core/tothread.h
   #obsolete core/tovisualize.h
-  core/toabout.h
+  #core/toconfiguration.h
+  #core/toconfigurationpriv.h
   core/tobackground.h
-  core/tobackgroundlabel.h
-  core/tobarchart.h
-  core/tobrowserbasewidget.h # this one is used by core/todescribe.h (therefore is not in tools)
   core/tocache.h
   core/tochangeconnection.h
   core/tocodemodel.h
   core/toconfenum.h
-  #core/toconfiguration.h
-  core/toconfiguration_new.h
-  #core/toconfigurationpriv.h
+  core/toconfiguration.h
   core/toconnection.h
-  core/toconnectionimport.h
   core/toconnectionmodel.h
   core/toconnectionregistry.h
-  core/todescribe.h
   core/todatabasesetting.h
-  core/todockbar.h
+  widgets/todescribe.h
+  widgets/todockbar.h
   core/todocklet.h
   core/toeditablemenu.h
   core/toeditmenu.h
@@ -215,59 +210,70 @@ SET(TORA_MOC_CLASSES
   core/toeventquery.h
   core/toeventqueryworker.h
   core/toglobalevent.h
-  core/toglobalsetting.h
-  core/toglobalsettingenum.h
-  core/tohelp.h
-  core/tohelpsetup.h
-  core/tolinechart.h
+  widgets/toglobalsetting.h
+  core/toglobalconfiguration.h
+  tools/tohelp.h
+  widgets/tohelpsetup.h
   core/tolistviewformatter.h
-  core/tomain.h
+  main/tomain.h
   core/tomainwindow.h
-  core/tomemoeditor.h
+  editor/tomemoeditor.h
   core/tomessage.h
-  core/tomodeleditor.h
-  core/tonewconnection.h  
-  core/toparamget.h
-  core/topiechart.h
-  core/topreferences.h
-  core/topushbutton.h     
+  editor/tomodeleditor.h
+  widgets/tonewconnection.h  
+  widgets/toparamget.h
+  widgets/topreferences.h
   core/toquery.h
   core/toqueryimpl.h
   core/toresult.h
-  core/toresultbar.h
-  core/toresultcode.h
-  core/toresultcols.h
-  core/toresultcolscomment.h
-  core/toresultcombo.h
-  core/toresultdatasingle.h
-  core/toresultdepend.h
-  core/toresultextent.h
-  core/toresultfield.h
-  core/toresultgrants.h
-  core/toresultitem.h
-  core/toresultline.h
-  core/toresultlistformat.h
-  core/toresultlock.h
-  core/toresultlong.h
-  core/toresultmodel.h
-  core/toresultmodeledit.h
-  core/toresultparam.h
-  core/toresultplan.h
-  core/toresultschema.h
-  core/toresultstats.h
-  core/toresulttableview.h  
-  core/toresulttableviewedit.h  
-  core/toresultview.h
-  core/tosplash.h
-  core/tosyntaxsetup.h
-  core/totableselect.h  
-  core/totabwidget.h
+  widgets/toabout.h
+  widgets/tobackgroundlabel.h
+  widgets/tobarchart.h
+  widgets/tobrowserbasewidget.h # this one is used by widgets/todescribe.h (therefore is not in tools)
+  widgets/toconnectionimport.h
+  widgets/tolinechart.h
+  widgets/topiechart.h
+  widgets/topushbutton.h     
+  widgets/toresultbar.h
+  widgets/toresultcode.h
+  widgets/toresultcols.h
+  widgets/toresultcolscomment.h
+  widgets/toresultcombo.h
+  widgets/toresultdatasingle.h
+  widgets/toresultdepend.h
+  widgets/toresultextent.h
+  widgets/toresultfield.h
+  widgets/toresultgrants.h
+  widgets/toresultitem.h
+  widgets/toresultline.h
+  widgets/toresultlistformat.h
+  widgets/toresultlock.h
+  widgets/toresultlong.h
+  widgets/toresultmodel.h
+  widgets/toresultmodeledit.h
+  widgets/toresultparam.h
+  widgets/toresultplan.h
+  widgets/toresultschema.h
+  widgets/toresultstats.h
+  widgets/toresulttableview.h  
+  widgets/toresulttableviewedit.h  
+  widgets/toresultview.h
+  widgets/tosplash.h
+  widgets/tosyntaxsetup.h
+  widgets/totableselect.h  
+  widgets/totabwidget.h
+  widgets/totoolwidget.h
   core/totextview.h
   core/totimer.h
+  widgets/totreewidget.h
+  widgets/toworkingwidget.h
+  widgets/toworkspace.h
+
+  core/tohelpcontext.h
+  core/tosettingtab.h
+  widgets/toconnectionwidget.h
+  
   core/totool.h
-  core/totreewidget.h
-  core/toworkingwidget.h
-  core/toworkspace.h
   core/utils.h
   parsing/tsqllexer.h
   parsing/tosyntaxanalyzer.h
@@ -395,7 +401,7 @@ IF (USE_EXPERIMENTAL)
   LIST(APPEND TORA_MOC_CLASSES docklets/tocodeoutline.h)
   #IF(graphviz_FOUND)
   LIST(APPEND TORA_MOC_CLASSES docklets/toquerymodel.h)
-  LIST(APPEND TORA_MOC_CLASSES tools/toer.h core/toresultdrawing.h)
+  LIST(APPEND TORA_MOC_CLASSES tools/toer.h widgets/toresultdrawing.h)
   #ENDIF(graphviz_FOUND)
 ENDIF (USE_EXPERIMENTAL)
 
@@ -411,28 +417,27 @@ SET(TORA_SOURCES
   #obsolete core/todatatype.cpp
   #obsolete core/totaskrunner.cpp
   #obsolete core/tovisualize.cpp
-  core/toabout.cpp
   core/tobackground.cpp
-  core/tobackgroundlabel.cpp     
-  core/tobarchart.cpp
-  core/tobrowserbasewidget.cpp # this one is used by core/todescribe.h (therefore is not in tools)
   core/tocache.cpp
   core/tochangeconnection.cpp 
   core/tocodemodel.cpp
   core/toconfenum.cpp
+  widgets/toabout.cpp
+  widgets/tobackgroundlabel.cpp     
+  widgets/tobarchart.cpp
+  widgets/tobrowserbasewidget.cpp # this one is used by widgets/todescribe.h (therefore is not in tools)
   #core/toconfiguration.cpp
-  core/toconfiguration_new.cpp
+  core/toconfiguration.cpp
   #core/toconfigurationpriv.cpp
   core/toconnection.cpp
-  core/toconnectionimport.cpp
   core/toconnectionmodel.cpp
   core/toconnectionoptions.cpp
   core/toconnectionprovider.cpp
   core/toconnectionregistry.cpp
   core/toconnectionsub.cpp
   core/toconnectionsubloan.cpp
-  core/todescribe.cpp
-  core/todockbar.cpp
+  core/todatabasesetting.cpp
+  widgets/todescribe.cpp
   core/todocklet.cpp
   core/toeditablemenu.cpp
   core/toeditmenu.cpp
@@ -442,70 +447,75 @@ SET(TORA_SOURCES
   core/toeventqueryworker.cpp
   core/toextract.cpp  
   core/toglobalevent.cpp
-  core/toglobalsetting.cpp
-  core/toglobalsettingenum.cpp
-  core/todatabasesetting.cpp
-  core/tohelp.cpp
-  core/tohelpsetup.cpp
+  core/toglobalconfiguration.cpp
+  core/tohelpcontext.cpp
   core/tohtml.cpp
-  core/tolinechart.cpp
   core/tolistviewformatter.cpp
   core/tolistviewformattercsv.cpp
   core/tolistviewformatterhtml.cpp
   core/tolistviewformattersql.cpp
   core/tolistviewformattertabdel.cpp
   core/tolistviewformattertext.cpp
-  core/tomain.cpp
   core/tomainwindow.cpp
-  core/tomemoeditor.cpp
   core/tomessage.cpp
-  core/tomodeleditor.cpp
-  core/tonewconnection.cpp
-  core/toparamget.cpp
-  core/topiechart.cpp
-  core/topreferences.cpp	
-  core/topushbutton.cpp
   core/toquery.cpp
   core/toqvalue.cpp
   core/toresult.cpp
-  core/toresultbar.cpp
-  core/toresultcode.cpp
-  core/toresultcols.cpp
-  core/toresultcolscomment.cpp
-  core/toresultcombo.cpp
-  core/toresultdatasingle.cpp
-  core/toresultdepend.cpp  
-  core/toresultextent.cpp
-  core/toresultfield.cpp
-  core/toresultgrants.cpp
-  core/toresultitem.cpp
-  core/toresultline.cpp
-  core/toresultlistformat.cpp
-  core/toresultlock.cpp
-  core/toresultlong.cpp
-  core/toresultmodel.cpp
-  core/toresultmodeledit.cpp
-  core/toresultparam.cpp
-  core/toresultplan.cpp
-  core/toresultschema.cpp
-  core/toresultstats.cpp
-  core/toresulttableview.cpp
-  core/toresulttableviewedit.cpp
-  core/toresultview.cpp
-  core/tosplash.cpp
+  core/tosettingtab.cpp
   core/tosql.cpp
-  core/tosyntaxsetup.cpp
-  core/totableselect.cpp  
-  core/totabwidget.cpp
   core/totextview.cpp
   core/totimer.cpp
   core/totool.cpp
-  core/totreewidget.cpp
-  core/toworkingwidget.cpp
-  core/toworkspace.cpp
+  main/tomain.cpp
+  widgets/toconnectionimport.cpp
+  widgets/toconnectionwidget.cpp
+  widgets/todockbar.cpp
+  widgets/toglobalsetting.cpp
+  widgets/tohelpsetup.cpp
+  widgets/tolinechart.cpp
+  widgets/tonewconnection.cpp
+  widgets/toparamget.cpp
+  widgets/topiechart.cpp
+  widgets/topreferences.cpp	
+  widgets/topushbutton.cpp
+  widgets/toresultbar.cpp
+  widgets/toresultcode.cpp
+  widgets/toresultcols.cpp
+  widgets/toresultcolscomment.cpp
+  widgets/toresultcombo.cpp
+  widgets/toresultdatasingle.cpp
+  widgets/toresultdepend.cpp  
+  widgets/toresultextent.cpp
+  widgets/toresultfield.cpp
+  widgets/toresultgrants.cpp
+  widgets/toresultitem.cpp
+  widgets/toresultline.cpp
+  widgets/toresultlistformat.cpp
+  widgets/toresultlock.cpp
+  widgets/toresultlong.cpp
+  widgets/toresultmodel.cpp
+  widgets/toresultmodeledit.cpp
+  widgets/toresultparam.cpp
+  widgets/toresultplan.cpp
+  widgets/toresultschema.cpp
+  widgets/toresultstats.cpp
+  widgets/toresulttableview.cpp
+  widgets/toresulttableviewedit.cpp
+  widgets/toresultview.cpp
+  widgets/tosplash.cpp
+  widgets/tosyntaxsetup.cpp
+  widgets/totableselect.cpp  
+  widgets/totabwidget.cpp
+  widgets/totoolwidget.cpp
+  widgets/totreewidget.cpp
+  widgets/toworkingwidget.cpp
+  widgets/toworkspace.cpp
+  
   core/utils.cpp
   core/utils_part.cpp
-  
+
+  editor/tomemoeditor.cpp
+  editor/tomodeleditor.cpp  
   editor/tobaseeditor.cpp
   editor/tocomplpopup.cpp
   editor/tomarkededitor.cpp
@@ -568,6 +578,7 @@ SET(TORA_SOURCES
   shortcuteditor/shortcutmodel.cpp
   shortcuteditor/shortcuteditordialog.cpp
 
+  tools/tohelp.cpp  
   tools/tooutput.cpp
 
   tools/toworksheet.cpp
@@ -662,7 +673,7 @@ IF (USE_EXPERIMENTAL)
   LIST(APPEND TORA_SOURCES docklets/tocodeoutline.cpp parsing/OracleSQLParser.cc parsing/OracleSQLLexer.cc parsing/tsqlparseoracle.cc)
   #IF(graphviz_FOUND)
     LIST (APPEND TORA_SOURCES docklets/toquerymodel.cpp docklets/toastwalk.cpp)
-    LIST (APPEND TORA_SOURCES tools/toer.cpp core/toresultdrawing.cpp)
+    LIST (APPEND TORA_SOURCES tools/toer.cpp widgets/toresultdrawing.cpp)
   #ENDIF(graphviz_FOUND)
 ENDIF (USE_EXPERIMENTAL)
 
@@ -792,7 +803,7 @@ SET(CMAKE_INSTALL_RPATH "$ORIGIN/:$$ORIGIN/")
 
 # The main executable
 ADD_EXECUTABLE(${EXE_NAME} ${GUI_TYPE}
-  core/main.cpp
+  main/main.cpp
   ${TORA_UI_SOURCES}  
   ${TORA_I18N_QM}
   ${TORA_MOC_SOURCES}
@@ -807,6 +818,15 @@ IF(PCH_DEFINED)
   # NOTE: this macro calls SET_SOURCE_FILES_PROPERTIES macro which set props for source within ALL tagets
   ADD_PRECOMPILED_HEADER(${EXE_NAME} ${PCH_HEADER} FORCEINCLUDE)
 ENDIF()
+
+FILE(GLOB CORE_OBJECT_SOURCES "core/*.cpp" "*core/*.cxx")
+
+FOREACH(item ${TORA_MOC_SOURCES})
+STRING(REGEX MATCH ".*/core/moc_.*c..$" item ${item})
+IF(item)
+ LIST(APPEND CORE_OBJECT_SOURCES ${item})
+ENDIF(item)
+ENDFOREACH(item ${TORA_MOC_SOURCES})
 
 IF(TORA_DEBUG AND TEST_APP1)
 # test1
@@ -879,32 +899,43 @@ IF(PCH_DEFINED)
 ENDIF(PCH_DEFINED)
 ENDIF(TORA_DEBUG AND TEST_APP3)
 
-IF(TORA_DEBUG AND TEST_APP4)  
+IF(TORA_DEBUG AND TEST_APP4)
+MESSAGE(WARNING "MOC ${TORA_MOC_SOURCES}")
 # test4
 SET(TEST4_SOURCES
   tests/test4.cpp
   tests/test4window.cpp
-  #core/moc_toconfiguration.cxx
-  #core/moc_toconfigurationpriv.cxx    
-  core/moc_toglobalevent.cxx
-  core/moc_tomainwindow.cxx
-  core/moc_topushbutton.cxx
-  core/toconfenum.cpp
-  core/moc_toconfenum.cxx
-  #core/toconfiguration.cpp
-  core/toconfiguration_new.cpp
-  core/moc_toconfiguration_new.cxx
-  #core/toconfigurationpriv.cpp
-  core/toglobalevent.cpp
-  core/tomainwindow.cpp
-  core/topushbutton.cpp
-  core/utils_part.cpp
-  editor/moc_tosqltext.cxx
+  ${CORE_OBJECT_SOURCES}
+  widgets/moc_tobackgroundlabel.cxx
+  widgets/moc_toconnectionwidget.cxx
+  widgets/moc_tohelpsetup.cxx
+  widgets/moc_topushbutton.cxx
+  widgets/moc_totabwidget.cxx
+  widgets/moc_totoolwidget.cxx
+  widgets/moc_totreewidget.cxx
+  widgets/moc_toworkspace.cxx
+  widgets/tobackgroundlabel.cpp
+  widgets/toconnectionwidget.cpp
+  widgets/tohelpsetup.cpp
+  widgets/topushbutton.cpp
+  widgets/totabwidget.cpp
+  widgets/totoolwidget.cpp
+  widgets/totreewidget.cpp
+  widgets/toworkspace.cpp
+  
+  editor/moc_tobaseeditor.cxx
+  editor/moc_tomarkededitor.cxx
   editor/moc_toscintilla.cxx
+  editor/moc_tosearchreplace.cxx  
+  editor/moc_tosqltext.cxx
   editor/moc_tostyle.cxx
-  editor/tosqltext.cpp
+  editor/tobaseeditor.cpp
+  editor/tomarkededitor.cpp
   editor/toscintilla.cpp
+  editor/tosearchreplace.cpp  
+  editor/tosqltext.cpp
   editor/tostyle.cpp
+
   parsing/MySQLGuiLexer.cc
   parsing/PLSQLGuiLexer.cc
   parsing/moc_tolexeroracle.cxx
@@ -920,7 +951,19 @@ SET(TEST4_SOURCES
   parsing/tsqllexermysql.cc
   parsing/tsqllexeroracle2.cc
   parsing/persistenttrie.cpp
+  # parsing/PLSQLLexer.cc
+  # parsing/PLSQLParser.cc
+  # parsing/PLSQLParser_PLSQL_DMLParser.cc
+  # parsing/PLSQLParser_PLSQLCommons.cc
+  # parsing/PLSQLParser_PLSQLKeys.cc
+  # parsing/PLSQLParser_SQLPLUSParser.cc  
   ts_log/moc_toostream.cxx
+
+  connection/tooraclesetting.cpp
+  connection/moc_tooraclesetting.cxx
+
+  tools/tohelp.cpp
+  tools/moc_tohelp.cxx
   )
 SET(TEST4_MOC_CLASSES  tests/test4window.h)
 
@@ -930,12 +973,6 @@ IF (NOT QT5_BUILD)
 ENDIF()
 
 ADD_EXECUTABLE("test4" ${GUI_TYPE}
-  # parsing/PLSQLLexer.cc
-  # parsing/PLSQLParser.cc
-  # parsing/PLSQLParser_PLSQL_DMLParser.cc
-  # parsing/PLSQLParser_PLSQLCommons.cc
-  # parsing/PLSQLParser_PLSQLKeys.cc
-  # parsing/PLSQLParser_SQLPLUSParser.cc
   # ${TORA_UI_SOURCES}
   ${TEST4_UI_SOURCES}
   ${TEST4_MOC_SOURCES}
@@ -955,144 +992,111 @@ ENDIF(TORA_DEBUG AND TEST_APP4)
 IF(TORA_DEBUG AND TEST_APP5)
 # test5
 SET(TEST5_SOURCES
-  connection/moc_tooraclesetting.cxx
-  connection/tooraclefind.cpp
-  connection/tooraclesetting.cpp
-  core/moc_tobrowserbasewidget.cxx
-  core/moc_tocache.cxx
-  core/moc_tocodemodel.cxx
-  #core/moc_toconfiguration.cxx
-  core/moc_toconfiguration_new.cxx  
-  #core/moc_toconfigurationpriv.cxx
-  core/moc_toconnection.cxx
-  core/moc_toconnectionregistry.cxx
-  core/moc_todescribe.cxx
-  core/moc_todockbar.cxx
-  core/moc_todocklet.cxx
-  core/moc_toeditmenu.cxx
-  core/moc_toeventquery.cxx
-  core/moc_toeventqueryworker.cxx
-  core/moc_toglobalevent.cxx
-  core/moc_tohelp.cxx
-  core/moc_tohelpsetup.cxx
-  core/moc_tomainwindow.cxx
-  core/moc_tomemoeditor.cxx
-  core/moc_tomodeleditor.cxx
-  core/moc_toparamget.cxx
-  core/moc_topushbutton.cxx
-  core/moc_toquery.cxx
-  core/moc_toqueryimpl.cxx
-  core/moc_toresult.cxx
-  core/moc_toresultcols.cxx
-  core/moc_toresultcolscomment.cxx
-  core/moc_toresultcombo.cxx
-  core/moc_toresultdatasingle.cxx
-  core/moc_toresultitem.cxx
-  core/moc_toresultlistformat.cxx
-  core/moc_toresultmodel.cxx
-  core/moc_toresultmodeledit.cxx
-  core/moc_toresultschema.cxx
-  core/moc_toresulttableview.cxx
-  core/moc_toresulttableviewedit.cxx
-  core/moc_toresultview.cxx
-  core/moc_tosplash.cxx
-  core/moc_totabwidget.cxx
-  core/moc_totimer.cxx
-  core/moc_totool.cxx
-  core/moc_totreewidget.cxx
-  core/moc_toworkingwidget.cxx
-  core/moc_toworkspace.cxx
-  core/moc_utils.cxx
-  core/tobrowserbasewidget.cpp
-  core/tocache.cpp
-  core/tocodemodel.cpp
-  #core/toconfiguration.cpp
-  core/toconfiguration_new.cpp
-  #core/toconfigurationpriv.cpp
-  core/toconnection.cpp
-  core/toconnectionoptions.cpp  
-  core/toconnectionprovider.cpp
-  core/toconnectionregistry.cpp
-  core/toconnectionsub.cpp
-  core/toconnectionsubloan.cpp
-  core/todescribe.cpp
-  core/todockbar.cpp
-  core/todocklet.cpp
-  core/toeditmenu.cpp
-  core/toeditwidget.cpp
-  core/toeventquery.cpp
-  core/toeventqueryworker.cpp
-  core/toglobalevent.cpp
-  core/tohelp.cpp
-  core/tohelpsetup.cpp
-  core/tohtml.cpp
-  core/tomainwindow.cpp
-  core/tomemoeditor.cpp
-  core/tomodeleditor.cpp
-  core/toparamget.cpp
-  core/topushbutton.cpp
-  core/toquery.cpp
-  core/toqvalue.cpp
-  core/toresult.cpp
-  core/toresultcols.cpp
-  core/toresultcolscomment.cpp
-  core/toresultcombo.cpp
-  core/toresultdatasingle.cpp
-  core/toresultitem.cpp
-  core/toresultlistformat.cpp
-  core/toresultmodel.cpp
-  core/toresultmodeledit.cpp
-  core/toresultschema.cpp
-  core/toresulttableview.cpp
-  core/toresulttableviewedit.cpp
-  core/toresultview.cpp
-  core/tosplash.cpp
-  core/tosql.cpp
-  core/totabwidget.cpp
-  core/totimer.cpp
-  core/totool.cpp
-  core/totreewidget.cpp
-  core/toworkingwidget.cpp
-  core/toworkspace.cpp
-  core/utils.cpp
-  core/utils_part.cpp
+  ${CORE_OBJECT_SOURCES}
+
+  widgets/tobackgroundlabel.cpp
+  widgets/moc_tobackgroundlabel.cxx
+  widgets/tobrowserbasewidget.cpp
+  widgets/moc_tobrowserbasewidget.cxx
+  widgets/todescribe.cpp
+  widgets/moc_todescribe.cxx
+  widgets/todockbar.cpp
+  widgets/moc_todockbar.cxx
+  widgets/tohelpsetup.cpp
+  widgets/moc_tohelpsetup.cxx
+  widgets/toparamget.cpp
+  widgets/moc_toparamget.cxx
+  widgets/topushbutton.cpp
+  widgets/moc_topushbutton.cxx
+  widgets/toresultcols.cpp
+  widgets/moc_toresultcols.cxx
+  widgets/toresultcolscomment.cpp
+  widgets/moc_toresultcolscomment.cxx
+  widgets/toresultcombo.cpp
+  widgets/moc_toresultcombo.cxx
+  widgets/toresultdatasingle.cpp
+  widgets/moc_toresultdatasingle.cxx
+  widgets/toresultitem.cpp
+  widgets/moc_toresultitem.cxx
+  widgets/toresultlistformat.cpp
+  widgets/moc_toresultlistformat.cxx
+  widgets/toresultmodel.cpp
+  widgets/moc_toresultmodel.cxx
+  widgets/toresultmodeledit.cpp
+  widgets/moc_toresultmodeledit.cxx
+  widgets/toresultschema.cpp
+  widgets/moc_toresultschema.cxx
+  widgets/toresulttableview.cpp
+  widgets/moc_toresulttableview.cxx
+  widgets/toresulttableviewedit.cpp
+  widgets/moc_toresulttableviewedit.cxx
+  widgets/toresultview.cpp
+  widgets/moc_toresultview.cxx
+  widgets/tosplash.cpp
+  widgets/moc_tosplash.cxx
+  widgets/totabwidget.cpp
+  widgets/moc_totabwidget.cxx
+  widgets/totreewidget.cpp
+  widgets/moc_totreewidget.cxx
+  widgets/toworkingwidget.cpp
+  widgets/moc_toworkingwidget.cxx
+  widgets/toworkspace.cpp
+  widgets/moc_toworkspace.cxx
+  widgets/totoolwidget.cpp
+  widgets/moc_totoolwidget.cxx
+  widgets/toconnectionwidget.cpp
+  widgets/moc_toconnectionwidget.cxx
+  
   editor/moc_tobaseeditor.cxx
   editor/moc_todebugeditor.cxx
   editor/moc_todebugtext.cxx  
   editor/moc_tohighlightededitor.cxx
-  editor/moc_tosqltext.cxx
   editor/moc_tomarkededitor.cxx
+  editor/moc_tomemoeditor.cxx
+  editor/moc_tomodeleditor.cxx
   editor/moc_toscintilla.cxx
   editor/moc_tosearchreplace.cxx
+  editor/moc_tosqltext.cxx
   editor/moc_tostyle.cxx
   editor/tobaseeditor.cpp
   editor/todebugeditor.cpp
   editor/todebugeditor.cpp
   editor/todebugtext.cpp
   editor/tohighlightededitor.cpp
-  editor/tosqltext.cpp
   editor/tomarkededitor.cpp
+  editor/tomemoeditor.cpp
+  editor/tomodeleditor.cpp
   editor/toscintilla.cpp
   editor/tosearchreplace.cpp
+  editor/tosqltext.cpp
   editor/tostyle.cpp
+
   parsing/moc_tolexeroracle.cxx
   parsing/moc_tolexeroracleapis.cxx
   parsing/moc_tosyntaxanalyzer.cxx
   parsing/moc_tsqllexer.cxx
+  parsing/persistenttrie.cpp
   parsing/tolexeroracle.cpp
   parsing/tolexeroracleapis.cpp
   parsing/tosyntaxanalyzer.cpp
   parsing/tosyntaxanalyzermysql.cpp
   parsing/tosyntaxanalyzernl.cpp
   parsing/tosyntaxanalyzeroracle.cpp
-  parsing/persistenttrie.cpp
   result/moc_toresulttabledata.cxx
   result/toresulttabledata.cpp
   tests/moc_test5window.cxx
+
+  tools/moc_tohelp.cxx
   tools/moc_toplsqleditor.cxx
   tools/moc_toplsqltext.cxx
+  tools/tohelp.cpp
   tools/toplsqleditor.cpp
   tools/toplsqltext.cpp
+
+  connection/tooraclefind.cpp
+  connection/tooraclesetting.cpp
+  connection/moc_tooraclesetting.cxx
+  
   ts_log/moc_toostream.cxx
   )
 

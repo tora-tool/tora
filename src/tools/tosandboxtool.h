@@ -1,7 +1,7 @@
 #ifndef TO_SANDBOXTOOL_H
 #define TO_SANDBOXTOOL_H
 
-#include "core/totool.h"
+#include "widgets/totoolwidget.h"
 #include "core/toconnection.h"
 #include "core/toeventquery.h"
 

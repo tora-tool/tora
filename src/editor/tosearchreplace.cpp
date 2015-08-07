@@ -34,7 +34,7 @@
 
 #include "editor/tosearchreplace.h"
 #include "core/utils.h"
-#include "core/tohelp.h"
+#include "tools/tohelp.h"
 #include "core/tomainwindow.h"
 #include "editor/tomarkededitor.h"
 #include "core/toeditmenu.h"

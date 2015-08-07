@@ -36,12 +36,13 @@
 #include "core/utils.h"
 #include "core/tosql.h"
 #include "core/toeventquery.h"
-#include "core/toresultview.h"
+#include "widgets/toresultview.h"
 #include "core/totool.h"
-#include "core/totreewidget.h"
+#include "widgets/totreewidget.h"
 #include "core/totimer.h"
-#include "core/toconfiguration_new.h"
+#include "core/toconfiguration.h"
 #include "core/toeditorsetting.h"
+#include "widgets/totoolwidget.h"
 
 #include <QtCore/QSettings>
 #include <QComboBox>

@@ -35,15 +35,15 @@
 #ifndef TOROLLBACK_H
 #define TOROLLBACK_H
 
-#include "core/totool.h"
-#include "core/totreewidget.h"
+#include "widgets/totoolwidget.h"
+#include "widgets/totreewidget.h"
 #include "core/toconnection.h"
 
 #include "ui_torollbackdialogui.h"
 
 #include <QDialog>
 
-#include <algorithm>
+#include <list>
 
 class QComboBox;
 class QMenu;

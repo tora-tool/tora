@@ -34,9 +34,9 @@
 
 #include "tools/tobrowserdblinkswidget.h"
 #include "core/utils.h"
-#include "core/toresultitem.h"
-#include "core/toresulttableview.h"
-#include "core/toresultcode.h"
+#include "widgets/toresultitem.h"
+#include "widgets/toresulttableview.h"
+#include "widgets/toresultcode.h"
 #include "core/toquery.h"
 
 #include <QMessageBox>

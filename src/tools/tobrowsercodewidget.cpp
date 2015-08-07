@@ -33,10 +33,10 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "tools/tobrowsercodewidget.h"
-#include "core/toresultdepend.h"
-#include "core/toresultcode.h"
-#include "core/toresultfield.h"
-#include "core/toresultgrants.h"
+#include "widgets/toresultdepend.h"
+#include "widgets/toresultcode.h"
+#include "widgets/toresultfield.h"
+#include "widgets/toresultgrants.h"
 #include "core/utils.h"
 
 Util::RegisterInFactory<toBrowserCodeWidget, toBrowserWidgetFactory, toCache::CacheEntryType> regToBrowserCodeWidget1(toCache::FUNCTION);

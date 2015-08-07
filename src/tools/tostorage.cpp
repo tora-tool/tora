@@ -38,10 +38,12 @@
 #include "core/tochangeconnection.h"
 #include "core/toconnectionsub.h"
 #include "core/utils.h"
-#include "core/tohelp.h"
-#include "core/tomemoeditor.h"
+#include "core/totool.h"
+#include "core/tosettingtab.h"
+#include "tools/tohelp.h"
+#include "editor/tomemoeditor.h"
 #include "core/toglobalevent.h"
-#include "core/toconfiguration_new.h"
+#include "core/toconfiguration.h"
 
 #include <QTableView>
 #include <QToolBar>

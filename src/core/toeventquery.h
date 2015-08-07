@@ -39,7 +39,7 @@
 #include "core/toconnection.h"
 #include "core/toconnectionsub.h"
 #include "core/toconnectionsubloan.h"
-//#include "core/toresultstats.h"
+//#include "widgets/toresultstats.h"
 #include "core/toqvalue.h"
 
 #include <QtCore/QObject>
