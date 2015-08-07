@@ -15,9 +15,9 @@
   <?define PlatformSystemFolder = "SystemFolder" ?>
   <?endif ?>
   <?ifdef env.BUILD_NUMBER?>
-  <?define ProductVersion="2.9.$(env.BUILD_NUMBER)"?>
+  <?define ProductVersion="2.99.$(env.BUILD_NUMBER)"?>
   <?else?>
-  <?define ProductVersion="2.9.0"?>
+  <?define ProductVersion="2.99.65534"?>
   <?endif?>
   <?define UpgradeCode="BAAA2F25-E626-4CC5-BC37-86477A2409AC"?>
   <?define BuildType = "RelWithDebInfo" ?>
@@ -86,14 +86,14 @@
 	  <Component Id="TROTL.DLL" DiskId="1" Win64="$(var.Win64)" Guid="3D149B9C-D59C-4B68-979D-BE132671F00D">
 	    <File Id="TROTL.DLL" Name="trotl.dll" Source="..\..\$(var.BuildType)\trotl.dll" />
 	  </Component>
-	  <Directory Id="PLUGINS" Name="plugins">
-	    <Component Id="QSQLMYSQL4.DLL" Win64="$(var.Win64)" DiskId="1" Guid="7FEC6332-E4CC-4F2F-B2C0-29A2744AFD7D">
-	      <File Id="QSQLMYSQL4.DLL" Name="qsqlmysql4.dll" Source="..\..\$(var.BuildType)\plugins\qsqlmysql4.dll" />
-	    </Component>
-	    <Component Id="QSQLODBC4.DLL" Win64="$(var.Win64)" DiskId="1" Guid="1BB8D019-7313-4159-BB55-8810F25A7C48">
-	      <File Id="QSQLODBC4.DLL" Name="qsqlodbc4.dll" Source="..\..\$(var.BuildType)\plugins\qsqlodbc4.dll" />
-	    </Component>
-	  </Directory>
+	  <!-- <Directory Id="PLUGINS" Name="plugins"> -->
+	  <!--   <Component Id="QSQLMYSQL4.DLL" Win64="$(var.Win64)" DiskId="1" Guid="7FEC6332-E4CC-4F2F-B2C0-29A2744AFD7D"> -->
+	  <!--     <File Id="QSQLMYSQL4.DLL" Name="qsqlmysql4.dll" Source="..\..\$(var.BuildType)\plugins\qsqlmysql4.dll" /> -->
+	  <!--   </Component> -->
+	  <!--   <Component Id="QSQLODBC4.DLL" Win64="$(var.Win64)" DiskId="1" Guid="1BB8D019-7313-4159-BB55-8810F25A7C48"> -->
+	  <!--     <File Id="QSQLODBC4.DLL" Name="qsqlodbc4.dll" Source="..\..\$(var.BuildType)\plugins\qsqlodbc4.dll" /> -->
+	  <!--   </Component> -->
+	  <!-- </Directory> -->
 	</Directory>
       </Directory>
 
@@ -143,8 +143,8 @@
       <ComponentRef Id="QTXML4.DLL" />
       <ComponentRef Id="TORA.EXE" />
       <ComponentRef Id="TROTL.DLL" />
-      <ComponentRef Id="QSQLMYSQL4.DLL" />
-      <ComponentRef Id="QSQLODBC4.DLL" />
+      <!-- <ComponentRef Id="QSQLMYSQL4.DLL" /> -->
+      <!-- <ComponentRef Id="QSQLODBC4.DLL" /> -->
       <ComponentRef Id="ApplicationShortcuts" />
       <ComponentRef Id="DesktopShortcut" />
     </Feature>
