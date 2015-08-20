@@ -55,6 +55,7 @@ class toBaseEditor : public QWidget, public toEditWidget
 
         /** Reimplemented from toEditWidget
          */
+        virtual FlagSetStruct flagSet();
         virtual QString editText();
         virtual void editUndo(void);
         virtual void editRedo(void);

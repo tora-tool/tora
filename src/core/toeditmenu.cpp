@@ -146,28 +146,37 @@ void toEditMenu::clipBoardChanged()
     QClipboard const *clipBoard = QApplication::clipboard();
     QMimeData const *mimeData = clipBoard->mimeData();
     m_clipboardContent = mimeData->hasText() && !clipBoard->text().isEmpty();
+
+    // NOTE: lauzy workaround for Ubuntu - Signal QMenu::aboutToShow is not triggered when using globalmenu
+    //slotAboutToShow();
 }
 
-void toEditMenu::slotAboutToShow()
+void toEditMenu::menuAboutToShow()
 {
     disableAll();
 
     toEditWidget *editWidget = toEditWidget::findEdit(QApplication::focusWidget());
     if (editWidget)
     {
-        m_pasteSupported = editWidget->FlagSet.Paste;
-        undoAct->setEnabled(editWidget->FlagSet.Undo);
-        redoAct->setEnabled(editWidget->FlagSet.Redo);
+        toEditWidget::FlagSetStruct FlagSet = editWidget->flagSet();
+        m_pasteSupported = FlagSet.Paste;
+        undoAct->setEnabled(FlagSet.Undo);
+        redoAct->setEnabled(FlagSet.Redo);
 
-        cutAct->setEnabled(editWidget->FlagSet.Cut);
-        copyAct->setEnabled(editWidget->FlagSet.Copy);
+        cutAct->setEnabled(FlagSet.Cut);
+        copyAct->setEnabled(FlagSet.Copy);
         pasteAct->setEnabled(m_pasteSupported && m_clipboardContent);
-        searchReplaceAct->setEnabled(editWidget->FlagSet.Search);
-        searchNextAct->setEnabled(editWidget->FlagSet.Search);
-        selectAllAct->setEnabled(editWidget->FlagSet.SelectAll);
+        searchReplaceAct->setEnabled(FlagSet.Search);
+        searchNextAct->setEnabled(FlagSet.Search);
+        selectAllAct->setEnabled(FlagSet.SelectAll);
 #if 0 // TODO: this part is waiting for QScintilla backend feature (yet unimplemented).
-        selectBlockAct->setEnabled(editWidget->FlagSet.SelectAll);
+        selectBlockAct->setEnabled(FlagSet.SelectAll);
 #endif
-        readAllAct->setEnabled(editWidget->FlagSet.ReadAll);
+        readAllAct->setEnabled(FlagSet.ReadAll);
     }
+}
+
+void toEditMenu::slotAboutToShow()
+{
+	menuAboutToShow();
 }

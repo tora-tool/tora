@@ -46,6 +46,11 @@ toEditWidget::~toEditWidget()
 {
 }
 
+toEditWidget::FlagSetStruct toEditWidget::flagSet()
+{
+	return FlagSet;
+}
+
 toEditWidget *toEditWidget::findEdit(QWidget *widget)
 {
     while (widget)
