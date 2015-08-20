@@ -1445,17 +1445,18 @@ void toMain::displayMessage(void)
 /** Handle events from toEditWidget subclasses */
 void toMain::receivedFocus(toEditWidget *widget)
 {
-    if (toWorksheetEditor *sheet = dynamic_cast<toWorksheetEditor *>(widget))
+    if (/*toWorksheetEditor *sheet = */dynamic_cast<toWorksheetEditor *>(widget))
     {
         RowLabel->setText("?");
         ColumnLabel->setText("?");
     }
 
-    openAct->setEnabled(widget->FlagSet.Open);
-    recentMenu->setEnabled(widget->FlagSet.Open);
-    saveAct->setEnabled(widget->FlagSet.Save);
-    saveAsAct->setEnabled(widget->FlagSet.Save);
-    printAct->setEnabled(widget->FlagSet.Print);
+    toEditWidget::FlagSetStruct FlagSet = widget->flagSet();
+    openAct->setEnabled(FlagSet.Open);
+    recentMenu->setEnabled(FlagSet.Open);
+    saveAct->setEnabled(FlagSet.Save);
+    saveAsAct->setEnabled(FlagSet.Save);
+    printAct->setEnabled(FlagSet.Print);
 }
 
 /** Handle events from toEditWidget subclasses */

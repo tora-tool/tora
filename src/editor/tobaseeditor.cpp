@@ -93,6 +93,14 @@ toBaseEditor::toBaseEditor(toScintilla *editor, QWidget *parent)
     setFocusProxy(m_editor);
 }
 
+toBaseEditor::FlagSetStruct toBaseEditor::flagSet()
+{
+    FlagSet.Undo = m_editor->isUndoAvailable();
+    FlagSet.Redo = m_editor->isRedoAvailable();
+    FlagSet.Cut = FlagSet.Copy = m_editor->hasSelectedText();
+    return FlagSet;
+}
+
 QString toBaseEditor::editText()
 {
     return m_editor->text();

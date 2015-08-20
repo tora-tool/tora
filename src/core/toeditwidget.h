@@ -74,14 +74,15 @@ class toEditWidget
                 , SelectBlock(false)
                 , ReadAll(false)
             {}
-        } FlagSet;
+        };
 
-    public:
         /** Empty constructor, all functions are disabled.
          */
         toEditWidget();
 
         virtual ~toEditWidget();
+
+        virtual FlagSetStruct flagSet();
 
         /** Perform an open on this widget. Default NOP.
          * @param file The file to open, if not specified prompt for file.
@@ -143,6 +144,9 @@ class toEditWidget
         virtual void searchReplace() = 0;
 
         static toEditWidget* findEdit(QWidget *widget);
+
+    protected:
+        FlagSetStruct FlagSet;
 };
 
 #endif

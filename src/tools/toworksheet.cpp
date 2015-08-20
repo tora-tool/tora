@@ -2126,6 +2126,9 @@ void toWorksheet::slotStop(void)
 
 void toWorksheet::slotCreatePopupMenu(const QPoint &pos)
 {
+    toEditMenu &editMenu = toEditMenuSingle::Instance();
+    editMenu.menuAboutToShow();
+
     if (!context)
     {
         context = new QMenu;
@@ -2143,18 +2146,18 @@ void toWorksheet::slotCreatePopupMenu(const QPoint &pos)
 
         context->addSeparator();
 
-        context->addAction(toEditMenuSingle::Instance().undoAct);
-        context->addAction(toEditMenuSingle::Instance().redoAct);
+        context->addAction(editMenu.undoAct);
+        context->addAction(editMenu.redoAct);
 
         context->addSeparator();
 
-        context->addAction(toEditMenuSingle::Instance().cutAct);
-        context->addAction(toEditMenuSingle::Instance().copyAct);
-        context->addAction(toEditMenuSingle::Instance().pasteAct);
+        context->addAction(editMenu.cutAct);
+        context->addAction(editMenu.copyAct);
+        context->addAction(editMenu.pasteAct);
 
         context->addSeparator();
 
-        context->addAction(toEditMenuSingle::Instance().selectAllAct);
+        context->addAction(editMenu.selectAllAct);
 
         context->addSeparator();
 

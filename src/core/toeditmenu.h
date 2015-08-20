@@ -64,6 +64,7 @@ class toEditMenu : public QMenu
 #endif
         QAction *readAllAct;
         QAction *prefsAct;
+        void menuAboutToShow();
     private slots:
         void clipBoardChanged();
         void slotAboutToShow();
