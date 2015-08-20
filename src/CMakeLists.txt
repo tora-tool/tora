@@ -559,7 +559,7 @@ SET(TORA_SOURCES
   parsing/tosyntaxanalyzermysql.cpp
   parsing/tosyntaxanalyzeroracle.cpp
   parsing/PLSQLGuiLexer.cc
-  parsing/tsqllexeroracle2.cc  
+  parsing/tsqllexeroracle2.cc
   parsing/MySQLGuiLexer.cc
   parsing/tsqllexermysql.cc
   parsing/MySQLLexer.cc
@@ -661,11 +661,25 @@ IF(ORACLE_FOUND)
 ENDIF(ORACLE_FOUND)
 
 IF (USE_EXPERIMENTAL)
-  LIST (APPEND TORA_SOURCES tools/toscript.cpp)
-  LIST (APPEND TORA_SOURCES docklets/tocodeoutline.cpp parsing/OracleSQLParser.cc parsing/OracleSQLLexer.cc parsing/tsqlparseoracle.cc)
-  LIST (APPEND TORA_SOURCES docklets/toquerymodel.cpp docklets/toastwalk.cpp)
-  LIST (APPEND TORA_SOURCES tools/toer.cpp)
-  LIST (APPEND TORA_SOURCES tools/tosandboxtool.cpp)
+  LIST(APPEND TORA_SOURCES
+    docklets/tocodeoutline.cpp
+    parsing/OraclePLSQLLexer.cc
+    parsing/OraclePLSQLParser.cc
+    parsing/OracleSQLLexer.cc
+    parsing/OracleSQLParser.cc
+    parsing/error_handler.cc
+    parsing/tplsqlparseoracle.cc
+    parsing/tsqllexeroracle.cc
+    parsing/tsqlparseoracle.cc
+    )
+  LIST (APPEND TORA_SOURCES
+    docklets/toquerymodel.cpp
+    docklets/toastwalk.cpp
+    )
+  LIST (APPEND TORA_SOURCES
+    tools/toer.cpp
+    widgets/toresultdrawing.cpp
+    )
 ENDIF (USE_EXPERIMENTAL)
 
 IF(POPPLER_QT4_FOUND)

@@ -64,7 +64,9 @@
 #include "widgets/todescribe.h"
 #include "core/toeditmenu.h"
 
-//#include "core/tsqlparse.h"
+#ifdef TORA_EXPERIMENTAL
+#include "parsing/tsqlparse.h"
+#endif
 #include "parsing/tsqllexer.h"
 #include "parsing/tosyntaxanalyzer.h"
 
@@ -1650,8 +1652,9 @@ void toWorksheet::slotDescribeNew(void)
     int line, col;
     QString buffer;
     QString firstWord, currentWord;
-    QString txt = Editor->text();
-    Editor->getCursorPosition(&line, &col);
+    QString txt = Editor->editor()->text();
+    toSyntaxAnalyzer::statement currentStat = currentStatement();
+    Editor->editor()->getCursorPosition(&line, &col);
     TLOG(1, toDecorator, __HERE__) << "describe: "
                                    << '[' << line << ',' << col << ']'
                                    << "--------------------------------------------------------------------------------" << std::endl
@@ -1660,10 +1663,11 @@ void toWorksheet::slotDescribeNew(void)
 
     try
     {
+    	//using namespace SQLLexer;
         std::auto_ptr <SQLParser::Statement> stmt;
-        std::auto_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("OracleSQL", txt, "");
+        std::auto_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("OracleSQL", currentStat.sql, "");
         firstWord = lexer->firstWord();
-        currentWord = lexer->currentWord(line, col);
+        currentWord = lexer->wordAt(SQLLexer::Position(line, col));
 
         if (
             QString::compare("CALL", firstWord, Qt::CaseInsensitive)      == 0 ||
@@ -1731,6 +1735,8 @@ void toWorksheet::slotDescribeNew(void)
 //            << "Token Type: " << currentToken->getTokenTypeString() << '\n'
             ;
 
+        buf << "AST path:\n";
+
         QList<QString> stack;
         while (stackPath->parent())
         {
@@ -1746,9 +1752,8 @@ void toWorksheet::slotDescribeNew(void)
             buffer += padding + stack.takeLast() + '\n';
             padding += "  ";
         }
+        buf << '\n';
 
-        buf << "AST path:\n"
-            << '\n';
         switch (currentToken->getTokenType())
         {
             case SQLParser::Token::L_TABLEALIAS:
@@ -1760,6 +1765,12 @@ void toWorksheet::slotDescribeNew(void)
                     const SQLParser::Token *alias = d.takeFirst();
                     buf << "Table alias: " << currentToken->toString() << " => " << '\n'
                         << alias->toStringRecursive() << '\n';
+                }
+
+                SQLParser::Token const* e = stmt->translateAlias (currentToken->toString(), &*currentToken);
+                if (e)
+                {
+                	buf << currentToken->toString() << " is alias for: " << e->toStringRecursive();
                 }
                 break;
         }
