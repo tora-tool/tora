@@ -111,8 +111,6 @@ class toBaseEditor : public QWidget, public toEditWidget
         virtual void searchReplace();
 
     signals:
-        // TODO/FIXME: simplify signals
-        void displayMenu(QMenu *);
         // emitted when a new file is opened
         void fileOpened(void);
         void fileOpened(QString file);

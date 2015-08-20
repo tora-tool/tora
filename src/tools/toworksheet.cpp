@@ -604,8 +604,7 @@ void toWorksheet::setup(bool autoLoad)
     connect(this, SIGNAL(connectionChange()), this, SLOT(slotConnectionChanged()));
 
     context = NULL;
-    Editor->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(Editor,
+    connect(Editor->editor(),
             SIGNAL(customContextMenuRequested(const QPoint &)),
             this,
             SLOT(slotCreatePopupMenu(const QPoint &)));

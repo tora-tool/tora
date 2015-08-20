@@ -167,6 +167,8 @@ class toScintilla: public QsciScintilla //, public toEditWidget
         virtual void focusOutEvent(QFocusEvent *e);
 
         //! \reimp
+        // to be overriden
+        // unless contextMenuPolicy is set to: Qt::CustomContextMenu, which is usual when toBaseEditor is used
         virtual void contextMenuEvent(QContextMenuEvent *);
 
         //! \reimp
@@ -200,7 +202,6 @@ class toScintilla: public QsciScintilla //, public toEditWidget
         };
 
     signals:
-        void displayMenu(QMenu *);
 
         void gotFocus();
         void lostFocus();
@@ -217,6 +218,12 @@ class toScintilla: public QsciScintilla //, public toEditWidget
          * at the specified position. If you want to create a custom popup menu,
          * reimplement this function and return the created popup menu. Ownership
          * of the popup menu is transferred to the caller.
+         *
+         * Another possibility is to connect to SIGNAL contextMenuToBeDisplayed
+         * and add your own items into it
+         *
+         * Next possibility is to set contextMenuPolicy to Qt::CustomContextMenu
+         * and then handle customContextMenuRequested signal.
          */
         virtual QMenu *createPopupMenu(const QPoint& pos);
 

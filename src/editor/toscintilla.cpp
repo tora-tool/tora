@@ -556,11 +556,6 @@ void toScintilla::contextMenuEvent(QContextMenuEvent *e)
 
     e->accept();
 
-    // NOTE: this emit exist for compatibility with older
-    //       version of TOra. It will have to be removed
-    //       once the way around it will be figured out
-    emit displayMenu(popup);
-
     popup->exec(e->globalPos());
     delete popup;
 }
