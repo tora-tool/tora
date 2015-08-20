@@ -39,6 +39,7 @@
 //#include "core/toworksheet.h"
 #include "widgets/todockbar.h"
 #include "widgets/tobackgroundlabel.h"
+#include "core/utils.h"
 
 #include <QtCore/QObject>
 #include <QMdiArea>

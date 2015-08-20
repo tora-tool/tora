@@ -42,7 +42,7 @@
 #include "core/tologger.h"
 #include "core/tooracleconst.h"
 #include "core/toqvalue.h"
-#include "wigets/tosplash.h"
+#include "widgets/tosplash.h"
 #include "core/utils.h"
 
 #include <QtCore/QDir>

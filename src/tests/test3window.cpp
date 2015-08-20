@@ -176,8 +176,8 @@ void Test3Window::createDockbars()
                 SLOT(moveDocklet(toDocklet *, Qt::DockWidgetArea)));
     }
 
-    leftDockbar->restoreState(toConfigurationSingle::Instance().leftDockbarState());
-    rightDockbar->restoreState(toConfigurationSingle::Instance().rightDockbarState());
+    leftDockbar->restoreState(toConfigurationNewSingle::Instance().option(ToConfiguration::Main::LeftDockbarState).toByteArray());
+    rightDockbar->restoreState(toConfigurationNewSingle::Instance().option(ToConfiguration::Main::RightDockbarState).toByteArray());
 }
 
 void Test3Window::createActions()
