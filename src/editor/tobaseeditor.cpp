@@ -54,6 +54,8 @@ toBaseEditor::toBaseEditor(toScintilla *editor, QWidget *parent)
     setObjectName("toBaseEditor");
 #pragma message WARN("TODO/FIXME: fix this ugly types based init")
     m_editor->setParent(this);
+    m_editor->setContextMenuPolicy(Qt::CustomContextMenu);
+    FlagSet.Paste = !m_editor->isReadOnly(); // show that we do support Paste operation
 
     Q_ASSERT_X(m_editor, "toBaseEditor init", "editor must be existing instance of toMarkedTextEditor");
 
@@ -84,7 +86,6 @@ toBaseEditor::toBaseEditor(toScintilla *editor, QWidget *parent)
     connect(m_editor, SIGNAL(lostFocus()), this, SLOT(lostFocus()));
     connect(m_editor, SIGNAL(cursorPositionChanged(int, int)),
             this, SLOT(setCoordinates(int, int)));
-
     connect(m_search, SIGNAL(searchNext(Search::SearchFlags)),
             this, SLOT(handleSearching(Search::SearchFlags)));
     connect(m_search, SIGNAL(windowClosed()),
@@ -226,6 +227,7 @@ void toBaseEditor::setEditFlags()
         FlagSet.Save = true;
         FlagSet.Print = true;
         FlagSet.Copy = m_editor->hasSelectedText();
+        FlagSet.Paste = false;
         FlagSet.Search = true;
         FlagSet.SelectAll = true;
     }
@@ -238,7 +240,6 @@ void toBaseEditor::setEditFlags()
         FlagSet.Redo = m_editor->isRedoAvailable();
         FlagSet.Cut = m_editor->hasSelectedText();
         FlagSet.Copy = m_editor->hasSelectedText();
-        FlagSet.Paste = true;
         FlagSet.Search = true;
         FlagSet.SelectAll = true;
     }
