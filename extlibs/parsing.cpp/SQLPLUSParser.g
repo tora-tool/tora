@@ -18,22 +18,20 @@
  */
 parser grammar SQLPLUSParser;
 
-@includes
-{
- 	#include "UserTraits.hpp"
+options {
+    output=AST;
 }
-@namespace{ Antlr3BackendImpl }
 
 sql_plus_command 
-    :    (SOLIDUS|whenever_command|exit_command|prompt_command|set_command) SEMICOLON?
+    :    (SOLIDUS!|whenever_command|exit_command|prompt_command|set_command) SEMICOLON?
     ;
 
 whenever_command
-    :    whenever_key (sqlerror_key|oserror_key) (exit_key (success_key|failure_key|warning_key) (commit_key|rollback_key) | continue_key (commit_key|rollback_key|none_key))
+    :    whenever_key^ (sqlerror_key|oserror_key) (exit_key (success_key|failure_key|warning_key) (commit_key|rollback_key) | continue_key (commit_key|rollback_key|none_key))
     ;
 
 set_command
-    :    set_key REGULAR_ID (CHAR_STRING|on_key|off_key|EXACT_NUM_LIT|REGULAR_ID)
+    :    set_key^ REGULAR_ID (CHAR_STRING|on_key|off_key|EXACT_NUM_LIT|REGULAR_ID)
     ;
 
 exit_command
