@@ -146,7 +146,11 @@ tokenRefRuleRootTrackAndListLabel(token,label,elementIndex,terminalOptions={}) :
 /** rule when output=AST and tracking for rewrite */
 ruleRefTrack(rule,label,elementIndex,args,scope) ::= <<
 <super.ruleRef(...)>
-<if(backtracking)>if ( <actions.(actionScope).synpredgate> ) <endif>stream_<rule.name>.add(<label>.tree);
+<if(backtracking)>if ( <actions.(actionScope).synpredgate> ) <endif>
+{
+    <label>_last = <label>.tree.get();
+    stream_<rule.name>.add(<label>.tree);
+}
 >>
 
 /** x+=rule when output=AST and tracking for rewrite */
@@ -240,7 +244,7 @@ rewriteCodeLabels() ::= <<
 	separator="\n"
 >
 <rest(referencedRuleLabels)
-	:{it | RewriteRuleSubtreeStream\<ImplTraits> stream_<it>(get_psrstate()->get_treeAdaptor(), "rule <it>",<it>.tree); // rewrite alias};
+	:{it | RewriteRuleSubtreeStream\<ImplTraits> stream_<it>(get_psrstate()->get_treeAdaptor(), "rule <it>",<it>_last); // rewrite alias};
 	separator="\n"
 >
 <referencedRuleListLabels
@@ -285,7 +289,8 @@ rewritePositiveClosureBlock(
 	description) ::=
 <<
 if ( !(<referencedElements:{el | stream_<el>.hasNext()}; separator="||">) ) {
-	throw new RewriteEarlyExitException();
+	ExceptionBaseType* ex = new ANTLR_Exception\< <name>ImplTraits, REWRITE_EARLY_EXCEPTION, StreamType>( this->get_rec(), "<referencedElements> empty" );
+	goto rule<ruleDescriptor.name>Ex;
 }
 while ( <referencedElements:{el | stream_<el>.hasNext()}; separator="||"> ) {
 	<alt>

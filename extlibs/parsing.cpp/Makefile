@@ -6,12 +6,12 @@ HEADERS = $(wildcard *.hpp) $(wildcard *.inl)
 SOURCES = $(wildcard *.cpp)
 PSOURCES = $(wildcard PLSQLParser*.cpp) PLSQLLexer.cpp
 POBJS = $(PSOURCES:.cpp=.o)
-GRAMMAROPTIONS= -report -Xconversiontimeout 1500000 -Xmultithreaded -Xwatchconversion
-ANTLR = antlr-complete-3.5.2-SNAPSHOT.jar
+GRAMMAROPTIONS= -report -Xconversiontimeout 1500000 -Xwatchconversion
+ANTLR = antlr-complete-3.5.3-SNAPSHOT.jar
 
 .SUFFIXES:
 
-INCLUDES= -I. -I../libantlr3cpp-3.5.2/include/ -I../../../boost_1_46_1/
+INCLUDES= -I. -I../libantlr3cpp-3.5.3/include/ -I../../../boost_1_46_1/
 #INCLUDES= -I. -I../../../antlr3/runtime/Cpp/include/ -I../../../boost_1_46_1/
 
 CXXFLAGS=-ggdb3 -O0 -fno-inline -std=c++0x
@@ -95,7 +95,7 @@ install:
 	$(RM) $@.tmp
 
 %.tokens %Lexer.cpp %Parser.cpp %Lexer.hpp %Parser.hpp: %.g $(ANTLR)
-	java -Xmx1024m -jar $(ANTLR) $(GRAMMAROPTIONS) $<
+	java -Xmx10240m -jar $(ANTLR) $(GRAMMAROPTIONS) $<
 
 # PLSQL_DMLParser.o: PLSQL_DMLParser.cpp PLSQL_DMLParser.tokens
 # 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c PLSQL_DMLParser.c -o $@

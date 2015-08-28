@@ -142,7 +142,9 @@ outputFile( LEXER,
 /* -----------------------------------------
  * Include the ANTLR3 generated header file.
  */
+#include "antlr3compilerwarning.hpp"
 #include "<name>.hpp"
+
 <if(trace)>
 #include \<iostream>
 <endif>
@@ -324,26 +326,6 @@ headerFile( LEXER,
 
 <actions.(actionScope).header>
 
-#ifdef	WIN32
-// Disable: Unreferenced parameter,							- Rules with parameters that are not used
-//          constant conditional,							- ANTLR realizes that a prediction is always true (synpred usually)
-//          initialized but unused variable					- tree rewrite variables declared but not needed
-//          Unreferenced local variable						- lexer rule declares but does not always use _type
-//          potentially unitialized variable used			- retval always returned from a rule
-//			unreferenced local function has been removed	- susually getTokenNames or freeScope, they can go without warnigns
-//
-// These are only really displayed at warning level /W4 but that is the code ideal I am aiming at
-// and the codegen must generate some of these warnings by necessity, apart from 4100, which is
-// usually generated when a parser rule is given a parameter that it does not use. Mostly though
-// this is a matter of orthogonality hence I disable that one.
-//
-#pragma warning( disable : 4100 )
-#pragma warning( disable : 4101 )
-#pragma warning( disable : 4127 )
-#pragma warning( disable : 4189 )
-#pragma warning( disable : 4505 )
-#pragma warning( disable : 4701 )
-#endif
 <if(backtracking)>
 
 /* ========================
@@ -375,7 +357,7 @@ public:
 	 * so we just undef it here for now. That isn't the value we get back from C recognizers
 	 * anyway. We are looking for ANTLR_TOKEN_EOF.
 	 */
-	enum Tokens 
+	enum Tokens : ANTLR_UINT32
 	{
 		EOF_TOKEN = <name>ImplTraits::CommonTokenType::TOKEN_EOF
 		<tokens:{it | , <it.name> = <it.type> }; separator="\n">
@@ -1237,7 +1219,7 @@ ruleLabelDefs() ::= <<
 ruleLabelInitializations() ::= <<
 <if(ruleDescriptor.hasMultipleReturnValues)>
 <if(!ruleDescriptor.isSynPred)>
-retval.call_start_placeholder();
+retval.call_start_placeholder(this);
 <endif>
 <endif>
 >>
@@ -1306,7 +1288,7 @@ rule<ruleDescriptor.name>Ex: ;
 <if(ruleDescriptor.hasMultipleReturnValues)>
 <if(!TREE_PARSER)>
 <if(!ruleDescriptor.isSynPred)>
-retval.call_stop_placeholder();<\n>
+retval.call_stop_placeholder(this);<\n>
 <endif>
 <endif>
 <endif>
@@ -2300,6 +2282,7 @@ initValue(typeName) ::= <<
 /** Define a rule label  */
 ruleLabelDef(label) ::= <<
 <ruleLabelType(referencedRule=label.referencedRule)> <label.label.text>;
+<ASTLabelType>::pointer <label.label.text>_last = NULL;
 >>
 /**  Rule label default value */
 ruleLabelInitVal(label) ::= <<
@@ -2370,6 +2353,9 @@ public:
     	<scope.attributes:{it | <it.name> = other.<it.name>; }; separator="\n">
     	return *this;
     }
+    
+	void call_start_placeholder(<componentBaseType()>* parser) { start = stop= static_cast\< <name>* >(parser)->get_istream()->LT(1); };
+	void call_stop_placeholder(<componentBaseType()>* parser) { stop = static_cast\< <name>* >(parser)->get_istream()->LT(-1); };
 <endif>
     <if(scope)><scope.attributes:{it |<it.type> <it.name>;}; separator="\n"><endif>
 };
