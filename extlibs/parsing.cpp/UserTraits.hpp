@@ -29,6 +29,8 @@ namespace Antlr3BackendImpl {
 	
 	class MySQLLexer;
 
+	class OracleDML;
+	
 	class EmptyParser {};
 
 	//code for overriding
@@ -211,7 +213,12 @@ namespace Antlr3BackendImpl
 	typedef PLSQLTraits PLSQLParser_SQLPLUSParserTraits;	
 	typedef PLSQLTraits PLSQLParser_PLSQL_DMLParser_PLSQLKeysTraits;
 	typedef PLSQLTraits PLSQLParser_PLSQL_DMLParser_PLSQLCommonsTraits;
-	
+
+	typedef antlr3::Traits<OraclePLSQLLexer, OracleDML, UserTraits> OracleSQLParserTraits;
+	typedef OracleSQLParserTraits OracleDMLTraits;
+	typedef OracleSQLParserTraits OracleDML_PLSQLCommonsTraits;
+	typedef OracleSQLParserTraits OracleDML_OracleDMLKeysTraits;
+  
 	template<class CommonTokenType>
 	inline bool isTableAlias(CommonTokenType *LT1, CommonTokenType *LT2) {
 		static const std::string wPARTITION("PARTITION");

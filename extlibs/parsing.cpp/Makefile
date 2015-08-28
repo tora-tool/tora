@@ -39,6 +39,12 @@ t2:	t2.cpp PLSQLLexer.tokens PLSQLParser.tokens t1.cpp $(TOBJS) $(PSOURCES) $(PO
 t4:	t4.cpp PLSQLLexer.tokens PLSQLParser.tokens t4.cpp $(TOBJS) $(PSOURCES) $(POBJS) Makefile UserTraits.hpp
 	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(TOBJS) t4.cpp $(POBJS) -o $@
 
+t5:	t5.cpp PLSQLLexer.tokens OracleDML.tokens t4.cpp $(TOBJS) Makefile UserTraits.hpp
+	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) -c OracleDML.cpp
+	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) -c OracleDML_OracleDMLKeys.cpp
+	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) -c OracleDML_PLSQLCommons.cpp
+	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(TOBJS) OracleDML.o OracleDML_OracleDMLKeys.o OracleDML_PLSQLCommons.o t5.cpp -o $@
+
 m0:	m0.cpp MySQLGuiLexer.tokens $(TOBJS) MySQLGuiLexer.o Makefile UserGuiTraits.hpp
 	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(TOBJS) m0.cpp MySQLGuiLexer.o $(LIBS) -o $@
 
