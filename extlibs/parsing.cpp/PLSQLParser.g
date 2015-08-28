@@ -176,10 +176,10 @@ backtrack=true;
     |    alter_sequence
     |    alter_trigger
     |    alter_type
+
     |    create_function_body
     |    create_procedure_body
     |    create_package
-    |    create_sequence
 
 //    |    create_index //TODO
 //    |    create_table //TODO
@@ -187,14 +187,17 @@ backtrack=true;
 //    |    create_directory //TODO
 //    |    create_materialized_view //TODO
 
+    |    create_sequence
     |    create_trigger
     |    create_type
+
     |    drop_function
     |    drop_package
     |    drop_procedure
     |    drop_sequence
     |    drop_trigger
     |    drop_type
+    |    data_manipulation_language_statements
     ;
 
 // $<DDL -> SQL Statements for Stored PL/SQL Units
@@ -571,7 +574,7 @@ alter_type
     :    alter_key type_key type_name
     (    compile_type_clause
     |    replace_type_clause {mode = 1;}
-    |    {input.LT(2).getText().equalsIgnoreCase("attribute")}? alter_attribute_definition {mode = 2;}
+    |    {LT(2)->getText() == ("ATTRIBUTE")}? alter_attribute_definition {mode = 2;}
     |    alter_method_spec {mode = 3;}
     |    alter_collection_clauses {mode = 4;}
     |    modifier_clause {mode = 5;}
@@ -1066,7 +1069,7 @@ table_type_dec
 
 table_indexed_by_part
     :    (idx1=indexed_key|idx2=index_key) by_key type_spec
-        ->{idx1 != null}? ^(INDEXED_BY[$idx1.start] type_spec)
+        ->{idx1.tree != NULL}? ^(INDEXED_BY[$idx1.start] type_spec)
         -> ^(INDEXED_BY[$idx2.start] type_spec)
     ;
 
@@ -1223,7 +1226,7 @@ raise_statement
 
 return_statement
     :    return_key cn1=condition?
-    -> {cn1 != null}? ^(return_key ^(LOGIC_EXPR condition))
+    -> {cn1.tree != NULL}? ^(return_key ^(LOGIC_EXPR condition))
     -> ^(return_key)
     ;
 

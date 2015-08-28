@@ -5,6 +5,7 @@
 #  include <sys/mman.h>
 #  define DIRDELIM '/'
 #  include <dirent.h>
+#  include <unistd.h>
 #elif __MINGW32__
 #  include <iostream>
 #  include <fstream>

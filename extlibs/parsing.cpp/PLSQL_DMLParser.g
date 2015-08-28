@@ -368,7 +368,7 @@ unpivot_in_elements
         |    (LEFT_PAREN)=> LEFT_PAREN constant (COMMA constant)* RIGHT_PAREN
         )
         )?
-        -> column_name+ ^(PIVOT_ALIAS constant+)
+        -> column_name+ ^(PIVOT_ALIAS constant+)?
     ;
 
 hierarchical_query_clause

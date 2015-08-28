@@ -29,13 +29,161 @@ tokens { // moved to the import vocabulary
     MINUS_SIGN; // Imaginary token based on subtoken typecasting - see the rule <SEPARATOR>
     DOUBLE_PERIOD;
     UNDERSCORE; // Imaginary token based on subtoken typecasting - see the rule <INTRODUCER>
+
+    //TORA TOKENS
+    T_UNKNOWN;
+    T_RESERVED;
+    // Identifier subtypes AST leafs
+    T_TABLE_ALIAS;
+    T_COLUMN_ALIAS;
+    T_COLUMN_NAME;
+    T_TABLE_NAME;
+    T_SCHEMA_NAME;
+    T_FUNCTION_NAME;
+    T_PACKAGE_NAME;
+    T_DBLINK_NAME;
+    T_BINDVAR_NAME;
+
+    //Alias type(declaration, usage)
+    T_DECL;
+    T_USE ;
+    
+    //Tree nodes
+    T_IDENTIFIER;
+    T_TABLE_REF;
+    T_WITH;
+    T_SELECT;
+    T_SUBQUERY;
+    T_TABLE_CAST;
+    T_COLUMN_LIST;
+    T_SELECT_COLUMN;
+    T_FROM;
+    //T_SELECTED_TABLE;
+    T_WHERE;
+    T_HIERARCHICAL;
+    T_GROUP_BY;
+    T_MODEL;
+    T_UNION;
+    T_ORDER_BY_CLAUSE;
+    T_FOR_UPDATE_CLAUSE;
+    T_JOINING_CLAUSE;
+
+    T_OPERATOR_UNARY;
+    T_OPERATOR_BINARY;
+    T_OPERATOR_PART;
+    T_COND_OR;
+    T_COND_OR_SEQ;
+    T_COND_AND;
+    T_COND_AND_SEQ;
+    T_COND_NOT;
+    T_COND_EXISTS;
+    T_COND_IS;
+    T_COND_COMPARISON;
+    T_COND_GROUP_COMPARISON;
+    T_COND_IN;
+    T_COND_IS_A_SET;
+    T_COND_IS_ANY;
+    T_COND_IS_EMPTY;
+    T_COND_IS_OF_TYPE;
+    T_COND_IS_PRESENT;
+    T_COND_LIKE;
+    T_COND_MEMEBER;
+    T_COND_BETWEEN;
+    T_COND_REGEXP_LIKE;
+    T_COND_SUBMULTISET;
+    T_COND_EQUALS_PATH;
+    T_COND_UNDER_PATH;
+    T_COND_PAREN;
+
+    EXPLAIN_STATEMENT;
+    SELECT_STATEMENT;
+    FACTORING;
+    SUBQUERY;
+    SELECT_LIST;
+    SELECT_ITEM;
+    DOT_ASTERISK;
+    TABLE_REF;
+    TABLE_REF_ELEMENT;
+    JOIN_DEF;
+    LOGIC_EXPR;
+    SELECTED_TABLEVIEW;
+    TABLE_EXPRESSION;
+    COLLECTION_MODE;
+    SELECT_MODE;
+    DIRECT_MODE;
+    PIVOT_ELEMENT;
+    ANY_MODE;
+    ELEMENTS_MODE;
+    PIVOT_IN_ELEMENT;
+    UNPIVOT_IN_ELEMENT;
+    HIERARCHICAL;
+    GROUP_BY_CLAUSE;
+    GROUP_BY_ELEMENT;
+    GROUPIN_SET;
+    MAIN_MODEL;
+    MODEL_COLUMN;
+    MODEL_COLUMNS;
+    MODEL_RULES;
+    MODEL_RULE;
+    ASSIGN;
+    ORDER_BY_ELEMENTS;
+    ORDER_BY_ELEMENT;
+    SINGLE_TABLE_MODE;
+    MULTI_TABLE_MODE;
+    TABLE_ELEMENT;
+    CONDITIONAL_INSERT;
+    COLUMNS;
+    MERGE_UPDATE;
+    MERGE_INSERT;
+    LOCK_TABLE_ELEMENT;
+    STATIC_RETURNING;
+    EXPR_LIST;
+    IS_NOT_NULL;
+    IS_NULL;
+    IS_NOT_NAN;
+    IS_NAN;
+    IS_NOT_PRESENT;
+    IS_PRESENT;
+    IS_NOT_INFINITE;
+    IS_INFINITE;
+    IS_NOT_A_SET;
+    IS_A_SET;
+    IS_NOT_EMPTY;
+    IS_EMPTY;
+    IS_NOT_OF_TYPE;
+    IS_OF_TYPE;
+    NOT_IN;
+    NOT_BETWEEN;
+    NOT_LIKE;
+    UNARY_OPERATOR;
+    STANDARD_FUNCTION;
+    MODEL_EXPRESSION;
+    FOR_SINGLE_COLUMN;
+    FOR_MULTI_COLUMN;
+    SIMPLE_CASE;
+    SEARCHED_CASE;
+    VECTOR_EXPR;
+    FUNCTION_ENABLING_OVER;
+    FUNCTION_ENABLING_USING;
+    FUNCTION_ENABLING_WITHIN_OR_OVER;
+    PREDICTION_FUNCTION;
+    ELEMENT;
+    XML_COLUMN;
+    XML_ALIAS;
+    PIVOT_ALIAS;
+    DATETIME_OP;
+    XML_ELEMENT;
+    EXPR;
+    ROUTINE_CALL;
+    ARGUMENTS;
+    ARGUMENT;
 }
 
 @lexer::includes
 {
 	#include "UserTraits.hpp"
 }
-@lexer::namespace{ Antlr3BackendImpl }        
+@lexer::namespace{ Antlr3BackendImpl }
 
 @header {
 /*
@@ -832,14 +980,13 @@ SQL92_RESERVED_WHERE
 SQL92_RESERVED_WITH
     :    'WITH'
     ;
-
 PLSQL_NON_RESERVED_CAST
     :    'CAST'
     ;
 
 PLSQL_NON_RESERVED_MULTISET
-	:	'MULTISET'
-	;
+       :       'MULTISET'
+       ;
 
 PLSQL_NON_RESERVED_USING
     :    'USING'

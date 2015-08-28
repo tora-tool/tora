@@ -22,6 +22,12 @@ options {
     output=AST;
 }
 
+@includes
+{
+       #include "UserTraits.hpp"
+}
+@namespace{ Antlr3BackendImpl }
+
 sql_plus_command 
     :    (SOLIDUS!|whenever_command|exit_command|prompt_command|set_command) SEMICOLON?
     ;

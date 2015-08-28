@@ -430,14 +430,14 @@ bind_variable
     ;
 
 general_element
-@init    { boolean isCascated = true; }
+@init    { int isCascated = true; }
     :    general_element_part ((PERIOD general_element_part)=> PERIOD general_element_part {isCascated = true;})*
         ->{isCascated}? ^(CASCATED_ELEMENT general_element_part+)
         -> general_element_part
     ;
 
 general_element_part
-@init    { boolean isRoutineCall = false; }
+@init    { int isRoutineCall = false; }
     :    (INTRODUCER char_set_name)? id_expression
             ((PERIOD id_expression)=> PERIOD id_expression)* (function_argument {isRoutineCall = true;})?
         ->{isRoutineCall}? ^(ROUTINE_CALL ^(ROUTINE_NAME char_set_name? id_expression+) function_argument)
