@@ -384,7 +384,7 @@ public:
 public:
 	void				consume();
 	ANTLR_MARKER		tindex();
-	ANTLR_UINT32		_LA(ANTLR_INT32 i);
+	ANTLR_UINT32		LA(ANTLR_INT32 i);
 	ANTLR_MARKER		mark();
 	void				release(ANTLR_MARKER marker);
 	void				rewindMark(ANTLR_MARKER marker);
