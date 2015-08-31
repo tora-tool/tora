@@ -338,7 +338,31 @@ CommonTreeAdaptor<ImplTraits>::create( ANTLR_UINT32 tokenType, const CommonToken
 
 template<class ImplTraits>
 typename CommonTreeAdaptor<ImplTraits>::TreeTypePtr
+CommonTreeAdaptor<ImplTraits>::create( ANTLR_UINT32 tokenType, const CommonTokenType* fromToken, typename CommonTreeAdaptor<ImplTraits>::StringType const& text)
+{
+	if (fromToken == NULL)
+		return create(tokenType, text);
+	/* Create the new token */
+	auto newToken = this->createToken(fromToken);
+	/* Set the type of the new token to that supplied */
+	newToken->set_type(tokenType);
+	/* Set the text of the token accordingly */
+	newToken->set_tokText(text);
+	/* Return a new node based upon this token */
+	return	this->create(newToken);
+}
+
+template<class ImplTraits>
+typename CommonTreeAdaptor<ImplTraits>::TreeTypePtr
 CommonTreeAdaptor<ImplTraits>::create( ANTLR_UINT32 tokenType, const char* text)
+{
+	auto fromToken = this->createToken(tokenType, text);
+	return	this->create(fromToken);
+}
+
+template<class ImplTraits>
+typename CommonTreeAdaptor<ImplTraits>::TreeTypePtr
+CommonTreeAdaptor<ImplTraits>::create( ANTLR_UINT32 tokenType, CommonTreeAdaptor<ImplTraits>::StringType const& text)
 {
 	auto fromToken = this->createToken(tokenType, text);
 	return	this->create(fromToken);
@@ -432,6 +456,16 @@ ANTLR_UINT64	CommonTreeAdaptor<ImplTraits>::getUniqueID( TreeTypePtr& node )
 template<class ImplTraits>
 typename CommonTreeAdaptor<ImplTraits>::CommonTokenType*
 CommonTreeAdaptor<ImplTraits>::createToken( ANTLR_UINT32 tokenType, const char* text)
+{
+	CommonTokenType* newToken = TreeStoreType::createToken();
+	newToken->set_tokText( text );
+	newToken->set_type(tokenType);
+	return newToken;
+}
+
+template<class ImplTraits>
+typename CommonTreeAdaptor<ImplTraits>::CommonTokenType*
+CommonTreeAdaptor<ImplTraits>::createToken( ANTLR_UINT32 tokenType, CommonTreeAdaptor<ImplTraits>::StringType const& text)
 {
 	CommonTokenType* newToken = TreeStoreType::createToken();
 	newToken->set_tokText( text );

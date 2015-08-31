@@ -146,9 +146,12 @@ public:
 	TreeTypePtr create( CommonTokenType const* payload);
 	TreeTypePtr create( ANTLR_UINT32 tokenType, const CommonTokenType* fromToken);
 	TreeTypePtr create( ANTLR_UINT32 tokenType, const CommonTokenType* fromToken, const char* text);
+	TreeTypePtr create( ANTLR_UINT32 tokenType, const CommonTokenType* fromToken, StringType const& text);
 	TreeTypePtr create( ANTLR_UINT32 tokenType, const char* text);
+	TreeTypePtr create( ANTLR_UINT32 tokenType, StringType const& text);
 	
 	CommonTokenType* createToken( ANTLR_UINT32 tokenType, const char* text);
+  	CommonTokenType* createToken( ANTLR_UINT32 tokenType, StringType const& text);
 	CommonTokenType* createToken( const CommonTokenType* fromToken);
 
 	ANTLR_UINT32	getType( TreeTypePtr& t);
