@@ -6,6 +6,8 @@ HEADERS = $(wildcard *.hpp) $(wildcard *.inl)
 SOURCES = $(wildcard *.cpp)
 PSOURCES = $(wildcard PLSQLParser*.cpp) PLSQLLexer.cpp
 POBJS = $(PSOURCES:.cpp=.o)
+T5SOURCES = $(wildcard OracleDML*.cpp) PLSQLLexer.cpp
+T5OBJS    = $(T5SOURCES:.cpp=.o)
 GRAMMAROPTIONS= -report -Xconversiontimeout 1500000 -Xwatchconversion
 ANTLR = antlr-complete-3.5.3-SNAPSHOT.jar
 
@@ -17,9 +19,9 @@ INCLUDES= -I. -I../libantlr3cpp-3.5.3/include/ -I../../../boost_1_46_1/
 CXXFLAGS=-ggdb3 -O0 -fno-inline -std=c++0x
 ##CXXFLAGS=-ggdb3 -Os
 
-TOBJS= utils.o
+UOBJS= utils.o
 
-all: t0 t1 t4 m0 m1 p0 s0 s1 s2
+all: t0 t1 t2 t4 t5 m0 m1 p0 s0 s1 s2 s3 p1
 
 $(ANTLR): org/antlr/codegen/templates/Cpp/Cpp.stg \
 	org/antlr/codegen/templates/Cpp/AST.stg \
@@ -27,50 +29,47 @@ $(ANTLR): org/antlr/codegen/templates/Cpp/Cpp.stg \
 	org/antlr/codegen/templates/Java/Java.stg
 	jar uvf $(ANTLR) org/antlr/codegen/templates/*/*.stg
 
-t0:	t0.cpp PLSQLGuiLexer.tokens t0.cpp $(TOBJS) PLSQLGuiLexer.o Makefile UserGuiTraits.hpp
-	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(TOBJS) t0.cpp PLSQLGuiLexer.o $(LIBS) -o $@
+t0:	t0.cpp PLSQLGuiLexer.tokens t0.cpp $(UOBJS) PLSQLGuiLexer.o Makefile UserGuiTraits.hpp
+	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(UOBJS) t0.cpp PLSQLGuiLexer.o $(LIBS) -o $@
 
-t1:	t1.cpp PLSQLLexer.tokens PLSQLParser.tokens t1.cpp $(TOBJS) $(POBJS) Makefile UserTraits.hpp
-	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(TOBJS) t1.cpp $(POBJS) -o $@
+t1:	t1.cpp PLSQLLexer.tokens PLSQLParser.tokens t1.cpp $(UOBJS) $(POBJS) Makefile UserTraits.hpp
+	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(UOBJS) t1.cpp $(POBJS) -o $@
 
-t2:	t2.cpp PLSQLLexer.tokens PLSQLParser.tokens t1.cpp $(TOBJS) $(PSOURCES) $(POBJS) Makefile UserTraits.hpp
-	$(CXX) $(CXXFLAGS) -DUSEBOOST $(INCLUDES) $(TOBJS) t2.cpp $(POBJS) $(LIBS) -o $@
+t2:	t2.cpp PLSQLLexer.tokens PLSQLParser.tokens t1.cpp $(UOBJS) $(PSOURCES) $(POBJS) Makefile UserTraits.hpp
+	$(CXX) $(CXXFLAGS) -DUSEBOOST $(INCLUDES) $(UOBJS) t2.cpp $(POBJS) $(LIBS) -o $@
 
-t4:	t4.cpp PLSQLLexer.tokens PLSQLParser.tokens t4.cpp $(TOBJS) $(PSOURCES) $(POBJS) Makefile UserTraits.hpp
-	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(TOBJS) t4.cpp $(POBJS) -o $@
+t4:	t4.cpp PLSQLLexer.tokens PLSQLParser.tokens t4.cpp $(UOBJS) $(PSOURCES) $(POBJS) Makefile UserTraits.hpp
+	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(UOBJS) t4.cpp $(POBJS) -o $@
 
-t5:	t5.cpp PLSQLLexer.tokens OracleDML.tokens t4.cpp $(TOBJS) Makefile UserTraits.hpp
-	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) -c OracleDML.cpp
-	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) -c OracleDML_OracleDMLKeys.cpp
-	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) -c OracleDML_PLSQLCommons.cpp
-	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(TOBJS) OracleDML.o OracleDML_OracleDMLKeys.o OracleDML_PLSQLCommons.o t5.cpp -o $@
+t5:	t5.cpp PLSQLLexer.tokens OracleDML.tokens t5.cpp $(UOBJS) $(T5OBJS) Makefile UserTraits.hpp
+	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(UOBJS) $(T5OBJS) t5.cpp -o $@
 
-m0:	m0.cpp MySQLGuiLexer.tokens $(TOBJS) MySQLGuiLexer.o Makefile UserGuiTraits.hpp
-	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(TOBJS) m0.cpp MySQLGuiLexer.o $(LIBS) -o $@
+m0:	m0.cpp MySQLGuiLexer.tokens $(UOBJS) MySQLGuiLexer.o Makefile UserGuiTraits.hpp
+	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(UOBJS) m0.cpp MySQLGuiLexer.o $(LIBS) -o $@
 
-m1:	m1.cpp MySQLLexer.tokens $(TOBJS) MySQLLexer.o Makefile UserTraits.hpp
-	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(TOBJS) $@.cpp MySQLLexer.o $(LIBS) -o $@
+m1:	m1.cpp MySQLLexer.tokens $(UOBJS) MySQLLexer.o Makefile UserTraits.hpp
+	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(UOBJS) $@.cpp MySQLLexer.o $(LIBS) -o $@
 
-p0:	p0.cpp OraclePLSQL.tokens $(TOBJS) OraclePLSQLLexer.o OraclePLSQLParser.o Makefile UserGuiTraits.hpp
-	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(TOBJS) p0.cpp OraclePLSQLLexer.o OraclePLSQLParser.o -o $@
+p0:	p0.cpp OraclePLSQL.tokens $(UOBJS) OraclePLSQLLexer.o OraclePLSQLParser.o Makefile UserGuiTraits.hpp
+	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(UOBJS) p0.cpp OraclePLSQLLexer.o OraclePLSQLParser.o -o $@
 
-s0:	s0.cpp SQLMini.tokens $(TOBJS) Makefile UserMiniTraits.hpp
-	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(TOBJS) s0.cpp SQLMiniLexer.cpp SQLMiniParser.cpp $(LIBS) -o $@
+s0:	s0.cpp SQLMini.tokens $(UOBJS) Makefile UserMiniTraits.hpp
+	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(UOBJS) s0.cpp SQLMiniLexer.cpp SQLMiniParser.cpp $(LIBS) -o $@
 
-s1:	s1.cpp S1.tokens $(TOBJS) Makefile UserMiniTraits.hpp
-	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(TOBJS) s1.cpp S1Lexer.cpp S1Parser.cpp $(LIBS) -o $@
+s1:	s1.cpp S1.tokens $(UOBJS) Makefile UserMiniTraits.hpp
+	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(UOBJS) s1.cpp S1Lexer.cpp S1Parser.cpp $(LIBS) -o $@
 
-s2:	s2.cpp S2.tokens $(TOBJS) Makefile UserMiniTraits.hpp
-	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(TOBJS) s2.cpp S2Lexer.cpp S2Parser.cpp $(LIBS) -o $@
+s2:	s2.cpp S2.tokens $(UOBJS) Makefile UserMiniTraits.hpp
+	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(UOBJS) s2.cpp S2Lexer.cpp S2Parser.cpp $(LIBS) -o $@
 
-s3:	s3.cpp S3.tokens $(TOBJS) Makefile UserMiniTraits.hpp
-	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(TOBJS) s3.cpp S3Lexer.cpp S3Parser.cpp $(LIBS) -o $@
+s3:	s3.cpp S3.tokens $(UOBJS) Makefile UserMiniTraits.hpp
+	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(UOBJS) s3.cpp S3Lexer.cpp S3Parser.cpp $(LIBS) -o $@
 
-p1:	p1.cpp PostgreSQLGuiLexer.tokens $(TOBJS) PostgreSQLGuiLexer.g.o Makefile UserGuiTraits.hpp
-	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(TOBJS) p1.cpp PostgreSQLGuiLexer.o $(LIBS) -o $@
+p1:	p1.cpp PostgreSQLGuiLexer.tokens $(UOBJS) PostgreSQLGuiLexer.g.o Makefile UserGuiTraits.hpp
+	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(UOBJS) p1.cpp PostgreSQLGuiLexer.o $(LIBS) -o $@
 
 clean:
-	rm -f *.o *Lexer*.[ch]pp *Parser.[ch]pp t0 t1 t2 t3 t4 m0 m1 s0 s1 s2 p0 *.tokens
+	rm -f *.o *Lexer*.[ch]pp *Parser.[ch]pp OracleDML*.[ch]pp t0 t1 t2 t4 t5 m0 m1 s0 s1 s2 s3 p0 p1 *.tokens
 
 install:
 	cp PLSQLGuiLexer.cpp ../../src/parsing/PLSQLGuiLexer.cc

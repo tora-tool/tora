@@ -23,7 +23,7 @@ options {
     tokenVocab=PLSQLLexer;
 }
 
-import OracleDMLKeys, PLSQLCommons;
+import OracleDMLKeys, OracleDMLCommons;
 tokens {
     EXPLAIN_STATEMENT;
     SELECT_STATEMENT;

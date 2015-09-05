@@ -345,7 +345,7 @@ tokens {
 @includes
 {
 	#include "UserTraits.hpp"
-	#include "PLSQLLexer.hpp"
+	#include "OracleDMLLexer.hpp"
 }
 @namespace { Antlr3BackendImpl }
 
@@ -453,27 +453,27 @@ index_key
     ;
 
 percent_notfound_key
-    :    {input.LT(2).getText().equalsIgnoreCase("NOTFOUND"}?=> PERCENT REGULAR_ID -> PERCENT_NOTFOUND_VK[$REGULAR_ID, $REGULAR_ID.text]
+    :    {LT(2)->getText() == "NOTFOUND"}?=> PERCENT REGULAR_ID -> PERCENT_NOTFOUND_VK[$REGULAR_ID, $REGULAR_ID.text]
     ;
 
 percent_found_key
-    :    {input.LT(2).getText().equalsIgnoreCase("FOUND"}?=> PERCENT REGULAR_ID -> PERCENT_FOUND_VK[$REGULAR_ID, $REGULAR_ID.text]
+    :    {LT(2)->getText() == "FOUND"}?=> PERCENT REGULAR_ID -> PERCENT_FOUND_VK[$REGULAR_ID, $REGULAR_ID.text]
     ;
 
 percent_isopen_key
-    :    {input.LT(2).getText().equalsIgnoreCase("ISOPEN"}?=> PERCENT REGULAR_ID -> PERCENT_ISOPEN_VK[$REGULAR_ID, $REGULAR_ID.text]
+    :    {LT(2)->getText() == "ISOPEN"}?=> PERCENT REGULAR_ID -> PERCENT_ISOPEN_VK[$REGULAR_ID, $REGULAR_ID.text]
     ;
 
 percent_rowcount_key
-    :    {input.LT(2).getText().equalsIgnoreCase("ROWCOUNT"}?=> PERCENT REGULAR_ID -> PERCENT_ROWCOUNT_VK[$REGULAR_ID, $REGULAR_ID.text]
+    :    {LT(2)->getText() == "ROWCOUNT"}?=> PERCENT REGULAR_ID -> PERCENT_ROWCOUNT_VK[$REGULAR_ID, $REGULAR_ID.text]
     ;
 
 percent_rowtype_key
-    :    {input.LT(2).getText().equalsIgnoreCase("ROWTYPE"}?=> PERCENT REGULAR_ID -> PERCENT_ROWTYPE_VK[$REGULAR_ID, $REGULAR_ID.text] 
+    :    {LT(2)->getText() == "ROWTYPE"}?=> PERCENT REGULAR_ID -> PERCENT_ROWTYPE_VK[$REGULAR_ID, $REGULAR_ID.text] 
     ;
 
 percent_type_key
-    :    {input.LT(2).getText().equalsIgnoreCase("TYPE"}?=> PERCENT REGULAR_ID -> PERCENT_TYPE_VK[$REGULAR_ID, $REGULAR_ID.text]
+    :    {LT(2)->getText() == "TYPE"}?=> PERCENT REGULAR_ID -> PERCENT_TYPE_VK[$REGULAR_ID, $REGULAR_ID.text]
     ;
 
 out_key
@@ -1272,7 +1272,8 @@ xml_key
     ;
 
 pivot_key
-    :    {(LT(1)->getText() == "PIVOT")}?=> REGULAR_ID -> PIVOT_VK[$REGULAR_ID]
+//    :    {(LT(1)->getText() == "PIVOT")}?=> REGULAR_ID -> PIVOT_VK[$REGULAR_ID]
+    :    PLSQL_NON_RESERVED_PIVOT
     ;
 
 prior_key
@@ -1357,7 +1358,8 @@ decrement_key
     ;
 
 unpivot_key
-    :    {(LT(1)->getText() == "UNPIVOT")}?=> REGULAR_ID -> UNPIVOT_VK[$REGULAR_ID]
+//    :    {(LT(1)->getText() == "UNPIVOT")}?=> REGULAR_ID -> UNPIVOT_VK[$REGULAR_ID]
+    :    PLSQL_NON_RESERVED_UNPIVOT
     ;
 
 keep_key
