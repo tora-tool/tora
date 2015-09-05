@@ -20,7 +20,7 @@ parser grammar OracleDML;
 options {
     output=AST;
     language=Cpp;    
-    tokenVocab=PLSQLLexer;
+    tokenVocab=OracleDMLLexer;
 }
 
 import OracleDMLKeys, OracleDMLCommons;
@@ -108,7 +108,7 @@ tokens {
 @parser::includes
 {
        #include "UserTraits.hpp"
-       #include "PLSQLLexer.hpp"
+       #include "OracleDMLLexer.hpp"
 }
 @parser::namespace { Antlr3BackendImpl }
 

@@ -6,7 +6,7 @@ HEADERS = $(wildcard *.hpp) $(wildcard *.inl)
 SOURCES = $(wildcard *.cpp)
 PSOURCES = $(wildcard PLSQLParser*.cpp) PLSQLLexer.cpp
 POBJS = $(PSOURCES:.cpp=.o)
-T5SOURCES = $(wildcard OracleDML*.cpp) PLSQLLexer.cpp
+T5SOURCES = $(wildcard OracleDML*.cpp)
 T5OBJS    = $(T5SOURCES:.cpp=.o)
 GRAMMAROPTIONS= -report -Xconversiontimeout 1500000 -Xwatchconversion
 ANTLR = antlr-complete-3.5.3-SNAPSHOT.jar
@@ -38,10 +38,10 @@ t1:	t1.cpp PLSQLLexer.tokens PLSQLParser.tokens t1.cpp $(UOBJS) $(POBJS) Makefil
 t2:	t2.cpp PLSQLLexer.tokens PLSQLParser.tokens t1.cpp $(UOBJS) $(PSOURCES) $(POBJS) Makefile UserTraits.hpp
 	$(CXX) $(CXXFLAGS) -DUSEBOOST $(INCLUDES) $(UOBJS) t2.cpp $(POBJS) $(LIBS) -o $@
 
-t4:	t4.cpp PLSQLLexer.tokens PLSQLParser.tokens t4.cpp $(UOBJS) $(PSOURCES) $(POBJS) Makefile UserTraits.hpp
+t4:	t4.cpp PLSQLLexer.tokens PLSQLParser.tokens $(UOBJS) $(PSOURCES) $(POBJS) Makefile UserTraits.hpp
 	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(UOBJS) t4.cpp $(POBJS) -o $@
 
-t5:	t5.cpp PLSQLLexer.tokens OracleDML.tokens t5.cpp $(UOBJS) $(T5OBJS) Makefile UserTraits.hpp
+t5:	t5.cpp OracleDMLLexer.tokens OracleDML.tokens $(UOBJS) $(T5OBJS) Makefile UserTraits.hpp
 	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(UOBJS) $(T5OBJS) t5.cpp -o $@
 
 m0:	m0.cpp MySQLGuiLexer.tokens $(UOBJS) MySQLGuiLexer.o Makefile UserGuiTraits.hpp

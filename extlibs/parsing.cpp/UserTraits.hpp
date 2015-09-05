@@ -29,6 +29,7 @@ namespace Antlr3BackendImpl {
 	
 	class MySQLLexer;
 
+	class OracleDMLLexer;
 	class OracleDML;
 	
 	class EmptyParser {};
@@ -205,7 +206,7 @@ namespace Antlr3BackendImpl
 	
 	typedef antlr3::Traits<MySQLLexer, EmptyParser> MySQLLexerTraits;
 
-	//typedef PLSQLTraits PLSQLLexerTraits;
+	typedef PLSQLTraits PLSQLLexerTraits;
 	typedef PLSQLTraits PLSQLParserTraits;
 	typedef PLSQLTraits PLSQLParser_PLSQLKeysTraits;
 	typedef PLSQLTraits PLSQLParser_PLSQLCommonsTraits;
@@ -214,8 +215,8 @@ namespace Antlr3BackendImpl
 	typedef PLSQLTraits PLSQLParser_PLSQL_DMLParser_PLSQLKeysTraits;
 	typedef PLSQLTraits PLSQLParser_PLSQL_DMLParser_PLSQLCommonsTraits;
 
-	typedef antlr3::Traits<PLSQLLexer, OracleDML, UserTraits> OracleSQLParserTraits;
-	typedef OracleSQLParserTraits PLSQLLexerTraits;
+	typedef antlr3::Traits<OracleDMLLexer, OracleDML, UserTraits> OracleSQLParserTraits;
+	typedef OracleSQLParserTraits OracleDMLLexerTraits;
 	typedef OracleSQLParserTraits OracleDMLTraits;
 	typedef OracleSQLParserTraits OracleDML_OracleDMLCommonsTraits;
 	typedef OracleSQLParserTraits OracleDML_OracleDMLKeysTraits;
