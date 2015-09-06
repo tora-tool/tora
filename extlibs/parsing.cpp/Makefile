@@ -18,7 +18,7 @@ INCLUDES= -I. -I../libantlr3cpp-3.5.3/include/
 #INCLUDES= -I. -I../../../antlr3/runtime/Cpp/include/ -I../../../boost_1_46_1/
 
 CXXFLAGS=-ggdb3 -O0 -fno-inline -std=c++14
-##CXXFLAGS=-ggdb3 -Os
+#CXXFLAGS=-ggdb3 -Os -std=c++14
 
 UOBJS= utils.o
 
@@ -73,7 +73,7 @@ p1:	p1.cpp PostgreSQLGuiLexer.tokens $(UOBJS) PostgreSQLGuiLexer.g.o Makefile Us
 	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(UOBJS) p1.cpp PostgreSQLGuiLexer.o $(LIBS) -o $@
 
 clean:
-	rm -f *.o *Lexer*.[ch]pp *Parser.[ch]pp OracleDML*.[ch]pp t0 t1 t2 t4 t5 m0 m1 s0 s1 s2 s3 p0 p1 *.tokens
+	rm -f *.o *Lexer*.[ch]pp *Parser.[ch]pp OracleDML*.[ch]pp t0 t1 t2 t4 t5 m0 m1 s0 s1 s2 s3 p0 p1 check *.tokens
 
 install:
 	cp PLSQLGuiLexer.cpp ../../src/parsing/PLSQLGuiLexer.cc

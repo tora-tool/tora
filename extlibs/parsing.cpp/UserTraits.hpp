@@ -376,6 +376,14 @@ namespace Antlr3BackendImpl
 		PLSQLTraits::StringType ST2(s2);
 		return boost::iequals(s1, ST2);
 	}
+
+	inline PLSQLTraits::StringType toUpper(PLSQLTraits::StringType const& s)
+	{
+		PLSQLTraits::StringType sU(s);
+		std::transform(sU.begin(), sU.end(), sU.begin(), ::toupper);
+		return sU;
+	}
+
 }
 
 #endif
