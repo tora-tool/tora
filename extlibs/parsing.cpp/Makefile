@@ -10,13 +10,14 @@ T5SOURCES = $(wildcard OracleDML*.cpp)
 T5OBJS    = $(T5SOURCES:.cpp=.o)
 GRAMMAROPTIONS= -report -Xconversiontimeout 1500000 -Xwatchconversion
 ANTLR = antlr-complete-3.5.3-SNAPSHOT.jar
+CXX = clang++
 
 .SUFFIXES:
 
-INCLUDES= -I. -I../libantlr3cpp-3.5.3/include/ -I../../../boost_1_46_1/
+INCLUDES= -I. -I../libantlr3cpp-3.5.3/include/
 #INCLUDES= -I. -I../../../antlr3/runtime/Cpp/include/ -I../../../boost_1_46_1/
 
-CXXFLAGS=-ggdb3 -O0 -fno-inline -std=c++0x
+CXXFLAGS=-ggdb3 -O0 -fno-inline -std=c++14
 ##CXXFLAGS=-ggdb3 -Os
 
 UOBJS= utils.o
@@ -43,6 +44,9 @@ t4:	t4.cpp PLSQLLexer.tokens PLSQLParser.tokens $(UOBJS) $(PSOURCES) $(POBJS) Ma
 
 t5:	t5.cpp OracleDMLLexer.tokens OracleDML.tokens $(UOBJS) $(T5OBJS) Makefile UserTraits.hpp
 	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(UOBJS) $(T5OBJS) t5.cpp -o $@
+
+check:	check.cpp OracleDMLLexer.tokens OracleDML.tokens $(UOBJS) $(T5OBJS) Makefile UserTraits.hpp
+	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(UOBJS) $(T5OBJS) check.cpp -o $@
 
 m0:	m0.cpp MySQLGuiLexer.tokens $(UOBJS) MySQLGuiLexer.o Makefile UserGuiTraits.hpp
 	$(CXX) $(CXXFLAGS) -DUSESTL $(INCLUDES) $(UOBJS) m0.cpp MySQLGuiLexer.o $(LIBS) -o $@
