@@ -85,6 +85,7 @@ public:
 	typedef typename ImplTraits::StringType StringType;
 	typedef typename ImplTraits::InputStreamType InputStreamType;
 	typedef typename ImplTraits::StreamDataType StreamDataType;
+	typedef typename ImplTraits::TokenUserDataType UserDataType;
 
 private:
     /** The actual type of this token
@@ -243,6 +244,7 @@ public:
      */
     StringType  toString() const;
 
+	UserDataType UserData;	
 };
 
 }

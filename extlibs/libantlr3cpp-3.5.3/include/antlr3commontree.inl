@@ -13,6 +13,7 @@ CommonTree<ImplTraits>::CommonTree()
 template<class ImplTraits>
 CommonTree<ImplTraits>::CommonTree( const CommonTree& ctree )
 	:m_children( ctree.m_children)
+	,UserData(ctree.UserData)
 {
 	m_startIndex = ctree.m_startIndex;
 	m_stopIndex  = ctree.m_stopIndex;
@@ -33,6 +34,7 @@ CommonTree<ImplTraits>::CommonTree( const CommonTokenType* token )
 
 template<class ImplTraits>
 CommonTree<ImplTraits>::CommonTree( const CommonTree* tree )
+	:UserData(tree->UserData)  
 {
 	m_startIndex = tree->get_startIndex();
 	m_stopIndex  = tree->get_stopIndex();
@@ -441,7 +443,7 @@ typename CommonTree<ImplTraits>::StringType	CommonTree<ImplTraits>::toString()
 {
 	if( this->isNilNode())
 		return StringType("nil");
-	return	m_token->getText();
+	return	m_token->toString();
 }
 
 template<class ImplTraits>

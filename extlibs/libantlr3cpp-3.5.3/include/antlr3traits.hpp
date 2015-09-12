@@ -34,6 +34,7 @@ public:
 	typedef Empty LexStateType;
 
 	typedef Empty CommonTokenType;
+	typedef Empty TokenUserDataType;
 
 	typedef Empty TokenIntStreamType;
 	typedef Empty TokenStreamType;
@@ -58,9 +59,9 @@ public:
 	};
 	
 	typedef Empty TreeType;
+	typedef Empty TreeUserDataType;	
 	typedef Empty TreeAdaptorType;
 	typedef Empty TreeStoreType;
-  
 	
 	template<class StreamType>
 	class ExceptionBaseType : public Empty
@@ -84,7 +85,7 @@ public:
 	};
 
 	typedef Empty  RuleReturnValueType;
-	
+
 	//If we want to change the way tokens are stored
 	static const bool TOKENS_ACCESSED_FROM_OWNING_RULE = false;
 	static const unsigned TOKEN_FILL_BUFFER_INCREMENT = 100; //used only if the above val is true
@@ -218,6 +219,10 @@ public:
 	typedef typename TraitsSelector< typename UserTraits<TraitsType>::CommonTokenType, 
 					 CommonToken<TraitsType> >::selected CommonTokenType;
 
+	// TokenUserDataType
+	typedef typename TraitsSelector< typename UserTraits<TraitsType>::TokenUserDataType, 
+					 Empty >::selected TokenUserDataType;
+	
 	// TokenListType
 	typedef typename BaseTraitsType::AllocPolicyType::template ListType<const CommonTokenType*> TokenListType;
 
@@ -272,7 +277,8 @@ public:
 	// TreeType
 	typedef typename TraitsSelector< typename UserTraits<TraitsType>::TreeType, 
 					 CommonTree<TraitsType> >::selected TreeType;
-
+	typedef typename TraitsSelector< typename UserTraits<TraitsType>::TreeUserDataType, 
+					 Empty >::selected TreeUserDataType;
 	// TreeAdaptorType
 	typedef typename TraitsSelector< typename UserTraits<TraitsType>::TreeAdaptorType, 
 					 CommonTreeAdaptor<TraitsType> >::selected TreeAdaptorType;

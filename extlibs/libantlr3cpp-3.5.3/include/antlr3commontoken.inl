@@ -45,6 +45,7 @@ CommonToken<ImplTraits>::CommonToken(TOKEN_TYPE type)
 template<class ImplTraits>
 CommonToken<ImplTraits>::CommonToken( const CommonToken& ctoken )
 	:m_tokText( ctoken.m_tokText )
+	,UserData(ctoken.UserData)	 
 {
 	m_type = ctoken.m_type;
 	m_channel = ctoken.m_channel;
@@ -60,6 +61,7 @@ CommonToken<ImplTraits>::CommonToken( const CommonToken& ctoken )
 template<class ImplTraits>
 CommonToken<ImplTraits>& CommonToken<ImplTraits>::operator=( const CommonToken& ctoken )
 {
+	UserData = ctoken.UserData;
 	m_type = ctoken.m_type;
 	m_channel = ctoken.m_channel;
 	m_lineStart = ctoken.m_lineStart;
