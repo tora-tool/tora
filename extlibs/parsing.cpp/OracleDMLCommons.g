@@ -90,17 +90,17 @@ options
 {
 backtrack=true;
 }
-    :    as_key? (id|alias_quoted_string)
+    :    as_key? (id[T_UNKNOWN,T_USE]|alias_quoted_string[T_UNKNOWN,T_USE])
     ->    ^(ALIAS id? alias_quoted_string?)
     |    as_key
     ;
 
 table_alias
-    :    ( id | alias_quoted_string )
+    :    ( id[1,1] | alias_quoted_string[1,1] )
     ->   ^(ALIAS id? alias_quoted_string?)
     ;
 
-alias_quoted_string
+alias_quoted_string[int identifierClass, int usageType]
     :    quoted_string
         -> ID[$quoted_string.start]
     ;
@@ -123,161 +123,161 @@ into_clause
 // $<Common PL/SQL Named Elements
 
 xml_column_name
-    :    id -> ^(XML_COLUMN_NAME id)
+    :    id[T_UNKNOWN,T_USE] -> ^(XML_COLUMN_NAME id)
     |    quoted_string -> ^(XML_COLUMN_NAME ID[$quoted_string.start])
     ;
 
 cost_class_name
-    :    id
+    :    id[T_UNKNOWN,T_USE]
         -> ^(COST_CLASS_NAME id)
     ;
 
 attribute_name
-    :    id
+    :    id[T_UNKNOWN,T_USE]
         -> ^(ATTRIBUTE_NAME id)
     ;
 
 savepoint_name
-    :    id
+    :    id[T_UNKNOWN,T_USE]
         -> ^(SAVEPOINT_NAME id)
     ;
 
 rollback_segment_name
-    :    id
+    :    id[T_UNKNOWN,T_USE]
         -> ^(ROLLBACK_SEGMENT_NAME id)
     ;
 
 
 table_var_name
-    :    id
+    :    id[T_UNKNOWN,T_USE]
         -> ^(TABLE_VAR_NAME id)
     ;
 
 schema_name
-    :    id
+    :    id[T_UNKNOWN,T_USE]
         -> ^(SCHEMA_NAME id)
     ;
 
 routine_name
-    :    id ((PERIOD id_expression)=> PERIOD id_expression)* (AT_SIGN link_name)?
+    :    id[T_UNKNOWN,T_USE] ((PERIOD id_expression[T_UNKNOWN,T_USE])=> PERIOD id_expression[T_UNKNOWN,T_USE])* (AT_SIGN link_name)?
         -> ^(ROUTINE_NAME id id_expression* link_name?)
     ;
 
 package_name
-    :    id
+    :    id[T_UNKNOWN,T_USE]
         -> ^(PACKAGE_NAME id)
     ;
 
 implementation_type_name
-    :    id ((PERIOD id_expression)=> PERIOD id_expression)?
+    :    id[T_UNKNOWN,T_USE] ((PERIOD id_expression[T_UNKNOWN,T_USE])=> PERIOD id_expression[T_UNKNOWN,T_USE])?
         -> ^(IMPLEMENTATION_TYPE_NAME id id_expression?)
     ;
 
 parameter_name
-    :    id
+    :    id[T_UNKNOWN,T_USE]
         -> ^(PARAMETER_NAME id)
     ;
 
 reference_model_name
-    :    id
+    :    id[T_UNKNOWN,T_USE]
         -> ^(REFERENCE_MODEL_NAME id)
     ;
 
 main_model_name
-    :    id
+    :    id[T_UNKNOWN,T_USE]
         -> ^(MAIN_MODEL_NAME id)
     ;
 
 aggregate_function_name
-    :    id ((PERIOD id_expression)=> PERIOD id_expression)*
+    :    id[T_UNKNOWN,T_USE] ((PERIOD id_expression[T_UNKNOWN,T_USE])=> PERIOD id_expression[T_UNKNOWN,T_USE])*
         -> ^(ROUTINE_NAME id id_expression*)
     ;
 
 query_name
-    :    id
+    :    id[T_UNKNOWN,T_USE]
         -> ^(QUERY_NAME id)
     ;
 
 constraint_name
-    :    id ((PERIOD id_expression)=> PERIOD id_expression)* (AT_SIGN link_name)?
+    :    id[T_UNKNOWN,T_USE] ((PERIOD id_expression[T_UNKNOWN,T_USE])=> PERIOD id_expression[T_UNKNOWN,T_USE])* (AT_SIGN link_name)?
         -> ^(CONSTRAINT_NAME id id_expression* link_name?)
     ;
 
 label_name
-    :    id_expression
+    :    id_expression[T_UNKNOWN,T_USE]
         -> ^(LABEL_NAME id_expression)
     ;
 
 type_name
-    :    id_expression ((PERIOD id_expression)=> PERIOD id_expression)*
+    :    id_expression[T_UNKNOWN,T_USE] ((PERIOD id_expression[T_UNKNOWN,T_USE])=> PERIOD id_expression[T_UNKNOWN,T_USE])*
         -> ^(TYPE_NAME id_expression+)
     ;
 
 sequence_name
-    :    id_expression ((PERIOD id_expression)=> PERIOD id_expression)*
+    :    id_expression[T_UNKNOWN,T_USE] ((PERIOD id_expression[T_UNKNOWN,T_USE])=> PERIOD id_expression[T_UNKNOWN,T_USE])*
         -> ^(SEQUENCE_NAME id_expression+)
     ;
 
 exception_name
-    :    id ((PERIOD id_expression)=> PERIOD id_expression)* 
+    :    id[T_UNKNOWN,T_USE] ((PERIOD id_expression[T_UNKNOWN,T_USE])=> PERIOD id_expression[T_UNKNOWN,T_USE])* 
         ->^(EXCEPTION_NAME id id_expression*)
     ;
 
 function_name
-    :    id ((PERIOD id_expression)=> PERIOD id_expression)?
+    :    id[T_UNKNOWN,T_USE] ((PERIOD id_expression[T_UNKNOWN,T_USE])=> PERIOD id_expression[T_UNKNOWN,T_USE])?
         -> ^(FUNCTION_NAME id id_expression*)
     ;
 
 procedure_name
-    :    id ((PERIOD id_expression)=> PERIOD id_expression)?
+    :    id[T_UNKNOWN,T_USE] ((PERIOD id_expression[T_UNKNOWN,T_USE])=> PERIOD id_expression[T_UNKNOWN,T_USE])?
         -> ^(PROCEDURE_NAME id id_expression*)
     ;
 
 trigger_name
-    :    id ((PERIOD id_expression)=> PERIOD id_expression)?
+    :    id[T_UNKNOWN,T_USE] ((PERIOD id_expression[T_UNKNOWN,T_USE])=> PERIOD id_expression[T_UNKNOWN,T_USE])?
         ->^(TRIGGER_NAME id id_expression*)
     ;
 
 variable_name
     :    (INTRODUCER char_set_name)?
-            id_expression ((PERIOD id_expression)=> PERIOD id_expression)?
+            id_expression[T_UNKNOWN,T_USE] ((PERIOD id_expression[T_UNKNOWN,T_USE])=> PERIOD id_expression[T_UNKNOWN,T_USE])?
         -> ^(VARIABLE_NAME char_set_name? id_expression*)
     |    bind_variable
         -> ^(HOSTED_VARIABLE_NAME bind_variable)
     ;
 
 index_name
-    :    id
+    :    id[T_UNKNOWN,T_USE]
         -> ^(INDEX_NAME id)
     ;
 
 cursor_name
-    :    (id | bind_variable)
+    :    (id[T_UNKNOWN,T_USE] | bind_variable)
         -> ^(CURSOR_NAME id? bind_variable?)
     ;
 
 record_name
-    :    (id | bind_variable)
+    :    (id[T_UNKNOWN,T_USE] | bind_variable)
         ->^(RECORD_NAME id)
     ;
 
 collection_name
-    :    id ((PERIOD id_expression)=> PERIOD id_expression)?
+    :    id[T_UNKNOWN,T_USE] ((PERIOD id_expression[T_UNKNOWN,T_USE])=> PERIOD id_expression[T_UNKNOWN,T_USE])?
         ->^(COLLECTION_NAME id id_expression?)
     ;
 
 link_name
-    :    id
+    :    id[T_UNKNOWN,T_USE]
         -> ^(LINK_NAME id)
     ;
 
 column_name
-    :    id ((PERIOD id_expression)=> PERIOD id_expression)*
+    :    id[T_UNKNOWN,T_USE] ((PERIOD id_expression[T_UNKNOWN,T_USE])=> PERIOD id_expression[T_UNKNOWN,T_USE])*
         -> ^(COLUMN_NAME id id_expression*)
     ;
 
 tableview_name
-    :    id ((PERIOD id_expression)=> PERIOD id_expression)? 
+    :    id[T_UNKNOWN,T_USE] ((PERIOD id_expression[T_UNKNOWN,T_USE])=> PERIOD id_expression[T_UNKNOWN,T_USE])? 
     (    AT_SIGN link_name
     |    {!(LA(2) == SQL92_RESERVED_BY)}?=> partition_extension_clause
     )?
@@ -285,7 +285,7 @@ tableview_name
     ;
 
 char_set_name
-    :    id_expression ((PERIOD id_expression)=> PERIOD id_expression)*
+    :    id_expression[T_UNKNOWN,T_USE] ((PERIOD id_expression[T_UNKNOWN,T_USE])=> PERIOD id_expression[T_UNKNOWN,T_USE])*
         ->^(CHAR_SET_NAME id_expression+)
     ;
 
@@ -338,7 +338,7 @@ respect_or_ignore_nulls
 
 argument
 @init    {    int mode = 0;    }
-    :    ((id EQUALS_OP GREATER_THAN_OP)=> id EQUALS_OP GREATER_THAN_OP {mode = 1;})? expression_wrapper
+    :    ((id[T_UNKNOWN,T_USE] EQUALS_OP GREATER_THAN_OP)=> id[T_UNKNOWN,T_USE] EQUALS_OP GREATER_THAN_OP {mode = 1;})? expression_wrapper
         ->{mode == 1}? ^(ARGUMENT expression_wrapper ^(PARAMETER_NAME[$EQUALS_OP] id))
         -> ^(ARGUMENT expression_wrapper)
     ;
@@ -438,14 +438,14 @@ general_element
 
 general_element_part
 @init    { int isRoutineCall = false; }
-    :    (INTRODUCER char_set_name)? id_expression
-            ((PERIOD id_expression)=> PERIOD id_expression)* (function_argument {isRoutineCall = true;})?
+    :    (INTRODUCER char_set_name)? id_expression[T_UNKNOWN,T_USE]
+            ((PERIOD id_expression[T_UNKNOWN,T_USE])=> PERIOD id_expression[T_UNKNOWN,T_USE])* (function_argument {isRoutineCall = true;})?
         ->{isRoutineCall}? ^(ROUTINE_CALL ^(ROUTINE_NAME char_set_name? id_expression+) function_argument)
         -> ^(ANY_ELEMENT char_set_name? id_expression+)
     ;
 
 table_element
-    :    (INTRODUCER char_set_name)? id_expression (PERIOD id_expression)*
+    :    (INTRODUCER char_set_name)? id_expression[T_UNKNOWN,T_USE] (PERIOD id_expression[T_UNKNOWN,T_USE])*
          -> ^(ANY_ELEMENT char_set_name? id_expression+)
     ;
 
@@ -485,14 +485,15 @@ quoted_string
     |    NATIONAL_CHAR_STRING_LIT
     ;
 
-id
+id[int identifierClass, int usageType]
     :    (INTRODUCER char_set_name)?
-        id_expression
-        -> char_set_name? id_expression
+        r=id_expression[identifierClass, usageType] { int i = r->get_type(); }
+        //-> char_set_name? id_expression
     ;
 
-id_expression
-    :    REGULAR_ID ->    ID[$REGULAR_ID]
+id_expression[int identifierClass, int usageType]
+//    :    REGULAR_ID ->    ID[$REGULAR_ID] {}
+    :    r=REGULAR_ID { const_cast<CommonTokenType*>($r)->set_type(ID); const_cast<CommonTokenType*>($r)->UserData.identifierClass = identifierClass; }
     |    DELIMITED_ID ->    ID[$DELIMITED_ID] 
     ;
 

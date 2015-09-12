@@ -538,7 +538,7 @@ update_set_clause
 @init    {    int mode = 1;    }
     :    set_key
     (    column_based_update_set_clause (COMMA column_based_update_set_clause)*
-    |    value_key LEFT_PAREN id RIGHT_PAREN EQUALS_OP expression {mode = 0;}
+    |    value_key LEFT_PAREN id[T_UNKNOWN,T_USE] RIGHT_PAREN EQUALS_OP expression {mode = 0;}
     )
         ->{mode == 1}? ^(set_key column_based_update_set_clause+)
         -> ^(set_key ^(value_key id ^(EXPR expression)))
@@ -1143,7 +1143,7 @@ standard_function
             (PERIOD general_element_part)?
     |    xmlpi_key^
             LEFT_PAREN! 
-                (    name_key id
+                (    name_key id[T_UNKNOWN,T_USE]
                 |    evalname_key concatenation_wrapper
                 )
                 (COMMA! concatenation_wrapper)?
@@ -1292,7 +1292,7 @@ xml_general_default_part
 
 xml_multiuse_expression_element
 @init    {    int mode = 0;    }
-    :    expression (as_key (id_expression {mode = 1;}|evalname_key concatenation {mode = 2;}))?
+    :    expression (as_key (id_expression[T_UNKNOWN,T_USE] {mode = 1;}|evalname_key concatenation {mode = 2;}))?
         -> {mode == 1}? ^(XML_ELEMENT ^(EXPR expression) ^(XML_ALIAS[$as_key.start] id_expression))
         -> {mode == 2}? ^(XML_ELEMENT ^(EXPR expression) ^(XML_ALIAS[$as_key.start] ^(evalname_key ^(EXPR concatenation))))
         -> ^(XML_ELEMENT ^(EXPR expression))

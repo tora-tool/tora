@@ -89,11 +89,24 @@ namespace Antlr3BackendImpl {
 				super::recover();
 			}
 		};
-  
+
+		struct TokenUserDataType
+		{
+			TokenUserDataType() : identifierClass(-1), usageType(-1) {};
+			int identifierClass, usageType;
+		};
+
+		struct TreeUserDataType
+		{
+			TreeUserDataType() : identifierClass(-1), usageType(-1) {};
+			int identifierClass, usageType;
+		};
+
 		class ToraToken : public antlr3::CommonToken<ImplTraits>
 		{
 			typedef antlr3::CommonToken<ImplTraits> super;
 			typedef typename antlr3::CommonToken<ImplTraits>::TOKEN_TYPE TOKEN_TYPE;
+			typedef typename super::StringType StringType;
 		public:
 			ToraToken() : m_block_context(BlkCtx::NONE), super() {};
 			ToraToken( ANTLR_UINT32 type) : super(type), m_block_context(BlkCtx::NONE)  {};
@@ -102,6 +115,14 @@ namespace Antlr3BackendImpl {
 
 			ToraToken& operator=( const ToraToken& other ) { super::operator=(other); m_block_context = other.m_block_context; return *this; };
 
+			StringType toString() const
+			{
+				StringType m_txt;				
+				m_txt = super::getText();
+				m_txt += "[" + std::to_string(super::UserData.identifierClass) + "]";
+				return m_txt;
+			}
+			
 			void setBlockContext(BlkCtx::BlockContextEnum bc) { m_block_context = bc; }
 			BlkCtx::BlockContextEnum getBlockContext() const { return m_block_context; }
 
@@ -234,9 +255,8 @@ namespace Antlr3BackendImpl
 		static const std::string wRIGHT("RIGHT");
 		static const std::string wOUTER("OUTER");
 
-		PLSQLTraits::StringType lt1 = LT1->getText();
-		PLSQLTraits::StringType lt2 = "";
-		//std::transform(lt1.begin(), lt1.end(), lt1.begin(), ::toupper);
+		auto lt1 = LT1->getText();
+		std::string lt2;
         
 		if ( LT2 && LT2->getText() != ""){
 			lt2 = LT2->getText();
@@ -322,8 +342,8 @@ namespace Antlr3BackendImpl
 		return false;
 	}
 
-	//template<class StringType>     
-	inline bool enablesOverClause(PLSQLTraits::StringType const& originalFunctionName) {
+	template<class StringType>     
+	inline bool enablesOverClause(StringType const& originalFunctionName) {
 		static const std::string wREGR("REGR_");
 		static const std::string wSTDDEV("STDDEV");
 		static const std::string wVAR("VAR_");
@@ -366,20 +386,21 @@ namespace Antlr3BackendImpl
 		return false;
 	}
 
-	//template<class StringType>
-	inline bool equalsIgnoreCase(PLSQLTraits::StringType const& s1, const char* s2)        
+	template<class StringType>
+	inline bool equalsIgnoreCase(StringType const& s1, const char* s2)        
 	{
 		// return !strcasecmp(s1.c_str(), s2);
 		// StringType s1U(s1);
 		// std::transform(s1U.begin(), s1U.end(), s1U.begin(), ::toupper);
 		// return s1U == s2;
-		PLSQLTraits::StringType ST2(s2);
+		StringType ST2(s2);
 		return boost::iequals(s1, ST2);
 	}
 
-	inline PLSQLTraits::StringType toUpper(PLSQLTraits::StringType const& s)
+	template<class StringType>  
+	inline StringType toUpper(StringType const& s)
 	{
-		PLSQLTraits::StringType sU(s);
+		StringType sU(s);
 		std::transform(sU.begin(), sU.end(), sU.begin(), ::toupper);
 		return sU;
 	}
