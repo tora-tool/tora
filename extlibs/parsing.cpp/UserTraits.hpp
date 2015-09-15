@@ -119,7 +119,7 @@ namespace Antlr3BackendImpl {
 			{
 				StringType m_txt;				
 				m_txt = super::getText();
-				m_txt += "[" + std::to_string(super::UserData.identifierClass) + "]";
+				//m_txt += "[" + std::to_string(super::UserData.identifierClass) + "]";
 				return m_txt;
 			}
 			
@@ -132,6 +132,55 @@ namespace Antlr3BackendImpl {
 
 		typedef ToraToken CommonTokenType;
 
+		class ToraTree : public antlr3::CommonTree<ImplTraits>
+		{
+			typedef antlr3::CommonTree<ImplTraits> super;
+			typedef typename super::StringType StringType;
+		public:
+			ToraTree() : super() {}
+			ToraTree( const CommonTokenType* token ) : super(token) {}
+			ToraTree( const ToraTree* token ) : super(token) {}
+			ToraTree( const super* token ) : super(token) {}
+			ToraTree( const ToraTree& ctree ) : super(ctree) {}
+
+			StringType toStringTree()
+			{
+				StringType retval;
+				StringType type = "[" + std::to_string(super::UserData.identifierClass) + "]";
+				if( this->m_children.empty() )
+					return	this->toString() + type;
+
+				/* Need a new string with nothing at all in it.
+				 */
+				if(this->isNilNode() == false)
+				{
+					retval.append("(");
+					retval.append(this->toString());
+					retval.append(type);
+					retval.append(" ");
+				}
+
+				if	( !this->m_children.empty())
+				{
+					retval.append( this->m_children.front()->toStringTree());
+					for (auto i = std::next(this->m_children.begin()); i != this->m_children.end(); ++i)
+					{
+						retval.append(" ");
+						retval.append((*i)->toStringTree());
+					}
+				}
+
+				if	(this->isNilNode() == false)
+				{
+					retval.append(")");
+				}
+				return  retval;
+			}
+
+		};
+
+		typedef ToraTree TreeType;
+		
 		//Similarly, if you want to override the nextToken function. write a class that
 		//derives from antlr3::TokenSource and override the nextToken function. But name the class
 		//as TokenSourceType

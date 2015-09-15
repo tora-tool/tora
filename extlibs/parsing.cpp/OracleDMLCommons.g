@@ -487,7 +487,7 @@ quoted_string
 
 id[int identifierClass, int usageType]
     :    (INTRODUCER char_set_name)?
-        r=id_expression[identifierClass, usageType] { int i = r->get_type(); }
+        r=id_expression[identifierClass, usageType] { int i = r.tree->getType(); r.tree->UserData.identifierClass = 1235; }
         //-> char_set_name? id_expression
     ;
 
