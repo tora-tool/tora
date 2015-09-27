@@ -549,7 +549,7 @@ tokens { // moved to the import vocabulary
 
 @lexer::includes
 {
-	#include "UserTraits.hpp"
+	#include "OracleDMLTraits.hpp"
 }
 @lexer::namespace{ Antlr3BackendImpl }
 

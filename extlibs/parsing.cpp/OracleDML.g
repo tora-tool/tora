@@ -107,7 +107,7 @@ tokens {
 
 @parser::includes
 {
-       #include "UserTraits.hpp"
+       #include "OracleDMLTraits.hpp"
        #include "OracleDMLLexer.hpp"
 }
 @parser::namespace { Antlr3BackendImpl }

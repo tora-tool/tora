@@ -19,4 +19,8 @@ namespace Utils
 	bool isDirectory(const char * director, struct stat const& sb);
 };
 
+#if defined _MSC_VER
+char *basename(char const *name);
+#endif
+
 #endif

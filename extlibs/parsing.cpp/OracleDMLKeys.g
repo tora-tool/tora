@@ -344,7 +344,7 @@ options {
 
 @includes
 {
-	#include "UserTraits.hpp"
+	#include "OracleDMLTraits.hpp"
 	#include "OracleDMLLexer.hpp"
 }
 @namespace { Antlr3BackendImpl }

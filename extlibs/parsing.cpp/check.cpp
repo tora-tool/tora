@@ -1,12 +1,15 @@
 #include "utils.hpp"
-#include "UserTraits.hpp"
+#include "OracleDMLTraits.hpp"
 #include "OracleDMLLexer.hpp"
 #include "OracleDML.hpp"
 #include "OracleDML_OracleDMLKeys.hpp"
 #include "OracleDML_OracleDMLCommons.hpp"
 
 #include <sys/types.h>
+#include <filesystem>
+#if defined __linux
 #include <libgen.h>
+#endif
 
 #include <iostream>
 #include <ostream>
@@ -125,7 +128,7 @@ void treeWalk(OracleSQLParserTraits::TreeTypePtr const& root, unsigned depth)
 	auto token = root->get_token();
 	int identifierClass = 0, usageType = 0;
 	
-	if (root->getType() < numeric_limits<ANTLR_UINT32>::max())
+	if (root->getType() < (numeric_limits<ANTLR_UINT32>::max)())
 		tokenType = (const char*)OracleDML::getTokenNames()[root->getType()];
 	
 	if (children.empty())

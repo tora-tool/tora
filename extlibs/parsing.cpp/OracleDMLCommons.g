@@ -73,7 +73,7 @@ tokens {
 
 @includes
 {
-        #include "UserTraits.hpp"
+        #include "OracleDMLTraits.hpp"
 }
 
 @namespace{ Antlr3BackendImpl }
