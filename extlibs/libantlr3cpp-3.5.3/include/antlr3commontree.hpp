@@ -48,7 +48,7 @@ public:
 	typedef typename AllocPolicyType::template VectorType<TreeTypePtr> ChildrenType;
 	typedef typename AllocPolicyType::template ListType<TreeTypePtr> ChildListType;
 	typedef typename ImplTraits::TreeUserDataType UserDataType;
-private:
+protected:
 	/// The list of all the children that belong to this node. They are not part of the node
     /// as they belong to the common tree node that implements this.
     ///
@@ -140,7 +140,7 @@ public:
 	// Prepare tree node to be re-used
 	void	reuse();
 
-	UserDataType UserData;	  
+	UserDataType UserData;
 };
 
 }

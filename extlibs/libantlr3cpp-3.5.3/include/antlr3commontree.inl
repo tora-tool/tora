@@ -34,7 +34,7 @@ CommonTree<ImplTraits>::CommonTree( const CommonTokenType* token )
 
 template<class ImplTraits>
 CommonTree<ImplTraits>::CommonTree( const CommonTree* tree )
-	:UserData(tree->UserData)  
+	:UserData(tree->UserData)
 {
 	m_startIndex = tree->get_startIndex();
 	m_stopIndex  = tree->get_stopIndex();
@@ -98,7 +98,9 @@ void	CommonTree<ImplTraits>::addChild(TreeTypePtr& child)
 					if ((*i) != NULL)
 					{
 						m_children.push_back(std::move(*i));
-						m_children.back()->set_parent(this);
+						// static_cast to possible subtype (if TreeType trait defined)
+						TreeType* tree = static_cast<TreeType*>(this);
+						m_children.back()->set_parent(tree);
 						m_children.back()->set_childIndex(m_children.size() - 1);
 					}
                 }
@@ -118,7 +120,9 @@ void	CommonTree<ImplTraits>::addChild(TreeTypePtr& child)
 	{
 		// Tree we are adding is not a Nil and might have children to copy
 		m_children.push_back( std::move(child) );
-		m_children.back()->set_parent(this);
+		// static_cast to possible subtype (if TreeType trait defined)
+		TreeType* tree = static_cast<TreeType*>(this);
+		m_children.back()->set_parent(tree);
 		m_children.back()->set_childIndex(m_children.size() - 1);
 	}
 }
@@ -187,7 +191,8 @@ void	CommonTree<ImplTraits>::replaceChildren(ANTLR_INT32 startChildIndex, ANTLR_
 		{
 			TreeType *child = newChildrenRef.at(j);
 			m_children[i] = child;
-			child->set_parent(this);
+			TreeType* tree = static_cast<TreeType*>(this);
+			child->set_parent(tree);
 			child->set_childIndex(i);
 			j++;
 		}
@@ -400,7 +405,8 @@ void CommonTree<ImplTraits>::setChild(ANTLR_UINT32 i, TreeTypePtr child)
 		m_children.resize(i+1);
 
 	m_children[i] = child;
-	child->set_parent(this);
+	TreeType* tree = static_cast<TreeType*>(this);
+	child->set_parent(tree);
 	child->set_childIndex(i);
 }
 
@@ -471,7 +477,8 @@ void	CommonTree<ImplTraits>::freshenParentAndChildIndexes(ANTLR_UINT32 offset)
 	for(; i != m_children.end(); ++i, ++c)
 	{
 		(*i)->set_childIndex(c);
-		(*i)->set_parent(this);
+		TreeType* tree = static_cast<TreeType*>(this);
+		(*i)->set_parent(tree);
 	}
 }
 

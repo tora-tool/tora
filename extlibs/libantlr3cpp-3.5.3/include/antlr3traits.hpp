@@ -59,7 +59,7 @@ public:
 	};
 	
 	typedef Empty TreeType;
-	typedef Empty TreeUserDataType;	
+	typedef Empty TreeUserDataType;
 	typedef Empty TreeAdaptorType;
 	typedef Empty TreeStoreType;
 	
@@ -220,9 +220,9 @@ public:
 					 CommonToken<TraitsType> >::selected CommonTokenType;
 
 	// TokenUserDataType
-	typedef typename TraitsSelector< typename UserTraits<TraitsType>::TokenUserDataType, 
+	typedef typename TraitsSelector< typename UserTraits<TraitsType>::TokenUserDataType,
 					 Empty >::selected TokenUserDataType;
-	
+
 	// TokenListType
 	typedef typename BaseTraitsType::AllocPolicyType::template ListType<const CommonTokenType*> TokenListType;
 
@@ -277,7 +277,7 @@ public:
 	// TreeType
 	typedef typename TraitsSelector< typename UserTraits<TraitsType>::TreeType, 
 					 CommonTree<TraitsType> >::selected TreeType;
-	typedef typename TraitsSelector< typename UserTraits<TraitsType>::TreeUserDataType, 
+	typedef typename TraitsSelector< typename UserTraits<TraitsType>::TreeUserDataType,
 					 Empty >::selected TreeUserDataType;
 	// TreeAdaptorType
 	typedef typename TraitsSelector< typename UserTraits<TraitsType>::TreeAdaptorType, 
