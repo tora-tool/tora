@@ -17,9 +17,11 @@ ADD_LIBRARY(${WINDOWS_LIB} STATIC ${WINDOWS_LIB_SOURCES})
 #
 # There is no default value for static libraries and cmake isn't setting it either.
 # We fix this by adding the flag manually.
-if( CMAKE_SIZEOF_VOID_P EQUAL 8 AND MSVC )
-	set_target_properties(${WINDOWS_LIB} PROPERTIES STATIC_LIBRARY_FLAGS "/machine:X64")
-else()
-	set_target_properties(${WINDOWS_LIB} PROPERTIES STATIC_LIBRARY_FLAGS "/machine:X86")
+if(MSVC)
+	if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+		set_target_properties(${WINDOWS_LIB} PROPERTIES STATIC_LIBRARY_FLAGS "/machine:X64")
+	else()
+		set_target_properties(${WINDOWS_LIB} PROPERTIES STATIC_LIBRARY_FLAGS "/machine:X86")
+	endif()
 endif()
 
