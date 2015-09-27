@@ -242,7 +242,7 @@ table_ref_aux
     )
         flashback_query_clause*
         ({isTableAlias(LT(1), LT(2))}? table_alias)?
-        -> ^(TABLE_REF_ELEMENT table_alias? dml_table_expression_clause? table_ref? subquery_operation_part* only_key? pivot_clause? unpivot_clause? flashback_query_clause*)
+        -> ^(TABLE_REF_ELEMENT dml_table_expression_clause? table_ref? subquery_operation_part* only_key? pivot_clause? unpivot_clause? flashback_query_clause* table_alias?)
     ;
 
 join_clause
@@ -512,7 +512,7 @@ order_by_elements
 
 for_update_clause
     :    for_key update_key for_update_of_part? for_update_options?
-        -> ^(for_key for_update_of_part? for_update_options?)
+        -> ^(for_key update_key for_update_of_part? for_update_options?)
     ;
 
 for_update_of_part

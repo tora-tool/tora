@@ -9,15 +9,19 @@
 #include <libgen.h>
 
 #include <iostream>
+#include <ostream>
 #include <sstream>
 #include <fstream>
 #include <memory>
-
+#include <iomanip>
+ 
 using namespace Antlr3BackendImpl;
 using namespace std;
 
-static OracleDMLLexer* lxr;
+void treeWalk(OracleSQLParserTraits::TreeTypePtr const&, unsigned depth = 0);
 
+static OracleDMLLexer* lxr;
+static set<string> tables, aliases;
 int 
 main	(int argc, char *argv[])
 {
@@ -36,6 +40,8 @@ main	(int argc, char *argv[])
 	}
 
 	printf("finished parsing OK\n");
+	std::cout << "sizeof(TreeType)" << sizeof(Antlr3BackendImpl::OracleSQLParserTraits::TreeType) << std::endl;
+	std::cout << "sizeof(TokenType):" << sizeof(Antlr3BackendImpl::OracleSQLParserTraits::CommonTokenType) << std::endl;
 	delete lxr; lxr = NULL;
 	return 0;
 }
@@ -104,7 +110,60 @@ bool parseFile(const char* fName, int fd)
 		return false;
 	}
 
-	std::cout << ast.tree->toStringTree() << std::endl;
-	std::cout << "Root:" << ast.tree.get() << std::endl;
+	//std::cout << ast.tree->toStringTree() << std::endl;
+	//std::cout << "Root:" << ast.tree.get() << std::endl;
+	tables.clear(); aliases.clear();		
+	treeWalk(ast.tree);
 	return true;
+}
+
+void treeWalk(OracleSQLParserTraits::TreeTypePtr const& root, unsigned depth)
+{
+	using Tokens = Antlr3BackendImpl::OracleDMLTokens;
+	OracleSQLParserTraits::StringType tokenString, leafIndicator(" "), tokenType;
+	auto &children = root->get_children();
+	auto token = root->get_token();
+	int identifierClass = 0, usageType = 0;
+	
+	if (root->getType() < numeric_limits<ANTLR_UINT32>::max())
+		tokenType = (const char*)OracleDML::getTokenNames()[root->getType()];
+	
+	if (children.empty())
+	{
+		leafIndicator = "*";
+	}
+
+	/* Need a new string with nothing at all in it. (current ANTLR3 does not generate nil nodes)	   
+	 */
+	if (root->isNilNode() == true)
+	{
+		leafIndicator = "#";
+	}
+
+	if (token)
+	{
+		identifierClass = token->UserData.identifierClass;
+		usageType = token->UserData.usageType;
+	}
+		  
+	cout << setw(4 * depth + 3) << leafIndicator << tokenType << '[' << root->getType() << ',' << identifierClass << ',' << usageType << ']';
+	if ( tokenType != root->toString())
+		cout << '/' << root->toString();
+	cout << endl;
+	
+	if (!children.empty())
+	{
+		treeWalk(children.front(), depth+1);
+		for (auto i = std::next(children.begin()); i != children.end(); ++i)
+		{
+			treeWalk(*i, depth+1);
+		}
+	}
+
+	if (token && token->UserData.identifierClass == Tokens::T_TABLE_NAME)
+		cout << token->getText() << endl;
+	if (token && token->UserData.identifierClass == Tokens::T_COLUMN_NAME)
+		cout << token->getText() << endl;
+	if (token && token->UserData.identifierClass == Tokens::T_TABLE_ALIAS /*&& token->UserData.usageType == Tokens::T_DECL*/)
+		cout << token->getText() << endl;
 }

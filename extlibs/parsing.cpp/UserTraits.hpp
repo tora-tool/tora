@@ -179,7 +179,7 @@ namespace Antlr3BackendImpl {
 
 		};
 
-		typedef ToraTree TreeType;
+		//typedef ToraTree TreeType;
 		
 		//Similarly, if you want to override the nextToken function. write a class that
 		//derives from antlr3::TokenSource and override the nextToken function. But name the class

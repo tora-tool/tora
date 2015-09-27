@@ -23,52 +23,52 @@ options {
 }
 
 tokens {
-    ALIAS;
-    EXPR;
-    ARGUMENTS;
-    ARGUMENT;
-    PARAMETER_NAME;
-    ATTRIBUTE_NAME;
-    SAVEPOINT_NAME;
-    ROLLBACK_SEGMENT_NAME;
-    TABLE_VAR_NAME;
-    SCHEMA_NAME;
-    ROUTINE_NAME;
-    PACKAGE_NAME;
-    IMPLEMENTATION_TYPE_NAME;
-    REFERENCE_MODEL_NAME;
-    MAIN_MODEL_NAME;
-    QUERY_NAME;
-    CONSTRAINT_NAME;
-    LABEL_NAME;
-    TYPE_NAME;
-    SEQUENCE_NAME;
-    EXCEPTION_NAME;
-    FUNCTION_NAME;
-    PROCEDURE_NAME;
-    TRIGGER_NAME;
-    INDEX_NAME;
-    CURSOR_NAME;
-    RECORD_NAME;
-    COLLECTION_NAME;
-    LINK_NAME;
-    COLUMN_NAME;
-    TABLEVIEW_NAME;
-    CHAR_SET_NAME;
-    ID;
-    VARIABLE_NAME;
-    HOSTED_VARIABLE_NAME;
-    CUSTOM_TYPE;
-    NATIVE_DATATYPE;
-    INTERVAL_DATATYPE;
-    PRECISION;
-    CASCATED_ELEMENT;
-    HOSTED_VARIABLE_ROUTINE_CALL;
-    HOSTED_VARIABLE;
-    ROUTINE_CALL;
-    ANY_ELEMENT;
-    COST_CLASS_NAME;
-    XML_COLUMN_NAME;
+    // ALIAS;
+    // EXPR;
+    // ARGUMENTS;
+    // ARGUMENT;
+    // PARAMETER_NAME;
+    // ATTRIBUTE_NAME;
+    // SAVEPOINT_NAME;
+    // ROLLBACK_SEGMENT_NAME;
+    // TABLE_VAR_NAME;
+    // SCHEMA_NAME;
+    // ROUTINE_NAME;
+    // PACKAGE_NAME;
+    // IMPLEMENTATION_TYPE_NAME;
+    // REFERENCE_MODEL_NAME;
+    // MAIN_MODEL_NAME;
+    // QUERY_NAME;
+    // CONSTRAINT_NAME;
+    // LABEL_NAME;
+    // TYPE_NAME;
+    // SEQUENCE_NAME;
+    // EXCEPTION_NAME;
+    // FUNCTION_NAME;
+    // PROCEDURE_NAME;
+    // TRIGGER_NAME;
+    // INDEX_NAME;
+    // CURSOR_NAME;
+    // RECORD_NAME;
+    // COLLECTION_NAME;
+    // LINK_NAME;
+    // COLUMN_NAME;
+    // TABLEVIEW_NAME;
+    // CHAR_SET_NAME;
+    // ID;
+    // VARIABLE_NAME;
+    // HOSTED_VARIABLE_NAME;
+    // CUSTOM_TYPE;
+    // NATIVE_DATATYPE;
+    // INTERVAL_DATATYPE;
+    // PRECISION;
+    // CASCATED_ELEMENT;
+    // HOSTED_VARIABLE_ROUTINE_CALL;
+    // HOSTED_VARIABLE;
+    // ROUTINE_CALL;
+    // ANY_ELEMENT;
+    // COST_CLASS_NAME;
+    // XML_COLUMN_NAME;
 }
 
 @includes
@@ -90,13 +90,13 @@ options
 {
 backtrack=true;
 }
-    :    as_key? (id[T_UNKNOWN,T_USE]|alias_quoted_string[T_UNKNOWN,T_USE])
+    :    as_key? (id[T_COLUMN_ALIAS,T_DECL]|alias_quoted_string[T_COLUMN_ALIAS,T_DECL])
     ->    ^(ALIAS id? alias_quoted_string?)
     |    as_key
     ;
 
 table_alias
-    :    ( id[1,1] | alias_quoted_string[1,1] )
+    :    ( id[T_TABLE_ALIAS,T_DECL] | alias_quoted_string[T_TABLE_ALIAS,T_DECL] )
     ->   ^(ALIAS id? alias_quoted_string?)
     ;
 
@@ -123,7 +123,7 @@ into_clause
 // $<Common PL/SQL Named Elements
 
 xml_column_name
-    :    id[T_UNKNOWN,T_USE] -> ^(XML_COLUMN_NAME id)
+    :    id[T_COLUMN_NAME,T_USE] -> ^(XML_COLUMN_NAME id)
     |    quoted_string -> ^(XML_COLUMN_NAME ID[$quoted_string.start])
     ;
 
@@ -148,23 +148,23 @@ rollback_segment_name
     ;
 
 
-table_var_name
-    :    id[T_UNKNOWN,T_USE]
-        -> ^(TABLE_VAR_NAME id)
-    ;
+// table_var_name
+//     :    id[T_TABLE_NAME,T_USE]
+//         -> ^(TABLE_VAR_NAME id)
+//     ;
 
-schema_name
-    :    id[T_UNKNOWN,T_USE]
-        -> ^(SCHEMA_NAME id)
-    ;
+// schema_name
+//     :    id[T_SCHEMA_NAME,T_USE]
+//         -> ^(SCHEMA_NAME id)
+//     ;
 
-routine_name
-    :    id[T_UNKNOWN,T_USE] ((PERIOD id_expression[T_UNKNOWN,T_USE])=> PERIOD id_expression[T_UNKNOWN,T_USE])* (AT_SIGN link_name)?
-        -> ^(ROUTINE_NAME id id_expression* link_name?)
-    ;
+// routine_name
+//     :    id[T_UNKNOWN,T_USE] ((PERIOD id_expression[T_UNKNOWN,T_USE])=> PERIOD id_expression[T_UNKNOWN,T_USE])* (AT_SIGN link_name)?
+//         -> ^(ROUTINE_NAME id id_expression* link_name?)
+//     ;
 
 package_name
-    :    id[T_UNKNOWN,T_USE]
+    :    id[T_PACKAGE_NAME,T_USE]
         -> ^(PACKAGE_NAME id)
     ;
 
@@ -189,12 +189,12 @@ main_model_name
     ;
 
 aggregate_function_name
-    :    id[T_UNKNOWN,T_USE] ((PERIOD id_expression[T_UNKNOWN,T_USE])=> PERIOD id_expression[T_UNKNOWN,T_USE])*
+    :    id[T_FUNCTION_NAME,T_USE] ((PERIOD id_expression[T_FUNCTION_NAME,T_USE])=> PERIOD id_expression[T_FUNCTION_NAME,T_USE])*
         -> ^(ROUTINE_NAME id id_expression*)
     ;
 
 query_name
-    :    id[T_UNKNOWN,T_USE]
+    :    id[T_TABLE_NAME,T_DECL]
         -> ^(QUERY_NAME id)
     ;
 
@@ -224,7 +224,7 @@ exception_name
     ;
 
 function_name
-    :    id[T_UNKNOWN,T_USE] ((PERIOD id_expression[T_UNKNOWN,T_USE])=> PERIOD id_expression[T_UNKNOWN,T_USE])?
+    :    id[T_FUNCTION_NAME,T_USE] ((PERIOD id_expression[T_FUNCTION_NAME,T_USE])=> PERIOD id_expression[T_FUNCTION_NAME,T_USE])?
         -> ^(FUNCTION_NAME id id_expression*)
     ;
 
@@ -272,12 +272,24 @@ link_name
     ;
 
 column_name
-    :    id[T_UNKNOWN,T_USE] ((PERIOD id_expression[T_UNKNOWN,T_USE])=> PERIOD id_expression[T_UNKNOWN,T_USE])*
+//    :    id[T_UNKNOWN,T_USE] ((PERIOD id_expression[T_UNKNOWN,T_USE])=> PERIOD id_expression[T_UNKNOWN,T_USE])*
+    :    (
+              (id[T_UNKNOWN,T_USE] PERIOD id_expression[T_UNKNOWN,T_USE] PERIOD id_expression[T_UNKNOWN,T_USE])
+                  => id[T_UNKNOWN,T_USE] PERIOD id_expression[T_UNKNOWN,T_USE] ( PERIOD id_expression[T_UNKNOWN,T_USE] )*
+         |    (id[T_SCHEMA_NAME,T_USE] PERIOD id_expression[T_COLUMN_NAME,T_USE])
+                  => id[T_SCHEMA_NAME,T_USE] PERIOD id_expression[T_COLUMN_NAME,T_USE]
+         |    (id[T_COLUMN_NAME,T_USE])
+                  => id[T_COLUMN_NAME,T_USE]
+         )
         -> ^(COLUMN_NAME id id_expression*)
     ;
 
 tableview_name
-    :    id[T_UNKNOWN,T_USE] ((PERIOD id_expression[T_UNKNOWN,T_USE])=> PERIOD id_expression[T_UNKNOWN,T_USE])? 
+  //:    id[T_TABLE_NAME,T_USE] ((PERIOD id_expression[T_TABLE_NAME,T_USE])=> PERIOD id_expression[T_TABLE_NAME,T_USE])?
+    :   (
+            (id[T_SCHEMA_NAME,T_USE] PERIOD) => id[T_SCHEMA_NAME,T_USE] PERIOD id_expression[T_TABLE_NAME,T_USE]
+        |   id[T_TABLE_NAME,T_USE]
+        )
     (    AT_SIGN link_name
     |    {!(LA(2) == SQL92_RESERVED_BY)}?=> partition_extension_clause
     )?
@@ -438,14 +450,14 @@ general_element
 
 general_element_part
 @init    { int isRoutineCall = false; }
-    :    (INTRODUCER char_set_name)? id_expression[T_UNKNOWN,T_USE]
-            ((PERIOD id_expression[T_UNKNOWN,T_USE])=> PERIOD id_expression[T_UNKNOWN,T_USE])* (function_argument {isRoutineCall = true;})?
+    :    (INTRODUCER char_set_name)? id_expression[T_COLUMN_NAME,T_USE]
+            ((PERIOD id_expression[T_COLUMN_NAME,T_USE])=> PERIOD id_expression[T_COLUMN_NAME,T_USE])* (function_argument {isRoutineCall = true;})?
         ->{isRoutineCall}? ^(ROUTINE_CALL ^(ROUTINE_NAME char_set_name? id_expression+) function_argument)
         -> ^(ANY_ELEMENT char_set_name? id_expression+)
     ;
 
 table_element
-    :    (INTRODUCER char_set_name)? id_expression[T_UNKNOWN,T_USE] (PERIOD id_expression[T_UNKNOWN,T_USE])*
+    :    (INTRODUCER char_set_name)? id_expression[T_COLUMN_NAME,T_USE] (PERIOD id_expression[T_COLUMN_NAME,T_USE])*
          -> ^(ANY_ELEMENT char_set_name? id_expression+)
     ;
 
@@ -487,14 +499,21 @@ quoted_string
 
 id[int identifierClass, int usageType]
     :    (INTRODUCER char_set_name)?
-        r=id_expression[identifierClass, usageType] { int i = r.tree->getType(); r.tree->UserData.identifierClass = 1235; }
+        r=id_expression[identifierClass, usageType] { /* int i = r.tree->getType(); r.tree->UserData.identifierClass = 1235; */ }
         //-> char_set_name? id_expression
     ;
 
 id_expression[int identifierClass, int usageType]
-//    :    REGULAR_ID ->    ID[$REGULAR_ID] {}
-    :    r=REGULAR_ID { const_cast<CommonTokenType*>($r)->set_type(ID); const_cast<CommonTokenType*>($r)->UserData.identifierClass = identifierClass; }
-    |    DELIMITED_ID ->    ID[$DELIMITED_ID] 
+//    :    REGULAR_ID ->    ID[$REGULAR_ID]
+//    |    DELIMITED_ID ->    ID[$DELIMITED_ID] { d }
+    :    r=REGULAR_ID   { const_cast<CommonTokenType*>($r)->set_type(ID);
+                          const_cast<CommonTokenType*>($r)->UserData.identifierClass = identifierClass;
+                          const_cast<CommonTokenType*>($r)->UserData.usageType = usageType;
+                        }
+    |    d=DELIMITED_ID { const_cast<CommonTokenType*>($d)->set_type(ID);
+                          const_cast<CommonTokenType*>($d)->UserData.identifierClass = identifierClass;
+                          const_cast<CommonTokenType*>($d)->UserData.usageType = usageType;
+                        }
     ;
 
 not_equal_op
