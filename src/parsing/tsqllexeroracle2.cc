@@ -79,7 +79,7 @@ void OracleGuiLexer::init()
 {
 	input = new PLSQLGuiLexerTraits::InputStreamType(
     		(const ANTLR_UINT8 *)QBAinput.data(),
-    		ANTLR_ENC_UTF8,
+    		antlr3::ENC_UTF8,
     		QBAinput.size(), //strlen(data.c_str()),
     		(ANTLR_UINT8*)QBAname.data());
 
@@ -97,7 +97,7 @@ void OracleGuiLexer::init()
 	{
 		// TODO throw here
 		throw Exception();
-		exit(ANTLR_ERR_NOMEM);
+		//exit(ANTLR_ERR_NOMEM);
 	}
 
 	lxr     = new PLSQLGuiLexer(input);
@@ -107,7 +107,7 @@ void OracleGuiLexer::init()
 	{
 		// TODO throw here
 		throw Exception();
-		exit(ANTLR_ERR_NOMEM);
+		//exit(ANTLR_ERR_NOMEM);
 	}
 
 	tstream = new PLSQLGuiLexerTraits::TokenStreamType(ANTLR_SIZE_HINT, lxr->get_tokSource());
@@ -118,7 +118,7 @@ void OracleGuiLexer::init()
 		// TODO throw here
 		//_mState = P_ERROR;
 		throw Exception();
-		exit(ANTLR_ERR_NOMEM);
+		//exit(ANTLR_ERR_NOMEM);
 	}
 	//_mState = P_LEXER;
 }
@@ -300,7 +300,7 @@ const Token& OracleGuiLexer::LA(int pos) const
 
 QString OracleGuiLexer::firstWord()
 {
-	CommonTokenType const* token = tstream->_LT(1);
+	CommonTokenType const* token = tstream->LT(1);
 	if( token)
 	{
 		return QString((const char*)(token->getText().c_str()));

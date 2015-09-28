@@ -1701,7 +1701,7 @@ void toWorksheet::slotDescribeNew(void)
         )
         {
             std::cout << "SQL:" << std::endl;
-            stmt = StatementFactTwoParmSing::Instance().create("OracleSQL", txt, "");
+            stmt = StatementFactTwoParmSing::Instance().create("OracleDML", txt, "");
             std::cout << stmt->root()->toStringRecursive().toStdString() << std::endl;
         }
         else

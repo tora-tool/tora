@@ -17,8 +17,6 @@ namespace Antlr3BackendImpl {
 	
 	class EmptyParser {};
 
-	typedef int ToraType;
-	
 	//code for overriding
 	template<class ImplTraits>
 	class UserTraits : public antlr3::CustomTraitsBase<ImplTraits>
@@ -75,10 +73,10 @@ namespace Antlr3BackendImpl {
 			}
 		};
 
-		struct TokenUserDataType
+		struct ToraTokenUserDataType
 		{
-			TokenUserDataType() : identifierClass(-1), usageType(-1) {};
-			int identifierClass, usageType;
+			ToraTokenUserDataType() : identifierClass(0), usageType(0) {};
+			int identifierClass, usageType, toraTokenType;
 		};
 
 		class ToraToken : public antlr3::CommonToken<ImplTraits>
@@ -110,6 +108,8 @@ namespace Antlr3BackendImpl {
 		};
 
 		typedef ToraToken CommonTokenType;
+		typedef ToraTokenUserDataType TokenUserDataType;
+		typedef ToraTokenUserDataType TreeUserDataType;
 
 		//Similarly, if you want to override the nextToken function. write a class that
 		//derives from antlr3::TokenSource and override the nextToken function. But name the class

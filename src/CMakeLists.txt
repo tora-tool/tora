@@ -565,7 +565,16 @@ SET(TORA_SOURCES
   parsing/MySQLLexer.cc
   parsing/tolexeroracleapis.cpp
   parsing/persistenttrie.cpp
-  
+  parsing/OracleDML.cc
+  parsing/OracleDML.hpp
+  parsing/OracleDML_OracleDMLCommons.cc
+  parsing/OracleDML_OracleDMLCommons.hpp
+  parsing/OracleDML_OracleDMLKeys.cc
+  parsing/OracleDML_OracleDMLKeys.hpp
+  parsing/OracleDMLLexer.cc
+  parsing/OracleDMLLexer.hpp
+  parsing/OracleDMLTraits.hpp
+
   docklets/toviewconnections.cpp
   docklets/toviewdirectory.cpp
 
@@ -671,6 +680,7 @@ IF (USE_EXPERIMENTAL)
     parsing/tplsqlparseoracle.cc
     parsing/tsqllexeroracle.cc
     parsing/tsqlparseoracle.cc
+    parsing/tsqlparseoracle2.cc
     )
   LIST (APPEND TORA_SOURCES
     docklets/toquerymodel.cpp
