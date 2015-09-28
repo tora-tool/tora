@@ -362,7 +362,7 @@ CommonTreeAdaptor<ImplTraits>::create( ANTLR_UINT32 tokenType, const char* text)
 
 template<class ImplTraits>
 typename CommonTreeAdaptor<ImplTraits>::TreeTypePtr
-CommonTreeAdaptor<ImplTraits>::create( ANTLR_UINT32 tokenType, CommonTreeAdaptor<ImplTraits>::StringType const& text)
+CommonTreeAdaptor<ImplTraits>::create( ANTLR_UINT32 tokenType, typename CommonTreeAdaptor<ImplTraits>::StringType const& text)
 {
 	auto fromToken = this->createToken(tokenType, text);
 	return	this->create(fromToken);
@@ -465,7 +465,7 @@ CommonTreeAdaptor<ImplTraits>::createToken( ANTLR_UINT32 tokenType, const char* 
 
 template<class ImplTraits>
 typename CommonTreeAdaptor<ImplTraits>::CommonTokenType*
-CommonTreeAdaptor<ImplTraits>::createToken( ANTLR_UINT32 tokenType, CommonTreeAdaptor<ImplTraits>::StringType const& text)
+CommonTreeAdaptor<ImplTraits>::createToken( ANTLR_UINT32 tokenType, typename CommonTreeAdaptor<ImplTraits>::StringType const& text)
 {
 	CommonTokenType* newToken = TreeStoreType::createToken();
 	newToken->set_tokText( text );
