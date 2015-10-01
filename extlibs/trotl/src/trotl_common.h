@@ -45,7 +45,7 @@
    Therefore windows.h MUST be included before oci.h
    We never use datatype boolean in trotl. (see bOOlean)
 */
-#if defined(_MSC_VER)
+#ifdef _WIN32
 #include <stdio.h>
 #include <wtypes.h>
 #include <windows.h>
