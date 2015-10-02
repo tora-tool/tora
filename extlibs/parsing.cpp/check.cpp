@@ -6,7 +6,6 @@
 #include "OracleDML_OracleDMLCommons.hpp"
 
 #include <sys/types.h>
-#include <filesystem>
 #if defined __linux
 #include <libgen.h>
 #endif
@@ -163,10 +162,12 @@ void treeWalk(OracleSQLParserTraits::TreeTypePtr const& root, unsigned depth)
 		}
 	}
 
+	if (token && token->UserData.identifierClass == Tokens::T_SCHEMA_NAME)
+		cout << "Schema name:\t" << token->getText() << endl;	
 	if (token && token->UserData.identifierClass == Tokens::T_TABLE_NAME)
-		cout << token->getText() << endl;
+		cout << "Table name:\t" << token->getText() << endl;
 	if (token && token->UserData.identifierClass == Tokens::T_COLUMN_NAME)
-		cout << token->getText() << endl;
+		cout << "Column name:\t" << token->getText() << endl;
 	if (token && token->UserData.identifierClass == Tokens::T_TABLE_ALIAS /*&& token->UserData.usageType == Tokens::T_DECL*/)
-		cout << token->getText() << endl;
+		cout << "Table alias:\t" << token->getText() << endl;
 }
