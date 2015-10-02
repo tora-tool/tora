@@ -85,7 +85,7 @@ namespace Antlr3BackendImpl {
 			typedef typename antlr3::CommonToken<ImplTraits>::TOKEN_TYPE TOKEN_TYPE;
 			typedef typename super::StringType StringType;
 		public:
-			ToraToken() : m_block_context(BlkCtx::NONE), super() {};
+			ToraToken() : super(), m_block_context(BlkCtx::NONE) {};
 			ToraToken( ANTLR_UINT32 type) : super(type), m_block_context(BlkCtx::NONE)  {};
 			ToraToken( TOKEN_TYPE type) : super(type), m_block_context(BlkCtx::NONE)  {};
 			ToraToken( const ToraToken& ctoken ) : super(ctoken), m_block_context(ctoken.m_block_context) {};

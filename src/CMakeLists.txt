@@ -1152,6 +1152,30 @@ IF(PCH_DEFINED)
 ENDIF(PCH_DEFINED)
 ENDIF(TORA_DEBUG AND TEST_APP6)
 
+IF(TORA_DEBUG AND TEST_APP7)
+# test7
+ADD_EXECUTABLE("test7" ${GUI_TYPE}
+  tests/test7.cpp
+  parsing/tsqlparse.cpp
+  parsing/OracleDML.cc
+  parsing/OracleDML.hpp
+  parsing/OracleDML_OracleDMLCommons.cc
+  parsing/OracleDML_OracleDMLCommons.hpp
+  parsing/OracleDML_OracleDMLKeys.cc
+  parsing/OracleDML_OracleDMLKeys.hpp
+  parsing/OracleDMLLexer.cc
+  parsing/OracleDMLLexer.hpp
+  parsing/OracleDMLTraits.hpp
+  parsing/tsqlparseoracle2.cc
+  ${PCH_SOURCE}
+  )
+TARGET_LINK_LIBRARIES("test7" ${TORA_LIBS})
+ADD_DEPENDENCIES("test7" revisiontag)
+IF(PCH_DEFINED)
+  ADD_PRECOMPILED_HEADER("test7" ${PCH_HEADER} FORCEINCLUDE)
+ENDIF(PCH_DEFINED)
+ENDIF(TORA_DEBUG AND TEST_APP7)
+
 ################################################################################
 #                       Connection provider libraries                          #
 ################################################################################
