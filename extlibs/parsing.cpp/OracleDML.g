@@ -230,7 +230,7 @@ table_ref_list
 // eventhough it is not enclosed in parenthesis. See pivot examples 09,10,11
 table_ref
     :    table_ref_aux join_clause* (pivot_clause|unpivot_clause)?
-        -> ^(TABLE_REF table_ref_aux join_clause* pivot_clause? unpivot_clause?)
+        -> ^(TABLE_REF[ToraType(T_TABLE_REF)] table_ref_aux join_clause* pivot_clause? unpivot_clause?)
     ;
 
 table_ref_aux

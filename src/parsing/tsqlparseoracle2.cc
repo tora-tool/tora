@@ -17,8 +17,10 @@ namespace SQLParser
 class OracleDMLToken: public Token
 {
 	using Tokens = Antlr3BackendImpl::OracleDMLLexerTokens;
+	using AntlrToken = Antlr3BackendImpl::OracleSQLParserTraits::CommonTokenType;
 public:
-    OracleDMLToken (Token *parent, const Position &pos, const QString &str, unsigned tokentype, const char* tokentypestring, unsigned usagetype = Tokens::T_UNKNOWN);
+	OracleDMLToken (Token *parent, const Position &pos, const QString &str, unsigned tokentype, const char* tokentypestring, unsigned usagetype = Tokens::T_UNKNOWN);
+	OracleDMLToken (Token *parent, AntlrToken &token);
 };
 
 OracleDMLToken::OracleDMLToken (Token *parent, const Position &pos, const QString &str, unsigned tokentype, const char* tokentypestring, unsigned usagetype)
@@ -151,6 +153,12 @@ OracleDMLToken::OracleDMLToken (Token *parent, const Position &pos, const QStrin
 
 };
 
+OracleDMLToken::OracleDMLToken (Token *parent, AntlrToken &token)
+	: Token(parent, Position(token.get_line(), token.get_charPositionInLine()), token.getText().c_str())
+{
+	
+};
+	
 class OracleDMLStatement: public Statement
 {
 	using TokenStream = Antlr3BackendImpl::OracleSQLParserTraits::TokenStreamType;
@@ -161,7 +169,7 @@ public:
 
     //template<class T> T& recursiveWalk(Token const* node, T &stream) const;
 private:
-    void parse ();
+    void parse();
     /* Recursive walk through ANTLR3_BASE_TREE and create AST tree*/
     void treeWalk(unique_ptr<Antlr3BackendImpl::OracleDML> &psr, QPointer<Token> root, Traits::TreeTypePtr& tree, unsigned &lastindex);
 
@@ -188,7 +196,7 @@ OracleDMLStatement::OracleDMLStatement(const QString &statement, const QString &
     disambiguate();
 };
 
-void OracleDMLStatement::parse ()
+void OracleDMLStatement::parse()
 {
 	using InputStream = Antlr3BackendImpl::OracleSQLParserTraits::InputStreamType;
 	using TokenStream = Antlr3BackendImpl::OracleSQLParserTraits::TokenStreamType;
@@ -196,50 +204,51 @@ void OracleDMLStatement::parse ()
 	using Tokens = Antlr3BackendImpl::OracleDMLTokens;
 	using namespace std;
 
-    QByteArray QBAinput(_mStatement.toUtf8());
-    QByteArray QBAname(_mname.toUtf8());
+	_mState = P_ERROR;
+	QByteArray QBAinput(_mStatement.toUtf8());
+	QByteArray QBAname(_mname.toUtf8());
 
+	_mState = P_INIT;
 	auto input = make_unique<InputStream>((const ANTLR_UINT8 *)QBAinput.data(), antlr3::ENC_8BIT, QBAinput.length(), (ANTLR_UINT8*)QBAname.data());
 	if (input == NULL)
 		throw ParseException();
 	input->setUcaseLA(true); // ignore case
 
 	auto lxr = make_unique<Antlr3BackendImpl::OracleDMLLexer>(input.get());
-    if ( lxr == NULL )
+	if ( lxr == NULL )
 		throw ParseException();
 
-    auto tstream = make_unique<TokenStream>(ANTLR_SIZE_HINT, lxr->get_tokSource());
-    if (tstream == NULL)
-    {
-        _mState = P_ERROR;
-        throw ParseException();
-    }
+	auto tstream = make_unique<TokenStream>(ANTLR_SIZE_HINT, lxr->get_tokSource());
+	if (tstream == NULL)
+	{
+		throw ParseException();
+	}
 
-    lexerTokenVector = tstream->getTokens();
-    _mState = P_LEXER;
+	lexerTokenVector = tstream->getTokens();
+	_mState = P_LEXER;
 
-    // Finally, now that we have our lexer constructed, we can create the parser
+	// Finally, now that we have our lexer constructed, we can create the parser
 	auto psr = make_unique<Antlr3BackendImpl::OracleDML>(tstream.get());
-    if (psr == NULL)
+	if (psr == NULL)
 		throw ParseException();
 
 	auto langAST = psr->seq_of_statements();
 	if (psr->getNumberOfSyntaxErrors())
-    {
-        // TODO throw reasonable exception HERE
-        throw ParseException();
-    }
-
-    //pANTLR3_COMMON_TOKEN root_token = langAST.tree->getToken(langAST.tree);
-    _mAST = new TokenSubquery( NULL
-                               , Position(0, 0)
-                               , ""
-                               , Token::X_ROOT
-                             );
-    _mAST->setTokenATypeName("ROOT");
+	{
+		// TODO throw reasonable exception HERE
+		throw ParseException();
+	}
+	_mState = P_PARSER;
+	
+	_mAST = new TokenSubquery( NULL
+				   , Position(0, 0)
+				   , ""
+				   , Token::X_ROOT
+		);
+	_mAST->setTokenATypeName("ROOT");
 	unsigned lastIndex = 0;
 
-    treeWalk(psr, _mAST, langAST.tree, lastIndex);
+	treeWalk(psr, _mAST, langAST.tree, lastIndex);
 	lexerTokenVector->clear();
 };
 
@@ -253,87 +262,87 @@ void OracleDMLStatement::treeWalk(unique_ptr<Antlr3BackendImpl::OracleDML> &psr,
 		Traits::TreeTypePtr &childNode(*i);
 		auto childToken = childNode->get_token();
 
-        // if child is not a leaf node - recurse
-        if (!childNode->get_children().empty())
-        {
+		// if child is not a leaf node - recurse
+		if (!childNode->get_children().empty())
+		{
 			// skip useless T_COND_OR_SEQ T_COND_AND_SEQ having only one son
 			ANTLR_UINT32 TokenType = childNode->getType();
-            if( (TokenType == Tokens::T_COND_OR_SEQ || TokenType == Tokens::T_COND_AND_SEQ) && childNode->getChildCount() == 1)
-            {
+			if( (TokenType == Tokens::T_COND_OR_SEQ || TokenType == Tokens::T_COND_AND_SEQ) && childNode->getChildCount() == 1)
+			{
 				auto &grandChildNode = childNode->getChild(0);
 				auto grandChildToken = grandChildNode->get_token();
 
-                treeWalk(psr, root, grandChildNode, lastindex);
-                continue;
-            }
+				treeWalk(psr, root, grandChildNode, lastindex);
+				continue;
+			}
 
-            Token *childTokenNew = new OracleDMLToken ( root
-                    , Position(childToken->get_line(), childToken->get_charPositionInLine())
-                    , childToken->getText().c_str()
-                    , childToken->getType()
-                    , childNode->getType() == Tokens::EOF_TOKEN ? "EOF" : (const char *)Antlr3BackendImpl::OracleDML::getTokenNames()[childNode->getType()]
-                    , childNode->UserData.usageType
-                                                   );
-            //childToken->setTokenTypeName( (const char*) psr->pParser->rec->state->tokenNames[ pChildNode->getType(pChildNode) ]);
+			Token *childTokenNew = new OracleDMLToken ( root
+								    , Position(childToken->get_line(), childToken->get_charPositionInLine())
+								    , childToken->getText().c_str()
+								    , childToken->getType()
+								    , childNode->getType() == Tokens::EOF_TOKEN ? "EOF" : (const char *)Antlr3BackendImpl::OracleDML::getTokenNames()[childNode->getType()]
+								    , childNode->UserData.usageType
+				);
+			//childToken->setTokenTypeName( (const char*) psr->pParser->rec->state->tokenNames[ pChildNode->getType(pChildNode) ]);
 
-            root->appendChild(childTokenNew);
-            treeWalk(psr, childTokenNew, childNode, lastindex);
-        }
-        else     // if child is a leaf node
-        {
-            /* this is a leaf node */
-            ANTLR_MARKER uChildLexemeStart = childToken->get_tokenIndex();
-            auto lexemeTotal = lexerTokenVector->size();
+			root->appendChild(childTokenNew);
+			treeWalk(psr, childTokenNew, childNode, lastindex);
+		}
+		else     // if child is a leaf node
+		{
+			/* this is a leaf node */
+			ANTLR_MARKER uChildLexemeStart = childToken->get_tokenIndex();
+			auto lexemeTotal = lexerTokenVector->size();
 
-            /* loop over lexer's tokens until leaf if found */
-            while(lastindex < lexemeTotal)
-            {
-                auto &localToken = lexerTokenVector->at(lastindex);
-                ANTLR_MARKER uLocalLexemeStart = localToken.get_tokenIndex();
-                if(uLocalLexemeStart == uChildLexemeStart)
-                    break;
-                lastindex++;
-            }
+			/* loop over lexer's tokens until leaf if found */
+			while(lastindex < lexemeTotal)
+			{
+				auto &localToken = lexerTokenVector->at(lastindex);
+				ANTLR_MARKER uLocalLexemeStart = localToken.get_tokenIndex();
+				if(uLocalLexemeStart == uChildLexemeStart)
+					break;
+				lastindex++;
+			}
 
-            // TODO check for EOF in lexer stream */
-            //printf("Leaf node \'%s\'(%d)\n",
-            //       (const char*)pChildNode->getText(pChildNode)->chars,
-            //       lastindex
-            //       );
+			// TODO check for EOF in lexer stream */
+			//printf("Leaf node \'%s\'(%d)\n",
+			//       (const char*)pChildNode->getText(pChildNode)->chars,
+			//       lastindex
+			//       );
 
-            Token *childTokenNew = 
+			Token *childTokenNew = 
 				new OracleDMLToken(
 					root
-                    , Position(childToken->get_line(), childToken->get_charPositionInLine())
-                    , childToken->getText().c_str()
-                    // Leaf node can be either a reserved (key)word or an identifier. Also some keywords can be identifiers.
-                    // if the attribute identifierClass is set then the token is considered to be an identifier
-                    // usageType represents either alias declaration or usage
-                    , childToken->UserData.identifierClass ? childToken->UserData.identifierClass : childToken->getType()
-                    , childNode->getType() == Tokens::EOF_TOKEN ? "EOF" : (const char*)Antlr3BackendImpl::OracleDML::getTokenNames()[childNode->getType()]
-                    , childToken->UserData.usageType ? childToken->UserData.usageType : Tokens::T_UNKNOWN
+					, Position(childToken->get_line(), childToken->get_charPositionInLine())
+					, childToken->getText().c_str()
+					// Leaf node can be either a reserved (key)word or an identifier. Also some keywords can be identifiers.
+					// if the attribute toraTokenType is set then the token is considered to be an identifier
+					// usageType represents either alias declaration or usage
+					, childToken->UserData.toraTokenType ? childToken->UserData.toraTokenType : childToken->getType()
+					, childNode->getType() == Tokens::EOF_TOKEN ? "EOF" : (const char*)Antlr3BackendImpl::OracleDML::getTokenNames()[childNode->getType()]
+					, childToken->UserData.usageType ? childToken->UserData.usageType : Tokens::T_UNKNOWN
 					);
-            root->appendChild(childTokenNew);
-            //childToken->setTokenTypeName( (const char*) psr->pParser->rec->state->tokenNames[ pChildNode->getType(pChildNode) ]);
+			root->appendChild(childTokenNew);
+			//childToken->setTokenTypeName( (const char*) psr->pParser->rec->state->tokenNames[ pChildNode->getType(pChildNode) ]);
 
-            // Process spaces and comments after parser_token
-            while(++lastindex < lexemeTotal)
-            {
-                auto &spacerToken = lexerTokenVector->at(lastindex);
-                unsigned SpacerLexemeChannel = spacerToken.get_channel();
+			// Process spaces and comments after parser_token
+			while(++lastindex < lexemeTotal)
+			{
+				auto &spacerToken = lexerTokenVector->at(lastindex);
+				unsigned SpacerLexemeChannel = spacerToken.get_channel();
 
-                if(SpacerLexemeChannel != antlr3::HIDDEN )
-                    break;
+				if(SpacerLexemeChannel != antlr3::HIDDEN )
+					break;
 
-                Token *spacerTokenNew =  new Token( root
-                                                 , Position(spacerToken.get_line(), spacerToken.get_charPositionInLine())
-                                                 , spacerToken.getText().c_str()
-                                                 , Token::X_COMMENT
-                                               );
+				Token *spacerTokenNew =  new Token( root
+								    , Position(spacerToken.get_line(), spacerToken.get_charPositionInLine())
+								    , spacerToken.getText().c_str()
+								    , Token::X_COMMENT
+					);
 				childTokenNew->appendSpacer(spacerTokenNew);
-            }
-        } // else for child is a leaf node
-    } // for each child
+			}
+		} // else for child is a leaf node
+	} // for each child
 };
 
 void OracleDMLStatement::disambiguate()

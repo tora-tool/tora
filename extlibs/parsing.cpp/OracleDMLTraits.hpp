@@ -18,7 +18,7 @@ namespace Antlr3BackendImpl {
 	class EmptyParser {};
 
 	typedef int ToraType;
-	
+
 	//code for overriding
 	template<class ImplTraits>
 	class UserTraits : public antlr3::CustomTraitsBase<ImplTraits>
@@ -75,10 +75,10 @@ namespace Antlr3BackendImpl {
 			}
 		};
 
-		struct TokenUserDataType
+		struct ToraTokenUserDataType
 		{
-			TokenUserDataType() : identifierClass(-1), usageType(-1) {};
-			int identifierClass, usageType;
+			ToraTokenUserDataType() : toraTokenType(0), usageType(0) {};
+			int toraTokenType, usageType;
 		};
 
 		class ToraToken : public antlr3::CommonToken<ImplTraits>
@@ -87,7 +87,7 @@ namespace Antlr3BackendImpl {
 			typedef typename antlr3::CommonToken<ImplTraits>::TOKEN_TYPE TOKEN_TYPE;
 			typedef typename super::StringType StringType;
 		public:
-			ToraToken() : m_block_context(BlkCtx::NONE), super() {};
+			ToraToken() : super(), m_block_context(BlkCtx::NONE) {};
 			ToraToken( ANTLR_UINT32 type) : super(type), m_block_context(BlkCtx::NONE)  {};
 			ToraToken( TOKEN_TYPE type) : super(type), m_block_context(BlkCtx::NONE)  {};
 			ToraToken( const ToraToken& ctoken ) : super(ctoken), m_block_context(ctoken.m_block_context) {};
@@ -98,7 +98,7 @@ namespace Antlr3BackendImpl {
 			{
 				StringType m_txt;				
 				m_txt = super::getText();
-				//m_txt += "[" + std::to_string(super::UserData.identifierClass) + "]";
+				//m_txt += "[" + std::to_string(super::UserData.toraTokenType) + "]";
 				return m_txt;
 			}
 			
@@ -110,6 +110,8 @@ namespace Antlr3BackendImpl {
 		};
 
 		typedef ToraToken CommonTokenType;
+		typedef ToraTokenUserDataType TokenUserDataType;
+		typedef ToraTokenUserDataType TreeUserDataType;
 
 		//Similarly, if you want to override the nextToken function. write a class that
 		//derives from antlr3::TokenSource and override the nextToken function. But name the class
@@ -183,8 +185,25 @@ namespace Antlr3BackendImpl {
 			std::queue<TokenType*> usedTokens; // "virtually" emitted tokens are kept and freed here
 			TokenType* jumpToken;
 		};	
+
+		class ToraTreeAdaptor : public antlr3::CommonTreeAdaptor<ImplTraits>
+		{
+			typedef antlr3::CommonTreeAdaptor<ImplTraits> super;
+			using StringType = typename super::StringType;
+		public:
+			using super::CommonTreeAdaptor;
+			using super::create;
+			using TreeTypePtr = typename super::TreeTypePtr;
+			TreeTypePtr create( ANTLR_UINT32 tokenType, ToraType tokenSubType)
+			{
+				TreeTypePtr retval = super::create(tokenType, StringType());
+				const_cast<CommonTokenType*>(retval->get_token())->UserData.toraTokenType = tokenSubType;
+				return retval;
+			}
+		};
+		typedef ToraTreeAdaptor TreeAdaptorType;
 	};
-  
+
 	typedef antlr3::Traits<OracleDMLLexer, OracleDML, UserTraits> OracleSQLParserTraits;
 	typedef OracleSQLParserTraits OracleDMLLexerTraits;
 	typedef OracleSQLParserTraits OracleDMLTraits;

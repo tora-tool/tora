@@ -249,8 +249,8 @@ namespace SQLParser
                 , _mChildren(other._mChildren)
                 , _mSpaces(other._mSpaces)
             {
-                size_t me = this->size();
-                size_t oth = other.size();
+                //size_t me = this->size();
+                //size_t oth = other.size();
                 assert( this->size() >= other.size());
             };
 
@@ -381,8 +381,8 @@ namespace SQLParser
                 : Token(other)
                 , _mResolved(false)
             {
-                size_t me = this->size();
-                size_t oth = other.size();
+                //size_t me = this->size();
+                //size_t oth = other.size();
                 assert( this->size() >= other.size());
             };
 
@@ -416,8 +416,8 @@ namespace SQLParser
                 : Token(other)
                 , _mAlias(NULL)
             {
-                size_t me = this->size();
-                size_t oth = other.size();
+                //size_t me = this->size();
+                //size_t oth = other.size();
                 assert( this->size() >= other.size());
             };
 
@@ -470,8 +470,8 @@ namespace SQLParser
                 : Token(other)
                 , _mAlias(NULL)
             {
-                size_t me = this->size();
-                size_t oth = other.size();
+                //size_t me = this->size();
+                //size_t oth = other.size();
                 assert( this->size() >= other.size());
             };
 

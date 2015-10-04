@@ -100,7 +100,7 @@ table_alias
     ->   ^(ALIAS id? alias_quoted_string?)
     ;
 
-alias_quoted_string[int identifierClass, int usageType]
+alias_quoted_string[int toraTokenType, int usageType]
     :    quoted_string
         -> ID[$quoted_string.start]
     ;
@@ -194,7 +194,7 @@ aggregate_function_name
     ;
 
 query_name
-    :    id[T_TABLE_NAME,T_DECL]
+    :    id[T_TABLE_ALIAS,T_DECL]
         -> ^(QUERY_NAME id)
     ;
 
@@ -497,21 +497,21 @@ quoted_string
     |    NATIONAL_CHAR_STRING_LIT
     ;
 
-id[int identifierClass, int usageType]
+id[int toraTokenType, int usageType]
     :    (INTRODUCER char_set_name)?
-        r=id_expression[identifierClass, usageType] { /* int i = r.tree->getType(); r.tree->UserData.identifierClass = 1235; */ }
+        r=id_expression[toraTokenType, usageType] { /* int i = r.tree->getType(); r.tree->UserData.toraTokenType = 1235; */ }
         //-> char_set_name? id_expression
     ;
 
-id_expression[int identifierClass, int usageType]
+id_expression[int toraTokenType, int usageType]
 //    :    REGULAR_ID ->    ID[$REGULAR_ID]
 //    |    DELIMITED_ID ->    ID[$DELIMITED_ID] { d }
     :    r=REGULAR_ID   { const_cast<CommonTokenType*>($r)->set_type(ID);
-                          const_cast<CommonTokenType*>($r)->UserData.identifierClass = identifierClass;
+                          const_cast<CommonTokenType*>($r)->UserData.toraTokenType = toraTokenType;
                           const_cast<CommonTokenType*>($r)->UserData.usageType = usageType;
                         }
     |    d=DELIMITED_ID { const_cast<CommonTokenType*>($d)->set_type(ID);
-                          const_cast<CommonTokenType*>($d)->UserData.identifierClass = identifierClass;
+                          const_cast<CommonTokenType*>($d)->UserData.toraTokenType = toraTokenType;
                           const_cast<CommonTokenType*>($d)->UserData.usageType = usageType;
                         }
     ;

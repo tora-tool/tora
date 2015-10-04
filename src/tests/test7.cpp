@@ -42,10 +42,12 @@
 #include <fstream>
 
 using namespace std;
+using namespace SQLParser;
 
 string slurp(string const& fileName);
 static void usage();
-
+void toASTWalk(SQLParser::Statement &source, bool (*filter)(Token const&node));
+	
 int main(int argc, char **argv)
 {
 	QApplication app(argc, argv);
@@ -61,6 +63,12 @@ int main(int argc, char **argv)
 	try
 	{
 		auto_ptr <SQLParser::Statement> parser = StatementFactTwoParmSing::Instance().create("OracleDML", qsql, "");
+		parser->dumpTree();
+		toASTWalk(*parser, [](Token const&node)
+			  {
+				  return node.getTokenType() == Token::S_SUBQUERY_FACTORED;
+			  }
+			);
 	}
 	catch (const QString &str)
 	{
@@ -71,7 +79,7 @@ int main(int argc, char **argv)
 
 static void usage()
 {
-    printf("Usage:\n\n  test6 filename\n\n");
+    printf("Usage:\n\n  test7 filename\n\n");
     exit(2);
 }
 
@@ -84,4 +92,16 @@ string slurp(string const& fileName)
     stringstream sstr;
     sstr << ifs.rdbuf();
     return sstr.str();
+}
+
+void toASTWalk(Statement &source, bool (*filter)(Token const& n))
+{
+	SQLParser::Statement::token_const_iterator node;
+	for (node = source.begin(); node != source.end(); ++node)
+	{
+		if(filter(*node))
+		{
+			cout << qPrintable(node->toStringRecursive(false)) << endl;
+		}
+	}
 }

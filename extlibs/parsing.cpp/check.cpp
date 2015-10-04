@@ -125,7 +125,7 @@ void treeWalk(OracleSQLParserTraits::TreeTypePtr const& root, unsigned depth)
 	OracleSQLParserTraits::StringType tokenString, leafIndicator(" "), tokenType;
 	auto &children = root->get_children();
 	auto token = root->get_token();
-	int identifierClass = 0, usageType = 0;
+	int toraTokenType = 0, usageType = 0;
 	
 	if (root->getType() < (numeric_limits<ANTLR_UINT32>::max)())
 		tokenType = (const char*)OracleDML::getTokenNames()[root->getType()];
@@ -144,11 +144,11 @@ void treeWalk(OracleSQLParserTraits::TreeTypePtr const& root, unsigned depth)
 
 	if (token)
 	{
-		identifierClass = token->UserData.identifierClass;
+		toraTokenType = token->UserData.toraTokenType;
 		usageType = token->UserData.usageType;
 	}
 		  
-	cout << setw(4 * depth + 3) << leafIndicator << tokenType << '[' << root->getType() << ',' << identifierClass << ',' << usageType << ']';
+	cout << setw(4 * depth + 3) << leafIndicator << tokenType << '[' << root->getType() << ',' << toraTokenType << ',' << usageType << ']';
 	if ( tokenType != root->toString())
 		cout << '/' << root->toString();
 	cout << endl;
@@ -162,12 +162,12 @@ void treeWalk(OracleSQLParserTraits::TreeTypePtr const& root, unsigned depth)
 		}
 	}
 
-	if (token && token->UserData.identifierClass == Tokens::T_SCHEMA_NAME)
+	if (token && token->UserData.toraTokenType == Tokens::T_SCHEMA_NAME)
 		cout << "Schema name:\t" << token->getText() << endl;	
-	if (token && token->UserData.identifierClass == Tokens::T_TABLE_NAME)
+	if (token && token->UserData.toraTokenType == Tokens::T_TABLE_NAME)
 		cout << "Table name:\t" << token->getText() << endl;
-	if (token && token->UserData.identifierClass == Tokens::T_COLUMN_NAME)
+	if (token && token->UserData.toraTokenType == Tokens::T_COLUMN_NAME)
 		cout << "Column name:\t" << token->getText() << endl;
-	if (token && token->UserData.identifierClass == Tokens::T_TABLE_ALIAS /*&& token->UserData.usageType == Tokens::T_DECL*/)
+	if (token && token->UserData.toraTokenType == Tokens::T_TABLE_ALIAS /*&& token->UserData.usageType == Tokens::T_DECL*/)
 		cout << "Table alias:\t" << token->getText() << endl;
 }
