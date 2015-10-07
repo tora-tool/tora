@@ -278,7 +278,10 @@ namespace SQLParser
 	SQLParser::Statement::token_const_iterator node;
 	for (node = this->begin(); node != this->end(); ++node)
 	{
-	  cout << setw(node.depth()) << ' ' << qPrintable(node->toString()) << '/' << node.depth() << endl;
+	  auto type = node->getTokenATypeName();
+	  cout << (node->isLeaf()?'*':' ') << setw(node.depth()) << ' ' << qPrintable(node->toString())
+	       << '/' << qPrintable(type)
+	       << endl;
 	}
     }
 }

@@ -190,6 +190,7 @@ namespace Antlr3BackendImpl {
 		{
 			typedef antlr3::CommonTreeAdaptor<ImplTraits> super;
 			using StringType = typename super::StringType;
+			using CommonTokenType = typename super::CommonTokenType;
 		public:
 			using super::CommonTreeAdaptor;
 			using super::create;
@@ -200,6 +201,12 @@ namespace Antlr3BackendImpl {
 				const_cast<CommonTokenType*>(retval->get_token())->UserData.toraTokenType = tokenSubType;
 				return retval;
 			}
+			TreeTypePtr create( ANTLR_UINT32 tokenType, const CommonTokenType *fromToken, ToraType tokenSubType)
+			{
+				TreeTypePtr retval = super::create(tokenType, fromToken);
+				const_cast<CommonTokenType*>(retval->get_token())->UserData.toraTokenType = tokenSubType;
+				return retval;
+			}		  
 		};
 		typedef ToraTreeAdaptor TreeAdaptorType;
 	};

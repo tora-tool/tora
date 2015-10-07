@@ -18,9 +18,10 @@ class OracleDMLToken: public Token
 {
 	using Tokens = Antlr3BackendImpl::OracleDMLLexerTokens;
 	using AntlrToken = Antlr3BackendImpl::OracleSQLParserTraits::CommonTokenType;
+	using AntlrNode = Antlr3BackendImpl::OracleSQLParserTraits::TreeType;
 public:
 	OracleDMLToken (Token *parent, const Position &pos, const QString &str, unsigned tokentype, const char* tokentypestring, unsigned usagetype = Tokens::T_UNKNOWN);
-	OracleDMLToken (Token *parent, AntlrToken &token);
+	OracleDMLToken (Token *parent, AntlrNode &token);
 };
 
 OracleDMLToken::OracleDMLToken (Token *parent, const Position &pos, const QString &str, unsigned tokentype, const char* tokentypestring, unsigned usagetype)
@@ -153,9 +154,157 @@ OracleDMLToken::OracleDMLToken (Token *parent, const Position &pos, const QStrin
 
 };
 
-OracleDMLToken::OracleDMLToken (Token *parent, AntlrToken &token)
-	: Token(parent, Position(token.get_line(), token.get_charPositionInLine()), token.getText().c_str())
+OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
+	: Token(parent, Position(node.get_line(), node.get_charPositionInLine()), node.getText().c_str())
 {
+	using Tokens = Antlr3BackendImpl::OracleDMLLexerTokens;
+	_mTokenATypeName = node.getType() == Tokens::EOF_TOKEN ? "EOF" : (const char *)Antlr3BackendImpl::OracleDML::getTokenNames()[node.getType()];
+
+	UsageType &usageTypeRef = const_cast<Token::UsageType&>(_mUsageType);
+	unsigned usagetype = node.UserData.usageType;
+	if (node.get_token() && node.get_token()->UserData.usageType)
+		usagetype = node.get_token()->UserData.usageType;
+	switch(usagetype)
+	{
+	case 0:
+	case Tokens::T_UNKNOWN:
+		usageTypeRef = Unknown;
+		break;
+	case Tokens::T_USE:
+		usageTypeRef = Usage;
+		break;
+	case Tokens::T_DECL:
+		usageTypeRef = Declaration;
+		break;
+	}
+
+	TokenType &tokenTypeRef = const_cast<Token::TokenType&>(_mTokenType);
+	// toraTokenType has precedence, if defined
+	unsigned toratokentype = node.UserData.toraTokenType;
+	if (node.get_token() && node.get_token()->UserData.toraTokenType)
+		toratokentype = node.get_token()->UserData.toraTokenType;
+	if (node.get_token() && node.get_token()->UserData.toraTokenType)
+	{
+		cout << "***" << node.get_token()->UserData.toraTokenType << "***" << endl;
+	}
+	if (node.UserData.toraTokenType)
+	{
+		cout << "###" << node.UserData.toraTokenType << "###" << endl;
+	}
+
+	if (node.getText() == "a")
+	{
+		cout << "&&&" << node.UserData.toraTokenType << "&&&" << endl;
+		cout << "$$$" << node.get_token()->UserData.toraTokenType << "$$$" << endl;
+	}
+	switch(toratokentype ? toratokentype : node.getType())
+	{
+	case Tokens::T_UNKNOWN:
+		tokenTypeRef = X_UNASSIGNED;
+		break;
+	case Tokens::T_RESERVED:
+		tokenTypeRef = L_RESERVED;
+		break;
+	case Tokens::T_TABLE_NAME:
+		tokenTypeRef = L_TABLENAME;
+		break;
+	case Tokens::T_TABLE_ALIAS:
+	{
+		// Resolve grammar ambiguity: SELECT * FROM A INNER JOIN B; (=> INNER is not a table alias)
+		// The same for NATURAL JOIN, CROSS JOIN, LEFT/RIGHT OUTER JOIN
+		QString str = QString::fromStdString(node.getText()).toUpper();
+		if( usageTypeRef == Tokens::T_DECL &&  (!str.compare("INNER", Qt::CaseInsensitive) ||
+							!str.compare("CROSS", Qt::CaseInsensitive) ||
+							!str.compare("NATURAL", Qt::CaseInsensitive) ||
+							!str.compare("LEFT", Qt::CaseInsensitive) ||
+							!str.compare("RIGHT", Qt::CaseInsensitive)
+			    )
+			)
+		{
+			tokenTypeRef = L_RESERVED;
+			usageTypeRef = Unknown;
+			_mTokenATypeName = "T_RESERVED";
+			break;
+		}
+		switch(parent->getTokenType())
+		{
+		case S_WITH:
+			tokenTypeRef = L_SUBQUERY_ALIAS;
+			break;
+		default:
+			tokenTypeRef = L_TABLEALIAS;
+			break;
+		}
+	}
+	break;
+	case Tokens::T_SCHEMA_NAME:
+		tokenTypeRef = L_SCHEMANAME;
+		break;
+	case Tokens::T_TABLE_REF:
+		tokenTypeRef = S_TABLE_REF;
+		break;
+	case Tokens::T_FUNCTION_NAME:
+		tokenTypeRef = L_FUNCTIONNAME;
+		break;
+	case Tokens::T_PACKAGE_NAME:
+		tokenTypeRef = L_PACKAGENAME;
+		break;
+	case Tokens::T_BINDVAR_NAME:
+		tokenTypeRef = L_BINDVARNAME;
+		break;
+	case Tokens::T_COLUMN_ALIAS:
+	case Tokens::T_COLUMN_NAME:
+		tokenTypeRef = L_IDENTIFIER;
+		break;
+	case Tokens::T_WITH:
+		tokenTypeRef = S_WITH;
+		break;
+	case Tokens::T_UNION:
+		tokenTypeRef = S_UNION;
+		break;
+	case Tokens::T_SELECT:
+		switch(parent->getTokenType())
+		{
+		case S_WITH:
+			tokenTypeRef = S_SUBQUERY_FACTORED;
+			break;
+		case S_FROM:
+		case S_COLUMN_LIST:
+		case S_WHERE:
+		case S_COND_AND:
+		case S_COND_OR:
+		case S_UNION:
+			tokenTypeRef = S_SUBQUERY_NESTED;
+			break;
+		case X_ROOT:
+			tokenTypeRef = X_ROOT;
+			break;
+		default:
+			tokenTypeRef = X_FAILURE;
+		}
+		break;
+	case Tokens::T_COLUMN_LIST:
+		tokenTypeRef = S_COLUMN_LIST;
+		break;
+	case Tokens::T_TABLE_CAST:
+		tokenTypeRef = S_SUBQUERY_NESTED;
+		break;
+	case Tokens::T_FROM:
+		tokenTypeRef = S_FROM;
+		break;
+	case Tokens::T_JOINING_CLAUSE:
+		tokenTypeRef = L_JOINING_CLAUSE;
+		break;
+	case Tokens::T_WHERE:
+		tokenTypeRef = S_WHERE;
+		break;
+	case Tokens::T_IDENTIFIER:
+		tokenTypeRef = S_IDENTIFIER;
+		break;
+	case Tokens::T_OPERATOR_BINARY:
+		tokenTypeRef = S_OPERATOR_BINARY;
+		break;
+	} // switch(tokentype)
 	
 };
 	
@@ -201,7 +350,7 @@ void OracleDMLStatement::parse()
 	using InputStream = Antlr3BackendImpl::OracleSQLParserTraits::InputStreamType;
 	using TokenStream = Antlr3BackendImpl::OracleSQLParserTraits::TokenStreamType;
 	//using Token = Antlr3BackendImpl::OracleSQLParserTraits::CommonTokenType;
-	using Tokens = Antlr3BackendImpl::OracleDMLTokens;
+	//using Tokens = Antlr3BackendImpl::OracleDMLTokens;
 	using namespace std;
 
 	_mState = P_ERROR;
@@ -276,15 +425,7 @@ void OracleDMLStatement::treeWalk(unique_ptr<Antlr3BackendImpl::OracleDML> &psr,
 				continue;
 			}
 
-			Token *childTokenNew = new OracleDMLToken ( root
-								    , Position(childToken->get_line(), childToken->get_charPositionInLine())
-								    , childToken->getText().c_str()
-								    , childToken->getType()
-								    , childNode->getType() == Tokens::EOF_TOKEN ? "EOF" : (const char *)Antlr3BackendImpl::OracleDML::getTokenNames()[childNode->getType()]
-								    , childNode->UserData.usageType
-				);
-			//childToken->setTokenTypeName( (const char*) psr->pParser->rec->state->tokenNames[ pChildNode->getType(pChildNode) ]);
-
+			Token *childTokenNew = new OracleDMLToken ( root, *childNode);
 			root->appendChild(childTokenNew);
 			treeWalk(psr, childTokenNew, childNode, lastindex);
 		}
@@ -311,17 +452,16 @@ void OracleDMLStatement::treeWalk(unique_ptr<Antlr3BackendImpl::OracleDML> &psr,
 			//       );
 
 			Token *childTokenNew = 
-				new OracleDMLToken(
-					root
-					, Position(childToken->get_line(), childToken->get_charPositionInLine())
-					, childToken->getText().c_str()
-					// Leaf node can be either a reserved (key)word or an identifier. Also some keywords can be identifiers.
-					// if the attribute toraTokenType is set then the token is considered to be an identifier
-					// usageType represents either alias declaration or usage
-					, childToken->UserData.toraTokenType ? childToken->UserData.toraTokenType : childToken->getType()
-					, childNode->getType() == Tokens::EOF_TOKEN ? "EOF" : (const char*)Antlr3BackendImpl::OracleDML::getTokenNames()[childNode->getType()]
-					, childToken->UserData.usageType ? childToken->UserData.usageType : Tokens::T_UNKNOWN
-					);
+				new OracleDMLToken(root, *childNode);
+					// , Position(childToken->get_line(), childToken->get_charPositionInLine())
+					// , childToken->getText().c_str()
+					// // Leaf node can be either a reserved (key)word or an identifier. Also some keywords can be identifiers.
+					// // if the attribute toraTokenType is set then the token is considered to be an identifier
+					// // usageType represents either alias declaration or usage
+					// , childToken->UserData.toraTokenType ? childToken->UserData.toraTokenType : childToken->getType()
+					// , childNode->getType() == Tokens::EOF_TOKEN ? "EOF" : (const char*)Antlr3BackendImpl::OracleDML::getTokenNames()[childNode->getType()]
+					// , childToken->UserData.usageType ? childToken->UserData.usageType : Tokens::T_UNKNOWN
+					// );
 			root->appendChild(childTokenNew);
 			//childToken->setTokenTypeName( (const char*) psr->pParser->rec->state->tokenNames[ pChildNode->getType(pChildNode) ]);
 
@@ -388,6 +528,8 @@ void OracleDMLStatement::disambiguate()
             i++;
             break;
         }
+	default:
+		break;
         } // switch
     } // for each AST node
 
@@ -508,6 +650,8 @@ void OracleDMLStatement::disambiguate()
             addTableRef(&node, node.parent());
             break;
         }
+	default:
+		break;
         } // switch(node.getTokenType())
     } // for each AST node
 };

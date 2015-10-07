@@ -504,16 +504,16 @@ id[int toraTokenType, int usageType]
     ;
 
 id_expression[int toraTokenType, int usageType]
-//    :    REGULAR_ID ->    ID[$REGULAR_ID]
-//    |    DELIMITED_ID ->    ID[$DELIMITED_ID] { d }
-    :    r=REGULAR_ID   { const_cast<CommonTokenType*>($r)->set_type(ID);
-                          const_cast<CommonTokenType*>($r)->UserData.toraTokenType = toraTokenType;
-                          const_cast<CommonTokenType*>($r)->UserData.usageType = usageType;
-                        }
-    |    d=DELIMITED_ID { const_cast<CommonTokenType*>($d)->set_type(ID);
-                          const_cast<CommonTokenType*>($d)->UserData.toraTokenType = toraTokenType;
-                          const_cast<CommonTokenType*>($d)->UserData.usageType = usageType;
-                        }
+   :    REGULAR_ID ->    ID[$REGULAR_ID, ToraType(toraTokenType)]
+   |    DELIMITED_ID ->    ID[$DELIMITED_ID] //{ d }
+    // :    r=REGULAR_ID   { const_cast<CommonTokenType*>($r)->set_type(ID);
+    //                       const_cast<CommonTokenType*>($r)->UserData.toraTokenType = toraTokenType;
+    //                       const_cast<CommonTokenType*>($r)->UserData.usageType = usageType;
+    //                     }
+    // |    d=DELIMITED_ID { const_cast<CommonTokenType*>($d)->set_type(ID);
+    //                       const_cast<CommonTokenType*>($d)->UserData.toraTokenType = toraTokenType;
+    //                       const_cast<CommonTokenType*>($d)->UserData.usageType = usageType;
+    //                     }
     ;
 
 not_equal_op
