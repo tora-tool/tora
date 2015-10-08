@@ -57,7 +57,7 @@ namespace Utils
 
 	string slurp(int fd)
 	{		
-#if defined __linux
+#if defined __linux || defined __CYGWIN__
 		struct stat sb;
 		const char *txt;
 		

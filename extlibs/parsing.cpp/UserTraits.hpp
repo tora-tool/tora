@@ -20,6 +20,18 @@
 
 using namespace SQLLexer;
 
+#if defined __CYGWIN__
+namespace std
+{
+	template < typename T > std::string to_string( const T& n )
+	{
+		std::ostringstream stm ;
+		stm << n ;
+		return stm.str() ;
+	}
+}
+#endif
+
 namespace Antlr3BackendImpl {
 	class OraclePLSQLLexer;
 	class OraclePLSQLParser;
