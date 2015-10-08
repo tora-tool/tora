@@ -1167,6 +1167,9 @@ ADD_EXECUTABLE("test7" ${GUI_TYPE}
   parsing/OracleDMLLexer.hpp
   parsing/OracleDMLTraits.hpp
   parsing/tsqlparseoracle2.cc
+  parsing/OracleSQLLexer.cc
+  parsing/OracleSQLParser.cc
+  parsing/tsqlparseoracle.cc
   ${PCH_SOURCE}
   )
 TARGET_LINK_LIBRARIES("test7" ${TORA_LIBS})

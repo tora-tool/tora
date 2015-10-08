@@ -2481,11 +2481,11 @@ like_key
     ;
 
 from_key
-    :    SQL92_RESERVED_FROM
+    :    s=SQL92_RESERVED_FROM -> SQL92_RESERVED_FROM[$s,ToraType(T_FROM)]
     ;
 
 where_key
-    :    SQL92_RESERVED_WHERE
+    :    s=SQL92_RESERVED_WHERE -> SQL92_RESERVED_WHERE[$s,ToraType(T_WHERE)]
     ;
 
 sequence_key

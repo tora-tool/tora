@@ -20,138 +20,7 @@ class OracleDMLToken: public Token
 	using AntlrToken = Antlr3BackendImpl::OracleSQLParserTraits::CommonTokenType;
 	using AntlrNode = Antlr3BackendImpl::OracleSQLParserTraits::TreeType;
 public:
-	OracleDMLToken (Token *parent, const Position &pos, const QString &str, unsigned tokentype, const char* tokentypestring, unsigned usagetype = Tokens::T_UNKNOWN);
 	OracleDMLToken (Token *parent, AntlrNode &token);
-};
-
-OracleDMLToken::OracleDMLToken (Token *parent, const Position &pos, const QString &str, unsigned tokentype, const char* tokentypestring, unsigned usagetype)
-    : Token(parent, pos, str)
-{
-	using Tokens = Antlr3BackendImpl::OracleDMLLexerTokens;
-    _mTokenATypeName = tokentypestring;
-
-    UsageType &_mUsageTypeRef = const_cast<Token::UsageType&>(_mUsageType);
-    switch(usagetype)
-    {
-    case 0:
-	case Tokens::T_UNKNOWN:
-        _mUsageTypeRef = Unknown;
-        break;
-    case Tokens::T_USE:
-        _mUsageTypeRef = Usage;
-        break;
-	case Tokens::T_DECL:
-        _mUsageTypeRef = Declaration;
-        break;
-    }
-
-    TokenType &_mTokenTypeRef = const_cast<Token::TokenType&>(_mTokenType);
-    switch(tokentype)
-    {
-	case Tokens::T_UNKNOWN:
-        _mTokenTypeRef = X_UNASSIGNED;
-        break;
-	case Tokens::T_RESERVED:
-        _mTokenTypeRef = L_RESERVED;
-        break;
-	case Tokens::T_TABLE_NAME:
-        _mTokenTypeRef = L_TABLENAME;
-        break;
-	case Tokens::T_TABLE_ALIAS:
-        // Resolve grammar ambiguity: SELECT * FROM A INNER JOIN B; (=> INNER is not a table alias)
-        // The same for NATURAL JOIN, CROSS JOIN, LEFT/RIGHT OUTER JOIN
-        if( usagetype == Tokens::T_DECL &&  (!str.compare("INNER", Qt::CaseInsensitive) ||
-                                     !str.compare("CROSS", Qt::CaseInsensitive) ||
-                                     !str.compare("NATURAL", Qt::CaseInsensitive) ||
-                                     !str.compare("LEFT", Qt::CaseInsensitive) ||
-                                     !str.compare("RIGHT", Qt::CaseInsensitive)
-                                    )
-          )
-        {
-            _mTokenTypeRef = L_RESERVED;
-            _mUsageTypeRef = Unknown;
-            _mTokenATypeName = "T_RESERVED";
-            break;
-        }
-        switch(parent->getTokenType())
-        {
-        case S_WITH:
-            _mTokenTypeRef = L_SUBQUERY_ALIAS;
-            break;
-        default:
-            _mTokenTypeRef = L_TABLEALIAS;
-            break;
-        }
-        break;
-	case Tokens::T_SCHEMA_NAME:
-        _mTokenTypeRef = L_SCHEMANAME;
-        break;
-    case Tokens::T_TABLE_REF:
-        _mTokenTypeRef = S_TABLE_REF;
-        break;
-    case Tokens::T_FUNCTION_NAME:
-        _mTokenTypeRef = L_FUNCTIONNAME;
-        break;
-    case Tokens::T_PACKAGE_NAME:
-        _mTokenTypeRef = L_PACKAGENAME;
-        break;
-    case Tokens::T_BINDVAR_NAME:
-        _mTokenTypeRef = L_BINDVARNAME;
-        break;
-    case Tokens::T_COLUMN_ALIAS:
-    case Tokens::T_COLUMN_NAME:
-        _mTokenTypeRef = L_IDENTIFIER;
-        break;
-    case Tokens::T_WITH:
-        _mTokenTypeRef = S_WITH;
-        break;
-    case Tokens::T_UNION:
-        _mTokenTypeRef = S_UNION;
-        break;
-    case Tokens::T_SELECT:
-        switch(parent->getTokenType())
-        {
-        case S_WITH:
-            _mTokenTypeRef = S_SUBQUERY_FACTORED;
-            break;
-        case S_FROM:
-        case S_COLUMN_LIST:
-        case S_WHERE:
-        case S_COND_AND:
-        case S_COND_OR:
-        case S_UNION:
-            _mTokenTypeRef = S_SUBQUERY_NESTED;
-            break;
-        case X_ROOT:
-            _mTokenTypeRef = X_ROOT;
-            break;
-        default:
-            _mTokenTypeRef = X_FAILURE;
-        }
-        break;
-    case Tokens::T_COLUMN_LIST:
-        _mTokenTypeRef = S_COLUMN_LIST;
-        break;
-    case Tokens::T_TABLE_CAST:
-        _mTokenTypeRef = S_SUBQUERY_NESTED;
-        break;
-    case Tokens::T_FROM:
-        _mTokenTypeRef = S_FROM;
-        break;
-    case Tokens::T_JOINING_CLAUSE:
-        _mTokenTypeRef = L_JOINING_CLAUSE;
-        break;
-    case Tokens::T_WHERE:
-        _mTokenTypeRef = S_WHERE;
-        break;
-    case Tokens::T_IDENTIFIER:
-        _mTokenTypeRef = S_IDENTIFIER;
-        break;
-    case Tokens::T_OPERATOR_BINARY:
-        _mTokenTypeRef = S_OPERATOR_BINARY;
-        break;
-    } // switch(tokentype)
-
 };
 
 OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
@@ -183,20 +52,15 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 	unsigned toratokentype = node.UserData.toraTokenType;
 	if (node.get_token() && node.get_token()->UserData.toraTokenType)
 		toratokentype = node.get_token()->UserData.toraTokenType;
-	if (node.get_token() && node.get_token()->UserData.toraTokenType)
-	{
-		cout << "***" << node.get_token()->UserData.toraTokenType << "***" << endl;
-	}
-	if (node.UserData.toraTokenType)
-	{
-		cout << "###" << node.UserData.toraTokenType << "###" << endl;
-	}
+	// if (node.get_token() && node.get_token()->UserData.toraTokenType)
+	// {
+	// 	cout << "***" << node.get_token()->UserData.toraTokenType << "***" << endl;
+	// }
+	// if (node.UserData.toraTokenType)
+	// {
+	// 	cout << "###" << node.UserData.toraTokenType << "###" << endl;
+	// }
 
-	if (node.getText() == "a")
-	{
-		cout << "&&&" << node.UserData.toraTokenType << "&&&" << endl;
-		cout << "$$$" << node.get_token()->UserData.toraTokenType << "$$$" << endl;
-	}
 	switch(toratokentype ? toratokentype : node.getType())
 	{
 	case Tokens::T_UNKNOWN:
@@ -213,6 +77,7 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 		// Resolve grammar ambiguity: SELECT * FROM A INNER JOIN B; (=> INNER is not a table alias)
 		// The same for NATURAL JOIN, CROSS JOIN, LEFT/RIGHT OUTER JOIN
 		QString str = QString::fromStdString(node.getText()).toUpper();
+		cout << "Tokens::T_TABLE_ALIAS:" << qPrintable(str) << endl;
 		if( usageTypeRef == Tokens::T_DECL &&  (!str.compare("INNER", Qt::CaseInsensitive) ||
 							!str.compare("CROSS", Qt::CaseInsensitive) ||
 							!str.compare("NATURAL", Qt::CaseInsensitive) ||
@@ -416,7 +281,14 @@ void OracleDMLStatement::treeWalk(unique_ptr<Antlr3BackendImpl::OracleDML> &psr,
 		{
 			// skip useless T_COND_OR_SEQ T_COND_AND_SEQ having only one son
 			ANTLR_UINT32 TokenType = childNode->getType();
-			if( (TokenType == Tokens::T_COND_OR_SEQ || TokenType == Tokens::T_COND_AND_SEQ) && childNode->getChildCount() == 1)
+			if(
+				(TokenType == Tokens::T_COND_OR_SEQ     ||
+				 TokenType == Tokens::T_COND_AND_SEQ    ||
+				 TokenType == Tokens::TABLE_REF_ELEMENT ||
+				 TokenType == Tokens::TABLE_EXPRESSION  ||
+				 TokenType == Tokens::DIRECT_MODE
+					)
+				&& childNode->getChildCount() == 1)
 			{
 				auto &grandChildNode = childNode->getChild(0);
 				auto grandChildToken = grandChildNode->get_token();
