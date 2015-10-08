@@ -32,6 +32,9 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
+#include <QtCore/QCoreApplication>
+#include <QtCore/QTextCodec>
+
 //#include "core/utils.h"
 #include "parsing/tsqlparse.h"
 #include <iostream>
@@ -50,7 +53,7 @@ void toASTWalk(SQLParser::Statement &source, bool (*filter)(Token const&node));
 	
 int main(int argc, char **argv)
 {
-	QApplication app(argc, argv);
+	QCoreApplication app(argc, argv);
 	if (argc != 2)
 		usage();
 	
