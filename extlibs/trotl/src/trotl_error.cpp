@@ -58,6 +58,7 @@ CriticalErrorList::CriticalErrorList()
 	insert(1092);  // ORA-01092: ORACLE instance terminated. Disconnection forced
 	insert(1094);  // ORA-01094: ALTER DATABASE CLOSE in progress. Connections not permitted
 	insert(2396);  // ORA-02396: exceeded maximum idle time, please connect again
+	insert(2399);  // ORA-02399: exceeded maximum connect time, you are being logged off
 	insert(3106);  // ORA-03106: fatal two-task communication protocol error
 	//insert(3111);  // ORA-03111: break received on communication channel (TODO does it apply also for OCIBreak?)
 	insert(3113);  // ORA-03113: end-of-file on communication channel
