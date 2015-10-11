@@ -186,7 +186,7 @@ subquery_operation_part
 
 subquery_basic_elements
     :    query_block
-    |    LEFT_PAREN! subquery RIGHT_PAREN!
+    |    LEFT_PAREN subquery RIGHT_PAREN
     ;
 
 query_block
@@ -262,7 +262,7 @@ join_on_part
     ;
 
 join_using_part
-    :    using_key^ LEFT_PAREN! column_name (COMMA! column_name)* RIGHT_PAREN!
+    :    using_key^ LEFT_PAREN column_name (COMMA! column_name)* RIGHT_PAREN
     ;
 
 outer_join_type
@@ -403,7 +403,7 @@ group_by_elements
     ;
 
 rollup_cube_clause
-    :    (rollup_key^|cube_key^) LEFT_PAREN! grouping_sets_elements (COMMA! grouping_sets_elements)* RIGHT_PAREN! 
+    :    (rollup_key^|cube_key^) LEFT_PAREN grouping_sets_elements (COMMA! grouping_sets_elements)* RIGHT_PAREN 
     ;
 
 grouping_sets_clause
@@ -439,7 +439,7 @@ return_rows_clause
 
 reference_model
     :    reference_key^ reference_model_name on_key! 
-            LEFT_PAREN! subquery RIGHT_PAREN! model_column_clauses 
+            LEFT_PAREN subquery RIGHT_PAREN model_column_clauses 
             cell_reference_options*
     ;
 
@@ -1035,10 +1035,10 @@ backtrack=true;
     |    bind_variable
     |    constant
     |    general_element
-    |    LEFT_PAREN!
+    |    LEFT_PAREN
          (
-              ( select_key | with_key)=> subquery RIGHT_PAREN! subquery_operation_part*
-              | expression_or_vector RIGHT_PAREN!
+              ( select_key | with_key)=> subquery RIGHT_PAREN subquery_operation_part*
+              | expression_or_vector RIGHT_PAREN
          )
     ;
 
@@ -1056,8 +1056,8 @@ vector_expr
 
 quantified_expression
     :    ( some_key^ | exists_key^ | all_key^ | any_key^ )
-         ( (LEFT_PAREN (select_key|with_key)) => LEFT_PAREN! subquery RIGHT_PAREN!
-           | LEFT_PAREN! expression_wrapper RIGHT_PAREN!
+         ( (LEFT_PAREN (select_key|with_key)) => LEFT_PAREN subquery RIGHT_PAREN
+           | LEFT_PAREN expression_wrapper RIGHT_PAREN
          )
     ;
 
@@ -1065,120 +1065,120 @@ standard_function
     :    stantard_function_enabling_over^ function_argument_analytic over_clause?
     |    stantard_function_enabling_using^ function_argument_modeling using_clause?
     |    count_key^
-            LEFT_PAREN!
+            LEFT_PAREN
                 ( ASTERISK | (distinct_key|unique_key|all_key)? concatenation_wrapper )
-            RIGHT_PAREN! over_clause?
+            RIGHT_PAREN over_clause?
     |    (cast_key^|xmlcast_key^) 
-            LEFT_PAREN!
-            ( (multiset_key LEFT_PAREN+ (select_key|with_key)) => (multiset_key! LEFT_PAREN! subquery order_by_clause? RIGHT_PAREN!)
+            LEFT_PAREN
+            ( (multiset_key LEFT_PAREN+ (select_key|with_key)) => (multiset_key! LEFT_PAREN subquery order_by_clause? RIGHT_PAREN)
               (as_key! type_spec)?
             | concatenation_wrapper as_key! type_spec
             )
-            RIGHT_PAREN!
+            RIGHT_PAREN
     |    chr_key^
-            LEFT_PAREN! 
+            LEFT_PAREN 
                 concatenation_wrapper using_key! nchar_cs_key 
-            RIGHT_PAREN!
+            RIGHT_PAREN
     |    collect_key^
-            LEFT_PAREN! 
+            LEFT_PAREN 
                 (distinct_key|unique_key)? concatenation_wrapper collect_order_by_part?
-            RIGHT_PAREN!
+            RIGHT_PAREN
     |    stantard_function_enabling_within_or_over^ 
             function_argument within_or_over_part+
     |    decompose_key^
-            LEFT_PAREN! 
+            LEFT_PAREN 
                 concatenation_wrapper (canonical_key|compatibility_key)? 
-            RIGHT_PAREN!
+            RIGHT_PAREN
     |    extract_key^
-            LEFT_PAREN!
+            LEFT_PAREN
                 REGULAR_ID from_key! concatenation_wrapper 
-            RIGHT_PAREN!
+            RIGHT_PAREN
     |    (first_value_key^|last_value_key^) function_argument_analytic
              respect_or_ignore_nulls? over_clause
     |    stantard_function_pedictions^
-            LEFT_PAREN!
+            LEFT_PAREN
                 expression_wrapper (COMMA expression_wrapper)* cost_matrix_clause? using_clause? 
-            RIGHT_PAREN!
+            RIGHT_PAREN
     |    translate_key^
-            LEFT_PAREN! 
+            LEFT_PAREN 
                 expression_wrapper (using_key! (char_cs_key|nchar_cs_key))? 
                     (COMMA expression_wrapper)* 
-            RIGHT_PAREN!
+            RIGHT_PAREN
     |    treat_key^
-            LEFT_PAREN!
+            LEFT_PAREN
                 expression_wrapper as_key! ref_key? type_spec 
-            RIGHT_PAREN!
+            RIGHT_PAREN
     |    trim_key^
-            LEFT_PAREN!
+            LEFT_PAREN
                 ((leading_key|trailing_key|both_key)? quoted_string? from_key)?
                 concatenation_wrapper
-            RIGHT_PAREN!
+            RIGHT_PAREN
     |    xmlagg_key^
-            LEFT_PAREN! 
+            LEFT_PAREN 
                 expression_wrapper order_by_clause? 
-            RIGHT_PAREN!
+            RIGHT_PAREN
             (PERIOD general_element_part)?
     |    (xmlcolattval_key^|xmlforest_key^) 
-            LEFT_PAREN!
+            LEFT_PAREN
                 xml_multiuse_expression_element (COMMA! xml_multiuse_expression_element)*
-            RIGHT_PAREN!
+            RIGHT_PAREN
             (PERIOD general_element_part)?
     |    xmlelement_key^
-            LEFT_PAREN!
+            LEFT_PAREN
                 (entityescaping_key|noentityescaping_key)?
                 (name_key|evalname_key)? expression_wrapper
                 ({LT(2)->getText() == "XMLATTRIBUTES"}? COMMA! xml_attributes_clause)?
                 (COMMA! expression_wrapper column_alias?)*
-            RIGHT_PAREN!
+            RIGHT_PAREN
             (PERIOD general_element_part)?
     |    xmlexists_key^
-            LEFT_PAREN!
+            LEFT_PAREN
                 expression_wrapper
                 xml_passing_clause?
-            RIGHT_PAREN!
+            RIGHT_PAREN
     |    xmlparse_key^
-            LEFT_PAREN! 
+            LEFT_PAREN 
                 (document_key|content_key) concatenation_wrapper wellformed_key?
-            RIGHT_PAREN!
+            RIGHT_PAREN
             (PERIOD general_element_part)?
     |    xmlpi_key^
-            LEFT_PAREN! 
+            LEFT_PAREN 
                 (    name_key id[T_UNKNOWN,T_USE]
                 |    evalname_key concatenation_wrapper
                 )
                 (COMMA! concatenation_wrapper)?
-            RIGHT_PAREN!
+            RIGHT_PAREN
             (PERIOD general_element_part)?
     |    xmlquery_key^
-            LEFT_PAREN! 
+            LEFT_PAREN 
                 concatenation_wrapper xml_passing_clause?
                 returning_key! content_key! (null_key on_key! empty_key!)?
-            RIGHT_PAREN!
+            RIGHT_PAREN
             (PERIOD general_element_part)?
     |    xmlroot_key^
-            LEFT_PAREN!
+            LEFT_PAREN
                 concatenation_wrapper
                     xmlroot_param_version_part
                     (COMMA! xmlroot_param_standalone_part)?
-            RIGHT_PAREN!
+            RIGHT_PAREN
             (PERIOD general_element_part)?
     |    xmlserialize_key^
-            LEFT_PAREN!
+            LEFT_PAREN
                 (document_key|content_key)
                 concatenation_wrapper (as_key! type_spec)?
                 xmlserialize_param_enconding_part?
                 xmlserialize_param_version_part?
                 xmlserialize_param_ident_part?
                 ((hide_key|show_key) defaults_key)?
-            RIGHT_PAREN!
+            RIGHT_PAREN
             (PERIOD general_element_part)?
     |    xmltable_key^
-            LEFT_PAREN!
+            LEFT_PAREN
                 xml_namespaces_clause?
                 concatenation_wrapper
                 xml_passing_clause?
                 (columns_key! xml_table_column (COMMA! xml_table_column))?
-            RIGHT_PAREN!
+            RIGHT_PAREN
             (PERIOD general_element_part)?
     ;
 
@@ -1200,10 +1200,10 @@ stantard_function_pedictions
 
 over_clause
     :    over_key^
-        LEFT_PAREN!
+        LEFT_PAREN
             query_partition_clause?
             (order_by_clause windowing_clause?)?
-        RIGHT_PAREN!
+        RIGHT_PAREN
     ;
 
 windowing_clause
@@ -1243,14 +1243,14 @@ collect_order_by_part
     ;
 
 within_or_over_part
-    :    within_key^ group_key! LEFT_PAREN! order_by_clause RIGHT_PAREN!
+    :    within_key^ group_key! LEFT_PAREN order_by_clause RIGHT_PAREN
     |    over_clause
     ;
 
 cost_matrix_clause
     :    cost_key^
     (    model_key auto_key?
-    |    LEFT_PAREN! cost_class_name (COMMA! cost_class_name)* RIGHT_PAREN! values_key! 
+    |    LEFT_PAREN cost_class_name (COMMA! cost_class_name)* RIGHT_PAREN values_key! 
             expression_list
     )
     ;
@@ -1262,20 +1262,20 @@ xml_passing_clause
 
 xml_attributes_clause
     :    xmlattributes_key^
-        LEFT_PAREN!
+        LEFT_PAREN
             (entityescaping_key|noentityescaping_key)?
             (schemacheck_key|noschemacheck_key)?
             xml_multiuse_expression_element (COMMA! xml_multiuse_expression_element)*
-        RIGHT_PAREN!
+        RIGHT_PAREN
     ;
 
 xml_namespaces_clause
     :    xmlnamespaces_key^
-        LEFT_PAREN!
+        LEFT_PAREN
             (concatenation_wrapper column_alias)?
                 (COMMA! concatenation_wrapper column_alias)*
             ((default_key)=> xml_general_default_part)?
-        RIGHT_PAREN!
+        RIGHT_PAREN
     ;
 
 xml_table_column
