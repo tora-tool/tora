@@ -72,6 +72,9 @@ int main(int argc, char **argv)
 				  return node.getTokenType() == Token::S_SUBQUERY_FACTORED;
 			  }
 			);
+		cout << "================================================================================" << endl;
+		cout << qPrintable(parser->root()->toStringRecursive(true));
+		cout << "================================================================================" << endl;
 	}
 	catch (const QString &str)
 	{

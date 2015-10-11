@@ -52,14 +52,6 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 	unsigned toratokentype = node.UserData.toraTokenType;
 	if (node.get_token() && node.get_token()->UserData.toraTokenType)
 		toratokentype = node.get_token()->UserData.toraTokenType;
-	// if (node.get_token() && node.get_token()->UserData.toraTokenType)
-	// {
-	// 	cout << "***" << node.get_token()->UserData.toraTokenType << "***" << endl;
-	// }
-	// if (node.UserData.toraTokenType)
-	// {
-	// 	cout << "###" << node.UserData.toraTokenType << "###" << endl;
-	// }
 
 	switch(toratokentype ? toratokentype : node.getType())
 	{
@@ -126,6 +118,11 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 		break;
 	case Tokens::T_UNION:
 		tokenTypeRef = S_UNION;
+		break;
+	case Tokens::FACTORING:
+	case Tokens::SUBQUERY:
+		break;
+	case Tokens::SQL92_RESERVED_SELECT:
 		break;
 	case Tokens::T_SELECT:
 		switch(parent->getTokenType())
@@ -317,34 +314,14 @@ void OracleDMLStatement::treeWalk(unique_ptr<Antlr3BackendImpl::OracleDML> &psr,
 				lastindex++;
 			}
 
-			// TODO check for EOF in lexer stream */
-			//printf("Leaf node \'%s\'(%d)\n",
-			//       (const char*)pChildNode->getText(pChildNode)->chars,
-			//       lastindex
-			//       );
-
-			Token *childTokenNew = 
-				new OracleDMLToken(root, *childNode);
-					// , Position(childToken->get_line(), childToken->get_charPositionInLine())
-					// , childToken->getText().c_str()
-					// // Leaf node can be either a reserved (key)word or an identifier. Also some keywords can be identifiers.
-					// // if the attribute toraTokenType is set then the token is considered to be an identifier
-					// // usageType represents either alias declaration or usage
-					// , childToken->UserData.toraTokenType ? childToken->UserData.toraTokenType : childToken->getType()
-					// , childNode->getType() == Tokens::EOF_TOKEN ? "EOF" : (const char*)Antlr3BackendImpl::OracleDML::getTokenNames()[childNode->getType()]
-					// , childToken->UserData.usageType ? childToken->UserData.usageType : Tokens::T_UNKNOWN
-					// );
+			Token *childTokenNew = new OracleDMLToken(root, *childNode);
 			root->appendChild(childTokenNew);
-			//childToken->setTokenTypeName( (const char*) psr->pParser->rec->state->tokenNames[ pChildNode->getType(pChildNode) ]);
 
 			// Process spaces and comments after parser_token
 			while(++lastindex < lexemeTotal)
 			{
 				auto &spacerToken = lexerTokenVector->at(lastindex);
 				unsigned SpacerLexemeChannel = spacerToken.get_channel();
-
-				if(SpacerLexemeChannel != antlr3::HIDDEN )
-					break;
 
 				Token *spacerTokenNew =  new Token( root
 								    , Position(spacerToken.get_line(), spacerToken.get_charPositionInLine())
