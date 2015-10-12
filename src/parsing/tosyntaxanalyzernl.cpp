@@ -280,6 +280,7 @@ QSet<QString> toSyntaxAnalyzerNL::DDL_INTRODUCERS = QSet<QString>()  // see Orac
         << "CREATE"
         << "DROP"
         << "ANALYZE"
+        << "ADMINISTER"	   
         << "ALTER"
         << "COMMENT"
         << "CLUSTER"
