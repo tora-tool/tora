@@ -192,7 +192,10 @@ namespace Antlr3BackendImpl {
 			using StringType = typename super::StringType;
 			using CommonTokenType = typename super::CommonTokenType;
 		public:
+#if _MSC_VER <= 1900
+#else
 			using super::CommonTreeAdaptor;
+#endif
 			using super::create;
 			using TreeTypePtr = typename super::TreeTypePtr;
 			TreeTypePtr create( ANTLR_UINT32 tokenType, ToraType tokenSubType)
