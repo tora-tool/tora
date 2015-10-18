@@ -1,6 +1,8 @@
 #include "utils.hpp"
 #include <stdio.h>
 
+#define _POSIX_C_SOURCE 200112L
+
 #if defined __linux
 #  include <sys/mman.h>
 #  define DIRDELIM '/'
@@ -57,7 +59,7 @@ namespace Utils
 
 	string slurp(int fd)
 	{		
-#if defined __linux || defined __CYGWIN__
+#if defined __linux
 		struct stat sb;
 		const char *txt;
 		
@@ -66,6 +68,14 @@ namespace Utils
 		string retval(txt);
 		munmap( (void*)txt, sb.st_size);
 		return retval;
+#elif defined __CYGWIN__
+		// ifstream ifs(::fdopen(fd, "r"));
+		// ifstream::pos_type fileSize = ifs.tellg();
+		// ifs.seekg(0, ios::beg);
+
+		// stringstream sstr;
+		// sstr << ifs.rdbuf();
+		// return sstr.str();		
 #else
 		ifstream ifs(::_fdopen(fd, "r"));
 		ifstream::pos_type fileSize = ifs.tellg();
@@ -173,7 +183,7 @@ namespace Utils
 
 }
 
-#if defined _MSC_VER
+#if defined _MSC_VER || defined __CYGWIN__
 
 #if defined _WIN32 || defined __WIN32__ || defined __EMX__ || defined __DJGPP__
 /* Win32, OS/2, DOS */
