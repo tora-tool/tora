@@ -65,6 +65,7 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 		tokenTypeRef = L_TABLENAME;
 		break;
 	case Tokens::T_TABLE_ALIAS:
+	case Tokens::ALIAS:
 	{
 		// Resolve grammar ambiguity: SELECT * FROM A INNER JOIN B; (=> INNER is not a table alias)
 		// The same for NATURAL JOIN, CROSS JOIN, LEFT/RIGHT OUTER JOIN
@@ -83,7 +84,7 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 			_mTokenATypeName = "T_RESERVED";
 			break;
 		}
-		switch(parent->getTokenType())
+		switch(parent->parent()->getTokenType())
 		{
 		case S_WITH:
 			tokenTypeRef = L_SUBQUERY_ALIAS;
@@ -120,6 +121,8 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 		tokenTypeRef = S_UNION;
 		break;
 	case Tokens::FACTORING:
+		tokenTypeRef = S_SUBQUERY_FACTORED;
+		break;			
 	case Tokens::SUBQUERY:
 		break;
 	case Tokens::SQL92_RESERVED_SELECT:
@@ -308,7 +311,7 @@ void OracleDMLStatement::treeWalk(unique_ptr<Antlr3BackendImpl::OracleDML> &psr,
 			auto lexemeTotal = lexerTokenVector->size();
 
 			/* loop over lexer's tokens until leaf if found */
-         	while(lastindex < lexemeTotal)
+			while(lastindex < lexemeTotal)
 			{
 				auto &localToken = lexerTokenVector->at(lastindex);
 				ANTLR_MARKER uLocalLexemeStart = localToken.get_tokenIndex();
@@ -415,7 +418,7 @@ void OracleDMLStatement::disambiguate()
 
             //loop over left brothers until you find either a reserved word or a table name
             QList<QPointer<Token> > const& brothers = node.parent()->getChildren();
-            ////std::cout << "Alias found:" << node.toString().toAscii().constData() << std::endl;
+            std::cout << "Alias found:" << node.toString().toAscii().constData() << std::endl;
             for( int j = node.row() - 1 ; j >= 0; --j)
             {
                 Token *brother = brothers.at(j);
@@ -488,7 +491,7 @@ void OracleDMLStatement::disambiguate()
                     static_cast<TokenSubquery*>(brother)->setNodeAlias(&node);
                     addTranslation(node.toString(), brother, node.parent());
 
-                    //std::cout << "Subquery alias found:" << node.toString().toStdString() << "->" << brother->toString().toStdString() << std::endl;
+                    std::cout << "Subquery alias found:" << node.toString().toStdString() << "->" << brother->toString().toStdString() << std::endl;
                     break;
                 }
             }
