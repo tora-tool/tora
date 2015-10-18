@@ -247,7 +247,8 @@ namespace SQLParser
                 , _mUsageType(other._mUsageType)
                 , _mTokenATypeName(other._mTokenATypeName)
                 , _mChildren(other._mChildren)
-                , _mSpaces(other._mSpaces)
+                , _mSpacesPrev(other._mSpacesPrev)
+                , _mSpacesPost(other._mSpacesPost)
             {
                 //size_t me = this->size();
                 //size_t oth = other.size();
@@ -281,8 +282,13 @@ namespace SQLParser
             };
             QString toStringFull() const
             {
-                QString retval(toString());
-                foreach(QPointer<Token> space, _mSpaces)
+                QString retval;
+				foreach(QPointer<Token> space, _mSpacesPrev)
+				{
+					retval += space->toString();
+				}
+                retval += this->toString();
+                foreach(QPointer<Token> space, _mSpacesPost)
                 {
                     retval += space->toString();
                 }
@@ -294,7 +300,7 @@ namespace SQLParser
                                 (spaces ? toStringFull() : toString()) :
                                     "");
                 foreach(QPointer<Token> child, _mChildren)
-            {
+				{
                     retval += child->toStringRecursive(spaces);
                 }
                 return retval;
@@ -332,9 +338,13 @@ namespace SQLParser
             {
                 _mChildren.append(child);
             };
+			inline void prependSpacer(QPointer<Token> space)
+			{
+				_mSpacesPrev.append(space);
+			};
             inline void appendSpacer(QPointer<Token> space)
             {
-                _mSpaces.append(space);
+                _mSpacesPost.append(space);
             };
             inline void replaceChild(int index, Token* newOne)
             {
@@ -370,7 +380,7 @@ namespace SQLParser
             QString _mTokenATypeName; //ANTLR token type - for debugging purposes only
             // TODO use only one of them
             QList<QPointer<Token> > _mChildren;
-            QList<QPointer<Token> > _mSpaces;
+            QList<QPointer<Token> > _mSpacesPrev, _mSpacesPost;
 
     };
 

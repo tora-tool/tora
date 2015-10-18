@@ -268,11 +268,12 @@ void OracleDMLStatement::treeWalk(unique_ptr<Antlr3BackendImpl::OracleDML> &psr,
 {
 	using Tokens = Antlr3BackendImpl::OracleDMLLexerTokens;
 	auto &children = tree->get_children();
+	auto ns = tree->toString();
 	for (auto i = children.begin(); i != children.end(); ++i)
 	{
 		Traits::TreeTypePtr &childNode(*i);
 		auto childToken = childNode->get_token();
-
+		auto s = childToken->toString();
 		// if child is not a leaf node - recurse
 		if (!childNode->get_children().empty())
 		{
@@ -290,38 +291,52 @@ void OracleDMLStatement::treeWalk(unique_ptr<Antlr3BackendImpl::OracleDML> &psr,
 				auto &grandChildNode = childNode->getChild(0);
 				auto grandChildToken = grandChildNode->get_token();
 
-				treeWalk(psr, root, grandChildNode, lastindex);
-				continue;
+				treeWalk(psr, root, childNode, lastindex);
+			} else {
+				Token *childTokenNew = new OracleDMLToken(root, *childNode);
+				root->appendChild(childTokenNew);
+				treeWalk(psr, childTokenNew, childNode, lastindex);
 			}
-
-			Token *childTokenNew = new OracleDMLToken ( root, *childNode);
-			root->appendChild(childTokenNew);
-			treeWalk(psr, childTokenNew, childNode, lastindex);
 		}
 		else     // if child is a leaf node
 		{
 			/* this is a leaf node */
+			Token *childTokenNew = new OracleDMLToken(root, *childNode);
+			root->appendChild(childTokenNew);
+
 			ANTLR_MARKER uChildLexemeStart = childToken->get_tokenIndex();
 			auto lexemeTotal = lexerTokenVector->size();
 
 			/* loop over lexer's tokens until leaf if found */
-			while(lastindex < lexemeTotal)
+         	while(lastindex < lexemeTotal)
 			{
 				auto &localToken = lexerTokenVector->at(lastindex);
 				ANTLR_MARKER uLocalLexemeStart = localToken.get_tokenIndex();
+
+				if (uLocalLexemeStart < uChildLexemeStart)
+				{
+					auto &spacerToken = lexerTokenVector->at(lastindex);
+					Token *spacerTokenNew = new Token(root
+						, Position(spacerToken.get_line(), spacerToken.get_charPositionInLine())
+						, spacerToken.getText().c_str()
+						, Token::X_COMMENT
+						);
+					childTokenNew->prependSpacer(spacerTokenNew);
+				}
+
 				if(uLocalLexemeStart == uChildLexemeStart)
 					break;
 				lastindex++;
 			}
-
-			Token *childTokenNew = new OracleDMLToken(root, *childNode);
-			root->appendChild(childTokenNew);
 
 			// Process spaces and comments after parser_token
 			while(++lastindex < lexemeTotal)
 			{
 				auto &spacerToken = lexerTokenVector->at(lastindex);
 				unsigned SpacerLexemeChannel = spacerToken.get_channel();
+
+				if (SpacerLexemeChannel != antlr3::HIDDEN)
+					break;
 
 				Token *spacerTokenNew =  new Token( root
 								    , Position(spacerToken.get_line(), spacerToken.get_charPositionInLine())
