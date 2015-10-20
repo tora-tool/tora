@@ -58,6 +58,10 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 	case Tokens::T_UNKNOWN:
 		tokenTypeRef = X_UNASSIGNED;
 		break;
+	case Tokens::SQL92_RESERVED_SELECT:
+	case Tokens::SQL92_RESERVED_WITH:
+	case Tokens::SQL92_RESERVED_FROM:
+	case Tokens::T_FROM:
 	case Tokens::T_RESERVED:
 		tokenTypeRef = L_RESERVED;
 		break;
@@ -84,9 +88,9 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 			_mTokenATypeName = "T_RESERVED";
 			break;
 		}
-		switch(parent->parent()->getTokenType())
+		switch(parent->getTokenType())
 		{
-		case S_WITH:
+		case S_SUBQUERY_FACTORED:
 			tokenTypeRef = L_SUBQUERY_ALIAS;
 			break;
 		default:
@@ -95,6 +99,7 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 		}
 	}
 	break;
+#if 0
 	case Tokens::T_SCHEMA_NAME:
 		tokenTypeRef = L_SCHEMANAME;
 		break;
@@ -120,13 +125,19 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 	case Tokens::T_UNION:
 		tokenTypeRef = S_UNION;
 		break;
+#endif
 	case Tokens::FACTORING:
 		tokenTypeRef = S_SUBQUERY_FACTORED;
 		break;			
 	case Tokens::SUBQUERY:
 		break;
-	case Tokens::SQL92_RESERVED_SELECT:
+	case Tokens::T_COLUMN_LIST:
+		tokenTypeRef = S_COLUMN_LIST;
 		break;
+	case Tokens::T_IDENTIFIER:
+		tokenTypeRef = S_IDENTIFIER;
+		break;
+#if 0
 	case Tokens::T_SELECT:
 		switch(parent->getTokenType())
 		{
@@ -148,9 +159,6 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 			tokenTypeRef = X_FAILURE;
 		}
 		break;
-	case Tokens::T_COLUMN_LIST:
-		tokenTypeRef = S_COLUMN_LIST;
-		break;
 	case Tokens::T_TABLE_CAST:
 		tokenTypeRef = S_SUBQUERY_NESTED;
 		break;
@@ -163,12 +171,10 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 	case Tokens::T_WHERE:
 		tokenTypeRef = S_WHERE;
 		break;
-	case Tokens::T_IDENTIFIER:
-		tokenTypeRef = S_IDENTIFIER;
-		break;
 	case Tokens::T_OPERATOR_BINARY:
 		tokenTypeRef = S_OPERATOR_BINARY;
 		break;
+#endif
 	} // switch(tokentype)
 	
 };
@@ -269,7 +275,7 @@ void OracleDMLStatement::parse()
 /* recursively copy an AST tree into */
 void OracleDMLStatement::treeWalk(unique_ptr<Antlr3BackendImpl::OracleDML> &psr, QPointer<Token> root, Traits::TreeTypePtr &tree, unsigned &lastindex)
 {
-	using Tokens = Antlr3BackendImpl::OracleDMLLexerTokens;
+	using LexerTokens = Antlr3BackendImpl::OracleDMLLexerTokens;
 	auto &children = tree->get_children();
 	auto ns = tree->toString();
 	for (auto i = children.begin(); i != children.end(); ++i)
@@ -277,17 +283,20 @@ void OracleDMLStatement::treeWalk(unique_ptr<Antlr3BackendImpl::OracleDML> &psr,
 		Traits::TreeTypePtr &childNode(*i);
 		auto childToken = childNode->get_token();
 		auto s = childToken->toString();
+		auto c = childNode->getChildCount();
 		// if child is not a leaf node - recurse
 		if (!childNode->get_children().empty())
 		{
 			// skip useless T_COND_OR_SEQ T_COND_AND_SEQ having only one son
-			ANTLR_UINT32 TokenType = childNode->getType();
-			if(
-				(TokenType == Tokens::T_COND_OR_SEQ     ||
-				 TokenType == Tokens::T_COND_AND_SEQ    ||
-				 TokenType == Tokens::TABLE_REF_ELEMENT ||
-				 TokenType == Tokens::TABLE_EXPRESSION  ||
-				 TokenType == Tokens::DIRECT_MODE
+			LexerTokens::Tokens tokenType = (LexerTokens::Tokens)childNode->getType();
+			if( //false &&
+				(tokenType == LexerTokens::T_COND_OR_SEQ     ||
+				 tokenType == LexerTokens::T_COND_AND_SEQ    ||
+				 tokenType == LexerTokens::TABLE_REF         ||
+				 tokenType == LexerTokens::TABLE_EXPRESSION  ||
+				 tokenType == LexerTokens::ALIAS             ||
+				 tokenType == LexerTokens::QUERY_NAME        || // used only by subquery factoring
+				 tokenType == LexerTokens::DIRECT_MODE
 					)
 				&& childNode->getChildCount() == 1)
 			{
