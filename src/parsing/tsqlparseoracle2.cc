@@ -65,6 +65,9 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 	case Tokens::T_RESERVED:
 		tokenTypeRef = L_RESERVED;
 		break;
+	case Tokens::TABLEVIEW_NAME:
+		tokenTypeRef = S_TABLE_REF;
+		break;
 	case Tokens::T_TABLE_NAME:
 		tokenTypeRef = L_TABLENAME;
 		break;
@@ -102,9 +105,6 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 #if 0
 	case Tokens::T_SCHEMA_NAME:
 		tokenTypeRef = L_SCHEMANAME;
-		break;
-	case Tokens::T_TABLE_REF:
-		tokenTypeRef = S_TABLE_REF;
 		break;
 	case Tokens::T_FUNCTION_NAME:
 		tokenTypeRef = L_FUNCTIONNAME;
