@@ -135,7 +135,12 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 		tokenTypeRef = S_COLUMN_LIST;
 		break;
 	case Tokens::T_IDENTIFIER:
+	case Tokens::ANY_ELEMENT: // todo use  -> ^(ANY_ELEMENT[ToraType(T_ITENTIFIER)] char_set_name? id_expression+)
 		tokenTypeRef = S_IDENTIFIER;
+		break;
+	case Tokens::T_JOINING_CLAUSE:
+	case Tokens::JOIN_DEF:
+		tokenTypeRef = L_JOINING_CLAUSE;
 		break;
 #if 0
 	case Tokens::T_SELECT:
@@ -164,9 +169,6 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 		break;
 	case Tokens::T_FROM:
 		tokenTypeRef = S_FROM;
-		break;
-	case Tokens::T_JOINING_CLAUSE:
-		tokenTypeRef = L_JOINING_CLAUSE;
 		break;
 	case Tokens::T_WHERE:
 		tokenTypeRef = S_WHERE;
@@ -296,6 +298,7 @@ void OracleDMLStatement::treeWalk(unique_ptr<Antlr3BackendImpl::OracleDML> &psr,
 				 tokenType == LexerTokens::TABLE_EXPRESSION  ||
 				 tokenType == LexerTokens::ALIAS             ||
 				 tokenType == LexerTokens::QUERY_NAME        || // used only by subquery factoring
+				 tokenType == LexerTokens::CASCATED_ELEMENT  ||
 				 tokenType == LexerTokens::DIRECT_MODE
 					)
 				&& childNode->getChildCount() == 1)
@@ -540,7 +543,7 @@ void OracleDMLStatement::scanTree(ObjectCache* o, QString const& cs)
         if( i->getTokenType() == Token::S_IDENTIFIER )
         {
             QString stopToken;
-            bool insideColumnList;
+            bool insideColumnList = false;
 
             // Do not resolve identifiers under S_COLUMN_LIST
             for(token_iterator_to_root k(i->parent()); k->parent(); ++k)
