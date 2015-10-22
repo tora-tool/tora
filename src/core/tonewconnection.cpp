@@ -355,7 +355,7 @@ void toNewConnection::done(int r)
         return;
     }
 
-    NewConnection = makeConnection(true);
+    NewConnection = makeConnection(/*savePrefs*/true, /*test connection*/false);
     if (!NewConnection)
         return;
 
@@ -533,7 +533,7 @@ void toNewConnection::searchEdit_textEdited(const QString & text)
 
 void toNewConnection::testConnectionButton_clicked()
 {
-    toConnection * c = makeConnection(false);
+    toConnection * c = makeConnection(/*savePrefs*/false, /*test connection*/ true);
     if (c)
     {
         QMessageBox::information(this->parentWidget(),
@@ -549,7 +549,7 @@ void toNewConnection::saveConnectionButton_clicked()
     writeSettings(true);
 }
 
-toConnection* toNewConnection::makeConnection(bool savePrefs)
+toConnection* toNewConnection::makeConnection(bool savePrefs, bool test)
 {
     try
     {
@@ -566,6 +566,10 @@ toConnection* toNewConnection::makeConnection(bool savePrefs)
 
         QString optionstring;
         QSet<QString> options;
+
+        // This connection is just for testing. Do not run any BG queries.
+        if(test)
+        	options.insert("TEST");
 
         QList<QCheckBox *> widgets = OptionGroup->findChildren<QCheckBox *>();
         foreach(QCheckBox * box, widgets)
