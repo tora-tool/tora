@@ -296,13 +296,15 @@ namespace SQLParser
             };
             QString toStringRecursive(bool spaces = true) const
             {
-                QString retval( isLeaf() ?
-                                (spaces ? toStringFull() : toString()) :
-                                    "");
+                //QString retval(spaces ? toStringFull() : toString());
+                QString retval;
+                //retval += '[';
+                retval += (spaces ? toStringFull() : toString());
                 foreach(QPointer<Token> child, _mChildren)
 				{
                     retval += child->toStringRecursive(spaces);
                 }
+                //retval += ']';
                 return retval;
             };
 

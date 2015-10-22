@@ -24,7 +24,7 @@ public:
 };
 
 OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
-	: Token(parent, Position(node.get_line(), node.get_charPositionInLine()), node.getText().c_str())
+	: Token(parent, Position(node.get_token()->get_line(), node.get_token()->get_charPositionInLine()), node.getText().c_str())
 {
 	using Tokens = Antlr3BackendImpl::OracleDMLLexerTokens;
 	_mTokenATypeName = node.getType() == Tokens::EOF_TOKEN ? "EOF" : (const char *)Antlr3BackendImpl::OracleDML::getTokenNames()[node.getType()];
@@ -57,6 +57,30 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 	{
 	case Tokens::T_UNKNOWN:
 		tokenTypeRef = X_UNASSIGNED;
+		break;
+	case Tokens::SELECT_STATEMENT:
+	case Tokens::T_SELECT:
+		switch(parent->getTokenType())
+		{
+#if 0
+		case S_WITH:
+			tokenTypeRef = S_SUBQUERY_FACTORED;
+			break;
+		case S_FROM:
+		case S_COLUMN_LIST:
+		case S_WHERE:
+		case S_COND_AND:
+		case S_COND_OR:
+		case S_UNION:
+			tokenTypeRef = S_SUBQUERY_NESTED;
+			break;
+#endif
+		case X_ROOT:
+			tokenTypeRef = X_ROOT;
+			break;
+		default:
+			tokenTypeRef = X_FAILURE;
+		}
 		break;
 	case Tokens::SQL92_RESERVED_SELECT:
 	case Tokens::SQL92_RESERVED_WITH:
@@ -143,27 +167,6 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 		tokenTypeRef = L_JOINING_CLAUSE;
 		break;
 #if 0
-	case Tokens::T_SELECT:
-		switch(parent->getTokenType())
-		{
-		case S_WITH:
-			tokenTypeRef = S_SUBQUERY_FACTORED;
-			break;
-		case S_FROM:
-		case S_COLUMN_LIST:
-		case S_WHERE:
-		case S_COND_AND:
-		case S_COND_OR:
-		case S_UNION:
-			tokenTypeRef = S_SUBQUERY_NESTED;
-			break;
-		case X_ROOT:
-			tokenTypeRef = X_ROOT;
-			break;
-		default:
-			tokenTypeRef = X_FAILURE;
-		}
-		break;
 	case Tokens::T_TABLE_CAST:
 		tokenTypeRef = S_SUBQUERY_NESTED;
 		break;
@@ -299,6 +302,7 @@ void OracleDMLStatement::treeWalk(unique_ptr<Antlr3BackendImpl::OracleDML> &psr,
 				 tokenType == LexerTokens::ALIAS             ||
 				 tokenType == LexerTokens::QUERY_NAME        || // used only by subquery factoring
 				 tokenType == LexerTokens::CASCATED_ELEMENT  ||
+				 tokenType == LexerTokens::SUBQUERY          ||
 				 tokenType == LexerTokens::DIRECT_MODE
 					)
 				&& childNode->getChildCount() == 1)
@@ -308,6 +312,9 @@ void OracleDMLStatement::treeWalk(unique_ptr<Antlr3BackendImpl::OracleDML> &psr,
 
 				treeWalk(psr, root, childNode, lastindex);
 			} else {
+				if (childNode->get_token()->get_line() >= 0)
+					// ANTLR line numbers start with 1. This node's Token is a real one
+					lastindex++;
 				Token *childTokenNew = new OracleDMLToken(root, *childNode);
 				root->appendChild(childTokenNew);
 				treeWalk(psr, childTokenNew, childNode, lastindex);
@@ -654,14 +661,14 @@ void OracleDMLStatement::addTableRef(Token const *tableRef, Token const *context
 {
     for( SQLParser::Statement::token_iterator_to_root k(const_cast<Token*>(context)); k->parent(); ++k)
     {
-        //std::cout << "tr: " << k->toString().toStdString() << std::endl;
+        //std::cout << "tr: " << k->toString().toStdString() << '(' << k->getTokenType() << ')' << std::endl;
         if( k->getTokenType() == Token::S_SUBQUERY_NESTED ||
                 k->getTokenType() == Token::S_SUBQUERY_FACTORED ||
                 k->getTokenType() == Token::X_ROOT)
         {
             TokenSubquery &s = static_cast<TokenSubquery&>(*k);
             s.nodeTables().insertMulti(tableRef->toStringRecursive(false).toUpper(), const_cast<Token*>(tableRef));
-            //std::cout << "Table ref added:" << tableOrSubquery->toStringRecursive(false).toStdString() << " context: " << k->toString().toStdString() << std::endl;
+            //std::cout << "Table ref added:" << tableRef->toStringRecursive(true).toStdString() << " context: " << k->toString().toStdString() << std::endl;
             break;
         }
     }
