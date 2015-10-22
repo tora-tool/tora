@@ -77,14 +77,14 @@ toConnection::toConnection(const QString &provider,
 
     setDefaultSchema(schema);
 
-    pCache = new toCache(*this, description(false).trimmed());
-
-    ////Version = connSub->version();
+    if(!ConnectionOptions.options.contains("TEST"))
     {
+    	pCache = new toCache(*this, description(false).trimmed());
+    	////Version = connSub->version();
+
         QMutexLocker clock(&ConnectionLock);
         if (toConfigurationNewSingle::Instance().option(ToConfiguration::Database::ObjectCacheInt).toInt() == toCache::ON_CONNECT)
             pCache->readCache();
-
     }
 }
 
@@ -210,17 +210,19 @@ toConnection::~toConnection()
     Q_ASSERT_X( LoanCnt.loadAcquire() == 0 , qPrintable(__QHERE__), "toConnection deleted while BG query is running");
 #endif
 
-    unsigned cacheNewRefCnt;
+    if(pCache)
     {
-        QWriteLocker clock(&getCache().cacheLock);
-        cacheNewRefCnt = getCache().refCount.deref();
+    	unsigned cacheNewRefCnt;
+    	{
+    		QWriteLocker clock(&getCache().cacheLock);
+    		cacheNewRefCnt = getCache().refCount.deref();
+    	}
+    	if (cacheNewRefCnt == 0)
+    	{
+    		getCache().writeDiskCache();
+    		delete this->pCache;
+    	}
     }
-    if (cacheNewRefCnt == 0)
-    {
-        getCache().writeDiskCache();
-        delete this->pCache;
-    }
-
     {
         closeWidgets();
 

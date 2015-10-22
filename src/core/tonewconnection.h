@@ -78,7 +78,7 @@ class toNewConnection : public QDialog
         // fills form with data from previous connection at param row
         void loadPrevious(const QModelIndex & current);
 
-        toConnection* makeConnection(bool savePrefs);
+        toConnection* makeConnection(bool savePrefs, bool test);
 
     public slots:
         virtual void done(int r);
