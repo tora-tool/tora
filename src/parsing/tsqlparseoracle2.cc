@@ -312,7 +312,7 @@ void OracleDMLStatement::treeWalk(unique_ptr<Antlr3BackendImpl::OracleDML> &psr,
 
 				treeWalk(psr, root, childNode, lastindex);
 			} else {
-				if (childNode->get_token()->get_line() >= 0)
+				if (childNode->get_token()->get_line() >= 1)
 					// ANTLR line numbers start with 1. This node's Token is a real one
 					lastindex++;
 				Token *childTokenNew = new OracleDMLToken(root, *childNode);

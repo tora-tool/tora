@@ -273,6 +273,9 @@ namespace SQLParser
 
             const QString& toString() const
             {
+                static const QString Empty;
+                if (getPosition().getLine() == 0)
+                   return Empty;
                 return _mStr;
             };
 
