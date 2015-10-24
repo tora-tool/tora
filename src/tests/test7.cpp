@@ -187,7 +187,7 @@ void toASTWalk(Statement &source, bool (*filter)(Token const& n))
 	{
 		if(filter(*node))
 		{
-			cout << qPrintable(node->toStringRecursive(false)) << endl;
+			cout << "Filtered: " << qPrintable(node->toStringRecursive(true)) << endl;
 		}
 	}
 }

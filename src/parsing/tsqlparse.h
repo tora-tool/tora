@@ -301,13 +301,14 @@ namespace SQLParser
             {
                 //QString retval(spaces ? toStringFull() : toString());
                 QString retval;
-                //retval += '[';
+                retval += '[';
                 retval += (spaces ? toStringFull() : toString());
+		retval += getPosition().toString();
                 foreach(QPointer<Token> child, _mChildren)
 				{
                     retval += child->toStringRecursive(spaces);
                 }
-                //retval += ']';
+                retval += ']';
                 return retval;
             };
 

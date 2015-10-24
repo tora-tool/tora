@@ -279,9 +279,11 @@ namespace SQLParser
 	for (node = this->begin(); node != this->end(); ++node)
 	{
 	  auto type = node->getTokenATypeName();
-	  cout << (node->isLeaf()?'*':' ') << setw(node.depth()) << ' ' << qPrintable(node->toString())
-	       << '/' << qPrintable(type)
+	  cout << (node->isLeaf()?'*':' ')
+	       << setw(node.depth()) << ' '
+	       << '/' << qPrintable(type)	    
 	       << '/' << qPrintable(node->getTokenTypeString())
+	       << '/' << qPrintable(node->toString())
 	       << endl;
 	}
     }

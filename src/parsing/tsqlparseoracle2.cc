@@ -9,6 +9,7 @@
 //#include "core/tologger.h"
 
 #include <QPair>
+#include <QtAlgorithms>
 
 using namespace std;
 
@@ -282,6 +283,13 @@ void OracleDMLStatement::treeWalk(unique_ptr<Antlr3BackendImpl::OracleDML> &psr,
 {
 	using LexerTokens = Antlr3BackendImpl::OracleDMLLexerTokens;
 	auto &children = tree->get_children();
+	qSort(children.begin(), children.end(),
+	      [](const Traits::TreeTypePtr&a,const Traits::TreeTypePtr&b)
+	      {					    
+		      return (a->get_token()->get_line() < b->get_token()->get_line())
+			      || (a->get_token()->get_line() == b->get_token()->get_line() &&
+				  a->get_token()->get_charPositionInLine() < b->get_token()->get_charPositionInLine());
+	      });
 	auto ns = tree->toString();
 	for (auto i = children.begin(); i != children.end(); ++i)
 	{
@@ -443,14 +451,14 @@ void OracleDMLStatement::disambiguate()
                 Token *brother = brothers.at(j);
                 if( brother->getTokenType() == Token::S_SUBQUERY_NESTED)
                 {
-                    ////std::cout << node.toString().toStdString() << "=>" << brother->toStringRecursive().toStdString() << std::endl;
+                    std::cout << node.toString().toStdString() << "=>" << brother->toStringRecursive().toStdString() << std::endl;
 
                     //_mDeclarations.insertMulti(node.toString(), brother.data());
-                    //for(SQLParser::Statement::token_const_iterator_to_root k(&*i); &*k; ++k)
-                    //{
-                    //  std::cout << k->toString().toStdString() << "->";
-                    //}
-                    //std::cout << std::endl;
+                    for(SQLParser::Statement::token_const_iterator_to_root k(&*i); &*k; ++k)
+                    {
+                     std::cout << k->toString().toStdString() << "->";
+                    }
+                    std::cout << std::endl;
 
                     static_cast<TokenSubquery*>(brother)->setNodeAlias(&node);
                     addTranslation(node.toString(), brother, node.parent());
@@ -458,14 +466,14 @@ void OracleDMLStatement::disambiguate()
                 }
                 if( brother->getTokenType() == Token::S_TABLE_REF)
                 {
-                    //std::cout << node.toString().toAscii().constData() << "=>" << (*brother).toStringRecursive().toAscii().constData() << std::endl;
+                    std::cout << node.toString().toAscii().constData() << "=>" << (*brother).toStringRecursive().toAscii().constData() << std::endl;
 
                     //_mDeclarations.insertMulti(node.toString(), brother.data());
-                    //for(SQLParser::Statement::token_const_iterator_to_root k(&*i); &*k; ++k)
-                    //{
-                    //  std::cout << k->toString().toStdString() << "->";
-                    //}
-                    //std::cout << std::endl;
+                    for(SQLParser::Statement::token_const_iterator_to_root k(&*i); &*k; ++k)
+                    {
+                     std::cout << k->toString().toStdString() << "->";
+                    }
+                    std::cout << std::endl;
 
                     static_cast<TokenSubquery*>(brother)->setNodeAlias(&node);
                     addTranslation(node.toString(), brother, node.parent());
@@ -503,7 +511,7 @@ void OracleDMLStatement::disambiguate()
 
                 if( brother->getTokenType() == Token::S_SUBQUERY_FACTORED)
                 {
-                    //std::cout << node.toString().toAscii().constData() << "=>" << brother->toStringRecursive().toStdString() << std::endl;
+                    std::cout << node.toString().toAscii().constData() << "=>" << brother->toStringRecursive().toStdString() << std::endl;
 
                     //_mDeclarations.insertMulti(node.toString(), brother.data());
 
@@ -642,14 +650,14 @@ void OracleDMLStatement::addTranslation(QString const& alias, Token const *table
 {
     for( SQLParser::Statement::token_iterator_to_root k(const_cast<Token*>(context)); k->parent(); ++k)
     {
-        //std::cout << "tr: " << k->toString().toStdString() << std::endl;
+        std::cout << "tr: " << k->toString().toStdString() << std::endl;
         if( k->getTokenType() == Token::S_SUBQUERY_NESTED ||
                 k->getTokenType() == Token::S_SUBQUERY_FACTORED ||
                 k->getTokenType() == Token::X_ROOT)
         {
             TokenSubquery &s = static_cast<TokenSubquery&>(*k);
             s.aliasTranslation().insert(alias.toUpper(), const_cast<Token*>(tableOrSubquery));
-            //std::cout << "Alias translation added:" << alias.toStdString() << "=>" << tableOrSubquery->toStringRecursive(false).toStdString() << " context: " << k->toString().toStdString() << std::endl;
+            std::cout << "Alias translation added:" << alias.toStdString() << "=>" << tableOrSubquery->toStringRecursive(false).toStdString() << " context: " << k->toString().toStdString() << std::endl;
             break;
         }
     }
