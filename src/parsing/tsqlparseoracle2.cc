@@ -320,9 +320,12 @@ void OracleDMLStatement::treeWalk(unique_ptr<Antlr3BackendImpl::OracleDML> &psr,
 
 				treeWalk(psr, root, childNode, lastindex);
 			} else {
-				if (childNode->get_token()->get_line() >= 1)
+				if (childToken->get_line() >= 1 && childToken->get_tokenIndex() == lastindex)
+				{
 					// ANTLR line numbers start with 1. This node's Token is a real one
+					auto &spacerToken = lexerTokenVector->at(lastindex);
 					lastindex++;
+				}
 				Token *childTokenNew = new OracleDMLToken(root, *childNode);
 				root->appendChild(childTokenNew);
 				treeWalk(psr, childTokenNew, childNode, lastindex);
@@ -334,16 +337,16 @@ void OracleDMLStatement::treeWalk(unique_ptr<Antlr3BackendImpl::OracleDML> &psr,
 			Token *childTokenNew = new OracleDMLToken(root, *childNode);
 			root->appendChild(childTokenNew);
 
-			ANTLR_MARKER uChildLexemeStart = childToken->get_tokenIndex();
+			ANTLR_MARKER uChildLexemeIndex = childToken->get_tokenIndex();
 			auto lexemeTotal = lexerTokenVector->size();
 
 			/* loop over lexer's tokens until leaf if found */
-			while(lastindex < lexemeTotal)
+			while(lastindex <= uChildLexemeIndex)
 			{
 				auto &localToken = lexerTokenVector->at(lastindex);
 				ANTLR_MARKER uLocalLexemeStart = localToken.get_tokenIndex();
 
-				if (uLocalLexemeStart < uChildLexemeStart)
+				if (uLocalLexemeStart < uChildLexemeIndex)
 				{
 					auto &spacerToken = lexerTokenVector->at(lastindex);
 					Token *spacerTokenNew = new Token(root
@@ -354,7 +357,7 @@ void OracleDMLStatement::treeWalk(unique_ptr<Antlr3BackendImpl::OracleDML> &psr,
 					childTokenNew->prependSpacer(spacerTokenNew);
 				}
 
-				if(uLocalLexemeStart == uChildLexemeStart)
+				if(uLocalLexemeStart == uChildLexemeIndex)
 					break;
 				lastindex++;
 			}
