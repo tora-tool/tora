@@ -77,8 +77,9 @@ namespace Antlr3BackendImpl {
 
 		struct ToraTokenUserDataType
 		{
-			ToraTokenUserDataType() : toraTokenType(0), usageType(0) {};
+			ToraTokenUserDataType() : toraTokenType(0), usageType(0), consumed(false) {};
 			int toraTokenType, usageType;
+			bool consumed;
 		};
 
 		class ToraToken : public antlr3::CommonToken<ImplTraits>
@@ -87,12 +88,12 @@ namespace Antlr3BackendImpl {
 			typedef typename antlr3::CommonToken<ImplTraits>::TOKEN_TYPE TOKEN_TYPE;
 			typedef typename super::StringType StringType;
 		public:
-			ToraToken() : super(), m_block_context(BlkCtx::NONE) {};
-			ToraToken( ANTLR_UINT32 type) : super(type), m_block_context(BlkCtx::NONE)  {};
-			ToraToken( TOKEN_TYPE type) : super(type), m_block_context(BlkCtx::NONE)  {};
-			ToraToken( const ToraToken& ctoken ) : super(ctoken), m_block_context(ctoken.m_block_context) {};
+			ToraToken() : super() {};
+			ToraToken( ANTLR_UINT32 type) : super(type) {};
+			ToraToken( TOKEN_TYPE type) : super(type) {};
+			ToraToken( const ToraToken& ctoken ) : super(ctoken) {};
 
-			ToraToken& operator=( const ToraToken& other ) { super::operator=(other); m_block_context = other.m_block_context; return *this; };
+			ToraToken& operator=( const ToraToken& other ) { super::operator=(other); return *this; };
 
 			StringType toString() const
 			{
@@ -102,11 +103,15 @@ namespace Antlr3BackendImpl {
 				return m_txt;
 			}
 			
-			void setBlockContext(BlkCtx::BlockContextEnum bc) { m_block_context = bc; }
-			BlkCtx::BlockContextEnum getBlockContext() const { return m_block_context; }
+			//void setBlockContext(BlkCtx::BlockContextEnum bc) { m_block_context = bc; }
+			//BlkCtx::BlockContextEnum getBlockContext() const { return m_block_context; }
+			
+			void setConsumed() { UserData.consumed = true; }
+			bool consumed() const { return UserData.consumed; }
 
+			bool isRealToken() const { return get_line() != 0; }
 		private:
-			BlkCtx::BlockContextEnum m_block_context;
+			//BlkCtx::BlockContextEnum m_block_context;
 		};
 
 		typedef ToraToken CommonTokenType;
