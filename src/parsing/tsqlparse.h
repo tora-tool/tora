@@ -141,6 +141,17 @@ namespace SQLParser
             {
                 return (_mLine > other._mLine) || (_mLine == other._mLine && _mLinePos > other._mLinePos);
             };
+
+			inline bool operator<= (const Position &other) const
+			{
+				return !(*this > other);
+			};
+
+			inline bool operator>= (const Position &other) const
+			{
+				return !(*this < other);
+			};
+
         private:
             unsigned _mLine, _mLinePos;
     };
@@ -303,10 +314,10 @@ namespace SQLParser
                 QString retval;
                 retval += '[';
                 retval += (spaces ? toStringFull() : toString());
-		retval += getPosition().toString();
+				//retval += getPosition().toString();
                 foreach(QPointer<Token> child, _mChildren)
 				{
-                    retval += child->toStringRecursive(spaces);
+					retval += child->toStringRecursive(spaces);
                 }
                 retval += ']';
                 return retval;

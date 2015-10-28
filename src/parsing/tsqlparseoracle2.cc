@@ -297,6 +297,15 @@ void OracleDMLStatement::treeWalk(unique_ptr<Antlr3BackendImpl::OracleDML> &psr,
 		auto childToken = childNode->get_token();
 		auto s = childToken->toString();
 		auto c = childNode->getChildCount();
+
+		auto &spacerTokenX = lexerTokenVector->at(lastindex);
+		if (tree->get_token() && tree->get_token()->get_line() >= 1 && tree->get_token()->get_tokenIndex() == lastindex)
+		{
+			// ANTLR line numbers start with 1. This node's Token is a real one
+			auto &spacerToken = lexerTokenVector->at(lastindex);
+			lastindex++;
+		}
+
 		// if child is not a leaf node - recurse
 		if (!childNode->get_children().empty())
 		{
@@ -319,17 +328,24 @@ void OracleDMLStatement::treeWalk(unique_ptr<Antlr3BackendImpl::OracleDML> &psr,
 				auto grandChildToken = grandChildNode->get_token();
 
 				treeWalk(psr, root, childNode, lastindex);
-			} else {
-				if (childToken->get_line() >= 1 && childToken->get_tokenIndex() == lastindex)
-				{
-					// ANTLR line numbers start with 1. This node's Token is a real one
-					auto &spacerToken = lexerTokenVector->at(lastindex);
-					lastindex++;
-				}
-				Token *childTokenNew = new OracleDMLToken(root, *childNode);
-				root->appendChild(childTokenNew);
-				treeWalk(psr, childTokenNew, childNode, lastindex);
+				continue;
 			}
+			auto &spacerTokenX = lexerTokenVector->at(lastindex);
+			//if (childToken->get_line() >= 1 && childToken->get_tokenIndex() == lastindex)
+			//{
+			//	// ANTLR line numbers start with 1. This node's Token is a real one
+			//	auto &spacerToken = lexerTokenVector->at(lastindex);
+			//	lastindex++;
+			//}
+			Token *childTokenNew = new OracleDMLToken(root, *childNode);
+			root->appendChild(childTokenNew);
+			treeWalk(psr, childTokenNew, childNode, lastindex);
+			//if (childToken->get_line() >= 1 && childToken->get_tokenIndex() == lastindex)
+			//{
+			//	// ANTLR line numbers start with 1. This node's Token is a real one
+			//	auto &spacerToken = lexerTokenVector->at(lastindex);
+			//	lastindex++;
+			//}
 		}
 		else     // if child is a leaf node
 		{
