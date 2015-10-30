@@ -297,10 +297,10 @@ namespace SQLParser
             QString toStringFull() const
             {
                 QString retval;
-				foreach(QPointer<Token> space, _mSpacesPrev)
-				{
-					retval += space->toString();
-				}
+		foreach(QPointer<Token> space, _mSpacesPrev)
+		{
+			retval += space->toString();
+		}
                 retval += this->toString();
                 foreach(QPointer<Token> space, _mSpacesPost)
                 {
@@ -310,17 +310,33 @@ namespace SQLParser
             };
             QString toStringRecursive(bool spaces = true) const
             {
-                //QString retval(spaces ? toStringFull() : toString());
-                QString retval;
-                retval += '[';
-                retval += (spaces ? toStringFull() : toString());
-				//retval += getPosition().toString();
-                foreach(QPointer<Token> child, _mChildren)
-				{
-					retval += child->toStringRecursive(spaces);
-                }
-                retval += ']';
-                return retval;
+		    //QString retval(spaces ? toStringFull() : toString());
+		    QString retval, retval_pre, retval_post;
+		    //retval += '[';
+		    retval += (spaces ? toStringFull() : toString());
+		    //retval += getPosition().toString();
+		    foreach(QPointer<Token> child, _mChildren)
+		    {
+			    Position child_position(0,0);
+			    Token *c = child;
+			    do
+			    {
+				    child_position = c->getPosition();
+				    auto children = c->getChildren();
+				    if (children.empty())
+					    break;
+				    else
+					    c = children.at(0);
+			    } while(c && child_position == Position(0,0)); 
+
+			    if(child_position < this->getPosition())
+				    retval_pre += child->toStringRecursive(spaces);
+			    else
+				    retval_post += child->toStringRecursive(spaces);
+			    //retval += child->toStringRecursive(spaces);
+		    }
+		    //retval += ']';
+		    return retval_pre + retval + retval_post;
             };
 
             inline bool isLeaf() const
