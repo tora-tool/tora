@@ -102,7 +102,7 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 		// Resolve grammar ambiguity: SELECT * FROM A INNER JOIN B; (=> INNER is not a table alias)
 		// The same for NATURAL JOIN, CROSS JOIN, LEFT/RIGHT OUTER JOIN
 		QString str = QString::fromStdString(node.getText()).toUpper();
-		cout << "Tokens::T_TABLE_ALIAS:" << qPrintable(str) << endl;
+		//cout << "Tokens::T_TABLE_ALIAS:" << qPrintable(str) << endl;
 		if( usageTypeRef == Tokens::T_DECL &&  (!str.compare("INNER", Qt::CaseInsensitive) ||
 							!str.compare("CROSS", Qt::CaseInsensitive) ||
 							!str.compare("NATURAL", Qt::CaseInsensitive) ||
@@ -181,6 +181,9 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 		tokenTypeRef = S_OPERATOR_BINARY;
 		break;
 #endif
+	case Tokens::EOF_TOKEN:
+		tokenTypeRef = X_EOF;
+		break;
 	} // switch(tokentype)
 	
 };
@@ -283,13 +286,13 @@ void OracleDMLStatement::treeWalk(unique_ptr<Antlr3BackendImpl::OracleDML> &psr,
 {
 	using LexerTokens = Antlr3BackendImpl::OracleDMLLexerTokens;
 	auto &children = tree->get_children();
-	qSort(children.begin(), children.end(),
-	      [](const Traits::TreeTypePtr&a,const Traits::TreeTypePtr&b)
-	      {					    
-		      return (a->get_token()->get_line() < b->get_token()->get_line())
-			      || (a->get_token()->get_line() == b->get_token()->get_line() &&
-				  a->get_token()->get_charPositionInLine() < b->get_token()->get_charPositionInLine());
-	      });
+//	qSort(children.begin(), children.end(),
+//	      [](const Traits::TreeTypePtr&a,const Traits::TreeTypePtr&b)
+//	      {
+//		      return (a->get_token()->get_line() < b->get_token()->get_line())
+//			      || (a->get_token()->get_line() == b->get_token()->get_line() &&
+//				  a->get_token()->get_charPositionInLine() < b->get_token()->get_charPositionInLine());
+//	      });
 	auto ns = tree->toString();
 	for (auto i = children.begin(); i != children.end(); ++i)
 	{
@@ -298,7 +301,7 @@ void OracleDMLStatement::treeWalk(unique_ptr<Antlr3BackendImpl::OracleDML> &psr,
 		auto s = childToken->toString();
 		auto c = childNode->getChildCount();
 
-		auto &spacerTokenX = lexerTokenVector->at(lastindex);
+		//auto &spacerTokenX = lexerTokenVector->at(lastindex);
 
 		// if child is not a leaf node - recurse
 		if (!childNode->get_children().empty())

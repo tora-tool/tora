@@ -48,6 +48,8 @@ using namespace std;
 using namespace SQLParser;
 
 string slurp(string const& fileName);
+void unslurp(string const& fileName, string const& what);
+
 static void usage();
 void toASTWalk(SQLParser::Statement &source, bool (*filter)(Token const&node));
 	
@@ -73,7 +75,8 @@ int main(int argc, char **argv)
 			  }
 			);
 		cout << "================================================================================" << endl;
-		cout << qPrintable(parser->root()->toStringRecursive(true));
+		string deserialized(qPrintable(parser->root()->toStringRecursive(true)));
+		cout << deserialized;
 		cout << "================================================================================" << endl;
 
 		SQLParser::ObjectCache *o = new SQLParser::ObjectCache();
@@ -155,6 +158,8 @@ int main(int argc, char **argv)
 		cols.clear();
 
 		parser->scanTree(o, QString("SERVICEDESK"));
+
+		unslurp(string(argv[1]) + ".out", deserialized);
 	}
 	catch (const QString &str)
 	{
@@ -178,6 +183,14 @@ string slurp(string const& fileName)
     stringstream sstr;
     sstr << ifs.rdbuf();
     return sstr.str();
+}
+
+void unslurp(string const& fileName, string const& what)
+{
+    ofstream ofs(fileName.c_str(), ios::out | ios::trunc);
+	bool o = ofs.is_open();
+    ofs << what;
+    ofs.close();
 }
 
 void toASTWalk(Statement &source, bool (*filter)(Token const& n))

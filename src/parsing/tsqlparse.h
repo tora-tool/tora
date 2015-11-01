@@ -197,6 +197,7 @@ namespace SQLParser
                 X_ROOT,
                 X_FAILURE,
                 X_COMMENT,
+				X_EOF,
                 // Leaf node
                 L_RESERVED,
                 L_TABLENAME,
@@ -287,6 +288,8 @@ namespace SQLParser
                 static const QString Empty;
                 if (getPosition().getLine() == 0)
                    return Empty;
+                if (getTokenType() == X_EOF)
+                	return Empty;
                 return _mStr;
             };
 
@@ -333,7 +336,6 @@ namespace SQLParser
 				    retval_pre += child->toStringRecursive(spaces);
 			    else
 				    retval_post += child->toStringRecursive(spaces);
-			    //retval += child->toStringRecursive(spaces);
 		    }
 		    //retval += ']';
 		    return retval_pre + retval + retval_post;
