@@ -5,14 +5,30 @@
 # ORACLE_INCLUDES - where to find oci.h
 # ORACLE_LIBRARIES - the libraries to link against to use Oracle OCI
 #
-# Components: CLNTSH, OCCI, XML, OCIEI
+# Components: CLNTSH, CLNTST, OCCI, XML, OCIEI
 # CLNTSH is enabled by default
 # for example: FIND_PACKAGE(Oracle REQUIRED CLNTSH OCCI)
 # 
 # copyright (c) 2007 Petr Vanek <petr@scribus.info>
-# copyright (c) 2009 Ivan Brezina <ibre5041@ibrezina.net>
+# copyright (c) 2015 Ivan Brezina <ibre5041@ibrezina.net>
 # Redistribution and use is allowed according to the terms of the BSD license.
 #
+# This module will set the following variables in your project:
+#
+# ``ORACLE_FOUND``
+#   Oracle installation detected (InstantClient or "think" client)
+# ``ORACLE_INCLUDES``
+#   Oracle include directory (where oci.h resides)
+# ``ORACLE_LIBRARY_CLNTSH``
+#   Library libclntsh.so.*
+# ``ORACLE_LIBRARY_CLNTST``
+#   Library libclntst??.a (not present in InstantClient, must be geenrated by executing genclntst)
+# ``ORACLE_LIBRARY_XML``
+#   Oracle XMLTYPE library libxml?.a (usually static, only present in thick client)
+# ``ORACLE_LIBRARIES``
+#   All Oracle libraries detected libclntsh.so.*, libociei.so.8 libxml.a ....
+# ``ORACLE_OCI_VERSION``
+#   This is set to 8i, 9i, 10g, 11g, 12c
 
 SET(ORACLE_FOUND "NO")
 SET(ORACLE_HAS_XML "NO")
@@ -138,6 +154,33 @@ IF (ORACLE_USE_CLNTSH)
     ENDIF (NOT ORACLE_LIBRARY_CLNTSH)
 ENDIF (ORACLE_USE_CLNTSH)
 
+IF (ORACLE_USE_CLNTST)
+    # The NO_DEFAULT_PATH is necessary here in the case there is Oracle DB
+    # *and* instant client installed. The order is given in ORACLE_LIB_LOCATION.
+    # See above.
+    # Support preference of static libs by adjusting CMAKE_FIND_LIBRARY_SUFFIXES
+    IF(WIN32)
+	set(CMAKE_FIND_LIBRARY_SUFFIXES .lib .a ${CMAKE_FIND_LIBRARY_SUFFIXES})
+    ELSE()
+	set(CMAKE_FIND_LIBRARY_SUFFIXES .a )
+    ENDIF()
+
+    MESSAGE(STATUS "Looking for libclntst")
+
+    FIND_LIBRARY(
+        ORACLE_LIBRARY_CLNTST
+        NAMES libclntst libclntst9 libclntst10 libclntst11 libclntst12 clntst clntst9 clntst10 clntst11 clntst12
+        PATHS ${ORACLE_LIB_LOCATION}
+        NO_DEFAULT_PATH
+	#NO_CMAKE_ENVIRONMENT_PATH NO_CMAKE_PATH NO_SYSTEM_ENVIRONMENT_PATH NO_CMAKE_SYSTEM_PATH
+    )
+    IF (NOT ORACLE_LIBRARY_CLNTST)
+        IF (Oracle_FIND_REQUIRED)
+            SET(FORCE_ERROR "CLNTST")
+        ENDIF (Oracle_FIND_REQUIRED)
+        set(ORACLE_LIBRARY_CLNTST "")
+    ENDIF (NOT ORACLE_LIBRARY_CLNTST)
+ENDIF (ORACLE_USE_CLNTST)
 
 #set (ORACLE_LIBRARY_OCCI "")
 IF (ORACLE_USE_OCCI)
@@ -202,6 +245,7 @@ IF (NOT FORCE_ERROR)
     SET (ORACLE_LIBRARIES ${ORACLE_LIBRARY_CLNTSH} ${ORACLE_LIBRARY_OCCI} ${ORACLE_LIBRARY_XML} ${ORACLE_LIBRARY_OCIEI})
 ENDIF (NOT FORCE_ERROR)
 MESSAGE(STATUS "ORACLE_LIBRARY_CLNTSH ${ORACLE_LIBRARY_CLNTSH}")
+MESSAGE(STATUS "ORACLE_LIBRARY_CLNTST ${ORACLE_LIBRARY_CLNTST}")
 MESSAGE(STATUS "ORACLE_LIBRARY_OCCI ${ORACLE_LIBRARY_OCCI}")
 MESSAGE(STATUS "ORACLE_LIBRARY_XML ${ORACLE_LIBRARY_XML}")
 MESSAGE(STATUS "ORACLE_LIBRARY_OCIEI ${ORACLE_LIBRARY_OCIEI}")
