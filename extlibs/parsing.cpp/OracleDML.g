@@ -29,6 +29,8 @@ tokens {
     SELECT_STATEMENT;
     FACTORING;
     SUBQUERY;
+    NESTED_SUBQUERY;
+    SUBQUERY_NESTED;
     SELECT_LIST;
     SELECT_ITEM;
     DOT_ASTERISK;
@@ -36,6 +38,7 @@ tokens {
     TABLE_REF_ELEMENT;
     JOIN_DEF;
     LOGIC_EXPR;
+    NESTED_EXPR;
     SELECTED_TABLEVIEW;
     TABLE_EXPRESSION;
     COLLECTION_MODE;
@@ -1031,15 +1034,18 @@ options
 {
 backtrack=true;
 }
+@init    {    int mode = 0;    }
     :    (table_element outer_join_sign) => table_element outer_join_sign
     |    bind_variable
     |    constant
     |    general_element
     |    LEFT_PAREN
          (
-              ( select_key | with_key)=> subquery RIGHT_PAREN subquery_operation_part*
+              ( select_key | with_key)=> subquery RIGHT_PAREN subquery_operation_part* { mode = 1; }
               | expression_or_vector RIGHT_PAREN
          )
+         -> { mode == 1 }? ^(NESTED_SUBQUERY LEFT_PAREN subquery RIGHT_PAREN subquery_operation_part*)
+         ->                ^(NESTED_EXPR LEFT_PAREN expression_or_vector RIGHT_PAREN)
     ;
 
 expression_or_vector
