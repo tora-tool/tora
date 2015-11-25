@@ -223,6 +223,8 @@ namespace SQLParser
                 S_SUBQUERY_NESTED,
                 L_SUBQUERY_ALIAS,
                 S_UNION,
+                S_MINUS,
+                S_INTERSECT,
                 S_WITH,
                 S_COLUMN_LIST,
                 S_FROM,

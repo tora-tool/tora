@@ -147,9 +147,6 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 	case Tokens::T_WITH:
 		tokenTypeRef = S_WITH;
 		break;
-	case Tokens::T_UNION:
-		tokenTypeRef = S_UNION;
-		break;
 #endif
 	case Tokens::FACTORING:
 		tokenTypeRef = S_SUBQUERY_FACTORED;
@@ -181,6 +178,15 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 		tokenTypeRef = S_OPERATOR_BINARY;
 		break;
 #endif
+	case Tokens::SQL92_RESERVED_UNION:
+		tokenTypeRef = S_UNION;
+		break;
+	case Tokens::PLSQL_RESERVED_MINUS:
+		tokenTypeRef = S_MINUS;
+		break;
+	case Tokens::SQL92_RESERVED_INTERSECT:
+		tokenTypeRef = S_INTERSECT;
+		break;
 	case Tokens::EOF_TOKEN:
 		tokenTypeRef = X_EOF;
 		break;

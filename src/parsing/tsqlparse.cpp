@@ -34,6 +34,8 @@ namespace SQLParser
         , "SUBQUERY_NESTED"
         , "SUBQUERY_ALIAS"
         , "UNION"
+        , "MINUS"
+        , "INTERSECT"
         , "WITH"
         , "COLUMN_LIST"
         , "FROM"
