@@ -317,7 +317,7 @@ namespace SQLParser
             {
 		    //QString retval(spaces ? toStringFull() : toString());
 		    QString retval, retval_pre, retval_post;
-		    //retval += '[';
+		    //retval_pre += '[';
 		    retval += (spaces ? toStringFull() : toString());
 		    //retval += getPosition().toString();
 		    foreach(QPointer<Token> child, _mChildren)
@@ -339,7 +339,7 @@ namespace SQLParser
 			    else
 				    retval_post += child->toStringRecursive(spaces);
 		    }
-		    //retval += ']';
+		    //retval_post += ']';
 		    return retval_pre + retval + retval_post;
             };
 

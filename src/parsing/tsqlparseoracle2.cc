@@ -335,10 +335,10 @@ void OracleDMLStatement::treeWalk(unique_ptr<Antlr3BackendImpl::OracleDML> &psr,
 			}
 			Token *childTokenNew = new OracleDMLToken(root, *childNode);
 			root->appendChild(childTokenNew);
-			// This token "select", "from", "where", "=" is already consummed. Do not prepend it to other tokens
+			// This token "select", "from", "where", "=" is already consumed. Do not prepend it to other tokens
 			if (childToken->isRealToken())
 			{
-				// The token might be clonned by the grammar. lexerTokenVector and AST might point onto different instances
+				// The token might be cloned by the grammar. lexerTokenVector and AST might point onto different instances
 				const_cast<Traits::CommonTokenType*>(childToken)->setConsumed();
 				auto &localToken = lexerTokenVector->at(childToken->get_tokenIndex());
 				const_cast<Traits::CommonTokenType&>(localToken).setConsumed();
@@ -354,7 +354,7 @@ void OracleDMLStatement::treeWalk(unique_ptr<Antlr3BackendImpl::OracleDML> &psr,
 			ANTLR_MARKER uChildLexemeIndex = childToken->get_tokenIndex();
 			auto lexemeTotal = lexerTokenVector->size();
 
-			/* loop over preceeding lexer's tokens */
+			/* loop over preceding lexer's tokens */
 			while(lastindex <= uChildLexemeIndex)
 			{
 				auto &localToken = lexerTokenVector->at(lastindex);

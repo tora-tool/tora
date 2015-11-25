@@ -10,8 +10,9 @@ namespace SQLParser
         "UNASSIGNED"
         , "ROOT"
         , "FAILURE"
-
         , "COMMENT"
+        , "<EOF>"
+
         , "RESERVED"
         , "TABLENAME"
         , "SCHEMANAME"
@@ -27,9 +28,11 @@ namespace SQLParser
         , "ON"
         , "JOINING_CLAUSE"
         , "USING"
+
         , "VARIABLE"
         , "DATATYPE"
         , "PARAMETER"
+
         , "SUBQUERY_FACTORED"
         , "SUBQUERY_NESTED"
         , "SUBQUERY_ALIAS"
