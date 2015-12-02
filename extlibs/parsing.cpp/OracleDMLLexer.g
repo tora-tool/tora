@@ -99,6 +99,7 @@ tokens { // moved to the import vocabulary
     SELECT_STATEMENT;
     FACTORING;
     SUBQUERY;
+    NESTED_SUBQUERY;
     SELECT_LIST;
     SELECT_ITEM;
     DOT_ASTERISK;
@@ -106,6 +107,7 @@ tokens { // moved to the import vocabulary
     TABLE_REF_ELEMENT;
     JOIN_DEF;
     LOGIC_EXPR;
+    NESTED_EXPR;    
     SELECTED_TABLEVIEW;
     TABLE_EXPRESSION;
     COLLECTION_MODE;

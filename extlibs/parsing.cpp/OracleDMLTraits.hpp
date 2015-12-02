@@ -106,10 +106,10 @@ namespace Antlr3BackendImpl {
 			//void setBlockContext(BlkCtx::BlockContextEnum bc) { m_block_context = bc; }
 			//BlkCtx::BlockContextEnum getBlockContext() const { return m_block_context; }
 			
-			void setConsumed() { UserData.consumed = true; }
-			bool consumed() const { return UserData.consumed; }
+			void setConsumed() { super::UserData.consumed = true; }
+			bool consumed() const { return super::UserData.consumed; }
 
-			bool isRealToken() const { return get_line() != 0; }
+			bool isRealToken() const { return super::get_line() != 0; }
 		private:
 			//BlkCtx::BlockContextEnum m_block_context;
 		};

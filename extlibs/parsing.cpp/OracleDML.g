@@ -25,12 +25,12 @@ options {
 
 import OracleDMLKeys, OracleDMLCommons;
 tokens {
+    // Note: when you change this, you should also change OracleDMLLexer.g
     EXPLAIN_STATEMENT;
     SELECT_STATEMENT;
     FACTORING;
     SUBQUERY;
     NESTED_SUBQUERY;
-    SUBQUERY_NESTED;
     SELECT_LIST;
     SELECT_ITEM;
     DOT_ASTERISK;
