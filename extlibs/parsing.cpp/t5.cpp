@@ -44,7 +44,11 @@ void parseFile(const char* fName, int fd)
 	OracleSQLParserTraits::TokenStreamType*	tstream;
 	OracleDML*			psr;
 
-	string data = Utils::slurp(fd);
+	string data = Utils::slurp(fName);
+	std::cout << "== parsing =====================================================================" << std::endl
+		  << data << std::endl
+		  << "================================================================================" << std::endl;
+	
 	input	= new OracleSQLParserTraits::InputStreamType((const ANTLR_UINT8 *)data.c_str(),
 							     antlr3::ENC_8BIT,
 							     data.length(), //strlen(data.c_str()),
