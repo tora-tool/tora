@@ -1646,7 +1646,7 @@ void toWorksheet::slotDescribeNew(void)
 	TLOG(1, toDecorator, __HERE__) << "sql_id lf: " << Utils::toSQLToSql_Id(stat.sql) << std::endl;
 
 	return;
-#if 0
+#ifdef TORA_EXPERIMENTAL
     int line, col;
     QString buffer;
     QString firstWord, currentWord;

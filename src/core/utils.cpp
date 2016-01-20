@@ -85,6 +85,33 @@
 namespace Utils
 {
 
+    static toSQL SQLTextPiece("Global:SQLText",
+                              "SELECT SQL_Text\n"
+                              "  FROM V$SQLText_With_Newlines\n"
+                              " WHERE Address||':'||Hash_Value = :f1<char[100]>\n"
+                              " ORDER BY Piece",
+                              "Get text of SQL statement.");
+
+//tool QString toSQLString(toConnection &conn, const QString &address)
+//tool {
+//tool     QString sql;
+
+//tool     toQList vals = toQuery::readQuery(conn, SQLTextPiece, address);
+
+//tool     for (toQList::iterator i = vals.begin(); i != vals.end(); i++)
+//tool     {
+//tool         sql.append(*i);
+//tool     }
+//tool     if (sql.isEmpty())
+//tool         throw qApp->translate("toSQLString", "SQL Address not found in SGA");
+//tool     return sql;
+//tool }
+
+    QString toDeepCopy(const QString &str)
+    {
+        return QString(str.data(), str.length());
+    }
+
     static toTreeWidgetItem *FindItem(toTreeWidget *lst, toTreeWidgetItem *first, const QString &str)
     {
         while (first)
