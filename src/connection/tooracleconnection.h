@@ -92,7 +92,7 @@ class toOracleConnectionSub: public toConnectionSub
         virtual void commit();
         virtual void rollback();
         virtual QString version();
-        virtual QString sessionId();
+        virtual toQueryParams sessionId();
         virtual bool hasTransaction();
         virtual queryImpl* createQuery(toQuery *query);
 

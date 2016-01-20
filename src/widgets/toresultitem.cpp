@@ -127,6 +127,54 @@ static toSQL SQLResource(
     " WHERE Address || ':' || Hash_Value = :f1<char[100]> ",
     "Display information about an SQL statement");
 
+static toSQL SQLResource10(
+		"toResultResources:Information",
+		"SELECT 'Total' AS \"-\", 										\n"
+		"       'per Execution' AS \"-\", 									\n"
+		"       'per Row processed' AS \"-\", 									\n"
+		"       Sorts, 												\n"
+		"       DECODE ( Executions,     0, 'N/A', ROUND ( Sorts / Executions,           3 ) ) AS \" \", 	\n"
+		"       DECODE ( Rows_Processed, 0, 'N/A', ROUND ( Sorts / Rows_Processed,       3 ) ) AS \" \", 	\n"
+		"       Parse_Calls AS \"Parse\", 									\n"
+ 		"       DECODE ( Executions,     0, 'N/A', ROUND ( Parse_Calls / Executions,     3 ) ) AS \" \", 	\n"
+		"       DECODE ( Rows_Processed, 0, 'N/A', ROUND ( Parse_Calls / Rows_Processed, 3 ) ) AS \" \", 	\n"
+		"       Disk_Reads, 											\n"
+		"       DECODE ( Executions,     0, 'N/A', ROUND ( Disk_Reads / Executions,      3 ) ) AS \" \", 	\n"
+		"       DECODE ( Rows_Processed, 0, 'N/A', ROUND ( Disk_Reads / Rows_Processed,  3 ) ) AS \" \", 	\n"
+		"       Buffer_Gets, 											\n"
+		"       DECODE ( Executions,     0, 'N/A', ROUND ( Buffer_Gets / Executions,     3 ) ) AS \" \", 	\n"
+		"       DECODE ( Rows_Processed, 0, 'N/A', ROUND ( Buffer_Gets / Rows_Processed, 3 ) ) AS \" \", 	\n"
+		"       Rows_Processed, 										\n"
+		"       DECODE ( Executions,     0, 'N/A', ROUND ( Rows_Processed / Executions,  3 ) ) AS \" \", 	\n"
+		"       ' ' AS \"-\", 											\n"
+		"       Executions, 											\n"
+		"       ' ' AS \"-\", 											\n"
+		"       ' ' AS \"-\", 											\n"
+		"       ' ' AS \"-\", 											\n"
+		"       ' ' AS \"-\", 											\n"
+		"       ' ' AS \"-\", 											\n"
+		"       Loads, 												\n"
+		"       First_Load_Time, 										\n"
+		"       Parsing_User_Id, 										\n"
+		"       Parsing_Schema_Id, 										\n"
+		"       Users_Executing, 										\n"
+		"       Users_Opening, 											\n"
+		"       Open_Versions, 											\n"
+		"       Sharable_Mem, 											\n"
+		"       Kept_Versions, 											\n"
+		"       Persistent_Mem, 										\n"
+		"       Optimizer_Mode, 										\n"
+		"       Loaded_Versions, 										\n"
+		"       Runtime_Mem, 											\n"
+		"       Serializable_Aborts, 										\n"
+		"       Invalidations 											\n"
+		"  FROM v$sqlarea 											\n"
+		" WHERE 1=1       											\n"
+		" AND   SQL_ID = :f1<char[100]>                                                                     \n",
+		"Display information about an SQL statement",
+		"1000",
+		"Oracle");
+
 toResultResources::toResultResources(QWidget *parent, const char *name)
     : toResultItem(3, true, parent, name)
 {

@@ -112,6 +112,12 @@ namespace Utils
      */
     QString toNow(toConnection &conn);
 
+    /** Get hash of SQL statement using Oracles' internal algorithm
+     * @param sql statement
+     * @return sql_id
+     */
+    QString toSQLToSql_Id(const QString &sql);
+
     /**Get the full SQL of an address (See @ref toSQLToAddress) from the
      * SGA.
      * @param conn Connection to get address from

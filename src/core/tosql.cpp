@@ -179,40 +179,44 @@ toSQL toSQL::sql(const QString &name)
 QString toSQL::string(const QString &name, const toConnection &conn)
 {
     allocCheck();
-    QString ver = conn.version();
-    QString prov = conn.provider();
+    QString SessionVersion = conn.version();
+    QString SessionProvider = conn.provider();
 
     bool quit = false;
 
     sqlMap::iterator i = Definitions->find(name);
-    if (i != Definitions->end())
+    if (i == Definitions->end())
+        goto fail;
+
+    // Loop over our connections' provider queries, if nothing is found also loop over "ANY" providers' queries
+    do
     {
-        do
-        {
-            if (prov == "Any")
-                quit = true;
-            QString *sql = NULL;
-            std::list<version> &cl = (*i).second.Versions;
-            for (std::list<version>::iterator j = cl.begin(); j != cl.end(); j++)
-            {
-                if ((*j).Provider == prov)
-                {
-                    if ((*j).Version <= ver || !sql)
-                    {
-                        sql = &(*j).SQL;
-                    }
-                    if ((*j).Version >= ver)
-                        return *sql;
-                }
-            }
-            if (sql)
-                return *sql;
+    	if (SessionProvider == "Any")
+    		quit = true;
+    	QString *sql = NULL;
+    	QString SqlVersion = "0000";
+    	std::list<version> &cl = (*i).second.Versions;
+    	for (std::list<version>::iterator j = cl.begin(); j != cl.end(); j++)
+    	{
+    		if ((*j).Provider != SessionProvider)
+    			continue;
 
-            prov = "Any";
-        }
-        while (!quit);
+    		QString &QueryVersion = (*j).Version;
+    		QString &QueryProvider = (*j).Provider;
+    		if (SqlVersion < QueryVersion && QueryVersion <= SessionVersion)
+    		{
+    			sql = &(*j).SQL;
+    			SqlVersion = QueryVersion;
+    		}
+    	}
+    	if (sql)
+    		return *sql;
+
+    	SessionProvider = "Any";
     }
+    while (!quit);
 
+fail:
     throw qApp->translate("toSQL", "02: Tried to get unknown SQL (%1)").arg(QString(name));
 }
 

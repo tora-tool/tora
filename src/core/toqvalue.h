@@ -95,6 +95,10 @@ class TORA_EXPORT toQValue
          * @param i Value.
          */
         toQValue(int i);
+        /** Create unsigned integer value.
+         * @param i Value.
+         */
+        toQValue(unsigned int i);
         /** Create string value.
          * @param str Value.
          */

@@ -86,7 +86,7 @@ class toQPSqlConnectionSub : public toQSqlConnectionSub
         }
 
         virtual QString version();
-        virtual QString sessionId();
+        virtual toQueryParams sessionId();
 
         virtual queryImpl* createQuery(toQuery *query);
 

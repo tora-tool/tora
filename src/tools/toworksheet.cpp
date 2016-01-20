@@ -79,7 +79,6 @@
 #include <QtCore/QTextStream>
 #include <QInputDialog>
 #include <QProgressDialog>
-#include <QtCore/QCryptographicHash>
 
 #include "icons/clock.xpm"
 #include "icons/recall.xpm"
@@ -203,63 +202,44 @@ static toSQL SQLParseSql("toWorksheet:ParseSql",
                          , "0800"
                          , "Oracle");
 
+#if 0
+QString toSQLToSql_Id(const QString &sql);
+
 static QString toSQLToAddress(toConnection &conn, const QString &sql)
 {
-    QString search = Utils::toSQLStripSpecifier(sql);
+	QString sql_id = toSQLToSql_Id(sql);
 
+    QString search = Utils::toSQLStripSpecifier(sql);
+	QString s = search.left(CHUNK_SIZE);
     toQList vals = toQuery::readQuery(conn, SQLAddress, toQueryParams() << search.left(CHUNK_SIZE));
 
     for (toQList::iterator i = vals.begin(); i != vals.end(); i++)
     {
+		int index = std::distance(vals.begin(), i);
         if (search == Utils::toSQLString(conn, (QString)*i))
             return (QString)*i;
     }
     throw qApp->translate("toSQLToAddress", "SQL Query not found in SGA");
 }
-
-static QString toSQLToSql_Id(const QString &sql)
-{
-    // based on
-    // http://www.slaviks-blog.com/2010/03/30/oracle-sql_id-and-hash-value/
-    // Note: 11gR2 also has dbms_sqltune_util0.sqltext_to_sqlid - but who cares
-    QByteArray ba = sql.toLocal8Bit();
-    ba.append('\0');
-    QByteArray baHash = QCryptographicHash::hash(ba, QCryptographicHash::Md5);
-
-    QString sql_id;
-    //consider only last/most significant 64 bits of regular 128bit MD5 hash
-    quint32 *msb = (quint32*)(&(baHash.constData()[8]));
-    quint32 *lsb = (quint32*)(&(baHash.constData()[12])); // these bits are the traditional 32 bit hash value
-    quint64 value = (quint64)(*msb) * 4294967296ULL + (quint64)(*lsb);
-    static const char* base32 = "0123456789abcdfghjkmnpqrstuvwxyz";
-    if (value == 0)
-    {
-        sql_id = "0";
-    }
-    else
-    {
-        while (value )
-        {
-            sql_id = base32[value % 32] + sql_id;
-            value /= 32;
-        }
-        sql_id = sql_id.rightJustified(13, '0');
-    }
-    quint32 *hash_value = (quint32*)(&(baHash.constData()[12]));
-    return QString("%1:%2").arg(*hash_value).arg(sql_id);
-}
+#endif
 
 void toWorksheet::viewResources(void)
 {
     try
     {
-        QString address = toSQLToAddress(connection(), m_lastQuery.sql);
-        Resources->refreshWithParams(toQueryParams() << address);
-        QString sql = toSQL::string("toSGATrace:LongOps", connection());
-        sql += "   AND b.SQL_Address||':'||b.SQL_Hash_Value = :addr<char[100]>";
-        LongOps->setSQL(sql);
-        LongOps->clearParams();
-        LongOps->refreshWithParams(toQueryParams() << address);
+		QString sql_id = Utils::toSQLToSql_Id(m_lastQuery.sql);
+		Resources->refreshWithParams(toQueryParams() /*<< sid*/ << sql_id);
+
+		if (LockedConnection)
+		{
+			toQueryParams sidserial = (*LockedConnection)->sessionId();
+			QString sql = toSQL::string("toSGATrace:LongOps", connection());
+			sql += " AND b.SID = :sid<int> && b.SERIAL# = :serial<int> \n";
+			sql += " AND b.SQL_ID :sqlid<char[100]>                    \n";
+			LongOps->setSQL(sql);
+			LongOps->clearParams();
+			LongOps->refreshWithParams(toQueryParams() << sidserial << sql_id);
+		}
     }
     TOCATCH
 }
@@ -1682,8 +1662,11 @@ void toWorksheet::slotDescribe(void)
 void toWorksheet::slotDescribeNew(void)
 {
     toSyntaxAnalyzer::statement stat = currentStatement();
-    TOMessageBox::information (this, toSQLToSql_Id(stat.sql), stat.sql);
+	TOMessageBox::information(this, Utils::toSQLToSql_Id(stat.sql), stat.sql);
 
+	TLOG(1, toDecorator, __HERE__) << "sql_id lf: " << Utils::toSQLToSql_Id(stat.sql) << std::endl;
+
+	return;
 #if 0
     int line, col;
     QString buffer;

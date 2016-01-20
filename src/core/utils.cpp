@@ -53,6 +53,7 @@
 #include <QtGui/QKeyEvent>
 #include <QDockWidget>
 #include <QStyleFactory>
+#include <QtCore/QCryptographicHash>
 
 #include <stdlib.h>
 #include <algorithm>
@@ -106,142 +107,6 @@ namespace Utils
 //tool         throw qApp->translate("toSQLString", "SQL Address not found in SGA");
 //tool     return sql;
 //tool }
-
-    QString toSQLStripSpecifier(const QString &sql)
-    {
-        QString ret;
-        char inString = 0;
-        for (int i = 0; i < sql.length(); i++)
-        {
-            QChar rc = sql.at(i);
-            char c = rc.toLatin1();
-            if (inString)
-            {
-                if (c == inString)
-                {
-                    inString = 0;
-                }
-                ret += c;
-            }
-            else
-            {
-                switch (c)
-                {
-                    case '\'':
-                        inString = '\'';
-                        ret += rc;
-                        break;
-                    case '\"':
-                        inString = '\"';
-                        ret += rc;
-                        break;
-                    case ':':
-                        ret += rc;
-                        for (i++; i < sql.length(); i++)
-                        {
-                            rc = sql.at(i);
-                            c = rc.toLatin1();
-                            if (!rc.isLetterOrNumber())
-                                break;
-                            ret += rc;
-                        }
-                        if (c == '<')
-                        {
-                            ret += QString::fromLatin1(" ");
-                            for (i++; i < sql.length(); i++)
-                            {
-                                rc = sql.at(i);
-                                c = rc.toLatin1();
-                                ret += QString::fromLatin1(" ");
-                                if (c == '>')
-                                {
-                                    i++;
-                                    break;
-                                }
-                            }
-                        }
-                        i--;
-                        break;
-                    default:
-                        ret += rc;
-                }
-            }
-        }
-        return ret;
-    }
-
-    QString toSQLStripBind(const QString &sql)
-    {
-        QString ret;
-        char inString = 0;
-        for (int i = 0; i < sql.length(); i++)
-        {
-            QChar rc = sql.at(i);
-            char  c  = rc.toLatin1(); // current
-            char  n  = 0;           // next
-            if (i + 1 < sql.length())
-                n = sql.at(i + 1).toLatin1();
-
-            if (inString)
-            {
-                if (c == inString)
-                {
-                    inString = 0;
-                }
-                ret += rc;
-            }
-            else
-            {
-                switch (char(c))
-                {
-                    case '\'':
-                        inString = '\'';
-                        ret += rc;
-                        break;
-                    case '\"':
-                        inString = '\"';
-                        ret += rc;
-                        break;
-                    case ':':
-                        // don't nuke my postgres-style casts
-                        if (n == ':')
-                        {
-                            ret += rc;
-                            ret += n;
-                            i++;
-                            break;
-                        }
-
-                        ret += QString::fromLatin1("''");
-                        for (i++; i < sql.length(); i++)
-                        {
-                            rc = sql.at(i);
-                            c = rc.toLatin1();
-                            if (!rc.isLetterOrNumber())
-                                break;
-                        }
-                        if (c == '<')
-                        {
-                            for (i++; i < sql.length(); i++)
-                            {
-                                rc = sql.at(i);
-                                c = rc.toLatin1();
-                                if (c == '>')
-                                {
-                                    i++;
-                                    break;
-                                }
-                            }
-                        }
-                        i--;
-                        break;
-                    default:
-                        ret += rc;
-                }
-            }
-        }
-        return ret;
-    }
 
     QString toDeepCopy(const QString &str)
     {
@@ -575,6 +440,44 @@ namespace Utils
         if (sql.isEmpty())
             throw qApp->translate("toSQLString", "SQL Address not found in SGA");
         return sql;
+    }
+
+    /** Get hash of SQL statement using Oracles' internal algorithm
+     * @param sql statement
+     * @return sql_id
+     */
+    QString toSQLToSql_Id(const QString &sql)
+    {
+    	// based on
+    	// http://www.slaviks-blog.com/2010/03/30/oracle-sql_id-and-hash-value/
+    	// Note: 11gR2 also has dbms_sqltune_util0.sqltext_to_sqlid - but who cares
+    	QByteArray ba = sql.toLocal8Bit();
+    	ba.replace("\r", 1, "", 0); // Convert CR/LF => LF
+    	ba.append('\0');
+    	QByteArray baHash = QCryptographicHash::hash(ba, QCryptographicHash::Md5);
+
+    	QString sql_id;
+    	//consider only last/most significant 64 bits of regular 128bit MD5 hash
+    	quint32 *msb = (quint32*)(&(baHash.constData()[8]));
+    	quint32 *lsb = (quint32*)(&(baHash.constData()[12])); // these bits are the traditional 32 bit hash value
+    	quint64 value = (quint64)(*msb) * 4294967296ULL + (quint64)(*lsb);
+    	static const char* base32 = "0123456789abcdfghjkmnpqrstuvwxyz";
+    	if (value == 0)
+    	{
+    		sql_id = "0";
+    	}
+    	else
+    	{
+    		while (value )
+    		{
+    			sql_id = base32[value % 32] + sql_id;
+    			value /= 32;
+    		}
+    		sql_id = sql_id.rightJustified(13, '0');
+    	}
+    	quint32 *hash_value = (quint32*)(&(baHash.constData()[12]));
+    	//return QString("%1:%2").arg(*hash_value).arg(sql_id);
+    	return sql_id;
     }
 
     int toSizeDecode(const QString &str)

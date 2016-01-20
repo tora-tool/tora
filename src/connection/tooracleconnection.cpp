@@ -353,10 +353,10 @@ QString toOracleConnectionSub::version()
            .arg((int)_login->_server.releaseNumber(), 2, 10, QChar('0'));
 }
 
-QString toOracleConnectionSub::sessionId()
+toQueryParams toOracleConnectionSub::sessionId()
 {
-    QString retval("(%1, %2)");
-    return retval.arg(_login->sid()).arg(_login->serial());
+    toQueryParams retval;
+    return retval << _login->sid() << _login->serial();
 }
 
 bool toOracleConnectionSub::hasTransaction()

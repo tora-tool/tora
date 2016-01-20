@@ -2,6 +2,7 @@
 #define TOCONNECTIONSUB
 
 #include "core/tocache.h"
+#include "core/toqvalue.h"
 #include "core/tora_export.h"
 
 #include <QtCore/QDateTime>
@@ -60,7 +61,7 @@ class TORA_EXPORT toConnectionSub
 
         virtual QString version() = 0;
 
-        virtual QString sessionId() = 0;
+        virtual toQueryParams sessionId() = 0;
 
         virtual bool hasTransaction();
 
