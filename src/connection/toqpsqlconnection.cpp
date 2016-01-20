@@ -174,11 +174,11 @@ QString toQPSqlConnectionSub::version()
         return super::version();
 }
 
-QString toQPSqlConnectionSub::sessionId()
+toQueryParams toQPSqlConnectionSub::sessionId()
 {
     int ver = nativeSessionId();
     if (ver)
-        return QString::number(ver);
+        return toQueryParams() << QString::number(ver);
     else
         return super::sessionId();
 }

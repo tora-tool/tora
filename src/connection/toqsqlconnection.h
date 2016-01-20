@@ -149,7 +149,7 @@ class toQSqlConnectionSub: public toConnectionSub
         virtual void rollback();
 
         virtual QString version();
-        virtual QString sessionId();
+        virtual toQueryParams sessionId();
 
         virtual queryImpl* createQuery(toQuery *query);
 

@@ -48,7 +48,7 @@ toQSqlConnectionSub::toQSqlConnectionSub(toConnection const& parent, QSqlDatabas
     , ParentConnection(parent)
     , HasTransactions(false)
 {
-    ConnectionID = sessionId();
+    ConnectionID = sessionId().first();
 }
 
 toQSqlConnectionSub::~toQSqlConnectionSub()
@@ -111,9 +111,9 @@ QString toQSqlConnectionSub::version()
     return ret;
 }
 
-QString toQSqlConnectionSub::sessionId()
+toQueryParams toQSqlConnectionSub::sessionId()
 {
-    QString ret;
+    toQueryParams ret;
     try
     {
         LockingPtr<QSqlDatabase> ptr(Connection, Lock);
@@ -123,7 +123,7 @@ QString toQSqlConnectionSub::sessionId()
         {
             QSqlRecord record = query.record();
             QVariant val = query.value(record.count() - 1);
-            ret = val.toString().toLatin1();
+            ret << val.toString();
         }
     }
     catch (std::exception const&e)

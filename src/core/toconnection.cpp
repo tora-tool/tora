@@ -184,7 +184,7 @@ QList<QString> toConnection::running(void) const
     {
         static QString sql("Session: %1\n%2\n");
         toQuery *query = conn->query();
-        ret << sql.arg(conn->sessionId()).arg(query ? query->sql() : QString("None"));
+        ret << sql.arg(conn->sessionId().first()).arg(query ? query->sql() : QString("None"));
     }
     return ret;
 }
@@ -337,7 +337,7 @@ void toConnection::connectionsMenu(QMenu *menu)
     QMutexLocker clock(&ConnectionLock);
     Q_FOREACH(toConnectionSub* conn, LentConnections)
     {
-        QMenu *sess = menu->addMenu(conn->sessionId());
+        QMenu *sess = menu->addMenu(conn->sessionId().first());
         QAction *cancel = new QAction("Cancel", this);
         QAction *close = new QAction("Close", this);
         cancel->setData(VPtr<toConnectionSub>::asQVariant(conn));
@@ -351,7 +351,7 @@ void toConnection::connectionsMenu(QMenu *menu)
     menu->addSeparator();
     Q_FOREACH(toConnectionSub* conn, Connections)
     {
-        QMenu *sess = menu->addMenu(conn->sessionId());
+        QMenu *sess = menu->addMenu(conn->sessionId().first());
         QAction *close = new QAction("Close", this);
         close->setData(VPtr<toConnectionSub>::asQVariant(conn));
         sess->addAction(close);
