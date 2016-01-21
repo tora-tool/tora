@@ -231,6 +231,7 @@ static toSQL SQLTableColumns(
     "                'N',\n"
     "                'NOT NULL',\n"
     "                NULL ) AS \"NULL\",\n"
+    "       decode(HISTOGRAM, 'NONE', null, HISTOGRAM) as \"Histogram\", \n"
     "       ( SELECT comments\n"
     "           FROM sys.All_Col_Comments c\n"
     "          WHERE c.owner = tc.owner\n"
