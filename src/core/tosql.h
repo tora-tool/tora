@@ -143,6 +143,9 @@ class toSQL
         /** Check that @ref Definitions are allocated, if not allocate it.
          */
         static void allocCheck(void);
+
+        /** default database version for toSql instances where version is defined and empty string "" */
+        static QString defaultVersion;
     public:
         /** Name of the SQL to get a userlist
          */
