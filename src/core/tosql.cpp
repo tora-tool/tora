@@ -48,6 +48,8 @@ toSQL::sqlMap *toSQL::Definitions;
 const char * const toSQL::TOSQL_USERLIST = "Global:UserList";
 const char * const toSQL::TOSQL_CREATEPLAN = "Global:CreatePlan";
 
+QString toSQL::defaultVersion("0000");
+
 toSQL::toSQL(const QString &name,
              const QString &sql,
              const QString &description,
@@ -55,7 +57,7 @@ toSQL::toSQL(const QString &name,
              const QString &provider)
     : Name(name)
 {
-    updateSQL(name, sql, description, ver, provider, false);
+    updateSQL(name, sql, description, ver.isEmpty() ? defaultVersion : ver, provider, false);
 }
 
 toSQL::toSQL(const QString &name)
@@ -194,7 +196,7 @@ QString toSQL::string(const QString &name, const toConnection &conn)
     	if (SessionProvider == "Any")
     		quit = true;
     	QString *sql = NULL;
-    	QString SqlVersion = "0000";
+    	QString SqlVersion = defaultVersion;
     	std::list<version> &cl = (*i).second.Versions;
     	for (std::list<version>::iterator j = cl.begin(); j != cl.end(); j++)
     	{
@@ -203,7 +205,7 @@ QString toSQL::string(const QString &name, const toConnection &conn)
 
     		QString &QueryVersion = (*j).Version;
     		QString &QueryProvider = (*j).Provider;
-    		if (SqlVersion < QueryVersion && QueryVersion <= SessionVersion)
+    		if (SqlVersion <= QueryVersion && QueryVersion <= SessionVersion)
     		{
     			sql = &(*j).SQL;
     			SqlVersion = QueryVersion;
