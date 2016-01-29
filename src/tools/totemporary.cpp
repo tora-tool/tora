@@ -84,7 +84,7 @@ static toSQL SQLListTemporaryObjects9("toTemporary:ListTemporaryObjects",
                                       "   AND a.address ( + ) = s.sql_address\n"
                                       "   AND a.hash_value ( + ) = s.sql_hash_value\n"
                                       "   AND p.name = 'db_block_size'",
-                                      QString::null,
+                                      "",
                                       "0900");
 
 class toTemporaryTool : public toTool

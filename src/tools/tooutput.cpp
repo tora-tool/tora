@@ -403,7 +403,6 @@ static toSQL SQLLog("toLogOutput:Poll",
 
 toLogOutput::toLogOutput(QWidget *parent, toConnection &connection)
     : toOutput(parent, connection)
-    , customizedLogSQL(SQLLog)
 {
     Type = new QComboBox(Toolbar);
     Type->addItem(tr("SQL Output"));
@@ -424,15 +423,11 @@ void toLogOutput::refresh(void)
 
         Log->removeSQL();
 
-        // Ugly woodo to replace %1 with the configured logging table name
-        customizedLogSQL.updateSQL(
-            SQLLog.name(), // "toLogOutput:Poll"
-            toSQL::string(SQLLog.name(), connection()).arg( toConfigurationNewSingle::Instance().option(ToConfiguration::Output::LogUser).toString()),
-            toSQL::description(SQLLog.name()),
-            connection().version(),
-            connection().provider(),
-            true);
-        Log->setSQL(customizedLogSQL);
+        // replace %1 with the configured logging table name
+        QString sql = toSQL::string(SQLLog, connection());
+        QString planTableName = toConfigurationNewSingle::Instance().option(ToConfiguration::Output::LogUser).toString();
+        QString customizedSQL = sql.arg(planTableName);
+        Log->setSQL(customizedSQL);
         Log->refresh();
     }
     toOutput::refresh();

@@ -50,14 +50,14 @@ const char * const toSQL::TOSQL_CREATEPLAN = "Global:CreatePlan";
 
 QString toSQL::defaultVersion("0000");
 
-toSQL::toSQL(const QString &name,
-             const QString &sql,
-             const QString &description,
-             const QString &ver,
-             const QString &provider)
+toSQL::toSQL(char const *name,
+             char const *sql,
+             char const *description,
+             char const *ver,
+             char const *provider)
     : Name(name)
 {
-    updateSQL(name, sql, description, ver.isEmpty() ? defaultVersion : ver, provider, false);
+    updateSQL(name, sql, description, ver, provider, false);
 }
 
 toSQL::toSQL(const QString &name)
@@ -70,76 +70,75 @@ void toSQL::allocCheck(void)
         Definitions = new sqlMap;
 }
 
-bool toSQL::updateSQL(const QString &name,
-                      const QString &sql,
-                      const QString &description,
-                      const QString &ver,
-                      const QString &provider,
+bool toSQL::updateSQL(char const *_name,
+                      char const *_sql,
+                      char const *_description,
+                      char const *_ver,
+                      char const *_provider,
                       bool modified)
 {
-    version def(provider, ver, sql, modified);
+	QString description(_description);
+	version def(_provider, _ver, _sql, modified);
 
     allocCheck();
-    sqlMap::iterator i = Definitions->find(name);
+    sqlMap::iterator i = Definitions->find(_name);
     if (i == Definitions->end())
     {
         if (description.isEmpty())
         {
-            fprintf(stderr, "ERROR:Tried add new version to unknown SQL (%s)\n", name.toLatin1().constData());
+            fprintf(stderr, "ERROR:Tried add new version to unknown SQL (%s)\n", _name);
             return false;
         }
         definition newDef;
         newDef.Modified = modified;
-        newDef.Description = description;
-        if (!sql.isNull())
+        newDef.Description = _description;
+        if (!def.SQL.isNull())
         {
             std::list<version> &cl = newDef.Versions;
             cl.insert(cl.end(), def);
         }
-        (*Definitions)[name] = newDef;
+        (*Definitions)[_name] = newDef;
         return true;
     }
-    else
+
+    if (!description.isEmpty())
     {
-        if (!description.isEmpty())
-        {
-            if ((*i).second.Description != description)
-            {
-                (*i).second.Description = description;
-                (*i).second.Modified = modified;
-            }
-            if (!modified)
-                fprintf(stderr, "ERROR:Overwrite description of nonmodified (%s)\n", name.toLatin1().constData());
-        }
-        std::list<version> &cl = (*i).second.Versions;
-        for (std::list<version>::iterator j = cl.begin(); j != cl.end(); j++)
-        {
-            if ((*j).Provider == provider && (*j).Version == ver)
-            {
-                if (!sql.isNull())
-                {
-                    (*j) = def;
-                    if (def.SQL != (*j).SQL)
-                        (*j).Modified = modified;
-                }
-                return false;
-            }
-            else if ((*j).Provider > provider ||
-                     ((*j).Provider == provider && (*j).Version > ver))
-            {
-                if (!sql.isNull())
-                    cl.insert(j, def);
-                return true;
-            }
-        }
-        cl.insert(cl.end(), def);
-        return true;
+    	if ((*i).second.Description != description)
+    	{
+    		(*i).second.Description = description;
+    		(*i).second.Modified = modified;
+    	}
+    	if (!modified)
+    		fprintf(stderr, "ERROR:Overwrite description of nonmodified (%s)\n", _name);
     }
+
+    std::list<version> &cl = (*i).second.Versions;
+    for (std::list<version>::iterator j = cl.begin(); j != cl.end(); j++)
+    {
+    	if (j->Provider == def.Provider && j->Version == def.Version)
+    	{
+    		if (!def.SQL.isNull())
+    		{
+    			if (def.SQL != j->SQL)
+    				def.Modified = modified;
+    			(*j) = def;
+    		}
+    		return false;
+    	}
+    	else if (j->Provider > def.Provider || (j->Provider == def.Provider && j->Version > def.Version))
+    	{
+    		if (!def.SQL.isNull())
+    			cl.insert(j, def);
+    		return true;
+    	}
+    }
+    cl.insert(cl.end(), def);
+    return true;
 }
 
-bool toSQL::deleteSQL(const QString &name,
-                      const QString &ver,
-                      const QString &provider)
+bool toSQL::deleteSQL(QString const& name,
+                      QString const& ver,
+                      QString const& provider)
 {
     allocCheck();
     sqlMap::iterator i = Definitions->find(name);
@@ -152,15 +151,15 @@ bool toSQL::deleteSQL(const QString &name,
         std::list<version> &cl = (*i).second.Versions;
         for (std::list<version>::iterator j = cl.begin(); j != cl.end(); j++)
         {
-            if ((*j).Version == ver && (*j).Provider == provider)
+            if (j->Version == ver && j->Provider == provider)
             {
                 cl.erase(j);
                 if ( cl.empty() )
                     Definitions->erase(i);
                 return true;
             }
-            else if ((*j).Provider > provider ||
-                     ((*j).Provider == provider && !(*j).Version.isNull()))
+            else if (j->Provider > provider ||
+                     (j->Provider == provider && ! j->Version.isNull()))
             {
                 return false;
             }
@@ -195,24 +194,24 @@ QString toSQL::string(const QString &name, const toConnection &conn)
     {
     	if (SessionProvider == "Any")
     		quit = true;
-    	QString *sql = NULL;
+    	QString retval;
     	QString SqlVersion = defaultVersion;
     	std::list<version> &cl = (*i).second.Versions;
     	for (std::list<version>::iterator j = cl.begin(); j != cl.end(); j++)
     	{
-    		if ((*j).Provider != SessionProvider)
+    		if (j->Provider != SessionProvider)
     			continue;
 
-    		QString &QueryVersion = (*j).Version;
-    		QString &QueryProvider = (*j).Provider;
+    		QString const& QueryVersion = j->Version;
+    		QString const& QueryProvider = j->Provider;
     		if (SqlVersion <= QueryVersion && QueryVersion <= SessionVersion)
     		{
-    			sql = &(*j).SQL;
+    			retval = j->SQL;
     			SqlVersion = QueryVersion;
     		}
     	}
-    	if (sql)
-    		return *sql;
+    	if (!retval.isEmpty())
+    		return retval;
 
     	SessionProvider = "Any";
     }
@@ -256,7 +255,7 @@ bool toSQL::saveSQL(const QString &filename, bool all)
                 line += "][";
                 line += ver.Provider;
                 line += "]=";
-                QString t = ver.SQL;
+                QString t(ver.SQL);
                 t.replace(backslash, QString::fromLatin1("\\\\"));
                 t.replace(newline, QString::fromLatin1("\\n"));
                 line += t;
@@ -296,19 +295,19 @@ void toSQL::loadSQL(const QString &filename)
                     throw QT_TRANSLATE_NOOP("toSQL", "Malformed tag in config file. Missing = on row.");
                 data[wpos] = 0;
                 {
-                    QString nam = ((const char *)data) + bol;
-                    QString val(QString::fromUtf8(((const char *)data) + endtag + 1));
-                    QString ver;
-                    QString prov;
+                    char const* nam = ((const char *)data) + bol;
+					char const* val = ((const char *)data) + endtag + 1;
+					char const* ver;
+					char const* prov;
                     if (vertag >= 0)
                     {
                         ver = ((const char *)data) + vertag + 1;
                         if (provtag >= 0)
                             prov = ((const char *)data) + provtag + 1;
-                        updateSQL(nam, val, QString::null, ver, prov, true);
+                        updateSQL(nam, val, "", ver, prov, true);
                     }
                     else
-                        updateSQL(nam, QString::null, val, "", "", true);
+                        updateSQL(nam, "", val, "", "", true);
                 }
                 bol = pos + 1;
                 provtag = vertag = endtag = -1;

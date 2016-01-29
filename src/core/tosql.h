@@ -100,9 +100,12 @@ class toSQL
              * @param sql Statement
              * @param modified Wether it is modified or not.
              */
-            version(const QString &provider, const QString &ver, const QString &sql, bool modified = false)
+            version(char const *provider, char const *ver, char const *sql, bool modified = false)
                 : Provider(provider), Version(ver), SQL(sql), Modified(modified)
-            { }
+            {
+            	if(Version.isEmpty())
+            		Version = "0000";
+            }
         }
         ;
 
@@ -162,11 +165,11 @@ class toSQL
          * @param modified Wether this is a modification or an addition to the map.
          * @return True if a new statement was saved, otherwise false.
          */
-        static bool updateSQL(const QString &name,
-                              const QString &sql,
-                              const QString &description,
-                              const QString &ver = "0801",
-                              const QString &provider = "Oracle",
+        static bool updateSQL(char const *name,
+                              char const *sql,
+                              char const *description,
+                              char const *ver = "0801",
+                              char const *provider = "Oracle",
                               bool modified = true);
 
         /** Remove an SQL statement from a map. If the last version is removed
@@ -176,9 +179,9 @@ class toSQL
          * @param provider Provider to delete.
          * @return True if a version was found to be removed.
          */
-        static bool deleteSQL(const QString &name,
-                              const QString &ver,
-                              const QString &provider = "Oracle");
+        static bool deleteSQL(QString const& name,
+                              QString const& ver,
+                              QString const& provider = "Oracle");
 
         /** Get the statement of an SQL.
          * @param name Name of statement.
@@ -295,11 +298,11 @@ class toSQL
          * @param ver Version this statement applies to.
          * @param provider Provider this string is for.
          */
-        toSQL(const QString &name,
-              const QString &sql,
-              const QString &description = "",
-              const QString &ver = "0801",
-              const QString &provider = "Oracle");
+        toSQL(char const *name,
+              char const * sql,
+              char const *description = "",
+              char const *ver = "0801",
+              char const *provider = "Oracle");
 };
 
 #endif

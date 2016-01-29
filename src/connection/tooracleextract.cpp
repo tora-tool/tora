@@ -4705,7 +4705,7 @@ static toSQL SQLTableConstraints7("toOracleExtract:TableConstraints",
                                   "              ,'C',4\n"
                                   "             )\n"
                                   "     , constraint_name",
-                                  QString::null,
+                                  "",
                                   "0703");
 
 static toSQL SQLTableReferences("toOracleExtract:TableReferences",
@@ -4742,7 +4742,7 @@ static toSQL SQLTableReferences7("toOracleExtract:TableReferences",
                                  "              ,'R',1\n"
                                  "             )\n"
                                  "     , constraint_name",
-                                 QString::null,
+                                 "",
                                  "0703");
 
 static toSQL SQLTableTriggers("toOracleExtract:TableTriggers",

@@ -417,10 +417,10 @@ void toSQLEdit::commitChanges(bool changeSelected)
         Description->setText(tr("Undescribed"));
     }
     toSQL::updateSQL(name.toLatin1(),
-                     Worksheet->editor()->sciEditor()->text(),
-                     Description->text(),
-                     version,
-                     provider);
+                     Worksheet->editor()->sciEditor()->text().toLocal8Bit().constData(),
+                     Description->text().toLocal8Bit().constData(),
+                     version.toLocal8Bit().constData(),
+                     provider.toLocal8Bit().constData());
     TrashButton->setEnabled(true);
     CommitButton->setEnabled(true);
 
@@ -521,7 +521,7 @@ void toSQLEdit::changeSQL(const QString &name, const QString &maxver)
         int ind = 0;
         for (std::list<toSQL::version>::iterator i = ver.begin(); i != ver.end(); i++)
         {
-            QString str = (*i).Provider;
+            QString str = i->Provider;
             str += QString::fromLatin1(":");
             str += (*i).Version;
             Version->addItem(str);
@@ -534,7 +534,7 @@ void toSQLEdit::changeSQL(const QString &name, const QString &maxver)
         }
         if (j != ver.end())
         {
-            Worksheet->editor()->sciEditor()->setText((*j).SQL);
+            Worksheet->editor()->sciEditor()->setText(j->SQL);
             TrashButton->setEnabled(true);
             CommitButton->setEnabled(true);
             Version->setCurrentIndex(ind);
