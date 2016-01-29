@@ -111,7 +111,6 @@ class toLogOutput : public toOutput
 
         QComboBox *Type;
         toResultView *Log;
-        toSQL customizedLogSQL;
 
     public:
         toLogOutput(QWidget *parent, toConnection &connection);
