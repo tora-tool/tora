@@ -183,6 +183,9 @@ void toTemporary::refresh(void)
 
 void toTemporary::changeItem(toTreeWidgetItem *item)
 {
+	throw QString("toSGATrace::changeItem: not implemented yet.");
+#if 0
     if (item)
         Statement->changeAddress(item->text(Objects->columns()));
+#endif
 }

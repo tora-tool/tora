@@ -35,7 +35,7 @@
 #ifndef TOSGASTATEMENT_H
 #define TOSGASTATEMENT_H
 
-
+#include "core/toqvalue.h"
 
 #include <QTabWidget>
 
@@ -44,6 +44,7 @@ class QTabWidget;
 class toResultField;
 class toResultItem;
 class toResultPlan;
+class toResultPlanNew;
 class toResultView;
 
 /** This widget displays information about a statement in the Oracle SGA. To get an
@@ -65,9 +66,13 @@ class toSGAStatement : public QTabWidget
         /** Address of the statement.
          */
         QString Address;
+        /** Cursor
+         */
+        QString Cursor;
         /** Execution plan of the statement.
          */
         toResultPlan *Plan;
+        toResultPlanNew *PlanNew;
 
         /** Display resources of statement.
          */
@@ -81,11 +86,13 @@ class toSGAStatement : public QTabWidget
          * @param parent Parent widget.
          */
         toSGAStatement(QWidget *parent);
-    public slots:
+
         /** Display another statement.
          * @param address Address of the statement to display.
          */
-        virtual void changeAddress(const QString &address);
+        void changeAddress(toQueryParams const& sqlid);
+
+    public slots:
         /** Update the contents of this widget.
          */
         void refresh(void)

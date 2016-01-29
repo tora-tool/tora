@@ -473,6 +473,12 @@ void toWorksheet::setup(bool autoLoad)
     ResultTab->addTab(Plan, tr("E&xecution plan"));
     explainAct->setEnabled(Plan->handled());
 
+    PlanNew = new toResultPlanNew();
+    ResultTab->addTab(PlanNew, "NewPlan");
+
+    PlanNewExp  = new toResultPlanNew();
+    ResultTab->addTab(PlanNewExp, "NewPlan Exp");
+
     ResourceSplitter = new QSplitter(Qt::Vertical, ResultTab);
     Resources = new toResultResources(ResourceSplitter);
 
@@ -920,6 +926,10 @@ void toWorksheet::slotChangeResult(int index)
     {
         if (CurrentTab == Plan)
             Plan->query(m_lastQuery.sql, toQueryParams() << QString("EXPLAIN"));
+        else if (CurrentTab == PlanNew)
+            PlanNew->queryCursorPlan(toQueryParams() << Utils::toSQLToSql_Id(m_lastQuery.sql) << toQValue(0));
+        else if (CurrentTab == PlanNewExp)
+            PlanNewExp->queryPlanTable(toQueryParams() << m_lastQuery.sql);
         else if (CurrentTab == ResourceSplitter)
             viewResources();
         else if (CurrentTab == Statistics && Result->running())

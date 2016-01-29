@@ -62,12 +62,12 @@ static toSQL SQLParsingSchema(
     "  FROM v$sql a,\n"
     "       all_users b\n"
     " WHERE b.user_id = a.parsing_schema_id\n"
-    "   AND a.address || ':' || a.hash_value = :f1<char[101]> AND a.child_number = 0",
+    "   AND a.sql_id = :f1<char[101]> AND a.child_number = :f2<char[101]>",
     "Get the schema that parsed a statement");
 
 static toSQL SQLcheckVSQL(
     "toSGAStatement:checkVSQL",
-    "SELECT count(*) FROM V$SQL_PLAN WHERE Address||':'||Hash_Value = '%1'",
+    "SELECT count(*) FROM V$SQL_PLAN WHERE SQL_ID = '%1'",
     "Check whether plan for the statement with specified addres exists in V$SQL_PLAN",
     "0900");
 
@@ -89,6 +89,8 @@ toSGAStatement::toSGAStatement(QWidget *parent)
     {
         Plan = new toResultPlan(this);
         addTab(Plan, tr("Execution plan"));
+        PlanNew = new toResultPlanNew(this);
+        addTab(PlanNew, tr("Execution plan New"));
         Resources = new toResultResources(this);
         addTab(Resources, tr("Information"));
     }
@@ -102,67 +104,70 @@ toSGAStatement::toSGAStatement(QWidget *parent)
 
 void toSGAStatement::changeTab(int index)
 {
-    QWidget *widget = QTabWidget::widget(index);
+    if (Address.isEmpty() || Address == QString::fromLatin1("00:0"))
+    	return;
+
+    CurrentTab = QTabWidget::widget(index);
     try
     {
-        CurrentTab = widget;
-        if (!Address.isEmpty() && Address != QString::fromLatin1("00:0"))
-        {
-            if (CurrentTab == SQLText)
-            {
-                QString sql;
-                toConnection &conn = toConnection::currentConnection(this);
+    	if (CurrentTab == SQLText)
+    	{
+    		QString sql;
+    		toConnection &conn = toConnection::currentConnection(this);
 
-                if (conn.providerIs("Oracle"))
-                    sql = Utils::toSQLString(conn, Address);
-                else if (conn.providerIs("QPSQL"))
-                {
-                    toQList vals = toQuery::readQuery(conn, SQLBackendSql, toQueryParams() << Address);
+    		if (conn.providerIs("Oracle"))
+    			sql = Utils::toSQLString(conn, Address);
+    		else if (conn.providerIs("QPSQL"))
+    		{
+    			toQList vals = toQuery::readQuery(conn, SQLBackendSql, toQueryParams() << Address);
 
-                    for (toQList::iterator i = vals.begin(); i != vals.end(); i++)
-                        sql.append((QString)*i);
-                }
+    			for (toQList::iterator i = vals.begin(); i != vals.end(); i++)
+    				sql.append((QString)*i);
+    		}
 
-                // TODO: toSQLParse disabled
-                // if (toConfigurationSingle::Instance().autoIndent())
-                // sql = toSQLParse::indent(sql);
-                SQLText->sciEditor()->setText(sql);
-            }
-            else if (CurrentTab == Plan)
-            {
-                toConnection &conn = toConnection::currentConnection(this);
-                /*
+    		// TODO: toSQLParse disabled
+    		// if (toConfigurationSingle::Instance().autoIndent())
+    		// sql = toSQLParse::indent(sql);
+    		SQLText->sciEditor()->setText(sql);
+    	}
+    	else if (CurrentTab == Plan)
+    	{
+    		toConnection &conn = toConnection::currentConnection(this);
+    		/*
                     Plan->query(toSQLString(toConnection::currentConnection(this), Address),
                                 toQuery::readQuery(toConnection::currentConnection(this),
                                                    SQLParsingSchema, Address));
-                               */
-                if (////conn.version() >= "0900" &&
-                    toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::VSqlPlansBool).toBool() &&
-                    toQuery::readQuery(conn, toSQL::string(SQLcheckVSQL, conn).arg(Address), toQueryParams()).begin()->toInt() > 0
-                )
-                {
-                    Plan->query(QString::fromLatin1("SGA:") + Address, toQueryParams() << QString("SGA") << Address);
-                }
-                else
-                {
-                    toQueryParams params;
-                    toQList l = toQuery::readQuery(conn, SQLParsingSchema, toQueryParams() << Address);
-                    if (!l.empty())
-                    {
-                        toQValue schema = l.front();
-                        Plan->query(Utils::toSQLString(conn, Address), toQueryParams() << schema);
-                    }
-                }
-            }
-            else if (CurrentTab == Resources)
-                viewResources();
-        }
+    		 */
+    		if (////conn.version() >= "0900" &&
+    				toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::VSqlPlansBool).toBool()
+					&&
+					toQuery::readQuery(conn, toSQL::string(SQLcheckVSQL, conn).arg(Address), toQueryParams()).begin()->toInt() > 0
+    		)
+    		{
+    			Plan->query(QString::fromLatin1("SGA:") + Address, toQueryParams() << QString("SGA") << Address);
+    		}
+    		else
+    		{
+    			toQueryParams params;
+    			toQList l = toQuery::readQuery(conn, SQLParsingSchema, toQueryParams() << Address);
+    			if (!l.empty())
+    			{
+    				toQValue schema = l.front();
+    				Plan->query(Utils::toSQLString(conn, Address), toQueryParams() << schema);
+    			}
+    		}
+    	}
+    	else if (CurrentTab == PlanNew)
+    		PlanNew->queryCursorPlan(toQueryParams() << Address << Cursor);
+    	else if (CurrentTab == Resources)
+    		viewResources();
     }
     TOCATCH;
 }
 
-void toSGAStatement::changeAddress(const QString &str)
+void toSGAStatement::changeAddress(toQueryParams const& sqlid)
 {
-    Address = str;
+    Address = sqlid[0];
+    Cursor  = sqlid[1];
     changeTab(QTabWidget::indexOf(CurrentTab));
 }

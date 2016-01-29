@@ -37,6 +37,7 @@
 
 
 #include "widgets/toresultview.h"
+#include "widgets/topushbutton.h"
 //#include "core/tosqlparse.h"
 
 class toEventQuery;
@@ -50,8 +51,16 @@ class toResultCombo;
 class toResultPlan : public toResultView
 {
         Q_OBJECT;
-
+        Q_ENUMS(ExplainTypeEnum);
     public:
+
+        enum ExplainTypeEnum
+        {
+            Explain   = 10,
+			XPLAN = 20,
+        };
+
+
         /** Create the widget.
          * @param parent Parent widget.
          * @param name Name of widget.
@@ -71,6 +80,10 @@ class toResultPlan : public toResultView
         /** Support Oracle
          */
         virtual bool canHandle(const toConnection &conn);
+
+    protected:
+        void showEvent(QShowEvent * event);
+        void hideEvent(QHideEvent * event);
 
     private:
         QString Ident;
@@ -100,5 +113,114 @@ class toResultPlan : public toResultView
         void slotChildComboChanged(int NewIndex);
         void slotErrorHanler(toEventQuery*, toConnection::exception  const &);
 };
+
+/**
+ * Subclass toToggleButton and iterate over values of HighlighterTypeEnum
+ */
+class toExplainTypeButton : public toToggleButton
+{
+        Q_OBJECT;
+    public:
+        toExplainTypeButton(QWidget *parent, const char *name = 0);
+        toExplainTypeButton();
+};
+
+class toPlanTreeItem
+{
+public:
+    explicit toPlanTreeItem(const QList<QVariant> &data, toPlanTreeItem *parentItem = 0);
+    ~toPlanTreeItem();
+
+    void appendChild(toPlanTreeItem *child);
+
+    toPlanTreeItem *child(int row);
+    int childCount() const;
+    int columnCount() const;
+    QVariant data(int column) const;
+    int row() const;
+    toPlanTreeItem *parentItem();
+
+    QString id() const;
+private:
+    QList<toPlanTreeItem*> m_childItems;
+    QList<QVariant> m_itemData;
+    toPlanTreeItem *m_parentItem;
+};
+
+class toResultPlanNewModel : public QAbstractItemModel
+{
+        Q_OBJECT
+		friend class toResultPlanNew;
+    public:
+		toResultPlanNewModel(toEventQuery *query, QObject *parent = 0);
+		virtual ~toResultPlanNewModel();
+
+		virtual QVariant data(const QModelIndex &index, int role) const override;
+		virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+
+		virtual Qt::ItemFlags flags(const QModelIndex &index) const override;
+		virtual QModelIndex index(int row, int column,
+                          const QModelIndex &parent = QModelIndex()) const override;
+		virtual QModelIndex parent(const QModelIndex &index) const override;
+		virtual int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+        virtual int columnCount(const QModelIndex &parent = QModelIndex()) const override;
+
+        QModelIndex rootIndex() const;
+
+    signals:
+		/**
+		 * Emitted when query is finished.
+		 */
+		void queryDone(toEventQuery*);
+
+    private slots:
+		void slotPoll(toEventQuery*);
+		void slotQueryDone(toEventQuery*);
+
+    protected:
+        void cleanup();
+        toEventQuery *Query;
+        toPlanTreeItem *rootItem, *sqlidItem;
+        QList<toPlanTreeItem*> stack;
+
+        struct HeaderDesc
+        {
+            QString           name;        /* column name */
+            Qt::Alignment     align;       /* alignment */
+        };
+
+        typedef QList<HeaderDesc> HeaderList;
+        HeaderList Headers;
+        bool HeadersRead;
+};
+
+class toResultPlanNew : public QWidget//, public toResult
+{
+	// Note: it thiss class also subclasses toResult, then QTabWidget will NOT show it
+        Q_OBJECT
+        //Q_ENUMS(ExplainTypeEnum);
+    public:
+        explicit toResultPlanNew(QWidget *parent = 0);
+
+        void queryCursorPlan(toQueryParams const& params);
+        void queryPlanTable(toQueryParams const& params);
+        void queryXPlan(toQueryParams const& params);
+        bool handled(void) { return true; };
+    private slots:
+		void queryDone(toEventQuery*);
+		void explainDone(toEventQuery*);
+    private:
+        QPointer<toResultPlanNewModel> model;
+        QTreeView *planTreeView;
+        QPlainTextEdit *planTreeText;
+        // used for sequence explain plan for, select * from plan_table
+        QSharedPointer<toConnectionSubLoan> LockedConnection;
+        bool explaining;
+        QString planId;
+        QPointer<toEventQuery> explainQuery;
+};
+
+// this one will be usually parented by QStatusBar
+typedef Loki::SingletonHolder<toExplainTypeButton, Loki::CreateUsingNew, Loki::NoDestroy> toExplainTypeButtonSingle;
 
 #endif

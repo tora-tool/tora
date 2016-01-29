@@ -57,6 +57,7 @@ class toResultModel : public QAbstractTableModel
         struct HeaderDesc
         {
             QString           name;        /* column name */
+            QString           name_orig;   /* original column name */
             QString           datatype;    /* data type from queryDescribe */
             bool              nullAllowed; /* data can be null */
             Qt::Alignment     align;       /* alignment */
