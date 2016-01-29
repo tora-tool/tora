@@ -280,7 +280,11 @@ static toSQL SQLLongOps(TOSQL_LONGOPS,
                         "       DECODE(a.Rows_Processed,0,'N/A',ROUND(a.Sorts/a.Rows_Processed,3)) \"Sorts/Rows\",\n"
                         "       DECODE(a.Rows_Processed,0,'N/A',ROUND(a.Disk_Reads/a.Rows_Processed,3)) \"Disk/Rows\",\n"
                         "       DECODE(a.Rows_Processed,0,'N/A',ROUND(a.Buffer_Gets/a.Rows_Processed,3)) \"Buffers/Rows\",\n"
-                        "       b.SQL_Address||':'||b.SQL_Hash_Value \" \"\n"
+                        "       b.SQL_Address||':'||b.SQL_Hash_Value \" \",\n"
+                        "       a.SQL_ID as \" SQL_ID\",                                       \n"
+                        "       a.SQL_CHILD_NUMBER as \" SQL_CHILD_NUMBER\",                   \n"
+                        "       a.PREV_SQL_ID as \" PREV_SQL_ID\",                             \n"
+                        "       a.PREV_CHILD_NUMBER as \" PREV_CHILD_NUMBER\"                  \n"
                         "  from v$sqlarea a,\n"
                         "       v$session_longops b\n"
                         " where b.sql_address = a.address(+)\n"
@@ -389,7 +393,10 @@ void toSGATrace::updateSchemas(void)
 
 void toSGATrace::changeItem()
 {
+	throw QString("toSGATrace::changeItem: not implemented yet.");
+#if 0
     QModelIndex s = Trace->selectedIndex(Trace->model()->columnCount() - 1);
     if (s.isValid())
         Statement->changeAddress(s.data(Qt::EditRole).toString());
+#endif
 }

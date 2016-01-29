@@ -66,6 +66,7 @@ class toResultCombo;
 class toResultSchema;
 class toResultItem;
 class toResultPlan;
+class toResultPlanNew;
 class toResultTableView;
 class toResultStats;
 class toTabWidget;
@@ -251,6 +252,8 @@ class toWorksheet : public toToolWidget
         toResultBar       *IOChart;
 #endif
         toListView        *Logging;
+        toResultPlanNew   *PlanNew, *PlanNewExp;
+
         //! Re-set EditSplitter sizes with settings.
         QList<int>        EditSplitterSizes;
         QSplitter         *EditSplitter;

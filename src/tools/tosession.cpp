@@ -296,13 +296,17 @@ static toSQL SQLSessions(
     "       a.Process \"Client PID\",\n"
     "       e.SPid \"Server PID\",\n"
     "       d.sql_text \"Current statement\",\n"
-    "       a.SQL_Address||':'||a.SQL_Hash_Value \" SQL Address\",\n"
-    "       a.Prev_SQL_Addr||':'||a.Prev_Hash_Value \" Prev SQl Address\"\n"
-    "  FROM v$session a left join v$sess_io b on ( a.sid = b.sid)\n"
-    "       left join v$sesstat c on ( a.sid = c.sid)\n"
-    "       left join v$sql d on (a.sql_address = d.address and\n"
-    "                             a.sql_hash_value=d.hash_value and\n"
-    "                             a.sql_child_number = d.child_number)\n"
+    "       a.SQL_Address||':'||a.SQL_Hash_Value \" SQL Address\",         \n"
+    "       a.Prev_SQL_Addr||':'||a.Prev_Hash_Value \" Prev SQl Address\", \n"
+    "       a.SQL_ID as \" SQL_ID\",                                       \n"
+    "       a.SQL_CHILD_NUMBER as \" SQL_CHILD_NUMBER\",                   \n"
+    "       a.PREV_SQL_ID as \" PREV_SQL_ID\",                             \n"
+    "       a.PREV_CHILD_NUMBER as \" PREV_CHILD_NUMBER\"                  \n"
+    "  FROM v$session a left join v$sess_io b on ( a.sid = b.sid)          \n"
+    "       left join v$sesstat c on ( a.sid = c.sid)                      \n"
+    "       left join v$sql d on (a.sql_address = d.address and            \n"
+    "                             a.sql_hash_value=d.hash_value and        \n"
+    "                             a.sql_child_number = d.child_number)     \n"
     "       left join v$process e on (a.paddr = e.addr)\n"
     " WHERE (c.statistic# = 12 OR c.statistic# IS NULL)\n"
     "%1 ORDER BY a.Sid",
@@ -845,9 +849,15 @@ void toSession::slotChangeTab(int index)
         }
         else if (CurrentTab == CurrentStatement)
         {
-            QModelIndex sindex = Sessions->model()->index(item.row(), Sessions->model()->columnCount() - 2);
-            if (sindex.isValid())
-                CurrentStatement->changeAddress(sindex.data().toString());
+        	QString sql_id = Sessions->model()->data(item.row(), " SQL_ID").toString();
+        	QString cursor = Sessions->model()->data(item.row(), " SQL_CHILD_NUMBER").toString();
+        	CurrentStatement->changeAddress(toQueryParams() << sql_id << cursor);
+        }
+        else if (CurrentTab == PreviousStatement)
+        {
+        	QString sql_id = Sessions->model()->data(item.row(), " PREV_SQL_ID").toString();
+        	QString cursor = Sessions->model()->data(item.row(), " PREV_CHILD_NUMBER").toString();
+        	CurrentStatement->changeAddress(toQueryParams() << sql_id << cursor);
         }
         else if (CurrentTab == AccessedObjects)
         {
@@ -856,12 +866,6 @@ void toSession::slotChangeTab(int index)
         else if (CurrentTab == LockedObjects)
         {
             LockedObjects->refreshWithParams(toQueryParams() << connectionId);
-        }
-        else if (CurrentTab == PreviousStatement)
-        {
-            QModelIndex sindex = Sessions->model()->index(item.row(), Sessions->model()->columnCount() - 1);
-            if (sindex.isValid())
-                PreviousStatement->changeAddress(sindex.data().toString());
         }
         else if (CurrentTab == Transaction)
         {
@@ -872,9 +876,10 @@ void toSession::slotChangeTab(int index)
 
 void toSession::slotChangeCursor()
 {
+	//QModelIndex item = Sessions->currentIndex();
     QModelIndex item = OpenCursors->selectedIndex(2);
     if (item.isValid())
-        OpenStatement->changeAddress(item.data().toString());
+        OpenStatement->changeAddress(toQueryParams() << item.data().toString());
 }
 
 void toSession::slotCancelBackend()

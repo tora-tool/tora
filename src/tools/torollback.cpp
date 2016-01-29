@@ -700,8 +700,11 @@ void toRollback::updateHeaders(const QString &sql, const toConnection::exception
 
 void toRollback::changeStatement(toTreeWidgetItem *item)
 {
+	throw QString("toSGATrace::changeItem: not implemented yet.");
+#if 0
     if (item)
         CurrentStatement->changeAddress(item->text(4));
+#endif
 }
 
 void toRollback::changeItem()

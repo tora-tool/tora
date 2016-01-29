@@ -35,10 +35,14 @@
 #include "widgets/toresultplan.h"
 #include "core/utils.h"
 #include "core/toeventquery.h"
+#include "core/tomainwindow.h"
 #include "widgets/toresultcombo.h"
 #include "core/toconfiguration.h"
+#include "core/toeditorsetting.h"
 #include "connection/tooraclesetting.h"
 //#include "core/tosqlparse.h"
+
+#include <QStackedLayout>
 
 toResultPlan::toResultPlan(QWidget *parent, const char *name)
     : toResultView(false, false, parent, name)
@@ -51,44 +55,29 @@ toResultPlan::toResultPlan(QWidget *parent, const char *name)
 
 static toSQL SQLVSQLChildSel("toResultPlan:VSQLChildSel",
                              "SELECT distinct to_char(child_number)||' ('||to_char(plan_hash_value)||')' cn_disp, child_number, sql_id, plan_hash_value\n"
-                             "FROM V$SQL_PLAN WHERE Address||':'||Hash_Value = :addr<char[40],in> \n"
+                             "FROM V$SQL_PLAN WHERE sql_id = :sql_id<char[40],in> \n"
                              "ORDER BY child_number",
                              "Get list of child plans for cursor",
                              "1000");
 
-static toSQL SQLVSQLChildSel9("toResultPlan:VSQLChildSel",
-                              "SELECT distinct to_char(child_number) cn_disp, child_number, null sql_id, null plan_hash_value\n"
-                              "FROM V$SQL_PLAN WHERE Address||':'||Hash_Value = :addr<char[40],in> \n"
-                              "ORDER BY child_number",
-                              "",
-                              "0900");
-
 static toSQL SQLViewVSQLPlan("toResultPlan:ViewVSQLPlan",
-                             "SELECT ID,NVL(Parent_ID,0),Operation, Options, Object_Name, Optimizer,cost,\n"
-                             "  io_cost,Bytes,Cardinality,partition_start,partition_stop,\n"
-                             "  temp_space,time,access_predicates,filter_predicates\n"
-                             "FROM V$SQL_PLAN WHERE Address||':'||Hash_Value = :addr<char[40],in> and child_number = :chld<char[10],in> \n"
-                             "ORDER BY NVL(Parent_ID,0),ID",
-                             "Get the contents of SQL plan from V$SQL_PLAN.",
+                             "SELECT ID,NVL(Parent_ID,0) \n"
+                             "  , Operation    \n"
+                             "  , Options      \n"
+                             "  , Object_Name  \n"
+                             "  , Optimizer    \n"
+                             "  , cost         \n"
+                             "  , io_cost      \n"
+                             "  , Bytes        \n"
+                             "  , Cardinality  \n"
+                             "  , partition_start, partition_stop \n"
+                             "  , temp_space,time,access_predicates,filter_predicates \n"
+                             "FROM V$SQL_PLAN  \n"
+                             "WHERE sql_id = :sqlid<char[40],in> and child_number = :chld<char[10],in> \n"
+                             "START WITH id = 0 \n"
+                             "CONNECT BY PRIOR id = parent_id and prior nvl(hash_value, 0) = nvl(hash_value, 0) \n",
+                             "Get the contents of SQL plan from V$SQL_PLANX",
                              "1000");
-
-static toSQL SQLViewVSQLPlan92("toResultPlan:ViewVSQLPlan",
-                               "SELECT ID,NVL(Parent_ID,0),Operation, Options, Object_Name, Optimizer,cost,\n"
-                               "  io_cost,Bytes,Cardinality,partition_start,partition_stop,\n"
-                               "  temp_space,null time,access_predicates,filter_predicates\n"
-                               "FROM V$SQL_PLAN WHERE Address||':'||Hash_Value = :addr<char[40],in> and child_number = :chld<char[10],in>\n"
-                               "ORDER BY NVL(Parent_ID,0),ID",
-                               "",
-                               "0902");
-
-static toSQL SQLViewVSQLPlan9("toResultPlan:ViewVSQLPlan",
-                              "SELECT ID,NVL(Parent_ID,0),Operation, Options, Object_Name, Optimizer,cost,\n"
-                              "  io_cost,Bytes,Cardinality,partition_start,partition_stop,\n"
-                              "  null temp_space,null time,access_predicates,filter_predicates\n"
-                              "FROM V$SQL_PLAN WHERE Address||':'||Hash_Value = :addr<char[40],in> and child_number = :chld<char[10],in>\n"
-                              "ORDER BY NVL(Parent_ID,0),ID",
-                              "",
-                              "0900");
 
 static toSQL SQLViewPlan("toResultPlan:ViewPlan",
                          "SELECT ID,NVL(Parent_ID,0),Operation, Options, Object_Name, Optimizer,cost,\n"
@@ -112,6 +101,29 @@ bool toResultPlan::canHandle(const toConnection &conn)
         conn.providerIs("Oracle") ||
         conn.providerIs("QMYSQL")  ||
         conn.providerIs("QPSQL");
+}
+
+void toResultPlan::showEvent(QShowEvent * event)
+{
+    toResultView::showEvent(event);
+    QMainWindow *main = toMainWindow::lookup();
+    if(main)
+    {
+        toExplainTypeButtonSingle::Instance().setFocusPolicy(Qt::NoFocus);
+        toExplainTypeButtonSingle::Instance().setEnabled(true);
+        main->statusBar()->insertWidget(0, &toExplainTypeButtonSingle::Instance(), 0);
+        toExplainTypeButtonSingle::Instance().show();
+    }
+}
+
+void toResultPlan::hideEvent(QHideEvent * event)
+{
+    toResultView::hideEvent(event);
+    QMainWindow *main = toMainWindow::lookup();
+    if(main)
+    {
+        main->statusBar()->removeWidget(&toExplainTypeButtonSingle::Instance());
+    }
 }
 
 void toResultPlan::oracleSetup(void)
@@ -149,131 +161,6 @@ void toResultPlan::connectSlotsAndStart()
     connect(Query, SIGNAL(error(toEventQuery*,toConnection::exception const &)), this, SLOT(slotErrorHanler(toEventQuery*, toConnection::exception  const &)));
     Query->start();
 }
-
-//void toResultPlan::oracleNext()
-//{
-//    LastTop = NULL;
-//    Parents.clear();
-//    Last.clear();
-//
-//    toConnection &conn = connection();
-//    //toConnectionSubLoan connSub(conn);
-//
-//    //connSub->execute(QString::fromLatin1("SAVEPOINT %1").arg(chkPoint));
-//
-//    Ident = QString::fromLatin1("TOra ") + QString::number((int)time(NULL) + rand());
-//
-//    QString planTable(toConfigurationNewSingle::Instance().planTable(conn.user()));
-//
-//    QString sql = Utils::toShift(Statements);
-//    if (sql.isNull())
-//    {
-//        return ;
-//    }
-//    if (sql.length() > 0 && sql.at(sql.length() - 1).toLatin1() == ';')
-//        sql = sql.mid(0, sql.length() - 1);
-//
-//    QString explain = QString::fromLatin1("EXPLAIN PLAN SET STATEMENT_ID = '%1' INTO %2 FOR %3").
-//                      arg(Ident).arg(planTable).arg(Utils::toSQLStripSpecifier(sql));
-//
-//    if (!Schema.isNull() && Schema != conn.user().toUpper())
-//    {
-//        //try
-//        //{
-//        //    connSub->execute(QString::fromLatin1("ALTER SESSION SET CURRENT_SCHEMA = \"%1\"").arg(User));
-//        //    connSub->execute(explain);
-//        //}
-//        //catch (...)
-//        //{
-//        //    try
-//        //    {
-//        //        // conn.execute(QString::fromLatin1("ALTER SESSION SET CURRENT_SCHEMA = %1").arg(connection().user()));
-//        //        // when we start connection it is for user but in schema context
-//        //        connSub->execute(QString::fromLatin1("ALTER SESSION SET CURRENT_SCHEMA = \"%1\"").arg(connection().schema()));
-//        //    }
-//        //    catch (...)
-//        //    {
-//        //        TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
-//        //    }
-//        //    throw;
-//        //}
-//        ////conn.execute(QString::fromLatin1("ALTER SESSION SET CURRENT_SCHEMA = %1").arg(connection().user()));
-//        //when we start connection it is for user but in schema context
-//        //connSub->execute(QString::fromLatin1("ALTER SESSION SET CURRENT_SCHEMA = \"%1\"").arg(connection().schema()));
-//        Query = new toEventQuery(this
-//        		                 , conn
-//                                 , toSQL::string(SQLViewPlan, conn).
-//                                   // arg(toConfigurationNewSingle::Instance().planTable()).
-//                                   // Since EXPLAIN PLAN is always to conn.user() plan_table
-//                                   arg(explain).arg(Ident)
-//								 , toQueryParams()
-//								 , toEventQuery::READ_ALL
-//								 );
-//        connectSlotsAndStart();
-//        Explaining = false;
-//    }
-//    else
-//    {
-//        Explaining = true;
-//		Query = new toEventQuery(this, conn, explain, toQueryParams(), toEventQuery::READ_ALL);
-//        connectSlotsAndStart();
-//    }
-//    TopItem = new toResultViewItem(this, TopItem, QString::fromLatin1("EXPLAIN PLAN:"));
-//    TopItem->setText(1, sql.left(50).trimmed());
-//}
-
-//static void StripInto(std::list<toSQLParse::statement> &stats)
-//{
-//    std::list<toSQLParse::statement> res;
-//    bool into = false;
-//    bool add
-//    = true;
-//    for (std::list<toSQLParse::statement>::iterator i = stats.begin(); i != stats.end(); i++)
-//    {
-//        if (into)
-//        {
-//            if (!add
-//                    && (*i).String.toUpper() == QString::fromLatin1("FROM"))
-//                add
-//                = true;
-//        }
-//        else if ((*i).String.toUpper() == QString::fromLatin1("INTO"))
-//        {
-//            add
-//            = false;
-//            into = true;
-//        }
-//        if (add
-//           )
-//            res.insert(res.end(), *i);
-//    }
-//    stats = res;
-//}
-
-//void toResultPlan::addStatements(std::list<toSQLParse::statement> &stats)
-//{
-//    for (std::list<toSQLParse::statement>::iterator i = stats.begin(); i != stats.end(); i++)
-//    {
-//        if ((*i).Type == toSQLParse::statement::Block)
-//            addStatements((*i).subTokens());
-//        else if ((*i).Type == toSQLParse::statement::Statement)
-//        {
-//            if ((*i).subTokens().begin() != (*i).subTokens().end())
-//            {
-//                QString t = (*((*i).subTokens().begin())).String.toUpper();
-//                if (t == QString::fromLatin1("SELECT"))
-//                    StripInto((*i).subTokens());
-//
-//                if (t == QString::fromLatin1("SELECT") ||
-//                        t == QString::fromLatin1("INSERT") ||
-//                        t == QString::fromLatin1("UPDATE") ||
-//                        t == QString::fromLatin1("DELETE"))
-//                    Statements.insert(Statements.end(),
-//                                      toSQLParse::indentStatement(*i).trimmed());
-//            }
-//        }
-//    }
-//}
 
 void toResultPlan::query(const QString &sql, toQueryParams const& param)
 {
@@ -348,7 +235,7 @@ void toResultPlan::query(const QString &sql, toQueryParams const& param)
                 this->LockedConnection = conn;
             }
             Explaining = true;
-            Ident = QString::fromLatin1("TOra ") + QString::number(QDateTime::currentMSecsSinceEpoch()/1000 + rand());
+            Ident = QString::fromLatin1("TOra ") + QString::number(QDateTime::currentMSecsSinceEpoch()/1000 + ::rand());
             TopItem = new toResultViewItem(this, NULL, QString::fromLatin1("EXPLAIN PLAN:"));
             TopItem->setText(1, sql.left(50).trimmed());
 
@@ -624,3 +511,481 @@ void toResultPlan::checkException(const QString &str)
     }
     TOCATCH
 }
+
+toExplainTypeButton::toExplainTypeButton(QWidget *parent, const char *name)
+	: toToggleButton(toResultPlan::staticMetaObject.enumerator(toResultPlan::staticMetaObject.indexOfEnumerator("ExplainTypeEnum"))
+	, parent
+	, name
+	)
+{
+}
+
+toExplainTypeButton::toExplainTypeButton()
+	: toToggleButton(toResultPlan::staticMetaObject.enumerator(toResultPlan::staticMetaObject.indexOfEnumerator("ExplainTypeEnum"))
+	, NULL
+	)
+{
+}
+
+toPlanTreeItem::toPlanTreeItem(const QList<QVariant> &data, toPlanTreeItem *parent)
+{
+    m_parentItem = parent;
+    m_itemData = data;
+}
+
+toPlanTreeItem::~toPlanTreeItem()
+{
+    qDeleteAll(m_childItems);
+}
+
+void toPlanTreeItem::appendChild(toPlanTreeItem *item)
+{
+    m_childItems.append(item);
+}
+
+toPlanTreeItem *toPlanTreeItem::child(int row)
+{
+    return m_childItems.value(row);
+}
+
+int toPlanTreeItem::childCount() const
+{
+    return m_childItems.count();
+}
+
+int toPlanTreeItem::columnCount() const
+{
+    return m_itemData.count();
+}
+
+QVariant toPlanTreeItem::data(int column) const
+{
+    return m_itemData.value(column);
+}
+
+toPlanTreeItem *toPlanTreeItem::parentItem()
+{
+    return m_parentItem;
+}
+
+int toPlanTreeItem::row() const
+{
+    if (m_parentItem)
+        return m_parentItem->m_childItems.indexOf(const_cast<toPlanTreeItem*>(this));
+
+    return 0;
+}
+
+QString toPlanTreeItem::id() const
+{
+	return m_itemData.first().toString();
+}
+
+toResultPlanNewModel::toResultPlanNewModel(toEventQuery *query, QObject *parent)
+: QAbstractItemModel(parent)
+, Query(query)
+, HeadersRead(false)
+{
+	Query->setParent(this); // this will satisfy QObject's disposal
+
+	rootItem = new toPlanTreeItem(QList<QVariant>());
+	QList<QVariant> sqlidData;
+	sqlidData << "SQLID:" << " " << "PlanID:";
+		for (int i = sqlidData.size(); i < Headers.size(); i++) sqlidData << "";
+	rootItem->appendChild(sqlidItem = new toPlanTreeItem(sqlidData, rootItem));
+
+	Headers
+	<< HeaderDesc{ QString::fromLatin1("#"), 0 }
+	<< HeaderDesc{"Operation", 0}
+	<< HeaderDesc{"Options", 0}
+	<< HeaderDesc{"Object name", 0}
+	<< HeaderDesc{"Mode", 0}
+	<< HeaderDesc{"Cost", 0}
+	<< HeaderDesc{"%CPU", Qt::AlignRight}
+	<< HeaderDesc{"Bytes", Qt::AlignRight}
+	<< HeaderDesc{"Rows",  Qt::AlignRight}
+	<< HeaderDesc{"Time", 0}
+	<< HeaderDesc{"Access pred.", 0}
+	<< HeaderDesc{"Filter pred.", 0}
+	<< HeaderDesc{"TEMP Space", Qt::AlignRight}
+	<< HeaderDesc{"Startpartition", 0}
+	<< HeaderDesc{"Endpartition", 0};
+	;
+
+    connect(Query, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(slotPoll(toEventQuery*)));
+    connect(Query, SIGNAL(done(toEventQuery*)), this, SLOT(slotQueryDone(toEventQuery*)));
+    connect(Query, SIGNAL(error(toEventQuery*,toConnection::exception const &)), this, SLOT(slotErrorHanler(toEventQuery*, toConnection::exception  const &)));
+}
+
+toResultPlanNewModel::~toResultPlanNewModel()
+{
+	cleanup();
+	delete rootItem;
+}
+
+int toResultPlanNewModel::columnCount(const QModelIndex &parent) const
+{
+// it looks like there is a bug in QT, column count in upper row affects
+// column column displayed in lower rows
+//    if (parent.isValid())
+//        return static_cast<toPlanTreeItem*>(parent.internalPointer())->columnCount();
+//    else
+	return Headers.size();
+}
+
+QVariant toResultPlanNewModel::data(const QModelIndex &index, int role) const
+{
+    if (!index.isValid())
+        return QVariant();
+
+    if (role != Qt::DisplayRole)
+        return QVariant();
+
+    toPlanTreeItem *item = static_cast<toPlanTreeItem*>(index.internalPointer());
+
+    return item->data(index.column());
+}
+
+Qt::ItemFlags toResultPlanNewModel::flags(const QModelIndex &index) const
+{
+    if (!index.isValid())
+        return 0;
+
+    return QAbstractItemModel::flags(index);
+}
+
+QVariant toResultPlanNewModel::headerData(int section, Qt::Orientation orientation,
+                               int role) const
+{
+	if (orientation != Qt::Horizontal)
+		return QVariant();
+
+	if (section > Headers.size() - 1)
+		return QVariant();
+
+	switch (role)
+	{
+	case Qt::DisplayRole:
+		return Headers[section].name;
+	case Qt::TextAlignmentRole:
+		return (int)Headers[section].align;
+	case Qt::SizeHintRole: // QSize(120, 0) col 10,11
+	default:
+		return QVariant();
+	}
+
+    return QVariant();
+#if 0
+            item->setTextAlignment (5, Qt::AlignRight);
+            item->setText(6, cpupct);
+            item->setTextAlignment (6, Qt::AlignRight);
+            item->setText(7, bytes);
+            item->setTextAlignment (7, Qt::AlignRight);
+            item->setText(8, cardinality);
+            item->setTextAlignment (8, Qt::AlignRight);
+            item->setText(9, time);
+            item->setText(10, accesspred);
+            item->setToolTip(10, accesspred);
+            item->setSizeHint(10, QSize(120, 0));
+            item->setText(11, filterpred);
+            item->setToolTip(11, filterpred);
+            item->setSizeHint(11, QSize(120, 0));
+            item->setText(12, tempspace);
+            item->setTextAlignment (12, Qt::AlignRight);
+#endif
+
+}
+
+QModelIndex toResultPlanNewModel::index(int row, int column, const QModelIndex &parent)
+            const
+{
+    if (!hasIndex(row, column, parent))
+        return QModelIndex();
+
+    toPlanTreeItem *parentItem;
+
+    if (!parent.isValid())
+        parentItem = rootItem;
+    else
+        parentItem = static_cast<toPlanTreeItem*>(parent.internalPointer());
+
+    toPlanTreeItem *childItem = parentItem->child(row);
+    if (childItem)
+        return createIndex(row, column, childItem);
+    else
+        return QModelIndex();
+}
+
+QModelIndex toResultPlanNewModel::parent(const QModelIndex &index) const
+{
+    if (!index.isValid())
+        return QModelIndex();
+
+    toPlanTreeItem *childItem = static_cast<toPlanTreeItem*>(index.internalPointer());
+    toPlanTreeItem *parentItem = childItem->parentItem();
+
+    if (parentItem == rootItem)
+        return QModelIndex();
+
+    return createIndex(parentItem->row(), 0, parentItem);
+}
+
+int toResultPlanNewModel::rowCount(const QModelIndex &parent) const
+{
+    toPlanTreeItem *parentItem;
+    if (parent.column() > 0)
+        return 0;
+
+    if (!parent.isValid())
+        parentItem = rootItem;
+    else
+        parentItem = static_cast<toPlanTreeItem*>(parent.internalPointer());
+
+    return parentItem->childCount();
+}
+
+void toResultPlanNewModel::cleanup()
+{
+    if (Query)
+    {
+        disconnect(Query, 0, this, 0);
+
+        Query->stop();
+        delete Query;
+        Query = NULL;
+        //emit done();
+    }
+    stack.clear();
+}
+
+QModelIndex toResultPlanNewModel::rootIndex() const
+{
+	return createIndex(0, 0, sqlidItem);
+}
+
+
+toResultPlanNew::toResultPlanNew(QWidget *parent)
+	: QWidget(parent)
+	, explaining(false)
+{
+    using namespace ToConfiguration;
+    planTreeView = new QTreeView(this);
+    planTreeText = new QPlainTextEdit(this);
+    planTreeText->setReadOnly(true);
+    planTreeText->setFont(Utils::toStringToFont(toConfigurationNewSingle::Instance().option(Editor::ConfTextFont).toString()));
+
+    //toExplainTypeButtonSingle::Instance().
+    QStackedLayout  *mainLayout = new QStackedLayout;
+    //QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout->setSpacing(0);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+
+    mainLayout->addWidget(planTreeView);
+    mainLayout->addWidget(planTreeText);
+    mainLayout->setCurrentIndex(0);
+    //mainLayout->setStackingMode(QStackedLayout::StackAll);
+    setLayout(mainLayout);
+}
+
+void toResultPlanNew::queryCursorPlan(toQueryParams const& params)
+{
+    toConnection &c = toConnection::currentConnection(this);
+    toEventQuery *Query = new toEventQuery(this
+    		, c
+			, toSQL::string(SQLViewVSQLPlan, c)
+    		, params
+			, toEventQuery::READ_ALL);
+
+	model = new toResultPlanNewModel(Query, this);
+	connect(model, SIGNAL(queryDone(toEventQuery*)), this, SLOT(queryDone(toEventQuery*)));
+	planTreeView->setModel(model);
+
+    toResultCombo *CursorChildSel = new toResultCombo(planTreeView, "toResultPlan");
+    CursorChildSel->setSQL(SQLVSQLChildSel);
+    CursorChildSel->setSelectionPolicy(toResultCombo::First);
+    try
+    {
+        CursorChildSel->refreshWithParams(toQueryParams() << params.first());
+    }
+    TOCATCH;
+    planTreeView->setIndexWidget(model->rootIndex().sibling(0,3), CursorChildSel);
+    connect(CursorChildSel, SIGNAL(done()), this, SLOT(slotChildComboReady())); //Wait for cursor children combo to fill
+    Query->start();
+}
+
+void toResultPlanNew::queryPlanTable(toQueryParams const& params)
+{
+    {
+    	QSharedPointer<toConnectionSubLoan> conn(new toConnectionSubLoan(toConnection::currentConnection(this)));
+        this->LockedConnection = conn;
+    }
+    explaining = true;
+    planId = QString::fromLatin1("TOra ") + QString::number(QDateTime::currentMSecsSinceEpoch()/1000 + qrand());
+
+    QString planTable = ToConfiguration::Oracle::planTable(LockedConnection->ParentConnection.user());
+
+    QString explain = QString::fromLatin1("EXPLAIN PLAN SET STATEMENT_ID = '%1' INTO %2 FOR %3").
+                      arg(planId).
+                      arg(planTable).
+                      arg(Utils::toSQLStripSpecifier(params.first()));
+
+    explainQuery = new toEventQuery(this, LockedConnection, explain, toQueryParams(), toEventQuery::READ_ALL);
+    //connect(Query, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(slotPoll()));
+    connect(explainQuery, SIGNAL(done(toEventQuery*)), this, SLOT(explainDone(toEventQuery*)));
+    connect(explainQuery, SIGNAL(error(toEventQuery*,toConnection::exception const &)), this, SLOT(slotErrorHanler(toEventQuery*, toConnection::exception  const &)));
+    explainQuery->start();
+}
+
+void toResultPlanNew::explainDone(toEventQuery*q)
+{
+    disconnect(explainQuery, 0, this, 0);
+    explainQuery->stop();
+    explainQuery = NULL;
+
+    if (!explaining)
+    	return;
+
+    explaining = false;
+    toConnection &conn = toConnection::currentConnection(this);
+
+    toEventQuery *Query = new toEventQuery(this
+    		, LockedConnection
+			, toSQL::string(SQLViewPlan, conn).
+			// arg(toConfigurationNewSingle::Instance().planTable()).
+			// Since EXPLAIN PLAN is always to conn.user() plan_table
+			// and current_schema can be different
+			arg(ToConfiguration::Oracle::planTable(conn.user())).
+			arg(planId)
+			, toQueryParams()
+			, toEventQuery::READ_ALL);
+
+	model = new toResultPlanNewModel(Query, this);
+	toPlanTreeItem *rootItem = static_cast<toPlanTreeItem*>(model->rootIndex().internalPointer());
+    //rootItem = new toResultViewItem(this, NULL, QString::fromLatin1("EXPLAIN PLAN:"));
+    //rootItem->setText(1, sql.left(50).trimmed());
+
+	connect(model, SIGNAL(queryDone(toEventQuery*)), this, SLOT(queryDone(toEventQuery*)));
+	planTreeView->setModel(model);
+	Query->start();
+}
+
+void toResultPlanNew::queryXPlan(toQueryParams const& params)
+{
+	toConnectionSubLoan conn(toConnection::currentConnection(this));
+	QString SQL("SELECT t.* FROM table(DBMS_XPLAN.DISPLAY_CURSOR(:sql_id<char[10]>, :child_number<int>)) t");
+
+	planTreeText->clear();
+	toQuery q(conn, SQL, params);
+	while (!q.eof())
+		planTreeText->appendPlainText((QString)q.readValue());
+}
+
+void toResultPlanNew::queryDone(toEventQuery*)
+{
+	for (int col = 0; col < model->columnCount(); col++)
+		planTreeView->resizeColumnToContents(col);
+	planTreeView->expandAll();
+}
+
+void toResultPlanNewModel::slotPoll(toEventQuery*Query)
+{
+	if (this->Query != Query)
+		return;
+
+    try
+    {
+        while (Query->hasMore())
+        {
+        	QList<QVariant> columnData, itemData;
+        	toPlanTreeItem *itemNew;
+
+        	for (int i=0; i < Query->columnCount(); i++)
+        		itemData << (QString)Query->readValue();
+
+            QString id              = itemData[0].toString();
+            QString parentid        = itemData[1].toString();
+            QString operation       = itemData[2].toString();
+            QString options         = itemData[3].toString();
+            QString object          = itemData[4].toString();
+            QString optimizer       = itemData[5].toString();
+            QString cost            = itemData[6].toString();
+            QString iocost          = itemData[7].toString();
+            QString bytes           = itemData[8].toString();
+            QString cardinality     = itemData[9].toString();
+            QString startpartition  = itemData[10].toString();
+            QString endpartition    = itemData[11].toString();
+            QString tempspace       = itemData[12].toString();
+            QString time            = itemData[13].toString();
+            QString accesspred      = itemData[14].toString();
+            QString filterpred      = itemData[15].toString();
+
+            QString cpupct;
+            if (!cost.isEmpty())
+            {
+                double pct = 100;
+                if (cost.toDouble() > 0)
+                {
+                    pct = 100 - (iocost.toDouble() / cost.toDouble() * 100);
+                }
+                cpupct.setNum(pct, 'f', 2);
+            }
+
+            if (!time.isEmpty())
+            {
+                double seconds = time.toDouble();
+                int hours = (int) (seconds / 3600);
+                int mins = (int) (( seconds - hours * 3600) / 60);
+                int secs = (int) seconds - (hours * 3600 + mins * 60);
+                time.sprintf("%d:%02d:%02d", hours, mins, secs);
+            }
+
+            columnData
+			<< id
+			<< operation
+			<< options
+			<< object
+			<< optimizer
+			<< cost
+			<< cpupct
+			<< bytes
+			<< cardinality
+			<< time
+			<< accesspred
+			<< filterpred
+			<< tempspace
+			<< startpartition
+			<< endpartition;
+
+            if (stack.empty()) // Root item
+            {
+            	sqlidItem->appendChild(itemNew = new toPlanTreeItem(columnData, sqlidItem));
+            } else { // Child item, pop stack until child's parent is found (assuming "connect by" was used)
+            	while (!stack.empty() && stack.last()->id() != parentid)
+            	{
+            		stack.pop_back();
+            	}
+            	if (stack.empty())
+            		throw QString::fromAscii("toResultPlan:ViewVSQLPlan returned rows in wrong order");
+
+            	stack.last()->appendChild(itemNew = new toPlanTreeItem(columnData, stack.last()));
+            }
+            // set new stack top
+			stack.append(itemNew);
+
+        }
+    }
+    catch (const QString &str)
+    {
+		cleanup();
+        Utils::toStatusMessage(str);
+		emit queryDone(Query);
+    }
+}
+
+void toResultPlanNewModel::slotQueryDone(toEventQuery*q)
+{
+	emit layoutChanged();
+	cleanup();
+	emit queryDone(q);
+}
+

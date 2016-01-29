@@ -108,10 +108,12 @@ toResultModel::toResultModel(const QString &owner,
     // data displayed.
     struct HeaderDesc d;
     d.name     = "#";
+    d.name_orig = d.name;
     d.align    = Qt::AlignRight;
     d.datatype = "INT";
     Headers.append(d);
     d.name = type + " name (cached)";
+    d.name_orig = type + " name";
     d.align    = Qt::AlignLeft;
     d.datatype = "CHAR";
     Headers.append(d);
@@ -579,7 +581,7 @@ QVariant toResultModel::data(int row, QString column) const
     int c;
     for (c = 0; c < Headers.size(); c++)
     {
-        if (Headers[c].name == column)
+        if (Headers[c].name_orig == column)
             break;
     }
 
@@ -654,6 +656,7 @@ bool toResultModel::setHeaderData(int section,
         return false;
 
     Headers[section].name = value.toString();
+    Headers[section].name_orig = value.toString();
     return true;
 }
 
@@ -668,6 +671,7 @@ void toResultModel::slotReadHeaders(toEventQuery*)
     // the row data easier. it is not always displayed.
     struct HeaderDesc d;
     d.name     = "#";
+    d.name_orig = d.name;
     d.align    = Qt::AlignRight;
     d.datatype = "INT";
     Headers.append(d);
@@ -678,6 +682,7 @@ void toResultModel::slotReadHeaders(toEventQuery*)
         struct HeaderDesc d;
 
         d.name = (*i).Name;
+        d.name_orig = d.name;
         if (ReadableColumns)
             Utils::toReadableColumn(d.name);
 
