@@ -56,7 +56,7 @@ static toSQL SQLListObjectsDatabase("toConnection:ListObjectsInDatabase",
 
 static toSQL SQLConnectioId("toQSqlConnection:ConnectionID",
                             "select pg_backend_pid()                           ",
-                            "Get a connection ID for a session",
+                            "",
                             "7.0",
                             "QPSQL");
 
