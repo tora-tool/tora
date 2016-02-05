@@ -379,7 +379,7 @@ bool toOracleConnectionSub::hasTransaction()
     }
 }
 
-queryImpl * toOracleConnectionSub::createQuery(toQuery *query)
+queryImpl * toOracleConnectionSub::createQuery(toQueryAbstr *query)
 {
     _hasTransaction = DIRTY_FLAG;
     return new oracleQuery(query, this);

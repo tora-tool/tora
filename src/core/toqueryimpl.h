@@ -41,7 +41,7 @@
 
 #include <QtCore/QObject>
 
-class toQuery;
+class toQueryAbstr;
 
 /** Abstract parent of implementations of a query for a database provider
  * (See @ref toConnection::connectionImpl and @ref toConnectionProvider)
@@ -55,7 +55,7 @@ class TORA_EXPORT queryImpl : public QObject
         /** Get the parent query object. All the parameters of the query must be read from here.
          * nothing is passed to the functions.
          */
-        toQuery *query()
+        toQueryAbstr *query()
         {
             return Parent;
         }
@@ -65,7 +65,7 @@ class TORA_EXPORT queryImpl : public QObject
          * data for the query may not be available when this object created.
          * @param query Parent query object.
          */
-        queryImpl(toQuery *query)
+        queryImpl(toQueryAbstr *query)
             : QObject()
             , Parent(query)
         { }
@@ -105,7 +105,7 @@ class TORA_EXPORT queryImpl : public QObject
          */
         virtual void cancel(void) = 0;
     private:
-        toQuery *Parent;
+        toQueryAbstr *Parent;
     protected:
 };
 

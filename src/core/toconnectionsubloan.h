@@ -11,6 +11,7 @@ class toConnectionSubLoan
 {
         friend class toEventQuery;
         friend class toQuery;
+		friend class toQueryAbstr;
     public:
 
         toConnectionSubLoan(toConnection &con);

@@ -54,7 +54,7 @@ QSqlQuery* qsqlQuery::createQuery(const QString &query)
     return ret;
 }
 
-qsqlQuery::qsqlQuery(toQuery *query, toQSqlConnectionSub *conn)
+qsqlQuery::qsqlQuery(toQueryAbstr *query, toQSqlConnectionSub *conn)
     : queryImpl(query)
     , Connection(conn)
     , ColumnOrderSize(0)

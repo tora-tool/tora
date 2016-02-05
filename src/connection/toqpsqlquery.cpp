@@ -83,7 +83,7 @@ QSqlQuery* psqlQuery::createQuery(const QString &sql)
     return ret;
 }
 
-psqlQuery::psqlQuery(toQuery *query, toQPSqlConnectionSub *conn)
+psqlQuery::psqlQuery(toQueryAbstr *query, toQPSqlConnectionSub *conn)
     : queryImpl(query)
     , Query(NULL)
     , Connection(conn)

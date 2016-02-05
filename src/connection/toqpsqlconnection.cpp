@@ -183,7 +183,7 @@ toQueryParams toQPSqlConnectionSub::sessionId()
         return super::sessionId();
 }
 
-queryImpl* toQPSqlConnectionSub::createQuery(toQuery *query)
+queryImpl* toQPSqlConnectionSub::createQuery(toQueryAbstr *query)
 {
     return new psqlQuery(query, this);
 }

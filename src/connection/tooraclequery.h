@@ -65,7 +65,7 @@ class oracleQuery : public queryImpl
         };
         trotlQuery * Query;
 
-        oracleQuery(toQuery *query, toOracleConnectionSub *);
+        oracleQuery(toQueryAbstr *query, toOracleConnectionSub *);
 
         virtual ~oracleQuery();
 

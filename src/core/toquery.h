@@ -51,8 +51,9 @@ class queryImpl;
 #include <QtCore/QPointer>
 
 /** This class is used to perform a query on a database connection.
+ *  Runs synchronously in foreground thread
  */
-class toQuery : public QObject
+class toQueryAbstr : public QObject
 {
         Q_OBJECT;
         friend class queryImpl;
@@ -73,7 +74,7 @@ class toQuery : public QObject
          * @param sql SQL to run.
          * @param params Parameters to pass to query.
          */
-        toQuery(toConnectionSubLoan &conn, const toSQL &sql, toQueryParams const &params);
+        toQueryAbstr(toConnectionSubLoan &conn, const toSQL &sql, toQueryParams const &params);
 
         /** Create a normal query.
          * @param conn Connection to create query on.
@@ -81,11 +82,11 @@ class toQuery : public QObject
          * @param params Parameters to pass to query.
          */
         //toQuery(toConnection &conn, const QString &sql, toQueryParams const &params);
-        toQuery(toConnectionSubLoan &conn, const QString &sql, toQueryParams const &params);
+        toQueryAbstr(toConnectionSubLoan &conn, const QString &sql, toQueryParams const &params);
 
         /** Destroy query.
          */
-        virtual ~toQuery();
+        virtual ~toQueryAbstr();
 
         // GETTERS
 
@@ -146,45 +147,13 @@ class toQuery : public QObject
             return m_Query->columns();
         }
 
-        /** Execute a query and return all the values returned by it.
-         * @param conn Connection to run query on.
-         * @param sql SQL to run.
-         * @param params Parameters to pass to query.
-         * @return A list of @ref toQValue(s) read from the query.
-         */
-        static std::list<toQValue> readQuery(toConnection &conn, const toSQL &sql, toQueryParams const &params);
-
-        /** Execute a query and return all the values returned by it.
-         * @param conn Connection to run query on.
-         * @param sql SQL to run.
-         * @param params Parameters to pass to query.
-         * @return A list of @ref toQValues:s read from the query.
-         */
-        static std::list<toQValue> readQuery(toConnection &conn, const QString &sql, toQueryParams const &params);
-
-        /** Execute a query using this oracle session and return all values.
-          * @param sql SQL to run.
-          * @param params Parameters to pass to query.
-          * @return A list of @ref toQValues:s read from query
-          */
-        //std::list<toQValue> readQuery(const QString &sql, toQueryParams const& params);
-
     protected:
         toConnectionSub* sub()
         {
             return m_ConnectionSubLoan.ConnectionSub;
         }
-    private:
-        /** This class contains a reference onto loaned connection
-         * therefore an instance of toQuery it MUST not live longer
-         * than instance of toConnectionSubLoan
-         *
-         * An instance of toQuery can be allocated on stack only.
-         */
-        void *operator new(size_t);
-        void *operator new[](size_t);
-    private:
-        void init();
+
+        virtual void init() = 0;
 
         toConnectionSubLoan& m_ConnectionSubLoan;
         toQueryParams m_Params;
@@ -193,7 +162,51 @@ class toQuery : public QObject
         unsigned long m_rowsProcessed;
 
         queryImpl *m_Query;
-        toQuery(const toQuery &);
+        toQueryAbstr(const toQuery &);
+};
+
+class toQuery : public toQueryAbstr
+{
+public:
+	toQuery(toConnectionSubLoan &conn, const toSQL &sql, toQueryParams const& params)
+		: toQueryAbstr(conn, sql, params)
+	{
+	    init();
+	}
+
+	toQuery(toConnectionSubLoan &conn, QString const& sql, toQueryParams const& params)
+		: toQueryAbstr(conn, sql, params)
+	{
+		init();
+	}
+
+    /** Execute a query and return all the values returned by it.
+     * @param conn Connection to run query on.
+     * @param sql SQL to run.
+     * @param params Parameters to pass to query.
+     * @return A list of @ref toQValue(s) read from the query.
+     */
+    static std::list<toQValue> readQuery(toConnection &conn, const toSQL &sql, toQueryParams const &params);
+
+    /** Execute a query and return all the values returned by it.
+     * @param conn Connection to run query on.
+     * @param sql SQL to run.
+     * @param params Parameters to pass to query.
+     * @return A list of @ref toQValues:s read from the query.
+     */
+    static std::list<toQValue> readQuery(toConnection &conn, const QString &sql, toQueryParams const &params);
+
+protected:
+    void init() override;
+private:
+    /** This class contains a reference onto loaned connection
+     * therefore an instance of toQuery it MUST not live longer
+     * than instance of toConnectionSubLoan
+     *
+     * An instance of toQuery can be allocated on stack only.
+     */
+    void *operator new(size_t);
+    void *operator new[](size_t);
 };
 
 #endif

@@ -94,7 +94,7 @@ class toOracleConnectionSub: public toConnectionSub
         virtual QString version();
         virtual toQueryParams sessionId();
         virtual bool hasTransaction();
-        virtual queryImpl* createQuery(toQuery *query);
+        virtual queryImpl* createQuery(toQueryAbstr *query) override;
 
         virtual toQAdditionalDescriptions* decribe(toCache::ObjectRef const&);
         virtual toCache::ObjectRef resolve(toCache::ObjectRef const& objectName);

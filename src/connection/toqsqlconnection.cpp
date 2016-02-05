@@ -141,7 +141,7 @@ toQueryParams toQSqlConnectionSub::sessionId()
     return ret;
 }
 
-queryImpl* toQSqlConnectionSub::createQuery(toQuery *query)
+queryImpl* toQSqlConnectionSub::createQuery(toQueryAbstr *query)
 {
     return new qsqlQuery(query, this);
 }
