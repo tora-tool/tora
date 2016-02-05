@@ -42,7 +42,7 @@
 
 #include <QApplication>
 
-toQuery::toQuery(toConnectionSubLoan &conn, const toSQL &sql, toQueryParams const& params)
+toQueryAbstr::toQueryAbstr(toConnectionSubLoan &conn, const toSQL &sql, toQueryParams const& params)
     : m_ConnectionSubLoan(conn)
     , m_Params(params)
     , m_SQL(sql(conn.ParentConnection).toLatin1())
@@ -50,10 +50,9 @@ toQuery::toQuery(toConnectionSubLoan &conn, const toSQL &sql, toQueryParams cons
     , m_rowsProcessed(0)
     , m_Query(NULL)
 {
-    init();
 }
 
-toQuery::toQuery(toConnectionSubLoan &conn, QString const& sql, toQueryParams const& params)
+toQueryAbstr::toQueryAbstr(toConnectionSubLoan &conn, QString const& sql, toQueryParams const& params)
     : m_ConnectionSubLoan(conn)
     , m_Params(params)
     , m_SQL(sql)
@@ -61,7 +60,74 @@ toQuery::toQuery(toConnectionSubLoan &conn, QString const& sql, toQueryParams co
     , m_rowsProcessed(0)
     , m_Query(NULL)
 {
-    init();
+}
+
+toQueryAbstr::~toQueryAbstr()
+{
+    if (m_Query)
+        delete m_Query;
+
+//    try {
+//		QString sql = toSQL::string("Global:CurrentSchema", connection());
+//		if (!sql.isEmpty())
+//		{
+//			m_Query = m_ConnectionSubLoan->createQuery(this);
+//			m_ConnectionSubLoan->setQuery(this);
+//			m_Query->execute(sql);
+//			QString schema = m_Query->readValue();
+//			m_ConnectionSubLoan->setSchema(schema);
+//			delete m_Query;
+//		}
+//    } catch (...) {
+//    }
+
+    if (m_ConnectionSubLoan->query() == this)
+        m_ConnectionSubLoan->setQuery(NULL);
+}
+
+bool toQueryAbstr::eof(void)
+{
+    bool retval = m_Query ? m_Query->eof() : true;
+
+    // eof value was flip over (do not call this each time)
+    if (retval && !m_eof) //
+    {
+        m_eof = retval;
+        try
+        {
+            QString sql = toSQL::string("Global:CurrentSchema", connection());
+            if (!sql.isEmpty())
+            {
+                queryImpl* Query = m_ConnectionSubLoan->createQuery(this);
+                //m_ConnectionSubLoan->setQuery(this);
+                Query->execute(sql);
+                QString schema = (QString)Query->readValue();
+                m_ConnectionSubLoan->setSchema(schema);
+                delete Query;
+            }
+        }
+        catch (...)
+        {
+        }
+        m_rowsProcessed = m_Query->rowsProcessed();
+        if (m_Query)
+            delete m_Query;
+        m_Query = NULL;
+    }
+
+    return retval;
+}
+
+toQValue toQueryAbstr::readValue(void)
+{
+    if (connection().Abort)
+        throw qApp->translate("toQuery", "Query aborted");
+    return m_Query->readValue();
+}
+
+toQColumnDescriptionList toQueryAbstr::describe(void)
+{
+    return m_Query->describe();
 }
 
 void toQuery::init()
@@ -110,62 +176,6 @@ void toQuery::init()
     }
 }
 
-toQuery::~toQuery()
-{
-    if (m_Query)
-        delete m_Query;
-
-//    try {
-//		QString sql = toSQL::string("Global:CurrentSchema", connection());
-//		if (!sql.isEmpty())
-//		{
-//			m_Query = m_ConnectionSubLoan->createQuery(this);
-//			m_ConnectionSubLoan->setQuery(this);
-//			m_Query->execute(sql);
-//			QString schema = m_Query->readValue();
-//			m_ConnectionSubLoan->setSchema(schema);
-//			delete m_Query;
-//		}
-//    } catch (...) {
-//    }
-
-    if (m_ConnectionSubLoan->query() == this)
-        m_ConnectionSubLoan->setQuery(NULL);
-}
-
-bool toQuery::eof(void)
-{
-    bool retval = m_Query ? m_Query->eof() : true;
-
-    // eof value was flip over (do not call this each time)
-    if (retval && !m_eof) //
-    {
-        m_eof = retval;
-        try
-        {
-            QString sql = toSQL::string("Global:CurrentSchema", connection());
-            if (!sql.isEmpty())
-            {
-                queryImpl* Query = m_ConnectionSubLoan->createQuery(this);
-                //m_ConnectionSubLoan->setQuery(this);
-                Query->execute(sql);
-                QString schema = (QString)Query->readValue();
-                m_ConnectionSubLoan->setSchema(schema);
-                delete Query;
-            }
-        }
-        catch (...)
-        {
-        }
-        m_rowsProcessed = m_Query->rowsProcessed();
-        if (m_Query)
-            delete m_Query;
-        m_Query = NULL;
-    }
-
-    return retval;
-}
-
 toQList toQuery::readQuery(toConnection &conn, toSQL const& sql, toQueryParams const& params)
 {
     Utils::toBusy busy;
@@ -186,28 +196,4 @@ toQList toQuery::readQuery(toConnection &conn, QString const& sql, toQueryParams
     while (!query.eof())
         ret.insert(ret.end(), query.readValue());
     return ret;
-}
-
-//toQList toQuery::readQuery(QString const& sql, toQueryParams const& params)
-//{
-//    Utils::toBusy busy(m_ShowBusy);
-//    m_SQL = sql;
-//    m_Params = params;
-//    m_Query->execute();
-//    toQList ret;
-//    while (!eof())
-//        ret.insert(ret.end(), readValue());
-//    return ret;
-//}
-
-toQValue toQuery::readValue(void)
-{
-    if (connection().Abort)
-        throw qApp->translate("toQuery", "Query aborted");
-    return m_Query->readValue();
-}
-
-toQColumnDescriptionList toQuery::describe(void)
-{
-    return m_Query->describe();
 }

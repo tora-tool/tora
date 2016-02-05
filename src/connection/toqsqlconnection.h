@@ -151,7 +151,7 @@ class toQSqlConnectionSub: public toConnectionSub
         virtual QString version();
         virtual toQueryParams sessionId();
 
-        virtual queryImpl* createQuery(toQuery *query);
+        virtual queryImpl* createQuery(toQueryAbstr *query);
 
         virtual toQAdditionalDescriptions* decribe(toCache::ObjectRef const&);
 

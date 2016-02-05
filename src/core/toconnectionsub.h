@@ -8,7 +8,7 @@
 #include <QtCore/QDateTime>
 
 class queryImpl;
-class toQuery;
+class toQueryAbstr;
 
 /** This class is an abstract definition of an actual connection to a database.
  * Each @ref toConnection object can have one or more actual connections to the
@@ -29,7 +29,7 @@ class TORA_EXPORT toConnectionSub
         // GETTERS
 
         /** Query current running on connection or NULL. */
-        inline toQuery *query()
+        inline toQueryAbstr *query()
         {
             return Query;
         }
@@ -43,7 +43,7 @@ class TORA_EXPORT toConnectionSub
         // SETTERS
 
         /** Set query currently running on connection. NULL means none. */
-        inline void setQuery(toQuery *query)
+        inline void setQuery(toQueryAbstr *query)
         {
             Query = query;
         }
@@ -65,7 +65,7 @@ class TORA_EXPORT toConnectionSub
 
         virtual bool hasTransaction();
 
-        virtual queryImpl* createQuery(toQuery *query) = 0;
+        virtual queryImpl* createQuery(toQueryAbstr *query) = 0;
 
         /** get additional details about db object */
         virtual toQAdditionalDescriptions* decribe(toCache::ObjectRef const&) = 0;
@@ -110,7 +110,7 @@ class TORA_EXPORT toConnectionSub
         }
 
     protected:
-        toQuery *Query;
+        toQueryAbstr *Query;
         bool Broken, Initialized;
         QString Schema;
         QDateTime LastUsed; // last time this db connection was actually used

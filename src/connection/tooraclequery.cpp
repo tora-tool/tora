@@ -34,7 +34,7 @@
 
 #include "connection/tooraclequery.h"
 
-oracleQuery::oracleQuery(toQuery *query, toOracleConnectionSub *) : queryImpl(query)
+oracleQuery::oracleQuery(toQueryAbstr *query, toOracleConnectionSub *) : queryImpl(query)
 {
     TLOG(6, toDecorator, __HERE__) << std::endl;
     Running = Cancel = false;

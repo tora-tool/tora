@@ -95,7 +95,7 @@ class psqlQuery : public queryImpl
             REFCURSOROID 	= 1790
         };
     public:
-        psqlQuery(toQuery *query, toQPSqlConnectionSub *conn);
+        psqlQuery(toQueryAbstr *query, toQPSqlConnectionSub *conn);
         virtual ~psqlQuery();
         virtual void execute(void);
         virtual void execute(QString const&);

@@ -77,7 +77,7 @@ class toConnection : public QObject
 {
         Q_OBJECT;
 
-        friend class toQuery;
+        friend class toQueryAbstr;
         friend class toCache;
         friend class toCacheWorker;
         friend class toResultModel;

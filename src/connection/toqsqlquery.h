@@ -47,7 +47,7 @@ class toQSqlConnectionSub;
 class qsqlQuery : public queryImpl
 {
     public:
-        qsqlQuery(toQuery *query, toQSqlConnectionSub *conn);
+        qsqlQuery(toQueryAbstr *query, toQSqlConnectionSub *conn);
 
         virtual ~qsqlQuery();
 
