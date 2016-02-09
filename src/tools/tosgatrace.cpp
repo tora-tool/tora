@@ -181,7 +181,7 @@ toSGATrace::toSGATrace(QWidget *main, toConnection &connection)
     QSplitter *splitter = new QSplitter(Qt::Vertical, this);
     layout()->addWidget(splitter);
 
-    Trace = new toResultTableView(false, false, splitter);
+    Trace = new toResultTableView(true, false, splitter);
 
     QList<int> list;
     list.append(75);
@@ -203,6 +203,7 @@ toSGATrace::toSGATrace(QWidget *main, toConnection &connection)
     TOCATCH;
 
     setFocusProxy(Trace);
+    refresh();
 }
 
 QString toSGATrace::schema() const
@@ -248,8 +249,9 @@ static toSQL SQLSGATrace("toSGATrace:SGATrace",
                          "       DECODE(a.Rows_Processed,0,'N/A',ROUND(a.Sorts/a.Rows_Processed,3)) \"Sorts/Rows\",\n"
                          "       DECODE(a.Rows_Processed,0,'N/A',ROUND(a.Disk_Reads/a.Rows_Processed,3)) \"Disk/Rows\",\n"
                          "       DECODE(a.Rows_Processed,0,'N/A',ROUND(a.Buffer_Gets/a.Rows_Processed,3)) \"Buffers/Rows\",\n"
-                         "       a.Address||':'||a.Hash_Value \" \"\n"
-                         "  from v$sqlarea a,\n"
+                         "       a.Address||':'||a.Hash_Value \" \", \n"
+                         "       a.sql_id \" SQL_ID\"               \n"
+						 "  from v$sqlarea a,\n"
                          "       sys.all_users b\n"
                          " where a.parsing_user_id = b.user_id",
                          "Display the contents of the SGA stack. Must have one hidden column "
@@ -281,10 +283,7 @@ static toSQL SQLLongOps(TOSQL_LONGOPS,
                         "       DECODE(a.Rows_Processed,0,'N/A',ROUND(a.Disk_Reads/a.Rows_Processed,3)) \"Disk/Rows\",\n"
                         "       DECODE(a.Rows_Processed,0,'N/A',ROUND(a.Buffer_Gets/a.Rows_Processed,3)) \"Buffers/Rows\",\n"
                         "       b.SQL_Address||':'||b.SQL_Hash_Value \" \",\n"
-                        "       a.SQL_ID as \" SQL_ID\",                                       \n"
-                        "       a.SQL_CHILD_NUMBER as \" SQL_CHILD_NUMBER\",                   \n"
-                        "       a.PREV_SQL_ID as \" PREV_SQL_ID\",                             \n"
-                        "       a.PREV_CHILD_NUMBER as \" PREV_CHILD_NUMBER\"                  \n"
+                        "       a.SQL_ID as \" SQL_ID\"                    \n"
                         "  from v$sqlarea a,\n"
                         "       v$session_longops b\n"
                         " where b.sql_address = a.address(+)\n"
@@ -293,6 +292,19 @@ static toSQL SQLLongOps(TOSQL_LONGOPS,
                         "Display the contents of long the long operations list. Must have a hidden column "
                         "with SGA address at the end and a table name 'b' with a column username and sid "
                         "and must accept \"and ...\" clauses at end.");
+
+static toSQL SQLPlanHistory("toSGATrace:PlanHistory",
+		"select ss.snap_id, ss.instance_number node, begin_interval_time, sql_id, plan_hash_value,     \n"
+		" nvl(executions_delta,0) execs,                                                               \n"
+		" (elapsed_time_delta/decode(nvl(executions_delta,0),0,1,executions_delta))/1000000 avg_etime, \n"
+		" (buffer_gets_delta/decode(nvl(buffer_gets_delta,0),0,1,executions_delta)) avg_lio            \n"
+		" from DBA_HIST_SQLSTAT S, DBA_HIST_SNAPSHOT SS                                                \n"
+		" where sql_id = :sql_id<char[100],in>                                                         \n"
+		" and ss.snap_id = S.snap_id                                                                   \n"
+		" and ss.instance_number = S.instance_number                                                   \n"
+		" and executions_delta > 0                                                                     \n"
+		" order by 1, 2, 3                                                                             ",
+		"Display sql plan history");
 
 void toSGATrace::refresh(void)
 {
@@ -393,10 +405,6 @@ void toSGATrace::updateSchemas(void)
 
 void toSGATrace::changeItem()
 {
-	throw QString("toSGATrace::changeItem: not implemented yet.");
-#if 0
-    QModelIndex s = Trace->selectedIndex(Trace->model()->columnCount() - 1);
-    if (s.isValid())
-        Statement->changeAddress(s.data(Qt::EditRole).toString());
-#endif
+	QString sql_id = Trace->model()->data(Trace->selectedIndex().row(), " SQL_ID").toString();
+	Statement->changeAddress(toQueryParams() << sql_id << QString("0"));
 }
