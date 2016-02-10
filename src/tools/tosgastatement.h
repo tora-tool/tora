@@ -46,6 +46,7 @@ class toResultItem;
 class toResultPlan;
 class toResultPlanNew;
 class toResultView;
+class toResultTableView;
 
 /** This widget displays information about a statement in the Oracle SGA. To get an
  * address use the @ref toSQLToAddress function.
@@ -63,6 +64,9 @@ class toSGAStatement : public QTabWidget
         /** Resources used by the statement.
          */
         toResultItem *Resources;
+        /** History of exec plan changes
+         */
+        toResultTableView *PlanHistory;
         /** Address of the statement.
          */
         QString Address;
@@ -74,9 +78,6 @@ class toSGAStatement : public QTabWidget
         toResultPlan *Plan;
         toResultPlanNew *PlanNew;
 
-        /** Display resources of statement.
-         */
-        void viewResources(void);
     private slots:
         /** Change the displayed tab.
          */

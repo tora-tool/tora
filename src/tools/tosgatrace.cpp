@@ -293,19 +293,6 @@ static toSQL SQLLongOps(TOSQL_LONGOPS,
                         "with SGA address at the end and a table name 'b' with a column username and sid "
                         "and must accept \"and ...\" clauses at end.");
 
-static toSQL SQLPlanHistory("toSGATrace:PlanHistory",
-		"select ss.snap_id, ss.instance_number node, begin_interval_time, sql_id, plan_hash_value,     \n"
-		" nvl(executions_delta,0) execs,                                                               \n"
-		" (elapsed_time_delta/decode(nvl(executions_delta,0),0,1,executions_delta))/1000000 avg_etime, \n"
-		" (buffer_gets_delta/decode(nvl(buffer_gets_delta,0),0,1,executions_delta)) avg_lio            \n"
-		" from DBA_HIST_SQLSTAT S, DBA_HIST_SNAPSHOT SS                                                \n"
-		" where sql_id = :sql_id<char[100],in>                                                         \n"
-		" and ss.snap_id = S.snap_id                                                                   \n"
-		" and ss.instance_number = S.instance_number                                                   \n"
-		" and executions_delta > 0                                                                     \n"
-		" order by 1, 2, 3                                                                             ",
-		"Display sql plan history");
-
 void toSGATrace::refresh(void)
 {
     try

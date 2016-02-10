@@ -37,24 +37,13 @@
 #include "widgets/toresultitem.h"
 #include "widgets/toresultplan.h"
 #include "widgets/toresultresources.h"
+#include "widgets/toresulttableview.h"
 //#include "core/tosqlparse.h"
 #include "core/tosql.h"
 #include "core/toconfiguration.h"
 #include "core/utils.h"
 #include "editor/toscintilla.h"
 #include "connection/tooraclesetting.h"
-
-void toSGAStatement::viewResources(void)
-{
-    try
-    {
-        Resources->refreshWithParams(toQueryParams() << Address);
-    }
-    catch (...)
-    {
-        Utils::toStatusMessage(tr("Couldn't find SQL statement in SGA"), false, false);
-    }
-}
 
 static toSQL SQLParsingSchema(
     "toSGAStatement:ParsingSchema",
@@ -78,6 +67,19 @@ static toSQL SQLBackendSql(
     "",
     "QPSQL");
 
+static toSQL SQLPlanHistory("toSGATrace:PlanHistory",
+		"select ss.snap_id, ss.instance_number node, begin_interval_time, sql_id, plan_hash_value,     \n"
+		" nvl(executions_delta,0) execs,                                                               \n"
+		" (elapsed_time_delta/decode(nvl(executions_delta,0),0,1,executions_delta))/1000000 avg_etime, \n"
+		" (buffer_gets_delta/decode(nvl(buffer_gets_delta,0),0,1,executions_delta)) avg_lio            \n"
+		" from DBA_HIST_SQLSTAT S, DBA_HIST_SNAPSHOT SS                                                \n"
+		" where sql_id = :sql_id<char[100],in>                                                         \n"
+		" and ss.snap_id = S.snap_id                                                                   \n"
+		" and ss.instance_number = S.instance_number                                                   \n"
+		" and executions_delta > 0                                                                     \n"
+		" order by 1, 2, 3                                                                             ",
+		"Display sql plan history");
+
 toSGAStatement::toSGAStatement(QWidget *parent)
     : QTabWidget(parent)
 {
@@ -93,6 +95,13 @@ toSGAStatement::toSGAStatement(QWidget *parent)
         addTab(PlanNew, tr("Execution plan New"));
         Resources = new toResultResources(this);
         addTab(Resources, tr("Information"));
+
+        PlanHistory  = new toResultTableView(this);
+        PlanHistory->setObjectName("columnView");
+        //PlanHistory->setSQLName("toSGATrace:PlanHistory");
+        PlanHistory->setSQL(SQLPlanHistory);
+        PlanHistory->setReadAll(true);
+        addTab(PlanHistory, tr("Plan History"));
     }
     else
         QTabWidget::tabBar()->hide();
@@ -160,7 +169,9 @@ void toSGAStatement::changeTab(int index)
     	else if (CurrentTab == PlanNew)
     		PlanNew->queryCursorPlan(toQueryParams() << Address << Cursor);
     	else if (CurrentTab == Resources)
-    		viewResources();
+            Resources->refreshWithParams(toQueryParams() << Address);
+    	else if (CurrentTab == PlanHistory)
+    		PlanHistory->refreshWithParams(toQueryParams() << Address);
     }
     TOCATCH;
 }
