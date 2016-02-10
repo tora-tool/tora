@@ -47,87 +47,6 @@
 #include <QtGui/QResizeEvent>
 
 static toSQL SQLResource(
-    "toResultResources:Information",
-    "SELECT 'Total' AS \"-\", "
-    "       'per Execution' AS \"-\", "
-    "       'per Row processed' AS \"-\", "
-    "       Sorts, "
-    "       DECODE ( Executions, "
-    "                0, "
-    "                'N/A', "
-    "                ROUND ( Sorts / Executions, "
-    "                        3 ) ) AS \" \", "
-    "       DECODE ( Rows_Processed, "
-    "                0, "
-    "                'N/A', "
-    "                ROUND ( Sorts / Rows_Processed, "
-    "                        3 ) ) AS \" \", "
-    "       Parse_Calls AS \"Parse\", "
-    "       DECODE ( Executions, "
-    "                0, "
-    "                'N/A', "
-    "                ROUND ( Parse_Calls / Executions, "
-    "                        3 ) ) AS \" \", "
-    "       DECODE ( Rows_Processed, "
-    "                0, "
-    "                'N/A', "
-    "                ROUND ( Parse_Calls / Rows_Processed, "
-    "                        3 ) ) AS \" \", "
-    "       Disk_Reads, "
-    "       DECODE ( Executions, "
-    "                0, "
-    "                'N/A', "
-    "                ROUND ( Disk_Reads / Executions, "
-    "                        3 ) ) AS \" \", "
-    "       DECODE ( Rows_Processed, "
-    "                0, "
-    "                'N/A', "
-    "                ROUND ( Disk_Reads / Rows_Processed, "
-    "                        3 ) ) AS \" \", "
-    "       Buffer_Gets, "
-    "       DECODE ( Executions, "
-    "                0, "
-    "                'N/A', "
-    "                ROUND ( Buffer_Gets / Executions, "
-    "                        3 ) ) AS \" \", "
-    "       DECODE ( Rows_Processed, "
-    "                0, "
-    "                'N/A', "
-    "                ROUND ( Buffer_Gets / Rows_Processed, "
-    "                        3 ) ) AS \" \", "
-    "       Rows_Processed, "
-    "       DECODE ( Executions, "
-    "                0, "
-    "                'N/A', "
-    "                ROUND ( Rows_Processed / Executions, "
-    "                        3 ) ) AS \" \", "
-    "       ' ' AS \"-\", "
-    "       Executions, "
-    "       ' ' AS \"-\", "
-    "       ' ' AS \"-\", "
-    "       ' ' AS \"-\", "
-    "       ' ' AS \"-\", "
-    "       ' ' AS \"-\", "
-    "       Loads, "
-    "       First_Load_Time, "
-    "       Parsing_User_Id, "
-    "       Parsing_Schema_Id, "
-    "       Users_Executing, "
-    "       Users_Opening, "
-    "       Open_Versions, "
-    "       Sharable_Mem, "
-    "       Kept_Versions, "
-    "       Persistent_Mem, "
-    "       Optimizer_Mode, "
-    "       Loaded_Versions, "
-    "       Runtime_Mem, "
-    "       Serializable_Aborts, "
-    "       Invalidations "
-    "  FROM v$sqlarea "
-    " WHERE Address || ':' || Hash_Value = :f1<char[100]> ",
-    "Display information about an SQL statement");
-
-static toSQL SQLResource10(
 		"toResultResources:Information",
 		"SELECT 'Total' AS \"-\", 										\n"
 		"       'per Execution' AS \"-\", 									\n"
@@ -153,24 +72,28 @@ static toSQL SQLResource10(
 		"       ' ' AS \"-\", 											\n"
 		"       ' ' AS \"-\", 											\n"
 		"       ' ' AS \"-\", 											\n"
-		"       Loads, 												\n"
+		"       Loads, 												    \n"
 		"       First_Load_Time, 										\n"
-		"       Parsing_User_Id, 										\n"
-		"       Parsing_Schema_Id, 										\n"
-		"       Users_Executing, 										\n"
+		"       b.username as Parsing_User,                             \n"
 		"       Users_Opening, 											\n"
+		"       Users_Executing, 										\n"
+		"       c.username as Parsing_Schema,                           \n"
 		"       Open_Versions, 											\n"
 		"       Sharable_Mem, 											\n"
-		"       Kept_Versions, 											\n"
 		"       Persistent_Mem, 										\n"
+		"       Kept_Versions, 											\n"
 		"       Optimizer_Mode, 										\n"
 		"       Loaded_Versions, 										\n"
 		"       Runtime_Mem, 											\n"
-		"       Serializable_Aborts, 										\n"
+		"       Serializable_Aborts, 									\n"
 		"       Invalidations 											\n"
-		"  FROM v$sqlarea 											\n"
-		" WHERE 1=1       											\n"
-		" AND   SQL_ID = :f1<char[100]>                                                                     \n",
+		"  FROM v$sqlarea a,										    \n"
+        "       sys.all_users b,                                        \n"
+        "       sys.all_users c                                         \n"
+		" WHERE 1=1       											    \n"
+        "   AND a.parsing_user_id = b.user_id                           \n"
+        "   AND a.Parsing_Schema_Id = c.user_id                         \n"
+		"   AND SQL_ID = :f1<char[100]>                                 \n",
 		"Display information about an SQL statement",
 		"1000",
 		"Oracle");
@@ -235,6 +158,7 @@ QWidget *toResultItem::createTitle(QWidget *parent)
     QLabel *widget = new QLabel(parent);
     widget->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     widget->setWordWrap(true);
+    widget->setTextInteractionFlags(Qt::TextSelectableByMouse);
     return widget;
 }
 
@@ -268,6 +192,7 @@ void toResultItem::setValue(QWidget *widget,
         {
             label->setFrameStyle(StyledPanel | Sunken);
             label->setFont(DataFont);
+            label->setTextInteractionFlags(Qt::TextSelectableByMouse);
         }
         else
         {
