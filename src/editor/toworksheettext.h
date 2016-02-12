@@ -131,6 +131,8 @@ class toWorksheetText : public toSqlText
         int m_bookmarkMarginHandle;
         //! \brief Bookrmarks handler list used for navigation (next/prev)
         QList<int> m_bookmarks;
+
+        bool m_completeEnabled;
 };
 
 /**

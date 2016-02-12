@@ -55,9 +55,13 @@ toWorksheetText::toWorksheetText(QWidget *parent, const char *name)
     , complTimer(new QTimer(this))
     , m_bookmarkHandle(QsciScintilla::markerDefine(QsciScintilla::Background))
     , m_bookmarkMarginHandle(QsciScintilla::markerDefine(QsciScintilla::RightTriangle))
+	, m_completeEnabled(toConfigurationNewSingle::Instance().option(Editor::UseSpacesForIndentBool).toBool())
 {
-    QsciScintilla::setAutoCompletionThreshold(0);
-    QsciScintilla::setAutoCompletionSource(QsciScintilla::AcsAPIs);
+	if (m_completeEnabled)
+	{
+		QsciScintilla::setAutoCompletionThreshold(0);
+		QsciScintilla::setAutoCompletionSource(QsciScintilla::AcsAPIs);
+	}
     QsciScintilla::setAutoIndent(true);
 
     // highlight caret line
@@ -138,7 +142,7 @@ void toWorksheetText::keyPressEvent(QKeyEvent * e)
             return;
         }
     }
-    else if (e->modifiers() == Qt::ControlModifier && e->key() == Qt::Key_T)
+    else if (m_completeEnabled && e->modifiers() == Qt::ControlModifier && e->key() == Qt::Key_T)
     {
         autoCompleteFromAPIs();
         e->accept();
@@ -169,7 +173,7 @@ void toWorksheetText::positionChanged(int row, int col)
 	{
 		position = SendScintilla(QsciScintilla::SCI_POSITIONBEFORE, position);
 		currentChar = getWCharAt(position);
-		if (currentChar == L'.')
+		if (m_completeEnabled && currentChar == L'.')
 		{
 			complTimer->start(toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::CodeCompleteDelayInt).toInt());
 			return;

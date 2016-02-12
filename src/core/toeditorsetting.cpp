@@ -58,7 +58,7 @@ QVariant ToConfiguration::Editor::defaultValue(int option) const
         case ObjectNamesUpperBool:
             return QVariant((bool) false);
         case CodeCompleteBool:
-            return QVariant((bool) true);
+            return QVariant((bool) false);
         case CompleteSortBool:
             return QVariant((bool) true);
         case CodeCompleteDelayInt:
