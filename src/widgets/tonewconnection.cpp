@@ -174,7 +174,7 @@ toNewConnection::toNewConnection(QWidget* parent, toWFlags fl)
     QModelIndex last = connectionModel()->index(r, 1);
     Previous->setCurrentIndex(last);
     Previous->selectionModel()->clear();
-    Previous->setFocus(Qt::OtherFocusReason);
+    searchEdit->setFocus(Qt::OtherFocusReason);
 }
 
 QString toNewConnection::getCurrentProvider()
