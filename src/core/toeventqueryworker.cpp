@@ -42,6 +42,7 @@
 #include "core/toquery.h"
 #include "core/toqvalue.h"
 #include "core/todatabasesetting.h"
+#include "core/toconnectiontraits.h"
 
 #include <QApplication>
 #include <QtCore/QMutexLocker>
@@ -76,6 +77,52 @@
         close();                                    \
     }
 
+void toEventQueryWorker::toQueryPriv::init()
+{
+    try
+    {
+        // Try to switch the current db schema
+        if (m_ConnectionSubLoan.SchemaInitialized == false && !m_ConnectionSubLoan.Schema.isEmpty())
+        {
+            QString sql = m_ConnectionSubLoan.ParentConnection.getTraits().schemaSwitchSQL(m_ConnectionSubLoan.Schema);
+            if (!sql.isEmpty())
+            {
+                m_Query = m_ConnectionSubLoan->createQuery(this);
+                m_ConnectionSubLoan->setQuery(this);
+                m_Query->execute(sql);
+                delete m_Query;
+            }
+            m_ConnectionSubLoan.SchemaInitialized = true;
+            m_ConnectionSubLoan->setSchema(m_ConnectionSubLoan.Schema); // assign value in toConnectionSub from toConnectionSubLoan
+        }
+
+        // Try to switch the current NLS_SETTINGS (not implemented yet)
+        if ( m_ConnectionSubLoan->isInitialized() == false)
+        {
+            Q_FOREACH(QString sql, m_ConnectionSubLoan.ParentConnection.initStrings())
+            {
+                m_Query = m_ConnectionSubLoan->createQuery(this);
+                m_ConnectionSubLoan->setQuery(this);
+                m_Query->execute(sql);
+                delete m_Query;
+            }
+            m_ConnectionSubLoan->setInitialized(true);
+        }
+
+        m_Query = m_ConnectionSubLoan->createQuery(this);
+        m_ConnectionSubLoan->setQuery(this);
+        m_Query->execute();
+    }
+    catch (...)
+    {
+        if (m_Query)
+            delete m_Query;
+        m_ConnectionSubLoan->setQuery(NULL);
+        m_Query = NULL;
+        throw;
+    }
+}
+
 toEventQueryWorker::toEventQueryWorker(toEventQuery *c
                                        , QSharedPointer<toConnectionSubLoan> &conn
                                        , QSharedPointer<toEventQuery::WaitConditionWithMutex> &wait
@@ -103,10 +150,11 @@ toEventQueryWorker::~toEventQueryWorker()
 void toEventQueryWorker::init()
 {
     TLOG(7, toDecorator, __HERE__) << "toEventQueryWorker init a" << std::endl;
-    emit started();
     try
     {
         Query.moveToThread(this->thread());
+        Query.init();
+        emit started();
         toQColumnDescriptionList desc = Query.describe();
         ColumnCount = Query.columns();
         emit headers(desc, ColumnCount);

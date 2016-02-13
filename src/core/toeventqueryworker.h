@@ -139,6 +139,20 @@ class toEventQueryWorker : public QObject
         */
         void rowsProcessed(unsigned long rows);
 
+    protected:
+        class toQueryPriv : public toQueryAbstr {
+        public:
+        	toQueryPriv(toConnectionSubLoan &conn, const toSQL &sql, toQueryParams const& params)
+        		: toQueryAbstr(conn, sql, params)
+        	{
+        	}
+
+        	toQueryPriv(toConnectionSubLoan &conn, QString const& sql, toQueryParams const& params)
+        		: toQueryAbstr(conn, sql, params)
+        	{
+        	}
+        	void init();
+        };
     private slots:
         void slotRead();
 
@@ -159,7 +173,7 @@ class toEventQueryWorker : public QObject
         bool Stopped, Closed;
 
         // the real query object
-        toQuery Query;
+        toQueryPriv Query;
 };
 
 #endif
