@@ -965,7 +965,7 @@ void toResultPlanNewModel::slotPoll(toEventQuery*Query)
             		stack.pop_back();
             	}
             	if (stack.empty())
-            		throw QString::fromAscii("toResultPlan:ViewVSQLPlan returned rows in wrong order");
+            		throw QString::fromLatin1("toResultPlan:ViewVSQLPlan returned rows in wrong order");
 
             	stack.last()->appendChild(itemNew = new toPlanTreeItem(columnData, stack.last()));
             }

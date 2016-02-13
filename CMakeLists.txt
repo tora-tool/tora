@@ -177,8 +177,7 @@ SET(QT_USE_QTWEBKIT TRUE)
 #SET(CMAKE_AUTOMOC ON)
 IF(QT5_BUILD)
   set (QT_FOUND true)
-  #set(CMAKE_PREFIX_PATH "$ENV{QTDIR}\\5.3\\msvc2013\\") # multiple paths do not work
-  set(CMAKE_PREFIX_PATH "$ENV{QTDIR}\\5.3\\msvc2013_64_opengl\\")
+  set(CMAKE_PREFIX_PATH "$ENV{QTDIR}\\") # multiple paths do not work
   find_package(Qt5Core REQUIRED)
   find_package(Qt5Gui REQUIRED)
   find_package(Qt5Network REQUIRED)
