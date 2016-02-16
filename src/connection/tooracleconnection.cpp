@@ -306,7 +306,7 @@ void toOracleConnectionSub::cancel()
         ReThrowException(exc);
     }
 
-    TLOG(0, toDecorator, __HERE__) << ":oracleConn::cancel(conn=" <<_conn << ", this=" << Query << ")" << std::endl;
+    TLOG(0, toDecorator, __HERE__) << ":oracleConn::cancel(conn=" <<_conn << ", Query=" << Query << ")" << std::endl;
 }
 
 void toOracleConnectionSub::close()

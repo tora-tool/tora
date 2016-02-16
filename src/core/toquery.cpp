@@ -46,20 +46,24 @@ toQueryAbstr::toQueryAbstr(toConnectionSubLoan &conn, const toSQL &sql, toQueryP
     : m_ConnectionSubLoan(conn)
     , m_Params(params)
     , m_SQL(sql(conn.ParentConnection).toLatin1())
+    , m_SQLName(sql.name())
     , m_eof(false)
     , m_rowsProcessed(0)
     , m_Query(NULL)
 {
+	conn->setLastSql(sql.name());
 }
 
 toQueryAbstr::toQueryAbstr(toConnectionSubLoan &conn, QString const& sql, toQueryParams const& params)
     : m_ConnectionSubLoan(conn)
     , m_Params(params)
     , m_SQL(sql)
+    , m_SQLName(sql.left(20))
     , m_eof(false)
     , m_rowsProcessed(0)
     , m_Query(NULL)
 {
+	conn->setLastSql(sql.left(20));
 }
 
 toQueryAbstr::~toQueryAbstr()
@@ -83,6 +87,7 @@ toQueryAbstr::~toQueryAbstr()
 
     if (m_ConnectionSubLoan->query() == this)
         m_ConnectionSubLoan->setQuery(NULL);
+    m_ConnectionSubLoan->setLastSql(m_SQLName+"#");
 }
 
 bool toQueryAbstr::eof(void)

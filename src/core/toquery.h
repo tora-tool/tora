@@ -158,6 +158,7 @@ class toQueryAbstr : public QObject
         toConnectionSubLoan& m_ConnectionSubLoan;
         toQueryParams m_Params;
         QString m_SQL;
+        QString m_SQLName;
         bool m_eof;
         unsigned long m_rowsProcessed;
 

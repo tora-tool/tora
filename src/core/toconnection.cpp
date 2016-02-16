@@ -335,23 +335,23 @@ void toConnection::connectionsMenu(QMenu *menu)
     }
 
     QMutexLocker clock(&ConnectionLock);
+    QMenu *active = menu->addMenu(tr("Active connections"));
+    active->setDisabled(true);
     Q_FOREACH(toConnectionSub* conn, LentConnections)
     {
-        QMenu *sess = menu->addMenu(conn->sessionId().first());
+        QMenu *sess = menu->addMenu(conn->sessionId().first()+" "+conn->lastSql());
         QAction *cancel = new QAction("Cancel", this);
-        QAction *close = new QAction("Close", this);
         cancel->setData(VPtr<toConnectionSub>::asQVariant(conn));
-        close->setData(VPtr<toConnectionSub>::asQVariant(conn));
         sess->addAction(cancel);
-        sess->addAction(close);
         ConnectionActions.insert(cancel);
-        ConnectionActions.insert(close);
         connect(sess, SIGNAL(triggered(QAction *)), this, SLOT(commandCallback(QAction *)));
     }
     menu->addSeparator();
+    QMenu *inactive = menu->addMenu(tr("Inactive connections"));
+    inactive->setDisabled(true);
     Q_FOREACH(toConnectionSub* conn, Connections)
     {
-        QMenu *sess = menu->addMenu(conn->sessionId().first());
+        QMenu *sess = menu->addMenu(conn->sessionId().first()+" "+conn->lastSql());
         QAction *close = new QAction("Close", this);
         close->setData(VPtr<toConnectionSub>::asQVariant(conn));
         sess->addAction(close);
@@ -366,11 +366,11 @@ void toConnection::commandCallback(QAction *act)
     toConnectionSub *conn = VPtr<toConnectionSub>::asPtr(act->data());
     if ( LentConnections.contains(conn))
     {
-
+    	conn->cancel();
     }
     else if ( Connections.contains(conn))
     {
-
+    	closeConnection(conn);
     }
     else
     {

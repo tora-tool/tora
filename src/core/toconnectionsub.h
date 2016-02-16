@@ -8,7 +8,6 @@
 #include <QtCore/QDateTime>
 
 class queryImpl;
-class toQueryAbstr;
 
 /** This class is an abstract definition of an actual connection to a database.
  * Each @ref toConnection object can have one or more actual connections to the
@@ -18,10 +17,11 @@ class toQueryAbstr;
  */
 class TORA_EXPORT toConnectionSub
 {
+	friend class toQueryAbstr;
     public:
 
         /** Create connection to database. */
-        toConnectionSub() : Query(NULL), Broken(false), Initialized(false) {}
+        toConnectionSub() : Query(NULL), Broken(false), Initialized(false), mutex(QMutex::NonRecursive) {}
 
         /** Close connection. */
         virtual ~toConnectionSub() {}
@@ -109,11 +109,26 @@ class TORA_EXPORT toConnectionSub
             Schema = schema;
         }
 
+        QString lastSql() const
+        {
+			QMutexLocker l(&mutex);
+        	return LastSql;
+        }
+
     protected:
+        void setLastSql(QString const& last)
+        {
+        	QMutexLocker l(&mutex);
+        	LastSql = last;
+        }
+
         toQueryAbstr *Query;
         bool Broken, Initialized;
         QString Schema;
         QDateTime LastUsed; // last time this db connection was actually used
+
+        mutable QMutex mutex;
+        QString LastSql;
 };
 
 #endif
