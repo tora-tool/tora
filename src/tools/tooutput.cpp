@@ -35,6 +35,7 @@
 #include "tools/tooutput.h"
 #include "ui_tooutputsettingui.h"
 #include "widgets/toresultview.h"
+#include "widgets/torefreshcombo.h"
 #include "core/totimer.h"
 #include "core/totool.h"
 #include "core/toglobalevent.h"
@@ -86,11 +87,7 @@ class toOutputSetting
             if (name)
                 setObjectName(name);
 
-            Utils::toRefreshCreate(this,
-                                   "toRefreshCreate",
-                                   toConfigurationNewSingle::Instance().option(Output::PollingInterval).toString(),
-                                   PollingInterval);
-
+            PollingInterval->setCurrentText(toConfigurationNewSingle::Instance().option(Output::PollingInterval).toString());
             toSettingTab::loadSettings(this);
         }
         virtual void saveSetting(void)
@@ -194,18 +191,15 @@ toOutput::toOutput(QWidget *main, toConnection &connection, bool enabled)
 
     Toolbar->addSeparator();
 
-    Toolbar->addWidget(
-        new QLabel(tr("Refresh") + " ", Toolbar));
+    Toolbar->addWidget(new QLabel(tr("Refresh") + " ", Toolbar));
 
-
-    Refresh = Utils::toRefreshCreate(Toolbar,
-                                     "Refresh",
-                                     toConfigurationNewSingle::Instance().option(ToConfiguration::Output::PollingInterval).toString());
+	Refresh = new toRefreshCombo(Toolbar, toConfigurationNewSingle::Instance().option(ToConfiguration::Output::PollingInterval).toString());
     Toolbar->addWidget(Refresh);
     connect(Refresh,
             SIGNAL(activated(const QString &)),
             this,
             SLOT(changeRefresh(const QString &)));
+	connect(Refresh->timer(), SIGNAL(timeout(void)), this, SLOT(refresh(void)));
 
     Toolbar->addWidget(new Utils::toSpacer());
 
@@ -213,17 +207,6 @@ toOutput::toOutput(QWidget *main, toConnection &connection, bool enabled)
     layout()->addWidget(Output);
 
     ToolMenu = NULL;
-    // connect(toMainWidget()->workspace(),
-    //         SIGNAL(subWindowActivated(QMdiSubWindow *)),
-    //         this,
-    //         SLOT(windowActivated(QMdiSubWindow *)));
-
-    try
-    {
-        connect(timer(), SIGNAL(timeout(void)), this, SLOT(refresh(void)));
-        Utils::toRefreshParse(timer(), toConfigurationNewSingle::Instance().option(ToConfiguration::Output::PollingInterval).toString());
-    }
-    TOCATCH;
 
     if (enabled)
         disable(false);
@@ -363,15 +346,6 @@ void toOutput::refresh(void)
 void toOutput::clear(void)
 {
     Output->clear();
-}
-
-void toOutput::changeRefresh(const QString &str)
-{
-    try
-    {
-        Utils::toRefreshParse(timer(), str);
-    }
-    TOCATCH;
 }
 
 bool toOutput::enabled(void)

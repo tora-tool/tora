@@ -165,12 +165,6 @@ namespace Utils
         return c.isLetterOrNumber() || c == '_' || c == '%' || c == '$' || c == '#';
     }
 
-    /** Set a timer with the value from a refresh combobox (See @ref toRefreshCreate).
-     * @param timer Timer to set timeout in.
-     * @param str String from currentText of combobox. If empty, set to default.
-     */
-    void toRefreshParse(toTimer *timer, const QString &str = QString::null);
-
     /**
      * Translate string if the context and text is strictly ASCII7 and the context doesn't
      * contain any spaces. Otherwise just return the text.
@@ -425,15 +419,6 @@ namespace Utils
     * @exception QString if style not available.
     */
     void toSetSessionType(const QString &str);
-
-    /** Create or fill a combobox with refresh intervals.
-    * @param parent Parent of created combobox.
-    * @param name Name of created combobox.
-    * @param def Default value of the combobox.
-    * @param item Combo box to fill. If not specified a new combobox is created.
-    */
-    QComboBox *toRefreshCreate(QWidget *parent, const char *name = NULL, const QString & def = QString::null,
-                               QComboBox * item = NULL);
 
     QPixmap connectionColorPixmap(const QString & name);
 

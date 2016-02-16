@@ -52,6 +52,7 @@ class toResultSchema;
 class toResultTableView;
 class toSGAStatement;
 class toTool;
+class toRefreshCombo;
 
 namespace ToConfiguration
 {
@@ -88,7 +89,6 @@ class toSGATrace : public toToolWidget
     public slots:
         void changeSchema(const QString &str);
         void changeItem(void);
-        void changeRefresh(const QString &str);
         void refresh(void);
     private:
         virtual void slotWindowActivated(toToolWidget*) {};
@@ -99,7 +99,7 @@ class toSGATrace : public toToolWidget
         QAction       *FetchAct;
         toResultSchema *Schema;
         QComboBox     *Type;
-        QComboBox     *Refresh;
+        toRefreshCombo*Refresh;
         QComboBox     *Limit;
 
         toSGAStatement *Statement;

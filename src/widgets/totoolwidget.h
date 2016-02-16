@@ -132,11 +132,6 @@ class toToolWidget : public QWidget
         void commitChanges();
         void rollbackChanges();
 
-        /** Get timer of tool. Used by some results to get update time.
-         * @return Pointer to a timer object.
-         */
-        toTimer *timer(void);
-
         QAction *activationAction();
 
 #ifdef TORA3_GRAPH
@@ -175,7 +170,6 @@ class toToolWidget : public QWidget
         virtual void slotWindowActivated(toToolWidget*) = 0;
         void toolActivated(toToolWidget*);
     private:
-        toTimer *Timer;
         toTool &Tool;
         QAction *Action;
 };

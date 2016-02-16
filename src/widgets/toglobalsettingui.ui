@@ -533,7 +533,7 @@ Will leave the password unencrypted in the config file.</string>
        </widget>
       </item>
       <item row="5" column="2">
-       <widget class="QComboBox" name="RefreshInterval"/>
+       <widget class="toRefreshCombo" name="RefreshInterval"/>
       </item>
       <item row="3" column="2">
        <widget class="QSpinBox" name="DisplaySamplesInt">
@@ -632,6 +632,13 @@ Will leave the password unencrypted in the config file.</string>
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>toRefreshCombo</class>
+   <extends>QComboBox</extends>
+   <header>widgets/torefreshcombo.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>CustomSQL</tabstop>
   <tabstop>SQLBrowse</tabstop>

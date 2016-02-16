@@ -531,32 +531,6 @@ namespace Utils
         return brush;
     }
 
-    void toRefreshParse(toTimer *timer, const QString &str)
-    {
-        QString t = str;
-        if (t.isEmpty())
-            t = toConfigurationNewSingle::Instance().option(ToConfiguration::Global::RefreshInterval).toString();
-
-        if (t == qApp->translate("toRefreshCreate", "None") || t == "None")
-            timer->stop();
-        else if (t == qApp->translate("toRefreshCreate", "2 seconds") || t == "2 seconds")
-            timer->start(2 * 1000);
-        else if (t == qApp->translate("toRefreshCreate", "5 seconds") || t == "5 seconds")
-            timer->start(5 * 1000);
-        else if (t == qApp->translate("toRefreshCreate", "10 seconds") || t == "10 seconds")
-            timer->start(10 * 1000);
-        else if (t == qApp->translate("toRefreshCreate", "30 seconds") || t == "30 seconds")
-            timer->start(30 * 1000);
-        else if (t == qApp->translate("toRefreshCreate", "1 min") || t == "1 min")
-            timer->start(60 * 1000);
-        else if (t == qApp->translate("toRefreshCreate", "5 min") || t == "5 min")
-            timer->start(300 * 1000);
-        else if (t == qApp->translate("toRefreshCreate", "10 min") || t == "10 min")
-            timer->start(600 * 1000);
-        else
-            throw qApp->translate("toRefreshParse", "Unknown timer value");
-    }
-
     QString toTranslateMayby(const QString &ctx, const QString &text)
     {
         if (ctx.contains(QString::fromLatin1(" ")) ||
@@ -817,50 +791,6 @@ namespace Utils
         }
         else
             return QString::fromUtf8(arr);
-    }
-
-    QComboBox *toRefreshCreate(QWidget *parent, const char *name, const QString &def, QComboBox *item)
-    {
-        QComboBox *refresh;
-        if (item)
-            refresh = item;
-        else
-        {
-            refresh = new QComboBox(parent);
-            refresh->setObjectName(name);
-            refresh->setEditable(false);
-        }
-
-        refresh->addItem(qApp->translate("toRefreshCreate", "None"));
-        refresh->addItem(qApp->translate("toRefreshCreate", "2 seconds"));
-        refresh->addItem(qApp->translate("toRefreshCreate", "5 seconds"));
-        refresh->addItem(qApp->translate("toRefreshCreate", "10 seconds"));
-        refresh->addItem(qApp->translate("toRefreshCreate", "30 seconds"));
-        refresh->addItem(qApp->translate("toRefreshCreate", "1 min"));
-        refresh->addItem(qApp->translate("toRefreshCreate", "5 min"));
-        refresh->addItem(qApp->translate("toRefreshCreate", "10 min"));
-        QString str;
-        if (!def.isNull())
-            str = def;
-        else
-            str = toConfigurationNewSingle::Instance().option(ToConfiguration::Global::RefreshInterval).toString();
-        if (str == "2 seconds")
-            refresh->setCurrentIndex(1);
-        else if (str == "5 seconds")
-            refresh->setCurrentIndex(2);
-        else if (str == "10 seconds")
-            refresh->setCurrentIndex(3);
-        else if (str == "30 seconds")
-            refresh->setCurrentIndex(4);
-        else if (str == "1 min")
-            refresh->setCurrentIndex(5);
-        else if (str == "5 min")
-            refresh->setCurrentIndex(6);
-        else if (str == "10 min")
-            refresh->setCurrentIndex(7);
-        else
-            refresh->setCurrentIndex(0);
-        return refresh;
     }
 
     void toSetThreadName(QThread const& p)

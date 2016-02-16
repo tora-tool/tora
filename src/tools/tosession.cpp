@@ -40,6 +40,7 @@
 #include "widgets/toresultlock.h"
 #include "widgets/toresultitem.h"
 #include "widgets/toresultstats.h"
+#include "widgets/torefreshcombo.h"
 #include "tools/tosgastatement.h"
 #include "tools/tosgatrace.h"
 #include "tools/towaitevents.h"
@@ -453,10 +454,9 @@ toSession::toSession(QWidget *main, toConnection &connection)
     toolbar->addWidget(
         new QLabel(tr("Refresh") + " ", toolbar));
 
-    Refresh = Utils::toRefreshCreate(toolbar);
-    connect(Refresh,
-            SIGNAL(activated(const QString &)),
-            this, SLOT(slotChangeRefresh(const QString &)));
+    Refresh = new toRefreshCombo(toolbar);
+    connect(Refresh, SIGNAL(activated(const QString &)), this, SLOT(slotChangeRefresh(const QString &)));
+    connect(Refresh->timer(), SIGNAL(timeout(void)), this, SLOT(slotRefreshTabs(void)));
     toolbar->addWidget(Refresh);
 
     toolbar->addSeparator();
@@ -605,13 +605,6 @@ toSession::toSession(QWidget *main, toConnection &connection)
             SIGNAL(currentChanged(int)),
             this,
             SLOT(slotChangeTab(int)));
-
-    try
-    {
-        connect(timer(), SIGNAL(timeout(void)), this, SLOT(slotRefreshTabs(void)));
-        Utils::toRefreshParse(timer());
-    }
-    TOCATCH;
 
     CurrentTab = CurrentStatement;
 
@@ -968,15 +961,6 @@ void toSession::slotDisconnectSession()
         }
         TOCATCH;
     }
-}
-
-void toSession::slotChangeRefresh(const QString &str)
-{
-    try
-    {
-        Utils::toRefreshParse(timer(), str);
-    }
-    TOCATCH;
 }
 
 void toSession::slotChangeItem()

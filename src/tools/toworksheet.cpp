@@ -55,6 +55,7 @@
 #include "widgets/toresultstats.h"
 #include "widgets/totabwidget.h"
 #include "widgets/totreewidget.h"
+#include "widgets/torefreshcombo.h"
 #include "core/totimer.h"
 //obsolete #include "core/tovisualize.h"
 #ifdef TORA3_STAT
@@ -358,7 +359,7 @@ void toWorksheet::setup(bool autoLoad)
     workToolbar->addAction(statisticAct);
     workToolbar->addWidget(new QLabel(tr("Refresh") + " ",
                                       workToolbar));
-    Refresh = Utils::toRefreshCreate(workToolbar);
+    Refresh = new toRefreshCombo(workToolbar);
     workToolbar->addWidget(Refresh);
     connect(Refresh,
             SIGNAL(activated(const QString &)),
@@ -628,17 +629,6 @@ toWorksheet::toWorksheet(QWidget *main, toConnection &connection, bool autoLoad)
 {
     createActions();
     setup(autoLoad);
-}
-
-
-void toWorksheet::slotChangeRefresh(const QString &str)
-{
-    try
-    {
-        if (stopAct->isEnabled() && statisticAct->isChecked())
-            Utils::toRefreshParse(timer(), str);
-    }
-    TOCATCH;
 }
 
 void toWorksheet::slotWindowActivated(toToolWidget *widget)
@@ -1306,12 +1296,6 @@ void toWorksheet::query(toSyntaxAnalyzer::statement const& statement, execTypeEn
                     if (!lockConnectionActClicked)
                         unlockConnection();
                 }
-                try
-                {
-                    if (statisticAct->isChecked())
-                        Utils::toRefreshParse(timer(), Refresh->currentText());
-                }
-                TOCATCH
                 Result->setSQLName(statement.sql.simplified().left(40));
             }
             break;
@@ -1399,7 +1383,6 @@ void toWorksheet::slotFirstResult(const QString &sql,
     // Stop ticking clock
     // TODO: resume (un-pause) the clock when read-all is executed in Model
     Poll.stop();
-    timer()->stop();
 
     m_FirstDataReceived = true;
 
@@ -1568,7 +1551,6 @@ void toWorksheet::slotEraseLogButton()
 
 void toWorksheet::slotQueryDone(void)
 {
-    timer()->stop();
     stopAct->setDisabled(true);
 
     // Possibly the toConnectionSub.Schema got changed after ~toQuery

@@ -82,14 +82,14 @@ class toResultBar : public toBarChart, public toResult
         /** Destroy chart
          */
         ~toResultBar();
-
+#if 0
         /** Stop automatic updating from tool timer.
          */
         void stop();
         /** Start automatic updating from tool timer.
          */
         void start();
-
+#endif
         /** Display actual values or flow/s.
          * @param on Display flow or absolute values.
          */

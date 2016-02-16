@@ -60,6 +60,7 @@ class toSGAStatement;
 class toSessionFilter;
 class toTreeWidgetItem;
 class toWaitEvents;
+class toRefreshCombo;
 
 #define TO_SESSION_WAIT "toSession:SessionWait"
 #define TO_SESSION_IO   "toSession:SessionIO"
@@ -96,7 +97,7 @@ class toSession : public toToolWidget
         toResultItem      *Transaction;
         QString            LastSession;
         QMenu             *ToolMenu;
-        QComboBox         *Refresh;
+        toRefreshCombo    *Refresh;
         QLabel            *Total;
         toSessionFilter   *SessionFilter;
 
@@ -121,7 +122,6 @@ class toSession : public toToolWidget
         void slotChangeTab(int);
         void slotChangeItem();
         void slotChangeCursor();
-        void slotChangeRefresh(const QString &str);
         void slotRefresh(void);
         void slotRefreshTabs(void);
         void slotEnableStatistics(void)

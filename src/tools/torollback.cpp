@@ -41,6 +41,7 @@
 #include "editor/tomemoeditor.h"
 #include "widgets/toresulttableview.h"
 #include "widgets/toresultview.h"
+#include "widgets/torefreshcombo.h"
 #include "tools/tosgastatement.h"
 #include "tools/tostoragedefinition.h"
 #include "core/totimer.h"
@@ -589,8 +590,9 @@ toRollback::toRollback(QWidget *main, toConnection &connection)
 
     QLabel * lab1 = new QLabel(tr("Refresh") + " ", toolbar);
     toolbar->addWidget(lab1);
-    connect(Refresh = Utils::toRefreshCreate(toolbar),
-            SIGNAL(activated(const QString &)), this, SLOT(changeRefresh(const QString &)));
+    Refresh = new toRefreshCombo(toolbar);
+    connect(Refresh, SIGNAL(activated(const QString &)), this, SLOT(changeRefresh(const QString &)));
+	connect(Refresh->timer(), SIGNAL(timeout(void)), this, SLOT(refresh(void)));
     toolbar->addWidget(Refresh);
 
     toolbar->addWidget(new Utils::toSpacer());
@@ -621,13 +623,6 @@ toRollback::toRollback(QWidget *main, toConnection &connection)
     connect(Statements, SIGNAL(selectionChanged(toTreeWidgetItem *)),
             this, SLOT(changeStatement(toTreeWidgetItem *)));
     CurrentStatement = new toSGAStatement(horsplit);
-
-    try
-    {
-        connect(timer(), SIGNAL(timeout(void)), this, SLOT(refresh(void)));
-        Utils::toRefreshParse(timer(), toConfigurationNewSingle::Instance().option(ToConfiguration::Global::RefreshInterval).toString());
-    }
-    TOCATCH
 
     if (toConfigurationNewSingle::Instance().option(ToConfiguration::Rollback::OldEnableBool).toBool())
         enableOldAct->setChecked(true);
@@ -713,15 +708,6 @@ void toRollback::changeItem()
     OfflineAct->setEnabled(stat != "OFFLINE");
     OnlineAct->setEnabled(stat != "ONLINE");
     DropAct->setEnabled(true);
-}
-
-void toRollback::changeRefresh(const QString &str)
-{
-    try
-    {
-        Utils::toRefreshParse(timer(), str);
-    }
-    TOCATCH
 }
 
 QString toRollback::currentSegment(void)

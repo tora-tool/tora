@@ -44,7 +44,7 @@
 int toBackground::Running = 0;
 
 toBackground::toBackground(QObject* parent, const char* name)
-    : toTimer(parent, name)
+    : QTimer(parent)
     , label(NULL)
 {
     /* It it not allowed to touch the gui(instance of toBackgroundLabel) from parallel thread,
@@ -76,7 +76,7 @@ void toBackground::start(int msec)
     {
         emit SignalSetTip(tr("One query running in background."));
     }
-    toTimer::start(msec);
+    QTimer::start(msec);
 }
 
 void toBackground::stop(void)
@@ -96,7 +96,7 @@ void toBackground::stop(void)
         else
             emit SignalSetTip(tr("No background queries."));
     }
-    toTimer::stop();
+    QTimer::stop();
 }
 
 void toBackground::setBackgroundLabel(toBackgroundLabel* label)

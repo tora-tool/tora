@@ -155,13 +155,6 @@ class toResult
         void setSQLName(const QString &name);
 
     protected:
-
-        /** Get the timer associated with the closest tool.
-         * @return Pointer to tool timer.
-         * NOTE: can be used only in subclasses who also inherit from QWidget
-         */
-        toTimer *timer(void);
-
         /** Called when connection is changed. Be sure to call the parent if you reimplement this.
          */
         virtual void connectionChanged(void);

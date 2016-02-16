@@ -57,6 +57,7 @@ toResultLine::~toResultLine()
     delete Query;
 }
 
+#if 0
 void toResultLine::start(void)
 {
     if (!Started)
@@ -82,13 +83,15 @@ void toResultLine::stop(void)
         Started = false;
     }
 }
+#endif
 
 void toResultLine::query(const QString &sql, const toQueryParams &param, bool first)
 {
     if (!handled() || Query)
         return ;
-
+#if 0
     start();
+#endif
     setSqlAndParams(sql, param);
 
     try

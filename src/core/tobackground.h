@@ -16,7 +16,7 @@ class toBackgroundLabel;
  * main window when any timer is running. Can not do singleshots, only
  * periodic intervals.
  */
-class toBackground : public toTimer
+class toBackground : public QTimer
 {
         Q_OBJECT;
     public:

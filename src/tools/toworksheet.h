@@ -72,6 +72,7 @@ class toResultStats;
 class toTabWidget;
 class toTreeWidgetItem;
 class toEditableMenu;
+class toRefreshCombo;
 
 namespace ToConfiguration
 {
@@ -180,7 +181,6 @@ class toWorksheet : public toToolWidget
         void slotExecuteNextLog(void);
         void slotExecuteLog(void);
         void slotFirstResult(const QString &sql, const toConnection::exception &result, bool error);
-        void slotChangeRefresh(const QString &);
         void slotSaveLast(void);
         void slotSaveStatistics(void);
         void slotRefreshSetup(void);
@@ -263,7 +263,7 @@ class toWorksheet : public toToolWidget
         QWidget           *StatTab;
         //! Used only for DESC/DESCRIBE sql statements
         toResultCols      *Columns;
-        QComboBox         *Refresh;
+        toRefreshCombo    *Refresh;
         QLabel            *Started;
         toResultSchema    *Schema;
 

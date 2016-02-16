@@ -204,11 +204,6 @@ void toResult::setSQLName(const QString &name)
     Name = name;
 }
 
-toTimer *toResult::timer(void)
-{
-    return toToolWidget::currentTool(dynamic_cast<QWidget *>(this))->timer();
-}
-
 void toResult::connectionChanged(void)
 {
     NeedsRefresh = true;

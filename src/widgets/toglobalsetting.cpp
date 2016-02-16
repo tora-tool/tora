@@ -115,12 +115,6 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, toWFlags fl)
         setObjectName(name);
 
     setupUi(this);
-#if QT_VERSION < 0x040400
-    TabbedTools->setVisible(false);
-#endif
-
-    // Refresh (load fields into ComboBox)
-    Utils::toRefreshCreate(OptionGroup, "toRefreshCreate", QString::null, RefreshInterval);
 
     // style (load fields into ComboBox)
     Style->addItems(QStyleFactory::keys());

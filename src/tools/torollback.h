@@ -52,6 +52,7 @@ class toResultView;
 class toSGAStatement;
 class toStorageDefinition;
 class toResultTableView;
+class toRefreshCombo;
 
 namespace ToConfiguration
 {
@@ -110,7 +111,7 @@ class toRollback : public toToolWidget
         QAction * DropAct;
 
         QMenu *ToolMenu;
-        QComboBox *Refresh;
+        toRefreshCombo *Refresh;
 
         QString currentSegment(void);
 
@@ -120,7 +121,6 @@ class toRollback : public toToolWidget
     private slots:
         void changeStatement(toTreeWidgetItem *item);
         void changeItem();
-        void changeRefresh(const QString &str);
 
         void enableOld(bool);
         void refresh(void);

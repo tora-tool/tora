@@ -234,6 +234,7 @@ SET(TORA_MOC_CLASSES
   widgets/tolinechart.h
   widgets/topiechart.h
   widgets/topushbutton.h     
+  widgets/torefreshcombo.h
   widgets/toresultbar.h
   widgets/toresultcode.h
   widgets/toresultcols.h
@@ -264,7 +265,6 @@ SET(TORA_MOC_CLASSES
   widgets/totabwidget.h
   widgets/totoolwidget.h
   core/totextview.h
-  core/totimer.h
   widgets/totreewidget.h
   widgets/toworkingwidget.h
   widgets/toworkspace.h
@@ -464,7 +464,6 @@ SET(TORA_SOURCES
   core/tosettingtab.cpp
   core/tosql.cpp
   core/totextview.cpp
-  core/totimer.cpp
   core/totool.cpp
   main/tomain.cpp
   widgets/toconnectionimport.cpp
@@ -478,6 +477,7 @@ SET(TORA_SOURCES
   widgets/topiechart.cpp
   widgets/topreferences.cpp	
   widgets/topushbutton.cpp
+  widgets/torefreshcombo.cpp
   widgets/toresultbar.cpp
   widgets/toresultcode.cpp
   widgets/toresultcols.cpp

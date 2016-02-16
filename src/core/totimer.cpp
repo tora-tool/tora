@@ -38,6 +38,7 @@
 
 #include "core/totimer.h"
 
+#if 1
 toTimer::toTimer(QObject *parent, const char * name)
     : QTimer(parent)
     , LastTimer(0)
@@ -60,3 +61,4 @@ int toTimer::lastTimer(void)
 {
     return LastTimer;
 }
+#endif

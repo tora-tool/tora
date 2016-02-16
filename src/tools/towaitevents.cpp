@@ -201,7 +201,7 @@ void toWaitEvents::setup(int session)
     layout->addWidget(AbsolutePie, 1, 1);
 #endif
     Query = NULL;
-    start();
+//    start();
     try
     {
         connect(toToolWidget::currentTool(this), SIGNAL(connectionChange()), this, SLOT(connectionChanged()));
@@ -269,6 +269,7 @@ void toWaitEvents::setSession(int session)
     TOCATCH
 }
 
+#if 0
 void toWaitEvents::start(void)
 {
     try
@@ -286,6 +287,7 @@ void toWaitEvents::stop(void)
     }
     TOCATCH
 }
+#endif
 
 void toWaitEvents::changeSelection(void)
 {

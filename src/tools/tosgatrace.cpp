@@ -38,6 +38,7 @@
 #include "core/tochangeconnection.h"
 #include "widgets/toresultschema.h"
 #include "widgets/toresulttableview.h"
+#include "widgets/torefreshcombo.h"
 #include "core/utils.h"
 #include "core/totimer.h"
 #include "core/toconfiguration.h"
@@ -139,8 +140,9 @@ toSGATrace::toSGATrace(QWidget *main, toConnection &connection)
 
     QLabel * labRef = new QLabel(tr("Refresh") + " ", toolbar);
     toolbar->addWidget(labRef);
-    connect(Refresh = Utils::toRefreshCreate(toolbar),
-            SIGNAL(activated(const QString &)), this, SLOT(changeRefresh(const QString &)));
+    Refresh = new toRefreshCombo(toolbar);
+    connect(Refresh, SIGNAL(activated(const QString &)), this, SLOT(changeRefresh(const QString &)));
+	connect(Refresh->timer(), SIGNAL(timeout(void)), this, SLOT(refresh(void)));
     toolbar->addWidget(Refresh);
 
     toolbar->addSeparator();
@@ -195,13 +197,6 @@ toSGATrace::toSGATrace(QWidget *main, toConnection &connection)
     CurrentSchema = connection.user().toUpper();
     updateSchemas();
 
-    try
-    {
-        connect(timer(), SIGNAL(timeout(void)), this, SLOT(refresh(void)));
-        Utils::toRefreshParse(timer(), toConfigurationNewSingle::Instance().option(ToConfiguration::Global::RefreshInterval).toString());
-    }
-    TOCATCH;
-
     setFocusProxy(Trace);
     refresh();
 }
@@ -210,17 +205,6 @@ QString toSGATrace::schema() const
 {
 	return CurrentSchema;
 }
-
-void toSGATrace::changeRefresh(const QString &str)
-{
-    try
-    {
-        Utils::toRefreshParse(timer(), str);
-    }
-    TOCATCH;
-}
-
-#define LARGE_BUFFER 4096
 
 void toSGATrace::changeSchema(const QString &str)
 {

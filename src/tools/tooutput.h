@@ -49,6 +49,7 @@
 class QComboBox;
 class toConnection;
 class toResultView;
+class toRefreshCombo;
 
 namespace ToConfiguration
 {
@@ -85,13 +86,12 @@ class toOutput : public toToolWidget
         void clear(void);
         virtual void refresh(void);
         virtual void disable(bool);
-        void changeRefresh(const QString &str);
         virtual void slotWindowActivated(toToolWidget *widget);
         void toggleMenu();
 
     private:
         QMenu        *ToolMenu;
-        QComboBox    *Refresh;
+        toRefreshCombo *Refresh;
         QAction      *refreshAct;
         QAction      *enableAct;
         QAction      *clearAct;

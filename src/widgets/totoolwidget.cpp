@@ -84,8 +84,6 @@ toToolWidget::toToolWidget(toTool &tool, const QString &ctx, QWidget *parent, to
     vbox->setContentsMargins(0, 0, 0, 0);
     setLayout(vbox);
 
-    Timer = NULL;
-
     connect(&toWorkSpaceSingle::Instance(), SIGNAL(activeToolChaged(toToolWidget*)), this, SLOT(slotWindowActivated(toToolWidget*)));
     connect(&toWorkSpaceSingle::Instance(), SIGNAL(activeToolChaged(toToolWidget*)), this, SLOT(toolActivated(toToolWidget*)));
 
@@ -158,13 +156,6 @@ void toToolWidget::setConnection(toConnection &conn)
     }
     emit connectionChange();
     toGlobalEventSingle::Instance().setNeedCommit(this, this->hasTransaction());
-}
-
-toTimer *toToolWidget::timer(void)
-{
-    if (!Timer)
-        Timer = new toTimer(this);
-    return Timer;
 }
 
 bool toToolWidget::canHandle(const toConnection &conn)
