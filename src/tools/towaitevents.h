@@ -92,8 +92,8 @@ class toWaitEvents : public QWidget
     public slots:
         virtual void connectionChanged(void);
         virtual void changeSelection(void);
-        virtual void poll(void);
-        virtual void queryDone(void);
+        void slotPoll(toEventQuery*);
+        void slotQueryDone(toEventQuery*);
         virtual void refresh(void);
         virtual void start(void);
         virtual void stop(void);

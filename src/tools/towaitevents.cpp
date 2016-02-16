@@ -397,11 +397,8 @@ void toWaitEvents::connectionChanged(void)
     refresh();
 }
 
-void toWaitEvents::poll(void)
+void toWaitEvents::slotPoll(toEventQuery*)
 {
-    if (!Utils::toCheckModal(this))
-        return;
-
     try
     {
         while (Query->hasMore())
@@ -445,7 +442,7 @@ void toWaitEvents::poll(void)
     }
 }
 
-void toWaitEvents::queryDone(void )
+void toWaitEvents::slotQueryDone(toEventQuery*)
 {
     std::map<QString, bool> types;
     toTreeWidgetItem *item = NULL;
@@ -628,19 +625,15 @@ void toWaitEvents::refresh(void)
             return ;
 
         toConnection &conn = toToolWidget::currentTool(this)->connection();
-        toQueryParams par;
-        QString sql;
-
         if (Session > 0)
-        {
-            sql = toSQL::string(SQLSessionWaitEvents, conn);
-            par.insert(par.end(), toQValue(Session));
-        }
+            Query = new toEventQuery(this, conn, toSQL::string(SQLSessionWaitEvents, conn), toQueryParams() << Session, toEventQuery::READ_ALL);
         else
-            sql = toSQL::string(SQLWaitEvents, conn);
-        Query = new toEventQuery(this, conn, sql, par, toEventQuery::READ_ALL);
-        connect(Query, SIGNAL(dataAvailable()), this, SLOT(poll()));
-        connect(Query, SIGNAL(done()), this, SLOT(queryDone()));
+        	Query = new toEventQuery(this, conn, toSQL::string(SQLWaitEvents, conn), toQueryParams(), toEventQuery::READ_ALL);
+
+        connect(Query, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(slotPoll(toEventQuery*)));
+        connect(Query, SIGNAL(done(toEventQuery*)), this, SLOT(slotQueryDone(toEventQuery*)));
+        connect(Query, SIGNAL(error(toEventQuery*,toConnection::exception const &)), this, SLOT(slotErrorHanler(toEventQuery*, toConnection::exception  const &)));
+
         Query->start();
     }
     TOCATCH
