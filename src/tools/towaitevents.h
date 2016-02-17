@@ -32,8 +32,9 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOWAITEVENTS_H
-#define TOWAITEVENTS_H
+#pragma once
+
+#include "core/toconnection.h"
 
 #include <list>
 #include <map>
@@ -94,6 +95,7 @@ class toWaitEvents : public QWidget
         virtual void changeSelection(void);
         void slotPoll(toEventQuery*);
         void slotQueryDone(toEventQuery*);
+        void slotErrorHanler(toEventQuery*, toConnection::exception const &);
         virtual void refresh(void);
 #if 0
         virtual void start(void);
@@ -102,4 +104,3 @@ class toWaitEvents : public QWidget
         virtual void changeType(int);
 };
 
-#endif

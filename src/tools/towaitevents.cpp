@@ -546,6 +546,11 @@ void toWaitEvents::slotQueryDone(toEventQuery*)
     Query = NULL;
 } // queryDone
 
+void toWaitEvents::slotErrorHanler(toEventQuery*, toConnection::exception const &str)
+{
+	Utils::toStatusMessage(str);
+}
+
 static toSQL SQLSessionWaitEvents("toWaitEvents:Session",
                                   "SELECT b.name,\n"
                                   "       SYSDATE,\n"
