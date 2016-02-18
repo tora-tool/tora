@@ -87,7 +87,7 @@ class toOutputSetting
             if (name)
                 setObjectName(name);
 
-            PollingInterval->setCurrentText(toConfigurationNewSingle::Instance().option(Output::PollingInterval).toString());
+            PollingInterval->setRefreshInterval(toConfigurationNewSingle::Instance().option(Output::PollingInterval).toString());
             toSettingTab::loadSettings(this);
         }
         virtual void saveSetting(void)

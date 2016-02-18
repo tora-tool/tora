@@ -8,6 +8,7 @@
 #include <QtCore/QDateTime>
 
 class queryImpl;
+class toQueryAbstr;
 
 /** This class is an abstract definition of an actual connection to a database.
  * Each @ref toConnection object can have one or more actual connections to the

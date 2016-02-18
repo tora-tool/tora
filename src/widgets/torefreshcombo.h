@@ -7,6 +7,8 @@ class toRefreshCombo : public QComboBox
 public:
 	explicit toRefreshCombo(QWidget *parent, const QString& def = QString());
 
+	void setRefreshInterval(QString const&);
+	
 	QTimer* timer();
 
 	int refreshTime() const;
