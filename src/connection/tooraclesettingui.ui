@@ -74,16 +74,6 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="2">
-    <widget class="QCheckBox" name="VSqlPlansBool">
-     <property name="toolTip">
-      <string>Use V$SQL_PLAN when possible.</string>
-     </property>
-     <property name="text">
-      <string>use &amp;V$SQL_PLAN</string>
-     </property>
-    </widget>
-   </item>
    <item row="3" column="0">
     <widget class="QLabel" name="TextLabel6_3">
      <property name="toolTip">
@@ -97,19 +87,6 @@
      </property>
      <property name="buddy">
       <cstring>PlanTable</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="2">
-    <widget class="QCheckBox" name="SharedPlanBool">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
-     <property name="text">
-      <string>shared PLAN_TABLE</string>
-     </property>
-     <property name="checked">
-      <bool>false</bool>
      </property>
     </widget>
    </item>
@@ -249,6 +226,19 @@
      </property>
     </spacer>
    </item>
+   <item row="4" column="2">
+    <widget class="QCheckBox" name="SharedPlanBool">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="text">
+      <string>shared PLAN_TABLE</string>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <tabstops>
@@ -259,7 +249,6 @@
   <tabstop>PlanTable</tabstop>
   <tabstop>KeepPlansBool</tabstop>
   <tabstop>CreatePlanTable</tabstop>
-  <tabstop>VSqlPlansBool</tabstop>
  </tabstops>
  <resources/>
  <connections>

@@ -54,8 +54,6 @@ QVariant ToConfiguration::Oracle::defaultValue(int option) const
             return QVariant(QString("PLAN_TABLE"));
         case KeepPlansBool:
             return QVariant((bool)false);
-        case VSqlPlansBool:
-            return QVariant((bool)true);
         case SharedPlanBool:
             return QVariant((bool)false);
         case UseDbmsMetadataBool:

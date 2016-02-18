@@ -56,7 +56,6 @@ namespace ToConfiguration
                 , MaxLong             // #define CONF_MAX_LONG
                 , PlanTable           // #define CONF_PLAN_TABLE
                 , KeepPlansBool           // #define CONF_KEEP_PLANS  // default: false
-                , VSqlPlansBool           // #define CONF_VSQL_PLANS  // default: true
                 , SharedPlanBool          // #define CONF_SHARED_PLAN // default: false
                 // Extractor. Controls the method used to produce database object extracts
                 // as well as extraction settings (which information should be extracted).
