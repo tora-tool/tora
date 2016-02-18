@@ -111,6 +111,11 @@ void toResultCombo::setSelected(const QString &sel)
     SelectedFound = !Additional.contains(Selected);
 }
 
+void toResultCombo::setSelectedData(const QString &sel)
+{
+    SelectedData = sel;
+}
+
 QString toResultCombo::selected(void)
 {
     return Selected;
@@ -146,6 +151,11 @@ void toResultCombo::slotPoll(void)
                 }
                 addItem(t, QVariant(l));
                 if (t == Selected)
+                {
+                    setCurrentIndex(count() - 1);
+                    SelectedFound = true;
+                }
+                if (l.contains(SelectedData))
                 {
                     setCurrentIndex(count() - 1);
                     SelectedFound = true;

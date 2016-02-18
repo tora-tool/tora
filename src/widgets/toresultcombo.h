@@ -75,11 +75,11 @@ class toResultCombo : public QComboBox, public toResult
 
         /** Reimplemented abstract method
          */
-        virtual void query(const QString &sql, toQueryParams const& param);
+        virtual void query(const QString &sql, toQueryParams const& param) override; // from toResult
 
         /** Handle any connection by default
          */
-        virtual bool canHandle(const toConnection &);
+        virtual bool canHandle(const toConnection &) override; // from toResult
 
         /** Clear list of additional items.
          */
@@ -92,6 +92,10 @@ class toResultCombo : public QComboBox, public toResult
         /** Set selected. When the result is read and this value is encountered that item is selected.
          */
         void setSelected(const QString &sel);
+
+        /** Set selected. When the result is read and this non-displayed is encountered that item is selected.
+         */
+        void setSelectedData(const QString &sel);
 
         /** Get selected item value. Might not be same as currentText since that item might not have been read yet.
          */
@@ -118,7 +122,7 @@ class toResultCombo : public QComboBox, public toResult
 
     protected:
         selectionPolicy SelectionPolicy;
-        QString Selected;
+        QString Selected, SelectedData;
         QStringList Additional;
         bool SelectedFound;       // Selected field was either retrieved from DB(true) or is member of Additional fields(false)
         toEventQuery *Query;
