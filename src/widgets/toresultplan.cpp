@@ -235,7 +235,7 @@ void toResultPlan::query(const QString &sql, toQueryParams const& param)
                 this->LockedConnection = conn;
             }
             Explaining = true;
-            Ident = QString::fromLatin1("TOra ") + QString::number(QDateTime::currentMSecsSinceEpoch()/1000 + ::rand());
+            Ident = QString::fromLatin1("TOra ") + QString::number(QDateTime::currentMSecsSinceEpoch()/1000 + qrand());
             TopItem = new toResultViewItem(this, NULL, QString::fromLatin1("EXPLAIN PLAN:"));
             TopItem->setText(1, sql.left(50).trimmed());
 
@@ -527,12 +527,12 @@ toExplainTypeButton::toExplainTypeButton()
 {
 }
 
-toPlanTreeItem::toPlanTreeItem(const QList<QVariant> &data, toPlanTreeItem *parent)
-{
-    m_parentItem = parent;
-    m_itemData = data;
-}
-
+toPlanTreeItem::toPlanTreeItem(const QString& id, const QVariantList& data, toPlanTreeItem *parent)
+	: m_id(id)
+	, m_parentItem(parent)
+	, m_itemData(data)
+{}
+;
 toPlanTreeItem::~toPlanTreeItem()
 {
     qDeleteAll(m_childItems);
@@ -563,6 +563,11 @@ QVariant toPlanTreeItem::data(int column) const
     return m_itemData.value(column);
 }
 
+QVariantList& toPlanTreeItem::childData()
+{
+	return m_itemData;
+}
+
 toPlanTreeItem *toPlanTreeItem::parentItem()
 {
     return m_parentItem;
@@ -578,24 +583,17 @@ int toPlanTreeItem::row() const
 
 QString toPlanTreeItem::id() const
 {
-	return m_itemData.first().toString();
+	return m_id;
 }
 
-toResultPlanNewModel::toResultPlanNewModel(toEventQuery *query, QObject *parent)
-: QAbstractItemModel(parent)
-, Query(query)
-, HeadersRead(false)
+toResultPlanModel::toResultPlanModel(toEventQuery *query, QObject *parent)
+	: QAbstractItemModel(parent)
+	, Query(query)
+	, HeadersRead(false)
 {
 	Query->setParent(this); // this will satisfy QObject's disposal
 
-	rootItem = new toPlanTreeItem(QList<QVariant>());
-	QList<QVariant> sqlidData;
-	sqlidData << "SQLID:" << " " << "PlanID:";
-		for (int i = sqlidData.size(); i < Headers.size(); i++) sqlidData << "";
-	rootItem->appendChild(sqlidItem = new toPlanTreeItem(sqlidData, rootItem));
-
 	Headers
-	<< HeaderDesc{ QString::fromLatin1("#"), 0 }
 	<< HeaderDesc{"Operation", 0}
 	<< HeaderDesc{"Options", 0}
 	<< HeaderDesc{"Object name", 0}
@@ -612,18 +610,23 @@ toResultPlanNewModel::toResultPlanNewModel(toEventQuery *query, QObject *parent)
 	<< HeaderDesc{"Endpartition", 0};
 	;
 
+	rootItem = new toPlanTreeItem("root", QList<QVariant>());
+	QVariantList sqlidData;
+	for (int i = sqlidData.size(); i < Headers.size(); i++) sqlidData << "";
+	rootItem->appendChild(sqlidItem = new toPlanTreeItem("sqlid", sqlidData, rootItem));
+
     connect(Query, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(slotPoll(toEventQuery*)));
     connect(Query, SIGNAL(done(toEventQuery*)), this, SLOT(slotQueryDone(toEventQuery*)));
     connect(Query, SIGNAL(error(toEventQuery*,toConnection::exception const &)), this, SLOT(slotErrorHanler(toEventQuery*, toConnection::exception  const &)));
 }
 
-toResultPlanNewModel::~toResultPlanNewModel()
+toResultPlanModel::~toResultPlanModel()
 {
 	cleanup();
 	delete rootItem;
 }
 
-int toResultPlanNewModel::columnCount(const QModelIndex &parent) const
+int toResultPlanModel::columnCount(const QModelIndex &parent) const
 {
 // it looks like there is a bug in QT, column count in upper row affects
 // column column displayed in lower rows
@@ -633,7 +636,7 @@ int toResultPlanNewModel::columnCount(const QModelIndex &parent) const
 	return Headers.size();
 }
 
-QVariant toResultPlanNewModel::data(const QModelIndex &index, int role) const
+QVariant toResultPlanModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
         return QVariant();
@@ -646,7 +649,20 @@ QVariant toResultPlanNewModel::data(const QModelIndex &index, int role) const
     return item->data(index.column());
 }
 
-Qt::ItemFlags toResultPlanNewModel::flags(const QModelIndex &index) const
+bool toResultPlanModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+	// only sqlidItem can be changed
+	if (rootIndex() != index)
+		return QAbstractItemModel::setData(index, value, role);
+
+	layoutAboutToBeChanged();
+	toPlanTreeItem *item = static_cast<toPlanTreeItem*>(index.internalPointer());
+	item->childData()[index.column()] = value;
+	return true;
+	layoutChanged();
+}
+
+Qt::ItemFlags toResultPlanModel::flags(const QModelIndex &index) const
 {
     if (!index.isValid())
         return 0;
@@ -654,7 +670,7 @@ Qt::ItemFlags toResultPlanNewModel::flags(const QModelIndex &index) const
     return QAbstractItemModel::flags(index);
 }
 
-QVariant toResultPlanNewModel::headerData(int section, Qt::Orientation orientation,
+QVariant toResultPlanModel::headerData(int section, Qt::Orientation orientation,
                                int role) const
 {
 	if (orientation != Qt::Horizontal)
@@ -696,7 +712,7 @@ QVariant toResultPlanNewModel::headerData(int section, Qt::Orientation orientati
 
 }
 
-QModelIndex toResultPlanNewModel::index(int row, int column, const QModelIndex &parent)
+QModelIndex toResultPlanModel::index(int row, int column, const QModelIndex &parent)
             const
 {
     if (!hasIndex(row, column, parent))
@@ -716,7 +732,7 @@ QModelIndex toResultPlanNewModel::index(int row, int column, const QModelIndex &
         return QModelIndex();
 }
 
-QModelIndex toResultPlanNewModel::parent(const QModelIndex &index) const
+QModelIndex toResultPlanModel::parent(const QModelIndex &index) const
 {
     if (!index.isValid())
         return QModelIndex();
@@ -730,7 +746,7 @@ QModelIndex toResultPlanNewModel::parent(const QModelIndex &index) const
     return createIndex(parentItem->row(), 0, parentItem);
 }
 
-int toResultPlanNewModel::rowCount(const QModelIndex &parent) const
+int toResultPlanModel::rowCount(const QModelIndex &parent) const
 {
     toPlanTreeItem *parentItem;
     if (parent.column() > 0)
@@ -744,7 +760,7 @@ int toResultPlanNewModel::rowCount(const QModelIndex &parent) const
     return parentItem->childCount();
 }
 
-void toResultPlanNewModel::cleanup()
+void toResultPlanModel::cleanup()
 {
     if (Query)
     {
@@ -753,30 +769,28 @@ void toResultPlanNewModel::cleanup()
         Query->stop();
         delete Query;
         Query = NULL;
-        //emit done();
     }
     stack.clear();
 }
 
-QModelIndex toResultPlanNewModel::rootIndex() const
+QModelIndex toResultPlanModel::rootIndex() const
 {
 	return createIndex(0, 0, sqlidItem);
 }
 
-
-toResultPlanNew::toResultPlanNew(QWidget *parent)
+toResultPlanAbstr::toResultPlanAbstr(QWidget *parent)
 	: QWidget(parent)
+	, CursorChildSel(NULL)
 	, explaining(false)
 {
     using namespace ToConfiguration;
-    planTreeView = new QTreeView(this);
+    planTreeView = new toResultPlanView(this);
     planTreeText = new QPlainTextEdit(this);
     planTreeText->setReadOnly(true);
     planTreeText->setFont(Utils::toStringToFont(toConfigurationNewSingle::Instance().option(Editor::ConfTextFont).toString()));
 
     //toExplainTypeButtonSingle::Instance().
     QStackedLayout  *mainLayout = new QStackedLayout;
-    //QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->setSpacing(0);
     mainLayout->setContentsMargins(0, 0, 0, 0);
 
@@ -787,8 +801,9 @@ toResultPlanNew::toResultPlanNew(QWidget *parent)
     setLayout(mainLayout);
 }
 
-void toResultPlanNew::queryCursorPlan(toQueryParams const& params)
+void toResultPlanAbstr::queryCursorPlan(toQueryParams const& params)
 {
+	// Prepare the query
     toConnection &c = toConnection::currentConnection(this);
     toEventQuery *Query = new toEventQuery(this
     		, c
@@ -796,24 +811,64 @@ void toResultPlanNew::queryCursorPlan(toQueryParams const& params)
     		, params
 			, toEventQuery::READ_ALL);
 
-	model = new toResultPlanNewModel(Query, this);
+    // Allocate the model
+	model = new toResultPlanModel(Query, this);
 	connect(model, SIGNAL(queryDone(toEventQuery*)), this, SLOT(queryDone(toEventQuery*)));
 	planTreeView->setModel(model);
+	sql_id = params.at(0);
+	child_id = params.at(1);
 
-    toResultCombo *CursorChildSel = new toResultCombo(planTreeView, "toResultPlan");
+	// Allocate CursorChildSel but do not start it(it will be started when plan is explained)
+    CursorChildSel = new toResultCombo(planTreeView, "toResultPlan");
     CursorChildSel->setSQL(SQLVSQLChildSel);
-    CursorChildSel->setSelectionPolicy(toResultCombo::First);
-    try
-    {
-        CursorChildSel->refreshWithParams(toQueryParams() << params.first());
-    }
-    TOCATCH;
-    planTreeView->setIndexWidget(model->rootIndex().sibling(0,3), CursorChildSel);
-    connect(CursorChildSel, SIGNAL(done()), this, SLOT(slotChildComboReady())); //Wait for cursor children combo to fill
+    CursorChildSel->setSelectedData(child_id);
+    connect(CursorChildSel, SIGNAL(done()), this, SLOT(childComboReady())); //Wait for cursor children combo to fill
+
+    // Start the query
     Query->start();
 }
 
-void toResultPlanNew::queryPlanTable(toQueryParams const& params)
+void toResultPlanAbstr::queryDone(toEventQuery*)
+{
+	// explain query finished resize view columns
+	planTreeView->expandAll();
+	for (int col = 0; col < model->columnCount(); col++)
+		planTreeView->resizeColumnToContents(col);
+
+	// refresh child_number selection combo
+    CursorChildSel = new toResultCombo(planTreeView, "toResultPlan");
+    CursorChildSel->setSQL(SQLVSQLChildSel);
+    CursorChildSel->setSelectedData(child_id);
+	connect(CursorChildSel, SIGNAL(done()), this, SLOT(childComboReady())); //Wait for cursor children combo to fill
+    try
+    {
+        CursorChildSel->refreshWithParams(toQueryParams() << sql_id);
+    }
+    TOCATCH;
+}
+
+void toResultPlanAbstr::childComboReady()
+{
+    explaining = false;
+
+    QStringList cur_sel = CursorChildSel->itemData(CursorChildSel->currentIndex()).toStringList();
+    plan_hash = cur_sel.at(2);
+    QString SInfo = QString::fromLatin1("V$SQL_PLAN: %1\nChild: %2 SQL_ID: %3")
+    	.arg(plan_hash)
+		.arg(child_id)
+		.arg(sql_id);
+
+	model->setData(model->rootIndex(), SInfo, Qt::DisplayRole);
+	planTreeView->setIndexWidget(model->rootIndex().sibling(0,2), CursorChildSel);
+	connect(CursorChildSel, SIGNAL(currentIndexChanged(int)), this, SLOT(childComboChanged(int)));
+}
+
+void toResultPlanAbstr::childComboChanged(int NewIndex)
+{
+
+}
+
+void toResultPlanAbstr::queryPlanTable(toQueryParams const& params)
 {
     {
     	QSharedPointer<toConnectionSubLoan> conn(new toConnectionSubLoan(toConnection::currentConnection(this)));
@@ -830,13 +885,12 @@ void toResultPlanNew::queryPlanTable(toQueryParams const& params)
                       arg(Utils::toSQLStripSpecifier(params.first()));
 
     explainQuery = new toEventQuery(this, LockedConnection, explain, toQueryParams(), toEventQuery::READ_ALL);
-    //connect(Query, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(slotPoll()));
     connect(explainQuery, SIGNAL(done(toEventQuery*)), this, SLOT(explainDone(toEventQuery*)));
     connect(explainQuery, SIGNAL(error(toEventQuery*,toConnection::exception const &)), this, SLOT(slotErrorHanler(toEventQuery*, toConnection::exception  const &)));
     explainQuery->start();
 }
 
-void toResultPlanNew::explainDone(toEventQuery*q)
+void toResultPlanAbstr::explainDone(toEventQuery*q)
 {
     disconnect(explainQuery, 0, this, 0);
     explainQuery->stop();
@@ -850,26 +904,28 @@ void toResultPlanNew::explainDone(toEventQuery*q)
 
     toEventQuery *Query = new toEventQuery(this
     		, LockedConnection
-			, toSQL::string(SQLViewPlan, conn).
-			// arg(toConfigurationNewSingle::Instance().planTable()).
+			, toSQL::string(SQLViewPlan, conn)
 			// Since EXPLAIN PLAN is always to conn.user() plan_table
 			// and current_schema can be different
-			arg(ToConfiguration::Oracle::planTable(conn.user())).
-			arg(planId)
+			.arg(ToConfiguration::Oracle::planTable(conn.user()))
+			.arg(planId)
 			, toQueryParams()
 			, toEventQuery::READ_ALL);
 
-	model = new toResultPlanNewModel(Query, this);
-	toPlanTreeItem *rootItem = static_cast<toPlanTreeItem*>(model->rootIndex().internalPointer());
-    //rootItem = new toResultViewItem(this, NULL, QString::fromLatin1("EXPLAIN PLAN:"));
-    //rootItem->setText(1, sql.left(50).trimmed());
-
+	model = new toResultPlanModel(Query, this);
 	connect(model, SIGNAL(queryDone(toEventQuery*)), this, SLOT(queryDone(toEventQuery*)));
 	planTreeView->setModel(model);
+
+	// Allocate CursorChildSel but do not start it(it will be started when plan is explained)
+    CursorChildSel = new toResultCombo(planTreeView, "toResultPlan");
+    CursorChildSel->setSQL(SQLVSQLChildSel);
+    CursorChildSel->setSelectionPolicy(toResultCombo::First);
+    connect(CursorChildSel, SIGNAL(done()), this, SLOT(childComboReady())); //Wait for cursor children combo to fill
+
 	Query->start();
 }
 
-void toResultPlanNew::queryXPlan(toQueryParams const& params)
+void toResultPlanAbstr::queryXPlan(toQueryParams const& params)
 {
 	toConnectionSubLoan conn(toConnection::currentConnection(this));
 	QString SQL("SELECT t.* FROM table(DBMS_XPLAN.DISPLAY_CURSOR(:sql_id<char[10]>, :child_number<int>)) t");
@@ -880,14 +936,7 @@ void toResultPlanNew::queryXPlan(toQueryParams const& params)
 		planTreeText->appendPlainText((QString)q.readValue());
 }
 
-void toResultPlanNew::queryDone(toEventQuery*)
-{
-	for (int col = 0; col < model->columnCount(); col++)
-		planTreeView->resizeColumnToContents(col);
-	planTreeView->expandAll();
-}
-
-void toResultPlanNewModel::slotPoll(toEventQuery*Query)
+void toResultPlanModel::slotPoll(toEventQuery*Query)
 {
 	if (this->Query != Query)
 		return;
@@ -940,7 +989,6 @@ void toResultPlanNewModel::slotPoll(toEventQuery*Query)
             }
 
             columnData
-			<< id
 			<< operation
 			<< options
 			<< object
@@ -958,7 +1006,7 @@ void toResultPlanNewModel::slotPoll(toEventQuery*Query)
 
             if (stack.empty()) // Root item
             {
-            	sqlidItem->appendChild(itemNew = new toPlanTreeItem(columnData, sqlidItem));
+            	sqlidItem->appendChild(itemNew = new toPlanTreeItem(id, columnData, sqlidItem));
             } else { // Child item, pop stack until child's parent is found (assuming "connect by" was used)
             	while (!stack.empty() && stack.last()->id() != parentid)
             	{
@@ -967,7 +1015,7 @@ void toResultPlanNewModel::slotPoll(toEventQuery*Query)
             	if (stack.empty())
             		throw QString::fromLatin1("toResultPlan:ViewVSQLPlan returned rows in wrong order");
 
-            	stack.last()->appendChild(itemNew = new toPlanTreeItem(columnData, stack.last()));
+            	stack.last()->appendChild(itemNew = new toPlanTreeItem(id, columnData, stack.last()));
             }
             // set new stack top
 			stack.append(itemNew);
@@ -978,14 +1026,13 @@ void toResultPlanNewModel::slotPoll(toEventQuery*Query)
     {
 		cleanup();
         Utils::toStatusMessage(str);
-		emit queryDone(Query);
+		//emit queryDone(Query);
     }
 }
 
-void toResultPlanNewModel::slotQueryDone(toEventQuery*q)
+void toResultPlanModel::slotQueryDone(toEventQuery*q)
 {
 	emit layoutChanged();
 	cleanup();
 	emit queryDone(q);
 }
-
