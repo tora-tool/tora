@@ -52,8 +52,9 @@ static toSQL SQLVSQLChildSel("toResultPlan:VSQLChildSel",
                              "Get list of child plans for cursor",
                              "1000");
 
+// see bug 2941533
 static toSQL SQLViewVSQLPlan("toResultPlan:ViewVSQLPlan",
-                             "SELECT ID,NVL(Parent_ID,0) \n"
+                             "SELECT /* +NO_MERGE */ ID,NVL(Parent_ID,0) \n"
                              "  , Operation    \n"
                              "  , Options      \n"
                              "  , Object_Name  \n"
@@ -64,10 +65,10 @@ static toSQL SQLViewVSQLPlan("toResultPlan:ViewVSQLPlan",
                              "  , Cardinality  \n"
                              "  , partition_start, partition_stop \n"
                              "  , temp_space,time,access_predicates,filter_predicates \n"
-                             "FROM V$SQL_PLAN  \n"
-                             "WHERE sql_id = :sqlid<char[40],in> and child_number = :chld<char[10],in> \n"
+                             "FROM (SELECT * FROM V$SQL_PLAN WHERE sql_id = :sqlid<char[40],in> and child_number = :chld<char[10],in> ) \n"
+                             //"WHERE sql_id = :sqlid<char[40],in> and child_number = :chld<char[10],in> \n"
                              "START WITH id = 0 \n"
-                             "CONNECT BY PRIOR id = parent_id and prior nvl(hash_value, 0) = nvl(hash_value, 0) \n",
+                             "CONNECT BY PRIOR id = parent_id and prior address=address and prior nvl(hash_value, 0) = nvl(hash_value, 0) \n",
                              "Get the contents of SQL plan from V$SQL_PLAN",
                              "1000");
 
