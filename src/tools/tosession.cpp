@@ -49,6 +49,7 @@
 #include "core/toglobalevent.h"
 #include "core/totool.h"
 
+#include <QtCore/QTimer>
 #include <QLayout>
 #include <QLineEdit>
 #include <QToolButton>

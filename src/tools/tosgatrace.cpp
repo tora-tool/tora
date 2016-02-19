@@ -45,6 +45,7 @@
 #include "core/tosettingtab.h"
 #include "core/totool.h"
 
+#include <QtCore/QTimer>
 #include <QComboBox>
 #include <QCheckBox>
 #include <QVBoxLayout>

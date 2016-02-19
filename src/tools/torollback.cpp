@@ -48,6 +48,7 @@
 #include "core/toconfiguration.h"
 #include "core/toglobalconfiguration.h"
 
+#include <QtCore/QTimer>
 #include <QWidget>
 
 #include "icons/addrollback.xpm"
