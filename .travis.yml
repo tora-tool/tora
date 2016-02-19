@@ -22,7 +22,6 @@ matrix:
 
 before_install: bash ./travis/before_install.sh
 install: bash ./travis/install.sh
-  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.9" CC="gcc-4.9"; fi
 
 addons:
   apt:
@@ -31,6 +30,8 @@ addons:
     packages:
     - gcc-4.8
     - g++-4.8
+    - gcc-4.9
+    - g++-4.9
 
 before_script: bash ./travis/before_script.sh
 script: bash ./travis/script.sh
