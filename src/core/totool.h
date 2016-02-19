@@ -51,7 +51,6 @@ class QPaintEvent;
 class QAction;
 
 class toConnection;
-class toTimer;
 class toToolWidget;
 
 /**

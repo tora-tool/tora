@@ -40,7 +40,6 @@
 #include "widgets/toresulttableview.h"
 #include "widgets/torefreshcombo.h"
 #include "core/utils.h"
-#include "core/totimer.h"
 #include "core/toconfiguration.h"
 #include "core/toglobalconfiguration.h"
 #include "core/tosettingtab.h"

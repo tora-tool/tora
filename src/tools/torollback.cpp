@@ -44,7 +44,6 @@
 #include "widgets/torefreshcombo.h"
 #include "tools/tosgastatement.h"
 #include "tools/tostoragedefinition.h"
-#include "core/totimer.h"
 #include "core/toglobalevent.h"
 #include "core/toconfiguration.h"
 #include "core/toglobalconfiguration.h"

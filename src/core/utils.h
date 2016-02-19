@@ -73,7 +73,6 @@ typedef Qt::WFlags toWFlags;
 #endif
 
 class QComboBox;
-class toTimer;
 class toConnection;
 class toConnectionRegistry;
 

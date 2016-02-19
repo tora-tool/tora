@@ -7,8 +7,6 @@
 #ifndef TOBACKGROUND_H
 #define TOBACKGROUND_H
 
-#include "core/totimer.h"
-
 class toBackgroundLabel;
 
 /**

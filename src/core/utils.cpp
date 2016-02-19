@@ -36,7 +36,6 @@
 #include "core/tomainwindow.h"
 #include "core/tosql.h"
 #include "core/toconfiguration.h"
-#include "core/totimer.h"
 #include "core/toglobalevent.h"
 #include "core/toglobalconfiguration.h"
 #include "core/toqvalue.h"

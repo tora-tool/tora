@@ -36,7 +36,6 @@
 #include "core/utils.h"
 #include "core/tomainwindow.h"
 #include "core/toeventquery.h"
-#include "core/totimer.h"
 #include "core/toglobalevent.h"
 
 #include <QMenu>

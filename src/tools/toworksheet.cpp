@@ -56,7 +56,6 @@
 #include "widgets/totabwidget.h"
 #include "widgets/totreewidget.h"
 #include "widgets/torefreshcombo.h"
-#include "core/totimer.h"
 //obsolete #include "core/tovisualize.h"
 #ifdef TORA3_STAT
 #include "tools/toworksheetstatistic.h"

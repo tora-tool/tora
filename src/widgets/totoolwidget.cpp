@@ -44,7 +44,6 @@
 #include "core/toconnection.h"
 #include "core/toconnectionregistry.h"
 #include "widgets/toworkspace.h"
-#include "core/totimer.h"
 #include "core/tomainwindow.h"
 #include "core/toconfiguration.h"
 #include "core/toglobalevent.h"

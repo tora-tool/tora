@@ -46,7 +46,6 @@
 #include <QWidget>
 
 class toTool;
-class toTimer;
 
 /** Simple baseclass for widgets defining the main tool widget. It is in
  * no way mandatory and all it does is register the widget in the connetion.

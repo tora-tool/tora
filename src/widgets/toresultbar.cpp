@@ -35,7 +35,6 @@
 #include "widgets/toresultbar.h"
 #include "core/utils.h"
 #include "core/toeventquery.h"
-#include "core/totimer.h"
 
 #include <QMenu>
 #include <QtCore/QObject>

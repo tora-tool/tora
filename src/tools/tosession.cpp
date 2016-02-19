@@ -46,7 +46,6 @@
 #include "tools/towaitevents.h"
 #include "widgets/toresulttableview.h"
 #include "core/toeventquery.h"
-#include "core/totimer.h"
 #include "core/toglobalevent.h"
 #include "core/totool.h"
 

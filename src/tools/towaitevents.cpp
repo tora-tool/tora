@@ -39,7 +39,6 @@
 #include "widgets/toresultview.h"
 #include "core/totool.h"
 #include "widgets/totreewidget.h"
-#include "core/totimer.h"
 #include "core/toconfiguration.h"
 #include "core/toeditorsetting.h"
 #include "widgets/totoolwidget.h"

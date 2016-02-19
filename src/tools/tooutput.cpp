@@ -36,7 +36,6 @@
 #include "ui_tooutputsettingui.h"
 #include "widgets/toresultview.h"
 #include "widgets/torefreshcombo.h"
-#include "core/totimer.h"
 #include "core/totool.h"
 #include "core/toglobalevent.h"
 #include "core/toconfiguration.h"

@@ -47,7 +47,6 @@
 class QTabWidget;
 class toConnection;
 class toResult;
-class toTimer;
 class QAction;
 
 /** Used for getting slots into toResult.
