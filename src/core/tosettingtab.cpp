@@ -35,6 +35,13 @@
 #include "core/tosettingtab.h"
 #include "core/toconfiguration.h"
 
+#include <QtCore/QDebug>
+#include <QWidget>
+#include <QCheckBox>
+#include <QLineEdit>
+#include <QSpinBox>
+#include <QComboBox>
+
 void toSettingTab::loadSettings(QWidget *widget)
 {
     static QRegExp any(".*");

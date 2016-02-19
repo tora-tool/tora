@@ -37,6 +37,7 @@
 
 #include <QtCore/QSettings>
 #include <QtCore/QFileInfo>
+#include <QtCore/QStringList>
 
 toQSqlProvider::toQSqlProvider(toConnectionProviderFinder::ConnectionProvirerParams const& p)
     : toConnectionProvider(p)

@@ -35,6 +35,8 @@
 #include "core/toconnectionoptions.h"
 #include "core/toconnection.h"
 
+#include <QtCore/QStringList>
+
 toConnectionOptions::toConnectionOptions(const QString &_prov,
         const QString &_host,
         const QString &_database,

@@ -287,6 +287,7 @@ class boost_thread_manager
 
 #include <QtCore/QMutex>
 #include <QtCore/QThread>
+#include <QtCore/QDateTime>
 #if defined(__linux__)
 #include <sys/prctl.h>
 #endif

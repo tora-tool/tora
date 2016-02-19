@@ -35,6 +35,8 @@
 #ifndef TOEDITWIDGET_H
 #define TOEDITWIDGET_H
 
+#include <QtCore/QString>
+
 class QWidget;
 
 /** This is an abstract base class for any widget (Not included in object) that wants to

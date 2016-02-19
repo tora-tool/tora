@@ -38,6 +38,8 @@
 #include "core/toglobalconfiguration.h"
 #include "core/toconnectionregistry.h"
 
+#include <QWidget>
+
 toConnectionWidget::toConnectionWidget(toConnection &conn, QWidget *widget)
     : Connection(&conn), Widget(widget)
 {

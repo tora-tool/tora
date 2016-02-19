@@ -45,6 +45,7 @@ class QTabWidget;
 class QModelIndex;
 class QSplitter;
 class QAction;
+class QMenu;
 
 class toCodeModel;
 class toPLSQLWidget;

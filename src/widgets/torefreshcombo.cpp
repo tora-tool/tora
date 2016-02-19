@@ -2,6 +2,8 @@
 #include "core/toconfiguration.h"
 #include "core/toglobalconfiguration.h"
 
+#include <QTimer>
+
 toRefreshCombo::toRefreshCombo(QWidget *parent, const QString& def)
 	: QComboBox(parent)
 	, m_timer(new QTimer(this))

@@ -37,6 +37,8 @@
 #include "widgets/topushbutton.h"
 #include "core/toresult.h"
 
+#include <QTreeView>
+
 class toEventQuery;
 class toResultCombo;
 
