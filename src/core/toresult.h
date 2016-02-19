@@ -48,6 +48,7 @@ class QTabWidget;
 class toConnection;
 class toResult;
 class toTimer;
+class QAction;
 
 /** Used for getting slots into toResult.
  * @internal
@@ -117,16 +118,7 @@ class toResult
          */
         toQueryParams const& params(void);
 
-        /** Check if this result is handled by the current connection
-         */
-        bool handled(void);
-
-        /** Indicate that this result can not be handled even though indicated otherwise
-         */
-        void setHandle(bool);
-
         /** disable hiding of the tab this result object lives in.
-         *
          */
         void setDisableTab(bool en);
 
@@ -154,7 +146,17 @@ class toResult
          */
         void setSQLName(const QString &name);
 
+        void setRelatedAction(QAction *act) { RelatedAction = act; };
+
     protected:
+        /** Check if this result is handled by the current connection
+         */
+        bool handled(void);
+
+        /** Indicate that this result can not be handled even though indicated otherwise
+         */
+        void setHandle(bool);
+
         /** Called when connection is changed. Be sure to call the parent if you reimplement this.
          */
         virtual void connectionChanged(void);
@@ -199,6 +201,7 @@ class toResult
         toQueryParams Params;
         bool FromSQL;
         QString Name;
+        QAction *RelatedAction;
 
         /** is set to true and toResult fails for some reason, the whole tool's Tab is disabled */
         bool IsCriticalTab;

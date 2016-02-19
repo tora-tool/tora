@@ -84,7 +84,7 @@ toResult::toResult()
     , FromSQL(false)
     , IsCriticalTab(true)
     , Handled(true)
-
+    , RelatedAction(NULL)
 {
     //see EventDispatcherWin32Private::registerTimer time should be either 0 or >20
     //otherwise the application hungs windows - bacause QT starts a new thread with RT priority
@@ -286,6 +286,9 @@ toConnection &toResult::connection(void)
 
 void toResult::changeHandle(void)
 {
+    if (RelatedAction)
+        RelatedAction->setEnabled(handled());
+
     if (!IsCriticalTab)
         return;
 
