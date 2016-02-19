@@ -522,6 +522,8 @@ void toResultPlanAbstr::queryDone(toEventQuery*)
 void toResultPlanAbstr::childComboReady()
 {
     QStringList cur_sel = CursorChildSel->itemData(CursorChildSel->currentIndex()).toStringList();
+	if (cur_sel.empty())
+		return;
     plan_hash = cur_sel.at(2);
     QString SInfo = QString::fromLatin1("V$SQL_PLAN: %1\nChild: %2 SQL_ID: %3")
     	.arg(plan_hash)

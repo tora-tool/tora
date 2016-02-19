@@ -38,7 +38,7 @@
 #include "widgets/totoolwidget.h"
 #include "widgets/totreewidget.h"
 
-class toResultLong;
+class toResultTableView;
 class toTask;
 class toSGAStatement;
 
@@ -46,7 +46,7 @@ class toTemporary : public toToolWidget
 {
         Q_OBJECT;
 
-        toResultLong   *Objects;
+        toResultTableView *Objects;
         toSGAStatement *Statement;
         QMenu          *ToolMenu;
         QAction        *refreshAct;
@@ -57,7 +57,7 @@ class toTemporary : public toToolWidget
     public slots:
         virtual void refresh(void);
         virtual void slotWindowActivated(toToolWidget *widget);
-        virtual void changeItem(toTreeWidgetItem *item);
+        virtual void changeItem();
 };
 
 #endif

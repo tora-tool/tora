@@ -37,7 +37,7 @@
 #include "core/totool.h"
 #include "core/tochangeconnection.h"
 #include "core/toconnection.h"
-#include "widgets/toresultlong.h"
+#include "widgets/toresulttableview.h"
 #include "tools/tosgastatement.h"
 #include "core/toglobalevent.h"
 #include "core/toconfiguration.h"
@@ -51,31 +51,15 @@
 #include "icons/totemporary.xpm"
 
 static toSQL SQLListTemporaryObjects("toTemporary:ListTemporaryObjects",
-                                     "SELECT s.sid || ',' || s.serial# \"Session\",\n"
-                                     "       s.username \"User\",\n"
-                                     "       u.TABLESPACE \"Tablespace\",\n"
-                                     "       segtype \"Type\",\n"
-                                     "       substr ( a.sql_text,1,50 ) \"SQL\",\n"
-                                     "       round ( u.blocks * p.value / :siz<int>,2 )||:sizstr<char[50]> \"Size\",\n"
-                                     "       s.sql_address || ':' || s.sql_hash_value \" \"\n"
-                                     "  FROM v$sort_usage u,\n"
-                                     "       v$session s,\n"
-                                     "       v$sqlarea a,\n"
-                                     "       v$parameter p\n"
-                                     " WHERE s.saddr = u.session_addr\n"
-                                     "   AND a.address ( + ) = s.sql_address\n"
-                                     "   AND a.hash_value ( + ) = s.sql_hash_value\n"
-                                     "   AND p.name = 'db_block_size'",
-                                     "Get temporary usage.", "0800");
-
-static toSQL SQLListTemporaryObjects9("toTemporary:ListTemporaryObjects",
                                       "SELECT s.sid || ',' || s.serial# \"Session\",\n"
                                       "       s.username \"User\",\n"
                                       "       u.TABLESPACE \"Tablespace\",\n"
                                       "       u.segtype \"Type\",\n"
-                                      "       substr ( a.sql_text,1,50 ) \"SQL\",\n"
+                                      "       substr ( a.sql_text,1,150 ) \"SQL\",\n"
                                       "       round ( u.blocks * p.value / :siz<int>,2 )||:sizstr<char[50]> \"Size\",\n"
-                                      "       s.sql_address || ':' || s.sql_hash_value \" \"\n"
+                                      "       s.sql_address || ':' || s.sql_hash_value \" address\",\n"
+                                      "       s.sql_id \" SQL_ID\",\n"
+                                      "       s.sql_child_number \" SQL_CHILD_NUMBER\"\n"
                                       "  FROM v$tempseg_usage u,\n"
                                       "       v$session s,\n"
                                       "       v$sqlarea a,\n"
@@ -84,7 +68,7 @@ static toSQL SQLListTemporaryObjects9("toTemporary:ListTemporaryObjects",
                                       "   AND a.address ( + ) = s.sql_address\n"
                                       "   AND a.hash_value ( + ) = s.sql_hash_value\n"
                                       "   AND p.name = 'db_block_size'",
-                                      "",
+                                      "Get temporary usage",
                                       "0900");
 
 class toTemporaryTool : public toTool
@@ -136,8 +120,10 @@ toTemporary::toTemporary(QWidget *main, toConnection &connection)
     QSplitter *splitter = new QSplitter(Qt::Vertical, this);
     layout()->addWidget(splitter);
 
-    Objects = new toResultLong(false, false, splitter);
+    Objects  = new toResultTableView(true, false, splitter, "columnView");
     Objects->setSQL(SQLListTemporaryObjects);
+    Objects->setReadAll(true);
+    Objects->setSelectionBehavior(QAbstractItemView::SelectRows);
 
     QList<int> list;
     list.append(75);
@@ -146,10 +132,8 @@ toTemporary::toTemporary(QWidget *main, toConnection &connection)
     QString unit(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::SizeUnit).toString());
     toQueryParams args = toQueryParams() << toQValue(Utils::toSizeDecode(unit)) << toQValue(unit);
 
-    Objects->setSelectionMode(toTreeWidget::Single);
     Objects->refreshWithParams(args);
-    connect(Objects, SIGNAL(selectionChanged(toTreeWidgetItem *)),
-            this, SLOT(changeItem(toTreeWidgetItem *)));
+    connect(Objects, SIGNAL(selectionChanged()), this, SLOT(changeItem()));
 
     Statement = new toSGAStatement(splitter);
 
@@ -181,11 +165,13 @@ void toTemporary::refresh(void)
     Objects->refresh();
 }
 
-void toTemporary::changeItem(toTreeWidgetItem *item)
+void toTemporary::changeItem()
 {
-	throw QString("toSGATrace::changeItem: not implemented yet.");
-#if 0
-    if (item)
-        Statement->changeAddress(item->text(Objects->columns()));
-#endif
+	QModelIndex selection1 = Objects->selectedIndex(8);
+	QString sql_id = Objects->model()->data(selection1, Qt::EditRole).toString();
+	QModelIndex selection2 = Objects->selectedIndex(9);
+	QString child_id = Objects->model()->data(selection2, Qt::EditRole).toString();
+	if (sql_id.isEmpty() || child_id.isEmpty())
+		return;
+	Statement->changeAddress(toQueryParams() << sql_id << child_id);
 }

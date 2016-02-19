@@ -149,6 +149,7 @@ void toSGAStatement::changeTab(int index)
 
 void toSGAStatement::changeAddress(toQueryParams const& sqlid)
 {
+    Q_ASSERT_X( sqlid.size() == 2, qPrintable(__QHERE__), "Expecting sql_id + child_id");
     Address = sqlid[0];
     Cursor  = sqlid[1];
     changeTab(QTabWidget::indexOf(CurrentTab));
