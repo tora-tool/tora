@@ -41,11 +41,13 @@
 
 class toEventQuery;
 class toResultCombo;
+class toWorkingWidget;
 
 /** This widget displays the execution plan of a statement
  */
 class toResultPlanView : public QTreeView
 {
+	typedef QTreeView super;
 	Q_OBJECT
 	Q_ENUMS(ExplainTypeEnum)
 public:
@@ -56,9 +58,20 @@ public:
 		Explain   = 10,
 		XPLAN = 20,
 	};
+
+	bool Ready;
+	toWorkingWidget* Working;
+
+public slots:
+	void queryStarted();
+	void queryDone();
+signals:
+	void cancelQueryRequeted();
 protected:
 	void showEvent(QShowEvent * event) override;
 	void hideEvent(QHideEvent * event) override;
+	void paintEvent(QPaintEvent *event) override;
+	void resizeEvent(QResizeEvent *event) override;
 };
 
 /**
@@ -167,7 +180,7 @@ public:
 	void childComboChanged(int NewIndex);
 	private:
 	QPointer<toResultPlanModel> model;
-	QTreeView *planTreeView;
+	toResultPlanView *planTreeView;
 	QPlainTextEdit *planTreeText;
 	// used to cursor explain
 	toResultCombo *CursorChildSel;

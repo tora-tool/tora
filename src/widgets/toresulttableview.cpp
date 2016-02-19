@@ -175,8 +175,7 @@ void toResultTableView::query(const QString &sql, toQueryParams const& param)
         Working->hide();
 
         // sets visible true but won't show if parent is hidden
-        QTimer t(this);
-        t.singleShot(300, Working, SLOT(forceShow()));
+        QTimer::singleShot(300, Working, SLOT(forceShow()));
 
         toEventQuery *query = new toEventQuery(this
                                                , connection()

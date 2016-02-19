@@ -79,6 +79,7 @@ toWorkingWidget::toWorkingWidget(QWidget * parent)
     vbox->addStretch(0);
 
     setLayout(vbox);
+    hide();
 }
 
 void toWorkingWidget::show()

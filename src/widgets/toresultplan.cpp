@@ -37,6 +37,7 @@
 #include "core/toeventquery.h"
 #include "core/tomainwindow.h"
 #include "widgets/toresultcombo.h"
+#include "widgets/toworkingwidget.h"
 #include "core/toconfiguration.h"
 #include "core/toeditorsetting.h"
 #include "connection/tooraclesetting.h"
@@ -92,6 +93,31 @@ static toSQL SQLViewPlan8("toResultPlan:ViewPlan",
 ////////////////////////////////////////////////////////////////////////////////
 //                     toResultPlanView
 ////////////////////////////////////////////////////////////////////////////////
+toResultPlanView::toResultPlanView(QWidget *parent)
+	: QTreeView(parent)
+	, Ready(true)
+{
+    setAlternatingRowColors(true);
+    setAllColumnsShowFocus(true);
+    setRootIsDecorated(true);
+
+    Working = new toWorkingWidget(this);
+    connect(Working, SIGNAL(stop()), this, SLOT(slotStop()));
+};
+
+void toResultPlanView::queryStarted()
+{
+	Ready = false;
+    // sets visible true but won't show if parent is hidden
+	QTimer::singleShot(300, Working, SLOT(forceShow()));
+}
+
+void toResultPlanView::queryDone()
+{
+	Ready = true;
+	Working->hide();
+}
+
 void toResultPlanView::showEvent(QShowEvent * event)
 {
 	QTreeView::showEvent(event);
@@ -112,6 +138,33 @@ void toResultPlanView::hideEvent(QHideEvent * event)
     if(main)
     {
         main->statusBar()->removeWidget(&toExplainTypeButtonSingle::Instance());
+    }
+}
+
+void toResultPlanView::paintEvent(QPaintEvent *event)
+{
+    if (Ready)
+    {
+        Working->hide();
+        super::paintEvent(event);
+    }
+    else
+    {
+        Working->setGeometry(this->viewport()->frameGeometry());
+        Working->show();
+        event->ignore();
+    }
+
+}
+
+void toResultPlanView::resizeEvent(QResizeEvent *event)
+{
+	super::resizeEvent(event);
+
+    if (!Ready)
+    {
+        Working->setGeometry(this->viewport()->frameGeometry());
+        Working->repaint();
     }
 }
 
@@ -193,14 +246,6 @@ QString toPlanTreeItem::id() const
 {
 	return m_id;
 }
-
-toResultPlanView::toResultPlanView(QWidget *parent)
-	: QTreeView(parent)
-{
-    setAlternatingRowColors(true);
-    setAllColumnsShowFocus(true);
-    setRootIsDecorated(true);
-};
 
 toResultPlanModel::toResultPlanModel(toEventQuery *query, QObject *parent)
 	: QAbstractItemModel(parent)
@@ -433,6 +478,7 @@ void toResultPlanAbstr::queryCursorPlan(toQueryParams const& params)
 	model = new toResultPlanModel(Query, this);
 	connect(model, SIGNAL(queryDone(toEventQuery*)), this, SLOT(queryDone(toEventQuery*)));
 	planTreeView->setModel(model);
+	planTreeView->queryStarted();
 	sql_id = params.at(0);
 	child_id = params.at(1);
 	DisplayChildCombo = true;
@@ -468,6 +514,8 @@ void toResultPlanAbstr::queryDone(toEventQuery*)
 			(*LockedConnection)->rollback();
 		LockedConnection.clear();
 	}
+
+	planTreeView->queryDone();
 }
 
 void toResultPlanAbstr::childComboReady()
