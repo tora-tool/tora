@@ -397,6 +397,7 @@ toResultPlanAbstr::toResultPlanAbstr(QWidget *parent)
 	: QWidget(parent)
 	, CursorChildSel(NULL)
 	, DisplayChildCombo(false)
+	, Explaining(false)
 	, Query(NULL)
 {
     using namespace ToConfiguration;
@@ -458,6 +459,14 @@ void toResultPlanAbstr::queryDone(toEventQuery*)
 		}
 		TOCATCH;
 	}
+	if (Explaining)
+	{
+		if (toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::KeepPlansBool).toBool())
+			(*LockedConnection)->commit();
+		else
+			(*LockedConnection)->rollback();
+		LockedConnection.clear();
+	}
 }
 
 void toResultPlanAbstr::childComboReady()
@@ -497,7 +506,7 @@ void toResultPlanAbstr::queryPlanTable(toQueryParams const& params)
     explainQuery = new toEventQuery(this, LockedConnection, explain, toQueryParams(), toEventQuery::READ_ALL);
     connect(explainQuery, SIGNAL(done(toEventQuery*)), this, SLOT(explainDone(toEventQuery*)));
     connect(explainQuery, SIGNAL(error(toEventQuery*,toConnection::exception const &)), this, SLOT(slotErrorHanler(toEventQuery*, toConnection::exception  const &)));
-    DisplayChildCombo = false;
+    Explaining = true;
     explainQuery->start();
 }
 

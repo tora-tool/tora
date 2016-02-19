@@ -1141,7 +1141,7 @@ void toWorksheet::query(toSyntaxAnalyzer::statement const& statement, execTypeEn
             {
                 if (ResultTab->currentIndex() != ResultTab->indexOf(Plan))
                     ResultTab->setCurrentIndex(ResultTab->indexOf(Plan));
-                Plan->query(statement.sql, toQueryParams() << QString("EXPLAIN"));
+                Plan->query(statement.sql, toQueryParams() << statement.sql);
                 slotUnhideResults();
             }
             break;

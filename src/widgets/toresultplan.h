@@ -155,7 +155,6 @@ public:
 	void queryPlanTable(toQueryParams const& params);
 	void queryXPlan(toQueryParams const& params);
 
-	virtual void query(const QString &sql, toQueryParams const& params) override {};
 	virtual bool canHandle(const toConnection &) override;
 
 	private slots:
@@ -175,7 +174,7 @@ public:
 	QString sql_id, child_id, plan_hash;
 	// used for sequence explain plan for, select * from plan_table
 	QSharedPointer<toConnectionSubLoan> LockedConnection;
-	bool DisplayChildCombo;
+	bool DisplayChildCombo, Explaining;
 	QString planId;
 	QPointer<toEventQuery> explainQuery;
 };
@@ -185,6 +184,10 @@ class toResultPlanCursor : public toResultPlanAbstr
 	Q_OBJECT
 public:
 	explicit toResultPlanCursor(QWidget *parent = 0) {};
+	void query(const QString &sql, toQueryParams const& params) override
+	{
+		queryCursorPlan(params);
+	}
 };
 
 class toResultPlanExplain : public toResultPlanAbstr
@@ -192,6 +195,10 @@ class toResultPlanExplain : public toResultPlanAbstr
 	Q_OBJECT
 public:
 	explicit toResultPlanExplain(QWidget *parent = 0) {};
+	void query(const QString &sql, toQueryParams const& params) override
+	{
+		queryPlanTable(params);
+	}
 };
 
 class toResultPlanSaved : public toResultPlanAbstr
@@ -199,6 +206,10 @@ class toResultPlanSaved : public toResultPlanAbstr
 	Q_OBJECT
 public:
 	explicit toResultPlanSaved(QWidget *parent = 0) {};
+	void query(const QString &sql, toQueryParams const& params) override
+	{
+
+	}
 };
 
 // this one will be usually parented by QStatusBar
