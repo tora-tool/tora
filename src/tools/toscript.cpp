@@ -41,7 +41,7 @@
 //#include "core/toreport.h"
 #include "widgets/toresultview.h"
 #include "core/totextview.h"
-#include "tools/toworksheet.h"
+#include "editor/toworksheettext.h"
 #include "tools/toscripttreeitem.h"
 
 #include <QScrollArea>
@@ -144,8 +144,8 @@ toScript::toScript(QWidget *parent, toConnection &connection)
     vbox->setSpacing(0);
     vbox->setContentsMargins(0, 0, 0, 0);
     box->setLayout(vbox);
-    Worksheet = new toWorksheet(box, connection);
-    vbox->addWidget(Worksheet);
+    WorksheetText = new toWorksheetText(box);
+    vbox->addWidget(WorksheetText);
     SearchList = new toListView(box);
     vbox->addWidget(SearchList);
     SearchList->addColumn(tr("Search result"));
@@ -246,7 +246,7 @@ toScript::~toScript()
 
 void toScript::closeEvent(QCloseEvent *event)
 {
-    if (Worksheet && Worksheet->slotClose())
+    if (WorksheetText /*&& WorksheetText->slotClose()*/)
     {
         QSettings s;
         s.beginGroup("toScript");
@@ -513,13 +513,13 @@ void toScript::execute(void)
                                       mode == MODE_COMPARE || mode == MODE_SEARCH);
         if (!script.isEmpty())
         {
-            Worksheet->editor()->setText(script);
-            Worksheet->editor()->setFilename(QString::null);
-            Worksheet->editor()->setModified(true);
+            WorksheetText->editor()->setText(script);
+            WorksheetText->editor()->setFilename(QString::null);
+            WorksheetText->editor()->setModified(true);
         }
         if (mode == MODE_SEARCH)
         {
-            Worksheet->hide();
+            WorksheetText->hide();
             Report->hide();
             SearchList->show();
             QRegExp re(ScriptUI->SearchWord->text(), Qt::CaseInsensitive);
@@ -570,7 +570,7 @@ void toScript::execute(void)
         }
         else if (mode == MODE_REPORT)
         {
-            Worksheet->hide();
+            WorksheetText->hide();
             SearchList->hide();
             Report->show();
             QString res = toGenerateReport(source.connection(), sourceDescription);
@@ -599,7 +599,7 @@ void toScript::execute(void)
         }
         else // TODO migrate
         {
-            Worksheet->show();
+            WorksheetText->show();
             SearchList->hide();
             Report->hide();
             fillDifference(sourceDescription, DropList);
