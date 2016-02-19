@@ -38,6 +38,8 @@
 #include "core/tohelpcontext.h"
 #include "core/tora_export.h"
 
+class QWidget;
+
 /**
  * Abstract baseclass for widgets defining tool settings.
  */

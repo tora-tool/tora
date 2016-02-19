@@ -8,9 +8,6 @@ if [ "$QTTYPE" = "5" ]; then
 	sudo apt-get install -y ubuntu-sdk qtquick1-5-dev 
 fi
 
-sudo apt-get install libboost-all-dev libqscintilla2-dev cmake libloki-dev xvfb g++-4.7 g++-4.8 g++-4.9
-sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.6 20 --slave /usr/bin/g++ g++ /usr/bin/g++-4.6
-sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.7 40 --slave /usr/bin/g++ g++ /usr/bin/g++-4.7
-sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 60 --slave /usr/bin/g++ g++ /usr/bin/g++-4.8
+sudo apt-get install libboost-all-dev libqscintilla2-dev cmake libloki-dev xvfb g++-4.9
 sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 80 --slave /usr/bin/g++ g++ /usr/bin/g++-4.9
 #sudo update-alternatives --config gcc
