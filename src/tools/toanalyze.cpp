@@ -394,7 +394,7 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
                                      QSizePolicy::Minimum));
         toolbar->addWidget(s);
 
-        CurrentPlan = new toResultPlan(splitter);
+        CurrentPlan = new toResultPlanSaved(splitter);
 
         Worksheet = new toWorksheetStatistic(Tabs);
         Tabs->addTab(Worksheet, tr("Worksheet statistics"));

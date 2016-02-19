@@ -470,15 +470,10 @@ void toWorksheet::setup(bool autoLoad)
     container->setLayout(box);
 
     ResultTab->setTabEnabled(ResultTab->indexOf(Columns), false);
-    Plan = new toResultPlan(ResultTab);
+
+    Plan = new toResultPlanExplain(ResultTab);
+    Plan->setRelatedAction(explainAct);
     ResultTab->addTab(Plan, tr("E&xecution plan"));
-    explainAct->setEnabled(Plan->handled());
-
-    PlanNew = new toResultPlanNew();
-    ResultTab->addTab(PlanNew, "NewPlan");
-
-    PlanNewExp  = new toResultPlanNew();
-    ResultTab->addTab(PlanNewExp, "NewPlan Exp");
 
     ResourceSplitter = new QSplitter(Qt::Vertical, ResultTab);
     Resources = new toResultResources(ResourceSplitter);
@@ -488,7 +483,6 @@ void toWorksheet::setup(bool autoLoad)
     //obsolete Visualize = new toVisualize(Result, ResultTab);
     // ResultTab->addTab(Visualize, tr("&Visualize"));
     ResultTab->addTab(ResourceSplitter, tr("&Information"));
-    ResultTab->setTabShown(ResourceSplitter, Resources->handled());
 
     StatTab = new QWidget(ResultTab);
     box = new QVBoxLayout;      // reassigned
@@ -507,6 +501,7 @@ void toWorksheet::setup(bool autoLoad)
 
     QSplitter *splitter = new QSplitter(Qt::Horizontal, StatTab);
     Statistics = new toResultStats(true, splitter);
+    Statistics->setRelatedAction(statisticAct);
 
 #ifdef TORA3_GRAPH
     WaitChart = new toResultBar(splitter);
@@ -700,9 +695,6 @@ void toWorksheet::slotConnectionChanged(void)
 {
     try
     {
-        statisticAct->setEnabled(connection().providerIs("Oracle"));
-        ResultTab->setTabShown(ResourceSplitter, Resources->handled());
-        explainAct->setEnabled(Plan->handled());
         delete ToolMenu;
         ToolMenu = NULL;
         slotWindowActivated(this);
@@ -915,11 +907,7 @@ void toWorksheet::slotChangeResult(int index)
     if (!m_lastQuery.sql.isEmpty())
     {
         if (CurrentTab == Plan)
-            Plan->query(m_lastQuery.sql, toQueryParams() << QString("EXPLAIN"));
-        else if (CurrentTab == PlanNew)
-            PlanNew->queryCursorPlan(toQueryParams() << Utils::toSQLToSql_Id(m_lastQuery.sql) << toQValue(0));
-        else if (CurrentTab == PlanNewExp)
-            PlanNewExp->queryPlanTable(toQueryParams() << m_lastQuery.sql);
+            Plan->queryPlanTable(toQueryParams() << m_lastQuery.sql);
         else if (CurrentTab == ResourceSplitter)
             viewResources();
         else if (CurrentTab == Statistics && Result->running())

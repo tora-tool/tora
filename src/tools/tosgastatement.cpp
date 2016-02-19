@@ -89,10 +89,8 @@ toSGAStatement::toSGAStatement(QWidget *parent)
 
     if (toConnection::currentConnection(this).providerIs("Oracle"))
     {
-        Plan = new toResultPlan(this);
+    	Plan = new toResultPlanCursor(this);
         addTab(Plan, tr("Execution plan"));
-        PlanNew = new toResultPlanNew(this);
-        addTab(PlanNew, tr("Execution plan New"));
         Resources = new toResultResources(this);
         addTab(Resources, tr("Information"));
 
@@ -140,34 +138,7 @@ void toSGAStatement::changeTab(int index)
     		SQLText->sciEditor()->setText(sql);
     	}
     	else if (CurrentTab == Plan)
-    	{
-    		toConnection &conn = toConnection::currentConnection(this);
-    		/*
-                    Plan->query(toSQLString(toConnection::currentConnection(this), Address),
-                                toQuery::readQuery(toConnection::currentConnection(this),
-                                                   SQLParsingSchema, Address));
-    		 */
-    		if (////conn.version() >= "0900" &&
-    				toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::VSqlPlansBool).toBool()
-					&&
-					toQuery::readQuery(conn, toSQL::string(SQLcheckVSQL, conn).arg(Address), toQueryParams()).begin()->toInt() > 0
-    		)
-    		{
-    			Plan->query(QString::fromLatin1("SGA:") + Address, toQueryParams() << QString("SGA") << Address);
-    		}
-    		else
-    		{
-    			toQueryParams params;
-    			toQList l = toQuery::readQuery(conn, SQLParsingSchema, toQueryParams() << Address);
-    			if (!l.empty())
-    			{
-    				toQValue schema = l.front();
-    				Plan->query(Utils::toSQLString(conn, Address), toQueryParams() << schema);
-    			}
-    		}
-    	}
-    	else if (CurrentTab == PlanNew)
-    		PlanNew->queryCursorPlan(toQueryParams() << Address << Cursor);
+    		Plan->queryCursorPlan(toQueryParams() << Address << Cursor);
     	else if (CurrentTab == Resources)
             Resources->refreshWithParams(toQueryParams() << Address);
     	else if (CurrentTab == PlanHistory)

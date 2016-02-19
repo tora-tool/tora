@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOSGASTATEMENT_H
-#define TOSGASTATEMENT_H
+#pragma once
 
 #include "core/toqvalue.h"
 
@@ -43,8 +42,7 @@ class QComboBox;
 class QTabWidget;
 class toResultField;
 class toResultItem;
-class toResultPlan;
-class toResultPlanNew;
+class toResultPlanCursor;
 class toResultView;
 class toResultTableView;
 
@@ -75,8 +73,7 @@ class toSGAStatement : public QTabWidget
         QString Cursor;
         /** Execution plan of the statement.
          */
-        toResultPlan *Plan;
-        toResultPlanNew *PlanNew;
+        toResultPlanCursor *Plan;
 
     private slots:
         /** Change the displayed tab.
@@ -101,5 +98,3 @@ class toSGAStatement : public QTabWidget
             changeTab(QTabWidget::indexOf(CurrentTab));
         }
 };
-
-#endif

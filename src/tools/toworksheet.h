@@ -65,8 +65,7 @@ class toResultCols;
 class toResultCombo;
 class toResultSchema;
 class toResultItem;
-class toResultPlan;
-class toResultPlanNew;
+class toResultPlanExplain;
 class toResultTableView;
 class toResultStats;
 class toTabWidget;
@@ -242,7 +241,7 @@ class toWorksheet : public toToolWidget
         toWorksheetEditor *Editor;
         toTabWidget       *ResultTab;
         toResultTableView *Result;
-        toResultPlan      *Plan;
+        toResultPlanExplain *Plan;
         QWidget           *CurrentTab;
         toSyntaxAnalyzer::statement m_lastQuery; // query is saved in order to reexecute it periodically ("refresh")
         toResultItem      *Resources;
@@ -252,7 +251,6 @@ class toWorksheet : public toToolWidget
         toResultBar       *IOChart;
 #endif
         toListView        *Logging;
-        toResultPlanNew   *PlanNew, *PlanNewExp;
 
         //! Re-set EditSplitter sizes with settings.
         QList<int>        EditSplitterSizes;

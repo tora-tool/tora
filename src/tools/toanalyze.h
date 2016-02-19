@@ -32,9 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOANALYZE_H
-#define TOANALYZE_H
-
+#pragma once
 
 #include "core/toeventquery.h"
 #include "widgets/totoolwidget.h"
@@ -50,7 +48,7 @@ class QTabWidget;
 class QTimer;
 class QLabel;
 class toResultSchema;
-class toResultPlan;
+class toResultPlanSaved;
 class toResultTableView;
 class toWorksheetStatistic;
 
@@ -93,10 +91,8 @@ class toAnalyze : public toToolWidget
         QLabel               *Current;
         QToolButton          *Stop;
         toResultTableView    *Plans;
-        toResultPlan         *CurrentPlan;
+        toResultPlanSaved    *CurrentPlan;
         toWorksheetStatistic *Worksheet;
         QList<toEventQuery *> Running;
         QStringList           Pending;
 };
-
-#endif

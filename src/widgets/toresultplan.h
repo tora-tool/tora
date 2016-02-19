@@ -34,81 +34,29 @@
 
 #pragma once
 
-#include "widgets/toresultview.h"
 #include "widgets/topushbutton.h"
+#include "core/toresult.h"
 
 class toEventQuery;
 class toResultCombo;
 
-/** This widget displays the execution plan of a statement. The statement
- * is identified by the first parameter which should be the address as gotten
- * from the @ref toSQLToAddress function.
+/** This widget displays the execution plan of a statement
  */
-
-class toResultPlan : public toResultView
+class toResultPlanView : public QTreeView
 {
-        Q_OBJECT;
-        Q_ENUMS(ExplainTypeEnum);
-    public:
+	Q_OBJECT
+	Q_ENUMS(ExplainTypeEnum)
+public:
+	explicit toResultPlanView(QWidget *parent = NULL);
 
-        enum ExplainTypeEnum
-        {
-            Explain   = 10,
-			XPLAN = 20,
-        };
-
-
-        /** Create the widget.
-         * @param parent Parent widget.
-         * @param name Name of widget.
-         */
-        toResultPlan(QWidget *parent, const char *name = NULL);
-
-        /** Destruct object
-         */
-        ~toResultPlan() {};
-
-        /** Reimplemented for internal reasons. If you prepend "SAVED:" a saved plan is read
-         * with the identified_by set to the string following the initial "SAVED:" string.
-         * If you prepend SGA: the rest is interpreted as cursor address:hash_value in V$SQL_PLAN.
-         */
-        virtual void query(const QString &sql, toQueryParams const& param);
-
-        /** Support Oracle
-         */
-        virtual bool canHandle(const toConnection &conn);
-
-    protected:
-        void showEvent(QShowEvent * event);
-        void hideEvent(QHideEvent * event);
-
-    private:
-        QString Ident;
-        std::map <QString, toTreeWidgetItem *> Parents;
-        std::map <QString, toTreeWidgetItem *> Last;
-        std::list<QString> Statements;
-        toTreeWidgetItem *TopItem;
-        toTreeWidgetItem *LastTop;
-        bool Explaining; // true when explaining the query, false when fetching the plan
-        QPointer<toEventQuery> Query;
-        QString Schema;
-        toResultCombo *CursorChildSel; //Used for Oracle for V$SQL_PLAN to choose plans among cursor children
-
-        QSharedPointer<toConnectionSubLoan> LockedConnection;
-
-        void checkException(const QString &);
-        void oracleSetup(void);
-
-        // TODO: toSQLParse disabled void addStatements(std::list<toSQLParse::statement> &stats);
-        void connectSlotsAndStart();
-
-        void cleanup();
-    private slots:
-        void slotPoll();
-        void slotQueryDone();
-        void slotChildComboReady();
-        void slotChildComboChanged(int NewIndex);
-        void slotErrorHanler(toEventQuery*, toConnection::exception  const &);
+	enum ExplainTypeEnum
+	{
+		Explain   = 10,
+		XPLAN = 20,
+	};
+protected:
+	void showEvent(QShowEvent * event) override;
+	void hideEvent(QHideEvent * event) override;
 };
 
 /**
@@ -145,12 +93,6 @@ private:
     QList<toPlanTreeItem*> m_childItems;
     QVariantList m_itemData;
     toPlanTreeItem *m_parentItem;
-};
-
-class toResultPlanView : public QTreeView
-{
-public:
-	explicit toResultPlanView(QWidget *parent) : QTreeView(parent) {};
 };
 
 class toResultPlanModel : public QAbstractItemModel
@@ -214,7 +156,7 @@ public:
 	void queryXPlan(toQueryParams const& params);
 
 	virtual void query(const QString &sql, toQueryParams const& params) override {};
-	virtual bool canHandle(const toConnection &) override { return true; };
+	virtual bool canHandle(const toConnection &) override;
 
 	private slots:
 	void queryDone(toEventQuery*);
@@ -233,9 +175,30 @@ public:
 	QString sql_id, child_id, plan_hash;
 	// used for sequence explain plan for, select * from plan_table
 	QSharedPointer<toConnectionSubLoan> LockedConnection;
-	bool explaining;
+	bool DisplayChildCombo;
 	QString planId;
 	QPointer<toEventQuery> explainQuery;
+};
+
+class toResultPlanCursor : public toResultPlanAbstr
+{
+	Q_OBJECT
+public:
+	explicit toResultPlanCursor(QWidget *parent = 0) {};
+};
+
+class toResultPlanExplain : public toResultPlanAbstr
+{
+	Q_OBJECT
+public:
+	explicit toResultPlanExplain(QWidget *parent = 0) {};
+};
+
+class toResultPlanSaved : public toResultPlanAbstr
+{
+	Q_OBJECT
+public:
+	explicit toResultPlanSaved(QWidget *parent = 0) {};
 };
 
 // this one will be usually parented by QStatusBar
