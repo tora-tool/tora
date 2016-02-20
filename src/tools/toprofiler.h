@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOPROFILER_H
-#define TOPROFILER_H
+#pragma once
 
 #include "widgets/totoolwidget.h"
 
@@ -77,9 +76,7 @@ class toProfiler : public toToolWidget
         void calcTotals(void);
         void noTables(void)
         {
-            close();
+            setDisabled(true);
         }
         virtual void slotWindowActivated(toToolWidget*) {};
 };
-
-#endif
