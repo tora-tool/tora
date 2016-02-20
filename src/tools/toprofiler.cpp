@@ -549,13 +549,14 @@ toProfiler::toProfiler(QWidget *parent, toConnection &connection)
                                         tr("&Yes"), tr("&No"), QString::null, 0, 1);
         if (ret == 0)
         {
+            Utils::toBusy busy;
             try
             {
                 toConnectionSubLoan con(connection);
-                toQuery runs(con, SQLProfilerRuns, toQueryParams());
-                toQuery units(con, SQLProfilerUnits, toQueryParams());
-                toQuery data(con, SQLProfilerData, toQueryParams());
-                toQuery number(con, SQLProfilerNumber, toQueryParams());
+                toQuery runs(con, SQLProfilerRuns, toQueryParams());     runs.eof();
+                toQuery units(con, SQLProfilerUnits, toQueryParams());   units.eof();
+                toQuery data(con, SQLProfilerData, toQueryParams());     data.eof();
+                toQuery number(con, SQLProfilerNumber, toQueryParams()); number.eof();
             }
             catch (const QString &str)
             {

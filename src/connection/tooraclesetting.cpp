@@ -38,7 +38,11 @@
 #include "core/tologger.h"
 #include "core/utils.h"
 #include "core/toconnection.h"
+#include "core/toconnectionsubloan.h"
 #include "core/toconnectionregistry.h"
+#include "core/tosql.h"
+#include "core/toqvalue.h"
+#include "core/toquery.h"
 
 QVariant ToConfiguration::Oracle::defaultValue(int option) const
 {
@@ -112,8 +116,8 @@ toOracleSetting::toOracleSetting(QWidget *parent)
     try
     {
         // Check if connection exists
-        toConnectionRegistrySing::Instance().currentConnection();
-        CreatePlanTable->setEnabled(true);
+        toConnection &conn = toConnectionRegistrySing::Instance().currentConnection();
+        CreatePlanTable->setEnabled(conn.providerIs("Oracle"));
     }
     catch (...)
     {
@@ -146,15 +150,17 @@ void toOracleSetting::dbmsMetadataClicked(bool)
 
 void toOracleSetting::createPlanTable()
 {
-    throw QString(__QHERE__ + "No implemeted yet");
-#ifdef TORA3_QUERY
     try
     {
-        toConnectionSubLoan connSub(toConnection::currentConnection());
-        connSub->execute(toSQL::string(SQLCreatePlanTable, conn).arg(ExplainPlan->text()));
+        Utils::toBusy busy;
+        toConnection &conn = toConnectionRegistrySing::Instance().currentConnection();
+        if (!conn.providerIs("Oracle"))
+            return;
+        toConnectionSubLoan connSub(conn);
+        toQuery createPlanTable(connSub, toSQL::string(toSQL::TOSQL_CREATEPLAN, conn).arg(PlanTable->text().trimmed()), toQueryParams());
+        createPlanTable.eof();
     }
     TOCATCH;
-#endif
 }
 
 ToConfiguration::Oracle toOracleSetting::s_oracleConf;

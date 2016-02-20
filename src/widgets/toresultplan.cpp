@@ -587,6 +587,44 @@ void toResultPlanAbstr::explainDone(toEventQuery*q)
 	Query->start();
 }
 
+void toResultPlanAbstr::slotErrorHanler(toEventQuery*, toConnection::exception  const &str)
+{
+	try
+    {
+        if (str.contains(QString::fromLatin1("ORA-02404")))
+        {
+            QString planTable = ToConfiguration::Oracle::planTable(connection().user());
+
+            // if shared plan table does not exist, do not try to create it
+            if (toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::SharedPlanBool).toBool())
+            {
+                TOMessageBox::warning(this,
+                                      tr("Plan table doesn't exist"),
+                                      tr("Specified plan table %1 doesn't exist.").arg(planTable),
+                                      tr("&OK"));
+            }
+            else
+            {
+                int ret = TOMessageBox::warning(this,
+                                                tr("Plan table doesn't exist"),
+                                                tr("Specified plan table %1 doesn't exist.\n"
+                                                   "Should TOra try to create it?").arg(planTable),
+                                                tr("&Yes"), tr("&No"), QString::null, 0, 1);
+                if (ret == 0)
+                {
+                    Utils::toBusy busy;
+                    toConnectionSubLoan conn(connection());
+                    toQuery createPlanTable(conn, toSQL::string(toSQL::TOSQL_CREATEPLAN, connection()).arg(planTable), toQueryParams());
+                    createPlanTable.eof();
+                }
+            }
+        }
+        else
+            Utils::toStatusMessage(str);
+    }
+    TOCATCH
+}
+
 void toResultPlanAbstr::queryXPlan(toQueryParams const& params)
 {
 	toConnectionSubLoan conn(toConnection::currentConnection(this));
@@ -709,73 +747,3 @@ void toResultPlanModel::slotQueryDone(toEventQuery*q)
 	cleanup();
 	emit queryDone(q);
 }
-
-// Original implementation of toResultView
-#if 0
-void toResultPlan::slotChildComboChanged(int NewIndex)
-{
-    Explaining = false;
-    if (NewIndex > -1 )
-    {
-        toConnection &conn = connection();
-        QStringList cur_sel = CursorChildSel->itemData(NewIndex).toStringList();
-        QString ChildNumber = cur_sel.at(0);
-        QString SInfo = QString::fromLatin1("V$SQL_PLAN: %1\nChild: %2 SQL_ID: %3").arg(cur_sel.at(2)).arg(ChildNumber).arg(cur_sel.at(1));
-        TopItem->setText(0, SInfo);
-
-        /*
-             std::map <QString, toTreeWidgetItem *>::reverse_iterator it;
-             for (it=Parents.rbegin(); it!=Parents.rend(); it++) {printf("Aqq %s\n",it->first.toLatin1().constData()); delete it->second;}
-        */
-        TopItem->deleteChildren();
-        LastTop = NULL;
-        Parents.clear();
-        Last.clear();
-
-        Query = new toEventQuery(this
-                                 , conn
-                                 , toSQL::string(SQLViewVSQLPlan, connection())
-                                 , toQueryParams() << Ident << ChildNumber
-                                 , toEventQuery::READ_ALL);
-        connectSlotsAndStart();
-    }
-}
-
-void toResultPlan::checkException(const QString &str)
-{
-    try
-    {
-        if (str.contains(QString::fromLatin1("ORA-02404")))
-        {
-            QString planTable = ToConfiguration::Oracle::planTable(connection().user());
-
-            // if shared plan table does not exist, do not try to create it
-            if (toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::SharedPlanBool).toBool())
-            {
-                TOMessageBox::warning(this,
-                                      tr("Plan table doesn't exist"),
-                                      tr("Specified plan table %1 doesn't exist.").arg(planTable),
-                                      tr("&OK"));
-            }
-            else
-            {
-                int ret = TOMessageBox::warning(this,
-                                                tr("Plan table doesn't exist"),
-                                                tr("Specified plan table %1 doesn't exist.\n"
-                                                   "Should TOra try to create it?").arg(planTable),
-                                                tr("&Yes"), tr("&No"), QString::null, 0, 1);
-                if (ret == 0)
-                {
-                    Utils::toBusy busy;
-                    toConnectionSubLoan conn(connection());
-                    toQuery createPlanTable(conn, toSQL::string(toSQL::TOSQL_CREATEPLAN, connection()).arg(planTable), toQueryParams());
-                    createPlanTable.eof();
-                }
-            }
-        }
-        else
-            Utils::toStatusMessage(str);
-    }
-    TOCATCH
-}
-#endif
