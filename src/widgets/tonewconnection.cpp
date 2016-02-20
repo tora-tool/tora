@@ -52,6 +52,8 @@
 #include <QMenu>
 #include <QtGui/QIcon>
 #include <QSortFilterProxyModel>
+#include <QtCore/QEvent>
+#include <QtCore/QKeyEvent>
 
 // TODO turn these into enum (QMetaEnum)
 #define CONF_PROVIDER_LIST_SORT_OFFSET "ProvListSort" //Sort by database/connection name, asc
