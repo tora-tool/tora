@@ -81,7 +81,7 @@ class toSession : public toToolWidget
         toSGAStatement    *PreviousStatement;
         toResultStats     *SessionStatistics;
         toResultLong      *LongOps;
-        toResultTableView *ConnectInfo;
+        toResultItem      *ConnectInfo;
         toResultTableView *LockedObjects;
         toResultLock      *PendingLocks;
         toResultTableView *AccessedObjects;
