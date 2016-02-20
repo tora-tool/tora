@@ -77,7 +77,7 @@ IF(WIN32)
     MESSAGE(FATAL "Boost libs not found.")
   ENDIF (Boost_FOUND)
 ELSE()
-  FIND_PACKAGE(Boost 1.46.0)
+  FIND_PACKAGE(Boost 1.46.0 REQUIRED)
 ENDIF()
 
 #Project Setup
