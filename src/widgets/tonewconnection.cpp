@@ -175,6 +175,7 @@ toNewConnection::toNewConnection(QWidget* parent, toWFlags fl)
     Previous->setCurrentIndex(last);
     Previous->selectionModel()->clear();
     searchEdit->setFocus(Qt::OtherFocusReason);
+	searchEdit->installEventFilter(this);
 }
 
 QString toNewConnection::getCurrentProvider()
@@ -650,6 +651,16 @@ toConnection* toNewConnection::makeConnection(bool savePrefs, bool test)
     }
 }
 
+bool toNewConnection::eventFilter(QObject *obj, QEvent *event)
+{
+	if (obj == searchEdit && event->type() == QEvent::KeyPress)
+	{
+		QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+		if(keyEvent->key() == Qt::Key_Down)
+			Previous->setFocus(Qt::OtherFocusReason);
+	}
+	return QObject::eventFilter(obj, event);
+}
 
 void toNewConnection::previousMenu(const QPoint &pos)
 {

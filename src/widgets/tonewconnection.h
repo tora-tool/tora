@@ -32,9 +32,6 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TONEWCONNECTION_H
-#define TONEWCONNECTION_H
-
 #include "core/tohelpcontext.h"
 #include "core/utils.h"
 #include "ui_tonewconnectionui.h"
@@ -79,6 +76,9 @@ class toNewConnection : public QDialog
 
         toConnection* makeConnection(bool savePrefs, bool test);
 
+    protected:
+        bool eventFilter(QObject *obj, QEvent *event) override;
+
     public slots:
         virtual void done(int r);
 
@@ -111,6 +111,3 @@ class toNewConnection : public QDialog
         void testConnectionButton_clicked();
         void saveConnectionButton_clicked();
 };
-
-
-#endif // TONEWCONNECTION_H
