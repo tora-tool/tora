@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOSCRIPT_H
-#define TOSCRIPT_H
+#pragma once
 
 #include "widgets/totoolwidget.h"
 #include "ui_toscriptui.h"
@@ -127,5 +126,3 @@ inline void toScript::PrefixString::operator()(QString& txt)
 
 inline toScript::PrefixString::PrefixString(std::list<QString> & l, QString s) : _l(l), _s(s)
 {}
-
-#endif

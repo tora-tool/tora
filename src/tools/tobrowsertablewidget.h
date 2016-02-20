@@ -59,9 +59,7 @@ class toBrowserTableWidget : public toBrowserBaseWidget
         toResultTableView *indexView;
         toResultTableView *constraintsView;
         toResultTableView *referencesView;
-#ifdef TORA_EXPORT
         toResultDrawing *schemaView;
-#endif
         toResultGrants *grantsView;
         toResultTableView *triggersView;
         toResultTableData *resultData;

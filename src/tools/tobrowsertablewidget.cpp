@@ -51,10 +51,8 @@
 #include "result/toresulttabledata.h"
 
 #include "widgets/toresultdrawing.h"
-#ifdef TORA_EXPERIMENTAL
 #include "dotgraphview.h"
 #include "dotgraph.h"
-#endif
 
 
 Util::RegisterInFactory<toBrowserTableWidget, toBrowserWidgetFactory, toCache::CacheEntryType> regToBrowserTableWidget(toCache::TABLE);
@@ -424,11 +422,9 @@ toBrowserTableWidget::toBrowserTableWidget(QWidget * parent)
     referencesView->setSQL(SQLTableReferences);
     referencesView->setReadAll(true);
 
-#ifdef TORA_EXPERIMENTAL
     schemaView = new toResultDrawing(this);
     schemaView->setObjectName("schemaView");
     connect(schemaView->m_dotGraphView, SIGNAL(selected(QString const&)), this, SLOT(slotSelected(QString const&)), Qt::QueuedConnection);
-#endif
 
     grantsView = new toResultGrants(this);
     grantsView->setObjectName("grantsView");
@@ -486,7 +482,6 @@ void toBrowserTableWidget::changeConnection()
     else
         referencesView->hide();
 
-#ifdef TORA_EXPERIMENTAL
     {
         int pos = 0;
         if (c.providerIs("Oracle"))
@@ -501,7 +496,6 @@ void toBrowserTableWidget::changeConnection()
                 setTabEnabled(pos, false);
         }
     }
-#endif
 
     if (c.providerIs("Oracle"))
         addTab(grantsView, "&Grants");

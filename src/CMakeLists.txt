@@ -35,6 +35,7 @@ INCLUDE_DIRECTORIES(
   ${CMAKE_BINARY_DIR}
   ${CMAKE_SOURCE_DIR}/extlibs/trotl/src
   ${CMAKE_SOURCE_DIR}/extlibs/libantlr3cpp-3.5.2/include
+  ${CMAKE_SOURCE_DIR}/extlibs/libermodel
   ${QT_INCLUDES}  
   )
 
@@ -65,15 +66,10 @@ ENDIF (NOT WANT_INTERNAL_QSCINTILLA)
 IF (USE_EXPERIMENTAL)
   INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/extlibs/libantlr3c-3.5.1/include)
   INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/extlibs/libantlr3c-3.5.1)
+
   IF (POPPLER_QT4_FOUND)
     INCLUDE_DIRECTORIES(${POPPLER_QT4_INCLUDE_DIR})
   ENDIF (POPPLER_QT4_FOUND)
-
-  #IF(graphviz_FOUND)
-  #  ADD_DEFINITIONS("-DGRAPHWIZ_FOUND")
-  #  INCLUDE_DIRECTORIES(${graphviz_INCLUDE_DIRECTORIES})
-    INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/extlibs/libermodel)
-  #ENDIF(graphviz_FOUND)
 ENDIF(USE_EXPERIMENTAL)
 
 ################################################################################
@@ -242,6 +238,7 @@ SET(TORA_MOC_CLASSES
   widgets/toresultcombo.h
   widgets/toresultdatasingle.h
   widgets/toresultdepend.h
+  widgets/toresultdrawing.h
   widgets/toresultextent.h
   widgets/toresultfield.h
   widgets/toresultgrants.h
@@ -356,7 +353,6 @@ SET(TORA_MOC_CLASSES
 
   tools/tocurrent.h 
 
-  tools/toscript.h
   tools/toscriptschemawidget.h
   tools/toscripttreeitem.h
   tools/toscripttreemodel.h
@@ -366,8 +362,6 @@ SET(TORA_MOC_CLASSES
   tools/totemporary.h
 
   tools/torollback.h
-
-  tools/tosandboxtool.h
 
   tools/toplsqltext.h
   tools/toplsqleditor.h
@@ -398,10 +392,12 @@ IF (POPPLER_QT4_FOUND)
 ENDIF (POPPLER_QT4_FOUND)
 
 IF (USE_EXPERIMENTAL)
+  LIST(APPEND TORA_MOC_CLASSES tools/toscript.h)
   LIST(APPEND TORA_MOC_CLASSES docklets/tocodeoutline.h)
   #IF(graphviz_FOUND)
   LIST(APPEND TORA_MOC_CLASSES docklets/toquerymodel.h)
-  LIST(APPEND TORA_MOC_CLASSES tools/toer.h widgets/toresultdrawing.h)
+  LIST(APPEND TORA_MOC_CLASSES tools/toer.h)
+  LIST(APPEND TORA_MOC_CLASSES tools/tosandboxtool.h)
   #ENDIF(graphviz_FOUND)
 ENDIF (USE_EXPERIMENTAL)
 
@@ -484,7 +480,8 @@ SET(TORA_SOURCES
   widgets/toresultcolscomment.cpp
   widgets/toresultcombo.cpp
   widgets/toresultdatasingle.cpp
-  widgets/toresultdepend.cpp  
+  widgets/toresultdepend.cpp
+  widgets/toresultdrawing.cpp
   widgets/toresultextent.cpp
   widgets/toresultfield.cpp
   widgets/toresultgrants.cpp
@@ -622,7 +619,6 @@ SET(TORA_SOURCES
   tools/tosecuritytreemodel.cpp
   tools/tosecuritytreeitem.cpp
 
-  tools/toscript.cpp
   tools/toscriptschemawidget.cpp
   tools/toscripttreeitem.cpp
   tools/toscripttreemodel.cpp
@@ -635,8 +631,6 @@ SET(TORA_SOURCES
 
   tools/toplsqleditor.cpp
   tools/toplsqltext.cpp
-  
-  tools/tosandboxtool.cpp
 
   templates/tosqledit.cpp
   templates/totemplate.cpp
@@ -670,11 +664,11 @@ IF(ORACLE_FOUND)
 ENDIF(ORACLE_FOUND)
 
 IF (USE_EXPERIMENTAL)
-  LIST(APPEND TORA_SOURCES docklets/tocodeoutline.cpp parsing/OracleSQLParser.cc parsing/OracleSQLLexer.cc parsing/tsqlparseoracle.cc)
-  #IF(graphviz_FOUND)
-    LIST (APPEND TORA_SOURCES docklets/toquerymodel.cpp docklets/toastwalk.cpp)
-    LIST (APPEND TORA_SOURCES tools/toer.cpp widgets/toresultdrawing.cpp)
-  #ENDIF(graphviz_FOUND)
+  LIST (APPEND TORA_SOURCES tools/toscript.cpp)
+  LIST (APPEND TORA_SOURCES docklets/tocodeoutline.cpp parsing/OracleSQLParser.cc parsing/OracleSQLLexer.cc parsing/tsqlparseoracle.cc)
+  LIST (APPEND TORA_SOURCES docklets/toquerymodel.cpp docklets/toastwalk.cpp)
+  LIST (APPEND TORA_SOURCES tools/toer.cpp)
+  LIST (APPEND TORA_SOURCES tools/tosandboxtool.cpp)
 ENDIF (USE_EXPERIMENTAL)
 
 IF(POPPLER_QT4_FOUND)
@@ -759,6 +753,7 @@ SET(TORA_LIBS
   ${Qt5Xml_LIBRARIES}           # dynamic qt5
   ${QSCINTILLA_LIBRARIES}       # dynamic
   ${TORA_LOKI_LIB} 		# static
+  ermodel                       # static
   )
 
 IF (POPPLER_QT4_FOUND)
@@ -790,11 +785,6 @@ IF (POSTGRESQL_FOUND)
 ENDIF (POSTGRESQL_FOUND)
 
 IF(USE_EXPERIMENTAL)
-  #IF(graphviz_FOUND)
-    LINK_DIRECTORIES(${graphviz_LIBRARY_DIRS}) # I'm not sure why it's required. But for macosx it's mandatory (probably)
-  # LIST(APPEND TORA_LIBS ${graphviz_LIBRARIES})
-    LIST(APPEND TORA_LIBS ermodel)
-  #ENDIF(graphviz_FOUND)
   LIST(APPEND TORA_LIBS antlr3c)
 ENDIF(USE_EXPERIMENTAL)
 

@@ -256,7 +256,7 @@ static toAWRTool AWRTool;
 toAWR::toAWR(/*toTool *tool,*/ QWidget *parent, toConnection &_connection)
     : toToolWidget(AWRTool, "simplequery.html", parent, _connection, "toAWR")
 {
-    QToolBar *toolbar = Utils::toAllocBar(this, tr("Simple Query"));
+    QToolBar *toolbar = Utils::toAllocBar(this, tr("AWR Tool"));
     layout()->addWidget(toolbar);
 
     toolbar->addWidget(new QLabel("Inst:", toolbar));

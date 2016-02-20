@@ -136,7 +136,7 @@ toERSchema::toERSchema(/*toTool *tool,*/ QWidget *parent, toConnection &_connect
     : toToolWidget(ERSchemaTool, "simplequery.html", parent, _connection, "toERSchema")
     , Query(NULL)
 {
-    QToolBar *toolbar = Utils::toAllocBar(this, tr("Simple Query"));
+    QToolBar *toolbar = Utils::toAllocBar(this, tr("ER Schema"));
     layout()->addWidget(toolbar);
 
     toolbar->addWidget(new QLabel("ER Schema view - TODO add some icons here:", toolbar));
