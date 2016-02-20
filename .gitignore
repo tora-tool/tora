@@ -1,6 +1,7 @@
 ########################################
 #             MSVC Build               #
 ########################################
+ipch/
 **/qrc_*.cpp
 **/*.cxx
 **/*.cxx_parameters
@@ -21,15 +22,29 @@ CMakeCache.txt
 CPackConfig.cmake
 CPackSourceConfig.cmake
 TOra.opensdf
+TOra.VC.opendb
 TOra.sdf
 cmake_uninstall.cmake
-# generated source(s)
+########################################
+#             Generated source(s)      #
+########################################
 toversion.h
 gitrevision.h
 gitrevision.h.txt
 gitrevision.txt
 src/ui_*.h
 src/tora_toad.qm
+**/*.dir/
+**/RelWithDebInfo/
+**/Release/
+**/Debug/
+extlibs/libantlr3c-3.5.1/antlr3config.h
 
+########################################
+#             Eclise                   #
+########################################
+.cproject
+.project
+.vs/
 
 .gitignore~
