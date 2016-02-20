@@ -30,7 +30,7 @@ addons:
     packages:
     - gcc-4.9
     - g++-4.9
-    - libboost-all-dev
+    - libboost1.48-dev
 
 before_script: bash ./travis/before_script.sh
 script: bash ./travis/script.sh
