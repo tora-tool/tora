@@ -164,7 +164,7 @@ class toSessionFilter  : public toViewFilter
 
 static toSQL SQLConnectInfo(
     "toSession:ConnectInfo",
-    "select authentication_type,osuser,network_service_banner\n"
+    "select * \n"
     "  from v$session_connect_info where sid = :f1<char[101]>",
     "Get connection info for a session");
 
@@ -544,8 +544,7 @@ toSession::toSession(QWidget *main, toConnection &connection)
         Waits = new toWaitEvents(0, ResultTab, "waits");
         ResultTab->addTab(Waits, tr("Wait events"));
 
-        ConnectInfo = new toResultTableView(true, false, ResultTab);
-        ConnectInfo->horizontalHeader()->setStretchLastSection(true);
+        ConnectInfo = new toResultItem(1, true, ResultTab);
         ConnectInfo->setSQL(SQLConnectInfo);
         ResultTab->addTab(ConnectInfo, tr("Connect Info"));
 
