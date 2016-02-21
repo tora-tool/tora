@@ -464,7 +464,7 @@ void OracleDMLStatement::disambiguate()
 
             //loop over left brothers until you find either a reserved word or a table name
             QList<QPointer<Token> > const& brothers = node.parent()->getChildren();
-            std::cout << "Alias found:" << node.toString().toAscii().constData() << std::endl;
+            std::cout << "Alias found:" << node.toString().toLatin1().constData() << std::endl;
             for( int j = node.row() - 1 ; j >= 0; --j)
             {
                 Token *brother = brothers.at(j);
@@ -485,7 +485,7 @@ void OracleDMLStatement::disambiguate()
                 }
                 if( brother->getTokenType() == Token::S_TABLE_REF)
                 {
-                    std::cout << node.toString().toAscii().constData() << "=>" << (*brother).toStringRecursive().toAscii().constData() << std::endl;
+                    std::cout << node.toString().toLatin1().constData() << "=>" << (*brother).toStringRecursive().toLatin1().constData() << std::endl;
 
                     //_mDeclarations.insertMulti(node.toString(), brother.data());
                     for(SQLParser::Statement::token_const_iterator_to_root k(&*i); &*k; ++k)
@@ -530,7 +530,7 @@ void OracleDMLStatement::disambiguate()
 
                 if( brother->getTokenType() == Token::S_SUBQUERY_FACTORED)
                 {
-                    std::cout << node.toString().toAscii().constData() << "=>" << brother->toStringRecursive().toStdString() << std::endl;
+                    std::cout << node.toString().toLatin1().constData() << "=>" << brother->toStringRecursive().toStdString() << std::endl;
 
                     //_mDeclarations.insertMulti(node.toString(), brother.data());
 
