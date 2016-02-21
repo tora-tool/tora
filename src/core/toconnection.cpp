@@ -183,7 +183,7 @@ QList<QString> toConnection::running(void) const
     Q_FOREACH(toConnectionSub *conn, LentConnections)
     {
         static QString sql("Session: %1\n%2\n");
-        toQuery *query = conn->query();
+        toQueryAbstr *query = conn->query();
         ret << sql.arg(conn->sessionId().first()).arg(query ? query->sql() : QString("None"));
     }
     return ret;
