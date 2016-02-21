@@ -27,10 +27,12 @@ addons:
   apt:
     sources:
     - ubuntu-toolchain-r-test
+    - boost-latest
     packages:
     - gcc-4.9
     - g++-4.9
-    - libboost1.55-dev
+    - libboost1.55-all-dev
+    - cmake
 
 before_script: bash ./travis/before_script.sh
 script: bash ./travis/script.sh
