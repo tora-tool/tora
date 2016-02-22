@@ -15,9 +15,6 @@ ENDIF()
 ################################################################################
 
 # ADD_SUBDIRECTORY(i18n)
-IF (WIN32)
-  ADD_SUBDIRECTORY(windows)
-ENDIF (WIN32)
 
 ################################################################################
 #                                 DEFINEs                                      #
@@ -721,10 +718,6 @@ ELSE (WANT_INTERNAL_LOKI)
   SET (TORA_LOKI_LIB ${LOKI_LIBRARIES})
 ENDIF (WANT_INTERNAL_LOKI)
 
-IF (WIN32)
-  SET (WINDOWS_LIB "windows_lib")
-ENDIF (WIN32)
-
 # Handle win/mac special stuff - it's left empty for linux/unix
 SET (GUI_TYPE)
 IF (APPLE)
@@ -770,7 +763,6 @@ ENDIF (WANT_INTERNAL_LOKI)
 
 # prevent opening the cmd.exe window
 IF (WIN32)
-  LIST(APPEND TORA_LIBS ${WINDOWS_LIB})
   LIST(APPEND TORA_LIBS "ws2_32.lib")
   # don't use console subsystem
   IF (MINGW)
