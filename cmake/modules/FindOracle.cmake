@@ -58,9 +58,11 @@ ELSE (ORACLE_PATH_INCLUDES)
             # xdk
             ${ORACLE_HOME}/xdk/include
             # sdk
-            ${ORACLE_HOME}/sdk/include
+            ${ORACLE_HOME}/sdk/include/
+            ${ORACLE_HOME}\\sdk\\include\\
             # xe on windows
-            ${ORACLE_HOME}/OCI/include
+            ${ORACLE_HOME}/OCI/include/
+            ${ORACLE_HOME}\\OCI\\include\\
             # instant client from rpm
             /usr/include/oracle/11.2/client${LIB_SUFFIX}/
             # instantclient on OS X from macports
@@ -75,10 +77,12 @@ ELSE (ORACLE_PATH_LIB)
             # TODO add 32/64bit version here (lib32/lib64 on some platforms)
             ${ORACLE_HOME}/lib 
             # xe on windows
-            ${ORACLE_HOME}/OCI/lib/MSVC
+            ${ORACLE_HOME}/OCI/lib/MSVC/
+            ${ORACLE_HOME}\\OCI\\lib\\MSVC\\
             ${ORACLE_HOME}
             # InstantClient on WinXP
             ${ORACLE_HOME}/sdk/lib/msvc/
+            ${ORACLE_HOME}\\sdk\\lib\\msvc\\
             # Instant client from rpm
             /usr/lib${LIB_SUFFIX}/
             /usr/lib/oracle/11.2/client${LIB_SUFFIX}/lib/
