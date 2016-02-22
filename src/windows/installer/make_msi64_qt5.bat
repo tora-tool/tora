@@ -43,8 +43,8 @@ popd
 echo %BUILD_ABS_PATH%
 
 del heat.wxs
-heat dir "../../RelWithDebInfo"  -var env.BUILD_ABS_PATH -cg ToraFiles -dr TARGETDIR -srd -sreg -gg -ag -template fragment -out heat.wxs
-candle.exe tora-qt5.wxs heat.wxs
+heat dir "../../RelWithDebInfo"  -var env.BUILD_ABS_PATH -cg ToraFiles -dr INSTALLLOCATION -suid -srd -sreg -gg -ag -out heat.wxs -t heat.xsl
+candle.exe -arch x64 tora-qt5.wxs heat.wxs
 light.exe -ext WixUIExtension -o tora3alpha.64bit.msi tora-qt5.wixobj heat.wixobj
 
 @pause
