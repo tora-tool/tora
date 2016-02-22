@@ -1,1 +1,137 @@
-../../doc/help/database.html
+<html lang="en">
+<head>
+<title>database - TOra</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="TOra">
+<meta name="generator" content="makeinfo 4.13">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="preferences.html#preferences" title="preferences">
+<link rel="prev" href="editor.html#editor" title="editor">
+<link rel="next" href="additionalhelp.html#additionalhelp" title="additionalhelp">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This manual is for TOra, version 2.1.4+.-->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<a name="database"></a>
+<p>
+Next:&nbsp;<a rel="next" accesskey="n" href="additionalhelp.html#additionalhelp">additionalhelp</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="editor.html#editor">editor</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="preferences.html#preferences">preferences</a>
+<hr>
+</div>
+
+<h4 class="subsection">3.8.3 Database Settings</h4>
+
+<p><a name="index-Database-Settings-13"></a>
+This page of the options contains settings on how to interact with the database.
+
+   <div class="block-image"><img src="images/database.png" alt="images/database.png"></div>
+
+     <dl>
+<dt><strong>Autocommit changes</strong><dd>    If this is set any changes made to the database will be automatically committed as soon as you make them. Use
+    this with care, the transaction handling is there for a reason you know. 
+<br><dt><strong>Reading object cache</strong><dd>    There are four options of object cache behaviour. <strong>Start read object cache when needed</strong> - will start
+    reading it when it is first used. <strong>Read object cache on connect</strong> - TOra will start reading the object
+    cache when you start a connection to a database. <strong>Never read object cache until mandatory</strong> - TODO. 
+    <strong>Never read object cache until mandatory (Will leave some parts of application nonfunctional</strong> - TODO. 
+    Note that reading this is quite a costly query so you probably shouldn't have this checked if you are in a
+    production environment, on a slow connection or not using the object cache. The object cache is mostly used
+    for describing tables, the PL/SQL debugger and code completion. 
+<br><dt><strong>Initial rows to fetch in query</strong><dd>    This setting indicates how many rows to always fetch from a query when executing it. Observe that you can
+    always read more from the individual query just by scrolling down. Check the <strong>All</strong> checkbox to always
+    read all available records. Be aware that TOra will interact sluggishly or not at all while reading many lines. 
+    It will also keep the entire result in memory so checking the <strong>All</strong> box and reading a really large
+    table could bring your machine to it's knees. 
+<br><dt><strong>Initially read in content editor</strong><dd>    If set to something other than <strong>All</strong> a query will be placed only this number of rows initially from
+    Oracle when browsing the content. The reason for this is that Oracle will be under high load if a content
+    list is started on a large table. When this value is reached the query will be reread to fetch the rest of
+    the values so you as a user will not see any difference. 
+<br><dt><strong>Maximum size display</strong><dd>    The maximum width a list column will get automatically regardless of how large the content is. This is so
+    you can still see the rest of the columns even if one of the first can contain very large values. You can
+    always resize the column by hand afterwards. 
+<br><dt><strong>Firewall mode.</strong><dd>    Makes each connection in connection pool to run extra queries (selecting sysdate from dual) at specified
+    interval (see "Connection test interval" option). This could be useful if there is a firewall between
+    TOra and database and firewall is dropping connections if there is no traffic.
+
+     <p><strong>Note!</strong> If you change this option, you have to reconnect in order to make it effective. 
+<br><dt><strong>Connection test interval</strong><dd>    Interval in seconds at which TOra should be sending dummy queries to database (see "Firewall mode"). 
+<br><dt><strong>Indicate empty values as &rdquo;.</strong><dd>    Display NULL values as "{null}" in the specified color. 
+<br><dt><strong>Number format.</strong><dd>    Select the format for displaying numbers. You can choose from "Default", "Scientific" and "Fixed decimal"
+    where the last allows you to specify the number of decimals. 
+</dl>
+
+   <p>There may also be pages under this for each individual database provider. Currently only Oracle and MySql uses this
+feature. That setup looks like this.
+
+   <div class="block-image"><img src="images/oracle.png" alt="images/oracle.png"></div>
+
+     <dl>
+<dt><strong>Checkpoint name</strong><dd>    This is a checkpoint TOra should use when it is making changes that need to be rolled back. One place where this
+    is used is to perform explain plans without filling up the plan table. The name doesn't matter, just make sure
+    you don't use this checkpoint name yourself. 
+<br><dt><strong>Default date format</strong><dd>    The format that you prefer dates to be displayed. Changing this will require a reconnect to the database before
+    it starts to operate. The string should be a standard Oracle date to string conversion specification. For more
+    information see the Oracle SQL Reference. 
+<br><dt><strong>Maximum cursors to keep open</strong><dd>    This specifies the size of the connection pool if TOra was compiled with OTL_STREAM_POOLING_ON. 
+<br><dt><strong>Max LONG and LOB data length</strong><dd>    The amount of data to read from LONG, BLOB or CLOB data fields. If you always want all the data to be read
+    check the <strong>Unlimited</strong> checkbox to the right. LONG datafields can not be specified as <strong>Unlimited</strong>,
+    if this is specified 33000 characters are read by default. 
+<br><dt><strong>Explain plan table</strong><dd>    The table to use to temporarily store explained execution plans. the table can be specified with or without a
+    schema name. If you leave out a schemaname the table will be created in the schema of the connected user, either
+    manually by clicking <strong>Create Table</strong> button or automatically by TOra if needed and confirmed by the user. 
+<br><dt><strong>Keep plans</strong><dd>    If this is checked explained plans are left in the explain plan table. The normal behaviour is to rollback the
+    explanation after it is initially read to keep the explain plan table from filling up with old plans. 
+<br><dt><strong>Use V$SQL_PLAN</strong><dd>    If possible, TOra will try to get the execution plan by reading V$SQL_PLAN instead of executing EXPLAIN for the
+    statement. 
+<br><dt><strong>shared PLAN_TABLE</strong><dd>    Enable this option if you wish to use the system-wide PLAN_TABLE provided by Oracle or a shared
+    plan table set up by yourself. In this case TOra will never create a plan table for you. 
+<br><dt><strong>Extractor options</strong><dd>    These options control the way TOra generates object creation scripts (ddl's) in database extractor tool as well as "Script" tab in schema browser.
+          <ul>
+    <li><strong>Use DBMS_METADATA</strong> Use standard Oracle package DBMS_METADATA to get ddl. If not selected TOra will use internal routines to generate ddl. 
+    <li><strong>Include storage information</strong>
+    <li><strong>Skip organisation and monitoring</strong> Exclude organisation and monitoring from storage information
+    <li><strong>Skip storage except tablespace</strong> Exclude all storage information except tablespace
+    <li><strong>Include parallel information</strong>
+    <li><strong>Include partition information</strong>
+    <li><strong>Include code</strong>
+    <li><strong>Include header</strong> Include TOra generated script header, containing information such as database name, time of extraction etc. 
+    <li><strong>Include prompt</strong>
+    </ul>
+     </dl>
+
+   <div class="block-image"><img src="images/mysql.png" alt="images/mysql.png"></div>
+
+     <dl>
+<dt><strong>Possibility to break MySql queries</strong><dd>    TODO
+<br><dt><strong>When calling create routine statement in worksheet</strong><dd>    MySQL routine creation does not support "create or replace" therefore if you try to create new routine and it
+    already exists you will get an exception. This option controls if TOra should try to avoid such exceptions in
+    one of supported ways:
+          <ul>
+    <li><strong>Do nothing</strong> - do not try to detect and avoid exception when creating routines. 
+    <li><strong>Drop before creating</strong> - execute "drop &lt;procedure|function&gt; if exists &lt;name&gt;" before calling create statement. 
+    <li><strong>Drop before creating (if exists)</strong> - check routines table if routine already exists. If so - execute drop statement. 
+    <li><strong>Ask</strong> - ask user if TOra should try dropping a routine before creating it (without checking if it already exists). 
+    <li><strong>Ask (if exists)</strong> - check routines table if routine already exists. If so - ask user if drop
+      statement should be called (without it creating procedure will fail, but it could be usefull if you didn't know
+      that routine with given name exists already and now you would like to skip creation and probably change the name
+      of routine). 
+    </ul>
+         <strong>Note!</strong> - if routine creation statement fails you will be left without <strong>any</strong> version of routine in the database! 
+</dl>
+
+   </body></html>
+

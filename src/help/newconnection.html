@@ -1,1 +1,67 @@
-../../doc/help/newconnection.html
+<html lang="en">
+<head>
+<title>newconnection - TOra</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="TOra">
+<meta name="generator" content="makeinfo 4.13">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="workspace.html#workspace" title="workspace">
+<link rel="prev" href="window.html#window" title="window">
+<link rel="next" href="whatprivileges.html#whatprivileges" title="whatprivileges">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This manual is for TOra, version 2.1.4+.-->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<a name="newconnection"></a>
+<p>
+Next:&nbsp;<a rel="next" accesskey="n" href="whatprivileges.html#whatprivileges">whatprivileges</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="window.html#window">window</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="workspace.html#workspace">workspace</a>
+<hr>
+</div>
+
+<h3 class="section">3.2 Connecting to a database</h3>
+
+<p><a name="index-Connecting-to-a-database-5"></a>
+You can connect to a database by selecting the <strong>File|New Connection</strong> menu entry or the toolbar button. For more information about the menu and toolbar see <a href="window.html#window">Elements of the main window</a>.
+
+   <p>After selecting the menu you will be presented with the following dialog.
+
+   <div class="block-image"><img src="images/newconnection.png" alt="images/newconnection.png"></div>
+
+   <p>The filling out of this dialog is pretty straight forward but the options can vary depending on the selected connection provider.
+
+     <dl>
+<dt><strong>Previous</strong><dd>      This list contains the previous connection made, selecting an entry from this list will set all the values to the right to the correct. Doubleclicking will connect straight away (only makes sense if you save passwords). 
+<br><dt><strong>Connections</strong><dd>      Values to connect to this database again. 
+<br><dt><strong>Connection provider</strong><dd>      The type of connection to create. TOra currently supports Teradata, PostgrSQL, Oracle and MySQL. 
+<br><dt><strong>Username</strong><dd>      The username with which to connect to the database
+<br><dt><strong>Password</strong><dd>      The password to use for the connection. You can also configure TOra to remember your last used password (see <a href="preferences.html#preferences">Options</a>)
+<br><dt><strong>Use SQL*Net</strong><dd>      This is perhaps the most difficult setting. This indicates whether to connect locally to the database or use SQL*Net. If you check this box the connection is made through the Oracle listener, otherwise a local connection usually using shared memory or named pipes is made. This is only available for Oracle connections. 
+<br><dt><strong>Hostname</strong><dd>      The host on which the database resides. 
+<br><dt><strong>Database</strong><dd>      What database to connect to. For Oracle, the listbox is filled with the values available in your tnsnames.ora file. 
+<br><dt><strong>Connection Mode</strong><dd>      The type of connection to make. For Oracle, usually <strong>normal</strong> always suffices here. But sometimes during database administration <strong>SYS_DBA</strong> or <strong>SYS_OPER</strong> is needed. If you don't know what these mean you probably shouldn't be using them. 
+<br><dt><strong>Color Session Identifier</strong><dd>      You can flag connections with an identfier. The pre-configured identifiers are <strong>None</strong> with no color, <strong>Testing</strong> in blue, <strong>Development</strong> in green and <strong>Production</strong> in red, but you can change the associated colors and even add some more (see <a href="preferences.html#preferences">Options</a>). 
+<br><dt><strong>Test button</strong><dd>      This button lets you test the configured connection without actually saving it. 
+<br><dt><strong>Save button</strong><dd>      Using this button you can save the connection. Useful if you want to change something like passwords or color identifiers when you normally don't want to connect. 
+<br><dt><strong>Import Connections</strong><dd>      You can import connections from TOra 1.3.x, Oracle SQL Developer 1.5 and SqirrelSQL 2.6.x. The import dialog is pretty straight forward, just select the type you wish to import and press <strong>Run</strong>. 
+</dl>
+
+   <p>Upon establishing a successful connection all the settings of the dialog will be saved and remembered when the next connection is made.
+
+   </body></html>
+

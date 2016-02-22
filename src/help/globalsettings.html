@@ -1,1 +1,68 @@
-../../doc/help/globalsettings.html
+<html lang="en">
+<head>
+<title>globalsettings - TOra</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="TOra">
+<meta name="generator" content="makeinfo 4.13">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="preferences.html#preferences" title="preferences">
+<link rel="next" href="editor.html#editor" title="editor">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This manual is for TOra, version 2.1.4+.-->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<a name="globalsettings"></a>
+<p>
+Next:&nbsp;<a rel="next" accesskey="n" href="editor.html#editor">editor</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="preferences.html#preferences">preferences</a>
+<hr>
+</div>
+
+<h4 class="subsection">3.8.1 Global Settings</h4>
+
+<p>These may vary some depending on how your system was compiled and configured. Not all options are displayed in the screenshot since that was made on a KDE version of TOra.
+
+   <p><table summary=""><tr align="left"><td valign="top" width="20%"><strong>Custom SQL</strong> </td><td valign="top" width="80%">The file in which to store your custom SQL. For more information about custom SQL and the SQL dictionary (see <a href="sqledit.html#sqledit">SQL Editor tool</a>. The string <samp><span class="env">$HOME</span></samp> will be replaced by your home directory on UNIX or documents directory in Windows. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Help directory</strong> </td><td valign="top" width="80%">Should point to where the TOra help table of contents file is stored (toc.html). This should be set up correctly if you made a normal install. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Default session</strong> </td><td valign="top" width="80%">TODO. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Cache directory</strong> </td><td valign="top" width="80%">Should point to where the TOra Disk Cache files are stored. There is one file for each Connection. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Change current connection with active window</strong> </td><td valign="top" width="80%">If this option is set, changing the current window will also change the current connection to that of the active window. The connection is only changed when you change window so if you want to change the connection to something else you can still do so as long as you don't change the window. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Save passwords</strong> </td><td valign="top" width="80%">Whether or not TOra should store the passwords used to connect. <strong>Be aware that the passwords are obfuscated only and stored in either the windows registry or a file.</strong>
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Include DB in caption</strong> </td><td valign="top" width="80%">If this is set the database name will be included in the caption of all your tool windows after the tool name. Observe that there often is no other way of knowing which database the window works on except for this. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Restore session on startup</strong> </td><td valign="top" width="80%">TODO. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Prefer TOAD key bindings</strong> </td><td valign="top" width="80%">TODO. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Use Disk Caching</strong> </td><td valign="top" width="80%">This option tells TOra to Cache the Object List in the Cache Directory. Default is No Caching. When Caching is activated, you have to refresh the object cache with the menu option File-&gt;Reread Object Cache, because, the default source for the Object List is the diskfile. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Display gridlines in results</strong>  </td><td valign="top" width="80%">Show grid lines in output result window. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Display alerts in statusbar only</strong>	 </td><td valign="top" width="80%">Display errors only in the statusbar. This is really useful since it doesn't interrupt you as much as a dialog window as long as you know to look for information in the statusbar when things doesn't work. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Arrange Tools in Tabs</strong>	 </td><td valign="top" width="80%">Display the different tools as tabs instead of separate windows in the main window. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Use Colors in Connections</strong>	 </td><td valign="top" width="80%">Assign colors to existing connection identifiers or create new ones. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Multi-line results</strong>	 </td><td valign="top" width="80%">All tables in all tools (Schema browser, SQL editor, Session list etc.) will have multi-line cells if text contains more than one line or if it does not fit into one cell horizontally. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Connect history</strong>	 </td><td valign="top" width="80%">How many connection entries to save in the new connection history list. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Status message</strong>  </td><td valign="top" width="80%">The number of seconds to display error messages in the status bar. If you specify 0 they are kept until the next message is displayed. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Message history</strong>	 </td><td valign="top" width="80%">The number of status messages to store in the status message history before the oldest are removed when new are added. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Chart samples</strong>  </td><td valign="top" width="80%">Number of samples to save by default in charts. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Display samples</strong>	 </td><td valign="top" width="80%">The number of samples to display in line and bar graph charts. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Size Unit</strong>  </td><td valign="top" width="80%">The unit to display sizes with in TOra. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Refresh</strong>	 </td><td valign="top" width="80%">The default refresh time to use in TOra. Tools which refresh automatically use this setting as the default. It can also be changed on a per tool basis. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Default list format</strong>	 </td><td valign="top" width="80%">The default format when exporting data in SQL Editor or Schema Browser. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Style</strong>  </td><td valign="top" width="80%">The GUI style to use for the TOra application. This switch is only available for Qt only applications. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Translation</strong>	 </td><td valign="top" width="80%">Which translation local to use for TOra. Requires restart to take effect. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"><strong>SMTP Server</strong>	 </td><td valign="top" width="80%">TODO.
+   <br></td></tr></table>
+
+   </body></html>
+

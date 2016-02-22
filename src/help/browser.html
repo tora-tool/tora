@@ -1,1 +1,305 @@
-../../doc/help/browser.html
+<html lang="en">
+<head>
+<title>browser - TOra</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="TOra">
+<meta name="generator" content="makeinfo 4.13">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="up" href="tools.html#tools" title="tools">
+<link rel="prev" href="worksheet.html#worksheet" title="worksheet">
+<link rel="next" href="plsqleditor.html#plsqleditor" title="plsqleditor">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<!--
+This manual is for TOra, version 2.1.4+.-->
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<a name="browser"></a>
+<p>
+Next:&nbsp;<a rel="next" accesskey="n" href="plsqleditor.html#plsqleditor">plsqleditor</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="worksheet.html#worksheet">worksheet</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="tools.html#tools">tools</a>
+<hr>
+</div>
+
+<h3 class="section">4.2 Schema Browser</h3>
+
+<p><a name="index-Schema-Browser-21"></a>
+This tool provides you a simple browser for exploring database schema objects. Initially it can be said that the
+browser also provides a browser like functionality for the template help (see <a href="template.html#template">Template Help</a>) which
+is covered separately. This browser will provide you with more information and you will also in future versions
+of TOra be able to interact with schema objects (Dropping or create tables etc.), this is not fully possible in the
+current version. The template help on the other hand is tree based and some people consider it easier and faster to
+work with.
+
+   <div class="block-image"><img src="images/browser.png" alt="images/browser.png"></div>
+
+<!-- * Using the browser:: -->
+<!-- * Available information:: -->
+<!-- * Content editor:: -->
+<!-- * Defining a filter:: -->
+   </ul>
+
+<!-- @node Using the browser, Available information, browser, browser -->
+<h4 class="subheading">Using the browser</h4>
+
+<p>The schema browser has a very simple interface with a toolbar which contains the following functions. 
+All of these are also available in the Browser menu item except for the schema selection and change object.
+
+     <dl>
+<dt><strong>Refresh</strong><dd>    Refresh the displayed data from the database. Also available on the <strong>F5</strong> key. 
+<br><dt><strong>Define filter</strong><dd>    Displays the define filter dialog(
+<!-- @pxref{Defining a filter} -->
+). This is used to specify which objects to show in the browser. The default filter is to show everything. 
+    Also available on the <strong>CTRL+SHIFT+G</strong> key. 
+<br><dt><strong>Clear filter</strong><dd>    Remove the current filter and revert to the default of showing everything. Also available on the <strong>CTRL+SHIFT+H</strong> key. 
+<br><dt><strong>Schema</strong><dd>    The last item on the toolbar is a combo box where you can select the schema to display objects for. 
+    It defaults the schema you are currently logged in as. Only schemas that are visible to the current user are
+    selectable in the lost (Really, TOra does not contain the secret DBA password that will always let you access
+    everything regardless of your privileges). 
+<br><dt><strong>Change connection</strong><dd>    Change the connection this tool window should operate on.
+
+   </dl>
+
+   <p>The rest of the interface consists of two tabbed windows, one within the other. The first one you can use to
+select the object type you want to inspect. When you have selected a type you can see the visible objects of the
+specified type available in the selected schema. The second tab indicates what kind of information you want to
+explore about the selected object and depends on the object type (
+<!-- @pxref{Available information} -->
+.). When you select an object name in the left list you can inspect information about it to the right.
+
+   <p>You can move the keyboard focus to the schema selection using <strong>ALT+S</strong> and to the current object list
+using <strong>ALT+N</strong>.
+
+<!-- * Available information:: -->
+<!-- * Content editor:: -->
+<!-- * Defining a filter:: -->
+   </ul>
+
+<!-- @node Available information, Content editor, Using the browser, browser -->
+<h4 class="subheading">Available information</h4>
+
+<p>This is the available information for the different object types.
+
+   <p><table summary="">
+<tr align="left"><th valign="top" width="20%">Object type
+</th><th valign="top" width="30%">Name
+</th><th valign="top" width="50%">Description
+
+<p><br></th></tr><tr align="left"><td valign="top" width="20%"><strong>Tables</strong>
+</td><td valign="top" width="30%">
+</td><td valign="top" width="50%">
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Columns</strong>
+</td><td valign="top" width="50%">A description of the columns in the table. For more information about this information also see object description. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Indexes</strong>
+</td><td valign="top" width="50%">A list with the indexes that have been created for this table. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Constraints</strong>
+</td><td valign="top" width="50%">Displays constraints associated with this table. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>References</strong>
+</td><td valign="top" width="50%">Displays the foreign key constraints that references this table and the other objects that have dependencies on this table. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Grants</strong>
+</td><td valign="top" width="50%">The grants that have been made on this table. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Triggers</strong>
+</td><td valign="top" width="50%">Lists the triggers that exist for this table. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Data</strong>
+</td><td valign="top" width="50%">Displays the data in the table. This is the only part of the database browser that let you modify any data. For more information about how to use the content editor
+<!-- @pxref{Content editor} -->
+. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Information</strong>
+</td><td valign="top" width="50%">Contains information about the table available in the SGA including analysed statistics etc. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Partitions</strong>
+</td><td valign="top" width="50%">TODO. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Extents</strong>
+</td><td valign="top" width="50%">TODO. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Script</strong>
+</td><td valign="top" width="50%">This tab displays an SQL script to recreate the database object.
+
+<p><br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Views</strong>
+</td><td valign="top" width="30%">
+</td><td valign="top" width="50%">
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Columns</strong>
+</td><td valign="top" width="50%">A description of the columns in the view. For more information about this information also see object description. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>SQL</strong>
+</td><td valign="top" width="50%">The SQL that defines the view. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Data</strong>
+</td><td valign="top" width="50%">Displays the data in the view. This is the only part of the database browser that let you modify any data. For more information about how to use the content editor (
+<!-- @pxref{Content editor} -->
+). You can not modify some views depending on how they are defined. See the Oracle reference for more information about editing views.<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Grants</strong>
+</td><td valign="top" width="50%">The grants that have been made on this view. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Dependencies</strong>
+</td><td valign="top" width="50%">The objects that depend on this view. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Script</strong>
+</td><td valign="top" width="50%">This tab displays an SQL script to recreate the database object.
+
+<p><br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Indexes</strong>
+</td><td valign="top" width="30%">
+</td><td valign="top" width="50%">
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Columns</strong>
+</td><td valign="top" width="50%">The columns that the index operate on. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Information</strong>
+</td><td valign="top" width="50%">Information in the SGA about an index. For instance analyzed statistics available for this index. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Extents</strong>
+</td><td valign="top" width="50%">TODO. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Script</strong>
+</td><td valign="top" width="50%">This tab displays an SQL script to recreate the database object.
+
+<p><br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Sequences</strong>
+</td><td valign="top" width="30%">
+</td><td valign="top" width="50%">
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Info</strong>
+</td><td valign="top" width="50%">Information about the sequence. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Grants</strong>
+</td><td valign="top" width="50%">The grants that have been made on this object. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Script</strong>
+</td><td valign="top" width="50%">This tab displays an SQL script to recreate the database object.
+
+<p><br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Synonyms</strong>
+</td><td valign="top" width="30%">
+</td><td valign="top" width="50%">
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Info</strong>
+</td><td valign="top" width="50%">Information about the synonyms
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Grants</strong>
+</td><td valign="top" width="50%">The grants that have been made on this object. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Script</strong>
+</td><td valign="top" width="50%">This tab displays an SQL script to recreate the database object.
+
+<p><br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Code</strong>
+</td><td valign="top" width="30%">
+</td><td valign="top" width="50%">
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Declaration</strong>
+</td><td valign="top" width="50%">The declaration of a package or type. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Body</strong>
+</td><td valign="top" width="50%">The implementation of a package, body, procedure or function. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Grants</strong>
+</td><td valign="top" width="50%">The grants that have been made on this object. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Dependencies</strong>
+</td><td valign="top" width="50%">Dependencies this object has. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Script</strong>
+</td><td valign="top" width="50%">This tab displays an SQL script to recreate the database object.
+
+<p><br></td></tr><tr align="left"><td valign="top" width="20%"><strong>Triggers</strong>
+</td><td valign="top" width="30%">
+</td><td valign="top" width="50%">
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Info</strong>
+</td><td valign="top" width="50%">Information about the trigger. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Code</strong>
+</td><td valign="top" width="50%">The code that implement the trigger. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Columns</strong>
+</td><td valign="top" width="50%">The columns this trigger operates on. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Grants</strong>
+</td><td valign="top" width="50%">The grants that have been made on this object. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Dependencies</strong>
+</td><td valign="top" width="50%">Dependencies of this object. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Script</strong>
+</td><td valign="top" width="50%">This tab displays an SQL script to recreate the database object.
+
+<p><br></td></tr><tr align="left"><td valign="top" width="20%"><strong>DBLinks</strong>
+</td><td valign="top" width="30%">
+</td><td valign="top" width="50%">
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Info</strong>
+</td><td valign="top" width="50%">Information about the trigger. 
+<br></td></tr><tr align="left"><td valign="top" width="20%"></td><td valign="top" width="30%"><strong>Synonyms</strong>
+</td><td valign="top" width="50%">TODO. 
+<br></td></tr><tr align="left"><td valign="top" width="20%">
+   <br></td></tr></table>
+
+<!-- @node  Content editor, Defining a filter, Available information, browser -->
+<h4 class="subheading">Content editor</h4>
+
+<p>The content editor lets you edit the contents of a table or view. There are a few things to note about this.
+
+   <p>First of all the content editor is designed to behave nicely to the database which means that it will only
+save the data when it thinks you are finished editing a row. This happens when you save the current row change
+or you commit the database. When there is unsaved data you can see it in the status bar that there exists unsaved data. Also observe that the content editor will respect the auto commit setting in the database settings.
+
+   <p>The content editor has it's own toolbar with the following buttons.
+
+     <dl>
+<dt><strong>Define filter</strong><dd>Displays the define filter dialog. This is used to specify which objects to show in the browser. The default filter is to show everything.
+
+     <br><dt><strong>Clear filter</strong><dd>Remove the current filter and revert to the default of showing everything.
+
+     <br><dt><strong>Save changes</strong><dd>Save the changes made to the current row to the database. Observe that this will not commit the changes.
+
+     <br><dt><strong>Add new record</strong><dd>Add a new record to the current table.
+
+     <br><dt><strong>Duplicate an existing record</strong><dd>Create a new record copying all data from currently selected one.
+
+     <br><dt><strong>Delete current record from table</strong><dd>Delete the current record from the database.
+
+     <br><dt><strong>Refresh data</strong><dd>Requery data from the database.
+
+     <br><dt><strong>Go to first row</strong><dd>Go to the first record in the editor.
+
+     <br><dt><strong>Go to previous row</strong><dd>Go to the previous record in the editor.
+
+     <br><dt><strong>Go to next row</strong><dd>Go to the next record in the editor.
+
+     <br><dt><strong>Go to last row</strong><dd>Go to the last record in the editor. Observe that this will read in all available records in the table into memory.
+
+     <br><dt><strong>Toggle between table or single record editing</strong><dd>Swith between editing data as a table or single record (the later one could be useful for table with a lot of columns).
+
+   </dl>
+
+   <p>The content editor can define a filter to specify which part of a table to edit. This dialog looks like this.
+
+   <div class="block-image"><img src="images/contentfilter.png" alt="images/contentfilter.png"></div>
+
+   <p>In the <strong>selection criteria</strong> part you can add whatever you want to go after a <strong>where</strong> in a select statement. In the <strong>sort order</strong> you can list the columns you want to sort on. The sort order only affect the order the records are read from the database, after they are read you can still sort on any column by clicking it. To the right is a list of available columns in the table.
+
+   <p>Finally at the bottom is a checkbox called <strong>use for all tables</strong>. If this box is checked the index is used for all tables, if not checked you can define specific filters for each tables and the content editor will remember the different filters as you jump between tables. The reason for this is that it's quite common that not all tables have all the columns you want to filter on for a table, in this case you will get an error trying to access the table with a faulty filter setting.
+
+<!-- @node Defining a filter,  , Content editor, browser -->
+<h4 class="subheading">Defining a filter</h4>
+
+<p>Filtering is based on the object name and can be specified in a variety of ways. This is the dialog used to specify the filter.
+
+   <div class="block-image"><img src="images/browserfilter.png" alt="images/browserfilter.png"></div>
+
+   <p>The most important part of this dialog is the editor which lets you specify the string to apply the criteria to. This is not available for No filter setting. The different available types and options are.
+
+     <dl>
+<dt><strong>No filter</strong><dd>No filter specified, display all objects.
+
+     <br><dt><strong>Start with</strong><dd>Only include objects which name starts with the specified string.
+
+     <br><dt><strong>End with</strong><dd>Only include objects which name ends with the specified string.
+
+     <br><dt><strong>Contains</strong><dd>Only include objects which name contain the specified string.
+
+     <br><dt><strong>Comma list</strong><dd>TODO.
+
+     <br><dt><strong>RegExp</strong><dd>Only include objects which name matches the regular expression specified in the editor. The dialect of RegExp:s is the ones in the
+version of Qt that TOra is compiled against. For more information on regular expressions check out <a href="http://doc.trolltech.com/qregexp.html">http://doc.trolltech.com/qregexp.html</a>, if you are using Qt 3.0 or later you have a more advanced form of regular expressions.
+
+     <br><dt><strong>Ignore case</strong><dd>Ignore the case when matches. Since object names are pretty much always uppercase it is probably safest to leave this on.
+
+     <br><dt><strong>Invert selection</strong><dd>If set, include all the objects that does not meet the specified criteria instead of the ones which does.
+
+   </dl>
+
+   <p>Some objects you can also search on what tablespace they are located on. This can be specified by the lower part of the dialog.
+
+     <dl>
+<dt><strong>Include all</strong><dd>Include all regardless of tablespace
+
+     <br><dt><strong>Include</strong><dd>Include the objects located on the selected tablespaces in the list below.
+
+     <br><dt><strong>Exclude</strong><dd>Include the objects not located on the selected tablespaces in the list below.
+
+   </dl>
+
+   </body></html>
+
