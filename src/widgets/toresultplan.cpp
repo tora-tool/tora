@@ -42,6 +42,7 @@
 #include "core/toeditorsetting.h"
 #include "connection/tooraclesetting.h"
 
+#include <QtCore/QTimer>
 #include <QStackedLayout>
 #include <QStatusBar>
 
@@ -109,7 +110,7 @@ toResultPlanView::toResultPlanView(QWidget *parent)
 void toResultPlanView::queryStarted()
 {
 	Ready = false;
-    // sets visible true but won't show if parent is hidden
+	// sets visible true but won't show if parent is hidden
 	QTimer::singleShot(300, Working, SLOT(forceShow()));
 }
 
