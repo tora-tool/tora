@@ -9,7 +9,7 @@
 # CLNTSH is enabled by default
 # for example: FIND_PACKAGE(Oracle REQUIRED CLNTSH OCCI)
 # 
-# copyright (c) 2007 Petr Vanek <petr@scribus.info>
+# copyright (c) 2007 Petr Vanek <petr@yarpen.cz>
 # copyright (c) 2015 Ivan Brezina <ibre5041@ibrezina.net>
 # Redistribution and use is allowed according to the terms of the BSD license.
 #
@@ -81,6 +81,7 @@ ELSE (ORACLE_PATH_LIB)
             ${ORACLE_HOME}/sdk/lib/msvc/
             # Instant client from rpm
             /usr/lib${LIB_SUFFIX}/
+            /usr/lib/oracle/11.2/client${LIB_SUFFIX}/lib/
             # instant client on OS X from macports
             /opt/local/lib/oracle/
         )
