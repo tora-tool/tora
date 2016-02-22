@@ -1,3 +1,12 @@
+#Project Setup
+PROJECT(TOra)
+#Set our version values
+SET (VERSION_MAJOR "3")
+SET (VERSION_MINOR "0")
+SET (VERSION_PATCH "0")
+SET (VERSION_SUFFIX "alpha")
+SET (VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}${VERSION_SUFFIX})
+MESSAGE(STATUS "TOra ${VERSION} will be built to install into ${CMAKE_INSTALL_PREFIX}")
 
 ##############################################################################################################
 ########## CMake Setup                                                                              ##########
@@ -67,28 +76,15 @@ IF(GIT_FOUND AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
   ADD_DEFINITIONS("-DHAVE_GITREVISION_H=1")
 ENDIF()
 
-IF(WIN32)
-  # Boost headers are required to compile with -DDEBUG (see tologger.h) and also for trotl sql parser
-  # SET(Boost_DEBUG TRUE)
-  FIND_PACKAGE(Boost 1.46.0 REQUIRED)
-  IF (Boost_FOUND)
-    MESSAGE(STATUS "Found Boost libraries for debug build: ${Boost_INCLUDE_DIRS}")
-  ELSE (Boost_FOUND)
-    MESSAGE(FATAL "Boost libs not found.")
-  ENDIF (Boost_FOUND)
-ELSE()
-  FIND_PACKAGE(Boost 1.46.0 REQUIRED)
-ENDIF()
+# Boost headers are required to compile with -DDEBUG (see tologger.h) and also for trotl sql parser
+# SET(Boost_DEBUG TRUE)
+FIND_PACKAGE(Boost 1.46.0 REQUIRED system)
+IF (Boost_FOUND)
+    MESSAGE(STATUS "Found Boost libraries for debug build: ${Boost_INCLUDE_DIRS}; libs: ${Boost_LIBRARY_DIRS}")
+ELSE (Boost_FOUND)
+    MESSAGE(FATAL_ERROR "Boost libs not found.")
+ENDIF (Boost_FOUND)
 
-#Project Setup
-PROJECT(TOra)
-#Set our version values
-SET (VERSION_MAJOR "3")
-SET (VERSION_MINOR "0")
-SET (VERSION_PATCH "0")
-SET (VERSION_SUFFIX "alpha")
-SET (VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}${VERSION_SUFFIX})
-MESSAGE(STATUS "TOra ${VERSION} will be built to install into ${CMAKE_INSTALL_PREFIX}")
 FILE(WRITE  ${CMAKE_BINARY_DIR}/toversion.h "#define TOVERSION \"${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}\"\n")
 
 SET (EXE_NAME "tora")
