@@ -76,9 +76,16 @@ IF(GIT_FOUND AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
   ADD_DEFINITIONS("-DHAVE_GITREVISION_H=1")
 ENDIF()
 
-# Boost headers are required to compile with -DDEBUG (see tologger.h) and also for trotl sql parser
+# Boost headers are required to compile with -DDEBUG (see tologger.h)
+# also for trotl sql parser(boost spirit)
+# also for liber dot parser(boost spirit)
 # SET(Boost_DEBUG TRUE)
-FIND_PACKAGE(Boost 1.46.0 REQUIRED system)
+IF(WIN32)
+  FIND_PACKAGE(Boost 1.48.0 REQUIRED)
+ELSE()
+  FIND_PACKAGE(Boost 1.48.0 REQUIRED system)
+ENDIF()
+
 IF (Boost_FOUND)
     MESSAGE(STATUS "Found Boost libraries for debug build: ${Boost_INCLUDE_DIRS}; libs: ${Boost_LIBRARY_DIRS}")
 ELSE (Boost_FOUND)
