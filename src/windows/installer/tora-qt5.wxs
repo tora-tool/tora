@@ -59,10 +59,11 @@
 	</Condition>
     -->
 
+    
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="$(var.PlatformProgramFilesFolder)">
 	<Directory Id="INSTALLDIR" Name="Tora">
-
+<!--	
 	  <Component Id="ICUDT52.DLL" DiskId="1" Win64="$(var.Win64)" Guid="*">
 	    <File Id="ICUDT52.DLL" Name="ICUDT52.DLL" Source="..\..\$(var.BuildType)\ICUDT52.DLL" />
 	  </Component>
@@ -71,7 +72,8 @@
 	  </Component>
 	  <Component Id="ICUUC52.DLL" DiskId="1" Win64="$(var.Win64)">
 	    <File Id="ICUUC52.DLL" Name="ICUUC52.DLL" Source="..\..\$(var.BuildType)\ICUUC52.DLL" />
-	  </Component>
+	    </Component>
+
 	  <Component Id="QT5CORE.DLL" DiskId="1" Win64="$(var.Win64)">
 	    <File Id="QT5CORE.DLL" Name="QT5CORE.DLL" Source="..\..\$(var.BuildType)\QT5CORE.DLL" />
 	  </Component>
@@ -90,23 +92,6 @@
 	  <Component Id="QT5WIDGETS.DLL" DiskId="1" Win64="$(var.Win64)">
 	    <File Id="QT5WIDGETS.DLL" Name="QT5WIDGETS.DLL" Source="..\..\$(var.BuildType)\QT5WIDGETS.DLL" />
 	  </Component>
-          <!--
-	  <Component Id="QTCORE4.DLL" DiskId="1" Win64="$(var.Win64)" Guid="A06ADCBB-EFAD-4DBA-9BC9-B871CE8B728C">
-	    <File Id="QTCORE4.DLL" Name="QtCore4.dll" Source="..\..\$(var.BuildType)\QtCore4.dll" />
-	  </Component>
-	  <Component Id="QTGUI4.DLL" DiskId="1" Win64="$(var.Win64)" Guid="B0A31CA7-A416-4265-982B-E626C187C06E">
-	    <File Id="QTGUI4.DLL" Name="QtGui4.dll" Source="..\..\$(var.BuildType)\QtGui4.dll" />
-	  </Component>
-	  <Component Id="QTNETWORK4.DLL" DiskId="1" Win64="$(var.Win64)" Guid="57BF565A-7EFC-4C7D-B282-5F98B969650E">
-	    <File Id="QTNETWORK4.DLL" Name="QtNetwork4.dll" Source="..\..\$(var.BuildType)\QtNetwork4.dll" />
-	  </Component>
-	  <Component Id="QTSQL4.DLL" DiskId="1" Win64="$(var.Win64)" Guid="CB86B8BB-39B6-4747-B969-9FA1D5688FCD">
-	    <File Id="QTSQL4.DLL" Name="QtSql4.dll" Source="..\..\$(var.BuildType)\QtSql4.dll" />
-	  </Component>
-	  <Component Id="QTXML4.DLL" DiskId="1" Win64="$(var.Win64)" Guid="F158986A-1C1B-4956-A376-FB000310FAB7">
-	    <File Id="QTXML4.DLL" Name="QtXml4.dll" Source="..\..\$(var.BuildType)\QtXml4.dll" />
-	  </Component>
-          -->
 	  <Component Id="TORA.EXE" DiskId="1" Win64="$(var.Win64)" Guid="DB3855D1-FD03-4AAE-A220-D81071E3635B">
 	    <File Id="TORA.EXE" Name="tora.exe" Source="..\..\$(var.BuildType)\tora.exe" />
 	  </Component>
@@ -115,28 +100,21 @@
 	  </Component>
 	  <Component Id="PORACLE.DLL" DiskId="1" Win64="$(var.Win64)" Guid="D864C985-6F7C-44ED-9417-3E4C274E351D">
 	    <File Id="PORACLE.DLL" Name="poracle.dll" Source="..\..\$(var.BuildType)\poracle.dll" />
-	  </Component>
-          <!--
-	  <Directory Id="PLUGINS" Name="plugins">
-	    <Component Id="QSQLMYSQL4.DLL" Win64="$(var.Win64)" DiskId="1" Guid="7FEC6332-E4CC-4F2F-B2C0-29A2744AFD7D">
-	      <File Id="QSQLMYSQL4.DLL" Name="qsqlmysql4.dll" Source="..\..\$(var.BuildType)\plugins\qsqlmysql4.dll" />
-	    </Component>
-	    <Component Id="QSQLODBC4.DLL" Win64="$(var.Win64)" DiskId="1" Guid="1BB8D019-7313-4159-BB55-8810F25A7C48">
-	      <File Id="QSQLODBC4.DLL" Name="qsqlodbc4.dll" Source="..\..\$(var.BuildType)\plugins\qsqlodbc4.dll" />
-	    </Component>
-	  </Directory>
-          -->
-	</Directory>
+          </Component>
+-->	  	    
+        </Directory>
       </Directory>
 
       <Directory Id="ProgramMenuFolder">
         <Directory Id="ProgramMenuSubfolder" Name="Tora">
           <Component Id="ApplicationShortcuts"
 		     Guid="6e6901f0-d92a-43da-95bd-f21e48b5b37a">
+	    <!--
             <Shortcut Id="ApplicationShortcut1" Name="Tora"
 		      Description="Tora tool for Oracle"
 		      Target="[INSTALLDIR]Tora.exe"
 		      WorkingDirectory="INSTALLDIR" />
+	    -->
 	    <Shortcut Id="UninstallProduct"             
 		      Name="Uninstall Tora"
 		      Description="Uninstalls Tora"
@@ -156,7 +134,9 @@
 	  <RegistryKey Root="HKCU" Key="Software\TOra\TOra">
 	    <RegistryValue Name="DTSC" Value="1" Type="integer" KeyPath="yes" />
 	  </RegistryKey>
-	  <Shortcut Id="DesktopShortcut" Directory="DesktopFolder" Name="Tora" Target="[TORA.EXE]" WorkingDirectory="INSTALLDIR" />
+	  <!--
+	      <Shortcut Id="DesktopShortcut" Directory="DesktopFolder" Name="Tora" Target="[TORA.EXE]" WorkingDirectory="INSTALLDIR" />
+	  -->
 	</Component>
       </Directory>
     </Directory>
@@ -167,27 +147,22 @@
     </InstallExecuteSequence>
 
     <Feature Id="DefaultFeature" Title="Main Feature" Level="1">
-      <ComponentRef Id="PORACLE.DLL" />
       <!--
-      <ComponentRef Id="QSQLMYSQL4.DLL" />
-      <ComponentRef Id="QSQLODBC4.DLL" />
-      <ComponentRef Id="QTCORE4.DLL" />
-      <ComponentRef Id="QTGUI4.DLL" />
-      <ComponentRef Id="QTNETWORK4.DLL" />
-      <ComponentRef Id="QTSQL4.DLL" />
-      <ComponentRef Id="QTXML4.DLL" />
-      -->
       <ComponentRef Id="ICUDT52.DLL"/>
       <ComponentRef Id="ICUIN52.DLL"/>
       <ComponentRef Id="ICUUC52.DLL"/>
-      <ComponentRef Id="QT5CORE.DLL"/>
-      <ComponentRef Id="QT5GUI.DLL"/>
-      <ComponentRef Id="QT5NETWORK.DLL"/>
-      <ComponentRef Id="QT5PRINTSUPPORT.DLL"/>
-      <ComponentRef Id="QT5SQL.DLL"/>
-      <ComponentRef Id="QT5WIDGETS.DLL"/>
-      <ComponentRef Id="TORA.EXE" />
-      <ComponentRef Id="TROTL.DLL" />
+      -->      
+      <!-- <ComponentRef Id="PORACLE.DLL" /> -->
+      <!-- <ComponentRef Id="QT5CORE.DLL"/> -->
+      <!-- <ComponentRef Id="QT5GUI.DLL"/> -->
+      <!-- <ComponentRef Id="QT5NETWORK.DLL"/> -->
+      <!-- <ComponentRef Id="QT5PRINTSUPPORT.DLL"/> -->
+      <!-- <ComponentRef Id="QT5SQL.DLL"/> -->
+      <!-- <ComponentRef Id="QT5WIDGETS.DLL"/> -->
+      <!-- <ComponentRef Id="TORA.EXE" /> -->
+      <!-- <ComponentRef Id="TROTL.DLL" /> -->
+      <!--  <ComponentGroupRef Id="INSTALLLOCATIONDR" /> -->
+      <ComponentGroupRef Id="ToraFiles" />
       <ComponentRef Id="ApplicationShortcuts" />
       <ComponentRef Id="DesktopShortcut" />
     </Feature>
@@ -199,10 +174,12 @@
     <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch My Application Name" />
 
     <!-- Step 3: Include the custom action -->
+    <!--
     <CustomAction Id="LaunchApplication" FileKey="TORA.EXE" ExeCommand="" Execute="immediate" Impersonate="yes" Return="asyncNoWait" />
     <UI>
       <Publish Dialog="MyExitDialog" Control="Finish" Order="1" Event="DoAction" Value="LaunchApplication">LAUNCHAPPONEXIT</Publish>
-    </UI>
+      </UI>
+    -->
   </Product>
 
   <Fragment>

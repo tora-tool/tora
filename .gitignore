@@ -25,6 +25,8 @@ TOra.opensdf
 TOra.VC.opendb
 TOra.sdf
 cmake_uninstall.cmake
+**/*.wixobj
+**/*.wixpdb
 ########################################
 #             Generated source(s)      #
 ########################################
