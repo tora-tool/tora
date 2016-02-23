@@ -52,3 +52,4 @@ extlibs/libantlr3c-3.5.1/antlr3config.h
 .settings/
 
 .gitignore~
+**/*.p12
