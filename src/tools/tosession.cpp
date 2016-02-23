@@ -50,6 +50,8 @@
 #include "core/totool.h"
 
 #include <QtCore/QTimer>
+#include <QtCore/QEvent>
+#include <QKeyEvent>
 #include <QLayout>
 #include <QLineEdit>
 #include <QToolButton>
@@ -201,8 +203,10 @@ static toSQL SQLLockedObjectPg(
 
 static toSQL SQLOpenCursors(
     "toSession:OpenCursor",
-    "select SQL_Text \"SQL\", Address||':'||Hash_Value \" Address\"\n"
-    "  from v$open_cursor where sid = :f1<char[101]>",
+	" select SQL_Text SQL, CURSOR_TYPE, c.SQL_ID  as \" sql_id\", child_number as \" child_number\" \n"
+	" from v$open_cursor c \n"
+	" join (select distinct ADDRESS, HASH_VALUE, SQL_ID, child_number from v$sql_plan) p on c.ADDRESS = p.ADDRESS and c.HASH_VALUE = p.HASH_VALUE and c.sql_id = p.sql_id \n"
+	" where sid = :f1<char[101]>",
     "Display open cursors of this session");
 
 static toSQL SQLSessionWait(
@@ -389,7 +393,7 @@ toSession::toSession(QWidget *main, toConnection &connection)
     refreshAct =
         toolbar->addAction(
             QIcon(QPixmap(const_cast<const char**>(refresh_xpm))),
-            tr("Update sessionlist"),
+            tr("Update sessionlist(F5)\nRefresh Detail(R)"),
             this,
             SLOT(slotRefresh(void)));
     refreshAct->setShortcut(QKeySequence::Refresh);
@@ -561,7 +565,7 @@ toSession::toSession(QWidget *main, toConnection &connection)
 
         OpenSplitter = new QSplitter(Qt::Horizontal, ResultTab);
         ResultTab->addTab(OpenSplitter, tr("Open Cursors"));
-        OpenCursors = new toResultTableView(false, true, OpenSplitter);
+        OpenCursors = new toResultTableView(true, false, OpenSplitter);
         OpenCursors->setSQL(SQLOpenCursors);
         OpenCursors->setSelectionBehavior(QAbstractItemView::SelectRows);
 
@@ -616,6 +620,18 @@ toSession::toSession(QWidget *main, toConnection &connection)
     list.append(999);
     list.append(1);
     splitter->setSizes(list);
+
+    QList<toResultItem*> resultItems = findChildren<toResultItem*>();
+    for(toResultItem* i: resultItems)
+    {
+    	i->installEventFilter(this);
+    }
+    QList<toResultTableView*> resultViews = findChildren<toResultTableView*>();
+    for(toResultItem* i: resultItems)
+    {
+    	i->installEventFilter(this);
+    }
+
 
     setFocusProxy(Sessions);
 }
@@ -868,10 +884,10 @@ void toSession::slotChangeTab(int index)
 
 void toSession::slotChangeCursor()
 {
-	//QModelIndex item = Sessions->currentIndex();
-    QModelIndex item = OpenCursors->selectedIndex(2);
-    if (item.isValid())
-        OpenStatement->changeAddress(toQueryParams() << item.data().toString());
+    QModelIndex sql_id_item = OpenCursors->selectedIndex(3);
+    QModelIndex cursor_item = OpenCursors->selectedIndex(2);
+    if (sql_id_item.isValid() && cursor_item.isValid())
+        OpenStatement->changeAddress(toQueryParams() << sql_id_item.data().toString() << cursor_item.data().toString());
 }
 
 void toSession::slotCancelBackend()
@@ -1002,3 +1018,19 @@ void toSession::slotFilterChanged(const QString &text)
     SessionFilter->setFilterString(text);
     Sessions->applyFilter();
 }
+
+bool toSession::eventFilter(QObject *obj, QEvent *event)
+{
+    if (event->type() == QEvent::KeyPress)
+    {
+        if (obj != Sessions)
+        {
+        	if (toResult *result = dynamic_cast<toResult*>(obj))
+            {
+        		result->refresh();
+            }
+        }
+    }
+    return QObject::eventFilter(obj, event);
+}
+

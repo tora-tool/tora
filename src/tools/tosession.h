@@ -139,6 +139,8 @@ class toSession : public toToolWidget
         void slotSelectAll(void);
         void slotSelectNone(void);
         void slotFilterChanged(const QString &text);
+    protected:
+        bool eventFilter(QObject *obj, QEvent *event) override;
 };
 
 #ifdef TOEXTENDED_MYSQL
