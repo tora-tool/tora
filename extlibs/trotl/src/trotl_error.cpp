@@ -53,6 +53,7 @@ CriticalErrorList::CriticalErrorList()
 	insert(1033);  // ORA-01033: ORACLE initialization or shutdown in progress
 	insert(1034);  // ORA-01034: ORACLE not available
 	insert(1035);  // ORA-01035: ORACLE only available to users with RESTRICTED SESSION privilege
+	insert(1041);  // ORA-01041: internal error. hostdef extension doesn't exist
 	insert(1089);  // ORA-01089: immediate shutdown in progress - no operations are permitted
 	insert(1090);  // ORA-01090: shutdown in progress - connection is not permitted
 	insert(1092);  // ORA-01092: ORACLE instance terminated. Disconnection forced
@@ -99,6 +100,7 @@ CriticalErrorList::CriticalErrorList()
 	insert(12543); // ORA-12543: TNS:destination host unreachable
 	insert(12571); // ORA-12571: TNS:packet writer failure
 	insert(24315); // ORA-24315: illegal attribute type
+	insert(24324); // ORA-24324: service handle not initialized tips
 };
 
 OciException::OciException(tstring where, OCIEnv* envh) :
