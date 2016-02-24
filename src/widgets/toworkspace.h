@@ -86,7 +86,7 @@ class toWorkSpace : public QWidget
 
     private:
         QTabBar *m_tabBar;
-#if !defined(TORA_EXPERIMENTAL)
+#if defined(TORA_EXPERIMENTAL)
         QLabel *m_label;
 #endif
         QStackedWidget *m_stackedWidget;

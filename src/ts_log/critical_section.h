@@ -23,6 +23,8 @@
 #define NOMINMAX
 #include <windows.h>
 
+#include "ts_log/ts_log_utils.h"
+
 // the object to be started - on a given thread
 struct win32_thread_obj
 {
@@ -362,6 +364,9 @@ class qt_thread_manager
 // Visual Studio 2013
 #if (defined _MSC_VER) && (_MSC_VER <= 1800)
 	    __declspec(thread) static ::std::string stid;
+#elif (defined __APPLE__)
+//#pragma message WARN("TODO/FIXME: thred local storage on OSX")
+            std::string stid;
 #else
 	    thread_local static std::string stid;
 #endif

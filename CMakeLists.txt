@@ -72,6 +72,7 @@ IF(GIT_FOUND AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
   # creates gitrevision.h using cmake script
   ADD_CUSTOM_COMMAND(TARGET revisiontag COMMAND ${CMAKE_COMMAND}
   -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
+  -DUSE_EXPERIMENTAL=${USE_EXPERIMENTAL}
   -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/getgit.cmake)
   ADD_DEFINITIONS("-DHAVE_GITREVISION_H=1")
 ENDIF()
@@ -194,6 +195,9 @@ IF(QT5_BUILD)
   find_package(Qt5Sql REQUIRED)
   find_package(Qt5Widgets REQUIRED)
   find_package(Qt5Xml REQUIRED)
+  IF(APPLE)
+    find_package(Qt5MacExtras REQUIRED)
+  ENDIF()
   set(QT_INCLUDES
     ${Qt5Core_INCLUDE_DIRS}	  
     ${Qt5Gui_INCLUDE_DIRS}
@@ -202,6 +206,9 @@ IF(QT5_BUILD)
     ${Qt5Sql_INCLUDE_DIRS}
     ${Qt5Widgets_INCLUDE_DIRS}
     ${Qt5Xml_INCLUDE_DIRS}
+    IF(APPLE)    
+      ${Qt5MacExtras_INCLUDE_DIRS}
+    ENDIF()
   )
   include_directories(${QT_INCLUDES})
   SET(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")

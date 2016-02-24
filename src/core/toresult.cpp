@@ -40,6 +40,7 @@
 #include "core/tomainwindow.h"
 
 #include <QtCore/QTimer>
+#include <QAction>
 
 void toResultObject::slotConnectionChanged(void)
 {

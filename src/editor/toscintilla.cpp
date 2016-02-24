@@ -87,7 +87,7 @@ toScintilla::toScintilla(QWidget *parent, const char *name)
 
     // WARNING: it looks like this hack is mandatory for macosx. Oracle simply
     // doesn't understand mac's eols, so force to UNIX is a functional workaround
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
     super::setEolMode(QsciScintilla::EolUnix);
 #endif
 

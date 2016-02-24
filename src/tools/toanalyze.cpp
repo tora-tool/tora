@@ -48,6 +48,7 @@
 #include <QMenu>
 #include <QToolBar>
 #include <QVBoxLayout>
+#include <QPlainTextEdit>
 
 #include "icons/execute.xpm"
 #include "icons/refresh.xpm"
