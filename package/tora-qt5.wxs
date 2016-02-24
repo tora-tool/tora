@@ -13,7 +13,7 @@
 	     Platform="$(var.Platform)"
 	     InstallerVersion="200" Compressed="yes" />
     <Media Id="1" Cabinet="Tora.cab" EmbedCab="yes" />
-    <Icon Id="tora.ico" SourceFile="..\..\icons\tora.ico" />
+    <Icon Id="tora.ico" SourceFile="$(var.PROJECT_SOURCE_DIR)\src\icons\tora.ico" />
     <Property Id="ARPPRODUCTICON" Value="tora.ico" />
     <Property Id="ARPHELPLINK" Value="http://torasql.com" />
     <Property Id="ARPURLINFOABOUT" Value="http://torasql.com" />
@@ -24,7 +24,7 @@
     </Property>
     
     <WixVariable Id="WixUIBannerBmp" Value="largelogo.bmp" />
-    <WixVariable Id="WixUILicenseRtf" Value="..\..\..\COPYING" />
+    <WixVariable Id="WixUILicenseRtf" Value="$(var.PROJECT_SOURCE_DIR)\COPYING" />
 
     <Property Id="PREVIOUSVERSIONSINSTALLED" Secure="yes" />
     <Upgrade Id="$(var.UpgradeCode)">

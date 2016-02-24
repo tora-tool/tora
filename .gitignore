@@ -43,6 +43,7 @@ src/tora_toad.qm
 extlibs/libantlr3c-3.5.1/antlr3config.h
 **/heat.wxs
 **/*.wxi
+**/*.msi
 
 ########################################
 #             Eclise                   #

@@ -28,6 +28,12 @@
   <!-- Upgrade code HAS to be the same for all updates. Once you've chosen it DON'T CHANGE it. -->
   <?define UpgradeCode="BAAA2F25-E626-4CC5-BC37-86477A2409AC" ?>
 
-  <?define BuildType = "@CMAKE_BUILD_TYPE@" ?>
+  <?define BuildType        = "@CMAKE_BUILD_TYPE@" ?>
+  <?define CMAKE_BINARY_DIR = "@CMAKE_BINARY_DIR@" ?>
+  <?define CMAKE_SOURCE_DIR = "@CMAKE_SOURCE_DIR@" ?>
+  <?define LIBRARY_OUTPUT_PATH = "@LIBRARY_OUTPUT_PATH@" ?>
+  <?define PROJECT_BINARY_DIR  = "@PROJECT_BINARY_DIR@" ?>
+  <?define PROJECT_SOURCE_DIR  = "@PROJECT_SOURCE_DIR@" ?>
+  
   <?define BUILD_ABS_PATH = "@EXECUTABLE_OUTPUT_PATH@" ?>
 </Include>

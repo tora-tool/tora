@@ -92,6 +92,7 @@ file(APPEND gitrevision.h.txt "#define GITVERSION_COUNT \"${GITVERSION_COUNT}\"\
 file(APPEND gitrevision.h.txt "#define GITVERSION_SHA1  \"${GITVERSION_SHA1}\"\n")
 file(APPEND gitrevision.h.txt "#define GITVERSION_SHORT \"${GITVERSION_SHORT}\"\n")
 file(APPEND gitrevision.h.txt "#define GITVERSION_DIRTY \"${GITVERSION_DIRTY}\"\n")
+file(APPEND gitrevision.h.txt "#define BUILD_TAG        \"v${GITVERSION_MAJOR}.${GITVERSION_MINOR}-${GITVERSION_COUNT}-${GIT_BUILD_TYPE}-${GITVERSION_SHA1}${GITVERSION_DIRTY}\"\n")
 file(WRITE  gitrevision.txt   "${GITVERSION}\n")
 
 # copy the file to the final header only if the revision changes
