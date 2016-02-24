@@ -12,14 +12,15 @@ Content:
   All information below assumes D:\DEVEL as the base directory, and
   D:\DEVEL\tora3 as tora checkout.
   
-  1. Download and install "Microsoft Visual Studio 2010 Express"
+  1. Download and install "Microsoft Visual Studio 2013 Express" (or higher)
   1a. (Optional) Download and install "Microsoft DirectX SDK (June 2010)"
   1b. (Optional) Download and install "Microsoft Windows SDK v7.1".
       If you have Windows SDK 7.1 use it's command prompt.
-  1c. Download and install Tortoise SVN. Including command line tools. Into D:\DEVEL (*without* spaces in the PATH)
+  1c. Download and install Git for Windows (https://git-for-windows.github.io/), into D:\DEVEL (or somewhere *without* spaces in the PATH)
 
+  ========================== QT 4 Version ========================================
   2. All related steps are done in the "Visual Studio Command Prompt" 
-     I have MS Visual Studio 2010 Express. (Or Windows SDK 7.1 command prompt).
+     I have MS Visual Studio 2013 Express. (Or Windows SDK 7.1 command prompt).
 
   3. Download and install Active state Perl
 
@@ -58,10 +59,14 @@ Content:
 	I am testing with the 5.1.37 MSI installer, not the 'Essentials' one
   
   10. Compile QT DB drivers for MySQL and PostgresSQL as described here: http://qt-project.org/doc/qt-4.8/sql-driver.html
-
+  ========================== QT 5 Version ========================================
+  2.  Download&Install binaries for MSVC
+  2a. set env variable QTDIR in MSVC command prompt
+  ================================================================================
+  
   11. Download and install cmake from www.cmake.org. Into D:\DEVEL (*without* spaces in the PATH)
 
-  12. Check and set paths in utils/qt32.bat
+  12. Check and set paths
       - QTDIR
       - CMAKE
       - Doxygen (Optional)
@@ -80,23 +85,19 @@ Content:
        - Where to build the binaries: d:\devel\tora3
        - Add Entry: Name:  BOOST_ROOT
                     Type:  "Path"
-                    Value" "D:/DEVEL/boost_1_46_1"
+                    Value" "D:/DEVEL/boost_1_58_0"
        - Add Entry: Name:  CMAKE_BUILD_TYPE
-                    Value: either "Debug" or "Release"
-       - (Optional) Add Entry: Name: Subversion_SVN_EXECUTABLE
-                    Type: "Path"
-                    Value: D:/DEVEL/TortoiseSVN/bin/svn.exe
-         Do not use SVN provided by cygwin		    
+                    Value: either "Debug", "Release" or "RelWithDebInfo"
        - Toggle WANT_INTERNAL_QSCINTILLA to Y.       
        - Toggle WANT_INTERNAL_LOKI to Y. 
-       - Click Configure/Generate, set generator to Visual Studio 10 (or Visual Studio 10 64bit)
-  13b. Open Visual Studio 2010 and import solution tora.sln
+       - Click Configure/Generate, set generator to Visual Studio 2013 (or Visual Studio 2013 64bit)
+  13b. Open Visual Studio 2013 and import solution tora.sln
   13c. Compile projects tora poracle
 
   14. Compile Tora in command prompt  
       mkdir d:\devel\tora3\debug
       cd d:\devel\tora3\debug
-      cmake -DBOOST_ROOT=D:/DEVEL/boost_1_46_1 -DWANT_INTERNAL_QSCINTILLA=1 -DWANT_INTERNAL_LOKI=1 -DCMAKE_BUILD_TYPE=Debug -G "NMake Makefiles" ..
+      cmake -DBOOST_ROOT=D:/DEVEL/boost_1_58_0 -DWANT_INTERNAL_QSCINTILLA=1 -DWANT_INTERNAL_LOKI=1 -DCMAKE_BUILD_TYPE=Debug -G "NMake Makefiles" ..
       nmake
 
 #
@@ -104,12 +105,15 @@ Content:
 #
 Above build will generate into the tora-build\RELEASE dir. Copy the various dll files from Qt, Postgres, MySQL 
 installs into that dir as well:
-MSVC 2010 Runtime libs(optional)
-	msvcp100.dll
-	msvcr100.dll 
-QT Libs:
+MSVC 2013 Runtime libs(optional)
+	msvcp120.dll
+	msvcr120.dll 
+QT4 Libs:
 	QtCore4.dll QtGui4.dll QtHelp4.dll QtNetwork4.dll QtSql4.dll QtXml4.dll (put into root)
 	qsqlmysqld4.dll qsqlpsql4.dll qsqlodbc4.dll (put into plugins subdir)
+QT5 Libs:
+	cd src/RelWithDebInfo
+	%QTDIR%/bin/windeployqt tora.exe
 
 Tora Libs:
 	poracle.dll
@@ -124,21 +128,8 @@ MSI
        http://wixtoolset.org/
 
     2. Execute the packager
-       cd src/windows/installer
-       make_msi.bat (resp. make_msi64.bat)
-
-NSIS (Obsolete)
-    1. Obtain and install NSIS installer software from 
-        http://nsis.sourceforge.net
-
-    2. Copy all the distribution files with desired directory structure
-       to the src/windows/installer/files directory within your TOra directory 
-       structure (or use it as INSTALLDIR when building TOra and use step 9 
-       of above build instrucstions).
-
-    3. Run NSIS compiler GUI and then drag and drop the tora.nsi file from
-        src/windows/installer directory in TOra to the compiler GUI window and 
-        wait till installer will finish the build.
+       cd package
+       make_msi.bat (resp. make_msi64.bat, make_msi64_qt5.bat)
 
 Please report any bugs should you find them as this port is still in the
 experimental stage.

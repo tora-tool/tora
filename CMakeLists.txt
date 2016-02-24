@@ -390,3 +390,11 @@ IF (WANT_RPM)
     COMMAND rpmbuild -ba ${RPM_DEFINES} "${RPM_SPEC}"
     )
 ENDIF (WANT_RPM)
+
+IF (WIN32)
+CONFIGURE_FILE(
+	${CMAKE_SOURCE_DIR}/package/variables.wxi.cmake
+	${CMAKE_SOURCE_DIR}/package/variables.wxi
+	@ONLY
+)
+ENDIF()

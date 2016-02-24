@@ -1,26 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <!-- Product name as you want it to appear in Add/Remove Programs-->
-  <!--<?define Platform = x64 ?>-->
-  <?define Platform = $(env.BUILD_ARCH) ?>
-  <?if $(var.Platform) = x64 ?>
-  <?define ProductName = "Tora (64 bit)" ?>
-  <?define Win64 = "yes" ?>
-  <?define PlatformProgramFilesFolder = "ProgramFiles64Folder" ?>
-  <?define PlatformSystemFolder = "System64Folder" ?>
-  <?else ?>
-  <?define ProductName = "Tora" ?>
-  <?define Win64 = "no" ?>
-  <?define PlatformProgramFilesFolder = "ProgramFilesFolder" ?>
-  <?define PlatformSystemFolder = "SystemFolder" ?>
-  <?endif ?>
-  <?ifdef env.BUILD_NUMBER?>
-  <?define ProductVersion="2.9.$(env.BUILD_NUMBER)"?>
-  <?else?>
-  <?define ProductVersion="2.9.0"?>
-  <?endif?>
-  <?define UpgradeCode="BAAA2F25-E626-4CC5-BC37-86477A2409AC"?>
-  <?define BuildType = "RelWithDebInfo" ?>
+  <?include $(sys.CURRENTDIR)\..\gitrevision.wxi ?>
+  <?include $(sys.CURRENTDIR)\variables.wxi ?>
   <Product Id="*" 
 	   Name="$(var.ProductName)" Language="1033" 
 	   Version="$(var.ProductVersion)"
@@ -58,7 +39,6 @@
 	NOT NEWERVERSIONDETECTED
 	</Condition>
     -->
-
     
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="$(var.PlatformProgramFilesFolder)">

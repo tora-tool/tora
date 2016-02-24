@@ -64,22 +64,30 @@ string(REGEX REPLACE "^v[0-9]+\\.[0-9a-z]+-[0-9]+-([0-9a-z]*).*" "\\1" GITVERSIO
 string(REGEX REPLACE "^v[0-9]+\\.[0-9a-z]+-[0-9]+-[0-9a-z]+" "" GITVERSION_DIRTY "${GITVERSION}")
 set(GITVERSION_SHORT "${GITVERSION_MAJOR}.${GITVERSION_MINOR}")
 
-#message("Git version ${GITVERSION}")
-#message("Git version major ${GITVERSION_MAJOR}")
-#message("Git version minor ${GITVERSION_MINOR}")
-#message("Git version count ${GITVERSION_COUNT}")
-#message("Git version sha1  ${GITVERSION_SHA1}")
-#message("Git version short ${GITVERSION_SHORT}")
-#message("Git version dirty ${GITVERSION_DIRTY}")
+IF (USE_EXPERIMENTAL)
+   set(GIT_BUILD_TYPE "Experimental")
+ELSE ()
+   set(GIT_BUILD_TYPE "Release")
+ENDIF()
+
+message("Git version ${GITVERSION}")
+message("Git version major ${GITVERSION_MAJOR}")
+message("Git version minor ${GITVERSION_MINOR}")
+message("Git version count ${GITVERSION_COUNT}")
+message("Git version sha1  ${GITVERSION_SHA1}")
+message("Git version short ${GITVERSION_SHORT}")
+message("Git version dirty ${GITVERSION_DIRTY}")
+message("Build tag v${GITVERSION_MAJOR}.${GITVERSION_MINOR}-${GITVERSION_COUNT}-${GIT_BUILD_TYPE}-${GITVERSION_SHA1}${GITVERSION_DIRTY}")
 
 if(GITVERSION_DIRTY)
-  message(WARNING "Git version dirty: ${GITVERSION}")
+message(WARNING "Git version dirty: ${GITVERSION}")
 endif()
 
 # write a file with the GITREVISION define
 file(WRITE  gitrevision.h.txt "#define GITVERSION       \"${GITVERSION}\"\n")
 file(APPEND gitrevision.h.txt "#define GITVERSION_MAJOR \"${GITVERSION_MAJOR}\"\n")
 file(APPEND gitrevision.h.txt "#define GITVERSION_MINOR \"${GITVERSION_MINOR}\"\n")
+file(APPEND gitrevision.h.txt "#define GIT_BUILD_TYPE   \"${GIT_BUILD_TYPE}\"\n")
 file(APPEND gitrevision.h.txt "#define GITVERSION_COUNT \"${GITVERSION_COUNT}\"\n")
 file(APPEND gitrevision.h.txt "#define GITVERSION_SHA1  \"${GITVERSION_SHA1}\"\n")
 file(APPEND gitrevision.h.txt "#define GITVERSION_SHORT \"${GITVERSION_SHORT}\"\n")
@@ -89,3 +97,9 @@ file(WRITE  gitrevision.txt   "${GITVERSION}\n")
 # copy the file to the final header only if the revision changes
 # reduces needless rebuilds
 execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different gitrevision.h.txt gitrevision.h)
+
+CONFIGURE_FILE(
+	${CMAKE_SOURCE_DIR}/package/gitrevision.wxi.cmake
+	${CMAKE_SOURCE_DIR}/gitrevision.wxi
+	@ONLY
+)
