@@ -36,6 +36,7 @@
 #include "ui_tosgatracesettingui.h"
 #include "tools/tosgastatement.h"
 #include "core/tochangeconnection.h"
+#include "core/toeditorsetting.h"
 #include "widgets/toresultschema.h"
 #include "widgets/toresulttableview.h"
 #include "widgets/torefreshcombo.h"
@@ -52,6 +53,8 @@
 #include <QGroupBox>
 #include <QSplitter>
 #include <QToolBar>
+#include <QFontMetrics>
+#include <QLineEdit>
 
 #include "icons/refresh.xpm"
 #include "icons/tosgatrace.xpm"
@@ -176,6 +179,18 @@ toSGATrace::toSGATrace(QWidget *main, toConnection &connection)
     Limit->addItem(tr("Top buffers/row"));
     toolbar->addWidget(Limit);
 
+    toolbar->addSeparator();
+
+    SQL_ID = new QLineEdit(toolbar);
+    QFont fixed(Utils::toStringToFont(toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::ConfCodeFont).toString()));
+    QFontMetrics mtr(fixed);
+    SQL_ID->setFont(fixed);
+    SQL_ID->setMaximumWidth(mtr.width("1234567890123") + 10);
+    SQL_ID->setMaxLength(13); // sql_id VARCHAR2(13)
+    SQL_ID->setPlaceholderText("sql_id");
+    connect(SQL_ID, SIGNAL(returnPressed()), this, SLOT(refresh(void)));
+    toolbar->addWidget(SQL_ID);
+
     toolbar->addWidget(new Utils::toSpacer());
 
     new toChangeConnection(toolbar);
@@ -296,8 +311,19 @@ void toSGATrace::refresh(void)
                 Utils::toStatusMessage(tr("Unknown type of trace"));
                 return ;
         }
+
+        toQueryParams params;
         if (!CurrentSchema.isEmpty())
+        {
             select.append(QString::fromLatin1("\n   and b.username = :f1<char[101]>"));
+            params << CurrentSchema;
+        }
+
+        if (!SQL_ID->text().trimmed().isEmpty())
+        {
+            select.append(QString::fromLatin1("\n   and a.sql_id = :f2<char[101]>"));
+            params << SQL_ID->text().trimmed();
+        }
 
         QString order;
         switch (Limit->currentIndex())
@@ -353,12 +379,7 @@ void toSGATrace::refresh(void)
                      QString("\n ORDER BY " + order + " DESC)\n WHERE ROWNUM < 20");
 
         Trace->removeSQL();
-        if (!CurrentSchema.isEmpty())
-        {
-            Trace->query(select, toQueryParams() << CurrentSchema);
-        }
-        else
-            Trace->query(select, toQueryParams());
+        Trace->query(select, params);
 
         Statement->refresh();
     }
