@@ -36,6 +36,7 @@
 #include "core/utils.h"
 #include "core/totool.h"
 #include "core/toconnection.h"
+#include "core/toconnectionregistry.h"
 #include "core/toeditmenu.h"
 #include "core/toconfiguration.h"
 #include "core/toglobalconfiguration.h"
@@ -607,7 +608,7 @@ static toSQLTemplate SQLTemplate;
 
 toSQLTemplateItem::toSQLTemplateItem(toTreeWidget *parent)
     : toTemplateItem(SQLTemplate, parent, qApp->translate("toSQL", "SQL Dictionary"))
-    , conn( toConnection::currentConnection(parent))
+    , conn(toConnectionRegistrySing::Instance().currentConnection())
 {
     setExpandable(true);
 }
