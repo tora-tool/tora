@@ -101,6 +101,7 @@ class toSGATrace : public toToolWidget
         QComboBox     *Type;
         toRefreshCombo*Refresh;
         QComboBox     *Limit;
+        QLineEdit     *SQL_ID;
 
         toSGAStatement *Statement;
         QString CurrentSchema;
