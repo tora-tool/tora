@@ -37,9 +37,11 @@
 
 #include "widgets/totoolwidget.h"
 
+#include <QtCore/QMap>
+
 class QLabel;
 class QMenu;
-class QTabWidget;
+class toTabWidget;
 class toResultTableView;
 
 class toBackup : public toToolWidget
@@ -47,12 +49,13 @@ class toBackup : public toToolWidget
         Q_OBJECT;
 
         QAction      *updateAct;
-        QTabWidget   *Tabs;
+        toTabWidget  *Tabs;
         toResultTableView *LogSwitches;
         toResultTableView *LogHistory;
         QLabel       *LastLabel;
         toResultTableView *LastBackup;
         toResultTableView *CurrentBackup;
+        toResultTableView *CorruptedBlocks;
         QMenu        *ToolMenu;
         toTool       *tool_;
 
@@ -61,8 +64,13 @@ class toBackup : public toToolWidget
         virtual ~toBackup();
     protected slots:
         virtual void slotWindowActivated(toToolWidget*);
+        void slotCorruptedBlocksCount();
+        void slotUpdateLabel();
     public slots:
         void refresh(void);
+    private:
+        QMap<int, toResultTableView*> TabIndex;
+        static QString CurruptedBlockLabel;
 };
 
 #endif

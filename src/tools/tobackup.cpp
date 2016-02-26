@@ -38,6 +38,7 @@
 #include "core/tochangeconnection.h"
 #include "core/totool.h"
 #include "widgets/toresulttableview.h"
+#include "widgets/totabwidget.h"
 #include "core/toglobalevent.h"
 
 #include <QToolBar>
@@ -299,6 +300,21 @@ static toSQL SQLCurrentBackup7("toBackup:CurrentBackup",
                                "",
                                "0703");
 
+static toSQL SQLCorruptedBlock("toBackup:CorruptedBackup",
+		" select c.*, owner,segment_name            \n"
+		" from V$DATABASE_BLOCK_CORRUPTION c        \n"
+		" left outer join dba_extents e on (c.FILE#=e.FILE_ID and c.block# between e.block_id and e.block_id+e.blocks-1) \n",
+		"Display current RMAN progress",
+		"0800");
+
+static toSQL SQLCorruptedBlockCount("toBackup:CorruptedBackupCount",
+		" select count(1)                           \n"
+		" from V$DATABASE_BLOCK_CORRUPTION c        \n",
+		"Display current RMAN progress",
+		"0800");
+
+QString toBackup::CurruptedBlockLabel("Corrupted Blocks(%1)");
+
 toBackup::toBackup(toTool* tool, QWidget *main, toConnection &connection)
     : toToolWidget(*tool, "backup.html", main, connection, "toBackup")
     , tool_(tool)
@@ -316,7 +332,8 @@ toBackup::toBackup(toTool* tool, QWidget *main, toConnection &connection)
 
     new toChangeConnection(toolbar);
 
-    Tabs = new QTabWidget(this);
+    Tabs = new toTabWidget(this);
+    int tabIdx;
     layout()->addWidget(Tabs);
 
     QWidget *box = new QWidget(Tabs);
@@ -329,11 +346,13 @@ toBackup::toBackup(toTool* tool, QWidget *main, toConnection &connection)
     LogSwitches = new toResultTableView(true, false, box);
     LogSwitches->setSQL(SQLLogSwitches);
     vbox->addWidget(LogSwitches);
-    Tabs->addTab(box, tr("Redo Switches"));
+    tabIdx = Tabs->addTab(box, tr("Redo Switches"));
+    TabIndex[tabIdx] = LogSwitches;
 
     LogHistory = new toResultTableView(true, false, Tabs);
     LogHistory->setSQL(SQLLogHistory);
-    Tabs->addTab(LogHistory, tr("Archived Logs"));
+    tabIdx = Tabs->addTab(LogHistory, tr("Archived Logs"));
+    TabIndex[tabIdx] = LogHistory;
 
     box = new QWidget(Tabs);
     vbox = new QVBoxLayout;
@@ -341,22 +360,35 @@ toBackup::toBackup(toTool* tool, QWidget *main, toConnection &connection)
     vbox->setContentsMargins(0, 0, 0, 0);
     box->setLayout(vbox);
 
-    LastLabel = new QLabel(box);
+    LastLabel = new QLabel("...", box);
     vbox->addWidget(LastLabel);
     LastBackup = new toResultTableView(true, false, box);
     vbox->addWidget(LastBackup);
     LastBackup->setSQL(SQLLastBackup);
-    Tabs->addTab(box, tr("Last Backup"));
+    tabIdx = Tabs->addTab(box, tr("Last Backup"));
+    TabIndex[tabIdx] = LastBackup;
 
     CurrentBackup = new toResultTableView(true, false, Tabs);
     CurrentBackup->setSQL(SQLCurrentBackup);
-    Tabs->addTab(CurrentBackup, tr("Backup Progress"));
+    tabIdx = Tabs->addTab(CurrentBackup, tr("Backup Progress"));
+    TabIndex[tabIdx] = CurrentBackup;
+
+    CorruptedBlocks = new toResultTableView(true, false, Tabs);
+    CorruptedBlocks->setSQL(SQLCorruptedBlock);
+    tabIdx = Tabs->addTab(CorruptedBlocks, CurruptedBlockLabel.arg(""));
+    TabIndex[tabIdx] = CorruptedBlocks;
 
     ToolMenu = NULL;
     // connect(toMainWidget()->workspace(), SIGNAL(subWindowActivated(QMdiSubWindow *)),
     //         this, SLOT(windowActivated(QMdiSubWindow *)));
 
     refresh();
+    QTimer::singleShot(0, this, SLOT(slotCorruptedBlocksCount()));
+    QTimer::singleShot(0, this, SLOT(slotUpdateLabel()));
+
+    connect(this, SIGNAL(connectionChange()), this, SLOT(slotCorruptedBlocksCount()));
+    connect(this, SIGNAL(connectionChange()), this, SLOT(slotUpdateLabel()));
+    connect(Tabs, SIGNAL(currentChanged(int)), this, SLOT(refresh()));
 
     setFocusProxy(Tabs);
 }
@@ -383,6 +415,42 @@ void toBackup::slotWindowActivated(toToolWidget *widget)
     }
 }
 
+void toBackup::slotCorruptedBlocksCount()
+{
+    Utils::toBusy busy;
+	try
+	{
+		toQList resultset = toQuery::readQuery(connection(), SQLCorruptedBlockCount, toQueryParams());
+		if (!resultset.empty())
+		{
+			QString count = resultset.front();
+			Tabs->setTabText(Tabs->indexOf(CorruptedBlocks), CurruptedBlockLabel.arg(count));
+		}
+	}
+	TOCATCH
+}
+
+void toBackup::slotUpdateLabel()
+{
+    int val = 0;
+    try
+    {
+        Utils::toBusy busy;
+        toConnectionSubLoan conn(connection());
+        toQuery query(conn, SQLOnlineBackup, toQueryParams());
+        val = query.readValue().toInt();
+
+        if (val == 0)
+            LastLabel->setText(tr("This appears to be a cold backup database"));
+        else
+            LastLabel->setText(tr("This appears to be a hot backup database"));
+    }
+    catch (...)
+    {
+        TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
+    }
+}
+
 toBackup::~toBackup()
 {
     try
@@ -394,24 +462,16 @@ toBackup::~toBackup()
 
 void toBackup::refresh()
 {
-    LogSwitches->refresh();
-    LogHistory->refresh();
-    int val = 0;
-    try
-    {
-        toConnectionSubLoan conn(connection());
-        toQuery query(conn, SQLOnlineBackup, toQueryParams());
-        val = query.readValue().toInt();
-    }
-    catch (...)
-    {
-        TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
-    }
-    if (val == 0)
-        LastLabel->setText(tr("This appears to be a cold backup database"));
-    else
-        LastLabel->setText(tr("This appears to be a hot backup database"));
-    LastBackup->refresh();
-    CurrentBackup->refresh();
+	toResultTableView *currentTable = TabIndex[Tabs->currentIndex()];
+	if (currentTable == LogSwitches)
+		LogSwitches->refresh();
+	else if (currentTable == LogHistory)
+		LogHistory->refresh();
+	else if (currentTable == LastBackup)
+		LastBackup->refresh();
+	else if (currentTable == CurrentBackup)
+		CurrentBackup->refresh();
+	else if (currentTable == CorruptedBlocks)
+		CorruptedBlocks->refresh();
 }
 
