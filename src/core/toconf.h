@@ -35,11 +35,11 @@
 #ifndef TOCONF_H
 #define TOCONF_H
 
-// Version of TOra, must also change rpm files
+// defines for QSettings
 #ifndef TOAPPNAME
 #  define TOAPPNAME  "TOra3"
 #endif
-// defines for QSettings
+
 #ifndef TOORGDOMAIN
 #define TOORGDOMAIN "tora.sourceforge.net"
 #endif

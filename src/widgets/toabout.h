@@ -32,9 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOABOUT_H
-#define TOABOUT_H
-
+#pragma once
 
 #include "ui_toaboutui.h"
 #include "core/utils.h"
@@ -44,15 +42,8 @@ class toAbout : public QDialog, public Ui::toAboutUI
         Q_OBJECT
 
     public:
-        enum AboutType
-        {
-            About,
-            License
-        };
 
-        toAbout(AboutType, QWidget* parent = 0, const char* name = 0, bool modal = false, toWFlags fl = 0);
-        ~toAbout();
+        toAbout(QWidget* parent = 0, const char* name = 0, bool modal = false);
+        virtual ~toAbout();
 
 };
-
-#endif

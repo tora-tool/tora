@@ -62,6 +62,7 @@ string(REGEX REPLACE "^v[0-9]+\\.([0-9a-z]+).*" "\\1" GITVERSION_MINOR "${GITVER
 string(REGEX REPLACE "^v[0-9]+\\.[0-9a-z]+-([0-9]+).*" "\\1" GITVERSION_COUNT "${GITVERSION}")
 string(REGEX REPLACE "^v[0-9]+\\.[0-9a-z]+-[0-9]+-([0-9a-z]*).*" "\\1" GITVERSION_SHA1 "${GITVERSION}")
 string(REGEX REPLACE "^v[0-9]+\\.[0-9a-z]+-[0-9]+-[0-9a-z]+" "" GITVERSION_DIRTY "${GITVERSION}")
+string(TIMESTAMP BUILD_DATE)
 set(GITVERSION_SHORT "${GITVERSION_MAJOR}.${GITVERSION_MINOR}")
 
 IF (USE_EXPERIMENTAL)
@@ -78,6 +79,7 @@ message("Git version sha1  ${GITVERSION_SHA1}")
 message("Git version short ${GITVERSION_SHORT}")
 message("Git version dirty ${GITVERSION_DIRTY}")
 message("Build tag v${GITVERSION_MAJOR}.${GITVERSION_MINOR}-${GITVERSION_COUNT}-${GIT_BUILD_TYPE}-${GITVERSION_SHA1}${GITVERSION_DIRTY}")
+message("Build date ${BUILD_DATE}")
 
 if(GITVERSION_DIRTY)
 message(WARNING "Git version dirty: ${GITVERSION}")
@@ -93,6 +95,7 @@ file(APPEND gitrevision.h.txt "#define GITVERSION_SHA1  \"${GITVERSION_SHA1}\"\n
 file(APPEND gitrevision.h.txt "#define GITVERSION_SHORT \"${GITVERSION_SHORT}\"\n")
 file(APPEND gitrevision.h.txt "#define GITVERSION_DIRTY \"${GITVERSION_DIRTY}\"\n")
 file(APPEND gitrevision.h.txt "#define BUILD_TAG        \"v${GITVERSION_MAJOR}.${GITVERSION_MINOR}-${GITVERSION_COUNT}-${GIT_BUILD_TYPE}-${GITVERSION_SHA1}${GITVERSION_DIRTY}\"\n")
+file(APPEND gitrevision.h.txt "#define BUILD_DATE       \"${BUILD_DATE}\"\n")
 file(WRITE  gitrevision.txt   "${GITVERSION}\n")
 
 # copy the file to the final header only if the revision changes

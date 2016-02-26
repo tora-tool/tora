@@ -305,8 +305,6 @@ void toMain::createActions()
 
     aboutQtAct = new QAction(tr("About &Qt..."), this);
 
-    licenseAct = new QAction(tr("&License..."), this);
-
     // ---------------------------------------- windows menu
     windowCloseAct = new QAction(tr("C&lose"), this);
     windowCloseAllAct = new QAction(tr("Close &All"), this);
@@ -414,9 +412,8 @@ void toMain::createMenus()
 
     helpMenu->addAction(helpCurrentAct);
     helpMenu->addAction(helpContentsAct);
-//    windowsMenu->addSeparator();
+	helpMenu->addSeparator();
     helpMenu->addAction(aboutAct);
-    helpMenu->addAction(licenseAct);
     helpMenu->addAction(aboutQtAct);
 
     connect(helpMenu,
@@ -900,16 +897,11 @@ void toMain::commandCallback(QAction *action)
         toHelp::displayHelp(QString::fromLatin1("toc.html"));
     else if (action == aboutAct)
     {
-        toAbout about(toAbout::About, this, "About " TOAPPNAME, true);
+        toAbout about(this, "About " TOAPPNAME, true);
         about.exec();
     }
     else if (action == aboutQtAct)
         QApplication::aboutQt();
-    else if (action == licenseAct)
-    {
-        toAbout about(toAbout::License, this, "About " TOAPPNAME, true);
-        about.exec();
-    }
     else if (action == editMenu.prefsAct)
     {
         toPreferences::displayPreferences(this);

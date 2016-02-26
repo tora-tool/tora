@@ -320,8 +320,8 @@ int main(int argc, char **argv)
 
         if (toConfigurationNewSingle::Instance().option(ToConfiguration::Main::LastVersion).toString() != TORAVERSION)
         {
-            std::auto_ptr<toAbout> about ( new toAbout(toAbout::About, NULL, "About " TOAPPNAME, true));
-            if (!about->exec())
+            toAbout about(NULL, "About " TOAPPNAME, true);
+            if (!about.exec())
                 exit (2);
             toConfigurationNewSingle::Instance().setOption(ToConfiguration::Main::LastVersion, QString(TORAVERSION));
         }

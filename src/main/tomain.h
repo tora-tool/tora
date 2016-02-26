@@ -330,7 +330,7 @@ class toMain : public toMainWindow
         QAction *newConnAct, *closeConn, *commitAct, *rollbackAct, *currentAct, *stopAct;
         QAction *refreshAct, *openAct, *saveAct, *saveAsAct, *openSessionAct, *saveSessionAct;
         QAction *restoreSessionAct , *closeSessionAct, *printAct, *quitAct;
-        QAction *helpCurrentAct, *helpContentsAct, *aboutAct, *aboutQtAct, *licenseAct;
+        QAction *helpCurrentAct, *helpContentsAct, *aboutAct, *aboutQtAct;
         QAction *windowCloseAct, *windowCloseAllAct;
 
         QPlainTextEdit &loggingWidget;

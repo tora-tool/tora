@@ -35,110 +35,15 @@
 #include "widgets/toabout.h"
 
 #include "core/toconf.h"
-#include "core/LICENSE.h"
 #include "core/COPYRIGHT.h"
 #include "core/toraversion.h"
 
 #include "icons/largelogo.xpm"
 
-static const QString AboutText = QString::fromUtf8(
-                                     "<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\" /></head>"
-                                     "<body bgcolor='#E3B836'>"
-                                     "<IMG SRC=':/icons/largelogo.xpm'><BR>\n"
-                                     "Version %1 (<A HREF=http://tora.sourceforge.net>http://tora.sourceforge.net</A>)\n"
-                                     "<P>\n"
-                                     "SourceForge project administered by Nathan Neulinger <A HREF=\"mailto:nneul@neulinger.org\">nneul@neulinger.org</A><P>\n"
-                                     "This program is available under the GNU General Public License.\n"
-                                     "Uses the Qt library by TrollTech\n"
-                                     "(<A HREF=http://www.trolltech.com>http://www.trolltech.com/</A>).<P>\n"
-                                     "\n"
-                                     "<HR BREAK=ALL>\n"
-                                     "This program is distributed in the hope that it will be useful,\n"
-                                     "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
-                                     "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
-                                     "GNU General Public License for more details."
-                                     "<HR BREAK=ALL>\n"
-                                     "Primary Development team:<P>\n"
-                                     "<UL>\n"
-                                     "<LI><B>Petr Vaněk</B>\n"
-                                     "<LI><B>Mike Johnson</B>\n"
-                                     "<LI><B>Alexey Danilchenko</B>\n"
-                                     "<LI><B>Ivan Březina</B>\n"
-                                     "<LI><B>Oliver Jehle</B>\n"
-                                     "<LI><B>Raj Thukral</B>\n"
-                                     "<LI><B>Thomas Porschberg</B>\n"
-                                     "<LI><B>Volker Götz</B>\n"
-                                     "<LI><B>Tomas Straupis</B>\n"
-                                     "<LI><B>Nathan Neulinger</B>\n"
-                                     "</UL>\n"
-                                     "Contributors (In alphabetical order):<P>\n"
-                                     "<UL>\n"
-                                     "<LI><B>Henrik Johnson</B> - Original developer, no longer involved.\n"
-                                     "<LI><B>Petr Bena</B> - Qt5 support.\n"
-                                     "<LI><B>Alexander (Leo) Bergolth</B> - Access to Oracle 7 database.\n"
-                                     "<LI><B>Volker Götz</B> - Improved PostgreSQL support.\n"
-                                     "<LI><B>Oliver Jehle</B> - Object caching to disc, SAP and much more.\n"
-                                     "<LI><B>Christoph Kümmel-Schulte</B> - Various work on qt4 port and windows support.\n"
-                                     "<LI><B>Sergei Kuchin</B> - Oracle Template Library.\n"
-                                     "<LI><B>Michael Meskes</B> - Debian maintainer (<A HREF=http://www.debian.org>http://www.debian.org/</A>).\n"
-                                     "<LI><B>Selcuk Ozturk</B> - Improved content editor.\n"
-                                     "<LI><B>Andreas Piesk</B> - Significant oracle related patches and bug fixes.\n"
-                                     "<LI><B>Jeff Price</B> - Endless feature requests and more.\n"
-                                     "<LI><B>Stefan Rindeskär</B> - Improved PostgreSQL support.\n"
-                                     "<LI><B>Adam vonNieda</B> - Improvements to RMAN monitoring from OracleTool (<A HREF=http://www.oracletool.com>http://www.oracletool.com</A>)\n"
-                                     "<LI><B>Guillaume Moulard</B> - Log4PL/SQL documentation.\n"
-                                     "<LI><B>ZippyDufus@yahoo.com</B> - Win32 cross compile build documentation.\n"
-                                     "</UL>\n"
-                                     "Financial and Project Support (In alphabetical order):<P>\n"
-                                     "<UL>\n"
-                                     "<LI><B>Eric Johnson</B>\n"
-                                     "</UL>\n"
-                                     "Other contributors:<P>\n"
-                                     "<B>Nuno Araujo</B>,\n"
-                                     "<B>Nathan Bryant</B>,\n"
-                                     "<B>Robert Cheramy</B>,\n"
-                                     "<B>Francesco Dandrea</B>,\n"
-                                     "<B>Ferdinand Gassauer</B>,\n"
-                                     "<B>Robert Ham</B>,\n"
-                                     "<B>Rick Hall</B>,\n"
-                                     "<B>Rico Hendriks</B>,\n"
-                                     "<B>Frits Hoogland</B>,\n"
-                                     "<B>Mihai Ibanescu</B>,\n"
-                                     "<B>Bo Johansson</B>,\n"
-                                     "<B>Olof Jönsson</B>,\n"
-                                     "<B>Michael Kaes</B>,\n"
-                                     "<B>Norbert Kiesel</B>,\n"
-                                     "<B>Paweł Kucharczyk</B>,\n"
-                                     "<B>Jacob Lauemølle</B>,\n"
-                                     "<B>Laramie Leavitt</B>,\n"
-                                     "<B>Paolo Magnoli</B>,\n"
-                                     "<B>Vladimir Naprstek</B>,\n"
-                                     "<B>Peter Nyborg</B>,\n"
-                                     "<B>Frank Pavageau</B>,\n"
-                                     "<B>Gerard H. Pille</B>,\n"
-                                     "<B>Thomas Porschberg</B>,\n"
-                                     "<B>Jan Pruner</B>,\n"
-                                     "<B>Jonas Rathert</B>,\n"
-                                     "<B>Christopher R. Redinger</B>,\n"
-                                     "<B>Erik Selberg</B>,\n"
-                                     "<B>Dennis Selsky</B>,\n"
-                                     "<B>Theo Schlossnagle</B>,\n"
-                                     "<B>Roman Stepanov</B>,\n"
-                                     "<B>Daniel Vérité</B>,\n"
-                                     "<B>Matthias Wolle</B>,\n"
-                                     "<B>Joachim Zetzsche</B>,\n"
-                                     "<B>Massimiliano Ziccardi</B>,\n"
-                                     "<B>Raj Thukral</B>,\n"
-                                     "<B>Heran Quan</B>...\n"
-                                     "<HR BREAK=ALL>\n"
-                                     "<P><FONT SIZE=-1>%2</FONT><P>\n"
-                                     "</body></html>");
+#include <QtCore/QStringRef>
 
-#define ABOUT_CAPTION TOAPPNAME " %1"
-
-
-toAbout::toAbout(AboutType page, QWidget* parent, const char* name, bool modal, toWFlags fl)
-    : QDialog(parent, fl)
+toAbout::toAbout(QWidget* parent, const char* name, bool modal)
+    : QDialog(parent)
 {
     if (name)
         setObjectName(name);
@@ -147,20 +52,53 @@ toAbout::toAbout(AboutType page, QWidget* parent, const char* name, bool modal, 
 
     setupUi(this);
 
-    if (page == License)
+#if !defined(TOBUILDTYPE_RELEASE)
+    setWindowTitle(QString(TOAPPNAME) + " " BUILD_TAG);
+#endif
+
+    // About Tab
     {
-        setWindowTitle(tr("GNU General Public License"));
-        TextView->setHtml(tr(LicenseText));
-        if (parent)
-            CancelButton->hide();
+    	QFile f(":/widgets/toabout.html");
+    	f.open(QFile::ReadOnly);
+    	QString AboutText = QString::fromUtf8(f.readAll());
+    	QString buffer = AboutText.arg(QString::fromLatin1(TORAVERSION), QString::fromLatin1(CopyrightText));
+    	textBrowserAbout->setHtml(buffer);
     }
-    else
+
+    // License Tab
     {
-        setWindowTitle(tr(ABOUT_CAPTION).arg(QString::fromLatin1(TORAVERSION)));
-        QString buffer = AboutText.arg(QString::fromLatin1(TORAVERSION), QString::fromLatin1(CopyrightText));
-        TextView->setHtml(buffer);
-        CancelButton->hide();
+    	QFile f(":/widgets/gpl-2.0-standalone.html");
+    	f.open(QFile::ReadOnly);
+    	QString LicenseText = QString::fromUtf8(f.readAll());
+    	textBrowserLicense->setHtml(LicenseText);
     }
+
+	// Copyright Tab
+	{
+		textBrowserCopyright->setHtml(CopyrightText);
+	}
+
+	// Version Tab
+	{
+		QString version;
+	#if defined(HAVE_GITREVISION_H)
+		QString format = QString("<tr><td>%1:<td>%2");
+		version.append("<table>");
+		version.append(format.arg("GITVERSION").arg(GITVERSION));
+		version.append(format.arg("GITVERSION_MAJOR").arg(GITVERSION_MAJOR));
+		version.append(format.arg("GITVERSION_MINOR").arg(GITVERSION_MINOR));
+		version.append(format.arg("GIT_BUILD_TYPE").arg(GIT_BUILD_TYPE));
+		version.append(format.arg("GITVERSION_COUNT").arg(GITVERSION_COUNT));
+		version.append(format.arg("GITVERSION_SHA1").arg(GITVERSION_SHA1));
+		version.append(format.arg("GITVERSION_SHORT").arg(GITVERSION_SHORT));
+		version.append(format.arg("BUILD_TAG").arg(BUILD_TAG));
+		version.append(format.arg("BUILD_DATE").arg(BUILD_DATE));
+		version.append("</table>");
+#else
+		version = TORAVERSION;
+#endif
+		textBrowserVersion->setHtml(version);
+	}
 }
 
 toAbout::~toAbout()

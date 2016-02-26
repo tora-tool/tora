@@ -258,5 +258,8 @@
         <file>templates/hints.tpl</file>
         <file>templates/log4plsql.tpl</file>
         <file>templates/sqlfunctions.tpl</file>
+
+	<file>widgets/toabout.html</file>
+	<file>widgets/gpl-2.0-standalone.html</file>
     </qresource>
 </RCC>

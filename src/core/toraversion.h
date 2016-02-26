@@ -46,7 +46,7 @@
 
 #if defined(SVNREVISION)
 # define TORAVERSION TOVERSION "." "(" SVNREVISION "svn)"
-#elif defined(GITVERSION)
+#elif defined(GITVERSION) && !defined(TOBUILDTYPE_RELEASE)
 # define TORAVERSION GITVERSION
 #else
 # define TORAVERSION TOVERSION
