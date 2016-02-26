@@ -133,6 +133,16 @@ IF (CMAKE_COMPILER_IS_GNUCC)
   SET(CMAKE_C_FLAGS           "-Wall            -ggdb3")
 ENDIF (CMAKE_COMPILER_IS_GNUCC)
 
+## matches Linux Clang and also AppleClang
+IF (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  SET(CMAKE_CXX_FLAGS_DEBUG   "-O0 -fno-inline")
+  SET(CMAKE_C_FLAGS_DEBUG     "-O0 -fno-inline")
+  SET(CMAKE_CXX_FLAGS_RELEASE "-O2")
+  SET(CMAKE_C_FLAGS_RELEASE   "-O2")
+  SET(CMAKE_CXX_FLAGS         "-Wall -std=c++11 -ggdb3")
+  SET(CMAKE_C_FLAGS           "-Wall            -ggdb3")
+ENDIF()
+
 #Convert our simpler command line option to the CMake style
 #None, Debug, Release, .. or custom ones
 IF (CMAKE_BUILD_TYPE MATCHES [Dd]ebug)
