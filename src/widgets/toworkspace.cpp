@@ -81,9 +81,10 @@ toWorkSpace::toWorkSpace(QWidget *parent)
 
     vbox->addWidget(m_stackedWidget);
 
+#if defined(TORA_EXPERIMENTAL)
     m_label = new QLabel("Blablabla", this);
-
     vbox->addWidget(m_label);
+#endif
 }
 
 void toWorkSpace::addToolWidget(toToolWidget *toolWidget)
@@ -154,12 +155,16 @@ void toWorkSpace::slotCurrentIndexChanged(int idx)
         m_lastWidget = NULL;
     }
 
+#if defined(TORA_EXPERIMENTAL)
     m_label->setText(QString("%1").arg(idx));
+#endif
 }
 
 void toWorkSpace::slotTabMoved(int from, int to)
 {
+#if defined(TORA_EXPERIMENTAL)
     m_label->setText(QString("%1 %2").arg(from).arg(to));
+#endif
 
     toToolWidget *w  = dynamic_cast<toToolWidget*>(m_tabBar->tabData(to).value<QWidget*>());
     if (!w)
@@ -191,7 +196,9 @@ void toWorkSpace::slotTabCloseRequested(int idx)
         Q_ASSERT_X(i == 1, qPrintable(__QHERE__), "m_toolsRegistry.remove() <> 1");
 
         delete w;
+#if defined(TORA_EXPERIMENTAL)
         m_label->setText(QString("*%1->%2").arg(idx).arg(m_tabBar->currentIndex()));
+#endif
         toGlobalEventSingle::Instance().toolWidgetRemoved(w);
     }
 }
@@ -286,7 +293,9 @@ bool toWorkSpace::closeToolWidget(toToolWidget* tool)
         Q_ASSERT_X(i == 1, qPrintable(__QHERE__), "m_toolsRegistry.remove() <> 1");
 
         delete tool;
+#if defined(TORA_EXPERIMENTAL)
         m_label->setText(QString("*%1").arg(idx));
+#endif
         m_lastWidget = NULL;
 
         toGlobalEventSingle::Instance().toolWidgetRemoved(tool);

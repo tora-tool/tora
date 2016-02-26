@@ -86,7 +86,9 @@ class toWorkSpace : public QWidget
 
     private:
         QTabBar *m_tabBar;
-        QLabel *m_label; // TODO DEBUG ONLY
+#if !defined(TORA_EXPERIMENTAL)
+        QLabel *m_label;
+#endif
         QStackedWidget *m_stackedWidget;
         QSignalMapper *m_signalMapper;
         ToolWindowsRegistry m_toolsRegistry;
