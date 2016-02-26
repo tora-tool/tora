@@ -766,18 +766,19 @@ class toExtract
              */
             columnInfo(const QString &name)
                 : Name(name)
+                , bNotNull(false)
             {
                 Order = 0;
             }
             /** Implement sort order based only on Order field.
              */
-            bool operator <(const columnInfo &inf)
+            bool operator <(const columnInfo &inf) const
             {
                 return Order < inf.Order;
             }
             /** Implement sort order based only on Order field.
              */
-            bool operator ==(const columnInfo &inf)
+            bool operator ==(const columnInfo &inf) const
             {
                 return Order == inf.Order;
             }
