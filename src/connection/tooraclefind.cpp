@@ -59,8 +59,8 @@
 #elif defined(Q_OS_WIN32)
 #   define PROVIDER_LIB "poracle.dll"
 #   define TROTL_LIB    "trotl.dll"
-#elif defined(Q_WS_MAC)
-#   define PROVIDER_LIB "libporacle.dylib"
+#elif defined(Q_OS_MAC)
+#   define PROVIDER_LIB "libporacle.so"
 #   define TROTL_LIB    "libtrotl.dylib"
 #endif
 
@@ -126,8 +126,8 @@ QSet<QString> const toOracleInstantFinder::m_paths = QSet<QString>()
 QList<QString> const toOracleInstantFinder::m_libname = QList<QString>()
 #if defined(Q_OS_LINUX)
         << QString::fromLatin1("libclntsh.so*")
-#elif defined(Q_WS_MAC)
-        << QString::fromLatin1("libclntsh.*dylib")
+#elif defined(Q_OS_MAC)
+        << QString::fromLatin1("libclntsh.dylib*")
 #elif defined(Q_OS_WIN32) // Note both 32 and 64 bit build
         << QString::fromLatin1("OCI.dll")
 #endif
@@ -329,7 +329,7 @@ void toOracleInstantFinder::setEnv(ConnectionProvirerParams const &params)
 void toOracleInstantFinder::loadLib(ConnectionProvirerParams const &params)
 {
     QFileInfo libPath(params.value("LIBPATH").toString());
-#ifdef Q_OS_WIN32
+#if defined(Q_OS_WIN32)
     TLOG(5, toNoDecorator, __HERE__) << "Loading:" << libPath.absoluteFilePath() << std::endl;
     Utils::toLibrary::LHandle hmoduleOCI = Utils::toLibrary::loadLibrary(libPath);
     if ( hmoduleOCI)

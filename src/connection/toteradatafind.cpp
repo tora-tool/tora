@@ -47,7 +47,7 @@
 #   define PROVIDER_LIB "libpteradata.so"
 #elif defined(Q_OS_WIN32)
 #   define PROVIDER_LIB "pteradata.dll"
-#elif defined(Q_WS_MAC)
+#elif defined(Q_OS_MAC)
 #   define PROVIDER_LIB "libpteradata.dylib"
 #endif
 
