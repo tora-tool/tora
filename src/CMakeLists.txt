@@ -670,6 +670,7 @@ IF(ORACLE_FOUND)
 ENDIF(ORACLE_FOUND)
 
 IF (USE_EXPERIMENTAL)
+  LIST(APPEND TORA_SOURCES tools/toscript.cpp)
   LIST(APPEND TORA_SOURCES
     docklets/tocodeoutline.cpp
     parsing/OraclePLSQLLexer.cc
@@ -690,6 +691,7 @@ IF (USE_EXPERIMENTAL)
     tools/toer.cpp
     widgets/toresultdrawing.cpp
     )
+  LIST (APPEND TORA_SOURCES tools/tosandboxtool.cpp)
 ENDIF (USE_EXPERIMENTAL)
 
 IF(POPPLER_QT4_FOUND)
