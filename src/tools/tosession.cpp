@@ -41,6 +41,7 @@
 #include "widgets/toresultitem.h"
 #include "widgets/toresultstats.h"
 #include "widgets/torefreshcombo.h"
+#include "widgets/toresultbar.h"
 #include "tools/tosgastatement.h"
 #include "tools/tosgatrace.h"
 #include "tools/towaitevents.h"
@@ -533,7 +534,7 @@ toSession::toSession(QWidget *main, toConnection &connection)
 
         StatisticSplitter = new QSplitter(Qt::Horizontal, ResultTab);
         SessionStatistics = new toResultStats(false, 0, StatisticSplitter);
-#ifdef TORA3_GRAPH
+#ifdef TORA_EXPERIMENTAL
         WaitBar = new toResultBar(StatisticSplitter);
         WaitBar->setSQL(SQLSessionWait);
         WaitBar->setTitle(tr("Session wait states"));
@@ -581,7 +582,7 @@ toSession::toSession(QWidget *main, toConnection &connection)
         LongOps           = NULL;
         StatisticSplitter = NULL;
         SessionStatistics = NULL;
-#ifdef TORA3_GRAPH
+#ifdef TORA_EXPERIMENTAL
         WaitBar           = NULL;
         IOBar             = NULL;
 #endif
@@ -989,7 +990,7 @@ void toSession::slotChangeItem()
     {
         if (!item.isEmpty())
         {
-#ifdef TORA3_GRAPH
+#ifdef TORA_EXPERIMENTAL
             if (WaitBar)
                 WaitBar->refreshWithParams(toQueryParams() << item);
             if (IOBar)

@@ -85,7 +85,7 @@ class toSession : public toToolWidget
         toResultTableView *LockedObjects;
         toResultLock      *PendingLocks;
         toResultTableView *AccessedObjects;
-#ifdef TORA3_GRAPH
+#ifdef TORA_EXPERIMENTAL
         toResultBar       *WaitBar;
         toResultBar       *IOBar;
 #endif

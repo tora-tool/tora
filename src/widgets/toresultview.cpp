@@ -1077,7 +1077,7 @@ QString toListView::exportAsText(toExportSettings settings)
     return pFormatter->getFormattedString(settings, model());
 }
 
-#ifdef TORA3_GRAPH
+#ifdef TORA3_SESSION
 void toListView::exportData(std::map<QString, QString> &ret, const QString &prefix)
 {
     int id = 0;

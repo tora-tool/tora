@@ -60,7 +60,7 @@ class QMdiSubWindow;
 class toWorksheetEditor;
 class toHighlightedEditor;
 class toListView;
-//obsolete class toResultBar;
+class toResultBar;
 class toResultCols;
 class toResultCombo;
 class toResultSchema;
@@ -115,7 +115,7 @@ class toWorksheet : public toToolWidget
 
         virtual bool canHandle(const toConnection &);
 
-#ifdef TORA3_GRAPH
+#ifdef TORA3_SESSION
         virtual void exportData(std::map<QString, QString> &data, const QString &prefix);
         virtual void importData(std::map<QString, QString> &data, const QString &prefix);
 #endif
@@ -246,7 +246,7 @@ class toWorksheet : public toToolWidget
         toSyntaxAnalyzer::statement m_lastQuery; // query is saved in order to reexecute it periodically ("refresh")
         toResultItem      *Resources;
         toResultStats     *Statistics;
-#ifdef TORA3_GRAPH
+#ifdef TORA_EXPERIMENTAL
         toResultBar       *WaitChart;
         toResultBar       *IOChart;
 #endif

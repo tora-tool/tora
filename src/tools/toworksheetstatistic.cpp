@@ -35,7 +35,7 @@
 #include "tools/toworksheetstatistic.h"
 #include "core/utils.h"
 #include "tools/toanalyze.h"
-//obsolete #include "widgets/tobarchart.h"
+#include "widgets/tobarchart.h"
 #include "core/toconf.h"
 #include "widgets/toresultview.h"
 #include "core/toconfiguration.h"
@@ -197,7 +197,7 @@ void toWorksheetStatistic::addStatistics(std::map<QString, QString> &stats)
     if (!ShowCharts->isChecked())
     {
         cur.Statistics->hide();
-#ifdef TORA3_GRAPH
+#ifdef TORA_EXPERIMENTAL
         cur.Wait->hide();
         cur.IO->hide();
 #endif
@@ -242,7 +242,7 @@ void toWorksheetStatistic::showCharts(bool show)
         if (show)
         {
             (*i).Statistics->show();
-#ifdef TORA3_GRAPH
+#ifdef TORA_EXPERIMENTAL
             (*i).Wait->show();
             (*i).IO->show();
 #endif
@@ -250,7 +250,7 @@ void toWorksheetStatistic::showCharts(bool show)
         else
         {
             (*i).Statistics->hide();
-#ifdef TORA3_GRAPH
+#ifdef TORA_EXPERIMENTAL
             (*i).Wait->hide();
             (*i).IO->hide();
 #endif

@@ -37,6 +37,8 @@
 #include "core/tosql.h"
 #include "core/toeventquery.h"
 #include "widgets/toresultview.h"
+#include "widgets/toresultbar.h"
+#include "widgets/topiechart.h"
 #include "core/totool.h"
 #include "widgets/totreewidget.h"
 #include "core/toconfiguration.h"
@@ -170,7 +172,7 @@ void toWaitEvents::setup(int session)
     QFrame *frame = new QFrame(splitter);
     QGridLayout *layout = new QGridLayout(frame);
 
-#ifdef TORA3_GRAPH
+#ifdef TORA_EXPERIMENTAL
     Delta = new toResultBar(frame);
     Delta->setTitle(tr("System wait events"));
     Delta->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
@@ -230,7 +232,7 @@ void toWaitEvents::setup(int session)
 void toWaitEvents::changeType(int item)
 {
     ShowTimes = item;
-#ifdef TORA3_GRAPH
+#ifdef TORA_EXPERIMENTAL
     if (ShowTimes)
     {
         DeltaTimes->show();
@@ -323,7 +325,7 @@ void toWaitEvents::changeSelection(void)
                 ind++;
             }
         }
-#ifdef TORA3_GRAPH
+#ifdef TORA_EXPERIMENTAL
         Delta->setEnabledCharts(Enabled);
         DeltaTimes->setEnabledCharts(Enabled);
 #endif
@@ -360,7 +362,7 @@ void toWaitEvents::changeSelection(void)
             for (std::list<double>::iterator i = absolute.begin(); i != absolute.end(); i++)
                 total += *i;
         }
-#ifdef TORA3_GRAPH
+#ifdef TORA_EXPERIMENTAL
         AbsolutePie->setValues(absolute, Labels);
         AbsolutePie->setTitle(tr("Absolute system wait events\nTotal %1%2").
                               arg(total / 1000).arg(QString::fromLatin1(ShowTimes ? "" : " s")));
@@ -469,7 +471,7 @@ void toWaitEvents::slotQueryDone(toEventQuery*)
     }
     if (First)
     {
-#ifdef TORA3_GRAPH
+#ifdef TORA_EXPERIMENTAL
         Delta->setLabels(Labels);
         DeltaTimes->setLabels(Labels);
 #endif
@@ -531,7 +533,7 @@ void toWaitEvents::slotQueryDone(toEventQuery*)
     LastTimes = CurrentTimes;
     LastCurrent = Current;
 
-#ifdef TORA3_GRAPH
+#ifdef TORA_EXPERIMENTAL
     if (Relative.begin() != Relative.end())
     {
         Delta->addValues(Relative, Now);
