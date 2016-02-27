@@ -78,11 +78,11 @@ ELSE (ORACLE_PATH_LIB)
             ${ORACLE_HOME}/lib 
             # xe on windows
             ${ORACLE_HOME}/OCI/lib/MSVC/
-            ${ORACLE_HOME}\\OCI\\lib\\MSVC\\
+            ${ORACLE_HOME}\\OCI\\lib\\MSVC
             ${ORACLE_HOME}
             # InstantClient on WinXP
             ${ORACLE_HOME}/sdk/lib/msvc/
-            ${ORACLE_HOME}\\sdk\\lib\\msvc\\
+            ${ORACLE_HOME}\\sdk\\lib\\msvc
             # Instant client from rpm
             /usr/lib${LIB_SUFFIX}/
             /usr/lib/oracle/11.2/client${LIB_SUFFIX}/lib/
