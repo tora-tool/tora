@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOSGATRACE_H
-#define TOSGATRACE_H
+#pragma once
 
 #include "widgets/totoolwidget.h"
 #include "core/toconfenum.h"
@@ -44,6 +43,7 @@
 #define TOSQL_LONGOPS "toSGATrace:LongOps"
 
 class QComboBox;
+class QLineEdit;
 class QMenu;
 class QTabWidget;
 class toConnection;
@@ -91,7 +91,7 @@ class toSGATrace : public toToolWidget
         void changeItem(void);
         void refresh(void);
     private:
-        virtual void slotWindowActivated(toToolWidget*) {};
+        void slotWindowActivated(toToolWidget*) override {};
 
         toResultTableView *Trace;
         QTabWidget *ResultTab;
@@ -108,5 +108,3 @@ class toSGATrace : public toToolWidget
 
         void updateSchemas(void);
 };
-
-#endif

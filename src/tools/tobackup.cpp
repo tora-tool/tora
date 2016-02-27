@@ -41,6 +41,7 @@
 #include "widgets/totabwidget.h"
 #include "core/toglobalevent.h"
 
+#include <QtCore/QTimer>
 #include <QToolBar>
 #include <QVBoxLayout>
 
