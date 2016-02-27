@@ -2,7 +2,8 @@
 
 sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
 sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
-sudo apt-get update
+sudo add-apt-repository --yes ppa:kalakris/cmake
+sudo apt-get update -qq
 mkdir /tmp/pk
 cd /tmp/pk
 wget http://petr.insw.cz/repo/oracle-instantclient12.1-basic_12.1.0.2.0-2_amd64.deb
