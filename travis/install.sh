@@ -5,7 +5,9 @@ if [ "$QTTYPE" = "4" ]; then
 fi
 
 if [ "$QTTYPE" = "5" ]; then
-	sudo apt-get install -y ubuntu-sdk qtquick1-5-dev 
+	sudo apt-get install -y qt5-qmake qtbase5-dev qtdeclarative5-dev libqt5webkit5-dev libsqlite3-dev
+	sudo apt-get install -y qt5-default qttools5-dev-tools
+	export QMAKE=/usr/lib/x86_64-linux-gnu/qt5/bin/qmake
 fi
 
 sudo apt-get purge libboost*1.46*
