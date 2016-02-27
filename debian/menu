@@ -1,0 +1,7 @@
+?package(tora):\
+  needs="X11"\
+  section="Applications/Data Management"\
+  title="TOra"\
+  command="/usr/bin/tora"\
+  icon32x32="/usr/share/icons/hicolor/32x32/apps/tora.xpm"\
+  icon16x16="/usr/share/icons/hicolor/16x16/apps/tora.xpm"

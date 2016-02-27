@@ -1,0 +1,26 @@
+This package was debianized by Michael Meskes <meskes@debian.org> on
+Fri, 25 Jan 2002 09:37:32 +0100.
+
+It was downloaded from http://tora.sourceforge.net/
+
+Upstream Authors:	Petr Vaněk 
+			Mike Johnson 
+			Alexey Danilchenko 
+			Ivan Brezina 
+			Oliver Jehle 
+			Raj Thukral 
+			Thomas Porschberg 
+			Volker Götz 
+			Nathan Neulinger 
+			Henrik Johnson 
+
+Copyright:
+Portions Copyright (C) 2000-2001 Underscore AB
+Portions Copyright (C) 2003-2005 Quest Software, Inc.
+Portions Copyright (C) 2004-2008 Numerous Other Contributors
+
+You may use, distribute and copy Toolkit for Oracle under the terms of
+GNU General Public License version 2.
+
+On Debian GNU/Linux systems, a copy of the GNU GPL can be found in
+/usr/share/common-licenses/GPL-2.
