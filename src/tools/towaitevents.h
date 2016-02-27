@@ -45,8 +45,8 @@
 
 class toTreeWidget;
 class toEventQuery;
-//class toPieChart;
-//class toResultBar;
+class toPieChart;
+class toResultBar;
 class QSplitter;
 
 class toWaitEvents : public QWidget
@@ -54,7 +54,7 @@ class toWaitEvents : public QWidget
         Q_OBJECT;
 
         QSplitter * splitter;
-#ifdef TORA3_GRAPH
+#ifdef TORA_EXPERIMENTAL
         toResultBar *Delta;
         toResultBar *DeltaTimes;
         toPieChart *AbsolutePie;

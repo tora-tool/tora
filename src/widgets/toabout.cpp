@@ -61,7 +61,7 @@ toAbout::toAbout(QWidget* parent, const char* name, bool modal)
     	QFile f(":/widgets/toabout.html");
     	f.open(QFile::ReadOnly);
     	QString AboutText = QString::fromUtf8(f.readAll());
-    	QString buffer = AboutText.arg(QString::fromLatin1(TORAVERSION), QString::fromLatin1(CopyrightText));
+    	QString buffer = AboutText.arg(QString::fromLatin1(TORAVERSION));
     	textBrowserAbout->setHtml(buffer);
     }
 

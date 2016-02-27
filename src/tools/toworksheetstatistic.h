@@ -66,7 +66,7 @@ class toWorksheetStatistic : public QWidget
             QLabel     *Label;
             QSplitter  *Charts;
             toListView *Statistics;
-#ifdef TORA3_GRAPH
+#ifdef TORA_EXPERIMENTAL
             toBarChart *Wait;
             toBarChart *IO;
 #endif
