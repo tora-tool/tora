@@ -278,8 +278,11 @@ protected:
 // Visual Studio 2013
 #if (defined _MSC_VER) && (_MSC_VER <= 1800)
 		__declspec(thread) static long long time;
+#elif (	defined __APPLE__)
+#pragma message WARN("TODO/FIXME: thread local storage on OSX")
+        static long long time;
 #else
-		thread_local static long long time;
+	thread_local static long long time;
 #endif
         return time;
     };
@@ -287,8 +290,11 @@ protected:
 // Visual Studio 2013
 #if (defined _MSC_VER) && (_MSC_VER <= 1800)
 		__declspec(thread) static long long time;
+#elif (	defined __APPLE__)
+#pragma message WARN("TODO/FIXME: thread local storage on OSX")
+        static long long time;
 #else
-		thread_local static long long time;
+	thread_local static long long time;
 #endif
         return time;
     };

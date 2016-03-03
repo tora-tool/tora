@@ -25,6 +25,10 @@
 
 #include "dotrenderop.h"
 
+#ifdef __clang__
+#pragma GCC diagnostic ignored "-Wunused-local-typedefs"
+#endif
+
 #include <boost/throw_exception.hpp>
 #include <boost/spirit/include/classic_core.hpp>
 #include <boost/spirit/include/classic_distinct.hpp>

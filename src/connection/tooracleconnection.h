@@ -87,17 +87,17 @@ class toOracleConnectionSub: public toConnectionSub
         toOracleConnectionSub(::trotl::OciConnection *, ::trotl::OciLogin *);
 
         virtual ~toOracleConnectionSub();
-        virtual void cancel();
-        virtual void close();
-        virtual void commit();
-        virtual void rollback();
-        virtual QString version();
-        virtual toQueryParams sessionId();
-        virtual bool hasTransaction();
-        virtual queryImpl* createQuery(toQueryAbstr *query) override;
+        void cancel() override;
+        void close() override;
+        void commit() override;
+        void rollback() override;
+        QString version() override;
+        toQueryParams sessionId() override;
+        bool hasTransaction() override;
+        queryImpl* createQuery(toQueryAbstr *query) override;
 
-        virtual toQAdditionalDescriptions* decribe(toCache::ObjectRef const&);
-        virtual toCache::ObjectRef resolve(toCache::ObjectRef const& objectName);
+        toQAdditionalDescriptions* decribe(toCache::ObjectRef const&) override;
+        toCache::ObjectRef resolve(toCache::ObjectRef const& objectName) override;
 
     private:
         enum TransactionFlagStateEnum   // three state boolean NO/YES/DUNNO

@@ -143,17 +143,17 @@ class toQSqlConnectionSub: public toConnectionSub
         toQSqlConnectionSub(toConnection const& parent, QSqlDatabase const& db, QString const& dbname);
 
         virtual ~toQSqlConnectionSub();
-        virtual void cancel();
-        virtual void close();
-        virtual void commit();
-        virtual void rollback();
+        void cancel() override;
+        void close() override;
+        void commit() override;
+        void rollback() override;
 
-        virtual QString version();
-        virtual toQueryParams sessionId();
+        QString version() override;
+        toQueryParams sessionId() override;
 
-        virtual queryImpl* createQuery(toQueryAbstr *query);
+        queryImpl* createQuery(toQueryAbstr *query) override;
 
-        virtual toQAdditionalDescriptions* decribe(toCache::ObjectRef const&);
+        toQAdditionalDescriptions* decribe(toCache::ObjectRef const&) override;
 
         static QString ErrorString(const QSqlError &err, const QString &sql = QString::null);
 

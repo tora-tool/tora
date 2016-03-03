@@ -59,16 +59,17 @@ class toQPSqlProvider : public toQSqlProvider
             return m_displayName;
         };
 
-        /* TODO DEFINE ALL OF THESE
-        //** see: @ref toConnectionProvider::hosts() *
+// TODO DEFINE THESE
+#if 0
+        /** see: @ref toConnectionProvider::hosts() */
         virtual QList<QString> hosts();
 
-        //** see: @ref toConnectionProvider::databases() *
+        /** see: @ref toConnectionProvider::databases() */
         virtual QList<QString> databases(const QString &host, const QString &user, const QString &pwd);
 
-        //** see: @ref toConnectionProvider::options() *
+        /** see: @ref toConnectionProvider::options() */
         virtual QList<QString> options();
-
+#endif
         /** see: @ref toConnectionProvider::configurationTab() */
         virtual QWidget *configurationTab(QWidget *parent);
 

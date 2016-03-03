@@ -41,6 +41,6 @@
 using Loki::Factory;
 using Loki::SingletonHolder;
 
-typedef SingletonHolder< Factory<toListViewFormatter, int> > toListViewFormatterFactory;
+typedef SingletonHolder< Factory<toListViewFormatter, int>, Loki::CreateUsingNew, Loki::NoDestroy> toListViewFormatterFactory;
 
 #endif
