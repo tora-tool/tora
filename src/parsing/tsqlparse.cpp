@@ -10,8 +10,9 @@ namespace SQLParser
         "UNASSIGNED"
         , "ROOT"
         , "FAILURE"
-
         , "COMMENT"
+        , "<EOF>"
+
         , "RESERVED"
         , "TABLENAME"
         , "SCHEMANAME"
@@ -27,13 +28,17 @@ namespace SQLParser
         , "ON"
         , "JOINING_CLAUSE"
         , "USING"
+
         , "VARIABLE"
         , "DATATYPE"
         , "PARAMETER"
+
         , "SUBQUERY_FACTORED"
         , "SUBQUERY_NESTED"
         , "SUBQUERY_ALIAS"
         , "UNION"
+        , "MINUS"
+        , "INTERSECT"
         , "WITH"
         , "COLUMN_LIST"
         , "FROM"
@@ -262,5 +267,30 @@ namespace SQLParser
     {
         return this->m_token == other.m_token;
     };
-
 };
+
+#ifdef DEBUG
+#include <iostream>
+#include <ostream>
+#include <iomanip>
+
+using namespace std;
+
+namespace SQLParser
+{
+    void Statement::dumpTree()
+    {
+	SQLParser::Statement::token_const_iterator node;
+	for (node = this->begin(); node != this->end(); ++node)
+	{
+	  auto type = node->getTokenATypeName();
+	  cout << (node->isLeaf()?'*':' ')
+	       << setw(node.depth()) << ' '
+	       << '/' << qPrintable(type)	    
+	       << '/' << qPrintable(node->getTokenTypeString())
+	       << '/' << qPrintable(node->toString())
+	       << endl;
+	}
+    }
+}
+#endif

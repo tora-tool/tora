@@ -58,7 +58,7 @@ void mySQLGuiLexer::init()
 {
     input = new MySQLGuiLexerTraits::InputStreamType(
     		(const ANTLR_UINT8 *)QBAinput.data(),
-    		ANTLR_ENC_UTF8,
+			antlr3::ENC_UTF8,
     		QBAinput.size(), //strlen(data.c_str()),
     		(ANTLR_UINT8*)QBAname.data());
 
@@ -68,7 +68,7 @@ void mySQLGuiLexer::init()
     {
         // TODO throw here
         throw Exception();
-        exit(ANTLR_ERR_NOMEM);
+        //exit(ANTLR_ERR_NOMEM);
     }
 
     // Our input stream is now open and all set to go, so we can create a new instance of our
@@ -82,7 +82,7 @@ void mySQLGuiLexer::init()
     {
         // TODO throw here
         throw Exception();
-        exit(ANTLR_ERR_NOMEM);
+        //exit(ANTLR_ERR_NOMEM);
     }
 
     tstream = new MySQLGuiLexerTraits::TokenStreamType(ANTLR_SIZE_HINT, lxr->get_tokSource());
@@ -92,7 +92,7 @@ void mySQLGuiLexer::init()
         // TODO throw here
         //_mState = P_ERROR;
         throw Exception();
-        exit(ANTLR_ERR_NOMEM);
+        //exit(ANTLR_ERR_NOMEM);
     }
     //_mState = P_LEXER;
 };
@@ -236,7 +236,7 @@ const Token& mySQLGuiLexer::LA(int pos) const
 
 QString mySQLGuiLexer::firstWord()
 {
-	MySQLGuiLexerTraits::CommonTokenType const* token = tstream->_LT(1);
+	MySQLGuiLexerTraits::CommonTokenType const* token = tstream->LT(1);
     if( token)
     {
 		return QString((const char*)(token->getText().c_str()));

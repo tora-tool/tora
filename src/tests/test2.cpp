@@ -36,12 +36,13 @@
 #include "core/tocache.h"
 #include "core/toconf.h"
 #include "core/toconfiguration.h"
+#include "core/todatabasesetting.h"
+#include "core/toglobalconfiguration.h"
 #include "core/toconnection.h"
 #include "core/toconnection.h"
 #include "core/toconnectionprovider.h"
 #include "core/toconnectionsubloan.h"
 #include "core/tologger.h"
-#include "core/tomain.h"
 #include "core/toquery.h"
 #include "core/toqvalue.h"
 #include "core/toraversion.h"
@@ -49,6 +50,7 @@
 #include "core/tosql.h"
 #include "core/utils.h"
 #include "editor/tomarkededitor.h"
+#include "core/tooracleconst.h"
 
 #include <QtCore/QDateTime>
 #include <QApplication>
@@ -153,16 +155,36 @@ int main(int argc, char **argv)
             QList<toConnectionProviderFinder::ConnectionProvirerParams> l = finder->find();
             allProviders.append(l);
         }
-        foreach(toConnectionProviderFinder::ConnectionProvirerParams p, allProviders)
+	QDir oHome = toConfigurationNewSingle::Instance().option(ToConfiguration::Global::OracleHomeDirectory).toString();
+        foreach(toConnectionProviderFinder::ConnectionProvirerParams const& params, allProviders)
         {
-            QString providerName = p.value("PROVIDER").toString();
+	    if ( params.value("PROVIDER").toString() != ORACLE_PROVIDER)
+	      continue;
+	    QDir pHome(params.value("ORACLE_HOME").toString());
+	    if (oHome != pHome)
+	      continue;
+	    QString providerName = params.value("PROVIDER").toString();
             if (providerName == "Oracle")
             {
-                toConnectionProviderRegistrySing::Instance().load(p);
+                toConnectionProviderRegistrySing::Instance().load(params);
                 break;
             }
         }
-
+        foreach(toConnectionProviderFinder::ConnectionProvirerParams const& params, allProviders)
+        {
+            QString providerName = params.value("PROVIDER").toString();
+	    if (params.value("PROVIDER").toString() != ORACLE_PROVIDER)
+	      continue;
+	    if (params.value("IS INSTANT").toBool() == true)
+	      continue;
+	    if (toConnectionProviderRegistrySing::Instance().providers().contains(providerName))
+	      continue;	    
+            if (providerName == "Oracle")
+            {
+                toConnectionProviderRegistrySing::Instance().load(params);
+                break;
+            }
+        }
 
         QSet<QString> options;
         QPointer<toConnection> oraCon = new toConnection(

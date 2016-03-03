@@ -196,7 +196,7 @@ void toQueryModel::timerEvent(QTimerEvent *e)
 
     try
     {
-        std::auto_ptr <SQLParser::Statement> stat = StatementFactTwoParmSing::Instance().create("OracleSQL", m_lastText, "");
+        std::auto_ptr <SQLParser::Statement> stat = StatementFactTwoParmSing::Instance().create("OracleDML", m_lastText, "");
         TLOG(0, toDecorator, __HERE__) << "Parsing ok:" << std::endl
                                        << stat->root()->toStringRecursive().toStdString() << std::endl;
 

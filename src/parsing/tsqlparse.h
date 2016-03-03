@@ -141,6 +141,17 @@ namespace SQLParser
             {
                 return (_mLine > other._mLine) || (_mLine == other._mLine && _mLinePos > other._mLinePos);
             };
+
+			inline bool operator<= (const Position &other) const
+			{
+				return !(*this > other);
+			};
+
+			inline bool operator>= (const Position &other) const
+			{
+				return !(*this < other);
+			};
+
         private:
             unsigned _mLine, _mLinePos;
     };
@@ -186,6 +197,7 @@ namespace SQLParser
                 X_ROOT,
                 X_FAILURE,
                 X_COMMENT,
+				X_EOF,
                 // Leaf node
                 L_RESERVED,
                 L_TABLENAME,
@@ -211,6 +223,8 @@ namespace SQLParser
                 S_SUBQUERY_NESTED,
                 L_SUBQUERY_ALIAS,
                 S_UNION,
+                S_MINUS,
+                S_INTERSECT,
                 S_WITH,
                 S_COLUMN_LIST,
                 S_FROM,
@@ -247,10 +261,11 @@ namespace SQLParser
                 , _mUsageType(other._mUsageType)
                 , _mTokenATypeName(other._mTokenATypeName)
                 , _mChildren(other._mChildren)
-                , _mSpaces(other._mSpaces)
+                , _mSpacesPrev(other._mSpacesPrev)
+                , _mSpacesPost(other._mSpacesPost)
             {
-                size_t me = this->size();
-                size_t oth = other.size();
+                //size_t me = this->size();
+                //size_t oth = other.size();
                 assert( this->size() >= other.size());
             };
 
@@ -272,6 +287,11 @@ namespace SQLParser
 
             const QString& toString() const
             {
+                static const QString Empty;
+                if (getPosition().getLine() == 0)
+                   return Empty;
+                if (getTokenType() == X_EOF)
+                	return Empty;
                 return _mStr;
             };
 
@@ -281,8 +301,13 @@ namespace SQLParser
             };
             QString toStringFull() const
             {
-                QString retval(toString());
-                foreach(QPointer<Token> space, _mSpaces)
+                QString retval;
+		foreach(QPointer<Token> space, _mSpacesPrev)
+		{
+			retval += space->toString();
+		}
+                retval += this->toString();
+                foreach(QPointer<Token> space, _mSpacesPost)
                 {
                     retval += space->toString();
                 }
@@ -290,14 +315,32 @@ namespace SQLParser
             };
             QString toStringRecursive(bool spaces = true) const
             {
-                QString retval( isLeaf() ?
-                                (spaces ? toStringFull() : toString()) :
-                                    "");
-                foreach(QPointer<Token> child, _mChildren)
-            {
-                    retval += child->toStringRecursive(spaces);
-                }
-                return retval;
+		    //QString retval(spaces ? toStringFull() : toString());
+		    QString retval, retval_pre, retval_post;
+		    //retval_pre += '[';
+		    retval += (spaces ? toStringFull() : toString());
+		    //retval += getPosition().toString();
+		    foreach(QPointer<Token> child, _mChildren)
+		    {
+			    Position child_position(0,0);
+			    Token *c = child;
+			    do
+			    {
+				    child_position = c->getPosition();
+				    auto children = c->getChildren();
+				    if (children.empty())
+					    break;
+				    else
+					    c = children.at(0);
+			    } while(c && child_position == Position(0,0)); 
+
+			    if(child_position < this->getPosition())
+				    retval_pre += child->toStringRecursive(spaces);
+			    else
+				    retval_post += child->toStringRecursive(spaces);
+		    }
+		    //retval_post += ']';
+		    return retval_pre + retval + retval_post;
             };
 
             inline bool isLeaf() const
@@ -332,9 +375,13 @@ namespace SQLParser
             {
                 _mChildren.append(child);
             };
+			inline void prependSpacer(QPointer<Token> space)
+			{
+				_mSpacesPrev.append(space);
+			};
             inline void appendSpacer(QPointer<Token> space)
             {
-                _mSpaces.append(space);
+                _mSpacesPost.append(space);
             };
             inline void replaceChild(int index, Token* newOne)
             {
@@ -370,7 +417,7 @@ namespace SQLParser
             QString _mTokenATypeName; //ANTLR token type - for debugging purposes only
             // TODO use only one of them
             QList<QPointer<Token> > _mChildren;
-            QList<QPointer<Token> > _mSpaces;
+            QList<QPointer<Token> > _mSpacesPrev, _mSpacesPost;
 
     };
 
@@ -381,8 +428,8 @@ namespace SQLParser
                 : Token(other)
                 , _mResolved(false)
             {
-                size_t me = this->size();
-                size_t oth = other.size();
+                //size_t me = this->size();
+                //size_t oth = other.size();
                 assert( this->size() >= other.size());
             };
 
@@ -416,8 +463,8 @@ namespace SQLParser
                 : Token(other)
                 , _mAlias(NULL)
             {
-                size_t me = this->size();
-                size_t oth = other.size();
+                //size_t me = this->size();
+                //size_t oth = other.size();
                 assert( this->size() >= other.size());
             };
 
@@ -470,8 +517,8 @@ namespace SQLParser
                 : Token(other)
                 , _mAlias(NULL)
             {
-                size_t me = this->size();
-                size_t oth = other.size();
+                //size_t me = this->size();
+                //size_t oth = other.size();
                 assert( this->size() >= other.size());
             };
 

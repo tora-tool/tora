@@ -7,7 +7,7 @@
 #cmakedefine ANTLR3_USE_64BIT ${ANTLR3_USE_64BIT}
 
 /* Name of package */
-#cmakedefine PACKAGE "${PACKAGE}"
+/*#cmakedefine PACKAGE "${PACKAGE}"*/
 
 /* Define to the address where bug reports for this package should be sent. */
 #cmakedefine PACKAGE_BUGREPORT "${PACKAGE_BUGREPORT}"

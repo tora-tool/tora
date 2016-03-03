@@ -35,7 +35,8 @@ OPTION(TEST_APP2 "toConnection/toQuery test" OFF)
 OPTION(TEST_APP3 "simple application - execute toWorksheet in a separate application" OFF)
 OPTION(TEST_APP4 "simple application - execute toHighlightedText in separate application" OFF)
 OPTION(TEST_APP5 "simple application - single tool(tabbed)" OFF)
-OPTION(TEST_APP6 "simple application parser" OFF)
+OPTION(TEST_APP6 "simple application parser(boost/spirit+.dot)" OFF)
+OPTION(TEST_APP7 "simple application parser" OFF)
 
 #Set our CMake minimum version
 #Require 2.4.2 for Qt finding
@@ -129,7 +130,7 @@ IF (CMAKE_COMPILER_IS_GNUCC)
   SET(CMAKE_C_FLAGS_DEBUG     "-O0 -fno-inline -rdynamic")
   SET(CMAKE_CXX_FLAGS_RELEASE "-O2")
   SET(CMAKE_C_FLAGS_RELEASE   "-O2")
-  SET(CMAKE_CXX_FLAGS         "-Wall -std=c++11 -ggdb3")
+  SET(CMAKE_CXX_FLAGS         "-Wall -std=c++14 -ggdb3")
   SET(CMAKE_C_FLAGS           "-Wall            -ggdb3")
 ENDIF (CMAKE_COMPILER_IS_GNUCC)
 

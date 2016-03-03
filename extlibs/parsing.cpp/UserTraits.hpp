@@ -20,6 +20,18 @@
 
 using namespace SQLLexer;
 
+#if defined __CYGWIN__
+namespace std
+{
+	template < typename T > std::string to_string( const T& n )
+	{
+		std::ostringstream stm ;
+		stm << n ;
+		return stm.str() ;
+	}
+}
+#endif
+
 namespace Antlr3BackendImpl {
 	class OraclePLSQLLexer;
 	class OraclePLSQLParser;
@@ -29,6 +41,9 @@ namespace Antlr3BackendImpl {
 	
 	class MySQLLexer;
 
+	class OracleDMLLexer;
+	class OracleDML;
+	
 	class EmptyParser {};
 
 	//code for overriding
@@ -86,11 +101,24 @@ namespace Antlr3BackendImpl {
 				super::recover();
 			}
 		};
-  
+
+		struct TokenUserDataType
+		{
+			TokenUserDataType() : identifierClass(-1), usageType(-1) {};
+			int identifierClass, usageType;
+		};
+
+		struct TreeUserDataType
+		{
+			TreeUserDataType() : identifierClass(-1), usageType(-1) {};
+			int identifierClass, usageType;
+		};
+
 		class ToraToken : public antlr3::CommonToken<ImplTraits>
 		{
 			typedef antlr3::CommonToken<ImplTraits> super;
 			typedef typename antlr3::CommonToken<ImplTraits>::TOKEN_TYPE TOKEN_TYPE;
+			typedef typename super::StringType StringType;
 		public:
 			ToraToken() : m_block_context(BlkCtx::NONE), super() {};
 			ToraToken( ANTLR_UINT32 type) : super(type), m_block_context(BlkCtx::NONE)  {};
@@ -99,6 +127,14 @@ namespace Antlr3BackendImpl {
 
 			ToraToken& operator=( const ToraToken& other ) { super::operator=(other); m_block_context = other.m_block_context; return *this; };
 
+			StringType toString() const
+			{
+				StringType m_txt;				
+				m_txt = super::getText();
+				//m_txt += "[" + std::to_string(super::UserData.identifierClass) + "]";
+				return m_txt;
+			}
+			
 			void setBlockContext(BlkCtx::BlockContextEnum bc) { m_block_context = bc; }
 			BlkCtx::BlockContextEnum getBlockContext() const { return m_block_context; }
 
@@ -108,6 +144,55 @@ namespace Antlr3BackendImpl {
 
 		typedef ToraToken CommonTokenType;
 
+		class ToraTree : public antlr3::CommonTree<ImplTraits>
+		{
+			typedef antlr3::CommonTree<ImplTraits> super;
+			typedef typename super::StringType StringType;
+		public:
+			ToraTree() : super() {}
+			ToraTree( const CommonTokenType* token ) : super(token) {}
+			ToraTree( const ToraTree* token ) : super(token) {}
+			ToraTree( const super* token ) : super(token) {}
+			ToraTree( const ToraTree& ctree ) : super(ctree) {}
+
+			StringType toStringTree()
+			{
+				StringType retval;
+				StringType type = "[" + std::to_string(super::UserData.identifierClass) + "]";
+				if( this->m_children.empty() )
+					return	this->toString() + type;
+
+				/* Need a new string with nothing at all in it.
+				 */
+				if(this->isNilNode() == false)
+				{
+					retval.append("(");
+					retval.append(this->toString());
+					retval.append(type);
+					retval.append(" ");
+				}
+
+				if	( !this->m_children.empty())
+				{
+					retval.append( this->m_children.front()->toStringTree());
+					for (auto i = std::next(this->m_children.begin()); i != this->m_children.end(); ++i)
+					{
+						retval.append(" ");
+						retval.append((*i)->toStringTree());
+					}
+				}
+
+				if	(this->isNilNode() == false)
+				{
+					retval.append(")");
+				}
+				return  retval;
+			}
+
+		};
+
+		//typedef ToraTree TreeType;
+		
 		//Similarly, if you want to override the nextToken function. write a class that
 		//derives from antlr3::TokenSource and override the nextToken function. But name the class
 		//as TokenSourceType
@@ -211,7 +296,13 @@ namespace Antlr3BackendImpl
 	typedef PLSQLTraits PLSQLParser_SQLPLUSParserTraits;	
 	typedef PLSQLTraits PLSQLParser_PLSQL_DMLParser_PLSQLKeysTraits;
 	typedef PLSQLTraits PLSQLParser_PLSQL_DMLParser_PLSQLCommonsTraits;
-	
+
+	typedef antlr3::Traits<OracleDMLLexer, OracleDML, UserTraits> OracleSQLParserTraits;
+	typedef OracleSQLParserTraits OracleDMLLexerTraits;
+	typedef OracleSQLParserTraits OracleDMLTraits;
+	typedef OracleSQLParserTraits OracleDML_OracleDMLCommonsTraits;
+	typedef OracleSQLParserTraits OracleDML_OracleDMLKeysTraits;
+  
 	template<class CommonTokenType>
 	inline bool isTableAlias(CommonTokenType *LT1, CommonTokenType *LT2) {
 		static const std::string wPARTITION("PARTITION");
@@ -225,9 +316,8 @@ namespace Antlr3BackendImpl
 		static const std::string wRIGHT("RIGHT");
 		static const std::string wOUTER("OUTER");
 
-		PLSQLTraits::StringType lt1 = LT1->getText();
-		PLSQLTraits::StringType lt2 = "";
-		//std::transform(lt1.begin(), lt1.end(), lt1.begin(), ::toupper);
+		auto lt1 = LT1->getText();
+		std::string lt2;
         
 		if ( LT2 && LT2->getText() != ""){
 			lt2 = LT2->getText();
@@ -313,8 +403,8 @@ namespace Antlr3BackendImpl
 		return false;
 	}
 
-	//template<class StringType>     
-	inline bool enablesOverClause(PLSQLTraits::StringType const& originalFunctionName) {
+	template<class StringType>     
+	inline bool enablesOverClause(StringType const& originalFunctionName) {
 		static const std::string wREGR("REGR_");
 		static const std::string wSTDDEV("STDDEV");
 		static const std::string wVAR("VAR_");
@@ -357,16 +447,25 @@ namespace Antlr3BackendImpl
 		return false;
 	}
 
-	//template<class StringType>
-	inline bool equalsIgnoreCase(PLSQLTraits::StringType const& s1, const char* s2)        
+	template<class StringType>
+	inline bool equalsIgnoreCase(StringType const& s1, const char* s2)        
 	{
 		// return !strcasecmp(s1.c_str(), s2);
 		// StringType s1U(s1);
 		// std::transform(s1U.begin(), s1U.end(), s1U.begin(), ::toupper);
 		// return s1U == s2;
-		PLSQLTraits::StringType ST2(s2);
+		StringType ST2(s2);
 		return boost::iequals(s1, ST2);
 	}
+
+	template<class StringType>  
+	inline StringType toUpper(StringType const& s)
+	{
+		StringType sU(s);
+		std::transform(sU.begin(), sU.end(), sU.begin(), ::toupper);
+		return sU;
+	}
+
 }
 
 #endif

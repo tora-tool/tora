@@ -1,10 +1,13 @@
 #include "utils.hpp"
 #include <stdio.h>
 
+#define _POSIX_C_SOURCE 200112L
+
 #if defined __linux
 #  include <sys/mman.h>
 #  define DIRDELIM '/'
 #  include <dirent.h>
+#  include <unistd.h>
 #elif __MINGW32__
 #  include <iostream>
 #  include <fstream>
@@ -30,7 +33,7 @@
 #  include "direntw.h"
 #endif
 
-extern void parseFile(const char* fName, int fd);
+extern bool parseFile(const char* fName, int fd);
 
 namespace Utils
 {
@@ -65,8 +68,22 @@ namespace Utils
 		string retval(txt);
 		munmap( (void*)txt, sb.st_size);
 		return retval;
+#elif defined __CYGWIN__
+		// ifstream ifs(::fdopen(fd, "r"));
+		// ifstream::pos_type fileSize = ifs.tellg();
+		// ifs.seekg(0, ios::beg);
+
+		// stringstream sstr;
+		// sstr << ifs.rdbuf();
+		// return sstr.str();		
 #else
-		return "";
+		ifstream ifs(::_fdopen(fd, "r"));
+		ifstream::pos_type fileSize = ifs.tellg();
+		ifs.seekg(0, ios::beg);
+
+		stringstream sstr;
+		sstr << ifs.rdbuf();
+		return sstr.str();
 #endif
 	}
 
@@ -163,4 +180,50 @@ namespace Utils
 		}
 #endif
 	}
+
 }
+
+#if defined _MSC_VER || defined __CYGWIN__
+
+#if defined _WIN32 || defined __WIN32__ || defined __EMX__ || defined __DJGPP__
+/* Win32, OS/2, DOS */
+# define HAS_DEVICE(P) \
+((((P)[0] >= 'A' && (P)[0] <= 'Z') || ((P)[0] >= 'a' && (P)[0] <= 'z')) \
+&& (P)[1] == ':')
+# define FILESYSTEM_PREFIX_LEN(P) (HAS_DEVICE (P) ? 2 : 0)
+# define ISSLASH(C) ((C) == '/' || (C) == '\\')
+#endif
+
+#ifndef FILESYSTEM_PREFIX_LEN
+# define FILESYSTEM_PREFIX_LEN(Filename) 0
+#endif
+
+#ifndef ISSLASH
+# define ISSLASH(C) ((C) == '/')
+#endif
+
+char *basename(char const *name)
+{
+	char const *base = name += FILESYSTEM_PREFIX_LEN(name);
+	int all_slashes = 1;
+	char const *p;
+
+	for (p = name; *p; p++)
+	{
+		if (ISSLASH(*p))
+			base = p + 1;
+		else
+			all_slashes = 0;
+	}
+
+	/* If NAME is all slashes, arrange to return `/'. */
+	if (*base == '\0' && ISSLASH(*name) && all_slashes)
+		--base;
+
+	/* Make sure the last byte is not a slash. */
+	//assert(all_slashes || !ISSLASH(*(p - 1)));
+
+	return (char *)base;
+}
+
+#endif

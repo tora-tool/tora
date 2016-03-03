@@ -31,8 +31,8 @@ INCLUDE_DIRECTORIES(
   ${CMAKE_CURRENT_SOURCE_DIR}/precompiled
   ${CMAKE_BINARY_DIR}
   ${CMAKE_SOURCE_DIR}/extlibs/trotl/src
-  ${CMAKE_SOURCE_DIR}/extlibs/libantlr3cpp-3.5.2/include
   ${CMAKE_SOURCE_DIR}/extlibs/libermodel
+  ${CMAKE_SOURCE_DIR}/extlibs/libantlr3cpp-3.5.3/include
   ${QT_INCLUDES}  
   )
 
@@ -559,13 +559,22 @@ SET(TORA_SOURCES
   parsing/tosyntaxanalyzermysql.cpp
   parsing/tosyntaxanalyzeroracle.cpp
   parsing/PLSQLGuiLexer.cc
-  parsing/tsqllexeroracle2.cc  
+  parsing/tsqllexeroracle2.cc
   parsing/MySQLGuiLexer.cc
   parsing/tsqllexermysql.cc
   parsing/MySQLLexer.cc
   parsing/tolexeroracleapis.cpp
   parsing/persistenttrie.cpp
-  
+  parsing/OracleDML.cc
+  parsing/OracleDML.hpp
+  parsing/OracleDML_OracleDMLCommons.cc
+  parsing/OracleDML_OracleDMLCommons.hpp
+  parsing/OracleDML_OracleDMLKeys.cc
+  parsing/OracleDML_OracleDMLKeys.hpp
+  parsing/OracleDMLLexer.cc
+  parsing/OracleDMLLexer.hpp
+  parsing/OracleDMLTraits.hpp
+
   docklets/toviewconnections.cpp
   docklets/toviewdirectory.cpp
 
@@ -661,10 +670,27 @@ IF(ORACLE_FOUND)
 ENDIF(ORACLE_FOUND)
 
 IF (USE_EXPERIMENTAL)
-  LIST (APPEND TORA_SOURCES tools/toscript.cpp)
-  LIST (APPEND TORA_SOURCES docklets/tocodeoutline.cpp parsing/OracleSQLParser.cc parsing/OracleSQLLexer.cc parsing/tsqlparseoracle.cc)
-  LIST (APPEND TORA_SOURCES docklets/toquerymodel.cpp docklets/toastwalk.cpp)
-  LIST (APPEND TORA_SOURCES tools/toer.cpp)
+  LIST(APPEND TORA_SOURCES tools/toscript.cpp)
+  LIST(APPEND TORA_SOURCES
+    docklets/tocodeoutline.cpp
+    parsing/OraclePLSQLLexer.cc
+    parsing/OraclePLSQLParser.cc
+    parsing/OracleSQLLexer.cc
+    parsing/OracleSQLParser.cc
+    parsing/error_handler.cc
+    parsing/tplsqlparseoracle.cc
+    parsing/tsqllexeroracle.cc
+    parsing/tsqlparseoracle.cc
+    parsing/tsqlparseoracle2.cc
+    )
+  LIST (APPEND TORA_SOURCES
+    docklets/toquerymodel.cpp
+    docklets/toastwalk.cpp
+    )
+  LIST (APPEND TORA_SOURCES
+    tools/toer.cpp
+    widgets/toresultdrawing.cpp
+    )
   LIST (APPEND TORA_SOURCES tools/tosandboxtool.cpp)
 ENDIF (USE_EXPERIMENTAL)
 
@@ -1126,6 +1152,34 @@ IF(PCH_DEFINED)
   ADD_PRECOMPILED_HEADER("test6" ${PCH_HEADER} FORCEINCLUDE)
 ENDIF(PCH_DEFINED)
 ENDIF(TORA_DEBUG AND TEST_APP6)
+
+IF(TORA_DEBUG AND TEST_APP7)
+# test7
+ADD_EXECUTABLE("test7" ${GUI_TYPE}
+  tests/test7.cpp
+  parsing/tsqlparse.cpp
+  parsing/OracleDML.cc
+  parsing/OracleDML.hpp
+  parsing/OracleDML_OracleDMLCommons.cc
+  parsing/OracleDML_OracleDMLCommons.hpp
+  parsing/OracleDML_OracleDMLKeys.cc
+  parsing/OracleDML_OracleDMLKeys.hpp
+  parsing/OracleDMLLexer.cc
+  parsing/OracleDMLLexer.hpp
+  parsing/OracleDMLTraits.hpp
+  parsing/tsqlparseoracle2.cc
+  parsing/OracleSQLLexer.cc
+  parsing/OracleSQLParser.cc
+  parsing/tsqlparseoracle.cc
+  ${PCH_SOURCE}
+  )
+TARGET_LINK_LIBRARIES("test7" ${TORA_LIBS})
+SET_TARGET_PROPERTIES("test7" PROPERTIES ENABLE_EXPORTS ON)
+ADD_DEPENDENCIES("test7" revisiontag)
+IF(PCH_DEFINED)
+  ADD_PRECOMPILED_HEADER("test7" ${PCH_HEADER} FORCEINCLUDE)
+ENDIF(PCH_DEFINED)
+ENDIF(TORA_DEBUG AND TEST_APP7)
 
 ################################################################################
 #                       Connection provider libraries                          #
