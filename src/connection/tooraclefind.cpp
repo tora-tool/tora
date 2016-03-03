@@ -60,7 +60,7 @@
 #   define PROVIDER_LIB "poracle.dll"
 #   define TROTL_LIB    "trotl.dll"
 #elif defined(Q_OS_MAC)
-#   define PROVIDER_LIB "libporacle.so"
+#   define PROVIDER_LIB "../PlugIns/libporacle.so"
 #   define TROTL_LIB    "libtrotl.dylib"
 #endif
 
@@ -347,18 +347,53 @@ void toOracleInstantFinder::loadLib(ConnectionProvirerParams const &params)
     else
         TLOG(5, toNoDecorator, __HERE__) << "Failed" << std::endl;
 #elif defined(Q_OS_MAC)
-    // TODO (symlinks) of set DYLD_LIBRARY_PATH to Oracle instant client home
-    // ln -sf $ORACLE_HOME/libclntsh.dylib.11 ./
-    // ln -sf $ORACLE_HOME/libnnz11.dylib     ./
-    // So far libtrotl is static and compiled into poracle.so, env. variable has to be set.
-    // export DYLD_LIBRARY_PATH=/Users/user115674/Documents/instantclient_11_2
-    // to load PROVIDER_LIB
-    // poracle.so should be in the same diretory as TOra binary
+    // There is cyclic dependency between libclntsh and libnnz11, so neither of them can be loaded via dlopen
+    // Both libraries have useless libary search path compiled in them:
+    //     /ade/b/3071542110/oracle/rdbms/lib/libclntsh.dylib.11.1
+    // This can be solved by:
+    // - set DYLD_LIBRARY_PATH to Oracle instant client home, but this does not work with newest OS X "El Capitan"
+    // - fix Instantclient libs by using fix_oralib.rb. This needs Xcode command line tools to be installed: install_name_tool
+    // - copy Instantclient into ~/Library/Frameworks/instantclient.framework (the framework suffix is mandatory)
+    //   this also requires fix_oralib.rb
+    // - "copy" Instantclient libs into users ~/lib
+    //   ln -sf $ORACLE_HOME/libclntsh.dylib.11 ~/lib/
+    //   ln -sf $ORACLE_HOME/libnnz11.dylib     ~/lib/
+    // The last option is used.
+    // So far libtrotl is static and compiled into poracle.so
+    int retval;
+    QDir cwdDir(QDir::currentPath());
+    QDir userLib(QDir::homePath() + QDir::separator() + "lib");
+    if ( userLib.mkpath(userLib.absolutePath()))
+      TLOG(5, toNoDecorator, __HERE__) << "mkdir -p " << userLib.absolutePath() << std::endl;
+    else
+      throw QString("Could not create: %1").arg(userLib.absolutePath());
+
+    if ( !QDir::setCurrent(userLib.absolutePath()))
+      throw QString("Could change cwd: %1").arg(userLib.absolutePath());
+
+    QDir pathDir(params.value("PATH").toString());
+    QFileInfoList libraries = pathDir.entryInfoList( QStringList() << "libclntsh*.dylib*" << "libnnz*.dylib*", QDir::Files );
+    foreach(QFileInfo const& library, libraries)
+    {
+      if (library.isFile())
+      {
+	TLOG(5, toNoDecorator, __HERE__) << "Re-creating symlink:" << library.absoluteFilePath() << std::endl;
+	QFileInfo targetLibrary(userLib, library.fileName());
+	if (targetLibrary.isSymLink())
+	{
+	  TLOG(5, toNoDecorator, __HERE__) << "rm -f " << targetLibrary.fileName() << std::endl;
+	  retval = unlink(targetLibrary.fileName().toStdString().c_str());
+	}
+	TLOG(5, toNoDecorator, __HERE__) << "ln -sf " << library.absoluteFilePath() << ' ' << targetLibrary.fileName() << std::endl;
+	retval = symlink(library.absoluteFilePath().toStdString().c_str(), targetLibrary.fileName().toStdString().c_str());
+      }
+    }
+
     QDir installDir(QCoreApplication::applicationDirPath());
     TLOG(5, toNoDecorator, __HERE__) << "Location: " << QCoreApplication::applicationDirPath() << std::endl;
-    QDir cwdDir(QDir::currentPath());
+
     if( installDir != cwdDir)
-      installDir.cd(".");
+      QDir::setCurrent(installDir.absolutePath());
 
     TLOG(5, toNoDecorator, __HERE__) << "Loading: " PROVIDER_LIB << std::endl;
     TLOG(5, toNoDecorator, __HERE__) << "From: " << QDir::currentPath() << std::endl;
@@ -368,7 +403,7 @@ void toOracleInstantFinder::loadLib(ConnectionProvirerParams const &params)
     else
       TLOG(5, toNoDecorator, __HERE__) << "Failed" << std::endl;
 
-    cwdDir.cd(".");
+    QDir::setCurrent(cwdDir.absolutePath());
 #else
     /* Steps to load libclntsh.so on Linux
     All these approaches fail:
@@ -383,7 +418,7 @@ void toOracleInstantFinder::loadLib(ConnectionProvirerParams const &params)
       This succeeds, but further call to OCIEnvInit fails with: ORA-01804.
       For some courious reason Oracle client thinks, that it is a thick one and searches for "rdbms" subdir.
 
-    This approach works correctly:
+     This approach works correctly:
     - libtrotl.so has compiled in this library search path: "$ORIGIN/instantclient:$$ORIGIN/instantclient".
     - libtrotl.so has dependency on libclntsh.so.11.1.
     - ln -sf /opt/instantclient_11_1 ./instantclient
