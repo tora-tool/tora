@@ -194,24 +194,24 @@ QString toSQL::string(const QString &name, const toConnection &conn)
     {
     	if (SessionProvider == "Any")
     		quit = true;
-    	QString *sql = NULL;
-    	QString SqlVersion = "0000";
+    	QString retval;
+    	QString SqlVersion = defaultVersion;
     	std::list<version> &cl = (*i).second.Versions;
     	for (std::list<version>::iterator j = cl.begin(); j != cl.end(); j++)
     	{
-    		if ((*j).Provider != SessionProvider)
+    		if (j->Provider != SessionProvider)
     			continue;
 
-    		QString &QueryVersion = (*j).Version;
-    		QString &QueryProvider = (*j).Provider;
-    		if (SqlVersion < QueryVersion && QueryVersion <= SessionVersion)
+    		QString const& QueryVersion = j->Version;
+    		QString const& QueryProvider = j->Provider;
+    		if (SqlVersion <= QueryVersion && QueryVersion <= SessionVersion)
     		{
-    			sql = &(*j).SQL;
+    			retval = j->SQL;
     			SqlVersion = QueryVersion;
     		}
     	}
-    	if (sql)
-    		return *sql;
+    	if (!retval.isEmpty())
+    		return retval;
 
     	SessionProvider = "Any";
     }
