@@ -1,0 +1,7 @@
+tora for Debian
+---------------
+
+This version contains only the qt3 database interface. Neither the
+native MySQL nor the native Oracle interface is built in.
+
+ -- Michael Meskes <meskes@debian.org>, Fri, 25 Jan 2002 09:37:32 +0100

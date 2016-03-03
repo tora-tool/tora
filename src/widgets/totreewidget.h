@@ -324,6 +324,7 @@ class toTreeWidget : public QTreeWidget
          */
         toTreeWidgetItem *toFindItem(const QString &str);
 
+        using QTreeWidget::selectionChanged;
     signals:
         /**
          * This signal is emitted whenever the set of selected items has

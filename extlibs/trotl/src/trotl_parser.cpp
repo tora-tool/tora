@@ -35,6 +35,10 @@
 #include "trotl_common.h"
 #include "trotl_parser.h"
 
+#ifdef __clang__
+#pragma GCC diagnostic ignored "-Wunused-local-typedefs"
+#endif
+
 #include <boost/bind.hpp>
 //#include <boost/spirit.hpp>
 #include <boost/spirit/include/classic.hpp>

@@ -276,14 +276,14 @@ namespace Util {
   template <class Base,
     typename CtorTypeList=Loki::NullType,
     class ClassIdKey=DefaultIdKeyType>
-    class GenericFactoryImpl;
+    struct GenericFactoryImpl;
 
   // GenericFactory class template, which uses specializations of the
   // GenericFactoryImpl class.
   template <class Base,
     typename CtorTypeList=Loki::NullType,
     typename ClassIdKey=DefaultIdKeyType>
-    class GenericFactory : public GenericFactoryImpl<Base, CtorTypeList, ClassIdKey>
+    struct GenericFactory : public GenericFactoryImpl<Base, CtorTypeList, ClassIdKey>
     {
       public:
 

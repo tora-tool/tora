@@ -62,10 +62,11 @@
 #   include <windows.h>
 #endif
 
-#if defined(Q_OS_MACX)
+#if defined(Q_OS_MAC)
 #include <sys/param.h>
 //#include <CoreServices/CoreServices.h>
-#endif // Q_OS_MACX
+#include <dlfcn.h>
+#endif // Q_OS_MAC
 
 #if defined(__linux__)
 #include <sys/prctl.h>
@@ -894,6 +895,18 @@ namespace Utils
             return false;
 #endif
 
+#ifdef Q_OS_MAC
+	TLOG(5, toDecorator, __HERE__) << "Validating:" << path.absoluteFilePath() << std::endl;
+	bool retval = dlopen_preflight(path.absoluteFilePath().toStdString().c_str());
+	if (retval)
+	  TLOG(5, toNoDecorator, __HERE__) << "dlopen_preflight:" << path.absoluteFilePath() << " OK" << std::endl;
+	else
+	  TLOG(5, toNoDecorator, __HERE__) << "dlopen_preflight:" << path.absoluteFilePath() << std::endl
+					   << '\t' << dlerror() << std::endl;
+	// return OK regarless of dlopen_preflight return
+	// it returns OK only if fix_oralib.rb was run, or DYLD_LIBRARY_PATH is set
+	return true;
+#endif
         return true;
     }
 

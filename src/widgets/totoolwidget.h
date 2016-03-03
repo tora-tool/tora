@@ -133,7 +133,7 @@ class toToolWidget : public QWidget
 
         QAction *activationAction();
 
-#ifdef TORA3_GRAPH
+#ifdef TORA3_SESSION
         /** Export data to a map.
          * @param data A map that can be used to recreate the data of a chart.
          * @param prefix Prefix to add to the map.

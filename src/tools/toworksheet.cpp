@@ -45,7 +45,7 @@
 #include "core/toconnectionsub.h"
 #include "core/toconnectiontraits.h"
 #include "widgets/toparamget.h"
-////obsolete #include "widgets/toresultbar.h"
+#include "widgets/toresultbar.h"
 #include "widgets/toresultschema.h"
 #include "widgets/toresultcols.h"
 #include "widgets/toresultitem.h"
@@ -504,7 +504,7 @@ void toWorksheet::setup(bool autoLoad)
     Statistics = new toResultStats(true, splitter);
     Statistics->setRelatedAction(statisticAct);
 
-#ifdef TORA3_GRAPH
+#ifdef TORA_EXPERIMENTAL
     WaitChart = new toResultBar(splitter);
     try
     {
@@ -517,7 +517,9 @@ void toWorksheet::setup(bool autoLoad)
     WaitChart->setTitle(tr("Wait states"));
     WaitChart->setYPostfix(QString::fromLatin1("ms/s"));
     WaitChart->setSamples(-1);
+#ifdef TORA3_GRAPH
     WaitChart->start();
+#endif
     // TODO: there is no method toResult::changeParams(QString const &, ...)
     // it was renamed to refreshWithParams(toQueryParams const&)
     connect(Statistics, SIGNAL(sessionChanged(const QString &)),
@@ -535,7 +537,9 @@ void toWorksheet::setup(bool autoLoad)
     IOChart->setTitle(tr("I/O"));
     IOChart->setYPostfix(tr("blocks/s"));
     IOChart->setSamples(-1);
+#ifdef TORA3_GRAPH
     IOChart->start();
+#endif
     // TODO: there is no method toResult::changeParams(QString const &, ...)
     // it was renamed to refreshWithParams(toQueryParams const&)
     connect(Statistics, SIGNAL(sessionChanged(const QString &)),
@@ -1994,7 +1998,7 @@ void toWorksheet::slotPoll(void)
 void toWorksheet::slotSaveStatistics(void)
 {
     std::map<QString, QString> stmt;
-#ifdef TORA3_GRAPH
+#ifdef TORA3_SESSION
     Statistics->exportData(stmt, "Stat");
     IOChart->exportData(stmt, "IO");
     WaitChart->exportData(stmt, "Wait");
@@ -2009,7 +2013,7 @@ void toWorksheet::slotSaveStatistics(void)
 #endif
 }
 
-#ifdef TORA3_GRAPH
+#ifdef TORA3_SESSION
 void toWorksheet::exportData(std::map<QString, QString> &data, const QString &prefix)
 {
     Editor->exportData(data, prefix + ":Edit");

@@ -38,7 +38,12 @@
 #include <vector>
 #include <map>
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-local-typedef"
+
 #include <boost/ptr_container/ptr_vector.hpp>
+
+#pragma clang diagnostic pop
 
 #include "trotl_export.h"
 #include "trotl_var.h"

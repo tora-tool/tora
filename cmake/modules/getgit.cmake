@@ -62,7 +62,7 @@ string(REGEX REPLACE "^v[0-9]+\\.([0-9a-z]+).*" "\\1" GITVERSION_MINOR "${GITVER
 string(REGEX REPLACE "^v[0-9]+\\.[0-9a-z]+-([0-9]+).*" "\\1" GITVERSION_COUNT "${GITVERSION}")
 string(REGEX REPLACE "^v[0-9]+\\.[0-9a-z]+-[0-9]+-([0-9a-z]*).*" "\\1" GITVERSION_SHA1 "${GITVERSION}")
 string(REGEX REPLACE "^v[0-9]+\\.[0-9a-z]+-[0-9]+-[0-9a-z]+" "" GITVERSION_DIRTY "${GITVERSION}")
-string(TIMESTAMP BUILD_DATE)
+string(TIMESTAMP BUILD_DATE "%Y-%m-%d")
 set(GITVERSION_SHORT "${GITVERSION_MAJOR}.${GITVERSION_MINOR}")
 
 IF (USE_EXPERIMENTAL)
