@@ -810,8 +810,13 @@ IF(USE_EXPERIMENTAL)
   LIST(APPEND TORA_LIBS antlr3c)
 ENDIF(USE_EXPERIMENTAL)
 
-SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
-SET(CMAKE_INSTALL_RPATH "$ORIGIN/:$$ORIGIN/")
+IF(UNIX AND NOT APPLE)
+  SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+  SET(CMAKE_INSTALL_RPATH "$ORIGIN/:$$ORIGIN/")
+ELIF()
+  #SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+  #SET(CMAKE_INSTALL_RPATH "Plugins/")
+ENDIF()
 
 # The main executable
 ADD_EXECUTABLE(${EXE_NAME} ${GUI_TYPE}
@@ -1188,21 +1193,41 @@ ENDIF(TORA_DEBUG AND TEST_APP7)
 ADD_DEFINITIONS("-DTROTL_DLL")
 IF(ORACLE_FOUND)
   SET(PROVIDER_ORACLE "poracle")
-  ADD_LIBRARY(${PROVIDER_ORACLE} SHARED 
+  ADD_LIBRARY(${PROVIDER_ORACLE} MODULE
   	"connection/tooracleprovider.cpp" 
   	"connection/tooracletraits.cpp" 
 	"connection/tooracleconnection.cpp" 
 	"connection/tooraclequery.cpp")
+  IF(APPLE AND TORA_DEBUG)
+    SET(STACK_LIB "stack_lib")
+  ENDIF()
   IF(QT5_BUILD)      
-    TARGET_LINK_LIBRARIES(${PROVIDER_ORACLE} ${ORACLE_LIBRARIES} Qt5::Core Qt5::Widgets ${TORA_LIB} "trotl")
+    TARGET_LINK_LIBRARIES(${PROVIDER_ORACLE} ${ORACLE_LIBRARIES} Qt5::Core Qt5::Widgets ${TORA_LIB} ${TROTL_LIB_FLAGS} "trotl" ${STACK_LIB})
   ELSE()
-    TARGET_LINK_LIBRARIES(${PROVIDER_ORACLE} ${ORACLE_LIBRARIES} ${QT_LIBRARIES} ${TORA_LIB} "trotl")    
+    TARGET_LINK_LIBRARIES(${PROVIDER_ORACLE} ${ORACLE_LIBRARIES} ${QT_LIBRARIES} ${TORA_LIB} ${TROTL_LIB_FLAGS} "trotl" ${STACK_LIB})
   ENDIF()
   IF(DEFINED TORA_LIB)
     ADD_DEPENDENCIES(${PROVIDER_ORACLE} ${TORA_LIB})
   ELSE()
     ADD_DEPENDENCIES(${PROVIDER_ORACLE} ${EXE_NAME})
   ENDIF()
+
+  IF(APPLE)
+    get_target_property(existing_link_flags ${PROVIDER_ORACLE} LINK_FLAGS)
+    if(existing_link_flags)
+      # TODO resolve abs path to TOra
+      # set(new_link_flags " ${existing_link_flags} -bundle_loader ${EXE_NAME} ")
+      set(new_link_flags "${existing_link_flags} -undefined dynamic_lookup ")
+    else()
+      # TODO resolve abs path to TOra
+      # set(new_link_flags " -bundle_loader ${EXE_NAME} ")
+      set(new_link_flags " -undefined dynamic_lookup ")
+    endif()
+  set_target_properties(${PROVIDER_ORACLE} PROPERTIES LINK_FLAGS ${new_link_flags})
+  set_target_properties(${PROVIDER_ORACLE} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/src/TOra.app/Contents/PlugIns)
+  MESSAGE(STATUS "${PROVIDER_ORACLE} ${new_link_flags}")
+  ENDIF(APPLE)
+
   MESSAGE(STATUS "${PROVIDER_ORACLE} ${ORACLE_LIBRARIES} ${QT_LIBRARIES} ${TORA_LIB} trotl") 
 ENDIF(ORACLE_FOUND)
 
