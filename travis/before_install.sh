@@ -11,6 +11,7 @@ wget http://petr.insw.cz/repo/oracle-instantclient12.1-devel_12.1.0.2.0-2_amd64.
 sudo dpkg -i *
 # nasty patch
 cd /home/travis/build/tora-tool/tora
-cat CMakeLists.txt | sed 's/VERSION 2.8.11/VERSION 2.8.9/' | sed 's/CMAKE_POLICY/#CMAKE_POLICY/' > /tmp/cmake
+sed -i -e 's/VERSION 2.8.11/VERSION 2.8.9/g;s/CMAKE_POLICY/#CMAKE_POLICY/' CMakeLists.txt
+sed -i -e 's/VERSION 2.8.11/VERSION 2.8.9/g;s/CMAKE_POLICY/#CMAKE_POLICY/' extlibs/trotl/CMakeLists.txt
 mv /tmp/cmake CMakeLists.txt
 echo Patched cmake file
