@@ -60,7 +60,7 @@
 #   define PROVIDER_LIB "poracle.dll"
 #   define TROTL_LIB    "trotl.dll"
 #elif defined(Q_OS_MAC)
-#   define PROVIDER_LIB "../PlugIns/libporacle.so"
+#   define PROVIDER_LIB "libporacle.so"
 #   define TROTL_LIB    "libtrotl.dylib"
 #endif
 
@@ -111,7 +111,7 @@ QSet<QString> const toOracleInstantFinder::m_paths = QSet<QString>()
         << QString::fromLatin1("/usr/lib/oracle/10.2.0.3/client/lib")
         << QString::fromLatin1("/opt/instantclient*")
         << QString::fromLatin1("/usr/lib")
-#elif  defined(Q_OS_WIN32)
+#elif defined(Q_OS_WIN32)
         << QString::fromLatin1("C:\\instantclient*")
         << QString::fromLatin1("D:\\instantclient*")
         << QString::fromLatin1("E:\\instantclient*")
@@ -119,6 +119,9 @@ QSet<QString> const toOracleInstantFinder::m_paths = QSet<QString>()
         << QString::fromLatin1("D:\\oracle\\instantclient*")
         << QString::fromLatin1("E:\\oracle\\instantclient*")
         << QString::fromLatin1("D:\\devel\\instantclient*")
+#elif defined(Q_OS_MAC)
+        << QString::fromLatin1("../PlugIns/")
+        << QString::fromLatin1("/opt/instantclient*")
 #endif
         << QDir::currentPath()
         ;
@@ -175,6 +178,9 @@ QList<toConnectionProviderFinder::ConnectionProvirerParams>  toOracleInstantFind
     QList<ConnectionProvirerParams> retval;
     QSet<QString> possibleOracleHomes;
     ConnectionProvirerParams ohome;
+
+    QDir cwdDir(QDir::currentPath());
+    QDir::setCurrent(QCoreApplication::applicationDirPath());
 
     do
     {
@@ -304,6 +310,7 @@ QList<toConnectionProviderFinder::ConnectionProvirerParams>  toOracleInstantFind
         }
     }
 
+    QDir::setCurrent(cwdDir.absolutePath());
     return retval;
 }
 
@@ -370,7 +377,7 @@ void toOracleInstantFinder::loadLib(ConnectionProvirerParams const &params)
 
     if ( !QDir::setCurrent(userLib.absolutePath()))
       throw QString("Could change cwd: %1").arg(userLib.absolutePath());
-
+#if 0  // If embedding instant client
     QDir pathDir(params.value("PATH").toString());
     QFileInfoList libraries = pathDir.entryInfoList( QStringList() << "libclntsh*.dylib*" << "libnnz*.dylib*", QDir::Files );
     foreach(QFileInfo const& library, libraries)
@@ -395,13 +402,22 @@ void toOracleInstantFinder::loadLib(ConnectionProvirerParams const &params)
     if( installDir != cwdDir)
       QDir::setCurrent(installDir.absolutePath());
 
+    TLOG(5, toNoDecorator, __HERE__) << "Loading: " << libPath.absoluteFilePath() << std::endl;
+    Utils::toLibrary::LHandle hmoduleOCI = Utils::toLibrary::loadLibrary(libPath);
+    if ( hmoduleOCI)
+        TLOG(5, toNoDecorator, __HERE__) << " OK" << std::endl;
+#else
+    //if embedding
+    //install_name_tool -change @rpath/libclntsh.dylib.11.1 @loader_path/libclntsh.dylib.11.1 libporacle.so
+#endif
+    QDir::setCurrent(QCoreApplication::applicationDirPath() + "/../PlugIns/");
     TLOG(5, toNoDecorator, __HERE__) << "Loading: " PROVIDER_LIB << std::endl;
     TLOG(5, toNoDecorator, __HERE__) << "From: " << QDir::currentPath() << std::endl;
     Utils::toLibrary::LHandle hmodulePOracle = Utils::toLibrary::loadLibrary(QFileInfo(PROVIDER_LIB));
     if ( hmodulePOracle)
-      TLOG(5, toNoDecorator, __HERE__) << "OK" << std::endl;
+      TLOG(5, toNoDecorator, __HERE__) << " OK" << std::endl;
     else
-      TLOG(5, toNoDecorator, __HERE__) << "Failed" << std::endl;
+      TLOG(5, toNoDecorator, __HERE__) << " Failed" << std::endl;
 
     QDir::setCurrent(cwdDir.absolutePath());
 #else
