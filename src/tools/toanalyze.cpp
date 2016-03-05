@@ -88,7 +88,7 @@ static toAnalyzeTool AnalyzeTool;
 static toSQL SQLListTablesMySQL("toAnalyze:ListTables",
                                 "show table status",
                                 "Get table statistics, first three columns and binds must be same",
-                                "4.1",
+                                "0401",
                                 "QMYSQL");
 static toSQL SQLListTables("toAnalyze:ListTables",
                            "select 'TABLE' \"Type\",\n"

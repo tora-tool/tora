@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef __QSQL_QUERY__
-#define __QSQL_QUERY__
+#pragma once
 
 #include "core/toquery.h"
 #include "core/toqueryimpl.h"
@@ -49,24 +48,24 @@ class qsqlQuery : public queryImpl
     public:
         qsqlQuery(toQueryAbstr *query, toQSqlConnectionSub *conn);
 
-        virtual ~qsqlQuery();
+        virtual ~qsqlQuery() override;
 
-        virtual void execute(void);
+        void execute(void) override;
 
-        virtual void execute(QString const&);
+        void execute(QString const&) override;
 
-        virtual void cancel(void);
+        void cancel(void) override;
 
-        virtual toQValue readValue(void);
+        toQValue readValue(void) override;
 
-        virtual bool eof(void);
+        bool eof(void) override;
 
-        virtual unsigned long rowsProcessed(void);
+        unsigned long rowsProcessed(void) override;
 
-        virtual unsigned columns(void);
+        unsigned columns(void) override;
 
-        virtual toQColumnDescriptionList describe(void);
-    private:
+        toQColumnDescriptionList describe(void) override;
+    protected:
         static toQColumnDescriptionList Describe(const QString &type, QSqlRecord record, int *order, unsigned int orderSize);
         static QString QueryParam(const QString &in, toQueryParams const &params, QList<QString> &extradata);
 
@@ -82,7 +81,5 @@ class qsqlQuery : public queryImpl
 
         void checkQuery(void);
 
-        QSqlQuery *createQuery(const QString &query);
+        virtual QSqlQuery *createQuery(const QString &query);
 };
-
-#endif

@@ -32,11 +32,10 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef __QMYSQL_QUERY__
-#define __QMYSQL_QUERY__
+#pragma once
 
 #include "core/toquery.h"
-#include "core/toqueryimpl.h"
+#include "connection/toqsqlquery.h"
 
 #include <QtSql/QSqlRecord>
 #include <QtCore/QList>
@@ -62,29 +61,29 @@ struct toQSqlProviderAggregate
     toQSqlProviderAggregate(aggregateType type, const QString &data = QString::null) : Type(type), Data(data) { }
 };
 
-class mysqlQuery : public queryImpl
+class mysqlQuery : public qsqlQuery
 {
     public:
-        mysqlQuery(toQuery *query, toQMySqlConnectionSub *conn);
+        mysqlQuery(toQueryAbstr *query, toQMySqlConnectionSub *conn);
 
         virtual ~mysqlQuery();
 
-        virtual void execute(void);
+        void execute(void) override;
 
-        virtual void execute(QString const&);
+        void execute(QString const&) override;
 
-        virtual void cancel(void);
+        void cancel(void) override;
 
-        virtual toQValue readValue(void);
+        toQValue readValue(void) override;
 
-        virtual bool eof(void);
+        bool eof(void) override;
 
-        virtual unsigned long rowsProcessed(void);
+        unsigned long rowsProcessed(void) override;
 
-        virtual unsigned columns(void);
+        unsigned columns(void) override;
 
-        virtual toQColumnDescriptionList describe(void);
-    private:
+        toQColumnDescriptionList describe(void) override;
+    protected:
         toQColumnDescriptionList describe(QSqlRecord record);
         QString stripBinds(const QString &in);
         void bindParam(QSqlQuery *q, toQueryParams const &params);
@@ -101,7 +100,5 @@ class mysqlQuery : public queryImpl
 
         QList<QString> extraData(const toQSqlProviderAggregate &aggr);
 
-        QSqlQuery *createQuery(const QString &query);
+        QSqlQuery *createQuery(const QString &query) override;
 };
-
-#endif

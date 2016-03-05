@@ -7,7 +7,7 @@
 #include <sqlenv.h>
 
 
-DB2Query::DB2Query(toQuery * parent, toConnectionSub * sub)
+DB2Query::DB2Query(toQueryAbstr * parent, toConnectionSub * sub)
     : toQuery::queryImpl(parent),
       m_canFetchMore(false)
 {

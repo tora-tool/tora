@@ -45,14 +45,14 @@ Util::RegisterInFactory<toBrowserIndexWidget, toBrowserWidgetFactory, toCache::C
 static toSQL SQLIndexColsMySQL3("toBrowser:IndexCols",
                                 "SHOW INDEX FROM `:f1<noquote>`.`:f2<noquote>`",
                                 "Display columns on which an index is built",
-                                "3.23",
+                                "0323",
                                 "QMYSQL");
 static toSQL SQLIndexColsMySQL("toBrowser:IndexCols",
                                "SELECT * FROM INFORMATION_SCHEMA.STATISTICS\n"
                                "    WHERE table_schema = :f1<char[101]>\n"
                                "        AND table_name = :f2<char[101]>\n",
                                "",
-                               "5.0",
+                               "0500",
                                "QMYSQL");
 static toSQL SQLIndexCols("toBrowser:IndexCols",
                           "SELECT a.Table_Name,a.Column_Name,a.Column_Length,a.Descend,b.Column_Expression \" \"\n"

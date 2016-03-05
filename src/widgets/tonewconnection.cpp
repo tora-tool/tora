@@ -398,7 +398,6 @@ void toNewConnection::changeProvider(int current)
 
         // Database provider Hosts
         Database->clear();
-        changeHost(); // will populate Databases combobox
 
         if (Provider->currentText().startsWith("Oracle")) // TODO add provider property
         {
@@ -416,13 +415,10 @@ void toNewConnection::changeProvider(int current)
         DefaultPort = ProviderRef.defaultConnection()["PORT"].toInt();
         DefaultHost = ProviderRef.defaultConnection()["HOST"];
         DefaultDatabase = ProviderRef.defaultConnection()["DB"];
-        if (Username->text().isEmpty())
-        	Username->setPlaceholderText(DefaultUser);
-        if (Host->currentText().isEmpty())
-        	Host->lineEdit()->setPlaceholderText(DefaultHost);
+        Username->setPlaceholderText(DefaultUser);
         Port->setValue(DefaultPort);
-        if (Database->currentText().isEmpty())
-        	Database->lineEdit()->setPlaceholderText(DefaultDatabase);
+        Host->lineEdit()->setPlaceholderText(DefaultHost);
+        Database->lineEdit()->setPlaceholderText(DefaultDatabase);
 
         if (Provider->currentText().startsWith(ORACLE_TNSCLIENT) || getCurrentProvider() == "QODBC")
         {

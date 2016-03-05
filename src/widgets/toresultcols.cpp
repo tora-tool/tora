@@ -91,7 +91,7 @@ static toSQL SQLTableCommentMySQL(
     "toResultCols:TableComment",
     "SHOW TABLE STATUS FROM `:f1<noquote>` LIKE :f2<char[100]>",
     "Display Table comment",
-    "4.1",
+    "0401",
     "QMYSQL");
 
 
@@ -405,14 +405,14 @@ static toSQL SQLTableColumnsMySql3(
     "toResultCols:ListCols",
     "SHOW FULL COLUMNS FROM :f1<noquote>",
     "",
-    "3.23",
+    "0323",
     "QMYSQL");
 
 static toSQL SQLTableColumnsMySql(
     "toResultCols:ListCols",
     "SELECT * FROM information_schema.columns WHERE table_schema = :f1<char[101]> AND table_name = :f2<char[101]>",
     "",
-    "5.0",
+    "0500",
     "QMYSQL");
 
 toResultCols::toResultCols(QWidget *parent, const char *name, toWFlags f)

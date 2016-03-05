@@ -89,14 +89,14 @@ static toSQL SQLSQLBody("toBrowser:CodeBody",
                              "select routine_definition from information_schema.routines\n"
                              " where routine_schema = :f1<char[101]> and routine_name = :f2<char[101]>",
                              "",
-                             "5.0",
+                             "0500",
                              "QMYSQL");*/
 
 // NOTE! MySQL query has an additional argument :f1 which should be set to 'FUNCTION' or 'PROCEDURE'!
 static toSQL SQLSQLBodyMySQL("toBrowser:CodeBody",
                              "show create :f3<noquote> `:f1<noquote>`.`:f2<noquote>`;",
                              "",
-                             "5.0",
+                             "0500",
                              "QMYSQL");
 
 static toSQL SQLSQLBodyTeradata("toBrowser:CodeBody",

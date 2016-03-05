@@ -111,7 +111,7 @@ static toSQL SQLTableIndexPG("toBrowserTableWidget:TableIndex",
 static toSQL SQLTableIndexMySQL3("toBrowserTableWidget:TableIndex",
                                  "SHOW INDEX FROM `:f1<noquote>`.`:tab<noquote>`",
                                  "",
-                                 "3.0",
+                                 "0300",
                                  "QMYSQL");
 static toSQL SQLTableIndexMySQL("toBrowserTableWidget:TableIndex",
                                 "SELECT * FROM INFORMATION_SCHEMA.STATISTICS\n"
@@ -309,12 +309,12 @@ static toSQL SQLTableTriggerMysql("toBrowser:TableTrigger",
                                   "       AND event_object_table = :f2<char[101]>\n"
                                   "   ORDER BY trigger_name\n",
                                   "",
-                                  "5.0",
+                                  "0500",
                                   "QMYSQL");
 static toSQL SQLTableInfoMysql("toBrowser:TableInformation",
                                "show table status from `:own<noquote>` like :tab",
                                "Display information about a table",
-                               "3.0",
+                               "0300",
                                "QMYSQL");
 static toSQL SQLTableInfo("toBrowser:TableInformation",
                           "SELECT *\n"

@@ -44,31 +44,31 @@ static toSQL SQLVersion("toQSqlConnection:Version",
                         "SHOW VARIABLES LIKE 'version'",
                         "Show version of database, "
                         "",
-                        "3.0",
+                        "",
                         "QMYSQL");
 
 static toSQL SQLListDatabases("toQSqlConnection:ListDatabases",
                               "show databases where `Database` = :f1<quote> or :f1<quote> = ''",
                               "List the available databases for a mysql connection",
-                              "3.0",
+                              "0300",
                               "QMYSQL");
 
 static toSQL SQLListObjectsDatabase("toQSqlConnection:ListObjectsDatabase",
                                     "show table status from :f1<noquote> where `Name` = :f2<quote> or :f2<quote> = ''",
                                     "Get the available tables for a specific database (MySQL specific, won't work for anything else)",
-                                    "3.0",
+                                    "0300",
                                     "QMYSQL");
 
 static toSQL SQLListObjects("toQSqlConnection:ListObjects",
                             "show tables",
                             "Get the available tables for a connection",
-                            "3.0",
+                            "0300",
                             "QMYSQL");
 
 static toSQL SQLConnectionID("toQSqlConnection:ConnectionID",
                              "SELECT connection_id()",
                              "Get a connection ID for a session",
-                             "3.23",
+                             "",
                              "QMYSQL");
 
 toQMySqlConnectionImpl::toQMySqlConnectionImpl(toConnection &conn)
@@ -127,7 +127,7 @@ void toQMySqlConnectionImpl::closeConnection(toConnectionSub *)
 
 }
 
-queryImpl* toQMySqlConnectionSub::createQuery(toQuery *query)
+queryImpl* toQMySqlConnectionSub::createQuery(toQueryAbstr *query)
 {
     return new mysqlQuery(query, this);
 }

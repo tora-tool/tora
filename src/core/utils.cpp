@@ -172,7 +172,7 @@ namespace Utils
     static toSQL SQLUserNamesMySQL(toSQL::TOSQL_USERLIST,
                                    "SHOW DATABASES",
                                    "List users in the database",
-                                   "3.0",
+                                   "0300",
                                    "QMYSQL");
 
     static toSQL SQLUserNames(toSQL::TOSQL_USERLIST,
@@ -343,7 +343,7 @@ namespace Utils
     static toSQL SQLNowMySQL("Global:Now",
                              "SELECT now()",
                              "Get current date/time from database",
-                             "3.0",
+                             "0300",
                              "QMYSQL");
     static toSQL SQLNow("Global:Now",
                         "SELECT TO_CHAR(SYSDATE) FROM sys.DUAL",

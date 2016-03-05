@@ -46,13 +46,13 @@
 static toSQL SQLCancel("toQSqlConnection:Cancel",
                        "KILL :f1",
                        "Cancel a connection given it's connection ID",
-                       "3.23",
+                       "0323",
                        "QMYSQL");
 
 static toSQL SQLCancelM5("toQSqlConnection:Cancel",
                          "KILL QUERY :f1",
                          "",
-                         "5.0",
+                         "0500",
                          "QMYSQL");
 
 QList<QString> mysqlQuery::extraData(const toQSqlProviderAggregate &aggr)
@@ -97,8 +97,8 @@ QSqlQuery* mysqlQuery::createQuery(const QString &sql)
     return ret;
 }
 
-mysqlQuery::mysqlQuery(toQuery *query, toQMySqlConnectionSub *conn)
-    : queryImpl(query)
+mysqlQuery::mysqlQuery(toQueryAbstr *query, toQMySqlConnectionSub *conn)
+    : qsqlQuery(query, conn)
     , Query(NULL)
     , Connection(conn)
     , CurrentColumn(0)

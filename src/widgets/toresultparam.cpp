@@ -61,13 +61,13 @@
 static toSQL SQLParamsMySQL("toResultParam:ListParam",
                             "show variables",
                             "List parameters available in the session",
-                            "4.0",
+                            "0400",
                             "QMYSQL");
 
 static toSQL SQLParamsGlobal("toResultParam:ListGlobal",
                              "show global variables",
                              "List parameters available in the database",
-                             "4.0",
+                             "0400",
                              "QMYSQL");
 
 static toSQL SQLParams("toResultParam:ListParam",

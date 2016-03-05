@@ -124,7 +124,7 @@ toResultModel::toResultModel(const QString &owner,
 
     beginInsertRows(QModelIndex(), 0, tmp.count());
     // Convert list of objects to appropriate type
-    toQuery::Row row;
+    toQueryAbstr::Row row;
     int counter = 1;
     for (QList<toCache::CacheEntry const*>::iterator i = tmp.begin(); i != tmp.end(); i++)
     {

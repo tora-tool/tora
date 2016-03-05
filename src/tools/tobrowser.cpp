@@ -696,7 +696,7 @@ static toSQL SQLListTablesMysql3("toBrowser:ListTables",
 static toSQL SQLListTablesMysql("toBrowser:ListTables",
                                 "SELECT TABLE_NAME TABLES\n"
                                 "    FROM information_schema.tables\n"
-                                "    WHERE table_schema = :f1<char[101]>",
+                                "    WHERE table_schema = :f1",
                                 "",
                                 "0500",
                                 "QMYSQL");
@@ -781,7 +781,7 @@ static toSQL SQLListViewTD("toBrowser:ListView",
 static toSQL SQLListIndexMySQL3("toBrowser:ListIndex",
                                 "SHOW INDEX FROM :f1<char[100]>",
                                 "List the available indexes in a schema",
-                                "3.23",
+                                "0323",
                                 "QMYSQL");
 static toSQL SQLListIndexMySQL("toBrowser:ListIndex",
                                "select distinct table_name \"Tables with Indexes\"\n"
@@ -789,7 +789,7 @@ static toSQL SQLListIndexMySQL("toBrowser:ListIndex",
                                "    where index_schema = :f1<char[100]>\n"
                                "    order by 1\n",
                                "",
-                               "5.0",
+                               "0500",
                                "QMYSQL");
 static toSQL SQLListIndex("toBrowser:ListIndex",
                           "SELECT Index_Name,NULL \" Ignore\",NULL \" Ignore2\",Tablespace_name \" Ignore2\"\n"
@@ -861,12 +861,12 @@ static toSQL SQLListDirectories("toBrowser:ListDirectories",
 static toSQL SQLMySQLAccess("toBrowser:MySQLAcess",
                             "SHOW TABLES FROM mysql",
                             "Show access tables for MySQL databases",
-                            "3.23",
+                            "0323",
                             "QMYSQL");
 static toSQL SQLMySQLUsers("toBrowser:MySQLUsers",
                            "SELECT concat(user,'@',host) Users FROM mysql.user",
                            "Show users for MySQL databases",
-                           "3.23",
+                           "0323",
                            "QMYSQL");
 static toSQL SQLTruncateTable("toBrowser:TruncateTable",
                               "TRUNCATE TABLE %1.%2",
@@ -876,7 +876,7 @@ static toSQL SQLTruncateTable("toBrowser:TruncateTable",
 static toSQL SQLDropUser("toBrowser:DropUser",
                          "DELETE FROM mysql.user WHERE concat(user,'@',host) = :f1<char[255]>",
                          "Drop MYSQL user",
-                         "3.23",
+                         "0323",
                          "QMYSQL");
 
 toBrowser::toBrowser(QWidget *parent, toConnection &connection)

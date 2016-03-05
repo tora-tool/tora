@@ -992,13 +992,13 @@ static toSQL SQLCheckMySQLRoutine("toWorksheet:CheckRoutine",
                                   "  and lower(routine_type) = :f2<char[101]>\n"
                                   "  and routine_schema = :f3<char[101]>",
                                   "Check if routine exists in MySQL",
-                                  "5.0",
+                                  "0500",
                                   "QMYSQL");
 
 static toSQL SQLDropMySQLRoutine("toWorksheet:DropRoutine",
                                  "drop :f1<noquote> if exists :f2<noquote>;",
                                  "Drop MySQL routine if it exists",
-                                 "5.0",
+                                 "0500",
                                  "QMYSQL");
 
 // MySQL does not support replacing currently existing routines. Trying to create existing

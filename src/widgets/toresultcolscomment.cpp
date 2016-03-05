@@ -51,7 +51,7 @@ static toSQL SQLChangeTableCommentMySQL(
     "toResultCols:ChangeTableComment",
     "ALTER TABLE %1 COMMENT = %2",
     "Set a comment on a table. Must have same % signs",
-    "4.1",
+    "0401",
     "QMYSQL");
 
 static toSQL SQLChangeTableComment(

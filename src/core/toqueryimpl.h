@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOQUERYIMPL_H
-#define TOQUERYIMPL_H
+#pragma once
 
 #include "core/tora_export.h"
 #include "core/tocache.h"
@@ -108,6 +107,3 @@ class TORA_EXPORT queryImpl : public QObject
         toQueryAbstr *Parent;
     protected:
 };
-
-
-#endif

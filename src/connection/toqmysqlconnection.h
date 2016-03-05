@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef __QMYSQL_CONNECTION__
-#define __QMYSQL_CONNECTION__
+#pragma once
 
 #include "core/toconnection.h"
 #include "core/toconnectionsub.h"
@@ -84,7 +83,7 @@ class toQMySqlConnectionSub : public toQSqlConnectionSub
         {
         }
 
-        ~toQMySqlConnectionSub()
+        virtual ~toQMySqlConnectionSub()
         {
             LockingPtr<QSqlDatabase> ptr(Connection, Lock);
             ptr->close();
@@ -92,25 +91,23 @@ class toQMySqlConnectionSub : public toQSqlConnectionSub
 
         /** Implemented abstract method inherited from toConnectionSub */
 
-        virtual void cancel(void)
+        void cancel(void) override
         {
-            // NOT SUPPORTED ON MYSQL
+            throw QString("Not implemented yet: toQMySqlConnectionSub::close");
         };
 
         /** Close connection. */
-        virtual void close(void)
+        void close(void) override
         {
             throw QString("Not implemented yet: toQMySqlConnectionSub::close");
         }
 
-        virtual queryImpl* createQuery(toQuery *query);
+        queryImpl* createQuery(toQueryAbstr *query) override;
 
-        virtual toQAdditionalDescriptions* decribe(toCache::ObjectRef const&)
+        toQAdditionalDescriptions* decribe(toCache::ObjectRef const&) override
         {
             throw QString("Not implemented yet: toQMySqlConnectionSub::describe");
         }
 
     private:
 };
-
-#endif

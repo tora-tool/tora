@@ -54,7 +54,7 @@ toResultCode::toResultCode(QWidget * parent)
 static toSQL SQLObjectTypeMySQL("toResultExtract:ObjectType",
                                 "SELECT IF(LOCATE('.',CONCAT(:f1,:f2))>0,'INDEX','TABLE')",
                                 "Get type of an object by name",
-                                "4.1",
+                                "0401",
                                 "QMYSQL");
 
 static toSQL SQLObjectType("toResultExtract:ObjectType",
