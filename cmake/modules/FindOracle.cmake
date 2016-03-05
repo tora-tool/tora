@@ -32,7 +32,7 @@
 
 SET(ORACLE_FOUND "NO")
 SET(ORACLE_HAS_XML "NO")
-SET(ORACLE_HOME $ENV{ORACLE_HOME})
+FILE(TO_CMAKE_PATH "$ENV{ORACLE_HOME}" ORACLE_HOME)
 
 # "components" handling. It enables to find various independent libraries,
 IF( Oracle_FIND_COMPONENTS )
@@ -59,10 +59,8 @@ ELSE (ORACLE_PATH_INCLUDES)
             ${ORACLE_HOME}/xdk/include
             # sdk
             ${ORACLE_HOME}/sdk/include/
-            ${ORACLE_HOME}\\sdk\\include\\
             # xe on windows
             ${ORACLE_HOME}/OCI/include/
-            ${ORACLE_HOME}\\OCI\\include\\
             # instant client from rpm
             /usr/include/oracle/11.2/client${LIB_SUFFIX}/
             # instantclient on OS X from macports
@@ -78,11 +76,9 @@ ELSE (ORACLE_PATH_LIB)
             ${ORACLE_HOME}/lib 
             # xe on windows
             ${ORACLE_HOME}/OCI/lib/MSVC/
-            ${ORACLE_HOME}\\OCI\\lib\\MSVC
             ${ORACLE_HOME}
             # InstantClient on WinXP
             ${ORACLE_HOME}/sdk/lib/msvc/
-            ${ORACLE_HOME}\\sdk\\lib\\msvc
             # Instant client from rpm
             /usr/lib${LIB_SUFFIX}/
             /usr/lib/oracle/11.2/client${LIB_SUFFIX}/lib/
