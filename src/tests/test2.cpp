@@ -55,7 +55,6 @@
 #include <QtCore/QDateTime>
 #include <QApplication>
 #include <QMessageBox>
-#include <QtCore/QTextCodec>
 #include <QtCore/QString>
 #include <QtCore/QTranslator>
 #include <QStyleFactory>
@@ -85,9 +84,6 @@ int main(int argc, char **argv)
     if (!style.isEmpty())
         QApplication::setStyle(QStyleFactory::create(style));
 
-    // Set the default codec to use for QString
-    QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
-
     try
     {
         toQValue::setNumberFormat(
@@ -99,10 +95,10 @@ int main(int argc, char **argv)
         qRegisterMetaType<ValuesList>("ValuesList&");
         qRegisterMetaType<toConnection::exception>("toConnection::exception");
 
-        if (qApp->argc() == 1)
+        if (argc == 1)
             usage();
 
-        QString connect = QString::fromLatin1(qApp->argv()[1]);
+        QString connect = QString::fromLatin1(argv[1]);
         QString user, password, database, schema, table;
 
         QStringList slashList, atList = connect.split("@", QString::SkipEmptyParts);
@@ -125,18 +121,18 @@ int main(int argc, char **argv)
             database = slashList.at(0);
             password = slashList.at(1);
         }
-        if ( qApp->argc() == 2)
+        if ( argc == 2)
         {
             schema = user;
         }
         else
         {
-            schema = QString::fromLatin1(qApp->argv()[2]);
+            schema = QString::fromLatin1(argv[2]);
         }
 
-        if ( qApp->argc() == 4)
+        if ( argc == 4)
         {
-            table = QString::fromLatin1(qApp->argv()[3]) ;
+            table = QString::fromLatin1(argv[3]) ;
         }
         else
         {
