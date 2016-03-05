@@ -44,7 +44,7 @@ Util::RegisterInFactory<toBrowserSequenceWidget, toBrowserWidgetFactory, toCache
 static toSQL SQLSequenceInfoPgSQL("toBrowser:SequenceInformation",
                                   "SELECT *, substr(:f1,1) as \"Owner\" FROM :f2<noquote>",
                                   "Display information about a sequence",
-                                  "7.1",
+                                  "0701",
                                   "QPSQL");
 static toSQL SQLSequenceInfo("toBrowser:SequenceInformation",
                              "SELECT * FROM SYS.ALL_SEQUENCES\n"

@@ -142,7 +142,7 @@ static toSQL SQLListTablesPg(
     " ORDER BY 1,\n"
     "          2",
     "",
-    "7.2",
+    "0702",
     "QPSQL");
 
 static toSQL SQLListIndex("toAnalyze:ListIndex",
@@ -178,7 +178,7 @@ static toSQL SQLListIndexPg(
     " ORDER BY 1,\n"
     "          2",
     "",
-    "7.2",
+    "0702",
     "QPSQL");
 
 static toSQL SQLListPlans("toAnalyze:ListPlans",

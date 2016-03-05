@@ -64,6 +64,7 @@ class toQPSqlConnectionSub : public toQSqlConnectionSub
         toQPSqlConnectionSub(toConnection const& parent, QSqlDatabase const& db, QString const& dbname)
             : toQSqlConnectionSub(parent, db, dbname)
         {
+            ConnectionID = sessionId().first();
         }
 
         ~toQPSqlConnectionSub()
@@ -74,23 +75,23 @@ class toQPSqlConnectionSub : public toQSqlConnectionSub
 
         /** Implemented abstract method inherited from toConnectionSub */
 
-        virtual void cancel(void)
+        void cancel(void) override
         {
             // NOT SUPPORTED YET
         };
 
         /** Close connection. */
-        virtual void close(void)
+        void close(void) override
         {
             throw QString("Not implemented yet: toQPSqlConnectionSub::close");
         }
 
-        virtual QString version();
-        virtual toQueryParams sessionId();
+        QString version() override;
+        toQueryParams sessionId() override;
 
-        virtual queryImpl* createQuery(toQueryAbstr *query);
+        queryImpl* createQuery(toQueryAbstr *query) override;
 
-        virtual toQAdditionalDescriptions* decribe(toCache::ObjectRef const&)
+        toQAdditionalDescriptions* decribe(toCache::ObjectRef const&) override
         {
             throw QString("Not implemented yet: toQPSqlConnectionSub::describe");
         }

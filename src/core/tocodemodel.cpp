@@ -110,7 +110,7 @@ static toSQL SQLListObjectsPgSQL("toCodeModel:ListObjects",
                                  "WHERE (n.nspname = :f1 OR n.oid IS NULL)\n"
                                  "ORDER BY Object_Name",
                                  "",
-                                 "7.1",
+                                 "0701",
                                  "QPSQL");
 
 static toSQL SQLListObjectsMySQL("toCodeModel:ListObjects",
@@ -120,7 +120,7 @@ static toSQL SQLListObjectsMySQL("toCodeModel:ListObjects",
                                  "  from information_schema.routines r\n"
                                  " where r.routine_schema = :owner<char[50]>\n",
                                  "",
-                                 "5.0",
+                                 "0500",
                                  "QMYSQL");
 
 static toSQL SQLListObjectsTeradata(

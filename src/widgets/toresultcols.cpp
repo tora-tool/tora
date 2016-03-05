@@ -73,7 +73,7 @@
 //    "   AND a.attnum > 0\n"
 //    "   AND NOT a.attisdropped",
 //    "",
-//    "7.1",
+//    "0701",
 //    "QPSQL");
 
 //static toSQL SQLCommentTD(
@@ -126,7 +126,7 @@ static toSQL SQLTableCommentPG(
     "   AND c.relnamespace = n.OID\n"
     "   AND d.objsubid = 0",
     "",
-    "7.1",
+    "0701",
     "QPSQL");
 
 static toSQL SQLTableColumns(
@@ -380,7 +380,7 @@ static toSQL SQLTableColumnsPG(
     "   AND NOT a.attisdropped\n"
     " ORDER BY a.attnum",
     "",
-    "7.1",
+    "0701",
     "QPSQL");
 
 static toSQL SQLTableColumnsTD(

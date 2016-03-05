@@ -59,7 +59,7 @@
 static toSQL SQLCancelPg("toQSqlConnection:Cancel",
                          "SELECT pg_cancel_backend(:pid)",
                          "",
-                         "8.0",
+                         "0800",
                          "QPSQL");
 
 QSqlQuery* psqlQuery::createQuery(const QString &sql)

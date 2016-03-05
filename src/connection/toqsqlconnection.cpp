@@ -48,7 +48,6 @@ toQSqlConnectionSub::toQSqlConnectionSub(toConnection const& parent, QSqlDatabas
     , ParentConnection(parent)
     , HasTransactions(false)
 {
-    ConnectionID = sessionId().first();
 }
 
 toQSqlConnectionSub::~toQSqlConnectionSub()
@@ -104,9 +103,20 @@ QString toQSqlConnectionSub::version()
             }
         }
     }
+    catch (std::exception const&e)
+    {
+        TLOG(1, toDecorator, __HERE__) << "	Ignored exception:" << e.what() << std::endl;
+		throw e;
+    }
+    catch (QString const&s)
+    {
+        TLOG(1, toDecorator, __HERE__) << "	Ignored exception:" << s << std::endl;
+		throw s;
+    }
     catch (...)
     {
         TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
+		throw;
     }
     return ret;
 }
@@ -129,14 +139,17 @@ toQueryParams toQSqlConnectionSub::sessionId()
     catch (std::exception const&e)
     {
         TLOG(1, toDecorator, __HERE__) << "	Ignored exception:" << e.what() << std::endl;
+		throw e;
     }
     catch (QString const&s)
     {
-        TLOG(1, toDecorator, __HERE__) << "	Ignored exception:" << qPrintable(s) << std::endl;
+        TLOG(1, toDecorator, __HERE__) << "	Ignored exception:" << s << std::endl;
+		throw s;
     }
     catch (...)
     {
         TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
+		throw;
     }
     return ret;
 }

@@ -51,21 +51,21 @@ static toSQL SQLListObjectsDatabase("toConnection:ListObjectsInDatabase",
                                     " group by 1                                       "
                                     " order by count(o.oid)>0, 1                       ",
                                     "",
-                                    "7.0",
+                                    "0700",
                                     "QPSQL");
 
 static toSQL SQLConnectioId("toQSqlConnection:ConnectionID",
                             "select pg_backend_pid()                           ",
                             "",
-                            "7.0",
+                            "",
                             "QPSQL");
 
 
 static toSQL SQLVersionPgSQL("toQSqlConnection:Version",
-                             "SELECT SUBSTR(version(), STRPOS(version(), ' ') + 1, STRPOS(version(), 'on') - STRPOS(version(), ' ') - 2)",
+                             "SHOW SERVER_VERSION",
                              "Show version of database, "
                              "last value of first return record of result is used.",
-                             "7.1",
+                             "",
                              "QPSQL");
 
 static toSQL SQLColumnComments("toQSqlConnection:ColumnComments",
@@ -81,7 +81,7 @@ static toSQL SQLColumnComments("toQSqlConnection:ColumnComments",
                                "  and c.relname=:table",
                                "Get the available comments on columns of a table, "
                                "must have same binds and columns",
-                               "7.1",
+                               "0701",
                                "QPSQL");
 
 static toSQL SQLColumnComments72("toQSqlConnection:ColumnComments",
@@ -97,7 +97,7 @@ static toSQL SQLColumnComments72("toQSqlConnection:ColumnComments",
                                  "  and (n.nspname = :owner OR u.usesysid IS NULL)\n"
                                  "  and c.relname=:table",
                                  "",
-                                 "7.2",
+                                 "0702",
                                  "QPSQL");
 
 // Opening a second connection has drawbacks and can fail to
@@ -106,7 +106,7 @@ static toSQL SQLColumnComments72("toQSqlConnection:ColumnComments",
 static toSQL SQLCancelPg("toQSqlConnection:Cancel",
                          "SELECT pg_cancel_backend(:pid)",
                          "",
-                         "8.0",
+                         "0800",
                          "QPSQL");
 
 toQPSqlConnectionImpl::toQPSqlConnectionImpl(toConnection &conn)
@@ -168,10 +168,19 @@ void toQPSqlConnectionImpl::closeConnection(toConnectionSub *)
 QString toQPSqlConnectionSub::version()
 {
     int ver = nativeVersion();
+    QString retval;
     if (ver)
-        return QString::number(ver);
+        retval = QString::number(ver);
     else
-        return super::version();
+        retval = super::version();
+    QStringList v = retval.split(".");
+    if (v.size() >= 2)
+    	retval = QString("%1%2").arg(v[0], 2, '0').arg(v[1], 2, '0');
+    else
+    	retval = QString("0000"); // PostgreSQL version up to 7.4
+    TLOG(5, toDecorator, __HERE__) << "QPSQL Connection version: " << retval << std::endl;
+    return retval;
+
 }
 
 toQueryParams toQPSqlConnectionSub::sessionId()

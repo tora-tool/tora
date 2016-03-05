@@ -118,7 +118,7 @@ static toSQL SQLTableIndexMySQL("toBrowserTableWidget:TableIndex",
                                 "    WHERE table_schema = :f1<char[101]>\n"
                                 "        AND table_name = :f2<char[101]>\n",
                                 "",
-                                "5.0",
+                                "0500",
                                 "QMYSQL");
 
 static toSQL SQLTableConstraint(
@@ -328,7 +328,7 @@ static toSQL SQLTableInfoPgSQL("toBrowser:TableInformation",
                                "   AND c.relkind = 'r'\n"
                                "   AND c.relname = :f2",
                                "",
-                               "7.1",
+                               "0701",
                                "QPSQL");
 static toSQL SQLTableInfoSapDB("toBrowser:TableInformation",
                                "SELECT TABLENAME,PRIVILEGES,CREATEDATE,CREATETIME,UPDSTATDATE,UPDSTATTIME,ALTERDATE,ALTERTIME,TABLEID \n"

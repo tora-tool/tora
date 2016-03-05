@@ -691,14 +691,14 @@ class toBrowserFilterSetup
 static toSQL SQLListTablesMysql3("toBrowser:ListTables",
                                  "SHOW TABLES FROM :f1<noquote>",
                                  "List the available tables in a schema.",
-                                 "3.0",
+                                 "0300",
                                  "QMYSQL");
 static toSQL SQLListTablesMysql("toBrowser:ListTables",
                                 "SELECT TABLE_NAME TABLES\n"
                                 "    FROM information_schema.tables\n"
                                 "    WHERE table_schema = :f1<char[101]>",
                                 "",
-                                "5.0",
+                                "0500",
                                 "QMYSQL");
 static toSQL SQLListTables("toBrowser:ListTables",
                            "SELECT Table_Name,NULL \" Ignore\",NULL \" Ignore2\",Tablespace_name \" Ignore2\"\n"
@@ -728,7 +728,7 @@ static toSQL SQLListTablesPgSQL("toBrowser:ListTables",
                                 "   AND c.relkind = 'r'"
                                 " ORDER BY \"Table Name\"",
                                 "",
-                                "7.1",
+                                "0701",
                                 "QPSQL");
 static toSQL SQLListTablesSapDB("toBrowser:ListTables",
                                 "SELECT tablename \"Table Name\"\n"
@@ -754,7 +754,7 @@ static toSQL SQLListViewPgSQL("toBrowser:ListView",
                               "   AND c.relkind = 'v'"
                               " ORDER BY View_Name",
                               "List the available views in a schema",
-                              "7.1",
+                              "0701",
                               "QPSQL");
 static toSQL SQLListView("toBrowser:ListView",
                          "SELECT View_Name FROM SYS.ALL_VIEWS WHERE OWNER = :f1<char[101]>\n"
@@ -805,7 +805,7 @@ static toSQL SQLListIndexPgSQL("toBrowser:ListIndex",
                                "  AND c.relkind = 'i'\n"
                                "ORDER BY \"Index Name\"",
                                "",
-                               "7.1",
+                               "0701",
                                "QPSQL");
 static toSQL SQLListIndexSapDb("toBrowser:ListIndex",
                                "SELECT IndexName \"Index Name\"\n"
@@ -821,7 +821,7 @@ static toSQL SQLListSequencePgSQL("toBrowser:ListSequence",
                                   "   AND c.relkind = 'S'\n"
                                   " ORDER BY \"Sequence Name\"",
                                   "List the available sequences in a schema",
-                                  "7.1",
+                                  "0701",
                                   "QPSQL");
 static toSQL SQLListSequence("toBrowser:ListSequence",
                              "SELECT Sequence_Name FROM SYS.ALL_SEQUENCES\n"

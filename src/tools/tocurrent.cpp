@@ -69,11 +69,13 @@ class toCurrentInfoTool : public toTool
         toCurrentInfoTool()
             : toTool(240, "Current Session")
         { }
-        virtual const char *menuItem()
+
+        const char *menuItem() override
         {
             return "Current Session";
         }
-        virtual toToolWidget* toolWindow(QWidget *parent, toConnection &connection)
+
+        toToolWidget* toolWindow(QWidget *parent, toConnection &connection) override
         {
             std::map<toConnection *, QWidget *>::iterator i = Windows.find(&connection);
             if (i != Windows.end())
@@ -89,11 +91,17 @@ class toCurrentInfoTool : public toTool
                 return window;
             }
         }
-        void closeWindow(toConnection &connection)
+
+        void closeWindow(toConnection &connection) override
         {
             std::map<toConnection *, QWidget *>::iterator i = Windows.find(&connection);
             if (i != Windows.end())
                 Windows.erase(i);
+        }
+
+        bool canHandle(const toConnection &conn) override
+        {
+            return conn.providerIs("Oracle");
         }
 };
 

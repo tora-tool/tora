@@ -86,9 +86,14 @@ void toTextView::setText(const QString &t)
     m_view->setText(t);
 }
 
+void toTextView::setFilename(const QString &f)
+{
+    m_filename = f;
+}
+
 bool toTextView::editSave(bool)
 {
-    QString fn = Utils::toSaveFilename(QString::null, QString::fromLatin1("*.html"), this);
+    QString fn = Utils::toSaveFilename("AWR-from-to", QString::fromLatin1("*.html"), this);
     if (!fn.isEmpty())
     {
         if (fn.contains(".HTML", Qt::CaseInsensitive) || fn.contains(".HTM", Qt::CaseInsensitive))

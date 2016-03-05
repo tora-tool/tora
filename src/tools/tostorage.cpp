@@ -124,19 +124,23 @@ class toStorageTool : public toTool
         toStorageTool()
             : toTool(50, "Storage Manager")
         { }
-        virtual const char *menuItem()
+        bool canHandle(const toConnection &conn) override
+        {
+            return conn.providerIs("Oracle");
+        }
+        const char *menuItem() override
         {
             return "Storage Manager";
         }
-        virtual toToolWidget* toolWindow(QWidget *parent, toConnection &connection)
+        toToolWidget* toolWindow(QWidget *parent, toConnection &connection) override
         {
             return new toStorage(parent, connection);
         }
-        virtual QWidget *configurationTab(QWidget *parent)
+        QWidget *configurationTab(QWidget *parent) override
         {
             return new toStorageSetting(this, parent);
         }
-        virtual void closeWindow(toConnection &connection) {};
+        void closeWindow(toConnection &connection) override {};
     private:
         static ToConfiguration::Storage s_storageConf;
 };

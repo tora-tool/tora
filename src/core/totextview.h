@@ -56,6 +56,7 @@ class toTextView : public QWidget, public toEditWidget
         void setFontFamily(const QString &fontFamily);
         void setReadOnly(bool ro);
         void setText(const QString &t);
+        void setFilename(const QString &f);
 
         /** Reimplemented for internal reasons.
          */
@@ -89,6 +90,7 @@ class toTextView : public QWidget, public toEditWidget
     private:
         QTextBrowser *m_view;
         toSearchReplace *m_search;
+        QString m_filename;
 
     private slots:
         void setEditorFocus();

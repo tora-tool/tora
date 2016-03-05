@@ -182,7 +182,7 @@ namespace Utils
     static toSQL SQLUserNamesPgSQL(toSQL::TOSQL_USERLIST,
                                    "SELECT nspname AS UserName FROM pg_namespace ORDER BY nspname",
                                    "",
-                                   "7.1",
+                                   "0701",
                                    "QPSQL");
 
     static toSQL SQLUserNamesSapDB(toSQL::TOSQL_USERLIST,
@@ -352,7 +352,7 @@ namespace Utils
     static toSQL SQLNowPgSQL("Global:Now",
                              "SELECT now()",
                              "",
-                             "7.1",
+                             "0701",
                              "QPSQL");
 
     static toSQL SQLNowTD("Global:Now",

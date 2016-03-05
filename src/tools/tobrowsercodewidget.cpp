@@ -52,7 +52,7 @@ static toSQL SQLSQLHeadPgSQL("toBrowser:CodeHead",
                              "WHERE (n.nspname = :f1 OR n.oid IS NULL)\n"
                              "  AND p.proname = :f2\n",
                              "Declaration of object",
-                             "7.1",
+                             "0701",
                              "QPSQL");
 static toSQL SQLSQLHead("toBrowser:CodeHead",
                         "SELECT Text FROM SYS.ALL_SOURCE\n"
@@ -75,7 +75,7 @@ static toSQL SQLSQLBodyPgSQL("toBrowser:CodeBody",
                              " WHERE ( n.nspname = :f1 OR n.OID IS NULL )\n"
                              "   AND p.proname = :f2",
                              "Implementation of object",
-                             "7.1",
+                             "0701",
                              "QPSQL");
 static toSQL SQLSQLBody("toBrowser:CodeBody",
                         "SELECT Text FROM SYS.ALL_SOURCE\n"

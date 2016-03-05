@@ -67,6 +67,7 @@ toConnection::toConnection(const QString &provider,
     , ConnectionOptions(provider, host, database, user, password, schema, color , 0, options)
     , pCache(NULL)
     , LoanCnt(0)
+	, Version("0000")
 {
     pConnectionImpl = toConnectionProviderRegistrySing::Instance().get(provider).createConnectionImpl(*this);
     pTrait = toConnectionProviderRegistrySing::Instance().get(provider).createConnectionTrait();

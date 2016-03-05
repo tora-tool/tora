@@ -93,19 +93,28 @@ class toSGATraceTool : public toTool
     public:
         toSGATraceTool()
             : toTool(230, "SGA Trace") { }
-        virtual const char *menuItem()
+
+        const char *menuItem() override
         {
             return "SGA Trace";
         }
-        virtual toToolWidget* toolWindow(QWidget *parent, toConnection &connection)
+
+        toToolWidget* toolWindow(QWidget *parent, toConnection &connection) override
         {
             return new toSGATrace(parent, connection);
         }
-        virtual QWidget *configurationTab(QWidget *parent)
+
+        QWidget *configurationTab(QWidget *parent) override
         {
             return new toSGATraceSetting(this, parent);
         }
-        virtual void closeWindow(toConnection &connection) {};
+
+        bool canHandle(const toConnection &conn) override
+        {
+            return conn.providerIs("Oracle");
+        }
+
+        void closeWindow(toConnection &connection) override {};
     private:
         static ToConfiguration::SgaTrace s_sgaTraceConf;
 };

@@ -386,6 +386,8 @@ void toNewConnection::changeProvider(int current)
         // Database provider Hosts
         bool oldStateH = Host->blockSignals(true);
         Host->clear();
+        Username->clear();
+        Password->clear();
         foreach(QString const & host, ProviderRef.hosts())
         {
             if (host.isEmpty())

@@ -63,7 +63,7 @@ static toSQL SQLChangeTableCommentPG(
     "toResultCols:ChangeTableComment",
     "COMMENT ON TABLE %1 IS %2",
     "",
-    "7.1",
+    "0701",
     "QPSQL");
 
 static toSQL SQLChangeTableCommentTD(
@@ -82,7 +82,7 @@ static toSQL SQLChangeColumnCommentPG(
     "toResultCols:ChangeColumnComment",
     "COMMENT ON COLUMN %1 IS %2",
     "",
-    "7.1",
+    "0701",
     "QPSQL");
 
 static toSQL SQLChangeColumnCommentTD(

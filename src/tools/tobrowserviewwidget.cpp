@@ -50,7 +50,7 @@ static toSQL SQLViewSQLPgSQL("toBrowser:ViewSQL",
                              " WHERE (n.nspname = :f1 OR n.oid IS NULL)\n"
                              "   AND c.relkind = 'v' AND c.relname = :f2",
                              "Display SQL of a specified view",
-                             "7.1",
+                             "0701",
                              "QPSQL");
 static toSQL SQLViewSQL("toBrowser:ViewSQL",
                         "SELECT Text SQL\n"

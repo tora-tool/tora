@@ -89,7 +89,7 @@ static toSQL SQLIndexColsPgSQL("toBrowser:IndexCols",
                                "   AND a.attnum > 0\n"
                                " ORDER BY a.attnum\n",
                                "",
-                               "7.1",
+                               "0701",
                                "QPSQL");
 static toSQL SQLIndexColsSapDb("toBrowser:IndexCols",
                                "SELECT tablename,columnname,len \"Length\",DataType,Sort \n"

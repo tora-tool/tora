@@ -209,17 +209,17 @@ class toAWRTool : public toTool
             : toTool(10003, "AWR")
         { }
 
-        virtual const char *menuItem()
+        const char *menuItem() override
         {
             return "AWR Report";
         }
 
-        virtual bool canHandle(const toConnection &conn)
+        bool canHandle(const toConnection &conn) override
         {
             return conn.providerIs("Oracle");
         }
 
-        virtual toToolWidget* toolWindow(QWidget *parent, toConnection &connection)
+        toToolWidget* toolWindow(QWidget *parent, toConnection &connection) override
         {
             std::map<toConnection *, QWidget *>::iterator i = Windows.find(&connection);
             if (i != Windows.end())
@@ -235,7 +235,8 @@ class toAWRTool : public toTool
                 return window;
             }
         }
-        virtual void closeWindow(toConnection &connection)
+
+        void closeWindow(toConnection &connection) override
         {
             std::map<toConnection *, QWidget *>::iterator i = Windows.find(&connection);
             if (i != Windows.end())
@@ -368,7 +369,6 @@ void toAWR::execute(void)
             tb->setFontFamily("monospace");
             tb->setReadOnly(true);
             tb->setText(reports);
-            //tb->setFontFamily("Courier");
 
             vbox->addWidget(tb);
             Tabs->addTab(box, tr("AWR Report"));
