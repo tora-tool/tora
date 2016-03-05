@@ -213,13 +213,13 @@ void toResultModel::slotReadData()
         // don't actually modify any data until we can call
         // beginInsertRows(). but to do that, we have to know how many
         // records we're going to add.
-        toQuery::RowList tmp;
+        toQueryAbstr::RowList tmp;
         int     current = Rows.size();
 
         while (Query->hasMore() &&
                 (MaxRows < 0 || MaxRows > current))
         {
-            toQuery::Row row;
+            toQueryAbstr::Row row;
 
             // The number column (rowKey). should never change
             toRowDesc rowDesc;
@@ -508,7 +508,7 @@ QVariant toResultModel::data(const QModelIndex &index, int role) const
     if (index.row() > Rows.size() - 1 || index.column() > Headers.size() - 1)
         return QVariant();
 
-    toQuery::Row const& row = Rows.at(index.row());
+    toQueryAbstr::Row const& row = Rows.at(index.row());
     if (index.column() >= row.size())
         return QVariant();
     toQValue const &data = row.at(index.column());
@@ -771,7 +771,7 @@ Qt::ItemFlags toResultModel::flags(const QModelIndex &index) const
         return defaultFlags;
     }
 
-    toQuery::Row const& row = Rows.at(index.row());
+    toQueryAbstr::Row const& row = Rows.at(index.row());
     if (index.column() >= row.size())
         return defaultFlags;
 
@@ -815,14 +815,14 @@ void toResultModel::sort(int column, Qt::SortOrder order)
 }
 
 
-toQuery::RowList toResultModel::mergesort(toQuery::RowList &rows,
+toQueryAbstr::RowList toResultModel::mergesort(toQueryAbstr::RowList &rows,
         int column,
         Qt::SortOrder order)
 {
     if (rows.size() <= 1)
         return rows;
 
-    toQuery::RowList left, right;
+    toQueryAbstr::RowList left, right;
 
     int middle = (int) (rows.size() / 2);
     left = rows.mid(0, middle);
@@ -835,12 +835,12 @@ toQuery::RowList toResultModel::mergesort(toQuery::RowList &rows,
 }
 
 
-toQuery::RowList toResultModel::merge(toQuery::RowList &left,
-                                      toQuery::RowList &right,
+toQueryAbstr::RowList toResultModel::merge(toQueryAbstr::RowList &left,
+                                      toQueryAbstr::RowList &right,
                                       int column,
                                       Qt::SortOrder order)
 {
-    toQuery::RowList result;
+    toQueryAbstr::RowList result;
 
     while (left.size() > 0 && right.size() > 0)
     {
@@ -860,7 +860,7 @@ toQuery::RowList toResultModel::merge(toQuery::RowList &left,
     return result;
 }
 
-toQuery::RowList& toResultModel::getRawData(void)
+toQueryAbstr::RowList& toResultModel::getRawData(void)
 {
     return Rows;
 }

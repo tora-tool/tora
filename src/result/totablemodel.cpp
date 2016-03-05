@@ -403,7 +403,7 @@ void toTableModelPriv::endInsertRows()
     super::endInsertRows();
 }
 
-void toTableModelPriv::appendRow(toQuery::Row const& r)
+void toTableModelPriv::appendRow(toQueryAbstr::Row const& r)
 {
     int oldRowCount = rowCount();
 
@@ -413,7 +413,7 @@ void toTableModelPriv::appendRow(toQuery::Row const& r)
         emit firstResultReceived();
 }
 
-void toTableModelPriv::appendRows(toQuery::RowList const& r)
+void toTableModelPriv::appendRows(toQueryAbstr::RowList const& r)
 {
     int oldRowCount = rowCount();
 
@@ -425,7 +425,7 @@ void toTableModelPriv::appendRows(toQuery::RowList const& r)
         emit firstResultReceived();
 }
 
-void toTableModelPriv::setHeaders(toQuery::HeaderList const& h)
+void toTableModelPriv::setHeaders(toQueryAbstr::HeaderList const& h)
 {
     if (!Headers.empty())
     {
@@ -439,14 +439,14 @@ void toTableModelPriv::setHeaders(toQuery::HeaderList const& h)
     emit headersReceived();
 }
 
-toQuery::RowList toTableModelPriv::mergesort(toQuery::RowList &rows,
+toQueryAbstr::RowList toTableModelPriv::mergesort(toQueryAbstr::RowList &rows,
         int column,
         Qt::SortOrder order)
 {
     if (rows.size() <= 1)
         return rows;
 
-    toQuery::RowList left, right;
+    toQueryAbstr::RowList left, right;
 
     int middle = (int) (rows.size() / 2);
     left = rows.mid(0, middle);
@@ -459,12 +459,12 @@ toQuery::RowList toTableModelPriv::mergesort(toQuery::RowList &rows,
 }
 
 
-toQuery::RowList toTableModelPriv::merge(toQuery::RowList &left,
-        toQuery::RowList &right,
+toQueryAbstr::RowList toTableModelPriv::merge(toQueryAbstr::RowList &left,
+        toQueryAbstr::RowList &right,
         int column,
         Qt::SortOrder order)
 {
-    toQuery::RowList result;
+    toQueryAbstr::RowList result;
 
     while (left.size() > 0 && right.size() > 0)
     {

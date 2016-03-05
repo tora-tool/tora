@@ -235,7 +235,7 @@ class toResultModel : public QAbstractTableModel
         /** Get raw data of the data model. This is currently used to
          * prepare and send data to cache.
          */
-        toQuery::RowList &getRawData(void);
+        toQueryAbstr::RowList &getRawData(void);
 
         void setInitialRows(int);
     signals:
@@ -280,12 +280,12 @@ class toResultModel : public QAbstractTableModel
         void cleanup(void);
 
         // helpers for sort implementation
-        toQuery::RowList mergesort(toQuery::RowList&, int, Qt::SortOrder);
-        toQuery::RowList merge(toQuery::RowList&, toQuery::RowList&, int, Qt::SortOrder);
+        toQueryAbstr::RowList mergesort(toQueryAbstr::RowList&, int, Qt::SortOrder);
+        toQueryAbstr::RowList merge(toQueryAbstr::RowList&, toQueryAbstr::RowList&, int, Qt::SortOrder);
 
         toEventQuery *Query;
 
-        toQuery::RowList Rows;
+        toQueryAbstr::RowList Rows;
         HeaderList Headers;
 
         // Following two variables hold information on how was data last sorted by sort() function.

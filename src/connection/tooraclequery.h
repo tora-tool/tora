@@ -135,5 +135,5 @@ class oracleQuery : public queryImpl
 
             return ret;
         }
-}; //   class oracleQuery : public toQuery::queryImpl
+}; //   class oracleQuery : public toQueryAbstr::queryImpl
 

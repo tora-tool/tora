@@ -203,9 +203,9 @@ class toTableModelPriv : public QAbstractTableModel
 
         ///@} --- end overrides for QAbstractTableModel parent ---
 
-        void appendRows(const toQuery::RowList &);
-        void appendRow(const toQuery::Row &);
-        void setHeaders(const toQuery::HeaderList &);
+        void appendRows(const toQueryAbstr::RowList &);
+        void appendRow(const toQueryAbstr::Row &);
+        void setHeaders(const toQueryAbstr::HeaderList &);
 
     signals:
 
@@ -217,11 +217,11 @@ class toTableModelPriv : public QAbstractTableModel
         void cleanup();
 
         // helpers for sort implementation
-        toQuery::RowList mergesort(toQuery::RowList&, int, Qt::SortOrder);
-        toQuery::RowList merge(toQuery::RowList&, toQuery::RowList&, int, Qt::SortOrder);
+        toQueryAbstr::RowList mergesort(toQueryAbstr::RowList&, int, Qt::SortOrder);
+        toQueryAbstr::RowList merge(toQueryAbstr::RowList&, toQueryAbstr::RowList&, int, Qt::SortOrder);
 
-        toQuery::RowList Rows;
-        toQuery::HeaderList Headers;
+        toQueryAbstr::RowList Rows;
+        toQueryAbstr::HeaderList Headers;
 
         // Following two variables hold information on how was data last sorted by sort() function.
         // This is used by sort() function in order not to waste CPU on resorting.

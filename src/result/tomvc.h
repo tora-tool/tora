@@ -117,10 +117,10 @@ class TOMVC
          * toEventQueryObserverObject::Observer interface implementation
          */
         ///@{
-        virtual void observeHeaders(const toQuery::HeaderList&);
+        virtual void observeHeaders(const toQueryAbstr::HeaderList&);
         virtual void observeBeginData();
-        virtual void observeRow(toQuery::Row&);
-        virtual void observeData(toQuery::RowList&);
+        virtual void observeRow(toQueryAbstr::Row&);
+        virtual void observeData(toQueryAbstr::RowList&);
         virtual void observeData(QObject*); // toQuery or toEventQuery
         virtual void observeEndData();
         virtual void observeDone();
@@ -210,12 +210,12 @@ typename _T,
          template <class> class _VP,
          template <class> class _DP
          >
-void TOMVC< _T, _VP, _DP>::observeHeaders(const toQuery::HeaderList &headers)
+void TOMVC< _T, _VP, _DP>::observeHeaders(const toQueryAbstr::HeaderList &headers)
 {
-    toQuery::HeaderList h(headers);
+    toQueryAbstr::HeaderList h(headers);
     if ( Traits::ShowRowNumber == MVCTraits::TableRowNumber )
     {
-        struct toQuery::HeaderDesc d;
+        struct toQueryAbstr::HeaderDesc d;
 
         d.name = QString("#");
         d.datatype = QString("RowNumber");
@@ -249,7 +249,7 @@ typename _T,
          template <class> class _VP,
          template <class> class _DP
          >
-void TOMVC< _T, _VP, _DP>::observeRow(toQuery::Row &row)
+void TOMVC< _T, _VP, _DP>::observeRow(toQueryAbstr::Row &row)
 {
     if ( Traits::ShowRowNumber == MVCTraits::TableRowNumber )
     {
@@ -262,7 +262,7 @@ typename _T,
          template <class> class _VP,
          template <class> class _DP
          >
-void TOMVC< _T, _VP, _DP>::observeData(toQuery::RowList &rows)
+void TOMVC< _T, _VP, _DP>::observeData(toQueryAbstr::RowList &rows)
 {
     Model::appendRows(rows);
 }
@@ -284,12 +284,12 @@ void TOMVC< _T, _VP, _DP>::observeData(QObject *q)
 
         // TODO to be moved into Policy class (tomvc.h)
         int columns = query->columnCount();
-        //toQuery::RowList rows;
+        //toQueryAbstr::RowList rows;
         int oldRowCount = Model::rowCount();
         Model::beginInsertRows(QModelIndex(), oldRowCount, oldRowCount + 49 /*rows.size() - 1*/);
         while (query->hasMore())
         {
-            toQuery::Row row;
+            toQueryAbstr::Row row;
             for (int i=0; i < columns; i++)
             {
                 row << query->readValue();

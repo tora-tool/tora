@@ -94,8 +94,8 @@ void toBrowserSchemaTableView::updateCache(void)
     QList<toCache::CacheEntry*> rows;
     toCache::CacheEntry *obj;
     // TODO: Check that result model rows are NOT sorted in descending order as that would break updating of cache!!!
-    toQuery::RowList modelRows = this->Model->getRawData();
-    for (QList<toQuery::Row>::iterator i = modelRows.begin(); i != modelRows.end(); i++)
+    toQueryAbstr::RowList modelRows = this->Model->getRawData();
+    for (QList<toQueryAbstr::Row>::iterator i = modelRows.begin(); i != modelRows.end(); i++)
     {
         obj = toCache::createCacheEntry(Schema, (QString)(*i)[1], ObjectType, "");
         if (obj != NULL) // Some objects (like DBLINKs are not held in the toCache => obj == NULL

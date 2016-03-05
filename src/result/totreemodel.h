@@ -143,9 +143,9 @@ class toTreeModelPriv : public QAbstractItemModel
 
         ///@} --- end overrides for QAbstractTableModel parent ---
 
-        void appendRows(const toQuery::RowList &);
-        void appendRow(const toQuery::Row &);
-        void setHeaders(const toQuery::HeaderList &);
+        void appendRows(const toQueryAbstr::RowList &);
+        void appendRow(const toQueryAbstr::Row &);
+        void setHeaders(const toQueryAbstr::HeaderList &);
 
     signals:
 
@@ -156,8 +156,8 @@ class toTreeModelPriv : public QAbstractItemModel
     private:
         void cleanup();
 
-        toQuery::RowList Rows;
-        toQuery::HeaderList Headers;
+        toQueryAbstr::RowList Rows;
+        toQueryAbstr::HeaderList Headers;
 };
 
 #endif

@@ -286,7 +286,7 @@ void toTreeModelPriv::endInsertRows()
     super::endInsertRows();
 }
 
-void toTreeModelPriv::appendRow(toQuery::Row const& r)
+void toTreeModelPriv::appendRow(toQueryAbstr::Row const& r)
 {
     int oldRowCount = rowCount();
 
@@ -296,7 +296,7 @@ void toTreeModelPriv::appendRow(toQuery::Row const& r)
         emit firstResultReceived();
 }
 
-void toTreeModelPriv::appendRows(toQuery::RowList const& r)
+void toTreeModelPriv::appendRows(toQueryAbstr::RowList const& r)
 {
     int oldRowCount = rowCount();
 
@@ -308,7 +308,7 @@ void toTreeModelPriv::appendRows(toQuery::RowList const& r)
         emit firstResultReceived();
 }
 
-void toTreeModelPriv::setHeaders(toQuery::HeaderList const& h)
+void toTreeModelPriv::setHeaders(toQueryAbstr::HeaderList const& h)
 {
     if (!Headers.empty())
     {

@@ -67,7 +67,7 @@ class toResultModelEdit : public toResultModel
                                           * after adjusting for
                                           * numbercolumn */
             toQValue           newValue;     /* data after the change */
-            toQuery::Row       row;          /* data before the change */
+            toQueryAbstr::Row       row;          /* data before the change */
         };
 
         toResultModelEdit(toEventQuery *query,
@@ -185,17 +185,17 @@ class toResultModelEdit : public toResultModel
          */
         void recordChange(const QModelIndex &,
                           const toQValue &,
-                          const toQuery::Row &);
+                          const toQueryAbstr::Row &);
 
         /**
          * Append a new row to Changes
          */
-        void recordAdd(const toQuery::Row &);
+        void recordAdd(const toQueryAbstr::Row &);
 
         /**
          * Record a deletion in Changes
          */
-        void recordDelete(const toQuery::Row &);
+        void recordDelete(const toQueryAbstr::Row &);
 
     signals:
         /**

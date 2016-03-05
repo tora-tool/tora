@@ -63,8 +63,10 @@ QVariant ToConfiguration::Global::defaultValue(int option) const
             {
                 QDir dirname;
 #ifdef Q_OS_WIN32
-                if (getenv("TEMP"))
-                    dirname = QString(getenv("TEMP"));
+                QString TEMP(qgetenv("TEMP"));
+                QFileInfo TEMPInfo(TEMP);
+                if (TEMPInfo.isDir() && TEMPInfo.exists())
+                    dirname = TEMPInfo.absoluteFilePath();
                 else
 #endif
                     dirname = QDir::homePath();
@@ -72,7 +74,13 @@ QVariant ToConfiguration::Global::defaultValue(int option) const
                 return QVariant(toraCache.absoluteFilePath());
             }
         case OracleHomeDirectory:
-            return QVariant(QString(getenv("ORACLE_HOME")));
+            {
+                QString OH(qgetenv("ORACLE_HOME"));
+                QFileInfo OHInfo(OH);
+                if (OHInfo.isDir() && OHInfo.exists())
+                    return QVariant(OHInfo.absoluteFilePath());
+                return QVariant();
+            }
         case MysqlHomeDirectory:
             return QVariant(QString(""));
         case PgsqlHomeDirectory:

@@ -252,7 +252,7 @@ class TORA_EXPORT toQValue
 };
 Q_DECLARE_METATYPE(toQValue::complexType*)
 
-/** A short representation of list<toQuery::queryValue>
+/** A short representation of list<toQueryAbstr::queryValue>
  */
 typedef std::list<toQValue> toQList;
 

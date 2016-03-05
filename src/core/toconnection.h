@@ -316,7 +316,7 @@ class toConnection : public QObject
 
         /** This class is an abstract baseclass to actually implement the communication with the
          * database(@ref toConnectionProvider).
-         * (See also @ref toQuery::queryImpl and @ref toConnectionProvider)
+         * (See also @ref toQueryAbstr::queryImpl and @ref toConnectionProvider)
          */
         class connectionImpl
         {

@@ -190,17 +190,20 @@ void toGlobalSetting::mysqlBrowse(void)
     QString str = TOFileDialog::getExistingDirectory(this, tr("MySQL client installation"), MysqlHomeDirectory->text());
     if (str.isEmpty())
         return;
-    QFileInfo libmysqlopt(str + QDir::separator() + "lib" + QDir::separator() + "opt", "libmysql.dll");
-    QFileInfo libmysql(str + QDir::separator() + "lib", "libmysql.dll");
-    if ( Utils::toLibrary::isValidLibrary(libmysqlopt))
-        MysqlHomeDirectory->setText(libmysqlopt.absolutePath());
-    else if ( Utils::toLibrary::isValidLibrary(libmysql))
-        MysqlHomeDirectory->setText(libmysql.absolutePath());
+    QFileInfo mysqllibopt(str + QDir::separator() + "lib" + QDir::separator() + "opt", "libmysql.dll");
+    QFileInfo mysqllib(str + QDir::separator() + "lib", "libmysql.dll");
+    QFileInfo mysql(str, "libmysql.dll");
+    if ( Utils::toLibrary::isValidLibrary(mysqllibopt))
+        MysqlHomeDirectory->setText(mysqllibopt.absolutePath());
+    else if ( Utils::toLibrary::isValidLibrary(mysqllib))
+        MysqlHomeDirectory->setText(mysqllib.absolutePath());
+    else if ( Utils::toLibrary::isValidLibrary(mysql))
+        MysqlHomeDirectory->setText(mysql.absolutePath());
     else
         TOMessageBox::warning(
             toMainWindow::lookup(),
             QT_TRANSLATE_NOOP("toLibraryErrorA", "Library error"),
-            QT_TRANSLATE_NOOP("toLibraryErrorA", QString("Couldn't validate library file: %1").arg(libmysqlopt.absoluteFilePath()))
+            QT_TRANSLATE_NOOP("toLibraryErrorA", QString("Couldn't validate library file: %1").arg("libmysql.dll"))
         );
 }
 

@@ -47,10 +47,10 @@ class toEventQueryObserverObject : public QObject, toEventQuery::Client
         class Observer
         {
             public:
-                virtual void observeHeaders(const toQuery::HeaderList&) {};
+                virtual void observeHeaders(const toQueryAbstr::HeaderList&) {};
                 virtual void observeBeginData() {};
-                virtual void observeRow(toQuery::Row&) {};
-                virtual void observeData(toQuery::RowList&) {};
+                virtual void observeRow(toQueryAbstr::Row&) {};
+                virtual void observeData(toQueryAbstr::RowList&) {};
                 virtual void observeData(QObject*) {};
                 virtual void observeDone() {};
                 virtual void observeEndData() {};

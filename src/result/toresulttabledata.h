@@ -107,7 +107,7 @@ class toResultTableData
 
         bool commitChanges();
 
-        void commitUpdate(toConnectionSubLoan &conn, const toQuery::Row &row, unsigned int &updated);
+        void commitUpdate(toConnectionSubLoan &conn, const toQueryAbstr::Row &row, unsigned int &updated);
 
         unsigned commitUpdate(toConnectionSubLoan &conn, toResultModelEdit::ChangeSet &change);
         unsigned commitAdd(toConnectionSubLoan &conn, toResultModelEdit::ChangeSet &change);

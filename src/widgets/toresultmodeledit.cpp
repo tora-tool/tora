@@ -72,7 +72,7 @@ int toResultModelEdit::addRow(QModelIndex ind, bool duplicate)
     }
     beginInsertRows(QModelIndex(), newRowPos, newRowPos);
 
-    toQuery::Row row;
+    toQueryAbstr::Row row;
     toRowDesc rowDesc;
     rowDesc.key = CurrRowKey++;
     rowDesc.status = ADDED;
@@ -107,7 +107,7 @@ void toResultModelEdit::deleteRow(QModelIndex index)
     if (!index.isValid() || index.row() >= Rows.size())
         return;
 
-    toQuery::Row deleted = Rows[index.row()];
+    toQueryAbstr::Row deleted = Rows[index.row()];
     toRowDesc rowDesc = deleted[0].getRowDesc();
 
     if (rowDesc.status == REMOVED)
@@ -133,7 +133,7 @@ void toResultModelEdit::deleteRow(QModelIndex index)
 void toResultModelEdit::clearStatus()
 {
     // Go through all records and set their status to be existed
-    for (toQuery::RowList::iterator ite = Rows.begin(); ite != Rows.end(); ite++)
+    for (toQueryAbstr::RowList::iterator ite = Rows.begin(); ite != Rows.end(); ite++)
     {
         toRowDesc rowDesc = ite->at(0).getRowDesc();
         if (rowDesc.status == REMOVED)
@@ -273,7 +273,7 @@ bool toResultModelEdit::setData(const QModelIndex &index,
     if (index.row() >= Rows.size() || index.column() >= Headers.size())
         return false;
 
-    toQuery::Row &row = Rows[index.row()];
+    toQueryAbstr::Row &row = Rows[index.row()];
     toQValue newValue = toQValue::fromVariant(_value);
     toRowDesc rowDesc = Rows.at(index.row())[0].getRowDesc();
     if (rowDesc.status == EXISTED && !(row[index.column()] == newValue))
@@ -285,7 +285,7 @@ bool toResultModelEdit::setData(const QModelIndex &index,
 
     {
         // If no prikey is used, data is recorded in change list
-        toQuery::Row oldRow = row;           // keep old version
+        toQueryAbstr::Row oldRow = row;           // keep old version
         row[index.column()] = newValue;
         // for writing to the database
         recordChange(index, newValue, oldRow);
@@ -314,7 +314,7 @@ Qt::ItemFlags toResultModelEdit::flags(const QModelIndex &index) const
         return Qt::ItemIsDropEnabled | defaultFlags;
     }
 
-    toQuery::Row const& row = Rows.at(index.row());
+    toQueryAbstr::Row const& row = Rows.at(index.row());
     if (index.column() >= row.size())
         return defaultFlags;
 
@@ -347,7 +347,7 @@ void toResultModelEdit::revertChanges()
 
 void toResultModelEdit::recordChange(const QModelIndex &index,
                                      const toQValue &newValue,
-                                     const toQuery::Row &row)
+                                     const toQueryAbstr::Row &row)
 {
     // first, if it was an added row, find and update the ChangeSet so
     // they all get inserted as one.
@@ -381,7 +381,7 @@ void toResultModelEdit::recordChange(const QModelIndex &index,
 }
 
 
-void toResultModelEdit::recordAdd(const toQuery::Row &row)
+void toResultModelEdit::recordAdd(const toQueryAbstr::Row &row)
 {
     struct ChangeSet change;
 
@@ -392,7 +392,7 @@ void toResultModelEdit::recordAdd(const toQuery::Row &row)
     emit changed(changed());
 }
 
-void toResultModelEdit::recordDelete(const toQuery::Row &row)
+void toResultModelEdit::recordDelete(const toQueryAbstr::Row &row)
 {
     // Loop through all previously recorded changes. If there is an insert (add)
     // statement for the row being deleted - remove it (as there is no point of

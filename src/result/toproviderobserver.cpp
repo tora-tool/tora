@@ -65,10 +65,10 @@ void toEventQueryObserverObject::eqDescriptionAvailable(toEventQuery *query, con
     Q_ASSERT_X(m_eventQuery == query, qPrintable(__QHERE__), " unknown data source");
 
     // TODO to be moved into Policy class (tomvc.h)
-    toQuery::HeaderList headers;
+    toQueryAbstr::HeaderList headers;
     for (toQColumnDescriptionList::const_iterator i = desc.constBegin(); i != desc.constEnd(); i++)
     {
-        struct toQuery::HeaderDesc d;
+        struct toQueryAbstr::HeaderDesc d;
 
         d.name = (*i).Name;
         d.datatype = (*i).Datatype;
@@ -90,10 +90,10 @@ void toEventQueryObserverObject::eqDataAvailable(toEventQuery *query)
 //
 //		// TODO to be moved into Policy class (tomvc.h)
 //		int columns = query->columnCount();
-//		toQuery::RowList m_rows;
+//		toQueryAbstr::RowList m_rows;
 //		while(query->hasMore())
 //		{
-//			toQuery::Row row;
+//			toQueryAbstr::Row row;
 //			m_observer.observeRow(row);
 //			for(int i=0; i < columns; i++)
 //			{
