@@ -57,3 +57,5 @@ extlibs/libantlr3c-3.5.1/antlr3config.h
 .gitignore~
 **/*~
 **/*.p12
+**/*.rej
+**/*.orig
