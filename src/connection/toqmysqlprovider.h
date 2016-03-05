@@ -62,23 +62,20 @@ class toQMySqlProvider : public toQSqlProvider
             return m_displayName;
         };
 
-        /** see: @ref toConnectionProvider::hosts() */
-        virtual QList<QString> hosts();
-
-        /** see: @ref toConnectionProvider::databases() */
-        virtual QList<QString> databases(const QString &host, const QString &user, const QString &pwd);
+        /** see: @ref toConnectionProvider::defaultConnection() */
+        QMap<QString,QString> defaultConnection() const override;
 
         /** see: @ref toConnectionProvider::options() */
-        virtual QList<QString> options();
+        QList<QString> options() const override;
 
         /** see: @ref toConnectionProvider::configurationTab() */
-        virtual QWidget *configurationTab(QWidget *parent);
+        QWidget *configurationTab(QWidget *parent) override;
 
         /** see: @ref toConnection */
-        virtual toConnection::connectionImpl* createConnectionImpl(toConnection&);
+        toConnection::connectionImpl* createConnectionImpl(toConnection&) override;
 
         /** see: @ref toConnection */
-        virtual toConnectionTraits* createConnectionTrait(void);
+        toConnectionTraits* createConnectionTrait(void) override;
 
     private:
         static QString m_name, m_displayName;

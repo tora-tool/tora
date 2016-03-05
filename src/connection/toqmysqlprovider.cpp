@@ -53,19 +53,12 @@ bool toQMySqlProvider::initialize()
     return true;
 }
 
-QList<QString> toQMySqlProvider::hosts()
+QMap<QString,QString> toQMySqlProvider::defaultConnection() const
 {
-    QList<QString> ret = QList<QString>() << QString::null << "localhost";
-    return ret;
+    return QMap<QString,QString>{{"HOST", "localhost"}, {"PORT", "3306"}, {"DB", "mysql"}, {"USER", "root"}};
 }
 
-QList<QString> toQMySqlProvider::databases(const QString &host, const QString &user, const QString &pwd)
-{
-    QList<QString> ret = QList<QString>() << "...";
-    return ret;
-}
-
-QList<QString> toQMySqlProvider::options()
+QList<QString> toQMySqlProvider::options() const
 {
     QList<QString> ret = QList<QString>()
                          << "*SSL"

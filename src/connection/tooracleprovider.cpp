@@ -81,22 +81,25 @@ class toOracleProvider : public  toConnectionProvider
         };
 
         /** see: @ref toConnectionProvider::hosts() */
-        virtual QList<QString> hosts();
+        QList<QString> hosts() const override;
+
+        /** see: @ref toConnectionProvider::defaultConnection() */
+        QMap<QString,QString> defaultConnection() const override;
 
         /** see: @ref toConnectionProvider::databases() */
-        virtual QList<QString> databases(const QString &host, const QString &user, const QString &pwd);
+        QList<QString> databases(const QString &host, const QString &user, const QString &pwd) const override;
 
         /** see: @ref toConnectionProvider::options() */
-        virtual QList<QString> options();
+        QList<QString> options() const override;
 
         /** see: @ref toConnectionProvider::configurationTab() */
-        virtual QWidget *configurationTab(QWidget *parent);
+        QWidget *configurationTab(QWidget *parent) override;
 
         /** see: @ref toConnection */
-        virtual toConnection::connectionImpl* createConnectionImpl(toConnection&);
+        toConnection::connectionImpl* createConnectionImpl(toConnection&) override;
 
         /** see: @ref toConnection */
-        virtual toConnectionTraits* createConnectionTrait(void);
+        toConnectionTraits* createConnectionTrait(void) override;
 
     private:
         static QString m_name, m_display_name;
@@ -156,13 +159,17 @@ bool toOracleProvider::initialize()
     return true;
 }
 
-QList<QString> toOracleProvider::hosts()
+QList<QString> toOracleProvider::hosts() const
 {
-    QList<QString> ret = QList<QString>() << QString::null << "SQL*Net";
-    return ret;
+    return QList<QString>{};
 }
 
-QList<QString> toOracleProvider::databases(const QString &host, const QString &user, const QString &pwd)
+QMap<QString,QString> toOracleProvider::defaultConnection() const
+{
+	return QMap<QString,QString>{{"HOST", "localhost"}, {"PORT", "1521"}, {"DB", "XE"}, {"USER", "SYSTEM"}};
+}
+
+QList<QString> toOracleProvider::databases(const QString &host, const QString &user, const QString &pwd) const
 {
     QSet<QString> tnsnames; // List of locations for the file tnsnames.ora
     QString str;
@@ -333,7 +340,7 @@ QList<QString> toOracleProvider::databases(const QString &host, const QString &u
     return ret;
 }
 
-QList<QString> toOracleProvider::options()
+QList<QString> toOracleProvider::options() const
 {
     QList<QString> ret;
     ret << "*SQL*Net"

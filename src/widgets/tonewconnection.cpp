@@ -381,30 +381,22 @@ void toNewConnection::changeProvider(int current)
         if (provider.isNull() || provider.isEmpty())
             return;
 
+        toConnectionProvider const& ProviderRef = toConnectionProviderRegistrySing::Instance().get(provider);
+
+        // Database provider Hosts
         bool oldStateH = Host->blockSignals(true);
         Host->clear();
-        QList<QString> hosts = toConnectionProviderRegistrySing::Instance().get(provider).hosts();
-        DefaultPort = 0;
-        foreach(QString const & host, hosts)
+        foreach(QString const & host, ProviderRef.hosts())
         {
             if (host.isEmpty())
                 continue;
-            else if (host.startsWith(":"))
-                DefaultPort = host.mid(1).toInt();
-            else
-                Host->addItem(host); // This might also call changeHost(), unless blockSignals == true
+            Host->addItem(host); // This might also call changeHost(), unless blockSignals == true
         }
         Host->blockSignals(oldStateH);
 
+        // Database provider Hosts
         Database->clear();
         changeHost(); // will populate Databases combobox
-
-        // seems i broke this for oracle
-        if (!DefaultPort)
-        {
-            if (provider.startsWith("Oracle"))
-                DefaultPort = 1521;
-        }
 
         if (Provider->currentText().startsWith("Oracle")) // TODO add provider property
         {
@@ -417,7 +409,18 @@ void toNewConnection::changeProvider(int current)
             Schema->hide();
         }
 
+        // Default connection parameters
+        DefaultUser = ProviderRef.defaultConnection()["USER"];
+        DefaultPort = ProviderRef.defaultConnection()["PORT"].toInt();
+        DefaultHost = ProviderRef.defaultConnection()["HOST"];
+        DefaultDatabase = ProviderRef.defaultConnection()["DB"];
+        if (Username->text().isEmpty())
+        	Username->setPlaceholderText(DefaultUser);
+        if (Host->currentText().isEmpty())
+        	Host->lineEdit()->setPlaceholderText(DefaultHost);
         Port->setValue(DefaultPort);
+        if (Database->currentText().isEmpty())
+        	Database->lineEdit()->setPlaceholderText(DefaultDatabase);
 
         if (Provider->currentText().startsWith(ORACLE_TNSCLIENT) || getCurrentProvider() == "QODBC")
         {
@@ -434,6 +437,7 @@ void toNewConnection::changeProvider(int current)
             Port->show();
         }
 
+        // Database connection options
         QList<QWidget *> widgets = OptionGroup->findChildren<QWidget *>();
         foreach(QWidget * w, widgets)
         delete w;

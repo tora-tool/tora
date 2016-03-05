@@ -46,7 +46,7 @@ class toQPSqlProvider : public toQSqlProvider
         toQPSqlProvider(toConnectionProviderFinder::ConnectionProvirerParams const& p);
 
         /** see: @ref toConnectionProvider::initialize() */
-        //virtual bool initialize();
+        //bool initialize() override;
 
         /** see: @ref toConnectionProvider::name() */
         virtual QString const& name() const
@@ -59,11 +59,11 @@ class toQPSqlProvider : public toQSqlProvider
             return m_displayName;
         };
 
-// TODO DEFINE THESE
-#if 0
-        /** see: @ref toConnectionProvider::hosts() */
-        virtual QList<QString> hosts();
+        /** see: @ref toConnectionProvider::defaultConnection() */
+        QMap<QString,QString> defaultConnection() const override;
 
+// TODO DEFINE THESE
+        #if 0
         /** see: @ref toConnectionProvider::databases() */
         virtual QList<QString> databases(const QString &host, const QString &user, const QString &pwd);
 

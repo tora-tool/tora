@@ -53,6 +53,7 @@ class toNewConnection : public QDialog
 
     private:
         QSettings Settings;
+        QString DefaultHost, DefaultDatabase, DefaultUser;
         // provider's default port
         int DefaultPort;
 

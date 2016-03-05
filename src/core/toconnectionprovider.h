@@ -160,7 +160,12 @@ class toConnectionProvider
         /** List the available hosts this database provider knows about.
         * @return A list of hosts.
         */
-        virtual QList<QString> hosts() = 0;
+        virtual QList<QString> hosts() const = 0;
+
+        /** List of default database connection parameters
+        * @return A list of default connection parameters
+        */
+        virtual QMap<QString,QString> defaultConnection() const { return QMap<QString, QString>{}; }
 
         /** List the available databases this provider knows about for a given host.
         * @param host Host to return connections for.
@@ -168,14 +173,14 @@ class toConnectionProvider
         * @param password That might be needed.
         * @return A list of databases available for a given host.
         */
-        virtual QList<QString> databases(const QString &host, const QString &user, const QString &pwd) = 0;
+        virtual QList<QString> databases (const QString &host, const QString &user, const QString &pwd) const = 0;
 
         /** Get a list of options available for the connection. An option with the name
         * "-" indicates a break should be made to separate the rest of the options from the previous
         * options. An option preceded by "*" means selected by default. The * shoul be stripped before
         * before passing it to the connection call.
         */
-        virtual QList<QString> options() = 0;
+        virtual QList<QString> options() const = 0;
 
         /**
         * Create and return configuration tab for this connectiontype. The returned widget should also

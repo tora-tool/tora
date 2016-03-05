@@ -48,13 +48,12 @@ bool toQSqlProvider::initialize()
     return true;
 }
 
-QList<QString> toQSqlProvider::hosts()
+QList<QString> toQSqlProvider::hosts() const
 {
-    QList<QString> ret = QList<QString>() << QString::null << "(TBD) hosts";
-    return ret;
+    return QList<QString>{};
 }
 
-QList<QString> toQSqlProvider::databases(const QString &host, const QString &user, const QString &pwd)
+QList<QString> toQSqlProvider::databases(const QString &host, const QString &user, const QString &pwd) const
 {
     QList<QString> ret;
 #ifdef Q_OS_WIN32
@@ -87,7 +86,7 @@ QList<QString> toQSqlProvider::databases(const QString &host, const QString &use
     return ret;
 }
 
-QList<QString> toQSqlProvider::options()
+QList<QString> toQSqlProvider::options() const
 {
     QList<QString> ret;
     ret << "TBD options";

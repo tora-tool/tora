@@ -46,6 +46,11 @@ toQPSqlProvider::toQPSqlProvider(toConnectionProviderFinder::ConnectionProvirerP
     : toQSqlProvider(p)
 {}
 
+QMap<QString,QString> toQPSqlProvider::defaultConnection() const
+{
+	return QMap<QString,QString>{{"HOST", "localhost"}, {"PORT", "5432"}, {"DB", "postgres"}, {"USER", "postgres"}};
+}
+
 QWidget* toQPSqlProvider::configurationTab(QWidget *parent)
 {
 #ifdef Q_OS_WIN
