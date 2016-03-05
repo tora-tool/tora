@@ -10,7 +10,7 @@
 # for example: FIND_PACKAGE(Oracle REQUIRED CLNTSH OCCI)
 # 
 # copyright (c) 2007 Petr Vanek <petr@yarpen.cz>
-# copyright (c) 2015 Ivan Brezina <ibre5041@ibrezina.net>
+# copyright (c) 2016 Ivan Brezina <ibre5041@ibrezina.net>
 # Redistribution and use is allowed according to the terms of the BSD license.
 #
 # This module will set the following variables in your project:
@@ -33,6 +33,7 @@
 SET(ORACLE_FOUND "NO")
 SET(ORACLE_HAS_XML "NO")
 FILE(TO_CMAKE_PATH "$ENV{ORACLE_HOME}" ORACLE_HOME)
+GET_FILENAME_COMPONENT(XE_HOME "[HKEY_LOCAL_MACHINE\\SOFTWARE\\ORACLE\\KEY_XE;ORACLE_HOME]" ABSOLUTE CACHE)
 
 # "components" handling. It enables to find various independent libraries,
 IF( Oracle_FIND_COMPONENTS )
@@ -47,7 +48,6 @@ IF( Oracle_FIND_COMPONENTS )
   ENDIF (NOT ORACLE_USE_CLNTSH)
 
 ENDIF( Oracle_FIND_COMPONENTS )
-
 
 IF (ORACLE_PATH_INCLUDES)
   SET (ORACLE_INCLUDES_LOCATION ${ORACLE_PATH_INCLUDES})
@@ -65,6 +65,8 @@ ELSE (ORACLE_PATH_INCLUDES)
             /usr/include/oracle/11.2/client${LIB_SUFFIX}/
             # instantclient on OS X from macports
             /opt/local/lib/oracle/sdk/include/
+            # Oracle XE Windows
+            ${XE_HOME}/oci/include/
        )
 ENDIF (ORACLE_PATH_INCLUDES)
 
@@ -84,6 +86,8 @@ ELSE (ORACLE_PATH_LIB)
             /usr/lib/oracle/11.2/client${LIB_SUFFIX}/lib/
             # instant client on OS X from macports
             /opt/local/lib/oracle/
+            # Oracle XE Windows
+            ${XE_HOME}/oci/lib/MSVC/
         )
 ENDIF (ORACLE_PATH_LIB)
 
