@@ -40,6 +40,7 @@
 
 #include <QtCore/QDebug>
 #include <QtCore/QSettings>
+#include <QGuiApplication>
 
 QVariant ToConfiguration::Editor::defaultValue(int option) const
 {
@@ -99,13 +100,15 @@ QVariant ToConfiguration::Editor::defaultValue(int option) const
         case EditStyleMap:
             {
                 static toStylesMap retval;
+                QPalette const& palette = QGuiApplication::palette();
+                QColor windowText = palette.color(QPalette::WindowText);
                 if (!retval.isEmpty())
                     return QVariant::fromValue(retval);
                 QMetaEnum StyleNameEnum(ENUM_REF(toSyntaxAnalyzer,WordClassEnum));
                 QsciLexerSQL *l = new QsciLexerSQL(NULL);
                 for (int idx = 0; idx < StyleNameEnum.keyCount(); idx++)
                 {
-                    QColor fg = l->color((int)StyleNameEnum.value(idx));
+                    QColor fg = l->color((int)StyleNameEnum.value(idx)).light(windowText.lightness());
                     QColor bg = l->paper((int)StyleNameEnum.value(idx));
                     QFont fo = Utils::toStringToFont(defaultValue(ConfCodeFont).toString());
 
