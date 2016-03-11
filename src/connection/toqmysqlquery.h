@@ -39,6 +39,7 @@
 
 #include <QtSql/QSqlRecord>
 #include <QtCore/QList>
+#include <QtCore/QStringList>
 
 class QSqlQuery;
 class toQMySqlConnectionSub;
