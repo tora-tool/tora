@@ -40,7 +40,7 @@
 
 #include <QtCore/QDebug>
 #include <QtCore/QSettings>
-#include <QGuiApplication>
+#include <QApplication>
 
 QVariant ToConfiguration::Editor::defaultValue(int option) const
 {
@@ -100,7 +100,7 @@ QVariant ToConfiguration::Editor::defaultValue(int option) const
         case EditStyleMap:
             {
                 static toStylesMap retval;
-                QPalette const& palette = QGuiApplication::palette();
+                QPalette const& palette = QApplication::palette();
                 QColor windowText = palette.color(QPalette::WindowText);
                 if (!retval.isEmpty())
                     return QVariant::fromValue(retval);

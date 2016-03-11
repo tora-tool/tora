@@ -62,9 +62,6 @@ int main(int argc, char **argv)
 	string sql = slurp(string(argv[1]));
 	QString qsql = QString::fromStdString(sql);
 	
-	// Set the default codec to use for QString
-	QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
-
 	try
 	{
 		auto_ptr <SQLParser::Statement> parser = StatementFactTwoParmSing::Instance().create("OracleDML", qsql, "");
