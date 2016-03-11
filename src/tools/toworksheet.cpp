@@ -1382,6 +1382,9 @@ void toWorksheet::slotFirstResult(const QString &sql,
     if (error && result.offset() >= 0 && toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::MoveToErrorBool).toBool())
         Editor->sciEditor()->setCursorPosition(m_lastQuery.lineFrom + result.line() - 1, result.column() - 1);
 
+    if (error && LockedConnection && (*LockedConnection)->isBroken())
+        unlockConnection();
+
     if (!error)
     {
         if (ResultTab)

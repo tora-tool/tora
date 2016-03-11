@@ -488,6 +488,8 @@ void toAWR::instanceRead(void)
     try
     {
         QVariant vdbid = dbid->itemData(dbid->currentIndex());
+        if (vdbid.toStringList().size() < 2)
+            return;
         QString dbids( vdbid.toStringList().at(0) );
         QString insts( vdbid.toStringList().at(1) );
 
