@@ -917,8 +917,8 @@ IF (TORA_DEBUG AND USE_EXPERIMENTAL AND QT5_BUILD)
     LIST (APPEND TORA_RCC_FILES tests/test4.qrc)
     ENDIF()
 
-    add_subdirectory(tests)
-    # include(CMakeLists.tests.txt)
+    # add_subdirectory(tests)
+    include(tests/CMakeLists.txt)
 ENDIF()
 
 ################################################################################

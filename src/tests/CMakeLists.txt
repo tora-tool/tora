@@ -16,7 +16,7 @@ SET(TEST1_MOC_SOURCES
   #../parsing/moc_tsqllexer.cxx
   )
 ADD_EXECUTABLE("test1" ${GUI_TYPE}
-  test1.cpp
+  tests/test1.cpp
   #${TEST1_MOC_SOURCES}
   #${TEST1_SOURCES}
   #${TORA_RCC_SRCS}
