@@ -54,6 +54,7 @@
 #include <QtCore/QSettings>
 #include <QSplitter>
 #include <QtCore/QTextStream>
+#include <QToolBar>
 
 #include "icons/execute.xpm"
 #include "icons/toscript.xpm"

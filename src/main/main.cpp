@@ -46,7 +46,7 @@
 #include "core/utils.h"
 #include "core/tologger.h"
 #include "core/toglobalconfiguration.h"
-#include "core/todatabasesetting.h"
+#include "core/todatabaseconfig.h"
 
 #ifndef Q_OS_WIN32
 #include <unistd.h>

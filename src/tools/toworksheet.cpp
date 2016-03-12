@@ -73,7 +73,7 @@
 #include "editor/tosqltext.h"
 #include "core/toglobalevent.h"
 #include "core/toconfiguration.h"
-#include "core/todatabasesetting.h"
+#include "core/todatabaseconfig.h"
 #include "connection/toqmysqlsetting.h"
 
 #include <QtCore/QDebug>

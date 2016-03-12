@@ -27,6 +27,8 @@ TOra.sdf
 cmake_uninstall.cmake
 **/*.wixobj
 **/*.wixpdb
+**/*.lib
+
 ########################################
 #             Generated source(s)      #
 ########################################

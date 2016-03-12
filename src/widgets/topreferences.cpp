@@ -34,7 +34,7 @@
 
 #include "widgets/topreferences.h"
 #include "widgets/toglobalsetting.h"
-#include "core/todatabasesetting.h"
+#include "widgets/todatabasesetting.h"
 #include "core/toconfiguration.h"
 #include "core/toconnectionprovider.h"
 #include "core/tomainwindow.h"

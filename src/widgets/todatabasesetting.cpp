@@ -32,55 +32,16 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "core/todatabasesetting.h"
-#include "core/utils.h"
-#include "core/toconfenum.h"
+#include "widgets/todatabasesetting.h"
+#include "core/todatabaseconfig.h"
 #include "core/toconfiguration.h"
-#include "core/tomainwindow.h"
 #include "core/toqvalue.h"
-#include "ts_log/ts_log_utils.h"
 
 #include <QColorDialog>
 #include <QtCore/QString>
 #include <QFileDialog>
 
 #include <QtCore/QDebug>
-
-QVariant ToConfiguration::Database::defaultValue(int option) const
-{
-    switch (option)
-    {
-        case ObjectCacheInt:
-            return QVariant((int)1);
-        case CacheTimeout:
-            return QVariant((int)7);
-        case AutoCommitBool:
-            return QVariant((bool)false);
-        case FirewallModeBool:
-            return QVariant((bool)false);
-        case ConnTestIntervalInt:
-            return QVariant((int)900);     //15min
-        case CachedConnectionsInt:
-            return QVariant((int)4);
-        case InitialFetchInt:
-            return QVariant((int)50);
-        case MaxContentInt:
-            return QVariant((int)100);
-        case MaxColDispInt:
-            return QVariant((int)300);
-        case IndicateEmptyBool:
-            return QVariant((bool)true);
-        case IndicateEmptyColor:
-            return QVariant(QString("#f2ffbc"));
-        case NumberFormatInt:
-            return QVariant((int)0);
-        case NumberDecimalsInt:
-            return QVariant((int)2);
-        default:
-            Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Database un-registered enum value: %1").arg(option)));
-            return QVariant();
-    }
-}
 
 void toDatabaseSetting::numberFormatChange()
 {

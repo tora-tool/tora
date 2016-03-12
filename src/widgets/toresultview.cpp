@@ -40,7 +40,7 @@
 #include "widgets/toresultlistformat.h"
 #include "core/toconfiguration.h"
 #include "core/toglobalconfiguration.h"
-#include "core/todatabasesetting.h"
+#include "core/todatabaseconfig.h"
 #include "core/toeditorsetting.h"
 #include "core/toconfiguration.h"
 

@@ -44,7 +44,7 @@
 #include "core/toconfiguration.h"
 #include "core/toconnectionprovider.h"
 #include "widgets/toworkspace.h"
-#include "core/todatabasesetting.h"
+#include "core/todatabaseconfig.h"
 
 #include <QMenu>
 

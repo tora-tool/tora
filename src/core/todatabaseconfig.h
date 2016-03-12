@@ -32,15 +32,11 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TODATABASESETTING_H
-#define TODATABASESETTING_H
+#pragma once
 
-#include "core/tosettingtab.h"
 #include "core/toconfenum.h"
 #include "core/utils.h"
-
-#include "ui_todatabasesettingui.h"
-
+#include "core/utils.h"
 namespace ToConfiguration
 {
     class Database : public ConfigContext
@@ -68,22 +64,3 @@ namespace ToConfiguration
             virtual QVariant defaultValue(int) const;
     };
 };
-
-class toDatabaseSetting : public QWidget
-    , public Ui::toDatabaseSettingUI
-    , public toSettingTab
-{
-        Q_OBJECT;
-
-    public:
-        toDatabaseSetting(QWidget *parent = 0, const char *name = 0, toWFlags fl = 0);
-
-    public slots:
-        virtual void saveSetting(void);
-        virtual void numberFormatChange();
-        virtual void IndicateEmptyColor_clicked();
-    private:
-        static ToConfiguration::Database s_databaseConfig;
-};
-
-#endif

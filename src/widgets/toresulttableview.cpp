@@ -47,7 +47,7 @@
 //#include "core/tolistviewformatteridentifier.h"
 #include "widgets/toworkingwidget.h"
 #include "core/toglobalconfiguration.h"
-#include "core/todatabasesetting.h"
+#include "core/todatabaseconfig.h"
 
 #include <QtCore/QSize>
 #include <QtCore/QTimer>

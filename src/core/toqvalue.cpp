@@ -35,7 +35,7 @@
 #include "core/toqvalue.h"
 #include "core/utils.h"
 #include "core/toconfiguration.h"
-#include "core/todatabasesetting.h"
+#include "core/todatabaseconfig.h"
 
 #include <QtCore/QVariant>
 #include <QApplication>

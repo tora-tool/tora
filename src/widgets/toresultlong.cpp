@@ -36,7 +36,7 @@
 #include "core/utils.h"
 #include "core/toeventquery.h"
 #include "core/toconfiguration.h"
-#include "core/todatabasesetting.h"
+#include "core/todatabaseconfig.h"
 
 toResultLong::toResultLong(bool readable, bool dispCol,
                            QWidget *parent, const char *name, toWFlags f)

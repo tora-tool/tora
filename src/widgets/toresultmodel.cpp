@@ -39,7 +39,7 @@
 #include "core/toqvalue.h"
 #include "core/toeventquery.h"
 #include "core/toconnectiontraits.h"
-#include "core/todatabasesetting.h"
+#include "core/todatabaseconfig.h"
 
 #include <QtCore/QDebug>
 #include <QtCore/QMimeData>
