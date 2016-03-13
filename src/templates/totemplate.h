@@ -36,7 +36,6 @@
 #define TOTEMPLATE_H
 
 #include "core/tohelpcontext.h"
-#include "widgets/toresultview.h"
 #include "core/tosettingtab.h"
 // due the TODock
 #include "core/utils.h"
@@ -49,6 +48,7 @@
 #include <list>
 #include <map>
 
+#include "../tools/toresultview.h"
 #include "ui_totemplateeditui.h"
 #include "ui_totemplateaddfileui.h"
 #include "ui_totemplatesetupui.h"

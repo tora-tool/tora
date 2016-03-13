@@ -35,8 +35,8 @@
 #ifndef TOWORKSHEETTEXT_H
 #define TOWORKSHEETTEXT_H
 
+#include "../main/toeditorsetting.h"
 #include "editor/tosqltext.h"
-#include "core/toeditorsetting.h"
 
 class toComplPopup;
 

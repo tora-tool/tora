@@ -37,7 +37,6 @@
 #include "widgets/toresultcombo.h"
 #include "core/utils.h"
 #include "core/totool.h"
-#include "widgets/toparamget.h"
 #include "core/tochangeconnection.h"
 #include "core/toquery.h"
 #include "core/totextview.h"
@@ -54,6 +53,7 @@
 #include <iostream>
 #include <list>
 #include <sstream>
+#include "toparamget.h"
 
 // -- Instances in this Workload Repository schema
 // => instnum

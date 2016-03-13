@@ -35,9 +35,7 @@
 #include "tools/toworksheetstatistic.h"
 #include "core/utils.h"
 #include "tools/toanalyze.h"
-#include "widgets/tobarchart.h"
 #include "core/toconf.h"
-#include "widgets/toresultview.h"
 #include "core/toconfiguration.h"
 
 #include <QCheckBox>
@@ -49,6 +47,8 @@
 #include "icons/grid.xpm"
 #include "icons/trash.xpm"
 #include "icons/tree.xpm"
+#include "tobarchart.h"
+#include "toresultview.h"
 
 toAnalyze *toWorksheetStatistic::Widget;
 

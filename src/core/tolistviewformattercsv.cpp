@@ -35,13 +35,13 @@
 #include "core/tolistviewformattercsv.h"
 #include "core/tolistviewformatterfactory.h"
 #include "core/tolistviewformatteridentifier.h"
-#include "widgets/toresultview.h"
 #include "widgets/toresultmodel.h"
 
 #include <QtCore/QRegExp>
 
 #include <iostream>
 #include <vector>
+#include "../tools/toresultview.h"
 
 namespace
 {

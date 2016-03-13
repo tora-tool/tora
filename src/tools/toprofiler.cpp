@@ -38,7 +38,6 @@
 #include "core/tochangeconnection.h"
 #include "core/toconnection.h"
 #include "widgets/toresultitem.h"
-#include "widgets/toresultlong.h"
 #include "core/tosql.h"
 #include "editor/tohighlightededitor.h"
 #include "editor/tosqltext.h"
@@ -55,6 +54,7 @@
 #include "icons/clock.xpm"
 #include "icons/execute.xpm"
 #include "icons/refresh.xpm"
+#include "toresultlong.h"
 
 static toSQL SQLProfilerRuns("toProfiler:ProfilerRuns",
                              "create table plsql_profiler_runs\n"

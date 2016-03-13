@@ -1,5 +1,4 @@
-#ifndef __TSQLPARSE__
-#define __TSQLPARSE__
+#pragma once
 
 #pragma warning(push)
 // some warnings still occur at this level
@@ -824,5 +823,3 @@ class TORA_EXPORT StatementFactTwoParmSing: public ::Loki::SingletonHolder<State
 
 // restore warning level
 #pragma warning(pop)
-
-#endif

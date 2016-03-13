@@ -37,12 +37,8 @@
 #include "core/totool.h"
 #include "editor/tomemoeditor.h"
 #include "widgets/toresultschema.h"
-#include "widgets/toresulttableview.h"
-#include "widgets/toresultplan.h"
 #include "tools/toworksheetstatistic.h"
 //#include "core/toconfiguration.h"
-#include "connection/tooraclesetting.h"
-
 #include <QComboBox>
 #include <QSpinBox>
 #include <QMenu>
@@ -55,6 +51,10 @@
 #include "icons/sql.xpm"
 #include "icons/stop.xpm"
 #include "icons/toanalyze.xpm"
+
+#include "connection/tooracleconfiguration.h"
+#include "toresultplan.h"
+#include "toresulttableview.h"
 
 class toAnalyzeTool : public toTool
 {

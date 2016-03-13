@@ -35,13 +35,13 @@
 #include "core/tolistviewformatterhtml.h"
 #include "core/tolistviewformatterfactory.h"
 #include "core/tolistviewformatteridentifier.h"
-#include "widgets/toresultview.h"
 #include "widgets/toresultmodel.h"
 #include "core/utils.h"
 
 #include <QtGui/QTextDocument>
 
 #include <iostream>
+#include "../tools/toresultview.h"
 
 namespace
 {

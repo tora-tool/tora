@@ -35,7 +35,7 @@
 #ifndef TOBROWSERINDEXWIDGET_H
 #define TOBROWSERINDEXWIDGET_H
 
-#include "widgets/tobrowserbasewidget.h"
+#include "tobrowserbasewidget.h"
 
 class toResultTableView;
 class toResultItem;

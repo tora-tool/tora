@@ -33,7 +33,6 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "connection/tooracleextract.h"
-#include "connection/tooraclesetting.h"
 #include "core/toconnectiontraits.h"
 #include "core/utils.h"
 #include "core/toconfiguration.h"
@@ -44,6 +43,8 @@
 
 #include <QApplication>
 #include <QtCore/QRegExp>
+
+#include "connection/tooracleconfiguration.h"
 
 static toOracleExtract OracleExtractor;
 

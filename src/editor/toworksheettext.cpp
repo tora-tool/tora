@@ -37,13 +37,13 @@
 #include "tools/toworksheet.h"
 #include "editor/tocomplpopup.h"
 #include "core/toconfiguration.h"
-#include "core/toeditorsetting.h"
 #include "core/toconnection.h"
 #include "core/toconnectiontraits.h"
 #include "core/tologger.h"
 #include "shortcuteditor/shortcutmodel.h"
 
 #include <QListWidget>
+#include "../main/toeditorsetting.h"
 
 using namespace ToConfiguration;
 

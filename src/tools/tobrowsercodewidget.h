@@ -35,7 +35,7 @@
 #ifndef TOBROWSERCODEWIDGET_H
 #define TOBROWSERCODEWIDGET_H
 
-#include "widgets/tobrowserbasewidget.h"
+#include "tobrowserbasewidget.h"
 
 class toResultField;
 class toResultGrants;

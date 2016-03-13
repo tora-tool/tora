@@ -33,11 +33,11 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "widgets/tohelpsetup.h"
-#include "tools/tohelp.h"
 #include "core/utils.h"
 #include "core/tohtml.h"
 #include "core/toconfiguration.h"
 #include "core/tomainwindow.h"
+#include "tohelp.h"
 
 toHelpAddFile::toHelpAddFile(QWidget *parent, const char *name)
     : QDialog(parent)

@@ -90,21 +90,21 @@ SET(TORA_UI_SRC
   widgets/connectioncolorsdialogui.ui
   widgets/toaboutui.ui
   widgets/todatabasesettingui.ui
-  widgets/todescribeui.ui
+  tools/todescribeui.ui
   widgets/toglobalsettingui.ui
   widgets/tohelpaddfileui.ui
   widgets/tohelpsetupui.ui
   widgets/tohelpui.ui
-  widgets/tolinechartsetupui.ui	
-  widgets/tomessageui.ui
-  widgets/tonewconnectionui.ui
-  widgets/topreferencesui.ui
+  tools/tolinechartsetupui.ui	
+  main/tomessageui.ui
+  main/tonewconnectionui.ui
+  main/topreferencesui.ui
   widgets/toresultcontentfilterui.ui
   widgets/toresultlistformatui.ui
-  widgets/tosyntaxsetupui.ui
+  main/tosyntaxsetupui.ui
   widgets/toworksheetsetupui.ui
-  editor/tosearchreplaceui.ui
-  widgets/toconnectionimportui.ui
+  widgets/tosearchreplaceui.ui
+  main/toconnectionimportui.ui
   widgets/totoolsettingui.ui
 
   #obsolete tools/tobrowserconstraintui.ui
@@ -160,7 +160,7 @@ SET(TORA_UI_SRC
   )
 
 IF (ORACLE_FOUND)
-  LIST (APPEND TORA_UI_SRC connection/tooraclesettingui.ui)
+  LIST (APPEND TORA_UI_SRC main/tooraclesettingui.ui)
 ENDIF (ORACLE_FOUND)
 
 IF (POPPLER_QT4_FOUND)
@@ -190,68 +190,68 @@ SET(TORA_MOC_CLASSES
   core/toconnectionmodel.h
   core/toconnectionregistry.h
   core/todatabaseconfig.h
-  widgets/todescribe.h
+  tools/todescribe.h
   widgets/todockbar.h
   core/todocklet.h
   core/toeditablemenu.h
   core/toeditmenu.h
-  core/toeditorsetting.h
+  main/toeditorsetting.h
   core/toeventquery.h
   core/toeventqueryworker.h
   core/toglobalevent.h
   widgets/todatabasesetting.h
   widgets/toglobalsetting.h  
   core/toglobalconfiguration.h
-  tools/tohelp.h
+  widgets/tohelp.h
   widgets/tohelpsetup.h
   core/tolistviewformatter.h
   main/tomain.h
   core/tomainwindow.h
   editor/tomemoeditor.h
-  core/tomessage.h
+  main/tomessage.h
   editor/tomodeleditor.h
-  widgets/tonewconnection.h  
-  widgets/toparamget.h
-  widgets/topreferences.h
+  main/tonewconnection.h  
+  tools/toparamget.h
+  main/topreferences.h
   core/toquery.h
   core/toqueryimpl.h
   core/toresult.h
   widgets/toabout.h
   widgets/tobackgroundlabel.h
-  widgets/tobarchart.h
-  widgets/tobrowserbasewidget.h # this one is used by widgets/todescribe.h (therefore is not in tools)
-  widgets/toconnectionimport.h
-  widgets/tolinechart.h
-  widgets/topiechart.h
+  tools/tobarchart.h
+  tools/tobrowserbasewidget.h # this one is used by widgets/todescribe.h (therefore is not in tools)
+  main/toconnectionimport.h
+  tools/tolinechart.h
+  tools/topiechart.h
   widgets/topushbutton.h     
   widgets/torefreshcombo.h
-  widgets/toresultbar.h
-  widgets/toresultcode.h
-  widgets/toresultcols.h
+  tools/toresultbar.h
+  tools/toresultcode.h
+  tools/toresultcols.h
   widgets/toresultcolscomment.h
   widgets/toresultcombo.h
-  widgets/toresultdatasingle.h
-  widgets/toresultdepend.h
-  widgets/toresultdrawing.h
-  widgets/toresultextent.h
-  widgets/toresultfield.h
-  widgets/toresultgrants.h
+  tools/toresultdatasingle.h
+  tools/toresultdepend.h
+  tools/toresultdrawing.h
+  tools/toresultextent.h
+  tools/toresultfield.h
+  tools/toresultgrants.h
   widgets/toresultitem.h
-  widgets/toresultline.h
+  tools/toresultline.h
   widgets/toresultlistformat.h
-  widgets/toresultlock.h
-  widgets/toresultlong.h
+  tools/toresultlock.h
+  tools/toresultlong.h
   widgets/toresultmodel.h
   widgets/toresultmodeledit.h
-  widgets/toresultparam.h
-  widgets/toresultplan.h
+  tools/toresultparam.h
+  tools/toresultplan.h
   widgets/toresultschema.h
-  widgets/toresultstats.h
-  widgets/toresulttableview.h  
-  widgets/toresulttableviewedit.h  
-  widgets/toresultview.h
+  tools/toresultstats.h
+  tools/toresulttableview.h  
+  tools/toresulttableviewedit.h  
+  tools/toresultview.h
   widgets/tosplash.h
-  widgets/tosyntaxsetup.h
+  main/tosyntaxsetup.h
   widgets/totableselect.h  
   widgets/totabwidget.h
   widgets/totoolwidget.h
@@ -267,7 +267,7 @@ SET(TORA_MOC_CLASSES
   core/totool.h
   core/utils.h
   parsing/tsqllexer.h
-  parsing/tosyntaxanalyzer.h
+  editor/tosyntaxanalyzer.h
   parsing/tolexeroracleapis.h 
   
   editor/tobaseeditor.h
@@ -279,8 +279,8 @@ SET(TORA_MOC_CLASSES
   editor/toworksheettext.h
   editor/todebugtext.h
   editor/todebugeditor.h
-  editor/tosearchreplace.h
-  editor/tostyle.h
+  widgets/tosearchreplace.h
+  core/tostyle.h
   parsing/tolexeroracle.h
 
   result/toproviderobserver.h
@@ -378,7 +378,7 @@ SET(TORA_MOC_CLASSES
   )
 
 IF (ORACLE_FOUND)
-  LIST(APPEND TORA_MOC_CLASSES connection/tooraclesetting.h)
+  LIST(APPEND TORA_MOC_CLASSES main/tooraclesetting.h connection/tooracleconfiguration.h)
 ENDIF (ORACLE_FOUND)
 
 IF (POPPLER_QT4_FOUND)
@@ -414,8 +414,8 @@ SET(TORA_SOURCES
   core/toconfenum.cpp
   widgets/toabout.cpp
   widgets/tobackgroundlabel.cpp     
-  widgets/tobarchart.cpp
-  widgets/tobrowserbasewidget.cpp # this one is used by widgets/todescribe.h (therefore is not in tools)
+  tools/tobarchart.cpp
+  tools/tobrowserbasewidget.cpp # this one is used by widgets/todescribe.h (therefore is not in tools)
   #core/toconfiguration.cpp
   core/toconfiguration.cpp
   #core/toconfigurationpriv.cpp
@@ -427,11 +427,11 @@ SET(TORA_SOURCES
   core/toconnectionsub.cpp
   core/toconnectionsubloan.cpp
   core/todatabaseconfig.cpp
-  widgets/todescribe.cpp
+  tools/todescribe.cpp
   core/todocklet.cpp
   core/toeditablemenu.cpp
   core/toeditmenu.cpp
-  core/toeditorsetting.cpp
+  main/toeditorsetting.cpp
   core/toeditwidget.cpp
   core/toeventquery.cpp
   core/toeventqueryworker.cpp
@@ -447,7 +447,7 @@ SET(TORA_SOURCES
   core/tolistviewformattertabdel.cpp
   core/tolistviewformattertext.cpp
   core/tomainwindow.cpp
-  core/tomessage.cpp
+  main/tomessage.cpp
   core/toquery.cpp
   core/toqvalue.cpp
   core/toresult.cpp
@@ -456,46 +456,46 @@ SET(TORA_SOURCES
   core/totextview.cpp
   core/totool.cpp
   main/tomain.cpp
-  widgets/toconnectionimport.cpp
+  main/toconnectionimport.cpp
   widgets/toconnectionwidget.cpp
   widgets/todockbar.cpp
   widgets/todatabasesetting.cpp
   widgets/toglobalsetting.cpp
   widgets/tohelpsetup.cpp
-  widgets/tolinechart.cpp
-  widgets/tonewconnection.cpp
-  widgets/toparamget.cpp
-  widgets/topiechart.cpp
-  widgets/topreferences.cpp	
+  tools/tolinechart.cpp
+  main/tonewconnection.cpp
+  tools/toparamget.cpp
+  tools/topiechart.cpp
+  main/topreferences.cpp	
   widgets/topushbutton.cpp
   widgets/torefreshcombo.cpp
-  widgets/toresultbar.cpp
-  widgets/toresultcode.cpp
-  widgets/toresultcols.cpp
+  tools/toresultbar.cpp
+  tools/toresultcode.cpp
+  tools/toresultcols.cpp
   widgets/toresultcolscomment.cpp
   widgets/toresultcombo.cpp
-  widgets/toresultdatasingle.cpp
-  widgets/toresultdepend.cpp
-  widgets/toresultdrawing.cpp
-  widgets/toresultextent.cpp
-  widgets/toresultfield.cpp
-  widgets/toresultgrants.cpp
+  tools/toresultdatasingle.cpp
+  tools/toresultdepend.cpp
+  tools/toresultdrawing.cpp
+  tools/toresultextent.cpp
+  tools/toresultfield.cpp
+  tools/toresultgrants.cpp
   widgets/toresultitem.cpp
-  widgets/toresultline.cpp
+  tools/toresultline.cpp
   widgets/toresultlistformat.cpp
-  widgets/toresultlock.cpp
-  widgets/toresultlong.cpp
+  tools/toresultlock.cpp
+  tools/toresultlong.cpp
   widgets/toresultmodel.cpp
   widgets/toresultmodeledit.cpp
-  widgets/toresultparam.cpp
-  widgets/toresultplan.cpp
+  tools/toresultparam.cpp
+  tools/toresultplan.cpp
   widgets/toresultschema.cpp
-  widgets/toresultstats.cpp
-  widgets/toresulttableview.cpp
-  widgets/toresulttableviewedit.cpp
-  widgets/toresultview.cpp
+  tools/toresultstats.cpp
+  tools/toresulttableview.cpp
+  tools/toresulttableviewedit.cpp
+  tools/toresultview.cpp
   widgets/tosplash.cpp
-  widgets/tosyntaxsetup.cpp
+  main/tosyntaxsetup.cpp
   widgets/totableselect.cpp  
   widgets/totabwidget.cpp
   widgets/totoolwidget.cpp
@@ -517,8 +517,8 @@ SET(TORA_SOURCES
   editor/toworksheettext.cpp
   editor/todebugtext.cpp
   editor/todebugeditor.cpp
-  editor/tosearchreplace.cpp
-  editor/tostyle.cpp
+  widgets/tosearchreplace.cpp
+  core/tostyle.cpp
   parsing/tolexeroracle.cpp
 
   result/toproviderobserver.cpp
@@ -552,17 +552,17 @@ SET(TORA_SOURCES
   connection/toqsqlquery.cpp
 
   parsing/tsqlparse.cpp
-  parsing/tosyntaxanalyzer.cpp
-  parsing/tosyntaxanalyzernl.cpp
-  parsing/tosyntaxanalyzermysql.cpp
-  parsing/tosyntaxanalyzeroracle.cpp
+  editor/tosyntaxanalyzer.cpp
+  editor/tosyntaxanalyzernl.cpp
+  editor/tosyntaxanalyzermysql.cpp
+  editor/tosyntaxanalyzeroracle.cpp
   parsing/PLSQLGuiLexer.cc
   parsing/tsqllexeroracle2.cc
   parsing/MySQLGuiLexer.cc
   parsing/tsqllexermysql.cc
   parsing/MySQLLexer.cc
   parsing/tolexeroracleapis.cpp
-  parsing/persistenttrie.cpp
+  core/persistenttrie.cpp
   parsing/OracleDML.cc
   parsing/OracleDML.hpp
   parsing/OracleDML_OracleDMLCommons.cc
@@ -579,7 +579,7 @@ SET(TORA_SOURCES
   shortcuteditor/shortcutmodel.cpp
   shortcuteditor/shortcuteditordialog.cpp
 
-  tools/tohelp.cpp  
+  widgets/tohelp.cpp  
   tools/tooutput.cpp
 
   tools/toworksheet.cpp
@@ -664,7 +664,7 @@ IF (PCH_DEFINED)
 ENDIF (PCH_DEFINED)
 
 IF(ORACLE_FOUND)
-  LIST(APPEND TORA_SOURCES connection/tooraclesetting.cpp connection/tooraclefind.cpp)
+  LIST(APPEND TORA_SOURCES main/tooraclesetting.cpp connection/tooracleconfiguration.cpp connection/tooraclefind.cpp)
 ENDIF(ORACLE_FOUND)
 
 IF (USE_EXPERIMENTAL)
@@ -687,7 +687,6 @@ IF (USE_EXPERIMENTAL)
     )
   LIST (APPEND TORA_SOURCES
     tools/toer.cpp
-    widgets/toresultdrawing.cpp
     )
   LIST (APPEND TORA_SOURCES tools/tosandboxtool.cpp)
 ENDIF (USE_EXPERIMENTAL)
@@ -900,15 +899,33 @@ ENDIF (TERADATA_FOUND)
 
 IF (TORA_DEBUG AND USE_EXPERIMENTAL AND QT5_BUILD)
     FILE(GLOB CORE_OBJECT_SOURCES "core/*.cpp")
-    ADD_LIBRARY(CORE_OBJECT_LIB OBJECT ${CORE_OBJECT_SOURCES})
-
+    FILE(GLOB CORE_OBJECT_HEADERS "core/*.h")
+    QT5_WRAP_CPP(CORE_OBJECT_MOC_SOURCES ${CORE_OBJECT_HEADERS})
+    #ADD_LIBRARY(CORE_OBJECT_LIB OBJECT ${CORE_OBJECT_SOURCES} ${CORE_OBJECT_MOC_SOURCES} ${PCH_SOURCE})
+    SET(CORE_SOURCES ${CORE_OBJECT_SOURCES} ${CORE_OBJECT_MOC_SOURCES})
+    
     FILE(GLOB PARSING_OBJECT_SOURCES "parsing/*.cpp")
-    ADD_LIBRARY(PARSING_OBJECT_LIB OBJECT ${PARSING_OBJECT_SOURCES})
+    FILE(GLOB PARSING_OBJECT_HEADERS "parsing/*.h")
+    QT5_WRAP_CPP(PARSING_OBJECT_MOC_SOURCES ${PARSING_OBJECT_HEADERS})
+    SET(PARSING_SOURCES ${PARSING_OBJECT_SOURCES} ${PARSING_OBJECT_MOC_SOURCES})
 
     FILE(GLOB WIDGETS_OBJECT_SOURCES "widgets/*.cpp")
     FILE(GLOB WIDGETS_OBJECT_UI "widgets/*.ui")
     QT5_WRAP_UI(WIDGETS_OBJECT_UI_SRC ${WIDGETS_OBJECT_UI})
-    ADD_LIBRARY(WIDGETS_OBJECT_LIB OBJECT ${WIDGETS_OBJECT_SOURCES} ${WIDGETS_OBJECT_UI_SRC})
+    FILE(GLOB WIDGETS_OBJECT_HEADERS "widgets/*.h")
+    QT5_WRAP_CPP(WIDGETS_OBJECT_MOC_SOURCES ${WIDGETS_OBJECT_HEADERS})
+    SET(WIDGETS_SOURCES ${WIDGETS_OBJECT_SOURCES} ${WIDGETS_OBJECT_UI_SRC} ${WIDGETS_OBJECT_MOC_SOURCES})
+
+    FILE(GLOB EDITOR_OBJECT_SOURCES "editor/*.cpp")
+    FILE(GLOB EDITOR_OBJECT_UI "editor/*.ui")
+    QT5_WRAP_UI(EDITOR_OBJECT_UI_SRC ${EDITOR_OBJECT_UI})
+    FILE(GLOB EDITOR_OBJECT_HEADERS "editor/*.h")
+    QT5_WRAP_CPP(EDITOR_OBJECT_MOC_SOURCES ${EDITOR_OBJECT_HEADERS})
+    SET(EDITOR_SOURCES ${EDITOR_OBJECT_SOURCES} ${EDITOR_OBJECT_UI_SRC} ${EDITOR_OBJECT_MOC_SOURCES})
+
+    FILE(GLOB LOGGING_OBJECT_HEADERS "ts_log/toostream.h")
+    QT5_WRAP_CPP(LOGGING_OBJECT_MOC_SOURCES ${LOGGING_OBJECT_HEADERS})
+    SET(LOGGING_SOURCES ${LOGGING_OBJECT_MOC_SOURCES})
 
 #QT5_WRAP_CPP(TORA_MOC_SOURCES ${TORA_MOC_CLASSES})
 #QT5_ADD_RESOURCES(TORA_RCC_SRCS ${TORA_RCC_FILES})

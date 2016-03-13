@@ -33,13 +33,13 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "core/toconnectionmodel.h"
-#include "widgets/tonewconnection.h"
 #include "core/toconfiguration.h"
 #include "core/toglobalconfiguration.h"
 #include "core/utils.h"
 #include "core/tooracleconst.h"
 
 #include <QtCore/QSettings>
+#include "main/tonewconnection.h"
 
 
 toConnectionModel::toConnectionModel(QObject *parent)

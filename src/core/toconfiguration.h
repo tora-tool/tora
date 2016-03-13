@@ -35,8 +35,6 @@
 
 #include "core/tora_export.h"
 #include "core/toconfenum.h"
-#include "editor/tostyle.h"
-
 #include <loki/Singleton.h>
 
 #include <QtCore/QStringList>
@@ -44,6 +42,7 @@
 #include <QtCore/QSettings>
 #include <QtCore/QVariant>
 #include <QApplication>
+#include "tostyle.h"
 
 namespace ToConfiguration
 {

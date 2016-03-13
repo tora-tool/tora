@@ -38,8 +38,6 @@
 #include "editor/toscintilla.h"
 #include "widgets/topushbutton.h"
 #include "core/tocache.h"
-#include "parsing/tosyntaxanalyzer.h"
-
 #include "loki/Singleton.h"
 
 #include <QtCore/QString>
@@ -49,6 +47,7 @@
 #include <QWidget>
 
 #include <tuple>
+#include "tosyntaxanalyzer.h"
 
 class QListWidgetItem;
 class QsciAbstractAPIs;

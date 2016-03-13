@@ -43,7 +43,6 @@
 #include "editor/tohighlightededitor.h"
 #include "tools/toworksheeteditor.h"
 #include "core/tomainwindow.h"
-#include "widgets/toresultview.h"
 #include "core/tosql.h"
 #include "tools/toworksheet.h"
 #include "widgets/totreewidget.h"
@@ -69,6 +68,8 @@
 #include "icons/fileopen.xpm"
 #include "icons/filesave.xpm"
 #include "icons/tosqledit.xpm"
+
+#include "../tools/toresultview.h"
 #include "icons/trash.xpm"
 
 class toSQLEditTool : public toTool

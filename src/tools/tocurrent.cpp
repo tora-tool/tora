@@ -38,10 +38,6 @@
 #include "core/toconnection.h"
 #include "core/tomainwindow.h"
 #include "core/toeventquery.h"
-#include "widgets/toresulttableview.h"
-#include "widgets/toresultparam.h"
-#include "widgets/toresultstats.h"
-#include "widgets/toresultview.h"
 #include "core/toeventquery.h"
 #include "core/tosql.h"
 #include "core/totool.h"
@@ -55,6 +51,11 @@
 
 #include "icons/refresh.xpm"
 #include "icons/tocurrent.xpm"
+
+#include "toresultparam.h"
+#include "toresultstats.h"
+#include "toresulttableview.h"
+#include "toresultview.h"
 
 class toCurrentInfoTool : public toTool
 {

@@ -5,8 +5,9 @@ a copyright and/or license notice that predates the release of Sqliteman
 for which a new license (GPL+exception) is in place.
 */
 #include "shortcuteditor/shortcutmodel.h"
+
+#include "../main/toeditorsetting.h"
 #include "core/toconfiguration.h"
-#include "core/toeditorsetting.h"
 
 ShortcutModel::ShortcutModel(QObject * /*parent*/)
     : QAbstractTableModel()

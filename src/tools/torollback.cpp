@@ -37,10 +37,7 @@
 #include "core/utils.h"
 #include "core/tosettingtab.h"
 #include "core/tochangeconnection.h"
-#include "tools/tohelp.h"
 #include "editor/tomemoeditor.h"
-#include "widgets/toresulttableview.h"
-#include "widgets/toresultview.h"
 #include "widgets/torefreshcombo.h"
 #include "tools/tosgastatement.h"
 #include "tools/tostoragedefinition.h"
@@ -56,7 +53,11 @@
 #include "icons/online.xpm"
 #include "icons/refresh.xpm"
 #include "icons/torollback.xpm"
+
+#include "widgets/tohelp.h"
 #include "icons/trash.xpm"
+#include "toresulttableview.h"
+#include "toresultview.h"
 
 
 QVariant ToConfiguration::Rollback::defaultValue(int option) const

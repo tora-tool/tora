@@ -36,7 +36,7 @@
 #define TORESULTSTORAGE_H
 
 
-#include "widgets/toresultview.h"
+#include "toresultview.h"
 
 class toEventQuery;
 

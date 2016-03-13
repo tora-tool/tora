@@ -39,8 +39,6 @@
 #include "core/toconfenum.h"
 #include "core/tosettingtab.h"
 #include "widgets/totoolwidget.h"
-#include "parsing/tosyntaxanalyzer.h"
-
 #include "ui_toworksheetsetupui.h"
 
 #include <QtCore/QTimer>
@@ -51,6 +49,7 @@
 #include <QToolBar>
 
 #include <map>
+#include "editor/tosyntaxanalyzer.h"
 
 class QComboBox;
 class QLabel;

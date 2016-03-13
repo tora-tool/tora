@@ -35,8 +35,6 @@
 //#include "core/utils.h"
 //#include "parsing/tsqlparse.h"
 #include "parsing/tsqllexer.h"
-#include "parsing/persistenttrie.h"
-
 #include <QtCore/QDateTime>
 #include <QApplication>
 #include <QtCore/QTextCodec>
@@ -48,6 +46,7 @@
 
 #include <memory>
 #include <iostream>
+#include "../core/persistenttrie.h"
 
 using namespace QmlJS::PersistentTrie;
 
@@ -62,9 +61,6 @@ int main(int argc, char **argv)
       break it (e.g. qscintilla lexers etc.).
     */
     QApplication app(argc, argv);
-
-    // Set the default codec to use for QString
-    QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
 
     try
     {

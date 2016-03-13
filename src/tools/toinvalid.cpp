@@ -38,9 +38,6 @@
 #include "core/tochangeconnection.h"
 #include "core/toextract.h"
 #include "editor/todebugtext.h"
-#include "widgets/toresultcode.h"
-#include "widgets/toresulttableview.h"
-#include "widgets/toresultview.h"
 #include "core/tosql.h"
 #include "core/totool.h"
 #include "core/toconnectiontraits.h"
@@ -58,6 +55,9 @@
 #include "icons/refresh.xpm"
 #include "icons/toinvalid.xpm"
 #include "icons/compile.xpm"
+#include "toresultcode.h"
+#include "toresulttableview.h"
+#include "toresultview.h"
 
 static toSQL SQLListInvalid("toInvalid:ListInvalid",
                             "SELECT owner \"Owner\",object_name \"Object\",object_type \"Type\",status \"Status\"\n"

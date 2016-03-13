@@ -36,12 +36,11 @@
 #include "core/toconfiguration.h"
 #include "core/toglobalevent.h"
 #include "core/tomainwindow.h"
-#include "core/toeditorsetting.h"
-
 #include <QtCore/QDir>
 #include <QtCore/QString>
 #include <QtCore/QTextCodec>
 #include <QFileDialog>
+#include "../main/toeditorsetting.h"
 
 // A little magic to get lrefresh to work and get a check on qApp
 #undef QT_TRANSLATE_NOOP

@@ -40,9 +40,7 @@
 #include "core/toquery.h"
 #include "widgets/totreewidget.h"
 #include "core/tosql.h"
-#include "widgets/toresultview.h"
 #include "core/tocodemodel.h"
-#include "widgets/todescribe.h"
 #include "widgets/toresultschema.h"
 #include "core/toglobalevent.h"
 #include "widgets/topushbutton.h"
@@ -68,6 +66,8 @@
 #include "icons/prevbug.xpm"
 #include "icons/checkcode.xpm"
 #include "icons/describe.xpm"
+#include "todescribe.h"
+#include "toresultview.h"
 
 
 class toPLSQLTool : public toTool

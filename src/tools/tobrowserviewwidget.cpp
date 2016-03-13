@@ -33,14 +33,14 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "tools/tobrowserviewwidget.h"
-#include "widgets/toresultcols.h"
-#include "widgets/toresultfield.h"
-#include "widgets/toresulttableview.h"
 #include "result/toresulttabledata.h"
-#include "widgets/toresultgrants.h"
-#include "widgets/toresultdepend.h"
-#include "widgets/toresultcode.h"
 #include "core/utils.h"
+#include "toresultcode.h"
+#include "toresultcols.h"
+#include "toresultdepend.h"
+#include "toresultfield.h"
+#include "toresultgrants.h"
+#include "toresulttableview.h"
 
 Util::RegisterInFactory<toBrowserViewWidget, toBrowserWidgetFactory, toCache::CacheEntryType> regToBrowserViewWidget(toCache::VIEW);
 

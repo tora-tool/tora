@@ -37,22 +37,22 @@
 
 //#include "tools/tosgatrace.h"
 //
-#include "widgets/toresultview.h"
 #include "core/toeditablemenu.h"
 #include "core/utils.h"
 #include "core/toconfenum.h"
 #include "core/tochangeconnection.h"
 #include "core/toconnectionsub.h"
 #include "core/toconnectiontraits.h"
-#include "widgets/toparamget.h"
-#include "widgets/toresultbar.h"
+#include "toparamget.h"
+#include "toresultbar.h"
+#include "toresultcols.h"
+#include "toresultplan.h"
+#include "toresultstats.h"
+#include "toresulttableview.h"
+#include "toresultview.h"
 #include "widgets/toresultschema.h"
-#include "widgets/toresultcols.h"
 #include "widgets/toresultitem.h"
-#include "widgets/toresultplan.h"
 #include "widgets/toresultresources.h"
-#include "widgets/toresulttableview.h"
-#include "widgets/toresultstats.h"
 #include "widgets/totabwidget.h"
 #include "widgets/totreewidget.h"
 #include "widgets/torefreshcombo.h"
@@ -61,14 +61,14 @@
 #include "tools/toworksheetstatistic.h"
 #endif
 #include "tools/toworksheeteditor.h"
-#include "widgets/todescribe.h"
+#include "todescribe.h"
 #include "core/toeditmenu.h"
 
 #ifdef TORA_EXPERIMENTAL
 #include "parsing/tsqlparse.h"
 #endif
 #include "parsing/tsqllexer.h"
-#include "parsing/tosyntaxanalyzer.h"
+#include "editor/tosyntaxanalyzer.h"
 
 #include "editor/tosqltext.h"
 #include "core/toglobalevent.h"

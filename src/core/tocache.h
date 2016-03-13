@@ -37,8 +37,6 @@
 
 #include "core/tora_export.h"
 
-#include "parsing/persistenttrie.h"
-
 #include <QtCore/QMetaType>
 #include <QtCore/QDate>
 #include <QtCore/QList>
@@ -52,6 +50,8 @@
 #include <QtCore/QString>
 #include <QtCore/QReadWriteLock>
 #include <QtCore/QMutex>
+
+#include "persistenttrie.h"
 //#include <map>
 
 class QThread;

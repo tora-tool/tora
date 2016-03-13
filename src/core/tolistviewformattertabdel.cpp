@@ -35,10 +35,10 @@
 #include "core/tolistviewformattertabdel.h"
 #include "core/tolistviewformatterfactory.h"
 #include "core/tolistviewformatteridentifier.h"
-#include "widgets/toresultview.h"
 #include "widgets/toresultmodel.h"
 
 #include <iostream>
+#include "../tools/toresultview.h"
 
 namespace
 {

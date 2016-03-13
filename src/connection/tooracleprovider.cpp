@@ -48,7 +48,7 @@
 #include "connection/absfact.h"
 
 #include "connection/tooracledatatype.h"
-#include "connection/tooraclesetting.h"
+#include "../main/tooraclesetting.h"
 #include "connection/tooracleconnection.h"
 #include "connection/tooracletraits.h"
 

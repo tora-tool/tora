@@ -35,7 +35,7 @@
 #ifndef TOBROWSERSEQUENCEWIDGET_H
 #define TOBROWSERSEQUENCEWIDGET_H
 
-#include "widgets/tobrowserbasewidget.h"
+#include "tobrowserbasewidget.h"
 
 class toResultItem;
 class toResultGrants;

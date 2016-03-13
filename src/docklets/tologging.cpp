@@ -35,9 +35,8 @@
 #include "docklets/tologging.h"
 #include "core/tologger.h"
 #include "core/utils.h"
-#include "editor/tosearchreplace.h"
-
 #include <QPlainTextEdit>
+#include "widgets/tosearchreplace.h"
 
 REGISTER_VIEW("Logging", toLoggingDocklet);
 

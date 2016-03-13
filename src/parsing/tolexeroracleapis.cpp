@@ -1,6 +1,7 @@
 #include "parsing/tolexeroracleapis.h"
+
+#include "../core/persistenttrie.h"
 #include "parsing/tolexeroracle.h"
-#include "parsing/persistenttrie.h"
 #include "editor/tosqltext.h"
 
 toLexerOracleAPIs::toLexerOracleAPIs(QsciLexer *lexer) : QsciAbstractAPIs(lexer)

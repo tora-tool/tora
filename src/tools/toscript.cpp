@@ -39,7 +39,6 @@
 //#include "core/toextract.h"
 #include "core/tomainwindow.h"
 //#include "core/toreport.h"
-#include "widgets/toresultview.h"
 #include "core/totextview.h"
 #include "editor/toworksheettext.h"
 #include "tools/toscripttreeitem.h"
@@ -58,6 +57,7 @@
 
 #include "icons/execute.xpm"
 #include "icons/toscript.xpm"
+#include "toresultview.h"
 
 
 class toScriptTool : public toTool
