@@ -247,7 +247,7 @@
   <customwidget>
    <class>toListView</class>
    <extends>QWidget</extends>
-   <header>widgets/toresultview.h</header>
+   <header>tools/toresultview.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

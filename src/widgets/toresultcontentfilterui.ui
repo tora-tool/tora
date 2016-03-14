@@ -167,7 +167,7 @@
   <customwidget>
    <class>toResultCols</class>
    <extends>QWidget</extends>
-   <header>widgets/toresultcols.h</header>
+   <header>tools/toresultcols.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

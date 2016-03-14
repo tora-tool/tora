@@ -39,8 +39,6 @@
 #include "core/tooracleconst.h"
 
 #include <QtCore/QSettings>
-#include "main/tonewconnection.h"
-
 
 toConnectionModel::toConnectionModel(QObject *parent)
     : QAbstractTableModel(parent)

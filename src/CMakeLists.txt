@@ -834,6 +834,48 @@ IF(PCH_DEFINED)
 ENDIF()
 
 ################################################################################
+#                                   Tests                                      #
+################################################################################
+
+IF (TORA_DEBUG AND USE_EXPERIMENTAL AND QT5_BUILD)
+    FILE(GLOB CORE_OBJECT_SOURCES "core/*.cpp")
+    FILE(GLOB CORE_OBJECT_HEADERS "core/*.h")
+    QT5_WRAP_CPP(CORE_OBJECT_MOC_SOURCES ${CORE_OBJECT_HEADERS})
+    #ADD_LIBRARY(CORE_OBJECT_LIB OBJECT ${CORE_OBJECT_SOURCES} ${CORE_OBJECT_MOC_SOURCES} ${PCH_SOURCE})
+    SET(CORE_SOURCES ${CORE_OBJECT_SOURCES} ${CORE_OBJECT_MOC_SOURCES})
+    
+    FILE(GLOB PARSING_OBJECT_SOURCES "parsing/*.cpp")
+    FILE(GLOB PARSING_OBJECT_HEADERS "parsing/*.h")
+    QT5_WRAP_CPP(PARSING_OBJECT_MOC_SOURCES ${PARSING_OBJECT_HEADERS})
+    SET(PARSING_SOURCES ${PARSING_OBJECT_SOURCES} ${PARSING_OBJECT_MOC_SOURCES})
+
+    FILE(GLOB WIDGETS_OBJECT_SOURCES "widgets/*.cpp")
+    FILE(GLOB WIDGETS_OBJECT_UI "widgets/*.ui")
+    QT5_WRAP_UI(WIDGETS_OBJECT_UI_SRC ${WIDGETS_OBJECT_UI})
+    FILE(GLOB WIDGETS_OBJECT_HEADERS "widgets/*.h")
+    QT5_WRAP_CPP(WIDGETS_OBJECT_MOC_SOURCES ${WIDGETS_OBJECT_HEADERS})
+    SET(WIDGETS_SOURCES ${WIDGETS_OBJECT_SOURCES} ${WIDGETS_OBJECT_UI_SRC} ${WIDGETS_OBJECT_MOC_SOURCES})
+
+    FILE(GLOB EDITOR_OBJECT_SOURCES "editor/*.cpp")
+    FILE(GLOB EDITOR_OBJECT_UI "editor/*.ui")
+    QT5_WRAP_UI(EDITOR_OBJECT_UI_SRC ${EDITOR_OBJECT_UI})
+    FILE(GLOB EDITOR_OBJECT_HEADERS "editor/*.h")
+    QT5_WRAP_CPP(EDITOR_OBJECT_MOC_SOURCES ${EDITOR_OBJECT_HEADERS})
+    SET(EDITOR_SOURCES ${EDITOR_OBJECT_SOURCES} ${EDITOR_OBJECT_UI_SRC} ${EDITOR_OBJECT_MOC_SOURCES})
+
+    FILE(GLOB LOGGING_OBJECT_HEADERS "ts_log/toostream.h")
+    QT5_WRAP_CPP(LOGGING_OBJECT_MOC_SOURCES ${LOGGING_OBJECT_HEADERS})
+    SET(LOGGING_SOURCES ${LOGGING_OBJECT_MOC_SOURCES})
+
+    IF(TORA_DEBUG)
+    LIST (APPEND TORA_RCC_FILES tests/test4.qrc)
+    ENDIF()
+
+    # add_subdirectory(tests)
+    include(tests/CMakeLists.txt)
+ENDIF()
+
+################################################################################
 #                       Connection provider libraries                          #
 ################################################################################
 # Oracle connection provider
@@ -892,51 +934,6 @@ IF(TERADATA_FOUND)
     ADD_DEPENDENCIES(${PROVIDER_TERADATA} ${EXE_NAME})
   ENDIF()
 ENDIF (TERADATA_FOUND)
-
-################################################################################
-#                                   Tests                                      #
-################################################################################
-
-IF (TORA_DEBUG AND USE_EXPERIMENTAL AND QT5_BUILD)
-    FILE(GLOB CORE_OBJECT_SOURCES "core/*.cpp")
-    FILE(GLOB CORE_OBJECT_HEADERS "core/*.h")
-    QT5_WRAP_CPP(CORE_OBJECT_MOC_SOURCES ${CORE_OBJECT_HEADERS})
-    #ADD_LIBRARY(CORE_OBJECT_LIB OBJECT ${CORE_OBJECT_SOURCES} ${CORE_OBJECT_MOC_SOURCES} ${PCH_SOURCE})
-    SET(CORE_SOURCES ${CORE_OBJECT_SOURCES} ${CORE_OBJECT_MOC_SOURCES})
-    
-    FILE(GLOB PARSING_OBJECT_SOURCES "parsing/*.cpp")
-    FILE(GLOB PARSING_OBJECT_HEADERS "parsing/*.h")
-    QT5_WRAP_CPP(PARSING_OBJECT_MOC_SOURCES ${PARSING_OBJECT_HEADERS})
-    SET(PARSING_SOURCES ${PARSING_OBJECT_SOURCES} ${PARSING_OBJECT_MOC_SOURCES})
-
-    FILE(GLOB WIDGETS_OBJECT_SOURCES "widgets/*.cpp")
-    FILE(GLOB WIDGETS_OBJECT_UI "widgets/*.ui")
-    QT5_WRAP_UI(WIDGETS_OBJECT_UI_SRC ${WIDGETS_OBJECT_UI})
-    FILE(GLOB WIDGETS_OBJECT_HEADERS "widgets/*.h")
-    QT5_WRAP_CPP(WIDGETS_OBJECT_MOC_SOURCES ${WIDGETS_OBJECT_HEADERS})
-    SET(WIDGETS_SOURCES ${WIDGETS_OBJECT_SOURCES} ${WIDGETS_OBJECT_UI_SRC} ${WIDGETS_OBJECT_MOC_SOURCES})
-
-    FILE(GLOB EDITOR_OBJECT_SOURCES "editor/*.cpp")
-    FILE(GLOB EDITOR_OBJECT_UI "editor/*.ui")
-    QT5_WRAP_UI(EDITOR_OBJECT_UI_SRC ${EDITOR_OBJECT_UI})
-    FILE(GLOB EDITOR_OBJECT_HEADERS "editor/*.h")
-    QT5_WRAP_CPP(EDITOR_OBJECT_MOC_SOURCES ${EDITOR_OBJECT_HEADERS})
-    SET(EDITOR_SOURCES ${EDITOR_OBJECT_SOURCES} ${EDITOR_OBJECT_UI_SRC} ${EDITOR_OBJECT_MOC_SOURCES})
-
-    FILE(GLOB LOGGING_OBJECT_HEADERS "ts_log/toostream.h")
-    QT5_WRAP_CPP(LOGGING_OBJECT_MOC_SOURCES ${LOGGING_OBJECT_HEADERS})
-    SET(LOGGING_SOURCES ${LOGGING_OBJECT_MOC_SOURCES})
-
-#QT5_WRAP_CPP(TORA_MOC_SOURCES ${TORA_MOC_CLASSES})
-#QT5_ADD_RESOURCES(TORA_RCC_SRCS ${TORA_RCC_FILES})
-
-    IF(TORA_DEBUG)
-    LIST (APPEND TORA_RCC_FILES tests/test4.qrc)
-    ENDIF()
-
-    # add_subdirectory(tests)
-    include(tests/CMakeLists.txt)
-ENDIF()
 
 ################################################################################
 #                                  Install                                     #

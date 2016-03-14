@@ -33,7 +33,6 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include <QtCore/QCoreApplication>
-#include <QtCore/QTextCodec>
 
 //#include "core/utils.h"
 #include "parsing/tsqlparse.h"
