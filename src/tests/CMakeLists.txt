@@ -58,21 +58,51 @@ ENDIF(TORA_DEBUG AND TEST_APP2)
 
 IF(TORA_DEBUG AND TEST_APP3)
 # test3
-QT5_WRAP_CPP(TEST3_MOC_SOURCES tests/test3window.h tools/toworksheet.h editor/toscintilla.h tools/toresultview.h tools/toresulttableview.h editor/tosyntaxanalyzernl.h editor/tosyntaxanalyzeroracle.h)
+QT5_WRAP_CPP(TEST3_MOC_SOURCES tests/test3window.h
+	connection/tooracleconfiguration.h
+	result/toresulttabledata.h
+	tools/tobarchart.h
+	tools/tobrowserbasewidget.h
+	tools/todescribe.h	
+	tools/tolinechart.h
+	tools/toparamget.h
+	tools/toresultbar.h
+	tools/toresultcols.h
+	tools/toresultdatasingle.h	
+	tools/toresultplan.h
+	tools/toresultstats.h
+	tools/toresulttableview.h
+	tools/toresulttableviewedit.h
+	tools/toresultview.h
+	tools/toworksheet.h
+	tools/toworksheeteditor.h
+	)
 ADD_EXECUTABLE("test3" ${GUI_TYPE}
   tests/test3.cpp
   tests/test3window.cpp
-  editor/toscintilla.cpp
-  editor/tosyntaxanalyzernl.cpp
-  editor/tosyntaxanalyzeroracle.cpp
-  tools/toworksheet.cpp
-  tools/toresultview.cpp
+  connection/tooracleconfiguration.cpp
+  result/toresulttabledata.cpp
+  tools/tobarchart.cpp
+  tools/tobrowserbasewidget.cpp  
+  tools/todescribe.cpp
+  tools/tolinechart.cpp
+  tools/toparamget.cpp
+  tools/toresultbar.cpp
+  tools/toresultcols.cpp
+  tools/toresultdatasingle.cpp  
+  tools/toresultplan.cpp
+  tools/toresultstats.cpp
   tools/toresulttableview.cpp
+  tools/toresulttableviewedit.cpp  
+  tools/toresultview.cpp
+  tools/toworksheet.cpp
+  tools/toworksheeteditor.cpp
   ${TEST3_MOC_SOURCES}
   ${PCH_SOURCE}  
   ${CORE_SOURCES}    
   ${PARSING_SOURCES} 
-  ${WIDGETS_SOURCES} 
+  ${WIDGETS_SOURCES}
+  ${EDITOR_SOURCES}
   ${LOGGING_SOURCES}
   )
 TARGET_LINK_LIBRARIES("test3"
@@ -104,6 +134,7 @@ ADD_EXECUTABLE("test4"
   editor/toscintilla.cpp
   editor/tosyntaxanalyzernl.cpp
   editor/tosyntaxanalyzeroracle.cpp
+  tools/toresultstats.cpp
   ${TEST4_MOC_SOURCES}
   ${TEST4_UI_SOURCES}
   ${TEST4_RC_SOURCES}
