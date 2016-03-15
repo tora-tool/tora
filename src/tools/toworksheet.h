@@ -49,7 +49,8 @@
 #include <QToolBar>
 
 #include <map>
-#include "editor/tosyntaxanalyzer.h"
+
+#include "core/tosyntaxanalyzer.h"
 
 class QComboBox;
 class QLabel;

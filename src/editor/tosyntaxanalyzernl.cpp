@@ -32,6 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
+#include "editor/tosyntaxanalyzernl.h"
 #include "core/toconfiguration.h"
 #include "editor/tosqltext.h"
 #include <QtCore/QString>
@@ -40,8 +41,7 @@
 
 #include <Qsci/qscilexer.h>
 #include <Qsci/qscilexersql.h>
-#include "../main/toeditorsetting.h"
-#include "editor/tosyntaxanalyzer.h"
+#include "core/toeditorconfiguration.h"
 #include "core/tostyle.h"
 
 toSyntaxAnalyzerNL::toSyntaxAnalyzerNL(toSqlText *parent)

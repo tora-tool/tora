@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOEDITORSETTING_H
-#define TOEDITORSETTING_H
+#pragma once
 
 #include "core/toconfenum.h"
 
@@ -78,5 +77,3 @@ namespace ToConfiguration
             virtual void loadUserType(QSettings &s, QVariant &val, int key) const;
     };
 }
-
-#endif

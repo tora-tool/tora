@@ -40,7 +40,7 @@
 #include <QtCore/QString>
 #include <QtCore/QTextCodec>
 #include <QFileDialog>
-#include "../main/toeditorsetting.h"
+#include "core/toeditorconfiguration.h"
 
 // A little magic to get lrefresh to work and get a check on qApp
 #undef QT_TRANSLATE_NOOP

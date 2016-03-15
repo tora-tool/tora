@@ -32,5 +32,20 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
+#pragma once
+
 #include "core/tosyntaxanalyzer.h"
 
+/* This "analyzer" uses ANTLR lexer and implements QsciLexerCustom */
+class toSyntaxAnalyzerOracle : public toSyntaxAnalyzer
+{
+        Q_OBJECT;
+    public:
+        toSyntaxAnalyzerOracle(toSqlText *parent);
+        virtual ~toSyntaxAnalyzerOracle();
+
+        virtual statementList getStatements(QString const& text);
+        virtual statement getStatementAt(unsigned line, unsigned linePos);
+        virtual QsciLexer* createLexer(QObject *parent);
+        virtual void sanitizeStatement(statement&);
+};

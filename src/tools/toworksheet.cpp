@@ -68,7 +68,9 @@
 #include "parsing/tsqlparse.h"
 #endif
 #include "parsing/tsqllexer.h"
-#include "editor/tosyntaxanalyzer.h"
+#include "core/tosyntaxanalyzer.h"
+#include "editor/tosyntaxanalyzernl.h"
+#include "editor/tosyntaxanalyzeroracle.h"
 
 #include "editor/tosqltext.h"
 #include "core/toglobalevent.h"

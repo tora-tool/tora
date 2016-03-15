@@ -32,5 +32,26 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
+#pragma once
+
 #include "core/tosyntaxanalyzer.h"
 
+/* This "analyzer" uses an empty line as statement delimiter */
+class toSyntaxAnalyzerNL : public toSyntaxAnalyzer
+{
+        Q_OBJECT;
+    public:
+        toSyntaxAnalyzerNL(toSqlText *parent);
+        virtual ~toSyntaxAnalyzerNL();
+
+        virtual statementList getStatements(QString const& text);
+        virtual statement getStatementAt(unsigned line, unsigned linePos);
+        virtual QsciLexer* createLexer(QObject *parent);
+        virtual void sanitizeStatement(statement&);
+
+        static QSet<QString> SELECT_INTRODUCERS;
+        static QSet<QString> DML_INTRODUCERS;
+        static QSet<QString> DDL_INTRODUCERS;
+        static QSet<QString> PLSQL_INTRODUCERS;
+        static QSet<QString> SQLPLUS_INTRODUCERS;
+};

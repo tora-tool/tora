@@ -32,7 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "../tools/toresultview.h"
+#include "tools/toresultview.h"
 
 #include "core/utils.h"
 #include "core/tolistviewformatter.h"
@@ -43,13 +43,14 @@
 #include "core/toglobalconfiguration.h"
 #include "core/todatabaseconfig.h"
 #include "core/toconfiguration.h"
+#include "core/toeditorconfiguration.h"
 
 #include <QtCore/QTimer>
 #include <QtCore/QMimeData>
 #include <QtGui/QClipboard>
 #include <QtGui/QPainter>
 #include <QProgressDialog>
-#include "../main/toeditorsetting.h"
+
 
 static int MaxColDisp;
 static bool Gridlines;

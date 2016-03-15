@@ -41,13 +41,15 @@
 #include "editor/toworksheettext.h"
 #include "core/toconfiguration.h"
 #include "ts_log/ts_log_utils.h"
+#include "core/tosyntaxanalyzer.h"
+#include "editor/tosyntaxanalyzernl.h"
+#include "editor/tosyntaxanalyzeroracle.h"
+#include "core/toeditorconfiguration.h"
 
 #include <QFontDialog>
 #include <QColorDialog>
 
 #include <Qsci/qscilexersql.h>
-#include "editor/tosyntaxanalyzer.h"
-#include "toeditorsetting.h"
 
 using namespace ToConfiguration;
 

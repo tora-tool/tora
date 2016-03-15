@@ -32,6 +32,8 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
+#include "editor/tosyntaxanalyzeroracle.h"
+
 #include "parsing/tolexeroracle.h"
 #include "core/toconfiguration.h"
 #include "editor/tosqltext.h"
@@ -42,8 +44,7 @@
 
 #include <iostream>
 
-#include "../main/toeditorsetting.h"
-#include "editor/tosyntaxanalyzer.h"
+#include "core/toeditorconfiguration.h"
 #include "core/tostyle.h"
 
 toSyntaxAnalyzerOracle::toSyntaxAnalyzerOracle(toSqlText* parent)

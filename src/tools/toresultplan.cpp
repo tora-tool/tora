@@ -46,7 +46,7 @@
 #include <QPaintEvent>
 #include <QPlainTextEdit>
 
-#include "main/toeditorsetting.h"
+#include "core/toeditorconfiguration.h"
 #include "connection/tooracleconfiguration.h"
 
 static toSQL SQLVSQLChildSel("toResultPlan:VSQLChildSel",

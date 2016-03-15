@@ -45,7 +45,7 @@
 #include <QScrollBar>
 #include <QPrintDialog>
 
-#include "../main/toeditorsetting.h"
+#include "core/toeditorconfiguration.h"
 #include "icons/print.xpm"
 #include "icons/chart.xpm"
 

@@ -58,12 +58,11 @@ ENDIF(TORA_DEBUG AND TEST_APP2)
 
 IF(TORA_DEBUG AND TEST_APP3)
 # test3
-QT5_WRAP_CPP(TEST3_MOC_SOURCES tests/test3window.h tools/toworksheet.h editor/tosyntaxanalyzer.h editor/toscintilla.h tools/toresultview.h tools/toresulttableview.h)
+QT5_WRAP_CPP(TEST3_MOC_SOURCES tests/test3window.h tools/toworksheet.h editor/toscintilla.h tools/toresultview.h tools/toresulttableview.h editor/tosyntaxanalyzernl.h editor/tosyntaxanalyzeroracle.h)
 ADD_EXECUTABLE("test3" ${GUI_TYPE}
   tests/test3.cpp
   tests/test3window.cpp
   editor/toscintilla.cpp
-  editor/tosyntaxanalyzer.cpp
   editor/tosyntaxanalyzernl.cpp
   editor/tosyntaxanalyzeroracle.cpp
   tools/toworksheet.cpp
@@ -85,6 +84,7 @@ TARGET_LINK_LIBRARIES("test3"
 	${TORA_QSCINTILLA_LIB}
 	${QSCINTILLA_LIBRARIES}	
 	${TORA_LOKI_LIB}
+	antlr3c	
 	)
 IF(PCH_DEFINED)
   ADD_PRECOMPILED_HEADER("test3" ${PCH_HEADER} FORCEINCLUDE)
@@ -94,18 +94,19 @@ ENDIF(TORA_DEBUG AND TEST_APP3)
 
 IF(TORA_DEBUG AND TEST_APP4)
 # test4
-QT5_WRAP_CPP(TEST4_MOC_SOURCES tests/test4window.h editor/tosqltext.h editor/toscintilla.h editor/tosyntaxanalyzer.h)
+QT5_WRAP_CPP(TEST4_MOC_SOURCES tests/test4window.h editor/tosqltext.h editor/toscintilla.h editor/tosyntaxanalyzernl.h editor/tosyntaxanalyzeroracle.h)
 QT5_WRAP_UI(TEST4_UI_SOURCES tests/test4ui.ui)
+QT5_ADD_RESOURCES(TEST4_RC_SOURCES tests/test4.qrc)
 ADD_EXECUTABLE("test4"
   tests/test4.cpp
   tests/test4window.cpp
   editor/tosqltext.cpp
   editor/toscintilla.cpp
-  editor/tosyntaxanalyzer.cpp
   editor/tosyntaxanalyzernl.cpp
   editor/tosyntaxanalyzeroracle.cpp
   ${TEST4_MOC_SOURCES}
   ${TEST4_UI_SOURCES}
+  ${TEST4_RC_SOURCES}
   ${PCH_SOURCE}  
   ${CORE_SOURCES}    
   ${PARSING_SOURCES} 
@@ -121,6 +122,7 @@ TARGET_LINK_LIBRARIES("test4"
 	${TORA_QSCINTILLA_LIB}
 	${QSCINTILLA_LIBRARIES}	
 	${TORA_LOKI_LIB}
+	antlr3c
 )
 IF(PCH_DEFINED)
   ADD_PRECOMPILED_HEADER("test4" ${PCH_HEADER} FORCEINCLUDE)

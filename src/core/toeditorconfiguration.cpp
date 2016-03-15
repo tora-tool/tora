@@ -32,7 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "../main/toeditorsetting.h"
+#include "core/toeditorconfiguration.h"
 
 #include "core/utils.h"
 #include "ts_log/ts_log_utils.h"
@@ -41,8 +41,8 @@
 #include <QtCore/QSettings>
 #include <QApplication>
 
-#include "editor/tosyntaxanalyzer.h"
 #include "core/tostyle.h"
+#include "core/tosyntaxanalyzer.h"
 
 QVariant ToConfiguration::Editor::defaultValue(int option) const
 {

@@ -43,7 +43,7 @@
 #include <QtCore/QString>
 #include <QtCore/QMetaEnum>
 #include "core/tostyle.h"
-#include "toeditorsetting.h"
+#include "core/toeditorconfiguration.h"
 
 class QListWidgetItem;
 class toSyntaxAnalyzer;

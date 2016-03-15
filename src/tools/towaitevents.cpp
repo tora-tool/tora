@@ -48,7 +48,7 @@
 #include <QToolBar>
 #include <QVBoxLayout>
 
-#include "../main/toeditorsetting.h"
+#include "core/toeditorconfiguration.h"
 #include "topiechart.h"
 #include "toresultbar.h"
 #include "toresultview.h"

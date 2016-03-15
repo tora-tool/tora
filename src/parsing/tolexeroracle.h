@@ -36,10 +36,12 @@
 #define TOLEXERORACLE_H_
 
 #include "parsing/tsqllexer.h"
+#include "core/tosyntaxanalyzer.h"
+
 #include <QtCore/QObject>
 #include <Qsci/qscilexercustom.h>
 #include <Qsci/qscilexersql.h>
-#include "editor/tosyntaxanalyzer.h"
+
 
 class QsciStyle;
 class QsciAbstractAPIs;

@@ -32,9 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "editor/tosyntaxanalyzer.h"
-
-#include "editor/tosqltext.h"
+#include "core/tosyntaxanalyzer.h"
 
 #include <QtCore/QString>
 #include <QtCore/QRegExp>
@@ -70,7 +68,8 @@ toSyntaxAnalyzer::statement& toSyntaxAnalyzer::statement::operator=(toSyntaxAnal
     return *this;
 }
 
-toSyntaxAnalyzer::toSyntaxAnalyzer(toSqlText *parent)
+//toSyntaxAnalyzer::toSyntaxAnalyzer(toSqlText *parent)
+toSyntaxAnalyzer::toSyntaxAnalyzer(QObject *parent)
     : QObject(parent)
 {
 //	Colors[Default] = toConfigurationSingle::Instance().syntaxDefault();

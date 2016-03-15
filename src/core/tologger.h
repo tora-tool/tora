@@ -20,14 +20,18 @@
 #include <iostream>
 #include <QtCore/QString>
 
+#ifdef __clang__
 #pragma GCC diagnostic push
 #pragma clang diagnostic ignored "-Wunused-local-typedef"
+#endif
 
 #include <boost/iostreams/device/null.hpp>
 #include <boost/iostreams/stream.hpp>
 #include <boost/iostreams/stream_buffer.hpp>
 
+#ifdef __clang__
 #pragma GCC diagnostic pop
+#endif
 
 using namespace boost;
 using namespace boost::iostreams;

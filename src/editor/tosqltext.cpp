@@ -33,18 +33,22 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "editor/tosqltext.h"
+#include "editor/tosyntaxanalyzernl.h"
+#include "editor/tosyntaxanalyzeroracle.h"
 #include "core/toconnection.h"
 #include "core/toconnectiontraits.h"
 #include "core/tologger.h"
 #include "core/utils.h"
 #include "core/toconfiguration.h"
 #include "editor/toworksheettext.h"
+#include "core/tosyntaxanalyzer.h"
 
 #include <QListWidget>
 #include <QVBoxLayout>
 
 #include <Qsci/qsciapis.h>
 #include <Qsci/qsciabstractapis.h>
+
 //#include <Qsci/qscilexersql.h>
 
 toSqlText::toSqlText(QWidget *parent, const char *name)

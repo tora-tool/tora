@@ -43,7 +43,7 @@
 #include "shortcuteditor/shortcutmodel.h"
 
 #include <QListWidget>
-#include "../main/toeditorsetting.h"
+#include "core/toeditorconfiguration.h"
 
 using namespace ToConfiguration;
 

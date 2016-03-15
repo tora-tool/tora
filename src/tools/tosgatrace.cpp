@@ -57,7 +57,7 @@
 #include "icons/refresh.xpm"
 #include "icons/tosgatrace.xpm"
 
-#include "../main/toeditorsetting.h"
+#include "core/toeditorconfiguration.h"
 #include "toresulttableview.h"
 
 class toSGATraceSetting

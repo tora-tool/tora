@@ -195,7 +195,7 @@ SET(TORA_MOC_CLASSES
   core/todocklet.h
   core/toeditablemenu.h
   core/toeditmenu.h
-  main/toeditorsetting.h
+  core/toeditorconfiguration.h
   core/toeventquery.h
   core/toeventqueryworker.h
   core/toglobalevent.h
@@ -267,7 +267,9 @@ SET(TORA_MOC_CLASSES
   core/totool.h
   core/utils.h
   parsing/tsqllexer.h
-  editor/tosyntaxanalyzer.h
+  core/tosyntaxanalyzer.h
+  editor/tosyntaxanalyzernl.h
+  editor/tosyntaxanalyzeroracle.h
   parsing/tolexeroracleapis.h 
   
   editor/tobaseeditor.h
@@ -431,7 +433,7 @@ SET(TORA_SOURCES
   core/todocklet.cpp
   core/toeditablemenu.cpp
   core/toeditmenu.cpp
-  main/toeditorsetting.cpp
+  core/toeditorconfiguration.cpp
   core/toeditwidget.cpp
   core/toeventquery.cpp
   core/toeventqueryworker.cpp
@@ -552,7 +554,7 @@ SET(TORA_SOURCES
   connection/toqsqlquery.cpp
 
   parsing/tsqlparse.cpp
-  editor/tosyntaxanalyzer.cpp
+  core/tosyntaxanalyzer.cpp
   editor/tosyntaxanalyzernl.cpp
   editor/tosyntaxanalyzermysql.cpp
   editor/tosyntaxanalyzeroracle.cpp
@@ -844,7 +846,7 @@ IF (TORA_DEBUG AND USE_EXPERIMENTAL AND QT5_BUILD)
     #ADD_LIBRARY(CORE_OBJECT_LIB OBJECT ${CORE_OBJECT_SOURCES} ${CORE_OBJECT_MOC_SOURCES} ${PCH_SOURCE})
     SET(CORE_SOURCES ${CORE_OBJECT_SOURCES} ${CORE_OBJECT_MOC_SOURCES})
     
-    FILE(GLOB PARSING_OBJECT_SOURCES "parsing/*.cpp")
+    FILE(GLOB PARSING_OBJECT_SOURCES "parsing/*.cpp" "parsing/*.cc")    
     FILE(GLOB PARSING_OBJECT_HEADERS "parsing/*.h")
     QT5_WRAP_CPP(PARSING_OBJECT_MOC_SOURCES ${PARSING_OBJECT_HEADERS})
     SET(PARSING_SOURCES ${PARSING_OBJECT_SOURCES} ${PARSING_OBJECT_MOC_SOURCES})
@@ -866,10 +868,6 @@ IF (TORA_DEBUG AND USE_EXPERIMENTAL AND QT5_BUILD)
     FILE(GLOB LOGGING_OBJECT_HEADERS "ts_log/toostream.h")
     QT5_WRAP_CPP(LOGGING_OBJECT_MOC_SOURCES ${LOGGING_OBJECT_HEADERS})
     SET(LOGGING_SOURCES ${LOGGING_OBJECT_MOC_SOURCES})
-
-    IF(TORA_DEBUG)
-    LIST (APPEND TORA_RCC_FILES tests/test4.qrc)
-    ENDIF()
 
     # add_subdirectory(tests)
     include(tests/CMakeLists.txt)

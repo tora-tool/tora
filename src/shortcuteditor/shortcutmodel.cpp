@@ -6,7 +6,7 @@ for which a new license (GPL+exception) is in place.
 */
 #include "shortcuteditor/shortcutmodel.h"
 
-#include "../main/toeditorsetting.h"
+#include "core/toeditorconfiguration.h"
 #include "core/toconfiguration.h"
 
 ShortcutModel::ShortcutModel(QObject * /*parent*/)

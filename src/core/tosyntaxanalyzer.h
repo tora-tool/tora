@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOSYNTAX_ANALYZER_H
-#define TOSYNTAX_ANALYZER_H
+#pragma once
 
 #include <QtCore/QObject>
 #include <QtGui/QColor>
@@ -156,7 +155,8 @@ class toSyntaxAnalyzer : public QObject
 
         typedef QList<statement> statementList;
 
-        toSyntaxAnalyzer(toSqlText *parent);
+        //toSyntaxAnalyzer(toSqlText *parent);
+        toSyntaxAnalyzer(QObject *parent);
         virtual ~toSyntaxAnalyzer();
 
         QColor getColor(WordClassEnum type) const;
@@ -177,39 +177,3 @@ class toSyntaxAnalyzer : public QObject
         QMap<WordClassEnum, QColor> Colors;
 
 };
-
-/* This "analyzer" uses an empty line as statement delimiter */
-class toSyntaxAnalyzerNL : public toSyntaxAnalyzer
-{
-        Q_OBJECT;
-    public:
-        toSyntaxAnalyzerNL(toSqlText *parent);
-        virtual ~toSyntaxAnalyzerNL();
-
-        virtual statementList getStatements(QString const& text);
-        virtual statement getStatementAt(unsigned line, unsigned linePos);
-        virtual QsciLexer* createLexer(QObject *parent);
-        virtual void sanitizeStatement(statement&);
-
-        static QSet<QString> SELECT_INTRODUCERS;
-        static QSet<QString> DML_INTRODUCERS;
-        static QSet<QString> DDL_INTRODUCERS;
-        static QSet<QString> PLSQL_INTRODUCERS;
-        static QSet<QString> SQLPLUS_INTRODUCERS;
-};
-
-/* This "analyzer" uses ANTLR lexer and implements QsciLexerCustom */
-class toSyntaxAnalyzerOracle : public toSyntaxAnalyzer
-{
-        Q_OBJECT;
-    public:
-        toSyntaxAnalyzerOracle(toSqlText *parent);
-        virtual ~toSyntaxAnalyzerOracle();
-
-        virtual statementList getStatements(QString const& text);
-        virtual statement getStatementAt(unsigned line, unsigned linePos);
-        virtual QsciLexer* createLexer(QObject *parent);
-        virtual void sanitizeStatement(statement&);
-};
-
-#endif

@@ -53,7 +53,7 @@
 #include <QPrinter>
 #include <QPrintDialog>
 
-#include "../main/toeditorsetting.h"
+#include "core/toeditorconfiguration.h"
 #include "tools/tolinechart.h"
 #include "icons/chart.xpm"
 #include "icons/print.xpm"

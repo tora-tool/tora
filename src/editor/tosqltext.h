@@ -39,6 +39,7 @@
 #include "widgets/topushbutton.h"
 #include "core/tocache.h"
 #include "loki/Singleton.h"
+#include "core/tosyntaxanalyzer.h"
 
 #include <QtCore/QString>
 #include <QtCore/QTimer>
@@ -47,7 +48,6 @@
 #include <QWidget>
 
 #include <tuple>
-#include "tosyntaxanalyzer.h"
 
 class QListWidgetItem;
 class QsciAbstractAPIs;
