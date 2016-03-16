@@ -1,6 +1,6 @@
 #include "parsing/tolexeroracleapis.h"
 
-#include "../core/persistenttrie.h"
+#include "core/persistenttrie.h"
 #include "parsing/tolexeroracle.h"
 #include "editor/tosqltext.h"
 
