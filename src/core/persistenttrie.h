@@ -30,9 +30,9 @@
 #ifndef PERSISTENTTRIE_H
 #define PERSISTENTTRIE_H
 
-#include <QHash>
-#include <QList>
-#include <QSharedPointer>
+#include <QtCore/QHash>
+#include <QtCore/QList>
+#include <QtCore/QSharedPointer>
 
 #include <utility>
 

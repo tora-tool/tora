@@ -41,7 +41,7 @@
 
 #include <iostream>
 #include <vector>
-#include "../tools/toresultview.h"
+#include "tools/toresultview.h"
 
 namespace
 {

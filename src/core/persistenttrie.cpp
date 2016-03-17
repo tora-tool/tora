@@ -61,12 +61,12 @@
   Would gain from some memory optimization, or direct string implementation.
  */
 
-#include "../core/persistenttrie.h"
+#include "core/persistenttrie.h"
 
-#include <QDebug>
-#include <QMap>
-#include <QString>
-#include <QStringList>
+#include <QtCore/QDebug>
+#include <QtCore/QMap>
+#include <QtCore/QString>
+#include <QtCore/QStringList>
 
 #include <algorithm>
 #include <utility>

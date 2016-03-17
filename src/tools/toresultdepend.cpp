@@ -32,7 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "../tools/toresultdepend.h"
+#include "tools/toresultdepend.h"
 
 #include "core/utils.h"
 #include "core/toconnection.h"

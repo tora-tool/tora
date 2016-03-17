@@ -40,7 +40,7 @@
 #include "core/toglobalconfiguration.h"
 #include "core/toconf.h"
 
-#include <QtGlobal>
+#include <QtCore/QtGlobal>
 #include <QtCore/QDir>
 #include <QtCore/QFile>
 #include <QtCore/QList>

@@ -40,7 +40,7 @@
 #include <QtCore/QVector>
 
 #include <iostream>
-#include "../tools/toresultview.h"
+#include "tools/toresultview.h"
 
 namespace
 {

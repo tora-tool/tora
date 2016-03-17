@@ -41,6 +41,8 @@
 #include "editor/toscintilla.h"
 #include "core/toeventquery.h"
 #include "core/totool.h"
+#include "tools/toresultview.h"
+#include "widgets/tohelp.h"
 
 #include <QtCore/QString>
 #include <QtCore/QDir>
@@ -59,8 +61,6 @@
 
 #include "icons/totemplate.xpm"
 
-#include "../tools/toresultview.h"
-#include "widgets/tohelp.h"
 
 typedef QMap<QString, QVariant> TemplatesMap;
 typedef QMapIterator<QString, QVariant> TemplatesMapIterator;

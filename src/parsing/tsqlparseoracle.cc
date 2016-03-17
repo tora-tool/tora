@@ -12,7 +12,7 @@
 #include "parsing/tsqlparse.h"
 //#include "core/tologger.h"
 
-#include <QPair>
+#include <QtCore/QPair>
 
 namespace SQLParser
 {

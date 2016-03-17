@@ -32,7 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "../tools/toresultlock.h"
+#include "tools/toresultlock.h"
 
 #include "core/toconnection.h"
 #include "core/toeventquery.h"

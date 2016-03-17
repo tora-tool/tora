@@ -46,6 +46,7 @@
 #include "core/tosql.h"
 #include "tools/toworksheet.h"
 #include "widgets/totreewidget.h"
+#include "tools/toresultview.h"
 
 #include <QtCore/QString>
 #include <QtCore/QFileInfo>
@@ -69,7 +70,6 @@
 #include "icons/filesave.xpm"
 #include "icons/tosqledit.xpm"
 
-#include "../tools/toresultview.h"
 #include "icons/trash.xpm"
 
 class toSQLEditTool : public toTool

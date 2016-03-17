@@ -128,17 +128,34 @@ ENDIF(TORA_DEBUG AND TEST_APP3)
 
 IF(TORA_DEBUG AND TEST_APP4)
 # test4
-QT5_WRAP_CPP(TEST4_MOC_SOURCES tests/test4window.h editor/tosqltext.h editor/toscintilla.h editor/tosyntaxanalyzernl.h editor/tosyntaxanalyzeroracle.h)
+QT5_WRAP_CPP(TEST4_MOC_SOURCES
+  tests/test4window.h
+  editor/tobaseeditor.h
+  editor/tohighlightededitor.h
+  editor/tomarkededitor.h  
+  editor/tomemoeditor.h
+  editor/toscintilla.h
+  editor/tosqltext.h
+  editor/tosyntaxanalyzernl.h
+  editor/tosyntaxanalyzeroracle.h
+  tools/toresultstats.h
+  tools/toresultview.h
+  )
 QT5_WRAP_UI(TEST4_UI_SOURCES tests/test4ui.ui)
 QT5_ADD_RESOURCES(TEST4_RC_SOURCES tests/test4.qrc)
 ADD_EXECUTABLE("test4"
   tests/test4.cpp
   tests/test4window.cpp
-  editor/tosqltext.cpp
+  editor/tobaseeditor.cpp
+  editor/tohighlightededitor.cpp
+  editor/tomarkededitor.cpp
+  editor/tomemoeditor.cpp
   editor/toscintilla.cpp
+  editor/tosqltext.cpp
   editor/tosyntaxanalyzernl.cpp
   editor/tosyntaxanalyzeroracle.cpp
   tools/toresultstats.cpp
+  tools/toresultview.cpp
   ${TEST4_MOC_SOURCES}
   ${TEST4_UI_SOURCES}
   ${TEST4_RC_SOURCES}
@@ -169,21 +186,24 @@ ENDIF(TORA_DEBUG AND TEST_APP4)
 IF(TORA_DEBUG AND TEST_APP5)
 # test5
 QT5_WRAP_CPP(TEST5_MOC_SOURCES
-	tests/test5window.h
-	tools/toplsqltext.h
-	result/toresulttabledata.h
-	tools/tobrowserbasewidget.h
-	tools/todescribe.h
-	tools/toparamget.h
-	tools/toplsqleditor.h
-	tools/toresultcols.h
-	tools/toresultdatasingle.h
-	tools/toresulttableview.h
-	tools/toresulttableviewedit.h
+  tests/test5window.h
+  editor/tomarkededitor.h
+  result/toresulttabledata.h
+  tools/tobrowserbasewidget.h
+  tools/todescribe.h
+  tools/toparamget.h
+  tools/toplsqleditor.h
+  tools/toplsqltext.h
+  tools/toresultview.h
+  tools/toresultcols.h
+  tools/toresultdatasingle.h
+  tools/toresulttableview.h
+  tools/toresulttableviewedit.h
 	)
 ADD_EXECUTABLE("test5"
   tests/test5.cpp
   tests/test5window.cpp
+  editor/tomarkededitor.cpp
   result/toresulttabledata.cpp
   tools/tobrowserbasewidget.cpp
   tools/todescribe.cpp
@@ -191,6 +211,7 @@ ADD_EXECUTABLE("test5"
   tools/toplsqleditor.cpp
   tools/toplsqltext.cpp
   tools/toresultcols.cpp
+  tools/toresultview.cpp
   tools/toresultdatasingle.cpp
   tools/toresulttableview.cpp
   tools/toresulttableviewedit.cpp
@@ -253,6 +274,7 @@ TARGET_LINK_LIBRARIES("test7"
 	Qt5::Widgets
 	Qt5::Gui
 	Qt5::Network
+	${CMAKE_DL_LIBS}
 	${TORA_LOKI_LIB}	
 	${TORA_QSCINTILLA_LIB}
 	${QSCINTILLA_LIBRARIES}

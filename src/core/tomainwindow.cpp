@@ -39,7 +39,7 @@
 
 #include <QApplication>
 #include <QAction>
-#include <QSettings>
+#include <QtCore/QSettings>
 
 namespace ToConfiguration
 {

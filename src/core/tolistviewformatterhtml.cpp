@@ -41,7 +41,7 @@
 #include <QtGui/QTextDocument>
 
 #include <iostream>
-#include "../tools/toresultview.h"
+#include "tools/toresultview.h"
 
 namespace
 {

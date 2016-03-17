@@ -32,7 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "../tools/toresultparam.h"
+#include "tools/toresultparam.h"
 
 #include "core/utils.h"
 #include "core/tosql.h"

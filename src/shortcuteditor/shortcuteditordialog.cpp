@@ -11,7 +11,7 @@ for which a new license (GPL+exception) is in place.
 #include <QFileDialog>
 #include <QtCore/QTextStream>
 #if QT_VERSION >= 0x040300
-#include <QXmlStreamReader>
+#include <QtCore/QXmlStreamReader>
 #else
 #warning "QXmlStreamReader is disabled. Qt 4.3.x required."
 #endif

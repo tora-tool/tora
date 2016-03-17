@@ -32,7 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "../tools/toresultlong.h"
+#include "tools/toresultlong.h"
 
 #include "core/utils.h"
 #include "core/toeventquery.h"

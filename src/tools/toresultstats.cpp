@@ -32,7 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "../tools/toresultstats.h"
+#include "tools/toresultstats.h"
 
 #include "core/utils.h"
 #include "core/tologger.h"

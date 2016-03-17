@@ -35,6 +35,7 @@
 #include "editor/tomemoeditor.h"
 #include "core/utils.h"
 #include "editor/toscintilla.h"
+#include "tools/toresultview.h"
 
 #include <QtGui/QKeyEvent>
 #include <QVBoxLayout>
@@ -42,7 +43,6 @@
 #include <QtCore/QSettings>
 #include <QCheckBox>
 
-#include "../tools/toresultview.h"
 #include "icons/commit.xpm"
 #include "icons/copy.xpm"
 #include "icons/wordwrap.xpm"

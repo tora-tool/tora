@@ -46,7 +46,7 @@
 
 #include <memory>
 #include <iostream>
-#include "../core/persistenttrie.h"
+#include "core/persistenttrie.h"
 
 using namespace QmlJS::PersistentTrie;
 

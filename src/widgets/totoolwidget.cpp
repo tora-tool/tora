@@ -54,7 +54,7 @@
 #include <QBoxLayout>
 #include <QAction>
 #include <QComboBox>
-#include <QtDebug>
+#include <QtCore/QtDebug>
 #include <QSpinBox>
 #include <QLineEdit>
 #include <QCheckBox>

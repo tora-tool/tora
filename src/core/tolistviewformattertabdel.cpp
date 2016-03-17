@@ -38,7 +38,7 @@
 #include "widgets/toresultmodel.h"
 
 #include <iostream>
-#include "../tools/toresultview.h"
+#include "tools/toresultview.h"
 
 namespace
 {
