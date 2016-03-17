@@ -6,10 +6,10 @@ fi
 
 if [ "$QTTYPE" = "5" ]; then
 	#sudo apt-get install -y qt5-qmake qtbase5-dev qtdeclarative5-dev libqt5webkit5-dev libsqlite3-dev
-	#sudo apt-get install -y qt5-default qttools5-dev-tools
+	sudo apt-get install -y qt5-default qttools5-dev-tools
 	sudo apt-get install -y qt54tools
 	export QMAKE=/usr/lib/x86_64-linux-gnu/qt5/bin/qmake
-	export QTDIR=/opt/qt54
+	#export QTDIR=/opt/qt54
 	export PATH=${QTDIR}/bin:${PATH}
 fi
 
