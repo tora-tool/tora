@@ -1,6 +1,6 @@
 #! /bin/bash
 
-#sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
+sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
 #sudo apt-add-repository --yes ppa:beineri/opt-qt542
 sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
 sudo add-apt-repository --yes ppa:kalakris/cmake
