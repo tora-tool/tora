@@ -35,11 +35,11 @@
 #include "tools/tobrowserdblinkswidget.h"
 #include "core/utils.h"
 #include "widgets/toresultitem.h"
-#include "widgets/toresulttableview.h"
-#include "widgets/toresultcode.h"
 #include "core/toquery.h"
 
 #include <QMessageBox>
+#include "toresultcode.h"
+#include "toresulttableview.h"
 
 static toSQL SQLDBLinkInfo("toBrowser:DBLinkInformation",
                            "SELECT * FROM Sys.all_db_links a\n"

@@ -33,9 +33,9 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "tools/tobrowserdirectorieswidget.h"
-#include "widgets/toresultcode.h"
-#include "widgets/toresulttableview.h"
 #include "core/utils.h"
+#include "toresultcode.h"
+#include "toresulttableview.h"
 
 static toSQL SQLDirectoriesInfo("toBrowser:DirectoriesInformation",
                                 "SELECT * FROM sys.all_directories\n"

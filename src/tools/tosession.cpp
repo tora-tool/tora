@@ -37,15 +37,11 @@
 #include "core/utils.h"
 #include "core/tochangeconnection.h"
 #include "widgets/toresultschema.h"
-#include "widgets/toresultlock.h"
 #include "widgets/toresultitem.h"
-#include "widgets/toresultstats.h"
 #include "widgets/torefreshcombo.h"
-#include "widgets/toresultbar.h"
 #include "tools/tosgastatement.h"
 #include "tools/tosgatrace.h"
 #include "tools/towaitevents.h"
-#include "widgets/toresulttableview.h"
 #include "core/toeventquery.h"
 #include "core/toglobalevent.h"
 #include "core/totool.h"
@@ -66,6 +62,11 @@
 #include "icons/noclock.xpm"
 #include "icons/refresh.xpm"
 #include "icons/tosession.xpm"
+
+#include "toresultbar.h"
+#include "toresultlock.h"
+#include "toresultstats.h"
+#include "toresulttableview.h"
 // #include "icons/filter.xpm"
 
 

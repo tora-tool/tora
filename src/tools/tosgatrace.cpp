@@ -36,9 +36,7 @@
 #include "ui_tosgatracesettingui.h"
 #include "tools/tosgastatement.h"
 #include "core/tochangeconnection.h"
-#include "core/toeditorsetting.h"
 #include "widgets/toresultschema.h"
-#include "widgets/toresulttableview.h"
 #include "widgets/torefreshcombo.h"
 #include "core/utils.h"
 #include "core/toconfiguration.h"
@@ -58,6 +56,9 @@
 
 #include "icons/refresh.xpm"
 #include "icons/tosgatrace.xpm"
+
+#include "core/toeditorconfiguration.h"
+#include "toresulttableview.h"
 
 class toSGATraceSetting
     : public QWidget

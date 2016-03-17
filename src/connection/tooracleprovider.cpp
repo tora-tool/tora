@@ -48,7 +48,7 @@
 #include "connection/absfact.h"
 
 #include "connection/tooracledatatype.h"
-#include "connection/tooraclesetting.h"
+#include "main/tooraclesetting.h"
 #include "connection/tooracleconnection.h"
 #include "connection/tooracletraits.h"
 
@@ -166,7 +166,13 @@ QList<QString> toOracleProvider::hosts() const
 
 QMap<QString,QString> toOracleProvider::defaultConnection() const
 {
-	return QMap<QString,QString>{{"HOST", "localhost"}, {"PORT", "1521"}, {"DB", "XE"}, {"USER", "SYSTEM"}};
+	QMap<QString,QString> retval;
+	retval.insert("HOST", "localhost");
+	retval.insert("PORT", "1521");
+	retval.insert("DB", "XE");
+	retval.insert("USER", "SYSTEM");
+	return retval;
+	//return QMap<QString,QString>{{"HOST", "localhost"}, {"PORT", "1521"}, {"DB", "XE"}, {"USER", "SYSTEM"}}; Qt >= 5.2 only
 }
 
 QList<QString> toOracleProvider::databases(const QString &host, const QString &user, const QString &pwd) const

@@ -35,7 +35,7 @@
 #ifndef TOBROWSERTRIGGERWIDGET_H
 #define TOBROWSERTRIGGERWIDGET_H
 
-#include "widgets/tobrowserbasewidget.h"
+#include "tobrowserbasewidget.h"
 
 class toResultItem;
 class toResultField;

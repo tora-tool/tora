@@ -110,8 +110,8 @@
 #include <QtGui/QPixmapCache>
 #include <QPlainTextEdit>
 #include <QtGui/QPolygon>
-#include <QtGui/QPrintDialog>
-#include <QtGui/QPrinter>
+#include <QPrintDialog>
+#include <QPrinter>
 #include <QProgressBar>
 #include <QProgressDialog>
 #include <QPushButton>
@@ -121,7 +121,7 @@
 #include <QScrollBar>
 #include <QShortcut>
 #include <QSlider>
-#include <QtGui/QSortFilterProxyModel>
+#include <QSortFilterProxyModel>
 #include <QSpinBox>
 #include <QSplitter>
 #include <QStackedWidget>
@@ -148,7 +148,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 #include <QtXml/QDomDocument>
-#include <QtXml/QXmlStreamReader>
+#include <QtCore/QXmlStreamReader>
 
 // STL headers
 #include <algorithm>

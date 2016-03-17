@@ -41,7 +41,7 @@
 #include "core/toconfiguration.h"
 #include "core/toquery.h"
 #include "core/toqvalue.h"
-#include "core/todatabasesetting.h"
+#include "core/todatabaseconfig.h"
 #include "core/toconnectiontraits.h"
 
 #include <QApplication>

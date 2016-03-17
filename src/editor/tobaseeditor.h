@@ -36,9 +36,8 @@
 #define TOBASEEDITOR_H
 
 #include "core/toeditwidget.h"
-#include "editor/tosearchreplace.h"
-
 #include <QWidget>
+#include "widgets/tosearchreplace.h"
 
 class toScintilla;
 class QFileSystemWatcher;

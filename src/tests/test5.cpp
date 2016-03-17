@@ -208,10 +208,10 @@ int main(int argc, char **argv)
                                qApp->translate("main", "Exit"));
     }
 
-    if (qApp->argc() == 1)
+    if (argc == 1)
         usage();
 
-    QString connect = QString::fromLatin1(qApp->argv()[1]);
+    QString connect = QString::fromLatin1(argv[1]);
     QString user, password, database;
 
     QStringList slashList, atList = connect.split("@", QString::SkipEmptyParts);

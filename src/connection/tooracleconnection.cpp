@@ -47,7 +47,7 @@
 #include "core/toconfiguration.h"
 #include "core/toraversion.h"
 #include "core/tologger.h"
-#include "connection/tooraclesetting.h"
+#include "main/tooraclesetting.h"
 
 #include "trotl.h"
 #include "trotl_convertor.h"

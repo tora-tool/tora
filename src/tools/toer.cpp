@@ -39,8 +39,6 @@
 #include "widgets/toresultcombo.h"
 #include "core/utils.h"
 #include "core/totool.h"
-#include "widgets/toresultview.h"
-#include "widgets/toparamget.h"
 #include "core/tochangeconnection.h"
 #include "core/toeventquery.h"
 
@@ -51,6 +49,8 @@
 #include "dotgraphview.h"
 
 #include <QToolBar>
+#include "toparamget.h"
+#include "toresultview.h"
 
 static toSQL SQLALLRefs (
     "toResultDrawing:ALLREFConstraints",

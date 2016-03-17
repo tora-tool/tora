@@ -150,7 +150,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 #include <QtXml/QDomDocument>
-#include <QXmlStreamReader>
+#include <QtCore/QXmlStreamReader>
 
 // STL headers
 #include <algorithm>

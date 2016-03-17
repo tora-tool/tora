@@ -37,11 +37,11 @@
 
 #include "widgets/totoolwidget.h"
 // due the toListView
-#include "widgets/toresultview.h"
 #include "ui_tosecurityquotaui.h"
 #include "tools/tosecuritytreemodel.h"
 
 #include <list>
+#include "toresultview.h"
 
 class QMenu;
 class QTabWidget;

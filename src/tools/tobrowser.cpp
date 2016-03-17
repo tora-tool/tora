@@ -33,6 +33,8 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "tools/tobrowser.h"
+
+#include "widgets/tohelp.h"
 #include "ui_tobrowserfilterui.h"
 #include "tools/toresultstorage.h"
 #include "tools/tobrowsertablewidget.h"
@@ -49,13 +51,12 @@
 
 #include "core/utils.h"
 #include "core/tochangeconnection.h"
-#include "tools/tohelp.h"
 #include "widgets/toresultschema.h"
-#include "widgets/toresultview.h"
 #include "core/toconnectionsub.h"
 #include "core/toconnectiontraits.h"
 #include "core/toglobalevent.h"
 #include "core/toconfiguration.h"
+#include "toresultview.h"
 
 #ifdef TOEXTENDED_MYSQL
 #  include "core/tomysqluser.h"

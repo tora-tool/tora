@@ -33,7 +33,6 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "editor/toscintilla.h"
-#include "editor/tostyle.h"
 #include "editor/toworksheettext.h"
 #include "core/toconfiguration.h"
 #include "core/toglobalevent.h"
@@ -52,6 +51,7 @@
 
 #include <Qsci/qsciprinter.h>
 #include <Qsci/qscilexersql.h>
+#include "core/tostyle.h"
 
 #include "icons/undo.xpm"
 #include "icons/redo.xpm"

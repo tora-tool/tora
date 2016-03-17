@@ -36,8 +36,6 @@
 #include "core/utils.h"
 #include "core/toconnection.h"
 #include "core/toconnectionsub.h"
-#include "widgets/toresultdatasingle.h"
-#include "widgets/toresulttableviewedit.h"
 #include "widgets/toresultmodeledit.h"
 #include "core/toconnectiontraits.h"
 #include "editor/toscintilla.h"
@@ -49,6 +47,8 @@
 #include <QMessageBox>
 #include <QtGui/QCloseEvent>
 
+#include "tools/toresultdatasingle.h"
+#include "tools/toresulttableviewedit.h"
 #include "icons/refresh.xpm"
 #include "icons/addrecord.xpm"
 #include "icons/canceledit.xpm"

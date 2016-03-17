@@ -37,7 +37,7 @@
 
 #include "widgets/totoolwidget.h"
 #include "core/tosql.h"
-#include "widgets/toresultview.h"
+#include "toresultview.h"
 
 class QTabWidget;
 class toEventQuery;

@@ -2,7 +2,7 @@
 #include "core/toconfiguration.h"
 #include "core/toglobalconfiguration.h"
 
-#include <QTimer>
+#include <QtCore/QTimer>
 
 toRefreshCombo::toRefreshCombo(QWidget *parent, const QString& def)
 	: QComboBox(parent)

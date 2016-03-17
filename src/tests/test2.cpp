@@ -36,7 +36,7 @@
 #include "core/tocache.h"
 #include "core/toconf.h"
 #include "core/toconfiguration.h"
-#include "core/todatabasesetting.h"
+#include "core/todatabaseconfig.h"
 #include "core/toglobalconfiguration.h"
 #include "core/toconnection.h"
 #include "core/toconnection.h"

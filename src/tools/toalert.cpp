@@ -40,7 +40,6 @@
 #include "core/toconf.h"
 #include "core/tomainwindow.h"
 #include "editor/tomemoeditor.h"
-#include "widgets/toresultview.h"
 #include "core/toconnection.h"
 #include "core/toquery.h"
 
@@ -61,6 +60,7 @@
 #include "icons/toalert.xpm"
 #include "icons/toworksheet.xpm"
 #include "icons/trash.xpm"
+#include "toresultview.h"
 
 class toAlertTool : public toTool
 {

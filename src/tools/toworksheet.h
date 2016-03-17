@@ -39,8 +39,6 @@
 #include "core/toconfenum.h"
 #include "core/tosettingtab.h"
 #include "widgets/totoolwidget.h"
-#include "parsing/tosyntaxanalyzer.h"
-
 #include "ui_toworksheetsetupui.h"
 
 #include <QtCore/QTimer>
@@ -51,6 +49,8 @@
 #include <QToolBar>
 
 #include <map>
+
+#include "core/tosyntaxanalyzer.h"
 
 class QComboBox;
 class QLabel;
@@ -84,7 +84,7 @@ namespace ToConfiguration
             enum OptionTypeEnum
             {
                 AutoSaveBool  = 7000      // #define CONF_AUTO_SAVE
-                                , CheckSaveBool           // #define CONF_CHECK_SAVE
+                , CheckSaveBool           // #define CONF_CHECK_SAVE
                 , LogAtEndBool            // #define CONF_LOG_AT_END
                 , LogMultiBool            // #define CONF_LOG_MULTI
                 , StatisticsBool          // #define CONF_STATISTICS

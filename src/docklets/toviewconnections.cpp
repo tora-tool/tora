@@ -34,7 +34,6 @@
 
 #include "docklets/toviewconnections.h"
 #include "core/toconnectionmodel.h"
-#include "widgets/tonewconnection.h"
 #include "core/toconnection.h"
 #include "core/toconnectionregistry.h"
 #include "core/tooracleconst.h"
@@ -44,6 +43,7 @@
 #include <QHeaderView>
 #include <QTableView>
 #include <QSortFilterProxyModel>
+#include "main/tonewconnection.h"
 
 REGISTER_VIEW("Connection", toViewConnections);
 

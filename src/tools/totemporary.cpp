@@ -37,7 +37,6 @@
 #include "core/totool.h"
 #include "core/tochangeconnection.h"
 #include "core/toconnection.h"
-#include "widgets/toresulttableview.h"
 #include "tools/tosgastatement.h"
 #include "core/toglobalevent.h"
 #include "core/toconfiguration.h"
@@ -49,6 +48,7 @@
 
 #include "icons/refresh.xpm"
 #include "icons/totemporary.xpm"
+#include "toresulttableview.h"
 
 static toSQL SQLListTemporaryObjects("toTemporary:ListTemporaryObjects",
                                       "SELECT s.sid || ',' || s.serial# \"Session\",\n"

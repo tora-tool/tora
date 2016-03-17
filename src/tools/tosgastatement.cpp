@@ -33,17 +33,17 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "tools/tosgastatement.h"
-#include "widgets/toresultfield.h"
+
+#include "connection/tooracleconfiguration.h"
 #include "widgets/toresultitem.h"
-#include "widgets/toresultplan.h"
 #include "widgets/toresultresources.h"
-#include "widgets/toresulttableview.h"
-//#include "core/tosqlparse.h"
 #include "core/tosql.h"
 #include "core/toconfiguration.h"
 #include "core/utils.h"
 #include "editor/toscintilla.h"
-#include "connection/tooraclesetting.h"
+#include "toresultfield.h"
+#include "toresultplan.h"
+#include "toresulttableview.h"
 
 static toSQL SQLParsingSchema(
     "toSGAStatement:ParsingSchema",

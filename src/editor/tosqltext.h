@@ -38,9 +38,8 @@
 #include "editor/toscintilla.h"
 #include "widgets/topushbutton.h"
 #include "core/tocache.h"
-#include "parsing/tosyntaxanalyzer.h"
-
 #include "loki/Singleton.h"
+#include "core/tosyntaxanalyzer.h"
 
 #include <QtCore/QString>
 #include <QtCore/QTimer>

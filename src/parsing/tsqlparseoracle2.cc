@@ -8,8 +8,8 @@
 #include "parsing/tsqlparse.h"
 //#include "core/tologger.h"
 
-#include <QPair>
-#include <QtAlgorithms>
+#include <QtCore/QPair>
+#include <QtCore/QtAlgorithms>
 
 using namespace std;
 

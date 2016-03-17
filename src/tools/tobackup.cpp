@@ -37,7 +37,6 @@
 #include "core/tologger.h"
 #include "core/tochangeconnection.h"
 #include "core/totool.h"
-#include "widgets/toresulttableview.h"
 #include "widgets/totabwidget.h"
 #include "core/toglobalevent.h"
 
@@ -46,6 +45,7 @@
 #include <QVBoxLayout>
 
 #include "icons/refresh.xpm"
+#include "toresulttableview.h"
 
 
 //static toBackupTool BackupTool;

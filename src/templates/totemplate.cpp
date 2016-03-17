@@ -38,11 +38,11 @@
 #include "core/tologger.h"
 #include "core/toconfiguration.h"
 #include "core/toconnection.h"
-#include "tools/tohelp.h"
 #include "editor/toscintilla.h"
 #include "core/toeventquery.h"
-#include "widgets/toresultview.h"
 #include "core/totool.h"
+#include "tools/toresultview.h"
+#include "widgets/tohelp.h"
 
 #include <QtCore/QString>
 #include <QtCore/QDir>
@@ -60,6 +60,7 @@
 #include <QToolBar>
 
 #include "icons/totemplate.xpm"
+
 
 typedef QMap<QString, QVariant> TemplatesMap;
 typedef QMapIterator<QString, QVariant> TemplatesMapIterator;

@@ -36,10 +36,10 @@
 #define TOTEMPLATE_H
 
 #include "core/tohelpcontext.h"
-#include "widgets/toresultview.h"
 #include "core/tosettingtab.h"
 // due the TODock
 #include "core/utils.h"
+#include "tools/toresultview.h"
 
 #include <QtCore/QString>
 #include <QWidget>
@@ -48,6 +48,7 @@
 
 #include <list>
 #include <map>
+
 
 #include "ui_totemplateeditui.h"
 #include "ui_totemplateaddfileui.h"

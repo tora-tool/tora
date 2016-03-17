@@ -40,7 +40,6 @@
 #include "core/utils.h"
 #include "core/totool.h"
 #include "core/tosettingtab.h"
-#include "tools/tohelp.h"
 #include "editor/tomemoeditor.h"
 #include "core/toglobalevent.h"
 #include "core/toconfiguration.h"
@@ -65,6 +64,8 @@
 #include "icons/refresh.xpm"
 #include "icons/storageextents.xpm"
 #include "icons/tostorage.xpm"
+
+#include "widgets/tohelp.h"
 #include "icons/writetablespace.xpm"
 
 QVariant ToConfiguration::Storage::defaultValue(int option) const

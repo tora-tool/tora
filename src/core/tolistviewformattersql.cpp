@@ -37,6 +37,8 @@
 //
 
 #include "core/tolistviewformattersql.h"
+
+#include "connection/tooracleconfiguration.h"
 #include "core/toconfiguration.h"
 #include "core/toconfiguration.h"
 #include "core/tolistviewformatterfactory.h"
@@ -44,7 +46,6 @@
 #include "widgets/toresultmodel.h"
 #include "core/utils.h"
 #include "editor/toworksheettext.h"
-#include "connection/tooraclesetting.h"
 
 namespace
 {

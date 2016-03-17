@@ -34,8 +34,8 @@
 
 #include "editor/tomemoeditor.h"
 #include "core/utils.h"
-#include "widgets/toresultview.h"
 #include "editor/toscintilla.h"
+#include "tools/toresultview.h"
 
 #include <QtGui/QKeyEvent>
 #include <QVBoxLayout>

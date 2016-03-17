@@ -42,7 +42,6 @@
 #include "core/tochangeconnection.h"
 #include "core/tocodemodel.h"
 #include "core/toeventquery.h"
-#include "widgets/toresulttableview.h"
 #include "editor/tohighlightededitor.h"
 #include "editor/tosqltext.h"
 
@@ -53,6 +52,7 @@
 #include <QSplitter>
 #include <QToolBar>
 #include <QTreeView>
+#include "toresulttableview.h"
 
 // helper definitons for SQLPackageParams and SQLUnitParams columns
 #define ARGUMENT_NAME 1

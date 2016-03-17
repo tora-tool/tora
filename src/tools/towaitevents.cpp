@@ -36,13 +36,9 @@
 #include "core/utils.h"
 #include "core/tosql.h"
 #include "core/toeventquery.h"
-#include "widgets/toresultview.h"
-#include "widgets/toresultbar.h"
-#include "widgets/topiechart.h"
 #include "core/totool.h"
 #include "widgets/totreewidget.h"
 #include "core/toconfiguration.h"
-#include "core/toeditorsetting.h"
 #include "widgets/totoolwidget.h"
 
 #include <QtCore/QSettings>
@@ -51,6 +47,11 @@
 #include <QSplitter>
 #include <QToolBar>
 #include <QVBoxLayout>
+
+#include "core/toeditorconfiguration.h"
+#include "topiechart.h"
+#include "toresultbar.h"
+#include "toresultview.h"
 
 class toWaitEventsItem : public toResultViewItem
 {

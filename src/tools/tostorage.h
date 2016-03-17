@@ -36,7 +36,6 @@
 #define TOSTORAGE_H
 
 #include "tools/toresultstorage.h"
-#include "widgets/toresultextent.h"
 #include "widgets/totoolwidget.h"
 #include "core/toconfenum.h"
 
@@ -49,6 +48,7 @@
 
 #include <QDialog>
 #include <QLabel>
+#include "toresultextent.h"
 
 class QCheckBox;
 class QLabel;

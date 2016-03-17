@@ -34,7 +34,6 @@
 
 #include "tools/tooutput.h"
 #include "ui_tooutputsettingui.h"
-#include "widgets/toresultview.h"
 #include "widgets/torefreshcombo.h"
 #include "core/totool.h"
 #include "core/toglobalevent.h"
@@ -52,6 +51,7 @@
 #include "icons/online.xpm"
 #include "icons/refresh.xpm"
 #include "icons/tooutput.xpm"
+#include "toresultview.h"
 
 QVariant ToConfiguration::Output::defaultValue(int option) const
 {

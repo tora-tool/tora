@@ -33,12 +33,12 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "tools/tobrowserindexwidget.h"
-#include "widgets/tobrowserbasewidget.h"
 #include "tools/tostorage.h"
-#include "widgets/toresultcode.h"
 #include "widgets/toresultitem.h"
-#include "widgets/toresulttableview.h"
 #include "core/utils.h"
+#include "tobrowserbasewidget.h"
+#include "toresultcode.h"
+#include "toresulttableview.h"
 
 Util::RegisterInFactory<toBrowserIndexWidget, toBrowserWidgetFactory, toCache::CacheEntryType> regToBrowserIndexWidget(toCache::INDEX);
 

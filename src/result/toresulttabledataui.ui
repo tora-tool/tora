@@ -66,12 +66,12 @@
   <customwidget>
    <class>toResultTableViewEdit</class>
    <extends>QTableView</extends>
-   <header>widgets/toresulttableviewedit.h</header>
+   <header>tools/toresulttableviewedit.h</header>
   </customwidget>
   <customwidget>
    <class>toResultDataSingle</class>
    <extends>QWidget</extends>
-   <header>widgets/toresultdatasingle.h</header>
+   <header>tools/toresultdatasingle.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

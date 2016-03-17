@@ -36,13 +36,12 @@
 #define TOSESSION_H
 
 #include "widgets/totoolwidget.h"
-#include "widgets/toresultlong.h"
-
 #include <QLabel>
 #include <QMenu>
 #include <QAction>
 
 #include <list>
+#include "toresultlong.h"
 
 class QComboBox;
 class QSplitter;

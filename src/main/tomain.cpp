@@ -36,17 +36,13 @@
 #include "widgets/tobackgroundlabel.h"
 #include "core/toeditmenu.h"
 #include "widgets/toworkspace.h"
-#include "core/tomessage.h"
 #include "core/toraversion.h"
 #include "core/toconnectionprovider.h"
 #include "core/toconnectionregistry.h"
 #include "core/toconnectionoptions.h"
-#include "widgets/tonewconnection.h"
 #include "widgets/todockbar.h"
 #include "editor/tomemoeditor.h"
-#include "tools/tohelp.h"
 #include "widgets/toabout.h"
-#include "widgets/topreferences.h"
 #include "tools/toworksheet.h"
 #include "tools/toworksheeteditor.h"
 #include "tools/tobrowser.h"
@@ -75,6 +71,10 @@
 #include <QComboBox>
 #include <QStatusBar>
 #include <QMenuBar>
+#include "widgets/tohelp.h"
+#include "tomessage.h"
+#include "tonewconnection.h"
+#include "topreferences.h"
 
 
 toMain::toMain()
