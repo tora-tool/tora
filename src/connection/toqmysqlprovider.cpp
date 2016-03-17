@@ -55,7 +55,13 @@ bool toQMySqlProvider::initialize()
 
 QMap<QString,QString> toQMySqlProvider::defaultConnection() const
 {
-    return QMap<QString,QString>{{"HOST", "localhost"}, {"PORT", "3306"}, {"DB", "mysql"}, {"USER", "root"}};
+	QMap<QString,QString> retval;
+	retval.insert("HOST", "localhost");
+	retval.insert("PORT", "3306");
+	retval.insert("DB", "mysql");
+	retval.insert("USER", "root");
+	return retval;
+    //return QMap<QString,QString>{{"HOST", "localhost"}, {"PORT", "3306"}, {"DB", "mysql"}, {"USER", "root"}}; Qt >= 5.2 only
 }
 
 QList<QString> toQMySqlProvider::options() const

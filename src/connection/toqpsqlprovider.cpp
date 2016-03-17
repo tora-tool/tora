@@ -48,7 +48,13 @@ toQPSqlProvider::toQPSqlProvider(toConnectionProviderFinder::ConnectionProvirerP
 
 QMap<QString,QString> toQPSqlProvider::defaultConnection() const
 {
-	return QMap<QString,QString>{{"HOST", "localhost"}, {"PORT", "5432"}, {"DB", "postgres"}, {"USER", "postgres"}};
+	QMap<QString,QString> retval;
+	retval.insert("HOST", "localhost");
+	retval.insert("PORT", "5432");
+	retval.insert("DB", "postgres");
+	retval.insert("USER", "postgres");
+	return retval;
+	//return QMap<QString,QString>{{"HOST", "localhost"}, {"PORT", "5432"}, {"DB", "postgres"}, {"USER", "postgres"}}; Qt >= 5.2 only
 }
 
 QWidget* toQPSqlProvider::configurationTab(QWidget *parent)
