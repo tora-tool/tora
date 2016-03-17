@@ -105,9 +105,10 @@ ELSE ()
     FILE(APPEND ${CMAKE_BINARY_DIR}/toversion.h "#define TOBUILDTYPE_RELEASE \"Release\"\n") 
 ENDIF()
 
-SET (EXE_NAME "tora")
 IF (APPLE)
   SET(EXE_NAME "TOra")
+ELSE()
+  SET(EXE_NAME "tora")  
 ENDIF(APPLE)
 
 # For Windows only. Plugings depend on the main program binary. Therefore we must also create .exp .lib (for each .exe)
@@ -200,6 +201,7 @@ SET(QT_USE_QTXML TRUE)
 SET(QT_USE_QTWEBKIT TRUE)
 #SET(CMAKE_AUTOMOC ON)
 IF(QT5_BUILD)
+
   set (QT_FOUND true)
   set(CMAKE_PREFIX_PATH "$ENV{QTDIR}\\") # multiple paths do not work
   find_package(Qt5Core REQUIRED)
@@ -220,13 +222,20 @@ IF(QT5_BUILD)
     ${Qt5Sql_INCLUDE_DIRS}
     ${Qt5Widgets_INCLUDE_DIRS}
     ${Qt5Xml_INCLUDE_DIRS}
-    IF(APPLE)    
-      ${Qt5MacExtras_INCLUDE_DIRS}
-    ENDIF()
   )
+  IF(APPLE)    
+    LIST(APPEND QT_INCLUDES ${Qt5MacExtras_INCLUDE_DIRS})
+  ENDIF()
   include_directories(${QT_INCLUDES})
   SET(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
-  SET(CMAKE_C_FLAGS           "${CMAKE_C_FLAGS}   ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")       
+  SET(CMAKE_C_FLAGS           "${CMAKE_C_FLAGS}   ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
+  STRING(TOUPPER "CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}" _flags_var_name)
+  SET(${_flags_var_name}      "${${_flags_var_name}} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
+  SET("CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}" _flags_var_name)
+  # prevent error "You must build your code with position independent code if Qt was built with..
+  #if (Qt5_POSITION_INDEPENDENT_CODE)
+  #  SET(CMAKE_POSITION_INDEPENDENT_CODE ON)
+  #endif()
 ELSE()
   SET (QT_MIN_VERSION "4.8.0")
   SET (QT_USE_QTSQL TRUE)
