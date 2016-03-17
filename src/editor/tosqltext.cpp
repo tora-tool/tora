@@ -45,6 +45,7 @@
 
 #include <QListWidget>
 #include <QVBoxLayout>
+#include <QGuiApplication>
 
 #include <Qsci/qsciapis.h>
 #include <Qsci/qsciabstractapis.h>
@@ -223,7 +224,12 @@ void toSqlText::setHighlighter(HighlighterTypeEnum h)
 
     if (super::lexer())
     {
-        declareStyle(OneLine,
+    	QPalette const& palette = QGuiApplication::palette();
+        declareStyle(Default,
+                     QColor(Qt::black),
+                     palette.color(QPalette::AlternateBase),
+                     mono);
+    	declareStyle(OneLine,
                      QColor(Qt::black),
                      QColor(toSqlText::lightCyan),
                      mono);

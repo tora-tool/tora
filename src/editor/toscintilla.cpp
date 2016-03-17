@@ -81,9 +81,12 @@ toScintilla::toScintilla(QWidget *parent, const char *name)
     setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
+    QPalette const& palete = QGuiApplication::palette();
+
     super::setFont(Utils::toStringToFont(toConfigurationNewSingle::Instance().option(Editor::ConfTextFont).toString()));
     super::setMarginLineNumbers(0, true);
     super::setCallTipsStyle(CallTipsNone);
+    super::setMarginsBackgroundColor(palete.color(QPalette::AlternateBase));
 
     // WARNING: it looks like this hack is mandatory for macosx. Oracle simply
     // doesn't understand mac's eols, so force to UNIX is a functional workaround
