@@ -68,21 +68,21 @@ class toLexerOracle : public QsciLexerCustom
         virtual ~toLexerOracle();
 
         /* override - reimplemented from QsciLexerCustom */
-        virtual const char *language() const;
-        virtual QString description(int) const;
-        virtual void styleText(int start, int end);
+        const char *language() const override;
+        QString description(int) const override;
+        void styleText(int start, int end) override;
 
-        virtual bool caseSensitive() const
+        bool caseSensitive() const override
         {
             return false;
         }
 
-        virtual QStringList autoCompletionWordSeparators() const
+        QStringList autoCompletionWordSeparators() const override
         {
             return QStringList() << ".";
         }
 
-        virtual const char *wordCharacters() const
+        const char *wordCharacters() const override
         {
             return "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$_#0123456789:.";
         }

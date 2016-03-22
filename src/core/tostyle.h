@@ -57,6 +57,7 @@ class toStyle : public QObject
 
         toStyle(const toStyle &other)
             : QObject(NULL)
+            , Name(other.Name)
             , FGColor(other.FGColor)
             , BGColor(other.BGColor)
             , Font(other.Font)
@@ -68,6 +69,7 @@ class toStyle : public QObject
 
         toStyle& operator =(const toStyle &other)
         {
+            Name    = other.Name;
             FGColor = other.FGColor;
             BGColor = other.BGColor;
             Font    = other.Font;
@@ -78,8 +80,9 @@ class toStyle : public QObject
             return *this;
         }
 
-        toStyle(QColor const& fg, QColor const& bg, QFont const& fo)
+        toStyle(QString const& name, QColor const& fg, QColor const& bg, QFont const& fo)
             : QObject(NULL)
+            , Name(name)
             , FGColor(fg)
             , BGColor(bg)
             , Font(fo)
@@ -89,6 +92,7 @@ class toStyle : public QObject
             , Bold()
         {}
 
+        QString Name;
         QColor FGColor;
         QColor BGColor;
         QFont Font;

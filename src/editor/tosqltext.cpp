@@ -202,6 +202,7 @@ void toSqlText::setHighlighter(HighlighterTypeEnum h)
     TLOG(8, toDecorator, __HERE__) << " Lexer: " << txt << std::endl;
 
     QMetaEnum m_enum = toSyntaxAnalyzer::staticMetaObject.enumerator(toSyntaxAnalyzer::staticMetaObject.indexOfEnumerator("WordClassEnum"));
+    QString fontName = super::lexer()->font(0).toString();
     for (int idx = 0; idx < m_enum.keyCount(); idx++)
     {
         unsigned ival = m_enum.value(idx);

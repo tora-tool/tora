@@ -116,7 +116,7 @@ QVariant ToConfiguration::Editor::defaultValue(int option) const
 
                     QString styleName = StyleNameEnum.key(idx);
                     int styleNameEnum = StyleNameEnum.value(idx);
-                    retval.insert(styleNameEnum, toStyle(fg, bg, fo));
+                    retval.insert(styleNameEnum, toStyle(styleName, fg, bg, fo));
                 }
                 delete l;
                 return QVariant::fromValue(retval);
@@ -170,6 +170,7 @@ void ToConfiguration::Editor::loadUserType(QSettings &s, QVariant &val, int key)
         if (i != NULL)
         {
             toStyle style = dMap.value(k);
+            style.Name = i;
             QString keyNameFg = QString(i) + "Fg";
             QColor confFg(s.value(keyNameFg).toString());
             if (confFg.isValid())

@@ -53,7 +53,7 @@ toSyntaxAnalyzerNL::~toSyntaxAnalyzerNL()
 
 toSyntaxAnalyzer::statementList toSyntaxAnalyzerNL::getStatements(QString const& text)
 {
-    QRegExp NL("\\r?\\n"); // TODO mac?, static variable can be bused in both threads(can not be static)
+    QRegExp NL("\\r?\\n"); // TODO mac?, static variable can be used in both threads(can not be static)
     QRegExp WS("^\\s*$");
 
     toSyntaxAnalyzer::statementList retval;
@@ -151,6 +151,7 @@ QsciLexer * toSyntaxAnalyzerNL::createLexer(QObject *parent)
 
     toStylesMap sMap = toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::EditStyleMap).value<toStylesMap>();
     sMap.updateLexer(retval);
+    //toSyntaxAnalyzer::updateLexerStyles(retval, sMap);
 
     return retval;
 }

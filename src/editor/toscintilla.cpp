@@ -1042,7 +1042,7 @@ QString toScintilla::getSelectionAsRTF()
     recolor();
 
     // Read the default settings
-    toStyle defaultStyle(lexer()->color(STYLE_DEFAULT), lexer()->paper(STYLE_DEFAULT), lexer()->font(STYLE_DEFAULT));
+    toStyle defaultStyle("", lexer()->color(STYLE_DEFAULT), lexer()->paper(STYLE_DEFAULT), lexer()->font(STYLE_DEFAULT));
 
     bool tabs = true;
     int tabSize = 4;
@@ -1101,7 +1101,7 @@ QString toScintilla::getSelectionAsRTF()
 
         for (int istyle = 0; istyle < STYLE_DEFAULT; istyle++)
         {
-            toStyle sd(lexer()->color(istyle), lexer()->paper(istyle), lexer()->font(istyle));
+            toStyle sd("", lexer()->color(istyle), lexer()->paper(istyle), lexer()->font(istyle));
 
             for (i = 0; i < fontCount; i++)
                 if (sd.Font == fonts[i])

@@ -33,6 +33,8 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "core/tosyntaxanalyzer.h"
+#include "core/tostyle.h"
+#include "core/tologger.h"
 
 #include <QtCore/QString>
 #include <QtCore/QRegExp>
@@ -72,16 +74,6 @@ toSyntaxAnalyzer::statement& toSyntaxAnalyzer::statement::operator=(toSyntaxAnal
 toSyntaxAnalyzer::toSyntaxAnalyzer(QObject *parent)
     : QObject(parent)
 {
-//	Colors[Default] = toConfigurationSingle::Instance().syntaxDefault();
-//	Colors[Comment] = toConfigurationSingle::Instance().syntaxComment();
-//	Colors[Number] = toConfigurationSingle::Instance().syntaxNumber();
-//	Colors[Keyword] = toConfigurationSingle::Instance().syntaxKeyword();
-//	Colors[String] = toConfigurationSingle::Instance().syntaxString();
-//	Colors[DefaultBg] = toConfigurationSingle::Instance().syntaxDefaultBg();
-//	Colors[ErrorBg] = toConfigurationSingle::Instance().syntaxErrorBg();
-//	Colors[DebugBg] = toConfigurationSingle::Instance().syntaxDebugBg();
-//	Colors[CurrentLineMarker] = toConfigurationSingle::Instance().syntaxCurrentLineMarker();
-//	Colors[StaticBg] = toConfigurationSingle::Instance().syntaxStaticBg();
 }
 
 QColor toSyntaxAnalyzer::getColor(toSyntaxAnalyzer::WordClassEnum type) const
@@ -94,3 +86,62 @@ QColor toSyntaxAnalyzer::getColor(toSyntaxAnalyzer::WordClassEnum type) const
 toSyntaxAnalyzer::~toSyntaxAnalyzer()
 {
 }
+
+#if 0
+void toSyntaxAnalyzer::updateLexerStyles(QsciLexer *lexer, toStylesMap const& map)
+{
+	TLOG(8, toDecorator, __HERE__) << "  Lexer:" << lexer->language() << std::endl;
+	QFont font = map.value(QsciLexerSQL::Default).Font;
+	QString fontName = font.toString();
+    Q_FOREACH(int key, map.keys())
+    {
+        lexer->setColor(map.value(key).FGColor, key);
+        lexer->setPaper(map.value(key).BGColor, key);
+        lexer->setFont(font, key);
+
+#ifdef QT_DEBUG
+        QColor c(map.value(key).FGColor);
+        QColor p(map.value(key).BGColor);
+        QFont  f(map.value(key).Font);
+        TLOG(8, toNoDecorator, __HERE__) << "  Style:" << key << '\t'
+                                         //<< std::endl
+                                         //<< "   Fore:" << c.name() << '(' << c.red() << ' ' << c.green() << ' ' << c.blue() << ' ' << c.alpha() << ')' << std::endl
+                                         //<< "   Back:" << p.name() << '(' << p.red() << ' ' << p.green() << ' ' << p.blue() << ' ' << p.alpha() << ')' << std::endl
+                                         << "   Font:" << f.toString() << std::endl;
+#endif
+    }
+#if 0
+    // Treat all comment style as one
+    lexer->setColor(map.value(QsciLexerSQL::Comment).FGColor, QsciLexerSQL::CommentLine);
+    lexer->setColor(map.value(QsciLexerSQL::Comment).FGColor, QsciLexerSQL::CommentLineHash);
+    lexer->setColor(map.value(QsciLexerSQL::Comment).FGColor, QsciLexerSQL::PlusComment);
+    lexer->setColor(map.value(QsciLexerSQL::Comment).FGColor, QsciLexerSQL::CommentDocKeyword);
+    lexer->setColor(map.value(QsciLexerSQL::Comment).FGColor, QsciLexerSQL::CommentDocKeywordError);
+    lexer->setColor(map.value(QsciLexerSQL::Comment).FGColor, QsciLexerSQL::QuotedIdentifier+1); // See tolexeroracle.h:58
+
+    lexer->setPaper(map.value(QsciLexerSQL::Comment).BGColor, QsciLexerSQL::CommentLine);
+    lexer->setPaper(map.value(QsciLexerSQL::Comment).BGColor, QsciLexerSQL::CommentLineHash);
+    lexer->setPaper(map.value(QsciLexerSQL::Comment).BGColor, QsciLexerSQL::PlusComment);
+    lexer->setPaper(map.value(QsciLexerSQL::Comment).BGColor, QsciLexerSQL::CommentDocKeyword);
+    lexer->setPaper(map.value(QsciLexerSQL::Comment).BGColor, QsciLexerSQL::CommentDocKeywordError);
+    lexer->setPaper(map.value(QsciLexerSQL::Comment).BGColor, QsciLexerSQL::QuotedIdentifier+1);
+#endif
+
+    lexer->setFont(font, QsciLexerSQL::CommentLine);
+    lexer->setFont(font, QsciLexerSQL::CommentLineHash);
+    lexer->setFont(font, QsciLexerSQL::PlusComment);
+    lexer->setFont(font, QsciLexerSQL::CommentDocKeyword);
+    lexer->setFont(font, QsciLexerSQL::CommentDocKeywordError);
+    lexer->setFont(font, QsciLexerSQL::QuotedIdentifier+1);
+
+    // see QsciScintilla::setPaper
+    // There are two "default" styles
+    // 0  - used for white spaces only
+    // 32 - used otherwise(used or empty paper's color), but this one can not be set when NOT using custom lexer
+    lexer->setPaper(map.value(QsciLexerSQL::Default).BGColor, QsciScintillaBase::STYLE_DEFAULT);
+
+    // be sure the same font is used
+    lexer->setFont(font);
+    lexer->setDefaultFont(font);
+}
+#endif

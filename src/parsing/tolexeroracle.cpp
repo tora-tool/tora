@@ -37,6 +37,8 @@
 #include "core/utils.h"
 #include "core/toconfiguration.h"
 #include "editor/toworksheettext.h"
+#include "core/tologger.h"
+#include "core/tosyntaxanalyzer.h"
 
 #include <QtCore/QDebug>
 #include <QtGui/QColor>
@@ -46,7 +48,8 @@
 
 #include <iostream>
 
-#define declareStyle(style,color, paper, font) styleNames[style] = tr(#style); \
+#define declareStyle(style,color, paper, font) \
+    styleNames[style] = tr(#style); \
     setColor(color, style); \
     setPaper(paper, style); \
     setFont(font, style);
@@ -63,44 +66,50 @@ toLexerOracle::toLexerOracle(QObject *parent)
 
     setAPIs(new toLexerOracleAPIs(this));
 
-    QFont mono;
-#if defined(Q_OS_WIN)
-    mono = QFont("Courier New", 10);
-#elif defined(Q_OS_MAC)
-    mono = QFont("Courier", 12);
-#else
-    mono = QFont(Utils::toStringToFont(toConfigurationNewSingle::Instance().option(Editor::ConfCodeFont).toString()));
+    toStylesMap sMap = toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::EditStyleMap).value<toStylesMap>();
+#if 0
+    toSyntaxAnalyzer::updateLexerStyles(this, sMap);
 #endif
-//
-//	toStylesMap sMap = toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::EditStyleMap).value<toStylesMap>();
-//	declareStyle(Default,
-//			sMap[Default].FGColor,
-//			sMap[Default].BGColor,
-//			mono);
-//	declareStyle(Comment,
-//			sMap[Comment].FGColor,
-//			sMap[Comment].BGColor,
-//			mono);
-//	declareStyle(CommentMultiline,
-//			sMap[Comment].FGColor,
-//			sMap[Comment].BGColor,
-//			mono);
-//	declareStyle(Reserved,
-//			sMap[Reserved].FGColor,
-//			sMap[Reserved].BGColor,
-//			mono);
-//	declareStyle(Builtin,
-//			sMap[toSyntaxAnalyzer::KeywordSet5].FGColor,
-//			sMap[toSyntaxAnalyzer::KeywordSet5].BGColor,
-//			mono);
-//	declareStyle(Identifier,
-//			sMap[Identifier].FGColor,
-//			sMap[Identifier].BGColor,
-//			mono);
-//	declareStyle(OneLine,
-//			sMap[OneLine].FGColor,
-//			sMap[OneLine].BGColor,
-//			mono);
+    // each style used has to have description set to non-empty string, otherwise it will be ignored by QScintilla
+    Q_FOREACH(int style, sMap.keys())
+    {
+        styleNames[style] = sMap.value(style).Name;
+    }
+    styleNames[CommentMultiline] = "CommentMultiline";
+
+    QFont mono = QFont(Utils::toStringToFont(toConfigurationNewSingle::Instance().option(Editor::ConfCodeFont).toString()));
+#if 0
+	declareStyle(Default,
+			sMap[Default].FGColor,
+			sMap[Default].BGColor,
+			mono);
+
+	declareStyle(Comment,
+			sMap[Comment].FGColor,
+			sMap[Comment].BGColor,
+			mono);
+	declareStyle(CommentMultiline,
+			sMap[Comment].FGColor,
+			sMap[Comment].BGColor,
+			mono);
+	declareStyle(Reserved,
+			sMap[Reserved].FGColor,
+			sMap[Reserved].BGColor,
+			mono);
+
+	declareStyle(Builtin,
+			sMap[toSyntaxAnalyzer::KeywordSet5].FGColor,
+			sMap[toSyntaxAnalyzer::KeywordSet5].BGColor,
+			mono);
+	declareStyle(Identifier,
+			sMap[Identifier].FGColor,
+			sMap[Identifier].BGColor,
+			mono);
+	declareStyle(OneLine,
+			sMap[OneLine].FGColor,
+			sMap[OneLine].BGColor,
+			mono);
+#endif
     declareStyle(Failure,
                  QColor(Qt::black),
                  QColor(Qt::red),
