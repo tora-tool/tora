@@ -21,7 +21,7 @@ if [ "$QTTYPE" = "5" ]; then
         mkdir /tmp/qt5
 	cd /tmp/qt5
 	cmake $tora \
-	      -DQT5_BUILD=true \	      
+	      -DQT5_BUILD=true \
 	      -DBOOST_ROOT=/usr/include \
 	      -DWANT_INTERNAL_QSCINTILLA=true \
 	      -DORACLE_PATH_INCLUDES=/usr/include/oracle/12.1/client64/ \

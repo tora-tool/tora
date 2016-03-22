@@ -1,20 +1,30 @@
 CMAKE help and hints
 --------------------------------------------------------------
 
+0. Prerequisites
+  - qt5 devel packages(for example qtbase5-dev)
+  - boost-dev (for example libboost1.55-dev)
+  - libloki-dev (unless WANT_INTERNAL_LOKI=true is used)
+  - libqt5scintilla2-dev (unless WANT_INTERNAL_QSCINTILLA=true is user)
+      **BEWARE** use QT5 version of qscintilla with qt5 build.
+      it might compile even with qt4 version, but it will cause random crashes.
+  - Oracle client libs
+      **BEWARE** user 64bit client libs for 64bit build, and vice-versa.    
+
 1. On Linux use build Tora aside from sources:
 
 1.1 Debug Build:
   mkdir -p tora3/DBUILD
   cd tora3/DBUILD
   cmake -DBOOST_ROOT=/usr/include -DCMAKE_BUILD_TYPE=Debug ..
-  make tora poracle parsing
+  make tora poracle
 
 1.2.
   Release Build:
   mkdir -p tora3/RBUILD
   cd tora3/RBUILD
   cmake -DBOOST_ROOT=/usr/include -DCMAKE_BUILD_TYPE=Release ..
-  make tora poracle parsing
+  make tora poracle
 
 2. Options:
   BOOST_ROOT for some unknown reason the CMAKE's FindBoots module
@@ -32,7 +42,7 @@ CMAKE help and hints
   (C:\Program oieeek, error here).
 
 3. QScintilla2
-  TOra requires QScintilla2. QScintilla2 is the new Qt4 port of old
+  TOra requires QScintilla2. QScintilla2 is the new Qt4Qt5 port of old
   Qt3 release with new API. It's strongly recomended to use standalone
   package of QScintilla2. Unfortunatelly it's sometimes missing in
   older distros. You can use TOra internal copy of QScintilla2 with:
