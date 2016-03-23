@@ -104,7 +104,7 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different gitrevision.h.txt 
 
 IF(WIN32)
 CONFIGURE_FILE(
-	${CMAKE_SOURCE_DIR}/package/gitrevision.wxi.cmake
+	${CMAKE_SOURCE_DIR}/msi/gitrevision.wxi.cmake
 	${CMAKE_SOURCE_DIR}/gitrevision.wxi
 	@ONLY
 )

@@ -6,7 +6,6 @@ SET (VERSION_MINOR "0")
 SET (VERSION_PATCH "0")
 SET (VERSION_SUFFIX "beta")
 SET (VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}${VERSION_SUFFIX})
-MESSAGE(STATUS "TOra ${VERSION} will be built to install into ${CMAKE_INSTALL_PREFIX}")
 
 ##############################################################################################################
 ########## CMake Setup                                                                              ##########
@@ -41,7 +40,6 @@ OPTION(TEST_APP7 "simple application parser" OFF)
 #Set our CMake minimum version
 #Require 2.4.2 for Qt finding
 #Require 2.4.3 for moc change detection and rpath updates for custom cairo install
-#Require 2.8 for svnversion
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.11 FATAL_ERROR) # qt5 requirement
 CMAKE_POLICY(SET CMP0046 OLD) # The dependency target "revisiontag" of target "tora" does not exist
 #CMAKE_POLICY(SET CMP0042 OLD) # MACOSX_RPATH
@@ -57,16 +55,16 @@ SET(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
 # Check for SVN to include SVn revision in SVN based builds
-FIND_PACKAGE(Subversion)
-IF (Subversion_FOUND AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.svn")
-  # a custom target that is always built
-  add_custom_target(revisiontag ALL)
-  # creates svnheader.h using cmake script
-  add_custom_command(TARGET revisiontag COMMAND ${CMAKE_COMMAND}
-  -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
-  -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/getsvn.cmake)
-  ADD_DEFINITIONS("-DHAVE_SVNREVISION_H=1")
-ENDIF()
+# FIND_PACKAGE(Subversion)
+# IF (Subversion_FOUND AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.svn")
+#   # a custom target that is always built
+#   add_custom_target(revisiontag ALL)
+#   # creates svnheader.h using cmake script
+#   add_custom_command(TARGET revisiontag COMMAND ${CMAKE_COMMAND}
+#   -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
+#   -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/getsvn.cmake)
+#   ADD_DEFINITIONS("-DHAVE_SVNREVISION_H=1")
+# ENDIF()
 FIND_PACKAGE(Git)
 IF(GIT_FOUND AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
   # a custom target that is always built
@@ -428,9 +426,25 @@ IF (WANT_RPM)
 ENDIF (WANT_RPM)
 
 IF (WIN32)
-CONFIGURE_FILE(
-	${CMAKE_SOURCE_DIR}/package/variables.wxi.cmake
-	${CMAKE_SOURCE_DIR}/package/variables.wxi
+  CONFIGURE_FILE(
+	${CMAKE_SOURCE_DIR}/msi/variables.wxi.cmake
+	${CMAKE_SOURCE_DIR}/msi/variables.wxi
 	@ONLY
-)
+  )
+  # see make_msi64_qt5.bat
+  IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT OR CMAKE_INSTALL_PREFIX MATCHES "^C:/Program Files")
+    SET(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}/TARGET/" CACHE PATH "TOra install prefix" FORCE )
+  ENDIF()
+  if(QT5_BUILD)
+    get_target_property(_moc_location Qt5::moc IMPORTED_LOCATION)
+    get_filename_component(QTBINDIR ${_moc_location} DIRECTORY)
+    find_program(WINDEPLOYQT_PROG windeployqt PATHS $ENV{QTDIR}/bin/ ${QTBINDIR})
+    if(WINDEPLOYQT_PROG)
+      message(STATUS "Found ${WINDEPLOYQT_PROG}")
+    else()
+      message(FATAL_ERROR "Unable to find windeployqt")
+    endif()
+  endif()
 ENDIF()
+
+MESSAGE(STATUS "TOra ${VERSION} will be built & installed into ${CMAKE_INSTALL_PREFIX}")
