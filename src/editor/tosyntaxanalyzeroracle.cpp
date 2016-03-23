@@ -172,10 +172,7 @@ toSyntaxAnalyzer::statement toSyntaxAnalyzerOracle::getStatementAt(unsigned line
 
 QsciLexer* toSyntaxAnalyzerOracle::createLexer(QObject* parent)
 {
-    QsciLexer *retval = new toLexerOracle(parent);
-    toStylesMap sMap = toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::EditStyleMap).value<toStylesMap>();
-    sMap.updateLexer(retval);
-    return retval;
+	return new toLexerOracle(parent);
 }
 
 void toSyntaxAnalyzerOracle::sanitizeStatement(statement& stat)

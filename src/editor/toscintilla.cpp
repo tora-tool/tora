@@ -257,7 +257,7 @@ void toScintilla::copy()
 
 #if defined(Q_OS_MAC) || defined(Q_OS_LINUX)
     mime = getSelectionAsHTML();
-#else defined(Q_OS_WIN)
+#elif defined(Q_OS_WIN)
     mime = getSelectionAsRTF();
 #endif
 
@@ -268,7 +268,7 @@ void toScintilla::copy()
     // md->setData(QLatin1String("text/html"), html.toUtf8()); MAC?
     md->setHtml(mime);
     TLOG(0, toDecorator, __HERE__) << "html:" << mime << std::endl;
-#else defined(Q_OS_WIN)
+#elif defined(Q_OS_WIN)
     md->setData(QLatin1String("text/rtf"), mime.toUtf8());
     md->setData(QLatin1String("Rich Text Format"), mime.toUtf8());
     TLOG(0, toDecorator, __HERE__) << "rtf:" << mime << std::endl;

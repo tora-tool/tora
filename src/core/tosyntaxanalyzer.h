@@ -172,9 +172,6 @@ class toSyntaxAnalyzer : public QObject
         virtual QsciLexer* createLexer(QObject *parent = 0) = 0;
 
         virtual void sanitizeStatement(statement&) = 0;
-#if 0
-        static void updateLexerStyles(QsciLexer*, toStylesMap const&);
-#endif
     private:
         /** Colors allocated for the different @ref wordClass values.
          */

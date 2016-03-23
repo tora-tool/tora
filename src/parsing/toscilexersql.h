@@ -1,4 +1,3 @@
-
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
@@ -32,57 +31,13 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "core/tosyntaxanalyzer.h"
-#include "core/tostyle.h"
-#include "core/tologger.h"
-
-#include <QtCore/QString>
-#include <QtCore/QRegExp>
+#pragma once
 
 #include <Qsci/qscilexer.h>
 #include <Qsci/qscilexersql.h>
 
-toSyntaxAnalyzer::statement::statement()
-    : lineFrom(0)
-    , lineTo(0)
-    , posFrom(0)
-    , posTo(0)
-    , sql()
-    , firstWord()
-    , statementType(UNKNOWN) {};
-toSyntaxAnalyzer::statement::statement(unsigned lf, unsigned lt)
-    : lineFrom(lf)
-    , lineTo(lt)
-    , posFrom(0)
-    , posTo(0)
-    , sql()
-    , firstWord()
-    , statementType(UNKNOWN) {};
-toSyntaxAnalyzer::statement& toSyntaxAnalyzer::statement::operator=(toSyntaxAnalyzer::statement const& other)
+class toSciLexerSQL : public QsciLexerSQL
 {
-    lineFrom = other.lineFrom;
-    lineTo = other.lineTo;
-    posFrom = other.posFrom;
-    posTo = other.posTo;
-    firstWord = other.firstWord;
-    sql = other.sql;
-    statementType = other.statementType;
-    return *this;
-}
-
-//toSyntaxAnalyzer::toSyntaxAnalyzer(toSqlText *parent)
-toSyntaxAnalyzer::toSyntaxAnalyzer(QObject *parent)
-    : QObject(parent)
-{
-}
-
-QColor toSyntaxAnalyzer::getColor(toSyntaxAnalyzer::WordClassEnum type) const
-{
-    if (Colors.contains(type))
-        return Colors[type];
-    throw QString("Unknown color reference: %1").arg(type);
-}
-
-toSyntaxAnalyzer::~toSyntaxAnalyzer()
-{
-}
+public:
+	toSciLexerSQL(QObject *parent = 0);
+};

@@ -168,7 +168,7 @@ void toSyntaxSetup::selectFont(void)
             toSyntaxAnalyzer::WordClassEnum key = (toSyntaxAnalyzer::WordClassEnum)WordClassEnum.value(idx);
             Styles[key].Font = font;
         }
-        Styles.updateLexer(Example->editor()->lexer());
+        Example->editor()->lexer()->setFont(font, -1); // -1 => all styles
         Example->editor()->recolor(0, -1);
         Example->editor()->update();
     }
@@ -265,7 +265,7 @@ void toSyntaxSetup::selectFGColor(void)
                 FGSample->setPalette(palette);
                 FGSample->update();
 
-                Styles.updateLexer(Example->editor()->lexer());
+                Example->editor()->lexer()->setColor(col, coleng);
                 Example->editor()->recolor(0, -1);
                 Example->editor()->update();
             }
@@ -295,7 +295,7 @@ void toSyntaxSetup::selectBGColor(void)
                 BGSample->setPalette(palette);
                 BGSample->update();
 
-                Styles.updateLexer(Example->editor()->lexer());
+                Example->editor()->lexer()->setPaper(col, coleng);
                 Example->editor()->recolor(0, -1);
                 Example->editor()->update();
             }

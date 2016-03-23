@@ -284,6 +284,7 @@ SET(TORA_MOC_CLASSES
   widgets/tosearchreplace.h
   core/tostyle.h
   parsing/tolexeroracle.h
+  parsing/toscilexersql.h
 
   result/toproviderobserver.h
   result/totablemodel.h
@@ -522,6 +523,7 @@ SET(TORA_SOURCES
   widgets/tosearchreplace.cpp
   core/tostyle.cpp
   parsing/tolexeroracle.cpp
+  parsing/toscilexersql.cpp
 
   result/toproviderobserver.cpp
   result/totablemodel.cpp

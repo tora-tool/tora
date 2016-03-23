@@ -34,15 +34,14 @@
 
 #include "editor/tosyntaxanalyzernl.h"
 #include "core/toconfiguration.h"
+#include "core/toeditorconfiguration.h"
+#include "core/tostyle.h"
 #include "editor/tosqltext.h"
+#include "parsing/toscilexersql.h"
+
 #include <QtCore/QString>
 #include <QtCore/QRegExp>
 #include <QtCore/QtDebug>
-
-#include <Qsci/qscilexer.h>
-#include <Qsci/qscilexersql.h>
-#include "core/toeditorconfiguration.h"
-#include "core/tostyle.h"
 
 toSyntaxAnalyzerNL::toSyntaxAnalyzerNL(toSqlText *parent)
     : toSyntaxAnalyzer(parent)
@@ -145,15 +144,7 @@ toSyntaxAnalyzer::statement toSyntaxAnalyzerNL::getStatementAt(unsigned line, un
 
 QsciLexer * toSyntaxAnalyzerNL::createLexer(QObject *parent)
 {
-    QsciLexerSQL *retval = new QsciLexerSQL(parent);
-    retval->setFoldComments(true);
-    retval->setFoldCompact(false);
-
-    toStylesMap sMap = toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::EditStyleMap).value<toStylesMap>();
-    sMap.updateLexer(retval);
-    //toSyntaxAnalyzer::updateLexerStyles(retval, sMap);
-
-    return retval;
+    return new toSciLexerSQL(parent);
 }
 
 void toSyntaxAnalyzerNL::sanitizeStatement(statement &stat)

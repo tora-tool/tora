@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOSTYLE_H
-#define TOSTYLE_H
+#pragma once
 
 #include <QtCore/QObject>
 #include <QtCore/QMap>
@@ -104,12 +103,7 @@ class toStyle : public QObject
 
 class toStylesMap: public QMap<int, toStyle>
 {
-    public:
-        void updateLexer(QsciLexer*);
 };
 
 Q_DECLARE_METATYPE(toStyle);
 Q_DECLARE_METATYPE(toStylesMap);
-
-#endif
-

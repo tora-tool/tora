@@ -51,7 +51,7 @@ namespace ToConfiguration
             enum OptionTypeEnum
             {
                 SyntaxHighlightingInt  = 3000 // #define CONF_HIGHLIGHT
-                                         , EditorTypeInt            // #define CONF_EDITOR_TYPE
+                , EditorTypeInt         // #define CONF_EDITOR_TYPE
                 , UseMaxTextWidthMarkBool
                 , MaxTextWidthMarkInt
                 , KeywordUpperBool      // #define CONF_KEYWORD_UPPER

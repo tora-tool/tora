@@ -66,37 +66,23 @@ toLexerOracle::toLexerOracle(QObject *parent)
 
     setAPIs(new toLexerOracleAPIs(this));
 
-    toStylesMap sMap = toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::EditStyleMap).value<toStylesMap>();
-#if 0
-    toSyntaxAnalyzer::updateLexerStyles(this, sMap);
-#endif
+    toStylesMap stylesMap = toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::EditStyleMap).value<toStylesMap>();
+    QFont font(stylesMap.value(QsciLexerSQL::Default).Font);
     // each style used has to have description set to non-empty string, otherwise it will be ignored by QScintilla
-    Q_FOREACH(int style, sMap.keys())
+    Q_FOREACH(int style, stylesMap.keys())
     {
-        styleNames[style] = sMap.value(style).Name;
+    	styleNames[style] = stylesMap.value(style).Name;
+    	setColor(stylesMap.value(style).FGColor, style);
+    	setPaper(stylesMap.value(style).BGColor, style);
+    	setFont(font, style);
     }
-    styleNames[CommentMultiline] = "CommentMultiline";
-
-    QFont mono = QFont(Utils::toStringToFont(toConfigurationNewSingle::Instance().option(Editor::ConfCodeFont).toString()));
+    toStyle styleComment = stylesMap.value(Comment);
+    toStyle styleDefault = stylesMap.value(Default);
 #if 0
 	declareStyle(Default,
 			sMap[Default].FGColor,
 			sMap[Default].BGColor,
 			mono);
-
-	declareStyle(Comment,
-			sMap[Comment].FGColor,
-			sMap[Comment].BGColor,
-			mono);
-	declareStyle(CommentMultiline,
-			sMap[Comment].FGColor,
-			sMap[Comment].BGColor,
-			mono);
-	declareStyle(Reserved,
-			sMap[Reserved].FGColor,
-			sMap[Reserved].BGColor,
-			mono);
-
 	declareStyle(Builtin,
 			sMap[toSyntaxAnalyzer::KeywordSet5].FGColor,
 			sMap[toSyntaxAnalyzer::KeywordSet5].BGColor,
@@ -105,15 +91,33 @@ toLexerOracle::toLexerOracle(QObject *parent)
 			sMap[Identifier].FGColor,
 			sMap[Identifier].BGColor,
 			mono);
-	declareStyle(OneLine,
-			sMap[OneLine].FGColor,
-			sMap[OneLine].BGColor,
+	declareStyle(Reserved,
+			sMap[Reserved].FGColor,
+			sMap[Reserved].BGColor,
 			mono);
 #endif
+
+	declareStyle(CommentMultiline,
+			styleComment.FGColor,
+			styleComment.BGColor,
+			font);
+	declareStyle(OneLine,
+			styleComment.FGColor,
+			styleComment.BGColor,
+			font);
     declareStyle(Failure,
-                 QColor(Qt::black),
-                 QColor(Qt::red),
-                 mono);
+    		QColor(Qt::black),
+			QColor(Qt::red),
+			font);
+    // see QsciScintilla::setPaper
+    // There are two "default" styles
+    // 0  - used for white spaces only
+    // 32 - used otherwise(used or empty paper's color), but this one can not be set when NOT using custom lexer
+    setPaper(styleDefault.BGColor, QsciScintillaBase::STYLE_DEFAULT);
+
+    // be sure the same font is used
+    setFont(font);
+    setDefaultFont(font);
 
     lineText = (char*) malloc(lineLength);
     if (lineText == NULL)
