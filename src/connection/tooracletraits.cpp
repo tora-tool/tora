@@ -33,6 +33,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "connection/tooracletraits.h"
+#include "connection/tooracleconfiguration.h"
 #include "core/utils.h"
 #include "core/toconfiguration.h"
 #include "core/toconnection.h"
@@ -112,8 +113,8 @@ QString toOracleTraits::quoteVarchar(const QString &name) const
 
 QString toOracleTraits::formatDate(const QVariant &value) const
 {
-	QString dateFormat = toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::ConfDateFormat).toString();
-	return QString("TO_DATE('%1', '%2')").arg(value.toString()).arg(dateFormat);
+    QString dateFormat = toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::ConfDateFormat).toString();
+    return QString("TO_DATE('%1', '%2')").arg(value.toString()).arg(dateFormat);
 }
 
 QString toOracleTraits::schemaSwitchSQL(QString const & schema) const

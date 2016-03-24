@@ -36,6 +36,8 @@
 #include "core/tostyle.h"
 #include "core/toconfiguration.h"
 
+#include <Qsci/qsciscintillabase.h>
+
 toSciLexerSQL::toSciLexerSQL(QObject *parent)
 	: QsciLexerSQL(parent)
 {
