@@ -190,6 +190,19 @@ QVariant toConnectionModel::data(const QModelIndex & index, int role) const
 
 Qt::ItemFlags toConnectionModel::flags(const QModelIndex & index) const
 {
-    return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+    if (!index.isValid())
+        return Qt::NoItemFlags;
+
+    toConnectionOptions opt = m_data[index.row()];
+    if (opt.enabled)
+    	return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+    else
+    	return Qt::NoItemFlags;
 }
 
+void toConnectionModel::disableConnection(int ix)
+{
+    toConnectionOptions opt = m_data[ix];
+    opt.enabled = false;
+    m_data[ix] = opt;
+}

@@ -110,6 +110,12 @@ QString toOracleTraits::quoteVarchar(const QString &name) const
     return QChar('\'') + retval + ('\'');
 }
 
+QString toOracleTraits::formatDate(const QVariant &value) const
+{
+	QString dateFormat = toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::ConfDateFormat).toString();
+	return QString("TO_DATE('%1', '%2')").arg(value.toString()).arg(dateFormat);
+}
+
 QString toOracleTraits::schemaSwitchSQL(QString const & schema) const
 {
     static const QString ALTER_SESSION("ALTER SESSION SET CURRENT_SCHEMA = \"%1\"");

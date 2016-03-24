@@ -67,12 +67,14 @@ class toSqlText : public toScintilla
         typedef toScintilla super;
     public:
         friend class toComplPopup;
-
+			
         enum HighlighterTypeEnum
         {
             None   = 10,
             Oracle = 20,
+#if defined(TORA_EXPERIMENTAL)
             Mysql  = 30,
+#endif
             QsciSql  = 40
         };
 

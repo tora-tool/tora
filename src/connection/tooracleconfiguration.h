@@ -48,7 +48,7 @@ namespace ToConfiguration
             enum OptionTypeEnum
             {
                 ConfDateFormat = 5000 // #define CONF_DATE_FORMAT
-                                 , ConfTimestampFormat // #define CONF_TIMESTAMP_FORMAT
+                , ConfTimestampFormat // #define CONF_TIMESTAMP_FORMAT
                 , MaxLong             // #define CONF_MAX_LONG
                 , PlanTable           // #define CONF_PLAN_TABLE
                 , KeepPlansBool           // #define CONF_KEEP_PLANS  // default: false

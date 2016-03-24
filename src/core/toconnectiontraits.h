@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOCONNECTIONTRAITS_H
-#define TOCONNECTIONTRAITS_H
+#pragma once
 
 #include "core/tocache.h"
 
@@ -65,10 +64,15 @@ class toConnectionTraits
         * @param name The name to be un-quoted.
         * @return String addressing table.
         */
-        virtual QString quoteVarchar(const QString &name) const
+        virtual QString quoteVarchar(const QString &value) const
         {
-            return QChar('\'') + name + ('\'');
+            return QChar('\'') + value + ('\'');
         };
+
+        virtual QString formatDate(const QVariant &value) const
+        {
+        	return QString("'%1'").arg(value.toString());
+        }
 
         /** Generate SQL statement for Schema switch
          * @param Schema/(Database) name
@@ -98,6 +102,3 @@ class toConnectionTraits
 
         virtual ~toConnectionTraits() {};
 };
-
-#endif
-

@@ -55,6 +55,7 @@ toConnectionOptions::toConnectionOptions(const QString &_prov,
     , color    (_color)
     , port     (_port)
     , options  (_options)
+    , enabled  (true)
 {}
 
 toConnectionOptions::toConnectionOptions(toConnectionOptions const& other)
@@ -67,6 +68,7 @@ toConnectionOptions::toConnectionOptions(toConnectionOptions const& other)
     , color    (other.color)
     , port     (other.port)
     , options  (other.options)
+    , enabled  (other.enabled)
 {
 }
 
@@ -81,6 +83,7 @@ toConnectionOptions& toConnectionOptions::operator=(const toConnectionOptions &o
     color    = other.color;
     port     = other.port;
     options  = other.options;
+    enabled  = other.enabled;
     return *this;
 }
 

@@ -546,24 +546,31 @@ void toResultPlanAbstr::childComboChanged(int NewIndex)
 
 void toResultPlanAbstr::queryPlanTable(toQueryParams const& params)
 {
+	toConnection &conn = toConnection::currentConnection(this);
+#ifndef TO_NO_ORACLE
+	if (conn.providerIs("Oracle"))
     {
-    	QSharedPointer<toConnectionSubLoan> conn(new toConnectionSubLoan(toConnection::currentConnection(this)));
-        this->LockedConnection = conn;
+		{
+			QSharedPointer<toConnectionSubLoan> c(new toConnectionSubLoan(conn));
+			this->LockedConnection = c;
+		}
+
+    	planId = QString::fromLatin1("TOra ") + QString::number(QDateTime::currentMSecsSinceEpoch()/1000 + qrand());
+
+    	QString planTable = ToConfiguration::Oracle::planTable(conn.user());
+
+    	QString explain = QString::fromLatin1("EXPLAIN PLAN SET STATEMENT_ID = '%1' INTO %2 FOR %3").
+    			arg(planId).
+				arg(planTable).
+				arg(Utils::toSQLStripSpecifier(params.first()));
+
+    	explainQuery = new toEventQuery(this, LockedConnection, explain, toQueryParams(), toEventQuery::READ_ALL);
+    	connect(explainQuery, SIGNAL(done(toEventQuery*)), this, SLOT(explainDone(toEventQuery*)));
+    	connect(explainQuery, SIGNAL(error(toEventQuery*,toConnection::exception const &)), this, SLOT(slotErrorHanler(toEventQuery*, toConnection::exception  const &)));
+    	Explaining = true;
+    	explainQuery->start();
     }
-    planId = QString::fromLatin1("TOra ") + QString::number(QDateTime::currentMSecsSinceEpoch()/1000 + qrand());
-
-    QString planTable = ToConfiguration::Oracle::planTable(LockedConnection->ParentConnection.user());
-
-    QString explain = QString::fromLatin1("EXPLAIN PLAN SET STATEMENT_ID = '%1' INTO %2 FOR %3").
-                      arg(planId).
-                      arg(planTable).
-                      arg(Utils::toSQLStripSpecifier(params.first()));
-
-    explainQuery = new toEventQuery(this, LockedConnection, explain, toQueryParams(), toEventQuery::READ_ALL);
-    connect(explainQuery, SIGNAL(done(toEventQuery*)), this, SLOT(explainDone(toEventQuery*)));
-    connect(explainQuery, SIGNAL(error(toEventQuery*,toConnection::exception const &)), this, SLOT(slotErrorHanler(toEventQuery*, toConnection::exception  const &)));
-    Explaining = true;
-    explainQuery->start();
+#endif
 }
 
 void toResultPlanAbstr::explainDone(toEventQuery*q)
@@ -571,24 +578,27 @@ void toResultPlanAbstr::explainDone(toEventQuery*q)
     disconnect(explainQuery, 0, this, 0);
     explainQuery->stop();
     explainQuery = NULL;
-
+#ifndef TO_NO_ORACLE
     toConnection &conn = toConnection::currentConnection(this);
+    if (conn.providerIs("Oracle"))
+    {
+    	toEventQuery *Query = new toEventQuery(this
+    			, LockedConnection
+				, toSQL::string(SQLViewPlan, conn)
+    	// Since EXPLAIN PLAN is always to conn.user() plan_table
+    	// and current_schema can be different
+    	.arg(ToConfiguration::Oracle::planTable(conn.user()))
+		.arg(planId)
+		, toQueryParams()
+		, toEventQuery::READ_ALL);
 
-    toEventQuery *Query = new toEventQuery(this
-    		, LockedConnection
-			, toSQL::string(SQLViewPlan, conn)
-			// Since EXPLAIN PLAN is always to conn.user() plan_table
-			// and current_schema can be different
-			.arg(ToConfiguration::Oracle::planTable(conn.user()))
-			.arg(planId)
-			, toQueryParams()
-			, toEventQuery::READ_ALL);
+    	model = new toResultPlanModel(Query, this);
+    	connect(model, SIGNAL(queryDone(toEventQuery*)), this, SLOT(queryDone(toEventQuery*)));
+    	planTreeView->setModel(model);
 
-	model = new toResultPlanModel(Query, this);
-	connect(model, SIGNAL(queryDone(toEventQuery*)), this, SLOT(queryDone(toEventQuery*)));
-	planTreeView->setModel(model);
-
-	Query->start();
+    	Query->start();
+    }
+#endif
 }
 
 void toResultPlanAbstr::slotErrorHanler(toEventQuery*, toConnection::exception  const &str)
@@ -597,6 +607,7 @@ void toResultPlanAbstr::slotErrorHanler(toEventQuery*, toConnection::exception  
     {
         if (str.contains(QString::fromLatin1("ORA-02404")))
         {
+#ifndef TO_NO_ORACLE
             QString planTable = ToConfiguration::Oracle::planTable(connection().user());
 
             // if shared plan table does not exist, do not try to create it
@@ -622,6 +633,7 @@ void toResultPlanAbstr::slotErrorHanler(toEventQuery*, toConnection::exception  
                     createPlanTable.eof();
                 }
             }
+#endif
         }
         else
             Utils::toStatusMessage(str);

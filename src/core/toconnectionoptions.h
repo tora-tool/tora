@@ -51,6 +51,7 @@ class toConnectionOptions
         // must have for qmap
         toConnectionOptions()
             : port(0)
+            , enabled(true)
         {}
 
         toConnectionOptions(const QString &_prov,
@@ -74,6 +75,7 @@ class toConnectionOptions
         QString provider, host, database, username, password, schema, color;
         quint16 port;
         QSet<QString> options;
+        bool enabled;
 };
 
 Q_DECLARE_METATYPE(toConnectionOptions)

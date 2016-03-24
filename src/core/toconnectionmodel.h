@@ -79,6 +79,7 @@ class toConnectionModel : public QAbstractTableModel
         };
         Qt::ItemFlags flags(const QModelIndex & index) const;
 
+        void disableConnection(int ix);
     private:
         QMap<int, toConnectionOptions> m_data;
 };

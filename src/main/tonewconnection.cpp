@@ -326,8 +326,12 @@ void toNewConnection::loadPrevious(const QModelIndex & current)
     QVariant p = QVariant::fromValue(opt.provider);
     int idx = Provider->findData(p, Qt::DisplayRole);
     if (idx == -1)
-        throw QString("Connection provider not loaded: %1").arg(opt.provider);
-
+    {
+    	connectionModel()->disableConnection(index);
+        TOMessageBox::warning(this, "Connection error", QString("Connection provider not loaded: %1").arg(opt.provider));
+    	return;
+        //throw QString("Connection provider not loaded: %1").arg(opt.provider);
+    }
     QString RealProviderName = Provider->itemData(idx, Qt::UserRole).toString();
     toConnectionProvider &prov = toConnectionProviderRegistrySing::Instance().get(RealProviderName);
 

@@ -37,15 +37,16 @@
 //
 
 #include "core/tolistviewformattersql.h"
-
-#include "connection/tooracleconfiguration.h"
+#include "core/toconnectionregistry.h"
+#include "core/toconnectiontraits.h"
 #include "core/toconfiguration.h"
 #include "core/toconfiguration.h"
 #include "core/tolistviewformatterfactory.h"
 #include "core/tolistviewformatteridentifier.h"
-#include "widgets/toresultmodel.h"
 #include "core/utils.h"
 #include "editor/toworksheettext.h"
+#include "connection/tooracleconfiguration.h"
+#include "widgets/toresultmodel.h"
 
 namespace
 {
@@ -69,6 +70,8 @@ QString toListViewFormatterSQL::getFormattedString(toExportSettings &settings,
         const QAbstractItemModel * model)
 {
     using namespace ToConfiguration;
+
+    toConnection &conn = toConnectionRegistrySing::Instance().currentConnection();
 
     int     columns   = model->columnCount();
     int     rows      = model->rowCount();
@@ -136,22 +139,22 @@ QString toListViewFormatterSQL::getFormattedString(toExportSettings &settings,
 //                 continue;
 
             mi = model->index(row, i);
-            QString currVal(model->data(mi, Qt::EditRole).toString());
+            QVariant currVal(model->data(mi, Qt::EditRole));
 
             QString h(hdr.at(i).datatype.toUpper());
             if (h.contains("DATE"))
             {
-                if (currVal.isEmpty())
+                if (currVal.toString().isEmpty())
                     values += "NULL";
                 else
                 {
-                    values += "TO_DATE(\'" + currVal + "\' ,\'" + toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::ConfDateFormat).toString() + "\')";
+                    values += conn.getTraits().formatDate(currVal);
                 }
             }
             else if (h.contains("CHAR"))
-                values += (currVal.isEmpty()) ? "NULL" : "\'" + currVal + "\'";
+            	values += currVal.toString().isEmpty() ? "NULL" : conn.getTraits().quoteVarchar(currVal.toString());
             else
-                values += (currVal.isEmpty()) ? "NULL" : currVal;
+                values += currVal.toString().isEmpty() ? "NULL" : currVal.toString();
 
             values += ", ";
         }

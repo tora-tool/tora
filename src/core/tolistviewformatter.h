@@ -56,7 +56,7 @@ namespace ToConfiguration
             enum OptionTypeEnum
             {
                 CsvDelimiter = 13000
-                               , CsvSeparator
+                , CsvSeparator
             };
             virtual QVariant defaultValue(int) const;
     };

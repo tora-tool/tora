@@ -42,32 +42,34 @@ class toOracleTraits: public toConnectionTraits
         * @param quoteLowercase Enclose in quotes when identifier has lowercase letters
         * @return String addressing table.
         */
-        virtual QString quote(const QString &name) const;
+        QString quote(const QString &name) const override;
 
         /** Perform the opposite of @ref quote.
         * @param name The name to be un-quoted.
         * @return String addressing table.
         */
-        virtual QString unQuote(const QString &name) const;
+        QString unQuote(const QString &name) const override;
 
-        virtual QString quoteVarchar(const QString &name) const;
+        QString quoteVarchar(const QString &name) const override;
+
+        QString formatDate(const QVariant &value) const override;
 
         /** Generate SQL statement for Schema switch
          * @param Schema/(Database) name
          * @return SQL statement
          */
-        virtual QString schemaSwitchSQL(QString const&) const;
+        QString schemaSwitchSQL(QString const&) const override;
 
         /** Check if connection provider supports table level comments.
          *  @return bool return true if database supports table level comments
          *  See toSQL: toResultCols:TableComment
          */
-        virtual bool hasTableComments() const
+        bool hasTableComments() const override
         {
             return true;
         }
 
-        virtual bool hasAsyncBreak() const
+        bool hasAsyncBreak() const override
         {
             return true;
         }

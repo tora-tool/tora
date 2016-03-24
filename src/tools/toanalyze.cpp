@@ -362,6 +362,7 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
     box->setContentsMargins(0, 0, 0, 0);
     container->setLayout(box);
 
+#ifndef TO_NO_ORACLE
     if (connection.providerIs("Oracle"))
     {
         container = new QWidget(Tabs);
@@ -405,6 +406,7 @@ toAnalyze::toAnalyze(QWidget *main, toConnection &connection)
         container->setLayout(box);
     }
     else
+#endif
     {
         Plans       = NULL;
         CurrentPlan = NULL;

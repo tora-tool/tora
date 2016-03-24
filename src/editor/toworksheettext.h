@@ -51,9 +51,9 @@ class toWorksheetText : public toSqlText
         enum EditorTypeEnum
         {
             SciTe   = 100
-#ifdef QT_DEBUG
-                      , Custom  = 200
-                                  , Emacs   = 300
+#ifdef TORA_EXPERIMENTAL
+            , Custom  = 200
+            , Emacs   = 300
 #endif
         };
 
