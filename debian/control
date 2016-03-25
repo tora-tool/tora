@@ -1,9 +1,10 @@
 Source: tora
 Section: misc
 Priority: optional
-Maintainer: Debian KDE Extras Team <pkg-kde-extras@lists.alioth.debian.org>
-Uploaders: Michael Meskes <meskes@debian.org>
-Build-Depends: debhelper (>= 5), libqscintilla2-dev, cdbs, libpq-dev, cmake
+Maintainer: Ivan Brezina <ivan@thinkpad>
+#Maintainer: Debian KDE Extras Team <pkg-kde-extras@lists.alioth.debian.org>
+#Uploaders: Michael Meskes <meskes@debian.org>
+Build-Depends: debhelper (>= 5), cdbs, cmake, qt5-qmake, qtbase5-dev, qttools5-dev-tools, libqt5scintilla2-dev
 Standards-Version: 3.9.1
 Homepage: http://www.torasql.com
 Vcs-Git: git://git.debian.org/pkg-kde/kde-extras/tora.git
@@ -11,21 +12,9 @@ Vcs-Browser: http://git.debian.org/?p=pkg-kde/kde-extras/tora.git
 
 Package: tora
 Architecture: any
-Depends: libqt4-sql, ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: A graphical toolkit for database developers and administrators
  Tora features a schema browser, SQL worksheet, PL/SQL editor & debugger,
  storage manager, rollback segment monitor, instance manager, and SQL output
- viewer. Via qt4 it can access PostgreSQL and MySQL directly. Any other
+ viewer. Via qt5 it can access PostgreSQL and MySQL directly. Any other
  database systems can be accessed via ODBC.
-
-Package: tora-dbg
-Section: debug
-Architecture: any
-Depends: ${misc:Depends}, tora
-Description: A graphical toolkit for database developers and administrators - debugging symbols
- Tora features a schema browser, SQL worksheet, PL/SQL editor & debugger,
- storage manager, rollback segment monitor, instance manager, and SQL output
- viewer. Via qt4 it can access PostgreSQL and MySQL directly. Any other
- database systems can be accessed via ODBC.
- .
- This package provides the debugging symbols for tora.
