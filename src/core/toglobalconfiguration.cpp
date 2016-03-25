@@ -79,7 +79,7 @@ QVariant ToConfiguration::Global::defaultValue(int option) const
                 QFileInfo OHInfo(OH);
                 if (OHInfo.isDir() && OHInfo.exists())
                     return QVariant(OHInfo.absoluteFilePath());
-                return QVariant();
+                return QVariant(QString(""));
             }
         case MysqlHomeDirectory:
             return QVariant(QString(""));
