@@ -41,7 +41,7 @@ OPTION(TEST_APP7 "simple application parser" OFF)
 #Require 2.4.2 for Qt finding
 #Require 2.4.3 for moc change detection and rpath updates for custom cairo install
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.11 FATAL_ERROR) # qt5 requirement
-CMAKE_POLICY(SET CMP0046 OLD) # The dependency target "revisiontag" of target "tora" does not exist
+#CMAKE_POLICY(SET CMP0046 OLD) # The dependency target "revisiontag" of target "tora" does not exist
 #CMAKE_POLICY(SET CMP0042 OLD) # MACOSX_RPATH
 
 #Pretty colors
@@ -300,13 +300,11 @@ ELSE (NOT ENABLE_PGSQL)
     ADD_DEFINITIONS(-DHAVE_POSTGRESQL_LIBPQ_FE_H)
     MESSAGE(STATUS "PostgreSQL environment found: ${POSTGRESQL_INCLUDE_DIR} ${POSTGRESQL_LIBRARIES}")
   ELSE (POSTGRESQL_FOUND)
-    MESSAGE(" ")
     MESSAGE(WARNING " No PostgreSQL environment has been found.")
     MESSAGE(WARNING " Specify -DPOSTGRESQL_PATH_INCLUDES=path")
     MESSAGE(WARNING "     and -DPOSTGRESQL_PATH_LIB=path manually")
     #MESSAGE (STATUS "PostgreSQL includes: ${POSTGRESQL_INCLUDE_DIR} vs. ${POSTGRESQL_PATH_INCLUDES}")
     #MESSAGE (STATUS "PostgreSQL libs: ${POSTGRESQL_LIBRARIES} vs. ${POSTGRESQL_PATH_LIB}")
-    MESSAGE(" ")
   ENDIF (POSTGRESQL_FOUND)
 ENDIF (NOT ENABLE_PGSQL)
 
