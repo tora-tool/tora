@@ -19,7 +19,6 @@
 #include <QFrame>
 #include <QGridLayout>
 #include <QGroupBox>
-#include <QGuiApplication>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QInputDialog>

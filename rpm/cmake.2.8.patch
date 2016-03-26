@@ -1,0 +1,20 @@
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -41,7 +41,7 @@ OPTION(TEST_APP7 "simple application parser" OFF)
+ #Require 2.4.2 for Qt finding
+ #Require 2.4.3 for moc change detection and rpath updates for custom cairo install
+ CMAKE_MINIMUM_REQUIRED(VERSION 2.8.11 FATAL_ERROR) # qt5 requirement
+-CMAKE_POLICY(SET CMP0046 OLD) # The dependency target "revisiontag" of target "tora" does not exist
++##CMAKE_POLICY(SET CMP0046 OLD) # The dependency target "revisiontag" of target "tora" does not exist
+ #CMAKE_POLICY(SET CMP0042 OLD) # MACOSX_RPATH
+ 
+ #Pretty colors
+@@ -132,7 +132,7 @@ IF (CMAKE_COMPILER_IS_GNUCC)
+   SET(CMAKE_C_FLAGS_DEBUG     "-O0 -fno-inline -rdynamic")
+   SET(CMAKE_CXX_FLAGS_RELEASE "-O2")
+   SET(CMAKE_C_FLAGS_RELEASE   "-O2")
+-  SET(CMAKE_CXX_FLAGS         "-Wall -std=c++14 -ggdb3")
++  SET(CMAKE_CXX_FLAGS         "-Wall -std=c++11 -ggdb3")
+   SET(CMAKE_C_FLAGS           "-Wall            -ggdb3")
+ ENDIF (CMAKE_COMPILER_IS_GNUCC)
+ 

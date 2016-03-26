@@ -399,27 +399,21 @@ add_custom_target(dist COMMAND ${CMAKE_MAKE_PROGRAM} package_source)
 
 
 IF (WANT_RPM)
-  # Check for SVN
-  IF(NOT Subversion_FOUND)
-    SET(Subversion_SVN_EXECUTABLE true)
-  ENDIF(NOT Subversion_FOUND)
-  
-  # get svn revision in rpmbuild time (and not in Makefile generation time)
-  SET(SVN_REVISION
-    "\"$$(" ${Subversion_SVN_EXECUTABLE} info ${CMAKE_SOURCE_DIR} | awk '/Revision:/ {print \$\$2 }' ")\""
-    )
-  SET(RPM_DEFINES 
-    --define "_sourcedir ${CMAKE_SOURCE_DIR}"
-    )
-  SET(SPEC_IN_SUBST
-    "\""
-    "s/(%define\\s+_version) .*/\\\\1 ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}/\;"
-    "s/(%define\\s+_release) .*/\\\\1 0.${SVN_REVISION}svn/\;"
-    "\""
-    )
-  SET(RPM_SPEC "rpm/tora.spec")
+  SET(RPM_SPEC "tora.generated.spec")  
+  SET(RPM_DEFINES --define "_sourcedir ${CMAKE_SOURCE_DIR}" )
+
+  # TODO get git commit count (see rpm rpm/tora.generated.spec.cmake _revision @REVISION@
+  # SET(REVISION
+  #    "\"$$(" ${Subversion_SVN_EXECUTABLE} info ${CMAKE_SOURCE_DIR} | awk '/Revision:/ {print \$\$2 }' ")\""
+  # )
+
+  CONFIGURE_FILE(
+	${CMAKE_SOURCE_DIR}/${RPM_SPEC}.cmake
+	${CMAKE_SOURCE_DIR}/${RPM_SPEC}
+	@ONLY
+  )
+
   ADD_CUSTOM_TARGET(package-rpm
-    COMMAND sed -r ${SPEC_IN_SUBST} "${RPM_SPEC}.in" >"${RPM_SPEC}"
     COMMAND make package_source
     COMMAND rpmbuild -ba ${RPM_DEFINES} "${RPM_SPEC}"
     )
