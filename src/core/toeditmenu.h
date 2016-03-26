@@ -72,7 +72,7 @@ class toEditMenu : public QMenu
         void disableAll();
         bool m_clipboardContent, m_pasteSupported;
 };
-typedef Loki::SingletonHolder<toEditMenu> toEditMenuSingle;
+typedef Loki::SingletonHolder<toEditMenu, Loki::CreateUsingNew, Loki::NoDestroy> toEditMenuSingle;
 
 #endif
 
