@@ -8,7 +8,7 @@
 %define _name           tora
 
 %define _version        @VERSION@
-%define _release        @RELEASE@
+%define _release        1
 
 %define _iconsdir       %{_datadir}/icons
 
