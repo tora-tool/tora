@@ -196,9 +196,9 @@
 #include <boost/iostreams/stream.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/spirit/include/classic_confix.hpp>
-#include "boost/thread/mutex.hpp"
-#include "boost/thread/thread.hpp"
-#include "boost/thread/xtime.hpp"
+//#include "boost/thread/mutex.hpp"
+//#include "boost/thread/thread.hpp"
+//#include "boost/thread/xtime.hpp"
 #include <boost/throw_exception.hpp>
 
 // Loki headers

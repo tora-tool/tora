@@ -128,11 +128,11 @@ SET(PLUGIN_PERMISSIONS WORLD_EXECUTE GROUP_EXECUTE OWNER_EXECUTE WORLD_READ GROU
 ########## check for the CPU we build for                                                           ##########
 
 IF (CMAKE_COMPILER_IS_GNUCC)
-  SET(CMAKE_CXX_FLAGS_DEBUG   "-O0 -fno-inline -rdynamic")
-  SET(CMAKE_C_FLAGS_DEBUG     "-O0 -fno-inline -rdynamic")
+  SET(CMAKE_CXX_FLAGS_DEBUG   "-O0 -fno-inline -rdynamic -fPIE")
+  SET(CMAKE_C_FLAGS_DEBUG     "-O0 -fno-inline -rdynamic -fPIE")
   SET(CMAKE_CXX_FLAGS_RELEASE "-O2")
   SET(CMAKE_C_FLAGS_RELEASE   "-O2")
-  SET(CMAKE_CXX_FLAGS         "-Wall -std=c++14 -ggdb3")
+  SET(CMAKE_CXX_FLAGS         "-Wall -std=c++11 -ggdb3")
   SET(CMAKE_C_FLAGS           "-Wall            -ggdb3")
 ENDIF (CMAKE_COMPILER_IS_GNUCC)
 
@@ -385,11 +385,21 @@ string(TOLOWER ${CMAKE_PROJECT_NAME} CPACK_PACKAGE_NAME)
 SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README")
 SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
 SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Petr Bena")
-SET(CPACK_PACKAGE_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
-SET(CPACK_SOURCE_GENERATOR "TGZ;TBZ2")
+SET(CPACK_PACKAGE_VERSION "${VERSION}")
+#SET(CPACK_SOURCE_GENERATOR "TGZ;TBZ2")
+SET(CPACK_SOURCE_GENERATOR "TGZ")
 #SET(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}")
 SET(CPACK_SOURCE_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}")
-SET(CPACK_IGNORE_FILES "/CVS/;/\\\\.svn/;\\\\.swp$;\\\\.#;/#;\\\\.tar.gz$;/CMakeFiles/;CMakeCache.txt;refresh-copyright-and-license.pl")
+SET(CPACK_IGNORE_FILES 
+	"\\\\.git"
+	"\\\\.swp$"
+	"\\\\.swp$"
+	"\\\\.#"
+	"/#"
+	"\\\\.tar.gz$"
+	"/CMakeFiles/"
+	"CMakeCache.txt"
+	"refresh-copyright-and-license.pl")
 SET(CPACK_SOURCE_IGNORE_FILES ${CPACK_IGNORE_FILES})
 INCLUDE(CPack)
 # simulate autotools' "make dist"
@@ -400,16 +410,17 @@ IF (WANT_RPM)
   SET(RPM_SPEC "tora.generated.spec")  
   SET(RPM_DEFINES --define "_sourcedir ${CMAKE_SOURCE_DIR}" )
 
-  # TODO get git commit count (see rpm rpm/tora.generated.spec.cmake _revision @REVISION@
-  # SET(REVISION
-  #    "\"$$(" ${Subversion_SVN_EXECUTABLE} info ${CMAKE_SOURCE_DIR} | awk '/Revision:/ {print \$\$2 }' ")\""
-  # )
-
-  CONFIGURE_FILE(
+  # get git commit count (see rpm rpm/tora.generated.spec.cmake _revision @REVISION@
+  # this is evaluated only once (see getgit.cmake)
+  IF(GIT_FOUND AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
+    execute_process(COMMAND ${GIT_EXECUTABLE} describe --long --tags --dirty --always OUTPUT_VARIABLE GITVERSION)
+    string(REGEX REPLACE "^v[0-9]+\\.[0-9a-z]+-([0-9]+).*" "\\1" GITVERSION_COUNT "${GITVERSION}")
+    CONFIGURE_FILE(
 	${CMAKE_SOURCE_DIR}/rpm/${RPM_SPEC}.cmake
 	${CMAKE_SOURCE_DIR}/${RPM_SPEC}
 	@ONLY
-  )
+    )
+  ENDIF()
 
   ADD_CUSTOM_TARGET(package-rpm
     COMMAND make package_source
