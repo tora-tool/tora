@@ -40,6 +40,7 @@
 #include "core/tomainwindow.h"
 #include "core/toconf.h"
 
+#include <QApplication>
 #include <QtGui/QClipboard>
 #include <QPrintDialog>
 #include <QtXml/QDomDocument>
@@ -81,7 +82,7 @@ toScintilla::toScintilla(QWidget *parent, const char *name)
     setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
-    QPalette const& palete = QGuiApplication::palette();
+    QPalette const& palete = QApplication::palette();
 
     super::setFont(Utils::toStringToFont(toConfigurationNewSingle::Instance().option(Editor::ConfTextFont).toString()));
     super::setMarginLineNumbers(0, true);
