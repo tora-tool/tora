@@ -48,9 +48,9 @@ signtool sign /v /f "OSD Ivan Brezina.p12" /P %PASS% ^
 )
 
 del heat.wxs
-heat dir %BUILD_ABS_PATH% -var env.BUILD_ABS_PATH -cg ToraFiles -dr INSTALLLOCATION -suid -srd -sreg -gg -ag -out heat.wxs -t heat.xsl
-candle.exe -arch x64 tora-qt5.wxs heat.wxs
-light.exe -ext WixUIExtension -o Tora3.beta.64bit.msi tora-qt5.wixobj heat.wixobj
+heat dir %BUILD_ABS_PATH% -var env.BUILD_ABS_PATH -cg ToraFiles -dr APPLICATIONFOLDER -suid -srd -sreg -gg -ag -out heat.wxs -t heat.xsl
+candle.exe -arch x64 tora-qt5.wxs heat.wxs MyWixUI_Advanced.wxs
+light.exe -ext WixUIExtension -o Tora3.beta.64bit.msi tora-qt5.wixobj heat.wixobj MyWixUI_Advanced.wixobj
 
 if exist "OSD Ivan Brezina.p12" (
 signtool sign /v /f "OSD Ivan Brezina.p12" /P %PASS% ^
@@ -62,7 +62,8 @@ signtool sign /v /f "OSD Ivan Brezina.p12" /P %PASS% ^
 
 @pause
 
+pushd %cd%
 cd %BUILD_ABS_PATH%
 cd ..
 zip -r Tora3.beta.64bit.zip Tora
-
+popd
