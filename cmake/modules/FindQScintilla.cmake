@@ -84,7 +84,7 @@ IF(Qt5Widgets_FOUND)
     SET(LIBRARYPATH ${QT5_WIDGETSLIBRARYPATH} "/usr/lib/" "/usr/local/lib")
     MESSAGE("QScintilla2 LIBPATH \"${LIBRARYPATH}\"")
 
-    FIND_LIBRARY(QSCINTILLA_LIBRARY NAMES qt5scintilla2 libqscintilla2.a qscintilla2.lib PATHS ${LIBRARYPATH})
+    FIND_LIBRARY(QSCINTILLA_LIBRARY NAMES qscintilla2-qt5 qt5scintilla2 libqscintilla2.a qscintilla2.lib PATHS ${LIBRARYPATH})
 
     # Check
     IF(QSCINTILLA_LIBRARY)
