@@ -150,6 +150,10 @@ class toScintilla: public QsciScintilla //, public toEditWidget
         void setWordWrap(bool);
 
     protected:
+#ifdef TORA_EXPERIMENTAL
+        // experimental support for tooltips
+        bool event(QEvent *event) override;
+#endif
         void print(const QString &fname);
 
         // QsciScintilla API reimplementation
