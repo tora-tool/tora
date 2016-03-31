@@ -292,6 +292,7 @@ P_ELSE:  r='$ELSE';
 P_ELSIF: r='$ELSIF';
 P_END:   r='$END';
 P_ERROR: r='$ERROR';
+P_ID:    r='$$' REGULAR_ID;
 
 PLSQL_RESERVED:
         'A'                                                                     | /* A_KEY: */
