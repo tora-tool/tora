@@ -17,7 +17,8 @@ namespace SQLLexer
             BEGIN     = 5,
             LOOP      = 6, // or CASE or IF
             END       = 7,
-            MAX       = 8  // not used by tokens, just's marks enum max. value
+            PREPROC   = 8, // $if $$id $then ... $end
+            MAX       = 9  // not used by tokens, just's marks enum max. value
         } BlockContextEnum;
     }
 }

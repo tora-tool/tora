@@ -285,6 +285,14 @@ R_END:  r='END'	 { $r->setBlockContext(BlkCtx::END);  $r->set_type(R_END);  get_
 R_AS:   a='AS' { $a->setBlockContext(BlkCtx::DECLARE); $a->set_type(PLSQL_RESERVED); get_tokSource()->enqueueToken($a); skip(); /*$channel = HIDDEN;*/ };
 R_IS:   i='IS' { $i->setBlockContext(BlkCtx::DECLARE); $i->set_type(PLSQL_RESERVED); get_tokSource()->enqueueToken($i); skip(); /*$channel = HIDDEN;*/ };
 
+// Preprocessor directives
+P_IF:    r='$IF';
+P_THEN:  r='$THEN';
+P_ELSE:  r='$ELSE';
+P_ELSIF: r='$ELSIF';
+P_END:   r='$END';
+P_ERROR: r='$ERROR';
+
 PLSQL_RESERVED:
         'A'                                                                     | /* A_KEY: */
         'ADD'                                                                   | /* ADD_KEY: */

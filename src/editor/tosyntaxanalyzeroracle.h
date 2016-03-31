@@ -44,8 +44,8 @@ class toSyntaxAnalyzerOracle : public toSyntaxAnalyzer
         toSyntaxAnalyzerOracle(toSqlText *parent);
         virtual ~toSyntaxAnalyzerOracle();
 
-        virtual statementList getStatements(QString const& text);
-        virtual statement getStatementAt(unsigned line, unsigned linePos);
-        virtual QsciLexer* createLexer(QObject *parent);
-        virtual void sanitizeStatement(statement&);
+        statementList getStatements(QString const& text) override;
+        statement getStatementAt(unsigned line, unsigned linePos) override;
+        QsciLexer* createLexer(QObject *parent) override;
+        void sanitizeStatement(statement&) override;
 };
