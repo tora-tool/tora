@@ -234,6 +234,7 @@ const Token& OracleGuiLexer::LA(int pos) const
 			type = Token::X_COMMENT;
 			break;
 		case PLSQLGuiLexer::TOKEN_FAILURE:
+		case PLSQLGuiLexer::CommonTokenType::MIN_TOKEN_TYPE:
 			type = Token::X_FAILURE;
 			break;
 		case PLSQLGuiLexer::PLSQL_RESERVED:
