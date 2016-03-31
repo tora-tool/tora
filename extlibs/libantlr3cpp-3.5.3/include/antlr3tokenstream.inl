@@ -110,6 +110,10 @@ typename TokenSource<ImplTraits>::TokenType*	TokenSource<ImplTraits>::nextTokenS
                 state->set_failed(true);
                 lexer->get_rec()->reportError();
                 lexer->recover(); 
+                if (state->get_token_present())
+                    // Good(or invalid) token factored by custom recover procedure
+                    //
+                    return  state->get_token();
             }
             else
             {
