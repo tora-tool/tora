@@ -231,6 +231,14 @@ OracleDMLStatement::OracleDMLStatement(const QString &statement, const QString &
     disambiguate();
 };
 
+namespace todocxx14
+{
+	template<typename T, typename... Args>
+	std::unique_ptr<T> make_unique(Args&&... args) {
+		return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+	}
+}
+ 
 void OracleDMLStatement::parse()
 {
 	using InputStream = Antlr3BackendImpl::OracleSQLParserTraits::InputStreamType;
@@ -244,16 +252,16 @@ void OracleDMLStatement::parse()
 	QByteArray QBAname(_mname.toUtf8());
 
 	_mState = P_INIT;
-	auto input = make_unique<InputStream>((const ANTLR_UINT8 *)QBAinput.data(), antlr3::ENC_8BIT, QBAinput.length(), (ANTLR_UINT8*)QBAname.data());
+	auto input = todocxx14::make_unique<InputStream>((const ANTLR_UINT8 *)QBAinput.data(), antlr3::ENC_8BIT, QBAinput.length(), (ANTLR_UINT8*)QBAname.data());
 	if (input == NULL)
 		throw ParseException();
 	input->setUcaseLA(true); // ignore case
 
-	auto lxr = make_unique<Antlr3BackendImpl::OracleDMLLexer>(input.get());
+	auto lxr = todocxx14::make_unique<Antlr3BackendImpl::OracleDMLLexer>(input.get());
 	if ( lxr == NULL )
 		throw ParseException();
 
-	auto tstream = make_unique<TokenStream>(ANTLR_SIZE_HINT, lxr->get_tokSource());
+	auto tstream = todocxx14::make_unique<TokenStream>(ANTLR_SIZE_HINT, lxr->get_tokSource());
 	if (tstream == NULL)
 	{
 		throw ParseException();
@@ -263,7 +271,7 @@ void OracleDMLStatement::parse()
 	_mState = P_LEXER;
 
 	// Finally, now that we have our lexer constructed, we can create the parser
-	auto psr = make_unique<Antlr3BackendImpl::OracleDML>(tstream.get());
+	auto psr = todocxx14::make_unique<Antlr3BackendImpl::OracleDML>(tstream.get());
 	if (psr == NULL)
 		throw ParseException();
 

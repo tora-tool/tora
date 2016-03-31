@@ -81,7 +81,7 @@ namespace Antlr3GuiImpl
                          *  So instead of calling: state->set_type(85 "TOKEN_INVALID"); We set token type to MIN_TOKEN_TYPE which is not used anywhere else
                          */
                         state->set_type(ImplTraits::CommonTokenType::MIN_TOKEN_TYPE);
-                        ImplTraits::CommonTokenType* t = super::emit();
+                        typename ImplTraits::CommonTokenType* t = super::emit();
                         //super::recover();
                     }
             };
