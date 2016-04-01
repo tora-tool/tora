@@ -78,9 +78,9 @@ namespace Antlr3GuiImpl
                         RecognizerSharedStateType* state = this->get_rec()->get_state();
                         /** Note: This class in not aware of ANTLR generated enums - probably (so CommonTokenType::TOKEN_INVALID is not accessible)
                          *  see: OracleGuiLexer::LA.
-                         *  So instead of calling: state->set_type(85 "TOKEN_INVALID"); We set token type to MIN_TOKEN_TYPE which is not used anywhere else
+                         *  So instead of calling: state->set_type(85 "TOKEN_INVALID"); We set token type to CommonTokenType::TOKEN_EOF - 1 which is not used anywhere else
                          */
-                        state->set_type(ImplTraits::CommonTokenType::MIN_TOKEN_TYPE);
+                        state->set_type(ImplTraits::CommonTokenType::TOKEN_EOF - 1);
                         typename ImplTraits::CommonTokenType* t = super::emit();
                         //super::recover();
                     }
