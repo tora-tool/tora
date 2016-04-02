@@ -2098,7 +2098,7 @@ static toSQL SQLIndexColumns7("toOracleExtract:IndexColumns",
                               "   AND index_owner = :own<char[100]>\n"
                               " ORDER BY column_position",
                               "",
-                              "07");
+                              "0700");
 
 // fix for #2692105: Can't extract DDL for some (probably function-based) indexes
 //static toSQL SQLIndexFunction("toOracleExtract:IndexFunction",
@@ -2520,7 +2520,7 @@ static toSQL SQLTableColumns9("toOracleExtract:TableColumns",
                               "   AND owner = :own<char[100]>\n"
                               " ORDER BY column_id",
                               "Extract column definitions from table",
-                              "09");
+                              "0900");
 
 static toSQL SQLTableColumns("toOracleExtract:TableColumns",
                              "SELECT  column_name,\n"
@@ -7288,6 +7288,11 @@ static toSQL SQLDbmsMetadataGetDdl("toOracleExtract:DbmsMetadataGetDdl",
                                    "                             :sch<char[100]>) FROM dual",
                                    "Get object creation ddl using dbms_metadata package");
 
+static toSQL SQLDbmsMetadataGetDir("toOracleExtract:DbmsMetadataGetDir",
+                                   "SELECT dbms_metadata.get_ddl(:typ<char[100]>,\n"
+                                   "                             :nam<char[100]>) FROM dual",
+                                   "Get directory creation ddl using dbms_metadata package");
+
 static toSQL SQLDbmsMetadataSetTransform("toOracleExtract:DbmsMetadataGetSetTransform",
         "begin                                                                                            \n"
         " DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'SQLTERMINATOR',true);        \n"
@@ -7298,7 +7303,7 @@ static toSQL SQLDbmsMetadataSetTransform("toOracleExtract:DbmsMetadataGetSetTran
 QString toOracleExtract::createMetadata(toExtract &ext, const QString &owner, const QString &name, const QString &type) const
 {
     toConnectionSubLoan conn(ext.connection());
-
+    QString ret;
     /* TODO
      * DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,�PRETTY�,false);
      * DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,�SQLTERMINATOR�,true);
@@ -7314,18 +7319,31 @@ QString toOracleExtract::createMetadata(toExtract &ext, const QString &owner, co
     else if (type == "PACKAGE")
     	type2 = "PACKAGE_SPEC";
 
-    toQuery inf(conn, SQLDbmsMetadataGetDdl, toQueryParams() << type2 << name << owner);
-    if (inf.eof())
-        throw qApp->translate("toOracleExtract", "Couldn't get meta information for %1 %2.%3").arg(type).arg(owner).arg(name);
+    if (type != "DIRECTORY")
+    {
+    	toQuery inf(conn, SQLDbmsMetadataGetDdl, toQueryParams() << type2 << name << owner);
+    	if (inf.eof())
+    		throw qApp->translate("toOracleExtract", "Couldn't get meta information for %1 %2.%3").arg(type).arg(owner).arg(name);
 
-    QString ret;
-    if (PROMPT)
-        ret = QString("PROMPT CREATE OR REPLACE %1 %2%3\n\n").
-              arg(type).
-              arg(owner).
-              arg(QUOTE(name));
-    toQValue sql = inf.readValue();
-    ret += sql.userData();
+    	if (PROMPT)
+    		ret = QString("PROMPT CREATE OR REPLACE %1 %2.%3\n\n").
+			arg(type).
+			arg(owner).
+			arg(QUOTE(name));
+    	toQValue sql = inf.readValue();
+    	ret += sql.userData();
+    } else {
+    	toQuery inf(conn, SQLDbmsMetadataGetDir, toQueryParams() << type << name);
+    	if (inf.eof())
+    		throw qApp->translate("toOracleExtract", "Couldn't get meta information for %1 %2").arg(type).arg(name);
+
+    	if (PROMPT)
+    		ret = QString("PROMPT CREATE OR REPLACE %1 %2\n\n").
+			arg(type).
+			arg(QUOTE(name));
+    	toQValue sql = inf.readValue();
+    	ret += sql.userData();
+    }
     return ret;
 } // createMeatada
 
