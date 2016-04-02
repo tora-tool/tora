@@ -1053,11 +1053,11 @@ void toStorage::coalesce(void)
     try
     {
         QString str;
-        toConnectionSubLoan connSub(connection());
+        toConnectionSubLoan conn(connection());
         str = QString::fromLatin1("ALTER TABLESPACE \"");
         str.append(Storage->currentTablespace());
         str.append(QString::fromLatin1("\" COALESCE"));
-        connSub->execute(str);
+        conn.execute(str);
         refresh();
     }
     TOCATCH
@@ -1068,11 +1068,11 @@ void toStorage::online(void)
     try
     {
         QString str;
-        toConnectionSubLoan connSub(connection());
+        toConnectionSubLoan conn(connection());
         str = QString::fromLatin1("ALTER TABLESPACE \"");
         str.append(Storage->currentTablespace());
         str.append(QString::fromLatin1("\" ONLINE"));
-        connSub->execute(str);
+        conn.execute(str);
         refresh();
     }
     TOCATCH
@@ -1083,11 +1083,11 @@ void toStorage::logging(void)
     try
     {
         QString str;
-        toConnectionSubLoan connSub(connection());
+        toConnectionSubLoan conn(connection());
         str = QString::fromLatin1("ALTER TABLESPACE \"");
         str.append(Storage->currentTablespace());
         str.append(QString::fromLatin1("\" LOGGING"));
-        connSub->execute(str);
+        conn.execute(str);
         refresh();
     }
     TOCATCH
@@ -1098,11 +1098,11 @@ void toStorage::noLogging(void)
     try
     {
         QString str;
-        toConnectionSubLoan connSub(connection());
+        toConnectionSubLoan conn(connection());
         str = QString::fromLatin1("ALTER TABLESPACE \"");
         str.append(Storage->currentTablespace());
         str.append(QString::fromLatin1("\" NOLOGGING"));
-        connSub->execute(str);
+        conn.execute(str);
         refresh();
     }
     TOCATCH
@@ -1113,11 +1113,11 @@ void toStorage::readOnly(void)
     try
     {
         QString str;
-        toConnectionSubLoan connSub(connection());
+        toConnectionSubLoan conn(connection());
         str = QString::fromLatin1("ALTER TABLESPACE \"");
         str.append(Storage->currentTablespace());
         str.append(QString::fromLatin1("\" READ ONLY"));
-        connSub->execute(str);
+        conn.execute(str);
         refresh();
     }
     TOCATCH
@@ -1128,11 +1128,11 @@ void toStorage::readWrite(void)
     try
     {
         QString str;
-        toConnectionSubLoan connSub(connection());
+        toConnectionSubLoan conn(connection());
         str = QString::fromLatin1("ALTER TABLESPACE \"");
         str.append(Storage->currentTablespace());
         str.append(QString::fromLatin1("\" READ WRITE"));
-        connSub->execute(str);
+        conn.execute(str);
         refresh();
     }
     TOCATCH
@@ -1159,12 +1159,12 @@ void toStorage::offline(void)
                 return ;
         }
         QString str;
-        toConnectionSubLoan connSub(connection());
+        toConnectionSubLoan conn(connection());
         str = QString::fromLatin1("ALTER TABLESPACE \"");
         str.append(Storage->currentTablespace());
         str.append(QString::fromLatin1("\" OFFLINE "));
         str.append(reason);
-        connSub->execute(str);
+        conn.execute(str);
         refresh();
     }
     TOCATCH
@@ -1272,9 +1272,9 @@ void toStorage::newDatafile(void)
         std::list<QString> lst = newFile.sql();
         if (newFile.exec() && lst.empty())
         {
-            toConnectionSubLoan connSub(connection());
+            toConnectionSubLoan conn(connection());
             for (std::list<QString>::iterator i = lst.begin(); i != lst.end(); i++)
-                connSub->execute(*i);
+                conn.execute(*i);
 
             refresh();
         }
@@ -1291,9 +1291,9 @@ void toStorage::newTablespace(void)
         std::list<QString> lst = newSpace.sql();
         if (newSpace.exec() && !lst.empty())
         {
-            toConnectionSubLoan connSub(connection());
+            toConnectionSubLoan conn(connection());
             for (std::list<QString>::iterator i = lst.begin(); i != lst.end(); i++)
-                connSub->execute(*i);
+                conn.execute(*i);
 
             refresh();
         }
@@ -1310,9 +1310,9 @@ void toStorage::dropTablespace(void)
         std::list<QString> lst = dropSpace.sql();
         if (dropSpace.exec() && !lst.empty())
         {
-            toConnectionSubLoan connSub(connection());
+            toConnectionSubLoan conn(connection());
             for (std::list<QString>::iterator i = lst.begin(); i != lst.end(); i++)
-                connSub->execute(*i);
+                conn.execute(*i);
 
             refresh();
         }
@@ -1329,9 +1329,9 @@ void toStorage::modifyTablespace(void)
         std::list<QString> lst = modifySpace.sql();
         if (modifySpace.exec() && !lst.empty())
         {
-            toConnectionSubLoan connSub(connection());
+            toConnectionSubLoan conn(connection());
             for (std::list<QString>::iterator i = lst.begin(); i != lst.end(); i++)
-                connSub->execute(*i);
+                conn.execute(*i);
 
             refresh();
         }
@@ -1349,9 +1349,9 @@ void toStorage::modifyDatafile(void)
         std::list<QString> lst = modifySpace.sql();
         if (modifySpace.exec() && !lst.empty())
         {
-            toConnectionSubLoan connSub(connection());
+            toConnectionSubLoan conn(connection());
             for (std::list<QString>::iterator i = lst.begin(); i != lst.end(); i++)
-                connSub->execute(*i);
+                conn.execute(*i);
 
             refresh();
         }
@@ -1368,7 +1368,7 @@ void toStorage::moveFile(void)
         if (!file.isEmpty() && file != orig)
         {
             QString str;
-            toConnectionSubLoan connSub(connection());
+            toConnectionSubLoan conn(connection());
             str = QString::fromLatin1("ALTER TABLESPACE \"");
             str.append(Storage->currentTablespace());
             str.append(QString::fromLatin1("\" RENAME DATAFILE '"));
@@ -1378,7 +1378,7 @@ void toStorage::moveFile(void)
             str.append(QString::fromLatin1("' TO '"));
             str.append(file);
             str.append(QString::fromLatin1("'"));
-            connSub->execute(str);
+            conn.execute(str);
             refresh();
         }
     }

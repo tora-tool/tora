@@ -34,11 +34,7 @@
 
 #include "core/toconnectionsub.h"
 #include "core/toconnection.h"
-
-void toConnectionSub::execute(QString const &SQL)
-{
-    throw toConnection::exception("Not implemented yet: void toConnectionSub::execute(QString const &SQL)");
-}
+#include "core/toquery.h"
 
 bool toConnectionSub::hasTransaction()
 {

@@ -790,7 +790,7 @@ void toSession::enableStatistics(bool enable)
     try
     {
         toConnectionSubLoan conn(connection());
-        conn->execute(sql);
+        conn.execute(sql);
     }
     catch (...)
     {
@@ -903,7 +903,7 @@ void toSession::slotCancelBackend()
         try
         {
             toConnectionSubLoan conn(connection());
-            conn->execute(QString("SELECT pg_cancel_backend ( %1 )").arg(item.data().toString()));
+            conn.execute(QString("SELECT pg_cancel_backend ( %1 )").arg(item.data().toString()));
         }
         TOCATCH;
     }

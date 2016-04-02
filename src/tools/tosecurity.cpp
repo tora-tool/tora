@@ -1538,7 +1538,7 @@ void toSecurity::saveChanges()
     {
         try
         {
-            conn->execute(*i);
+            conn.execute(*i);
         }
         TOCATCH
     }
@@ -1566,7 +1566,7 @@ void toSecurity::drop()
         try
         {
             toConnectionSubLoan conn(connection());
-            conn->execute(str);
+            conn.execute(str);
             refresh();
             changeUser(false);
         }
@@ -1582,7 +1582,7 @@ void toSecurity::drop()
                     try
                     {
                         toConnectionSubLoan conn(connection());
-                        conn->execute(str);
+                        conn.execute(str);
                         refresh();
                         changeUser(false);
                     }

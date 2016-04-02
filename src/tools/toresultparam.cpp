@@ -364,7 +364,7 @@ void toResultParam::applySystem(void)
                         }
                         else
                             str += item->text(1);
-                        conn->execute(str);
+                        conn.execute(str);
                         std::map<QString, QString>::iterator i = NewValues.find(item->text(0));
                         if (i != NewValues.end())
                             NewValues.erase(i);
@@ -402,7 +402,7 @@ void toResultParam::applyChanges(void)
                     str += QString::fromLatin1("'");
                     str += item->text(1);
                     str += QString::fromLatin1("'");
-                    conn->execute(str);
+                    conn.execute(str);
                     std::map<QString, QString>::iterator i = NewValues.find(item->text(0));
                     if (i != NewValues.end())
                         NewValues.erase(i);

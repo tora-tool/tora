@@ -104,7 +104,7 @@ void toBrowserAccessWidget::flushPrivs(void)
     try
     {
         toConnectionSubLoan connSub(toConnection::currentConnection(this));
-        connSub->execute("FLUSH PRIVILEGES");
+        connSub.execute("FLUSH PRIVILEGES");
     }
     TOCATCH
 }

@@ -35,6 +35,7 @@
 #include "core/toconnectionsubloan.h"
 #include "core/toconnectionsub.h"
 #include "core/toconnection.h"
+#include "core/toquery.h"
 
 toConnectionSubLoan::toConnectionSubLoan(toConnection &con)
     : ParentConnection(con)
@@ -67,3 +68,8 @@ toConnectionSubLoan::~toConnectionSubLoan()
     }
 }
 
+void toConnectionSubLoan::execute(QString const &SQL)
+{
+    toQuery query(*this, SQL, toQueryParams());
+    query.eof();
+}

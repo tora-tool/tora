@@ -1,5 +1,4 @@
-#ifndef TOCONNECTIONSUB
-#define TOCONNECTIONSUB
+#pragma once
 
 #include "core/tocache.h"
 #include "core/toqvalue.h"
@@ -77,8 +76,6 @@ class TORA_EXPORT toConnectionSub
             return objectName;
         };
 
-        void execute(QString const& SQL);
-
         /** Set time when last query on this connection has finished to "now" */
         inline void setLastUsed(void)
         {
@@ -131,5 +128,3 @@ class TORA_EXPORT toConnectionSub
         mutable QMutex mutex;
         QString LastSql;
 };
-
-#endif

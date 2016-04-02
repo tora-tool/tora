@@ -1,5 +1,4 @@
-#ifndef TOCONNECTIONSUBLOAN
-#define TOCONNECTIONSUBLOAN
+#pragma once
 
 #include "core/tologger.h"
 
@@ -47,6 +46,8 @@ class toConnectionSubLoan
             return ConnectionSub;
         }
 
+        void execute(QString const& SQL);
+
         toConnection const& ParentConnection;
         //InitModeEnum InitMode;
         bool SchemaInitialized;
@@ -61,5 +62,3 @@ class toConnectionSubLoan
     protected:
         toConnectionSub *ConnectionSub;
 };
-
-#endif
