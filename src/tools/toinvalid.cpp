@@ -74,7 +74,7 @@ static toSQL SQLReadErrors("toInvalid:ReadErrors",
                            "SELECT Line-1,Text FROM sys.All_Errors\n"
                            " WHERE OWNER = :f1<char[101]>\n"
                            "   AND NAME = :f2<char[101]>\n"
-                           "   AND TYPE = :f3<char[101]>",
+                           "   AND TYPE = :f3<char[101]>"
                            " ORDER BY Type,Line",
                            "Get lines with errors in object (Observe first line 0)");
 
@@ -222,7 +222,7 @@ void toInvalid::recompileSelected(void)
 
             if (l >= 0)
             {
-                conn->execute(sql.mid(0, l + 1));
+                conn.execute(sql.mid(0, l + 1));
             }
         }
         catch (...)
@@ -281,16 +281,17 @@ void toInvalid::changeSelection(void)
         QModelIndex item = Objects->selectedIndex();
         if (item.isValid())
         {
-            Source->refreshWithParams( toQueryParams() << Objects->model()->data(item.row(), 1).toString()
-                                       << Objects->model()->data(item.row(), 2).toString()
-                                       << Objects->model()->data(item.row(), 3).toString());
+            int row = item.row();
+            QString owner = Objects->model()->data(row, 1).toString();
+            QString object = Objects->model()->data(row, 2).toString();
+            QString type = Objects->model()->data(row, 3).toString();
+
+            Source->refreshWithParams( toQueryParams() << owner << object << type);
             QMap<int, QString> Errors;
             toConnectionSubLoan conn(connection());
             toQuery errors(conn,
                            SQLReadErrors,
-                           toQueryParams() << Objects->model()->data(item.row(), 1).toString()
-                           << Objects->model()->data(item.row(), 2).toString()
-                           << Objects->model()->data(item.row(), 3).toString());
+                           toQueryParams() << owner << object << type);
 
             while (!errors.eof())
             {

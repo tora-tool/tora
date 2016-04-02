@@ -7307,7 +7307,14 @@ QString toOracleExtract::createMetadata(toExtract &ext, const QString &owner, co
     */
     toQuery query1(conn, SQLDbmsMetadataSetTransform, toQueryParams());
     query1.eof();
-    toQuery inf(conn, SQLDbmsMetadataGetDdl, toQueryParams() << type << name << owner);
+
+    QString type2 = type;
+    if (type == "PACKAGE BODY")
+    	type2 = "PACKAGE_BODY";
+    else if (type == "PACKAGE")
+    	type2 = "PACKAGE_SPEC";
+
+    toQuery inf(conn, SQLDbmsMetadataGetDdl, toQueryParams() << type2 << name << owner);
     if (inf.eof())
         throw qApp->translate("toOracleExtract", "Couldn't get meta information for %1 %2.%3").arg(type).arg(owner).arg(name);
 
@@ -7645,7 +7652,7 @@ void toOracleExtract::initialize(toExtract &ext) const
         q.eof();
         DbaSegments = "sys.dba_segments";
     }
-    catch (...)
+    catch (QString const& exc)
     {
         DbaSegments = QString("(select '%1' owner,user_segments.* from sys.user_segments)").
                       arg(CONNECTION.user().toUpper());
