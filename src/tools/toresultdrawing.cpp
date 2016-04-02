@@ -142,7 +142,7 @@ static toSQL SQLTableFKWithDistance(
     " START WITH table_name = :f2<char[101]>                                       \n"
     " CONNECT BY NOCYCLE PRIOR r_table_name = table_name AND PRIOR r_owner = owner \n",
     "Get list of all the FK referenced/referencing tables within specified distance",
-    "100000",
+    "1000",
     "Oracle");
 
 

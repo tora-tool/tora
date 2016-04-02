@@ -100,12 +100,7 @@ class toSQL
              * @param sql Statement
              * @param modified Wether it is modified or not.
              */
-            version(char const *provider, char const *ver, char const *sql, bool modified = false)
-                : Provider(provider), Version(ver), SQL(sql), Modified(modified)
-            {
-            	if(Version.isEmpty())
-            		Version = "0000";
-            }
+            version(char const *provider, char const *ver, char const *sql, bool modified = false);
         }
         ;
 

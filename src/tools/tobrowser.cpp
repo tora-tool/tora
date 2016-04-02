@@ -856,7 +856,7 @@ static toSQL SQLListDBLinkDBA("toBrowser:ListDBLinkDBA",
 static toSQL SQLListDirectories("toBrowser:ListDirectories",
                                 "SELECT DISTINCT directory_name FROM SYS.ALL_DIRECTORIES\n"
                                 " WHERE (owner = 'SYS' or owner=:f1<char[101]>) and\n"
-                                " UPPER(directory_name) like :f2<char[101]>",
+                                " UPPER(directory_name) like :f2<char[101]>"
                                 " ORDER BY directory_name",
                                 "List database external directories");
 static toSQL SQLMySQLAccess("toBrowser:MySQLAcess",

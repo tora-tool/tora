@@ -50,6 +50,15 @@ const char * const toSQL::TOSQL_CREATEPLAN = "Global:CreatePlan";
 
 QString toSQL::defaultVersion("0000");
 
+toSQL::version::version(char const *provider, char const *ver, char const *sql, bool modified)
+    : Provider(provider), Version(ver), SQL(sql), Modified(modified)
+{
+	if(Version.isEmpty())
+		Version = "0000";
+	if(Version.length() != 4)
+		fprintf(stderr, "ERROR:Tried add invalid version(%s) to unknown SQL\n", ver);
+}
+
 toSQL::toSQL(char const *name,
              char const *sql,
              char const *description,
