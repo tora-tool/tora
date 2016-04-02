@@ -521,6 +521,12 @@ Lexer::token_const_iterator OracleGuiLexer::findEndTokenPL( Lexer::token_const_i
 		case Token::L_DML_INTRODUCER:   // INSERT, UPDATE, DELETE, ...
 			// TODO TRIGGER abc BEFORE INSERT/UPDATE/DELETE is handled wrongly
 			//
+			if (currText.toUpper() == "TIMESTAMP" && i->getText().toUpper() == "WITH") // TIMESTAMP WITH TIMEZONE is not DML
+			{
+				prevText = currText;
+				currText = i->getText();
+				break;
+			}
 			// DML keyword can be only present within BEGIN or LOOP context
 			if( stackContext == BlkCtx::PACKAGE || stackContext == BlkCtx::PROCEDURE)
 			{
@@ -565,6 +571,9 @@ Lexer::token_const_iterator OracleGuiLexer::findEndTokenPL( Lexer::token_const_i
 			continue;
 
 		if ( currText.toUpper() == "CASE" && prevText.toUpper() == "END")                  // "END CASE;" CASE does not start a new block
+			continue;
+
+		if (currText.toUpper() == "WITH" && prevText.toUpper() == "TIMESTAMP")             // TIMESTAMP WITH LOCAL TIMEZONE (WITH does not start DML)
 			continue;
 
 		// Combine two enumerated values. The current Stack's top
