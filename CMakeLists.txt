@@ -4,7 +4,7 @@ PROJECT(TOra)
 SET (VERSION_MAJOR "3")
 SET (VERSION_MINOR "0")
 SET (VERSION_PATCH "0")
-SET (VERSION_SUFFIX "beta")
+SET (VERSION_SUFFIX "")
 SET (VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}${VERSION_SUFFIX})
 
 ##############################################################################################################

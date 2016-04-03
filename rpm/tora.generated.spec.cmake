@@ -150,8 +150,8 @@ export CXXFLAGS="$RPM_OPT_FLAGS"
 %{__rm} -rf "${RPM_BUILD_ROOT}"
 
 %changelog
-* Sat Mar 26 2016 Ivan Brezina <ivan@thinkpad> - 3.0.0beta-1.1
-- Pre Tora3 release
+* Sun Apr 03 2016 Ivan Brezina <ivan@thinkpad> - 3.0.0-1.1
+- Tora3 release
 
 * Tue Apr  6 2010 Michael Mraka <michael.mraka@redhat.com> 2.1.2-1
 - updated to TOra 2.1.2
