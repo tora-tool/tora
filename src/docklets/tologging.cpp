@@ -33,6 +33,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "docklets/tologging.h"
+#include "ts_log/toostream.h"
 #include "core/tologger.h"
 #include "core/utils.h"
 #include <QPlainTextEdit>

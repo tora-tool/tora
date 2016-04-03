@@ -2,7 +2,7 @@
 #define __TORA_LOGGER__
 
 
-#ifdef DEBUG
+#if defined(DEBUG) || defined(TORA_EXPERIMENTAL)
 
 #ifdef WIN32
 #define USE_WIN32_THREAD_MANAGER

@@ -396,11 +396,8 @@ IF (USE_EXPERIMENTAL)
   LIST(APPEND TORA_MOC_CLASSES tools/toer.h)
   LIST(APPEND TORA_MOC_CLASSES tools/tosandboxtool.h)
   #ENDIF(graphviz_FOUND)
-ENDIF (USE_EXPERIMENTAL)
-
-IF(TORA_DEBUG)
   LIST(APPEND TORA_MOC_CLASSES docklets/tologging.h)
-ENDIF()
+ENDIF (USE_EXPERIMENTAL)
 
 ################################################################################
 #                              Source files .cpp .rc                           #
@@ -693,15 +690,12 @@ IF (USE_EXPERIMENTAL)
     tools/toer.cpp
     )
   LIST (APPEND TORA_SOURCES tools/tosandboxtool.cpp)
+  LIST (APPEND TORA_SOURCES docklets/tologging.cpp)
 ENDIF (USE_EXPERIMENTAL)
 
 IF(POPPLER_QT4_FOUND)
   #    LIST(APPEND TORA_SOURCES pdfview/pdfviewwidget.cpp pdfview/documentwidget.cpp)
 ENDIF (POPPLER_QT4_FOUND)
-
-IF(TORA_DEBUG)
-  LIST(APPEND TORA_SOURCES docklets/tologging.cpp)  
-ENDIF()
 
 ################################################################################
 #             compiled in icons for windows(MSVC and Mingw way)                #
