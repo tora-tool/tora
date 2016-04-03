@@ -682,7 +682,8 @@ Lexer::token_const_iterator OracleGuiLexer::findEndTokenPL( Lexer::token_const_i
 
 		}
 	}
-	return i;
+
+	return i.consumeUntil(Token::X_EOL);
 }
 
 Lexer::token_const_iterator OracleGuiLexer::findEndTokenDML( Lexer::token_const_iterator const &start)

@@ -61,6 +61,7 @@ bool SimplePlsqlParser::parse (const tstring &statement)
 	static rule<> unumber_tm = (+digit_p);
 	static rule<> number_tm = (!ch_p('-')) >> unumber_tm;
 	static rule<> float_tm = (number_tm >> !(ch_p('.') >> unumber_tm ));
+	static rule<> preproc_tm = ch_p('$') >> *(alnum_p | ch_p('_') | ch_p('#') | ch_p('$') );
 
 #if 1
 	static rule<> operator_tm = ( str_p("**") | str_p("NOT") |
@@ -116,7 +117,7 @@ bool SimplePlsqlParser::parse (const tstring &statement)
 	rule<> number_cl = (float_tm|unumber_tm|number_tm)
 	                   [boost::bind(&SimplePlsqlParser::token_callback, boost::ref(*this), "number", _1, _2)];
 
-	rule<> word_cl = (label_tm | ((word_tm|quoted_word_tm) >>
+	rule<> word_cl = (label_tm | ((word_tm|preproc_tm|quoted_word_tm) >>
 	                              !( ch_p('.') >> (word_tm|quoted_word_tm)) >>
 	                              !( ch_p('.') >> (word_tm|quoted_word_tm)) >>
 	                              !( ch_p('%') >> (word_tm|quoted_word_tm))

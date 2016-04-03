@@ -54,7 +54,7 @@ namespace SQLLexer
             {
                 // Special node types
                 X_UNASSIGNED = 0
-                               , X_EOF
+                , X_EOF
                 , X_EOL
                 , X_FAILURE                // invalid character not understood by lexer
                 , X_ONE_LINE               // SQLPlus command
