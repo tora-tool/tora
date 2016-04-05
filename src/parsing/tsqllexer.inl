@@ -208,7 +208,7 @@ namespace SQLLexer
 		Lexer::token_const_iterator retval(*this);
 		while( retval->getTokenType() != Token::X_EOF)
 		{
-			if( retval->getTokenType() == type)
+			if( std::next(retval)->getTokenType() == type)
 				break;
 			retval++;
 		}
@@ -220,7 +220,7 @@ namespace SQLLexer
 		Lexer::token_const_iterator retval(*this);
 		while( retval->getTokenType() != Token::X_EOF)
 		{
-			if( s.contains(retval->getTokenType()))
+			if( s.contains(std::next(retval)->getTokenType()))
 				break;
 			retval++;
 		}
@@ -232,7 +232,7 @@ namespace SQLLexer
 		Lexer::token_const_iterator retval(*this);
 		while( retval->getTokenType() != Token::X_EOF)
 		{
-			if( retval->getOrigTokenType() == type)
+			if( std::next(retval)->getOrigTokenType() == type)
 				break;
 			retval++;
 		}
@@ -244,7 +244,7 @@ namespace SQLLexer
 		Lexer::token_const_iterator retval(*this);
 		while( retval->getTokenType() != Token::X_EOF)
 		{
-			if( s.contains(retval->getOrigTokenType()))
+			if( s.contains(std::next(retval)->getOrigTokenType()))
 				break;
 			retval++;
 		}

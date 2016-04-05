@@ -372,7 +372,11 @@ Lexer::token_const_iterator OracleGuiLexer::findStartToken( Lexer::token_const_i
 	token_const_iterator i(start);	
 	while(i->getTokenType() != SQLLexer::Token::X_EOF)
 	{
-		i = i.consumeUntil(INTRODUCERS);
+		if(!INTRODUCERS.contains(i->getTokenType()))
+		{
+			i = i.consumeUntil(INTRODUCERS);
+			i++;
+		}
 		if(i->getTokenType() != SQLLexer::Token::L_LPAREN)
 			return i;                      // Return this Token - it is not LPAREN '('  
 
@@ -473,7 +477,7 @@ Lexer::token_const_iterator OracleGuiLexer::findEndToken( Lexer::token_const_ite
 	// Handle OneLiners (SQLPLUS commands)
 	case Token::X_ONE_LINE:
 	{
-		i = i.consumeUntil(PLSQLGuiLexer::NEWLINE);
+		i = i.consumeUntil(PLSQLGuiLexer::NEWLINE); i++;
 		break;
 	}
 	default:
@@ -774,20 +778,7 @@ Lexer::token_const_iterator OracleGuiLexer::findEndTokenDML( Lexer::token_const_
 Lexer::token_const_iterator OracleGuiLexer::findEndTokenOther( Lexer::token_const_iterator const &start)
 {
 	token_const_iterator i(start);
-	bool grantFound = start->getText().compare("GRANT", Qt::CaseInsensitive) == 0;
-	while(true)
-	{
-		i++;
-		switch( i->getOrigTokenType())
-		{
-		case PLSQLGuiLexer::EOF_TOKEN:
-		case PLSQLGuiLexer::SEMICOLON:
-		case PLSQLGuiLexer::SQLPLUS_SOLIDUS:
-			goto exitLoopOtherIntroducer;
-		}
-	}
-	exitLoopOtherIntroducer:;
-	return i;
+	return i.consumeUntil(QSet<unsigned>() << PLSQLGuiLexer::EOF_TOKEN << PLSQLGuiLexer::SEMICOLON << PLSQLGuiLexer::SQLPLUS_SOLIDUS);
 }
 
 };

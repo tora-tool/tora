@@ -145,10 +145,14 @@ namespace SQLLexer
                     explicit token_const_iterator(Lexer const& l, int i);
                     ~token_const_iterator();
 
+                    /** Iterate until specific token is found - non-inclusive */
                     inline token_const_iterator consumeUntil(Token::TokenType);
+                    /** Iterate until one of specific tokens is found - non-inclusive */
                     inline token_const_iterator consumeUntil(QSet<Token::TokenType>);
 
+                    /** Iterate until specific token is found - non-inclusive */
                     inline token_const_iterator consumeUntil(unsigned);
+                    /** Iterate until one of specific tokens is found - non-inclusive */
                     inline token_const_iterator consumeUntil(QSet<unsigned>);
                     inline token_const_iterator consumeWS();
 

@@ -304,8 +304,12 @@ Lexer::token_const_iterator mySQLGuiLexer::findStartToken( Lexer::token_const_it
 		<< SQLLexer::Token::X_ONE_LINE
 		;	
 	token_const_iterator i(start);
-	i = i.consumeUntil(INTRODUCERS);
-	return i;    
+	if(!INTRODUCERS.contains(i->getTokenType()))
+	{
+		i = i.consumeUntil(INTRODUCERS);
+		i++;
+	}
+	return i;
 }
 
 Lexer::token_const_iterator mySQLGuiLexer::findEndToken( Lexer::token_const_iterator const &start)
