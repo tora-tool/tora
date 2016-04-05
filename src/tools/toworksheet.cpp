@@ -1262,9 +1262,9 @@ void toWorksheet::query(toSyntaxAnalyzer::statement const& statement, execTypeEn
                     saveHistory();
                     Result->removeSQL();
                     if (LockedConnection)
-                        Result->querySub(LockedConnection, statement.sql, param);
+                        Result->querySub(LockedConnection, m_lastQuery.sql, param);
                     else
-                        Result->query(statement.sql, param);
+                        Result->query(m_lastQuery.sql, param);
 
                     if (CurrentTab)
                     {

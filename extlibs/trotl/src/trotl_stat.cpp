@@ -83,7 +83,9 @@ SqlStatement::SqlStatement(OciConnection& conn, const tstring& stmt, ub4 lang, i
 	_errh.alloc(_env);
 
 	SimplePlsqlParser parser;
-	parser.parse(stmt);
+	bool parse_retval = parser.parse(stmt);
+	if(!parse_retval)
+		throw_oci_exception(OciException(__TROTL_HERE__, "Parsing failed for: \n%s").arg(parser.getNonColored()));
 
 	_parsed_stmt= parser.getNonColored();
 
