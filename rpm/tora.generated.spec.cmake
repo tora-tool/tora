@@ -41,16 +41,20 @@ License:                GPL
 BuildRoot:              %{_tmppath}/tora-root
 BuildRequires: postgresql-devel
 #BuildRequires: oracle-instantclient11.2-devel
-BuildRequires: qt4-devel >= 4.8.5
-BuildRequires: openssl-devel
 BuildRequires: perl
 BuildRequires: cmake >= 2.8.11
 BuildRequires: gcc-c++
-Requires:      qt4 >= 4.8.5
 #Requires:      oracle-instantclient11.2-basic
 %if ! 0%{?rhel} || 0%{?rhel} > 5
 #BuildRequires: qscintilla-devel >= 2.0.0
 #Requires:      qscintilla >= 2.0.0
+#Requires:      qt4 >= 4.8.5
+%endif
+
+%if 0%{?fedora} >= 23
+BuildRequires: qscintilla-qt5-devel
+BuildRequires: qt5-qtbase-devel
+BuildRequires: qt5-qttools-devel
 %endif
 
 #

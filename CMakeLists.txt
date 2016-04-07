@@ -209,6 +209,7 @@ IF(QT5_BUILD)
   find_package(Qt5Sql REQUIRED)
   find_package(Qt5Widgets REQUIRED)
   find_package(Qt5Xml REQUIRED)
+  find_package(Qt5LinguistTools REQUIRED)  
   IF(APPLE)
     find_package(Qt5MacExtras REQUIRED)
   ENDIF()
@@ -414,7 +415,14 @@ IF (WANT_RPM)
   # this is evaluated only once (see getgit.cmake)
   IF(GIT_FOUND AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
     execute_process(COMMAND ${GIT_EXECUTABLE} describe --long --tags --dirty --always OUTPUT_VARIABLE GITVERSION)
+    string(REGEX REPLACE "^v([0-9]+)\\..*" "\\1" GITVERSION_MAJOR "${GITVERSION}")
+    string(REGEX REPLACE "^v[0-9]+\\.([0-9a-z]+).*" "\\1" GITVERSION_MINOR "${GITVERSION}")
     string(REGEX REPLACE "^v[0-9]+\\.[0-9a-z]+-([0-9]+).*" "\\1" GITVERSION_COUNT "${GITVERSION}")
+    string(REGEX REPLACE "^v[0-9]+\\.[0-9a-z]+-[0-9]+-([0-9a-z]*).*" "\\1" GITVERSION_SHA1 "${GITVERSION}")
+    string(REGEX REPLACE "^v[0-9]+\\.[0-9a-z]+-[0-9]+-[0-9a-z]+" "" GITVERSION_DIRTY "${GITVERSION}")
+    string(TIMESTAMP BUILD_DATE "%Y-%m-%d")
+    set(GITVERSION_SHORT "${GITVERSION_MAJOR}.${GITVERSION_MINOR}")    
+    
     CONFIGURE_FILE(
 	${CMAKE_SOURCE_DIR}/rpm/${RPM_SPEC}.cmake
 	${CMAKE_SOURCE_DIR}/${RPM_SPEC}
