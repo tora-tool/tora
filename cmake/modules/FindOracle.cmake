@@ -63,6 +63,7 @@ ELSE (ORACLE_PATH_INCLUDES)
             ${ORACLE_HOME}/OCI/include/
             # instant client from rpm
             /usr/include/oracle/11.2/client${LIB_SUFFIX}/
+            /usr/include/oracle/12.1/client${LIB_SUFFIX}/
             # instantclient on OS X from macports
             /opt/local/lib/oracle/sdk/include/
             # Oracle XE Windows
@@ -84,6 +85,7 @@ ELSE (ORACLE_PATH_LIB)
             # Instant client from rpm
             /usr/lib${LIB_SUFFIX}/
             /usr/lib/oracle/11.2/client${LIB_SUFFIX}/lib/
+            /usr/lib/oracle/12.1/client${LIB_SUFFIX}/lib/
             # instant client on OS X from macports
             /opt/local/lib/oracle/
             # Oracle XE Windows
