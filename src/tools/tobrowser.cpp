@@ -944,11 +944,11 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
 
     QToolBar *tableToolbar = Utils::toAllocBar(tableWidget, tr("Database browser"));
     tableLayout->addWidget(tableToolbar);
-
+#ifdef TORA_EXPERIMENTAL
     addTableAct = new QAction(QPixmap(const_cast<const char**>(addtable_xpm)),
                               tr("Create new table"),
                               this);
-    connect(addTableAct, SIGNAL(triggered()), this, SLOT(addTable(void)));
+    //connect(addTableAct, SIGNAL(triggered()), this, SLOT(addTable(void)));
     tableToolbar->addAction(addTableAct);
 
     tableToolbar->addSeparator();
@@ -956,19 +956,19 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     modTableAct = new QAction(QPixmap(const_cast<const char**>(modtable_xpm)),
                               tr("Modify table columns"),
                               this);
-    connect(modTableAct, SIGNAL(triggered()), this, SLOT(modifyTable(void)));
+    //connect(modTableAct, SIGNAL(triggered()), this, SLOT(modifyTable(void)));
     tableToolbar->addAction(modTableAct);
 
     modConstraintAct = new QAction(QPixmap(const_cast<const char**>(modconstraint_xpm)),
                                    tr("Modify constraints"),
                                    this);
-    connect(modConstraintAct, SIGNAL(triggered()), this, SLOT(modifyConstraint(void)));
+    //connect(modConstraintAct, SIGNAL(triggered()), this, SLOT(modifyConstraint(void)));
     tableToolbar->addAction(modConstraintAct);
 
     modIndexAct = new QAction(QPixmap(const_cast<const char**>(modindex_xpm)),
                               tr("Modify indexes"),
                               this);
-    connect(modIndexAct, SIGNAL(triggered()), this, SLOT(modifyIndex(void)));
+    //connect(modIndexAct, SIGNAL(triggered()), this, SLOT(modifyIndex(void)));
     tableToolbar->addAction(modIndexAct);
 
     tableToolbar->addSeparator();
@@ -976,7 +976,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     dropTableAct = new QAction(QPixmap(const_cast<const char**>(trash_xpm)),
                                tr("Drop table"),
                                this);
-    connect(dropTableAct, SIGNAL(triggered()), this, SLOT(dropTable(void)));
+    //connect(dropTableAct, SIGNAL(triggered()), this, SLOT(dropTable(void)));
     tableToolbar->addAction(dropTableAct);
 
     tableToolbar->addSeparator();
@@ -984,21 +984,15 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     enableConstraintAct = new QAction(QPixmap(const_cast<const char**>(online_xpm)),
                                       tr("Enable constraint or trigger"),
                                       this);
-    connect(enableConstraintAct,
-            SIGNAL(triggered()),
-            this,
-            SLOT(enableConstraints(void)));
+    //connect(enableConstraintAct, SIGNAL(triggered()), this, SLOT(enableConstraints(void)));
     tableToolbar->addAction(enableConstraintAct);
 
     disableConstraintAct = new QAction(QPixmap(const_cast<const char**>(offline_xpm)),
                                        tr("Disable constraint or trigger"),
                                        this);
-    connect(disableConstraintAct,
-            SIGNAL(triggered()),
-            this,
-            SLOT(disableConstraints(void)));
+    //connect(disableConstraintAct, SIGNAL(triggered()), this, SLOT(disableConstraints(void)));
     tableToolbar->addAction(disableConstraintAct);
-
+#endif
     // Tables
     tableView = new toBrowserSchemaTableView(tableWidget, "TABLE");
     tableLayout->addWidget(tableView);
@@ -1012,9 +1006,9 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     tableSplitter->setStretchFactor(tableSplitter->indexOf(tableBrowserWidget), 1);
 
     connect(tableView, SIGNAL(selectionChanged()), this, SLOT(changeItem()));
-    connect(tableView, SIGNAL(displayMenu(QMenu *)), this, SLOT(displayTableMenu(QMenu *)));
+    //connect(tableView, SIGNAL(displayMenu(QMenu *)), this, SLOT(displayTableMenu(QMenu *)));
     connect(tableBrowserWidget, SIGNAL(selected(const QString&)), this, SLOT(slotSelected(const QString&)));
-    connect(this,      SIGNAL(chilterChanged(toViewFilter*)), tableView, SLOT(setFilter(toViewFilter*)));
+    connect(this,      SIGNAL(filterChanged(toViewFilter*)), tableView, SLOT(setFilter(toViewFilter*)));
 
     m_objectsMap[tableSplitter] = tableView;
     m_browsersMap[tableSplitter] = tableBrowserWidget;
@@ -1030,7 +1024,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     connect(viewView, SIGNAL(selectionChanged()), this, SLOT(changeItem()));
     // connect context menu for views
     connect(viewView, SIGNAL(displayMenu(QMenu *)), this, SLOT(displayViewMenu(QMenu *)));
-    connect(this,     SIGNAL(chilterChanged(toViewFilter*)), viewView, SLOT(setFilter(toViewFilter*)));
+    connect(this,     SIGNAL(filterChanged(toViewFilter*)), viewView, SLOT(setFilter(toViewFilter*)));
 
     viewSplitter->setStretchFactor(viewSplitter->indexOf(viewView), 0);
 
@@ -1043,8 +1037,9 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     dropViewAct = new QAction(QPixmap(const_cast<const char**>(trash_xpm)),
                               tr("Drop view"),
                               this);
-    connect(dropViewAct, SIGNAL(triggered()), this, SLOT(dropView(void)));
-
+#ifdef TORA_EXPERIMENTAL
+    //connect(dropViewAct, SIGNAL(triggered()), this, SLOT(dropView(void)));
+#endif
     // Indexes
     indexSplitter = new QSplitter(Qt::Horizontal, m_mainTab);
     indexSplitter->setObjectName(TAB_INDEX);
@@ -1058,12 +1053,11 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
 
     QToolBar * indexToolbar = Utils::toAllocBar(indexWidget, tr("Database browser"));
     indexLayout->addWidget(indexToolbar);
-
+#ifdef TORA_EXPERIMENTAL
     addIndexesAct = new QAction(QPixmap(const_cast<const char**>(addindex_xpm)),
                                 tr("Add indexes"),
                                 this);
-    connect(addIndexesAct, SIGNAL(triggered()),
-            this, SLOT(addIndex()));
+    //connect(addIndexesAct, SIGNAL(triggered()), this, SLOT(addIndex()));
     indexToolbar->addAction(addIndexesAct);
 
     indexToolbar->addSeparator();
@@ -1075,17 +1069,16 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     dropIndexesAct = new QAction(QPixmap(const_cast<const char**>(trash_xpm)),
                                  tr("Drop index"),
                                  this);
-    connect(dropIndexesAct, SIGNAL(triggered()),
-            this, SLOT(dropIndex()));
+    //connect(dropIndexesAct, SIGNAL(triggered()), this, SLOT(dropIndex()));
     indexToolbar->addAction(dropIndexesAct);
-
+#endif
     indexView = new toBrowserSchemaTableView(indexWidget, "INDEX");
     indexLayout->addWidget(indexView);
     indexView->setReadAll(true);
     indexView->setSQL(SQLListIndex);
     connect(indexView, SIGNAL(selectionChanged()),   this, SLOT(changeItem()));
-    connect(indexView, SIGNAL(displayMenu(QMenu *)), this, SLOT(displayIndexMenu(QMenu *)));
-    connect(this,      SIGNAL(chilterChanged(toViewFilter*)), indexView, SLOT(setFilter(toViewFilter*)));
+    //connect(indexView, SIGNAL(displayMenu(QMenu *)), this, SLOT(displayIndexMenu(QMenu *)));
+    connect(this,      SIGNAL(filterChanged(toViewFilter*)), indexView, SLOT(setFilter(toViewFilter*)));
 
     indexWidget->resize(FIRST_WIDTH, indexView->height());
     indexSplitter->setStretchFactor(indexSplitter->indexOf(indexWidget), 0);
@@ -1105,7 +1098,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     sequenceView->setSQL(SQLListSequence);
     sequenceView->resize(FIRST_WIDTH, sequenceView->height());
     connect(sequenceView, SIGNAL(selectionChanged()), this, SLOT(changeItem()));
-    connect(this,         SIGNAL(chilterChanged(toViewFilter*)), sequenceView, SLOT(setFilter(toViewFilter*)));
+    connect(this,         SIGNAL(filterChanged(toViewFilter*)), sequenceView, SLOT(setFilter(toViewFilter*)));
 
     sequenceSplitter->setStretchFactor(sequenceSplitter->indexOf(sequenceView), 0);
 
@@ -1125,7 +1118,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     synonymView->setSQL(SQLListSynonym);
     synonymView->resize(FIRST_WIDTH, synonymView->height());
     connect(synonymView, SIGNAL(selectionChanged()), this, SLOT(changeItem()));
-    connect(this,        SIGNAL(chilterChanged(toViewFilter*)), synonymView, SLOT(setFilter(toViewFilter*)));
+    connect(this,        SIGNAL(filterChanged(toViewFilter*)), synonymView, SLOT(setFilter(toViewFilter*)));
 
     synonymSplitter->setStretchFactor(synonymSplitter->indexOf(synonymView), 0);
 
@@ -1144,7 +1137,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
 //     codeView->setSQL(SQLListSQL);
     codeView->resize(FIRST_WIDTH * 2, codeView->height());
     connect(codeView, SIGNAL(clicked(const QModelIndex &)),  this, SLOT(changeItem(const QModelIndex &)));
-    connect(this, SIGNAL(chilterChanged(toViewFilter*)), codeView, SLOT(setFilter(toViewFilter*)));
+    connect(this, SIGNAL(filterChanged(toViewFilter*)), codeView, SLOT(setFilter(toViewFilter*)));
 
     codeSplitter->setStretchFactor(codeSplitter->indexOf(codeView), 0);
 
@@ -1164,7 +1157,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     triggerView->setSQL(SQLListTrigger);
     triggerView->resize(FIRST_WIDTH, triggerView->height());
     connect(triggerView, SIGNAL(selectionChanged()), this, SLOT(changeItem()));
-    connect(this, SIGNAL(chilterChanged(toViewFilter*)), triggerView, SLOT(setFilter(toViewFilter*)));
+    connect(this, SIGNAL(filterChanged(toViewFilter*)), triggerView, SLOT(setFilter(toViewFilter*)));
 
     triggerSplitter->setStretchFactor(triggerSplitter->indexOf(triggerView), 0);
 
@@ -1204,7 +1197,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
 
     connect(dblinkView, SIGNAL(selectionChanged()), this, SLOT(changeItem()));
     // connect(dblinkView, SIGNAL(displayMenu(QMenu *)), this, SLOT(displayIndexMenu(QMenu *)));
-    connect(this, SIGNAL(chilterChanged(toViewFilter*)), dblinkView, SLOT(setFilter(toViewFilter*)));
+    connect(this, SIGNAL(filterChanged(toViewFilter*)), dblinkView, SLOT(setFilter(toViewFilter*)));
 
     dblinkWidget->resize(FIRST_WIDTH, dblinkView->height());
     dblinkSplitter->setStretchFactor(dblinkSplitter->indexOf(dblinkView), 0);
@@ -1234,7 +1227,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
 
     connect(directoriesView, SIGNAL(selectionChanged()), this, SLOT(changeItem()));
     // connect(directoriesView, SIGNAL(displayMenu(QMenu *)), this, SLOT(displayIndexMenu(QMenu *)));
-    connect(this, SIGNAL(chilterChanged(toViewFilter*)), directoriesView, SLOT(setFilter(toViewFilter*)));
+    connect(this, SIGNAL(filterChanged(toViewFilter*)), directoriesView, SLOT(setFilter(toViewFilter*)));
 
     directoriesWidget->resize(FIRST_WIDTH, directoriesView->height());
     directoriesSplitter->setStretchFactor(directoriesSplitter->indexOf(directoriesView), 0);
@@ -1287,7 +1280,7 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     m_browsersMap[accessSplitter] = accessBrowserWidget;
 
     connect(accessView, SIGNAL(selectionChanged()), this, SLOT(changeItem()));
-    connect(this, SIGNAL(chilterChanged(toViewFilter*)), accessView, SLOT(setFilter(toViewFilter*)));
+    connect(this, SIGNAL(filterChanged(toViewFilter*)), accessView, SLOT(setFilter(toViewFilter*)));
 
     // End of tabs. Now the common things are comming...
     ToolMenu = NULL;

@@ -456,11 +456,11 @@ void toCodeModel::refresh(toConnection &conn, const QString &owner)
                 this,
                 SLOT(readData()));
         connect(query,
-                SIGNAL(error(const toConnection::exception &)),
+                SIGNAL(error(toEventQuery*, const toConnection::exception &)),
                 this,
                 SLOT(queryError(const toConnection::exception &)));
         connect(query,
-                SIGNAL(done(toEventQuery*)),
+                SIGNAL(done(toEventQuery*, unsigned long)),
                 this,
                 SLOT(readData()));
 

@@ -139,13 +139,6 @@ class toResultTableView : public QTableView, public toResult, public toEditWidge
         }
 
         /**
-         * Set a filter to this list.
-         *
-         * @param filter The new filter or NULL if no filter is to be used.
-         */
-        void setFilter(toViewFilter *filter);
-
-        /**
          * apply Filter to row visibility
          */
         void applyFilter(void);
@@ -232,6 +225,13 @@ class toResultTableView : public QTableView, public toResult, public toEditWidge
         bool queryFromCache(const QString &owner, const QString &type);
 
     public slots:
+        /**
+         * Set a filter to this list.
+         *
+         * @param filter The new filter or NULL if no filter is to be used.
+         */
+        void setFilter(toViewFilter *filter);
+
         /**
          * Resizes all columns based on the size hints of the delegate
          * used to render each item in the columns.
