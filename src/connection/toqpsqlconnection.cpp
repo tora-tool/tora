@@ -63,8 +63,7 @@ static toSQL SQLConnectioId("toQSqlConnection:ConnectionID",
 
 static toSQL SQLVersionPgSQL("toQSqlConnection:Version",
                              "SHOW SERVER_VERSION",
-                             "Show version of database, "
-                             "last value of first return record of result is used.",
+                             "", // "Show version of the database"
                              "",
                              "QPSQL");
 

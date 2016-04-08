@@ -151,7 +151,6 @@ int main(int argc, char **argv)
             splash.show();
 
             QList<QString> plugins;
-            plugins << "parsing";
 #ifdef Q_OS_WIN
             QString mysqlHome(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::MysqlHomeDirectory).toString());
             QDir mysqlHomeDir(mysqlHome);

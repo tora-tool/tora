@@ -42,8 +42,7 @@
 
 static toSQL SQLVersion("toQSqlConnection:Version",
                         "SHOW VARIABLES LIKE 'version'",
-                        "Show version of database, "
-                        "",
+                        "Show version of the database",
                         "",
                         "QMYSQL");
 

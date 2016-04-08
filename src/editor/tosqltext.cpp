@@ -91,9 +91,6 @@ toSqlText::toSqlText(QWidget *parent, const char *name)
     connect(m_parserThread, SIGNAL(finished()),  m_parserThread, SLOT(deleteLater()));
 
     // Connect signals&slots
-    connect(this, SIGNAL(cursorPositionChanged(int, int)), this, SLOT(setStatusMessage(void )));
-    connect (this, SIGNAL(cursorPositionChanged(int, int)), this, SLOT(positionChanged(int, int)));
-
     connect(&toHighlighterTypeButtonSingle::Instance(),
             SIGNAL(toggled(int)),
             this,
