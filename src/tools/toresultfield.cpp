@@ -74,7 +74,7 @@ void toResultField::query(const QString &sql, toQueryParams const& param)
                                  , param
                                  , toEventQuery::READ_ALL);
         connect(Query, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(slotPoll()));
-        connect(Query, SIGNAL(done(toEventQuery*)), this, SLOT(slotQueryDone()));
+        connect(Query, SIGNAL(done(toEventQuery*, unsigned long)), this, SLOT(slotQueryDone()));
         Query->start();
     }
     TOCATCH

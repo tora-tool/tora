@@ -301,7 +301,7 @@ void toEventQuery::slotFinished()
     WorkDone = true;
     disconnect(SIGNAL(consumed()));
     disconnect(SIGNAL(dataRequested()));
-    emit done(this);
+    emit done(this, Processed);
 }
 
 void toEventQuery::slotRowsProcessed(unsigned long rows)

@@ -175,7 +175,7 @@ void toERSchema::slotExecute(void)
                                  , toQueryParams() << conn.defaultSchema()
                                  , toEventQuery::READ_ALL);
         connect(Query, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(slotPoll(toEventQuery*)));
-        connect(Query, SIGNAL(done(toEventQuery*)), this, SLOT(slotQueryDone()));
+        connect(Query, SIGNAL(done(toEventQuery*,unsigned long)), this, SLOT(slotQueryDone()));
         Query->start();
     }
     catch (const toConnection::exception &t)

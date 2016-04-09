@@ -205,7 +205,7 @@ void toResultStats::slotRefreshStats(bool reset)
                                  , toEventQuery::READ_ALL
                                 );
         connect(Query, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(slotPollQuery()));
-        connect(Query, SIGNAL(done(toEventQuery*)), this, SLOT(slotQueryDone()));
+        connect(Query, SIGNAL(done(toEventQuery*, unsigned long)), this, SLOT(slotQueryDone()));
         Query->start();
 
         if (!System)
@@ -217,7 +217,7 @@ void toResultStats::slotRefreshStats(bool reset)
                                          , toEventQuery::READ_ALL
                                         );
             connect(SessionIO, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(slotPollSystem()));
-            connect(SessionIO, SIGNAL(done(toEventQuery*)), this, SLOT(slotSystemDone()));
+            connect(SessionIO, SIGNAL(done(toEventQuery*, unsigned long)), this, SLOT(slotSystemDone()));
             SessionIO->start();
         }
 

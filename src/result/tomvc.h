@@ -189,7 +189,7 @@ void TOMVC<_T, _VP, _DP>::setQuery(Query *query)
     retval = QObject::connect(m_query, SIGNAL(error(toEventQuery*, const toConnection::exception &))
                               , m_observerObject, SLOT(eqError(toEventQuery*, const toConnection::exception &)));
     Q_ASSERT_X(retval, qPrintable(__QHERE__), "connect failed: error");
-    retval = QObject::connect(m_query, SIGNAL(done(toEventQuery*))
+    retval = QObject::connect(m_query, SIGNAL(done(toEventQuery*,unsigned long))
                               , m_observerObject, SLOT(eqDone(toEventQuery*)));
     Q_ASSERT_X(retval, qPrintable(__QHERE__), "connect failed: done");
     m_query->start();

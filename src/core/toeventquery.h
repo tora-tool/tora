@@ -214,7 +214,7 @@ class toEventQuery : public QObject
         /**
          * Emitted when done
          */
-        void done(toEventQuery*);
+        void done(toEventQuery*, unsigned long);
 
         /**
          * Signals to be sent to Worker

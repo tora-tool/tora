@@ -92,7 +92,7 @@ void toResultLong::query(const QString &sql, const toQueryParams &param)
                                  , toEventQuery::READ_ALL
                                 );
         connect(Query, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(slotAddItem()));
-        connect(Query, SIGNAL(done(toEventQuery*)), this, SLOT(slotQueryDone()));
+        connect(Query, SIGNAL(done(toEventQuery*, unsigned long)), this, SLOT(slotQueryDone()));
         if (ReadAll)
         {
             MaxNumber = -1;

@@ -659,7 +659,7 @@ void toResultStorage::query(const QString &sql, toQueryParams const& param)
                                        , args
                                        , toEventQuery::READ_ALL);
         connect(Tablespaces, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(slotPollTablespaces()));
-        connect(Tablespaces, SIGNAL(done(toEventQuery*)), this, SLOT(slotDoneTablespaces()));
+        connect(Tablespaces, SIGNAL(done(toEventQuery*, unsigned long)), this, SLOT(slotDoneTablespaces()));
         Tablespaces->start();
 
         Files = new toEventQuery(this
@@ -668,7 +668,7 @@ void toResultStorage::query(const QString &sql, toQueryParams const& param)
                                  , args
                                  , toEventQuery::READ_ALL);
         connect(Files, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(slotPollFiles()));
-        connect(Files, SIGNAL(done(toEventQuery*)), this, SLOT(slotDoneFiles()));
+        connect(Files, SIGNAL(done(toEventQuery*, unsigned long)), this, SLOT(slotDoneFiles()));
         Files->start();
     }
     TOCATCH

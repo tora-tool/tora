@@ -173,7 +173,7 @@ static toSQL SQLLock("toResultLock:Locks",
 void toResultLock::startQuery(void)
 {
     connect(Query, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(poll()));
-    connect(Query, SIGNAL(done(toEventQuery*)), this, SLOT(queryDone()));
+    connect(Query, SIGNAL(done(toEventQuery*, unsigned long)), this, SLOT(queryDone()));
     Query->start();
 } // startQuery
 

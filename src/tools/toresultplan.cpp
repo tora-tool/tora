@@ -282,7 +282,7 @@ toResultPlanModel::toResultPlanModel(toEventQuery *query, QObject *parent)
 	rootItem->appendChild(sqlidItem = new toPlanTreeItem("sqlid", sqlidData, rootItem));
 
     connect(Query, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(slotPoll(toEventQuery*)));
-    connect(Query, SIGNAL(done(toEventQuery*)), this, SLOT(slotQueryDone(toEventQuery*)));
+    connect(Query, SIGNAL(done(toEventQuery*, unsigned long)), this, SLOT(slotQueryDone(toEventQuery*)));
     connect(Query, SIGNAL(error(toEventQuery*,toConnection::exception const &)), this, SLOT(slotErrorHanler(toEventQuery*, toConnection::exception  const &)));
 }
 
@@ -565,8 +565,8 @@ void toResultPlanAbstr::queryPlanTable(toQueryParams const& params)
 				arg(Utils::toSQLStripSpecifier(params.first()));
 
     	explainQuery = new toEventQuery(this, LockedConnection, explain, toQueryParams(), toEventQuery::READ_ALL);
-    	connect(explainQuery, SIGNAL(done(toEventQuery*)), this, SLOT(explainDone(toEventQuery*)));
-    	connect(explainQuery, SIGNAL(error(toEventQuery*,toConnection::exception const &)), this, SLOT(slotErrorHanler(toEventQuery*, toConnection::exception  const &)));
+        connect(explainQuery, SIGNAL(done(toEventQuery*, unsigned long)), this, SLOT(explainDone(toEventQuery*)));
+        connect(explainQuery, SIGNAL(error(toEventQuery*,toConnection::exception const &)), this, SLOT(slotErrorHanler(toEventQuery*, toConnection::exception  const &)));
     	Explaining = true;
     	explainQuery->start();
     }

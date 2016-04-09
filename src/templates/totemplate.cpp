@@ -878,8 +878,8 @@ void toTemplateSQLObject::expand(void)
                                  , toQueryParams()
                                  , toEventQuery::READ_ALL
                                 );
-        connect(Query, SIGNAL(dataAvailable()), this, SLOT(poll()));
-        connect(Query, SIGNAL(done()), this, SLOT(queryDone()));
+        connect(Query, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(poll()));
+        connect(Query, SIGNAL(done(toEventQuery*,unsigned long)), this, SLOT(queryDone()));
         Query->start();
     }
     TOCATCH

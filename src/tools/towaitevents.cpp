@@ -640,7 +640,7 @@ void toWaitEvents::refresh(void)
         	Query = new toEventQuery(this, conn, toSQL::string(SQLWaitEvents, conn), toQueryParams(), toEventQuery::READ_ALL);
 
         connect(Query, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(slotPoll(toEventQuery*)));
-        connect(Query, SIGNAL(done(toEventQuery*)), this, SLOT(slotQueryDone(toEventQuery*)));
+        connect(Query, SIGNAL(done(toEventQuery*, unsigned long)), this, SLOT(slotQueryDone(toEventQuery*)));
         connect(Query, SIGNAL(error(toEventQuery*,toConnection::exception const &)), this, SLOT(slotErrorHanler(toEventQuery*, toConnection::exception  const &)));
 
         Query->start();

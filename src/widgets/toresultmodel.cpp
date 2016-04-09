@@ -76,7 +76,7 @@ toResultModel::toResultModel(toEventQuery *query,
             SLOT(slotQueryError(toEventQuery*, const toConnection::exception &)));
     // TODO done -> slotFetchMore ??????
     connect(query,
-            SIGNAL(done(toEventQuery*)),
+            SIGNAL(done(toEventQuery*, unsigned long)),
             this,
             SLOT(slotFetchMore(toEventQuery*)));
 #if QT_VERSION < 0x050000

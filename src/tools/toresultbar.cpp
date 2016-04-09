@@ -97,7 +97,7 @@ void toResultBar::query(const QString &sql, toQueryParams const& param, bool fir
         First = first;
         Query = new toEventQuery(this, connection(), sql, param, toEventQuery::READ_ALL);
         connect(Query, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(poll()));
-        connect(Query, SIGNAL(done(toEventQuery*)), this, SLOT(queryDone()));
+        connect(Query, SIGNAL(done(toEventQuery*, unsigned long)), this, SLOT(queryDone()));
         Query->start();
     }
     TOCATCH
