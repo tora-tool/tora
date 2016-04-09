@@ -456,6 +456,7 @@ void toWorksheet::setup(bool autoLoad)
             SLOT(slotFirstResult(const QString &,
                                  const toConnection::exception &,
                                  bool)));
+    connect(Result, SIGNAL(modelChanged(toResultModel*)), this, SLOT(slotRefreshModel(toResultModel*)));
     connect(Result,
             SIGNAL(firstResult(const QString &,
                                const toConnection::exception &,
@@ -628,6 +629,7 @@ toWorksheet::toWorksheet(QWidget *main, toConnection &connection, bool autoLoad)
     : toToolWidget(WorksheetTool, "worksheet.html", main, connection, "toWorksheet")
     , CurrentTab(NULL)
     , lockConnectionActClicked(false)
+    , ResultModel(NULL)
 {
     createActions();
     setup(autoLoad);
@@ -1419,6 +1421,11 @@ void toWorksheet::slotFirstResult(const QString &sql,
     saveDefaults();
 }
 
+void toWorksheet::slotLastResult(const QString &message, bool error)
+{
+    Utils::toStatusMessage(message, false, false);
+}
+
 void toWorksheet::slotUnhideResults(const QString &,
                                     const toConnection::exception &,
                                     bool error)
@@ -2170,6 +2177,13 @@ void toWorksheet::slotLockConnection(bool enabled)
     else
         unlockConnection();
     lockConnectionActClicked = enabled;
+}
+
+void toWorksheet::slotRefreshModel(class toResultModel *model)
+{
+	ResultModel = model;
+	if (ResultModel)
+		connect(ResultModel, SIGNAL(lastResult(const QString &, bool)), this, SLOT(slotLastResult(const QString &, bool)));
 }
 
 void toWorksheet::lockConnection()

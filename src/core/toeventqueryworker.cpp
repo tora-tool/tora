@@ -185,11 +185,12 @@ void toEventQueryWorker::close()
     TLOG(7, toDecorator, __HERE__) << "toEventQueryWorker close a" << std::endl;
     if (Closed)
         return;
-    emit workDone();
 
     unsigned long p = Query.rowsProcessed();
     if (p > 0)
         emit rowsProcessed(p);
+
+    emit workDone();
 
     Closed = true;
     emit finished();

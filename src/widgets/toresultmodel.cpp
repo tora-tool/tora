@@ -74,11 +74,10 @@ toResultModel::toResultModel(toEventQuery *query,
             SIGNAL(error(toEventQuery*, const toConnection::exception &)),
             this,
             SLOT(slotQueryError(toEventQuery*, const toConnection::exception &)));
-    // TODO done -> slotFetchMore ??????
     connect(query,
             SIGNAL(done(toEventQuery*, unsigned long)),
             this,
-            SLOT(slotFetchMore(toEventQuery*)));
+            SLOT(slotFetchLast(toEventQuery*, unsigned long)));
 #if QT_VERSION < 0x050000
     setSupportedDragActions(Qt::CopyAction);
 #endif
@@ -744,6 +743,15 @@ void toResultModel::slotFetchMore(toEventQuery*)
     }
 }
 
+void toResultModel::slotFetchLast(toEventQuery*q, unsigned long rows)
+{
+	if (Query && q == Query && Query->rowsProcessed() > 0)
+	{
+		QString message = QString::number(Query->rowsProcessed()) + (Query->rowsProcessed() == 1 ? tr(" row processed") : tr(" rows processed"));
+		emit lastResult(message, false);
+	}
+	slotFetchMore(q);
+}
 
 void toResultModel::fetchMore(const QModelIndex &parent)
 {

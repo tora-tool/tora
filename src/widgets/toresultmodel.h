@@ -246,18 +246,31 @@ class toResultModel : public QAbstractTableModel
         void done(void);
 
         /**
-         * Emitted when the first result is available.
+         * Emitted when the first result piece is available.
          *
          * @param res String describing result.
          * @param error Error has occurred.
          */
         void firstResult(const toConnection::exception &res, bool error);
 
+        /**
+         * Emitted when the last result piece is available.
+         *
+         * @param res String describing result.
+         * @param error Error has occurred.
+         */
+        void lastResult(const QString &message, bool error);
+
     protected slots:
         /**
-         * Overloaded method. Called when query has data available.
+         * Called when query has data available.
          */
         void slotFetchMore(toEventQuery*);
+
+        /**
+         * Called when last data piece available.
+         */
+        void slotFetchLast(toEventQuery*, unsigned long);
 
         /**
          * reads ands sets up Rows and Columns

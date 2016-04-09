@@ -166,7 +166,7 @@ class toWorksheet : public toToolWidget
         void slotDescribeNew();
         void slotEraseLogButton();
         void slotChangeResult(int);
-        virtual void slotWindowActivated(toToolWidget*);
+        void slotWindowActivated(toToolWidget*) override;
         void slotQueryDone(void);
         void slotEnableStatistic(bool);
         void slotExplainPlan(void);
@@ -180,11 +180,13 @@ class toWorksheet : public toToolWidget
         void slotExecuteNextLog(void);
         void slotExecuteLog(void);
         void slotFirstResult(const QString &sql, const toConnection::exception &result, bool error);
+        void slotLastResult(const QString &message, bool error);
         void slotSaveLast(void);
         void slotSaveStatistics(void);
         void slotRefreshSetup(void);
         void slotStop(void);
         void slotLockConnection(bool);
+        void slotRefreshModel(toResultModel*);
 
         /**
          * create context menus
@@ -264,7 +266,7 @@ class toWorksheet : public toToolWidget
         toRefreshCombo    *Refresh;
         QLabel            *Started;
         toResultSchema    *Schema;
-
+        toResultModel     *ResultModel;
         int RefreshSeconds;
         QTimer RefreshTimer;
 
