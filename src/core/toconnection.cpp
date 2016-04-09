@@ -363,21 +363,24 @@ void toConnection::connectionsMenu(QMenu *menu)
 
 void toConnection::commandCallback(QAction *act)
 {
-    QString actionStr = act->text();
-    toConnectionSub *conn = VPtr<toConnectionSub>::asPtr(act->data());
-    if ( LentConnections.contains(conn))
-    {
-    	conn->cancel();
-    }
-    else if ( Connections.contains(conn))
-    {
-    	closeConnection(conn);
-    }
-    else
-    {
-        Q_ASSERT_X(false, qPrintable(__QHERE__), "Invalid QAction pointing onto unknown toConnectionSub");
-    }
-
+	try {
+		QString actionStr = act->text();
+		toConnectionSub *conn = VPtr<toConnectionSub>::asPtr(act->data());
+		if ( LentConnections.contains(conn))
+		{
+			conn->cancel();
+		}
+		else if ( Connections.contains(conn))
+		{
+			closeConnection(conn);
+		}
+		else
+		{
+			Q_ASSERT_X(false, qPrintable(__QHERE__), "Invalid QAction pointing onto unknown toConnectionSub");
+		}
+	} catch (toConnection::exception const& e) {
+		Utils::toStatusMessage(e);
+	}
 }
 
 QString toConnection::description(bool version) const
