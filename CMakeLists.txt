@@ -57,6 +57,7 @@ IF(GIT_FOUND AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
   -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
   -DUSE_EXPERIMENTAL=${USE_EXPERIMENTAL}
   -DTARGET_NAME=revisiontag
+  -DRPM_SPEC=${RPM_SPEC}
   -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/getgit.cmake)
   add_definitions("-DHAVE_GITREVISION_H=1")
   include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/getgit.cmake)
