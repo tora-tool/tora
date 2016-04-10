@@ -38,9 +38,12 @@
 # include "toversion.h"
 #endif
 
-#if defined(GITVERSION) && !defined(TOBUILDTYPE_RELEASE)
+#if defined(HAVE_GITREVISION_H) && !defined(TOBUILDTYPE_RELEASE)
 // use version defined in git tag
 # define TORAVERSION GITVERSION
+#elif defined(HAVE_GITREVISION_H) && defined(TOBUILDTYPE_RELEASE)
+// use short version defined in git tag
+# define TORAVERSION GITVERSION_SHORT
 #else
 // use version define in CMakeLists.txt
 # define TORAVERSION TOVERSION

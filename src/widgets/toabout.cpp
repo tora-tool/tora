@@ -91,6 +91,7 @@ toAbout::toAbout(QWidget* parent, const char* name, bool modal)
 		version.append(format.arg("GITVERSION_COUNT").arg(GITVERSION_COUNT));
 		version.append(format.arg("GITVERSION_SHA1").arg(GITVERSION_SHA1));
 		version.append(format.arg("GITVERSION_SHORT").arg(GITVERSION_SHORT));
+		version.append(format.arg("GIT_BRANCH").arg(GIT_BRANCH));
 		version.append(format.arg("BUILD_TAG").arg(BUILD_TAG));
 		version.append(format.arg("BUILD_DATE").arg(BUILD_DATE));
 		version.append("</table>");
