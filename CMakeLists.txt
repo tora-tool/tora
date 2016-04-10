@@ -1,11 +1,5 @@
 #Project Setup
 PROJECT(TOra)
-#Set our version values
-SET (VERSION_MAJOR "3")
-SET (VERSION_MINOR "0")
-SET (VERSION_PATCH "0")
-SET (VERSION_SUFFIX "")
-SET (VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}${VERSION_SUFFIX})
 
 ##############################################################################################################
 ########## CMake Setup                                                                              ##########
@@ -54,17 +48,6 @@ SET(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 #Set the custom CMake module directory where our include/lib finders are
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
-# Check for SVN to include SVn revision in SVN based builds
-# FIND_PACKAGE(Subversion)
-# IF (Subversion_FOUND AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.svn")
-#   # a custom target that is always built
-#   add_custom_target(revisiontag ALL)
-#   # creates svnheader.h using cmake script
-#   add_custom_command(TARGET revisiontag COMMAND ${CMAKE_COMMAND}
-#   -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
-#   -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/getsvn.cmake)
-#   ADD_DEFINITIONS("-DHAVE_SVNREVISION_H=1")
-# ENDIF()
 FIND_PACKAGE(Git)
 IF(GIT_FOUND AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
   # a custom target that is always built
@@ -75,6 +58,23 @@ IF(GIT_FOUND AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
   -DUSE_EXPERIMENTAL=${USE_EXPERIMENTAL}
   -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/getgit.cmake)
   ADD_DEFINITIONS("-DHAVE_GITREVISION_H=1")
+  include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/getgit.cmake)
+ELSE()
+  #Set our version values (if not determined from git tag)
+  SET (VERSION_MAJOR "3")
+  SET (VERSION_MINOR "0")
+  #SET (VERSION_PATCH "0")
+  #SET (VERSION_SUFFIX "")
+  SET (VERSION ${VERSION_MAJOR}.${VERSION_MINOR})
+  #SET (VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}${VERSION_SUFFIX})
+  FILE(WRITE  ${CMAKE_BINARY_DIR}/toversion.h "#pragma once\n")
+  FILE(APPEND ${CMAKE_BINARY_DIR}/toversion.h "#define TOVERSION \"${VERSION}\"\n")
+  # IF (USE_EXPERIMENTAL)
+  #   FILE(APPEND ${CMAKE_BINARY_DIR}/toversion.h "#define TOBUILDTYPE \"Experimental\"\n")
+  # ELSE ()
+  #   FILE(APPEND ${CMAKE_BINARY_DIR}/toversion.h "#define TOBUILDTYPE \"Release\"\n")
+  #   FILE(APPEND ${CMAKE_BINARY_DIR}/toversion.h "#define TOBUILDTYPE_RELEASE \"Release\"\n") 
+  # ENDIF()  
 ENDIF()
 
 # Boost headers are required to compile with -DDEBUG (see tologger.h)
@@ -94,14 +94,6 @@ IF (Boost_FOUND)
 ELSE (Boost_FOUND)
     MESSAGE(FATAL_ERROR "Boost libs not found.")
 ENDIF (Boost_FOUND)
-
-FILE(WRITE  ${CMAKE_BINARY_DIR}/toversion.h "#define TOVERSION \"${VERSION}\"\n")
-IF (USE_EXPERIMENTAL)
-    FILE(APPEND ${CMAKE_BINARY_DIR}/toversion.h "#define TOBUILDTYPE \"Experimental\"\n")
-ELSE ()
-    FILE(APPEND ${CMAKE_BINARY_DIR}/toversion.h "#define TOBUILDTYPE \"Release\"\n")
-    FILE(APPEND ${CMAKE_BINARY_DIR}/toversion.h "#define TOBUILDTYPE_RELEASE \"Release\"\n") 
-ENDIF()
 
 IF (APPLE)
   SET(EXE_NAME "TOra")
@@ -334,6 +326,8 @@ ENDIF (NOT ENABLE_TERADATA)
 IF (USE_EXPERIMENTAL)
   FIND_PACKAGE(PopplerQt4)
   #FIND_PACKAGE(GraphViz)
+ELSE ()
+  ADD_DEFINITIONS("-DTOBUILDTYPE_RELEASE=1")
 ENDIF(USE_EXPERIMENTAL)
 
 #MESSAGE(STATUS "graphviz_FOUND: ${graphviz_FOUND}")

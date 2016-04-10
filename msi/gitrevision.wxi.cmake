@@ -8,4 +8,5 @@
   <?define GITVERSION_SHA1  = "@GITVERSION_SHA1@"  ?>
   <?define GITVERSION_SHORT = "@GITVERSION_SHORT@" ?>
   <?define GITVERSION_DIRTY = "@GITVERSION_DIRTY@" ?>
+  <?define GIT_BRANCH       = "@GIT_BRANCH@" ?>
 </Include>

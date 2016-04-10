@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Ivan Brezina <ivan@thinkpad>
 #Maintainer: Debian KDE Extras Team <pkg-kde-extras@lists.alioth.debian.org>
 #Uploaders: Michael Meskes <meskes@debian.org>
-Build-Depends: debhelper (>= 5), cdbs, cmake, qt5-qmake, qtbase5-dev, qttools5-dev-tools, libqt5scintilla2-dev
+Build-Depends: debhelper (>= 5), cdbs, cmake, qt5-qmake, qtbase5-dev, qttools5-dev, qttools5-dev-tools, libqt5scintilla2-dev
 Standards-Version: 3.9.1
 Homepage: http://www.torasql.com
 Vcs-Git: git://git.debian.org/pkg-kde/kde-extras/tora.git

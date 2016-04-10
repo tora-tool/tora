@@ -17,7 +17,7 @@ file(WRITE gitrevision.txt "${MY_WC_REVISION}\n")
 # reduces needless rebuilds
 #execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different svnrevision.h.txt svnrevision.h)
 
-function(git_describe _var)
+function(git_call _var)
   if(NOT GIT_FOUND)
     find_package(Git QUIET)
   endif()
@@ -38,7 +38,7 @@ function(git_describe _var)
 
   execute_process(COMMAND
     "${GIT_EXECUTABLE}"
-    describe
+    #describe
     ${ARGN}
     WORKING_DIRECTORY
     "${CMAKE_SOURCE_DIR}"
@@ -55,7 +55,7 @@ function(git_describe _var)
   set(${_var} "${out}" PARENT_SCOPE)
 endfunction()
 
-git_describe(GITVERSION --long --tags --dirty --always)
+git_call(GITVERSION describe --long --tags --dirty --always)
 #parse the version information into pieces.
 string(REGEX REPLACE "^v([0-9]+)\\..*" "\\1" GITVERSION_MAJOR "${GITVERSION}")
 string(REGEX REPLACE "^v[0-9]+\\.([0-9a-z]+).*" "\\1" GITVERSION_MINOR "${GITVERSION}")
@@ -64,6 +64,8 @@ string(REGEX REPLACE "^v[0-9]+\\.[0-9a-z]+-[0-9]+-([0-9a-z]*).*" "\\1" GITVERSIO
 string(REGEX REPLACE "^v[0-9]+\\.[0-9a-z]+-[0-9]+-[0-9a-z]+" "" GITVERSION_DIRTY "${GITVERSION}")
 string(TIMESTAMP BUILD_DATE "%Y-%m-%d")
 set(GITVERSION_SHORT "${GITVERSION_MAJOR}.${GITVERSION_MINOR}")
+
+git_call(GIT_BRANCH rev-parse --abbrev-ref HEAD)
 
 IF (USE_EXPERIMENTAL)
    set(GIT_BUILD_TYPE "Experimental")
@@ -78,6 +80,7 @@ message("Git version count ${GITVERSION_COUNT}")
 message("Git version sha1  ${GITVERSION_SHA1}")
 message("Git version short ${GITVERSION_SHORT}")
 message("Git version dirty ${GITVERSION_DIRTY}")
+message("Git branch ${GIT_BRANCH}")
 message("Build tag v${GITVERSION_MAJOR}.${GITVERSION_MINOR}-${GITVERSION_COUNT}-${GIT_BUILD_TYPE}-${GITVERSION_SHA1}${GITVERSION_DIRTY}")
 message("Build date ${BUILD_DATE}")
 
@@ -86,7 +89,8 @@ message(WARNING "Git version dirty: ${GITVERSION}")
 endif()
 
 # write a file with the GITREVISION define
-file(WRITE  gitrevision.h.txt "#define GITVERSION       \"${GITVERSION}\"\n")
+file(WRITE  gitrevision.h.txt "#pragma once\n")
+file(APPEND gitrevision.h.txt "#define GITVERSION       \"${GITVERSION}\"\n")
 file(APPEND gitrevision.h.txt "#define GITVERSION_MAJOR \"${GITVERSION_MAJOR}\"\n")
 file(APPEND gitrevision.h.txt "#define GITVERSION_MINOR \"${GITVERSION_MINOR}\"\n")
 file(APPEND gitrevision.h.txt "#define GIT_BUILD_TYPE   \"${GIT_BUILD_TYPE}\"\n")
@@ -107,6 +111,11 @@ CONFIGURE_FILE(
 	${CMAKE_SOURCE_DIR}/msi/gitrevision.wxi.cmake
 	${CMAKE_SOURCE_DIR}/gitrevision.wxi
 	@ONLY
+)	
+CONFIGURE_FILE(
+	${CMAKE_SOURCE_DIR}/msi/gitrevision.bat.cmake
+	${CMAKE_SOURCE_DIR}/gitrevision.bat
+	@ONLY	
 )
 ENDIF()
 
