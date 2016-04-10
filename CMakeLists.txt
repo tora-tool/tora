@@ -48,6 +48,8 @@ SET(CMAKE_INCLUDE_CURRENT_DIR TRUE)
 #Set the custom CMake module directory where our include/lib finders are
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 
+SET(RPM_SPEC "tora.generated.spec")
+
 FIND_PACKAGE(Git)
 IF(GIT_FOUND AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
   # a custom target that is always built
@@ -57,7 +59,6 @@ IF(GIT_FOUND AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
   -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
   -DUSE_EXPERIMENTAL=${USE_EXPERIMENTAL}
   -DTARGET_NAME=revisiontag
-  -DRPM_SPEC=${RPM_SPEC}
   -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/getgit.cmake)
   add_definitions("-DHAVE_GITREVISION_H=1")
   include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/getgit.cmake)
@@ -404,7 +405,6 @@ add_custom_target(dist COMMAND ${CMAKE_MAKE_PROGRAM} package_source)
 
 
 IF (WANT_RPM)
-  SET(RPM_SPEC "tora.generated.spec")  
   SET(RPM_DEFINES --define "_sourcedir ${CMAKE_SOURCE_DIR}" )
 
   # get git commit count (see rpm rpm/tora.generated.spec.cmake _revision @REVISION@
