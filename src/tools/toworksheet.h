@@ -65,6 +65,7 @@ class toResultCols;
 class toResultCombo;
 class toResultSchema;
 class toResultItem;
+class toResultModel;
 class toResultPlanExplain;
 class toResultTableView;
 class toResultStats;
