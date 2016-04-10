@@ -32,16 +32,16 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-
-#include "toversion.h"
-
 #if defined(HAVE_GITREVISION_H)
 # include "gitrevision.h"
+#else
+# include "toversion.h"
 #endif
 
 #if defined(GITVERSION) && !defined(TOBUILDTYPE_RELEASE)
+// use version defined in git tag
 # define TORAVERSION GITVERSION
 #else
+// use version define in CMakeLists.txt
 # define TORAVERSION TOVERSION
 #endif
-

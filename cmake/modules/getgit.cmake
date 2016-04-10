@@ -10,13 +10,6 @@
 # http://www.boost.org/LICENSE_1_0.txt)
 FIND_PACKAGE(Git)
 
-# write a file with the GITREVISION define
-file(WRITE gitrevision.h.txt "#define GITREVISION \"${MY_WC_REVISION}\"\n")
-file(WRITE gitrevision.txt "${MY_WC_REVISION}\n")
-# copy the file to the final header only if the revision changes
-# reduces needless rebuilds
-#execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different svnrevision.h.txt svnrevision.h)
-
 function(git_call _var)
   if(NOT GIT_FOUND)
     find_package(Git QUIET)
@@ -98,13 +91,31 @@ file(APPEND gitrevision.h.txt "#define GITVERSION_COUNT \"${GITVERSION_COUNT}\"\
 file(APPEND gitrevision.h.txt "#define GITVERSION_SHA1  \"${GITVERSION_SHA1}\"\n")
 file(APPEND gitrevision.h.txt "#define GITVERSION_SHORT \"${GITVERSION_SHORT}\"\n")
 file(APPEND gitrevision.h.txt "#define GITVERSION_DIRTY \"${GITVERSION_DIRTY}\"\n")
+file(APPEND gitrevision.h.txt "#define GIT_BRANCH       \"${GIT_BRANCH}\"\n")
 file(APPEND gitrevision.h.txt "#define BUILD_TAG        \"v${GITVERSION_MAJOR}.${GITVERSION_MINOR}-${GITVERSION_COUNT}-${GIT_BUILD_TYPE}-${GITVERSION_SHA1}${GITVERSION_DIRTY}\"\n")
 file(APPEND gitrevision.h.txt "#define BUILD_DATE       \"${BUILD_DATE}\"\n")
 file(WRITE  gitrevision.txt   "${GITVERSION}\n")
 
 # copy the file to the final header only if the revision changes
 # reduces needless rebuilds
-execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different gitrevision.h.txt gitrevision.h)
+if(TARGET_NAME)
+  # execute during build (make phase)
+  execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different gitrevision.h.txt gitrevision.h)
+else()
+  # execute during cmake (configure phase)
+  file(WRITE  gitrevision.h "#pragma once\n")
+  file(APPEND gitrevision.h "#define GITVERSION       \"${GITVERSION}\"\n")
+  file(APPEND gitrevision.h "#define GITVERSION_MAJOR \"${GITVERSION_MAJOR}\"\n")
+  file(APPEND gitrevision.h "#define GITVERSION_MINOR \"${GITVERSION_MINOR}\"\n")
+  file(APPEND gitrevision.h "#define GIT_BUILD_TYPE   \"${GIT_BUILD_TYPE}\"\n")
+  file(APPEND gitrevision.h "#define GITVERSION_COUNT \"${GITVERSION_COUNT}\"\n")
+  file(APPEND gitrevision.h "#define GITVERSION_SHA1  \"${GITVERSION_SHA1}\"\n")
+  file(APPEND gitrevision.h "#define GITVERSION_SHORT \"${GITVERSION_SHORT}\"\n")
+  file(APPEND gitrevision.h "#define GITVERSION_DIRTY \"${GITVERSION_DIRTY}\"\n")
+  file(APPEND gitrevision.h "#define GIT_BRANCH       \"${GIT_BRANCH}\"\n")
+  file(APPEND gitrevision.h "#define BUILD_TAG        \"v${GITVERSION_MAJOR}.${GITVERSION_MINOR}-${GITVERSION_COUNT}-${GIT_BUILD_TYPE}-${GITVERSION_SHA1}${GITVERSION_DIRTY}\"\n")
+  file(APPEND gitrevision.h "#define BUILD_DATE       \"${BUILD_DATE}\"\n")
+endif()
 
 IF(WIN32)
 CONFIGURE_FILE(

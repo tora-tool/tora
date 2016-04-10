@@ -6,7 +6,7 @@
 
 %define _name           tora
 
-%define _version        @VERSION@
+%define _version        @GITVERSION_SHORT@
 %define _release        @GITVERSION_COUNT@
 
 %define _iconsdir       %{_datadir}/icons
