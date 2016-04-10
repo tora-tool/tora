@@ -1,3 +1,11 @@
+tora (3.0.8-0ubuntu1) UNRELEASED; urgency=medium
+
+  * Fix for bug #24 Bindings variables
+  * Fix for bug #25 Database link does not work
+  * Partial fix for bug #26 no feedback on updated or deleted rows
+
+ -- Ivan Brezina <ivan@haf>  Sun, 10 Apr 2016 20:57:39 +0200
+
 tora (3.0.0-1ubuntu1) RELEASED; urgency=medium
 
   * New Upstream version 3.0.0
