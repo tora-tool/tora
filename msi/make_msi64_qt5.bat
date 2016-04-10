@@ -16,7 +16,9 @@ for /f "tokens=2*" %%a in ('REG QUERY %HKEY09% /ve') do set "AppPath=%%~b\..\bin
 if exist "%AppPath%"\ SET PATH=%AppPath%;%PATH%
 echo %AppPath%
 
-set BUILD_NUMBER=
+call ../gitrevision.bat
+set BUILD_NUMBER="%GITVERSION_SHORT%.%GITVERSION_COUNT%.%GIT_BUILD_TYPE%"
+echo "Build number: %BUILD_NUMBER%"
 
 REM SVN version (not used anymore)
 REM for /F "tokens=1,2"  %%t  in ('svn info') do @if "%%t"=="Revision:" set BUILD_NUMBER=%%u
@@ -50,7 +52,7 @@ signtool sign /v /f "OSD Ivan Brezina.p12" /P %PASS% ^
 del heat.wxs
 heat dir %BUILD_ABS_PATH% -var env.BUILD_ABS_PATH -cg ToraFiles -dr APPLICATIONFOLDER -suid -srd -sreg -gg -ag -out heat.wxs -t heat.xsl
 candle.exe -arch x64 tora-qt5.wxs heat.wxs MyWixUI_Advanced.wxs
-light.exe -ext WixUIExtension -o Tora3.64bit.msi tora-qt5.wixobj heat.wixobj MyWixUI_Advanced.wixobj
+light.exe -ext WixUIExtension -o Tora.%BUILD_NUMBER%.64bit.msi tora-qt5.wixobj heat.wixobj MyWixUI_Advanced.wixobj
 
 if exist "OSD Ivan Brezina.p12" (
 signtool sign /v /f "OSD Ivan Brezina.p12" /P %PASS% ^
@@ -65,5 +67,5 @@ signtool sign /v /f "OSD Ivan Brezina.p12" /P %PASS% ^
 pushd %cd%
 cd %BUILD_ABS_PATH%
 cd ..
-zip -r Tora3.64bit.zip Tora
+zip -r Tora.%BUILD_NUMBER%.64bit.zip Tora
 popd
