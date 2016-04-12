@@ -214,7 +214,7 @@ static toSQL SQLStopProfiler("toProfiler:StopProfiler",
 
 class toProfilerTool : public toTool
 {
-        virtual const char **pictureXPM(void)
+        const char **pictureXPM(void) override
         {
             return const_cast<const char**>(clock_xpm);
         }
@@ -222,15 +222,19 @@ class toProfilerTool : public toTool
         toProfilerTool()
             : toTool(120, "PL/SQL Profiler")
         { }
-        virtual const char *menuItem()
+        const char *menuItem() override
         {
             return "PL/SQL Profiler";
         }
-        virtual toToolWidget* toolWindow(QWidget *parent, toConnection &connection)
+        bool canHandle(const toConnection &conn)
+        {
+            return conn.providerIs("Oracle");
+        }
+        toToolWidget* toolWindow(QWidget *parent, toConnection &connection) override
         {
             return new toProfiler(parent, connection);
         }
-        virtual void closeWindow(toConnection &connection) {};
+        void closeWindow(toConnection &connection) override {};
 };
 
 static toProfilerTool ProfilerTool;

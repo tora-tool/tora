@@ -44,24 +44,6 @@
 class QSqlQuery;
 class toQMySqlConnectionSub;
 
-struct toQSqlProviderAggregate
-{
-    enum aggregateType
-    {
-        None,
-        AllDatabases,
-        AllTables,
-        CurrentDatabase,
-        SpecifiedDatabase
-    } Type;
-
-    QString Data;
-
-    toQSqlProviderAggregate() : Type(None) { }
-
-    toQSqlProviderAggregate(aggregateType type, const QString &data = QString::null) : Type(type), Data(data) { }
-};
-
 class mysqlQuery : public qsqlQuery
 {
     public:

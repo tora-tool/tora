@@ -100,7 +100,7 @@ class toOutputTool : public toTool
     protected:
         std::map<toConnection *, QWidget *> Windows;
 
-        virtual const char **pictureXPM(void)
+        const char **pictureXPM(void) override
         {
             return const_cast<const char**>(tooutput_xpm);
         }
@@ -111,9 +111,14 @@ class toOutputTool : public toTool
         {
         }
 
-        virtual const char *menuItem()
+        const char *menuItem() override
         {
             return "SQL Output";
+        }
+
+        bool canHandle(const toConnection &conn) override
+        {
+            return conn.providerIs("Oracle");
         }
 
         virtual toToolWidget *toolWindow(QWidget *parent, toConnection &connection)
@@ -133,14 +138,14 @@ class toOutputTool : public toTool
             }
         }
 
-        void closeWindow(toConnection &connection)
+        void closeWindow(toConnection &connection) override
         {
             std::map<toConnection *, QWidget *>::iterator i = Windows.find(&connection);
             if (i != Windows.end())
                 Windows.erase(i);
         }
 
-        virtual QWidget *configurationTab(QWidget *parent)
+        QWidget *configurationTab(QWidget *parent) override
         {
             return new toOutputSetting(this, parent);
         }

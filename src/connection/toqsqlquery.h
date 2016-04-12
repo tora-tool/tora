@@ -43,6 +43,24 @@
 class QSqlQuery;
 class toQSqlConnectionSub;
 
+struct toQSqlProviderAggregate
+{
+    enum aggregateType
+    {
+        None,
+        AllDatabases,
+        AllTables,
+        CurrentDatabase,
+        SpecifiedDatabase
+    } Type;
+
+    QString Data;
+
+    toQSqlProviderAggregate() : Type(None) { }
+
+    toQSqlProviderAggregate(aggregateType type, const QString &data = QString::null) : Type(type), Data(data) { }
+};
+
 class qsqlQuery : public queryImpl
 {
     public:
@@ -66,6 +84,8 @@ class qsqlQuery : public queryImpl
 
         toQColumnDescriptionList describe(void) override;
     protected:
+        QString parseReorder(const QString &str);
+
         static toQColumnDescriptionList Describe(const QString &type, QSqlRecord record, int *order, unsigned int orderSize);
         static QString QueryParam(const QString &in, toQueryParams const &params, QList<QString> &extradata);
 

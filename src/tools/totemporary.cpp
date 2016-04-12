@@ -73,7 +73,7 @@ static toSQL SQLListTemporaryObjects("toTemporary:ListTemporaryObjects",
 
 class toTemporaryTool : public toTool
 {
-        virtual const char **pictureXPM(void)
+        const char **pictureXPM(void) override
         {
             return const_cast<const char**>(totemporary_xpm);
         }
@@ -81,21 +81,21 @@ class toTemporaryTool : public toTool
         toTemporaryTool()
             : toTool(130, "Temporary Objects")
         { }
-        virtual const char *menuItem()
+        const char *menuItem() override
         {
             return "Temporary Objects";
         }
-        virtual toToolWidget* toolWindow(QWidget *parent, toConnection &connection)
+        toToolWidget* toolWindow(QWidget *parent, toConnection &connection) override
         {
             return new toTemporary(parent, connection);
         }
-        virtual bool canHandle(const toConnection &conn)
+        bool canHandle(const toConnection &conn) override
         {
-            if (conn.providerIs("Oracle") || conn.version() >= "0800")
+            if (conn.providerIs("Oracle") && conn.version() >= "0800")
                 return true;
             return false;
         }
-        virtual void closeWindow(toConnection &connection) {};
+        void closeWindow(toConnection &connection) override {};
 };
 
 static toTemporaryTool TemporaryTool;

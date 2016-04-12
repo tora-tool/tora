@@ -113,7 +113,8 @@ mysqlQuery::~mysqlQuery()
 
 void mysqlQuery::execute(void)
 {
-    Query = createQuery(query()->sql());
+    QString sql = qsqlQuery::QueryParam(parseReorder(query()->sql()), query()->params(), QList<QString>());
+    Query = createQuery(sql);
     checkQuery();
 }
 

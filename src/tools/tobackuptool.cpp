@@ -34,9 +34,9 @@
 
 #include "tools/tobackuptool.h"
 #include "tools/tobackup.h"
+#include "core/toconnection.h"
 
 #include "icons/tobackup.xpm"
-
 
 const char** toBackupTool::pictureXPM(void)
 {
@@ -65,6 +65,11 @@ toToolWidget* toBackupTool::toolWindow(QWidget *parent, toConnection &connection
         Windows[&connection] = window;
         return window;
     }
+}
+
+bool toBackupTool::canHandle(const toConnection &conn)
+{
+    return conn.providerIs("Oracle");
 }
 
 void toBackupTool::closeWindow(toConnection &connection)

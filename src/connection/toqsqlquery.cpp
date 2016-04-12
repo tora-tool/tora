@@ -76,7 +76,7 @@ void qsqlQuery::execute(void)
     Query = NULL;
 
     QList<QString> empty;
-    //QString sql = qsqlQuery::QueryParam(parseReorder(query()->sql()), query()->params(), empty);
+    QString sql = qsqlQuery::QueryParam(parseReorder(query()->sql()), query()->params(), empty);
     Query = createQuery(query()->sql());
 
     checkQuery();
@@ -408,10 +408,69 @@ toQColumnDescriptionList qsqlQuery::Describe(const QString &type, QSqlRecord rec
     return ret;
 }
 
+QString qsqlQuery::parseReorder(const QString &str)
+{
+    if (str.toUpper().startsWith("TOAD"))
+    {
+        std::list<int> order;
+        int num = -1;
+        int i;
+        for (i = 4; i < str.length(); i++)
+        {
+            char c = str.at(i).toLatin1();
+            if (isspace(c))
+                ;
+            else if (isdigit(c))
+            {
+                if (num < 0)
+                    num = 0;
+                num *= 10;
+                num += c - '0';
+            }
+            else if (c == '*')
+            {
+                if (num >= 0)
+                    throw QString("Invalid column selection, number before *");
+                if (c == '*')
+                {
+                    order.insert(order.end(), -1);
+                    do
+                    {
+                        i++;
+                    }
+                    while (str.at(i).isSpace());
+                    break;
+                }
+            }
+            else
+            {
+                if (num < 0)
+                    throw QString("Invalid column selection, number missing");
+                order.insert(order.end(), num);
+                num = -1;
+                if (c != ',')
+                    break;
+            }
+        }
+        ColumnOrderSize = order.size();
+        if (ColumnOrderSize == 0)
+            throw QString("Missing column selection");
+        delete[] ColumnOrder;
+        ColumnOrder = new int[ColumnOrderSize];
+        int pos = 0;
+        for (std::list<int>::iterator j = order.begin(); j != order.end(); j++, pos++)
+            ColumnOrder[pos] = *j;
+
+        return str.mid(i);
+    }
+    else
+        return str;
+}
+
 QString qsqlQuery::QueryParam(const QString &in, toQueryParams const &params, QList<QString> &extradata)
 {
     QString ret = in;
-#if 0
+#if 1
     bool inString = false;
     toQueryParams::const_iterator cpar = params.constBegin();
     QString query = QString(in);
