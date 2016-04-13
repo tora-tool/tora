@@ -121,7 +121,7 @@ void toRollbackSetting::saveSetting(void)
 class toRollbackTool : public toTool
 {
     protected:
-        virtual const char **pictureXPM(void)
+        const char **pictureXPM(void) override
         {
             return const_cast<const char**>(torollback_xpm);
         }
@@ -129,19 +129,23 @@ class toRollbackTool : public toTool
         toRollbackTool()
             : toTool(220, "Rollback Segments")
         { }
-        virtual const char *menuItem()
+        const char *menuItem() override
         {
             return "Rollback Segments";
         }
-        virtual toToolWidget* toolWindow(QWidget *parent, toConnection &connection)
+        bool canHandle(const toConnection &conn) override
+        {
+        	return false;
+        }
+        toToolWidget* toolWindow(QWidget *parent, toConnection &connection) override
         {
             return new toRollback(parent, connection);
         }
-        virtual QWidget* configurationTab(QWidget *parent)
+        QWidget* configurationTab(QWidget *parent) override
         {
             return new toRollbackSetting(this, parent);
         }
-        virtual void closeWindow(toConnection &connection) {};
+        void closeWindow(toConnection &connection) override {};
     private:
         static ToConfiguration::Rollback s_rollbackConfig;
 };

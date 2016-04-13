@@ -61,6 +61,7 @@ QList<QString> mysqlQuery::extraData(const toQSqlProviderAggregate &aggr)
     const QList<toCache::CacheEntry const*> &objects = query()->connection().getCache().entries(false);
     for (QList<toCache::CacheEntry const*>::const_iterator i = objects.begin(); i != objects.end(); i++)
     {
+    	auto t = (*i)->type;
         if ((*i)->type == toCache::DATABASE && aggr.Type == toQSqlProviderAggregate::AllDatabases)
         {
             ret << (*i)->name.first;
@@ -113,8 +114,29 @@ mysqlQuery::~mysqlQuery()
 
 void mysqlQuery::execute(void)
 {
-    QString sql = qsqlQuery::QueryParam(parseReorder(query()->sql()), query()->params(), QList<QString>());
-    Query = createQuery(sql);
+    try
+    {
+		QString sql = qsqlQuery::QueryParam(parseReorder(query()->sql()), query()->params(), QList<QString>());
+    	Query = createQuery(sql);
+    }
+    catch (const toQSqlProviderAggregate &aggr)
+    {
+    	ExtraData = extraData(aggr);
+    	if (ExtraData.begin() != ExtraData.end())
+    		CurrentExtra = *ExtraData.begin();
+
+    	QString t = QueryParam(parseReorder(query()->sql()), query()->params(), ExtraData);
+    	if (t.isEmpty())
+    	{
+    		Utils::toStatusMessage("Nothing to send to aggregate query");
+    		Query = NULL;
+    		EOQ = true;
+    		return;
+    	}
+    	else
+    		Query = createQuery(t);
+    }
+
     checkQuery();
 }
 
