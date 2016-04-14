@@ -116,7 +116,8 @@ void mysqlQuery::execute(void)
 {
     try
     {
-		QString sql = qsqlQuery::QueryParam(parseReorder(query()->sql()), query()->params(), QList<QString>());
+    	QList<QString> empty;
+    	QString sql = qsqlQuery::QueryParam(parseReorder(query()->sql()), query()->params(), empty);
     	Query = createQuery(sql);
     }
     catch (const toQSqlProviderAggregate &aggr)
