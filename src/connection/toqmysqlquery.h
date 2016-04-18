@@ -70,19 +70,18 @@ class mysqlQuery : public qsqlQuery
         toQColumnDescriptionList describe(QSqlRecord record);
         QString stripBinds(const QString &in);
         void bindParam(QSqlQuery *q, toQueryParams const &params);
-        QString queryParam(const QString &in, toQueryParams const &params);
+        QStringList queryParam(const QString &in, toQueryParams const &params);
 
         QSqlQuery *Query;
         QSqlRecord Record;
         QStringList BindParams;
+        QStringList ExtraQuery;                            // see toAnalyze
         toQMySqlConnectionSub *Connection;
         toQColumnDescriptionList ColumnDescriptions;
         unsigned CurrentColumn;
         bool EOQ;
 
         void checkQuery(void);
-
-        QList<QString> extraData(const toQSqlProviderAggregate &aggr);
 
         QSqlQuery *createQuery(const QString &query) override;
 };

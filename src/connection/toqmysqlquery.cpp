@@ -60,21 +60,6 @@ static toSQL SQLCancelM5("toQSqlConnection:Cancel",
 
 using namespace ToConfiguration;
 
-QList<QString> mysqlQuery::extraData(const toQSqlProviderAggregate &aggr)
-{
-    QList<QString> ret;
-    const QList<toCache::CacheEntry const*> &objects = query()->connection().getCache().entries(false);
-    for (QList<toCache::CacheEntry const*>::const_iterator i = objects.begin(); i != objects.end(); i++)
-    {
-    	auto t = (*i)->type;
-        if ((*i)->type == toCache::DATABASE && aggr.Type == toQSqlProviderAggregate::AllDatabases)
-        {
-            ret << (*i)->name.first;
-        }
-    }
-    return ret;
-}
-
 QSqlQuery* mysqlQuery::createQuery(const QString &sql)
 {
     LockingPtr<QSqlDatabase> ptr(Connection->Connection, Connection->Lock);
@@ -112,29 +97,9 @@ mysqlQuery::~mysqlQuery()
 
 void mysqlQuery::execute(void)
 {
-    try
-    {
-    	QString sql = queryParam(query()->sql(), query()->params());
-    	Query = createQuery(sql);
-    }
-    catch (const toQSqlProviderAggregate &aggr)
-    {
-    	ExtraData = extraData(aggr);
-    	if (ExtraData.begin() != ExtraData.end())
-    		CurrentExtra = *ExtraData.begin();
-
-    	QString t = queryParam(query()->sql(), query()->params());
-    	if (t.isEmpty())
-    	{
-    		Utils::toStatusMessage("Nothing to send to aggregate query");
-    		Query = NULL;
-    		EOQ = true;
-    		return;
-    	}
-    	else
-    		Query = createQuery(t);
-    }
-
+	ExtraQuery = queryParam(query()->sql(), query()->params());
+	QString sql = ExtraQuery.takeFirst();
+	Query = createQuery(sql);
     checkQuery();
 }
 
@@ -196,6 +161,13 @@ toQValue mysqlQuery::readValue(void)
     {
         delete Query;
         Query = NULL;
+        if (!ExtraQuery.isEmpty())
+        {
+        	QString sql = ExtraQuery.takeFirst();
+        	Query = createQuery(sql);
+            checkQuery();
+        	EOQ = false;
+        }
     }
 
     return toQValue::fromVariant(retval);
@@ -413,24 +385,11 @@ void mysqlQuery::bindParam(QSqlQuery *q, toQueryParams const &params)
     }
 }
 
-QString mysqlQuery::queryParam(const QString &in, toQueryParams const &params)
+QStringList mysqlQuery::queryParam(const QString &in, toQueryParams const &params)
 {
 	bool useBinds = toConfigurationNewSingle::Instance().option(MySQL::UseBindsBool).toBool();
-    QString ret;
+    QString sql, allDatabases;
     toQueryParams::const_iterator cpar = params.constBegin();
-
-    QList<QString> databases;
-    const QList<toCache::CacheEntry const*> &objects = query()->connection().getCache().entries(false);
-    for (QList<toCache::CacheEntry const*>::const_iterator i = objects.begin(); i != objects.end(); i++)
-    {
-    	auto t = (*i)->type;
-        if ((*i)->type == toCache::DATABASE /*&& aggr.Type == toQSqlProviderAggregate::AllDatabases*/)
-        {
-            databases << (*i)->name.first;
-        }
-    }
-
-    std::map<QString, QString> binds;
 
     std::auto_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("MySQLLexer", "", "toCustomLexer");
     lexer->setStatement(in);
@@ -453,24 +412,14 @@ QString mysqlQuery::queryParam(const QString &in, toQueryParams const &params)
 				QStringList options = option.split(',');
                 QString name2 = name.leftJustified(text.length(), ' ');         // ":f1             " space padded
 
-            	toQSqlProviderAggregate aggr;
-            	if (options.contains("alldatabases"))
-            		aggr = toQSqlProviderAggregate(toQSqlProviderAggregate::AllDatabases);
-            	else
-            		aggr = toQSqlProviderAggregate(toQSqlProviderAggregate::None);
-
-            	QString tmp;
-
+                if (options.contains("alldatabases"))
+                	allDatabases = name;
+#if 0
             	if (aggr.Type == toQSqlProviderAggregate::None)
             	{
             		if (name.isEmpty())
             			break;
 
-            		if (binds.find(name) != binds.end())
-            		{
-            			ret += binds[name];
-            			break;
-            		}
             		if (cpar == params.end())
             			throw toConnection::exception("Not all bind variables supplied");
             		if ((*cpar).isNull())
@@ -497,12 +446,28 @@ QString mysqlQuery::queryParam(const QString &in, toQueryParams const &params)
             		if (!options.contains("noquote"))
             			str = toQMySqlTraits::quoteVarcharStatic(tmp);
             	}
-				binds[name] = str;
+#endif
+            	str = name2;
             	break;
             }
         }
 		start++;
-		ret.append(str);
+		sql.append(str);
+    }
+
+    QStringList ret;
+
+    if (allDatabases.isEmpty())
+    {
+    	ret << sql;
+    } else {
+    	QStringList databases = query()->connection().getCache().userList(toCache::DATABASES);
+    	Q_FOREACH(QString database, databases)
+    	{
+    		QString new_sql(sql);
+    		new_sql.replace(allDatabases, database);
+    		ret << new_sql;
+    	}
     }
     return ret;
 }

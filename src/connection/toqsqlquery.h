@@ -43,21 +43,6 @@
 class QSqlQuery;
 class toQSqlConnectionSub;
 
-struct toQSqlProviderAggregate
-{
-    enum aggregateType
-    {
-        None,
-        AllDatabases
-    } Type;
-
-    QString Data;
-
-    toQSqlProviderAggregate() : Type(None) { }
-
-    toQSqlProviderAggregate(aggregateType type, const QString &data = QString::null) : Type(type), Data(data) { }
-};
-
 class qsqlQuery : public queryImpl
 {
     public:
