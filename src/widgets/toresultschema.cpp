@@ -137,7 +137,8 @@ void toResultSchema::slotUsersFromCache(void)
 void toResultSchema::slotQueryDone(void)
 {
     QAbstractItemModel const* m = model();
-    QList<toCache::CacheEntry*> users;
+    QList<toCache::CacheEntry*> entries;
+    bool isOracle = connection().providerIs("Oracle");
 
     for (int i = 0; i < m->rowCount(); i++)
     {
@@ -145,9 +146,16 @@ void toResultSchema::slotQueryDone(void)
         QString s = m->data(idx).toString();
         if (Additional.contains(s))
             continue;
-        users << new toCacheEntryUser(s);
+        if (isOracle)
+        	entries << new toCacheEntryUser(s);
+        else
+        	entries << new toCacheEntryDatabase(s);
     }
-    connection().getCache().upsertUserList(users);
+
+    if (isOracle)
+    	connection().getCache().upsertUserList(entries);
+    else
+    	connection().getCache().upsertUserList(entries, toCache::DATABASES);
     toResultCombo::slotQueryDone();
 }
 

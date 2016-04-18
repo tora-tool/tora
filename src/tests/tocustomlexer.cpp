@@ -164,7 +164,7 @@ void toCustomLexer::setOracle()
 
 void toCustomLexer::setMySQL()
 {
-    lexer = LexerFactTwoParmSing::Instance().create("mySQLGuiLexer", "", "toCustomLexer");
+    lexer = LexerFactTwoParmSing::Instance().create("MySQLGuiLexer", "", "toCustomLexer");
     styleText(0, editor()->text().length()-1);
 }
 

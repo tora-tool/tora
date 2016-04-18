@@ -59,7 +59,7 @@ SHIFT_RIGHT                     : '>>' ;
 ALL_FIELDS                      : '.*' ;
 
 SEMI                            : ';' ;
-COLON                           : ':' ;
+//COLON                           : ':' ;
 DOT                             : '.' ;
 COMMA                           : ',' ;
 ASTERISK                        : '*' ;
@@ -141,6 +141,13 @@ STRING_LITERAL: TEXT_STRING /*| USER_VAR_SUBFIX2 | USER_VAR_SUBFIX3*/ | USER_VAR
 // Bind variables
 BIND_VAR:
         '?'
+        (
+            LTH ID (LBRACK UNSIGNED_INTEGER RPAREN)? GTH { $type = BIND_VAR_WITH_PARAMS; }
+        )?
+;
+
+BIND_VAR_WITH_NAME:
+        ':' ID
         (
             LTH ID (LBRACK UNSIGNED_INTEGER RPAREN)? GTH { $type = BIND_VAR_WITH_PARAMS; }
         )?

@@ -31,8 +31,7 @@
  * All trademarks belong to their respective owners.
  *
  * END_COMMON_COPYRIGHT_HEADER */
-#ifndef __QMYSQL_TRAITS__
-#define __QMYSQL_TRAITS__
+#pragma once
 
 #include "core/toconnectiontraits.h"
 
@@ -44,33 +43,74 @@ class toQMySqlTraits: public toConnectionTraits
         * @param quoteLowercase Enclose in quotes when identifier has lowercase letters
         * @return String addressing table.
         */
-        virtual QString quote(const QString &name) const;
+        QString quote(const QString &name) const override;
 
         /** Perform the opposite of @ref quote.
         * @param name The name to be un-quoted.
         * @return String addressing table.
         */
-        virtual QString unQuote(const QString &name) const;
+        QString unQuote(const QString &name) const override;
 
         /** Generate SQL statement for Schema switch
          * @param Schema/(Database) name
          * @return SQL statement
          */
-        virtual QString schemaSwitchSQL(QString const&) const;
+        QString schemaSwitchSQL(QString const&) const override;
 
         /** Check if connection provider supports table level comments.
          *  @return bool return true if database supports table level comments
          *  See toSql: toResultCols:TableComment
          */
-        virtual bool hasTableComments() const
+        bool hasTableComments() const override
         {
             return false;
         }
 
-        virtual bool hasAsyncBreak() const
+        bool hasAsyncBreak() const override
         {
             return false;
+        }
+
+        QString quoteVarchar(const QString &name) const override
+        {
+        	return quoteVarcharStatic(name);
+        }
+
+        static QString quoteVarcharStatic(const QString &name)
+        {
+        	QString retval;
+        	retval.append('\'');
+        	for (int j = 0; j < name.length(); j++)
+        	{
+        		QChar d = name.at(j);
+        		switch (d.toLatin1())
+        		{
+        		case 0:
+        			retval += QString::fromLatin1("\\0");
+        			break;
+        		case '\n':
+        			retval += QString::fromLatin1("\\n");
+        			break;
+        		case '\t':
+        			retval += QString::fromLatin1("\\t");
+        			break;
+        		case '\r':
+        			retval += QString::fromLatin1("\\r");
+        			break;
+        		case '\'':
+        			retval += QString::fromLatin1("\\\'");
+        			break;
+        		case '\"':
+        			retval += QString::fromLatin1("\\\"");
+        			break;
+        		case '\\':
+        			retval += QString::fromLatin1("\\\\");
+        			break;
+        		default:
+        			retval += d;
+        		}
+        	}
+        	retval.append('\'');
+        	return retval;
         }
 };
-
-#endif

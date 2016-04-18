@@ -34,6 +34,9 @@
 
 #include "connection/toqmysqlquery.h"
 #include "connection/toqmysqlprovider.h"
+#include "connection/toqmysqltraits.h"
+#include "connection/toqmysqlsetting.h"
+#include "core/toconfiguration.h"
 #include "core/tosql.h"
 #include "core/tocache.h"
 #include "core/utils.h"
@@ -55,6 +58,8 @@ static toSQL SQLCancelM5("toQSqlConnection:Cancel",
                          "0500",
                          "QMYSQL");
 
+using namespace ToConfiguration;
+
 QList<QString> mysqlQuery::extraData(const toQSqlProviderAggregate &aggr)
 {
     QList<QString> ret;
@@ -65,13 +70,6 @@ QList<QString> mysqlQuery::extraData(const toQSqlProviderAggregate &aggr)
         if ((*i)->type == toCache::DATABASE && aggr.Type == toQSqlProviderAggregate::AllDatabases)
         {
             ret << (*i)->name.first;
-        }
-        else if ((*i)->type == toCache::TABLE)
-        {
-            if (aggr.Type == toQSqlProviderAggregate::AllTables ||
-                    (aggr.Type == toQSqlProviderAggregate::CurrentDatabase && (*i)->name.first == query()->connection().user()) ||
-                    (aggr.Type == toQSqlProviderAggregate::SpecifiedDatabase && (*i)->name.first == aggr.Data))
-                ret << ((*i)->name.first + "." + (*i)->name.second);
         }
     }
     return ret;
@@ -116,8 +114,7 @@ void mysqlQuery::execute(void)
 {
     try
     {
-    	QList<QString> empty;
-    	QString sql = qsqlQuery::QueryParam(parseReorder(query()->sql()), query()->params(), empty);
+    	QString sql = queryParam(query()->sql(), query()->params());
     	Query = createQuery(sql);
     }
     catch (const toQSqlProviderAggregate &aggr)
@@ -126,7 +123,7 @@ void mysqlQuery::execute(void)
     	if (ExtraData.begin() != ExtraData.end())
     		CurrentExtra = *ExtraData.begin();
 
-    	QString t = QueryParam(parseReorder(query()->sql()), query()->params(), ExtraData);
+    	QString t = queryParam(query()->sql(), query()->params());
     	if (t.isEmpty())
     	{
     		Utils::toStatusMessage("Nothing to send to aggregate query");
@@ -374,7 +371,7 @@ QString mysqlQuery::stripBinds(const QString &in)
 {
     BindParams.clear();
     QString retval;
-    std::auto_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("mySQLGuiLexer", "", "toCustomLexer");
+    std::auto_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("MySQLLexer", "", "toCustomLexer");
     lexer->setStatement(in);
 
     SQLLexer::Lexer::token_const_iterator start = lexer->begin();
@@ -414,4 +411,98 @@ void mysqlQuery::bindParam(QSqlQuery *q, toQueryParams const &params)
         q->bindValue(BindParams.at(i), params.at(i).displayData());
         TLOG(6, toDecorator, __HERE__) << "	Binding " << BindParams.at(i) << " <= " << params.at(i).displayData() << std::endl;
     }
+}
+
+QString mysqlQuery::queryParam(const QString &in, toQueryParams const &params)
+{
+	bool useBinds = toConfigurationNewSingle::Instance().option(MySQL::UseBindsBool).toBool();
+    QString ret;
+    toQueryParams::const_iterator cpar = params.constBegin();
+
+    QList<QString> databases;
+    const QList<toCache::CacheEntry const*> &objects = query()->connection().getCache().entries(false);
+    for (QList<toCache::CacheEntry const*>::const_iterator i = objects.begin(); i != objects.end(); i++)
+    {
+    	auto t = (*i)->type;
+        if ((*i)->type == toCache::DATABASE /*&& aggr.Type == toQSqlProviderAggregate::AllDatabases*/)
+        {
+            databases << (*i)->name.first;
+        }
+    }
+
+    std::map<QString, QString> binds;
+
+    std::auto_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("MySQLLexer", "", "toCustomLexer");
+    lexer->setStatement(in);
+
+    SQLLexer::Lexer::token_const_iterator start = lexer->begin();
+    while (start->getTokenType() != SQLLexer::Token::X_EOF)
+    {
+    	QString str = start->getText();
+        switch (start->getTokenType())
+        {
+            case SQLLexer::Token::L_BIND_VAR:
+            	break;
+            case SQLLexer::Token::L_BIND_VAR_WITH_PARAMS:
+            {
+                QString text = start->getText();                                // ":f1<alldatabases>", ":f1<varchar,noquote>" or ":f1<int>"
+                QString name = text.left(text.indexOf('<'));                    // ":f1"
+                QString bindname = name.mid(1);                                 // "f1"
+				QString option = text.mid(text.indexOf('<') + 1); 
+				option.chop(1);                                                 //  "alldatabases" or "varchar,noquote"
+				QStringList options = option.split(',');
+                QString name2 = name.leftJustified(text.length(), ' ');         // ":f1             " space padded
+
+            	toQSqlProviderAggregate aggr;
+            	if (options.contains("alldatabases"))
+            		aggr = toQSqlProviderAggregate(toQSqlProviderAggregate::AllDatabases);
+            	else
+            		aggr = toQSqlProviderAggregate(toQSqlProviderAggregate::None);
+
+            	QString tmp;
+
+            	if (aggr.Type == toQSqlProviderAggregate::None)
+            	{
+            		if (name.isEmpty())
+            			break;
+
+            		if (binds.find(name) != binds.end())
+            		{
+            			ret += binds[name];
+            			break;
+            		}
+            		if (cpar == params.end())
+            			throw toConnection::exception("Not all bind variables supplied");
+            		if ((*cpar).isNull())
+            		{
+            			str = QString::fromLatin1("NULL");
+            		}
+            		else if ((*cpar).isInt() || (*cpar).isDouble())
+            		{
+            			str = QString(*cpar);
+            		}
+            		tmp = (*cpar);
+            		cpar++;
+            	}
+
+            	if (str.isNull())
+            	{
+            		if (aggr.Type != toQSqlProviderAggregate::None)
+            		{
+            			{
+            				aggr.Data = tmp;
+            				throw aggr;
+            			}
+            		}
+            		if (!options.contains("noquote"))
+            			str = toQMySqlTraits::quoteVarcharStatic(tmp);
+            	}
+				binds[name] = str;
+            	break;
+            }
+        }
+		start++;
+		ret.append(str);
+    }
+    return ret;
 }

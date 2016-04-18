@@ -286,7 +286,8 @@ class TORA_EXPORT toCache : public QObject
         enum UserListType
         {
             USERS,
-            OWNERS
+            OWNERS,
+			DATABASES
         };
 
         /** Constructuctors, destructors
@@ -398,8 +399,8 @@ class TORA_EXPORT toCache : public QObject
         QMap<ObjectRef, CacheEntry const*> entryMap;
         QMap<ObjectRef, CacheEntry const*> synonymMap;
         QMap<QString, CacheEntry const*> columnCache;
-        QMap<QString, CacheEntry const*> ownersMap, usersMap;
-        bool ownersRead, usersRead;
+        QMap<QString, CacheEntry const*> ownersMap, usersMap, databasesMap;
+        bool ownersRead, usersRead, databasesRead;
         toConnection &parentConn;
 
         /** Return the file used to store cache contents for this connection.
@@ -542,7 +543,7 @@ class toCacheEntryTrigger: public toCache::CacheEntry
 class toCacheEntryDatabase: public toCache::CacheEntry
 {
     public:
-        toCacheEntryDatabase(const QString &owner, const QString &name, const QString &comment = QString::null);
+        toCacheEntryDatabase(const QString &name, const QString &comment = QString::null);
 
     private:
 };

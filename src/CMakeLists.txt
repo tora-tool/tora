@@ -561,6 +561,7 @@ SET(TORA_SOURCES
   parsing/tsqllexeroracle2.cc
   parsing/MySQLGuiLexer.cc
   parsing/tsqllexermysql.cc
+  parsing/tsqllexermysql2.cc
   parsing/MySQLLexer.cc
   parsing/tolexeroracleapis.cpp
   core/persistenttrie.cpp

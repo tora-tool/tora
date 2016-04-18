@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef __QMYSQL_PROVIDER__
-#define __QMYSQL_PROVIDER__
+#pragma once
 
 #include "connection/toqsqlprovider.h"
 #include "connection/toqsqlconnection.h"
@@ -80,5 +79,3 @@ class toQMySqlProvider : public toQSqlProvider
     private:
         static QString m_name, m_displayName;
 };
-
-#endif
