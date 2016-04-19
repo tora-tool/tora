@@ -1127,7 +1127,7 @@ BIND_VAR
 BIND_VAR_WITH_NAME:
         ':' ID
         (
-            LTH ID (LBRACK UNSIGNED_INTEGER RPAREN)? GTH { $type = BIND_VAR_WITH_PARAMS; }
+            LTH ID (LBRACK UNSIGNED_INTEGER RBRACK)? GTH { $type = BIND_VAR_WITH_PARAMS; }
         )?
 ;
 

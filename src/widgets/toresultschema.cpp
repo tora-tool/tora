@@ -90,9 +90,15 @@ void toResultSchema::query(const QString &sql, toQueryParams const& param)
     //if (!setSqlAndParams(sql, param))
     //	return ;
 
-    if (connection().getCache().userListExists(toCache::USERS))
+	// Mysql way
+    if (connection().getCache().userListExists(toCache::DATABASES))
     {
         slotUsersFromCache();
+    }
+    // Oracle way
+    else if (connection().getCache().userListExists(toCache::USERS))
+    {
+    	slotUsersFromCache();
     }
     else
     {
@@ -120,7 +126,13 @@ void toResultSchema::slotUsersFromCache(void)
         if (Additional[i] == Selected)
             setCurrentIndex(i);
 
-    QStringList users = connection().getCache().userList(toCache::USERS);
+    QStringList users;
+
+    if (connection().providerIs("Oracle"))
+    	users = connection().getCache().userList(toCache::USERS);
+    else
+    	users = connection().getCache().userList(toCache::DATABASES);
+
     for (QStringList::iterator i = users.begin(); i != users.end(); i++)
     {
         QString t = (*i);

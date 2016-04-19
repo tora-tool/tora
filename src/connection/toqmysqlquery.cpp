@@ -62,9 +62,7 @@ using namespace ToConfiguration;
 
 QSqlQuery* mysqlQuery::createQuery(const QString &sql)
 {
-    LockingPtr<QSqlDatabase> ptr(Connection->Connection, Connection->Lock);
-
-    QSqlQuery *ret = new QSqlQuery(*ptr);
+    QSqlQuery *ret = new QSqlQuery(Connection->Connection);
     ret->setForwardOnly(true);
 
     if (!query()->params().empty())
@@ -92,11 +90,13 @@ mysqlQuery::mysqlQuery(toQueryAbstr *query, toQMySqlConnectionSub *conn)
 
 mysqlQuery::~mysqlQuery()
 {
+    LockingPtr<QSqlDatabase> ptr(Connection->Connection, Connection->Lock);
     delete Query;
 }
 
 void mysqlQuery::execute(void)
 {
+	LockingPtr<QSqlDatabase> ptr(Connection->Connection, Connection->Lock);
 	ExtraQuery = queryParam(query()->sql(), query()->params());
 	QString sql = ExtraQuery.takeFirst();
 	Query = createQuery(sql);
@@ -105,11 +105,13 @@ void mysqlQuery::execute(void)
 
 void mysqlQuery::execute(QString const& sql)
 {
+    LockingPtr<QSqlDatabase> ptr(Connection->Connection, Connection->Lock);
     Query = createQuery(sql);
     checkQuery();
 }
 void mysqlQuery::cancel(void)
 {
+    LockingPtr<QSqlDatabase> ptr(Connection->Connection, Connection->Lock);
     if (!Connection->ConnectionID.isEmpty())
     {
         try
@@ -138,12 +140,13 @@ void mysqlQuery::cancel(void)
 
 toQValue mysqlQuery::readValue(void)
 {
+    LockingPtr<QSqlDatabase> ptr(Connection->Connection, Connection->Lock);
+
     if (!Query)
         throw toConnection::exception(QString::fromLatin1("Fetching from not executed query"));
     if (EOQ)
         throw toConnection::exception(QString::fromLatin1("Tried to read past end of query"));
 
-    LockingPtr<QSqlDatabase> ptr(Connection->Connection, Connection->Lock);
     QVariant retval;
     {
         retval = Query->value(CurrentColumn);
@@ -213,7 +216,6 @@ toQColumnDescriptionList mysqlQuery::describe(void)
 
 void mysqlQuery::checkQuery(void) // Must *not* call while locked
 {
-    LockingPtr<QSqlDatabase> ptr(Connection->Connection, Connection->Lock);
     if (!Query->isActive())
     {
         QString msg = QString::fromLatin1("Query not active ");
@@ -391,7 +393,7 @@ QStringList mysqlQuery::queryParam(const QString &in, toQueryParams const &param
     QString sql, allDatabases;
     toQueryParams::const_iterator cpar = params.constBegin();
 
-    std::auto_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("MySQLLexer", "", "toCustomLexer");
+    std::auto_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("MySQLGuiLexer", "", "toCustomLexer");
     lexer->setStatement(in);
 
     SQLLexer::Lexer::token_const_iterator start = lexer->begin();
@@ -401,6 +403,10 @@ QStringList mysqlQuery::queryParam(const QString &in, toQueryParams const &param
         switch (start->getTokenType())
         {
             case SQLLexer::Token::L_BIND_VAR:
+            	if (useBinds)
+            		BindParams << str;
+            	else
+            		str = toQMySqlTraits::quoteVarcharStatic(str);
             	break;
             case SQLLexer::Token::L_BIND_VAR_WITH_PARAMS:
             {
@@ -413,13 +419,13 @@ QStringList mysqlQuery::queryParam(const QString &in, toQueryParams const &param
                 QString name2 = name.leftJustified(text.length(), ' ');         // ":f1             " space padded
 
                 if (options.contains("alldatabases"))
+                {
                 	allDatabases = name;
-#if 0
-            	if (aggr.Type == toQSqlProviderAggregate::None)
-            	{
-            		if (name.isEmpty())
-            			break;
-
+                	str = name2;
+                } else if (useBinds) {
+                	BindParams << name;
+                	str = name2;
+                } else {
             		if (cpar == params.end())
             			throw toConnection::exception("Not all bind variables supplied");
             		if ((*cpar).isNull())
@@ -429,25 +435,13 @@ QStringList mysqlQuery::queryParam(const QString &in, toQueryParams const &param
             		else if ((*cpar).isInt() || (*cpar).isDouble())
             		{
             			str = QString(*cpar);
-            		}
-            		tmp = (*cpar);
+            		} else
+            			str = toQMySqlTraits::quoteVarcharStatic(*cpar);
             		cpar++;
             	}
 
-            	if (str.isNull())
-            	{
-            		if (aggr.Type != toQSqlProviderAggregate::None)
-            		{
-            			{
-            				aggr.Data = tmp;
-            				throw aggr;
-            			}
-            		}
-            		if (!options.contains("noquote"))
-            			str = toQMySqlTraits::quoteVarcharStatic(tmp);
-            	}
-#endif
-            	str = name2;
+//                if (!options.contains("noquote"))
+//                	str = toQMySqlTraits::quoteVarcharStatic(*cpar);
             	break;
             }
         }
