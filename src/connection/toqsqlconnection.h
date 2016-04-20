@@ -126,14 +126,15 @@ class toQSqlConnectionImpl: public toConnection::connectionImpl
         friend class toQSqlProvider;
         friend class toQMySqlProvider;
         friend class toQPSqlProvider;
+        friend class toQODBCProvider;
     protected:
         toQSqlConnectionImpl(toConnection &conn) : toConnection::connectionImpl(conn) {};
     public:
         /** Create a new connection to the database. */
-        virtual toConnectionSub *createConnection(void);
+        toConnectionSub *createConnection(void) override;
 
         /** Close a connection to the database. */
-        virtual void closeConnection(toConnectionSub *);
+        void closeConnection(toConnectionSub *) override;
 };
 
 class toQSqlConnectionSub: public toConnectionSub

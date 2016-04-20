@@ -1017,9 +1017,9 @@ static toSQL SQLDropMySQLRoutine("toWorksheet:DropRoutine",
 //   4 - ask (if exists)
 void toWorksheet::mySQLBeforeCreate(QString &chk)
 {
-    // wether routine exists must checked if config is set to 2 (drop if exists) and 4 (ask if exists)
+    // whether routine exists must checked if config is set to 2 (drop if exists) and 4 (ask if exists)
     bool check = (toConfigurationNewSingle::Instance().option(ToConfiguration::MySQL::BeforeCreateActionInt).toInt() % 2 == 0);
-    // wether to ask or drop automatically if config is set to 3 (ask) and 4 (ask if exists)
+    // whether to ask or drop automatically if config is set to 3 (ask) and 4 (ask if exists)
     bool ask = (toConfigurationNewSingle::Instance().option(ToConfiguration::MySQL::BeforeCreateActionInt).toInt() > 2);
     bool answerYes;
 

@@ -52,7 +52,8 @@ namespace ToConfiguration
             enum OptionTypeEnum
             {
                 BreakConnectionsBool = 6000
-                                       , BeforeCreateActionInt  // #define CONF_CREATE_ACTION
+                , UseBindsBool
+                , BeforeCreateActionInt  // #define CONF_CREATE_ACTION
             };
             virtual QVariant defaultValue(int option) const
             {
@@ -60,6 +61,8 @@ namespace ToConfiguration
                 {
                     case BreakConnectionsBool :
                         return QVariant((bool)false);
+                    case UseBindsBool :
+                    	return QVariant((bool)false);
                     case BeforeCreateActionInt:
                         return QVariant((int)0);
                     default:

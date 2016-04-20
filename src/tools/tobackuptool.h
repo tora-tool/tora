@@ -24,12 +24,15 @@ class toBackupTool : public toTool
         Q_OBJECT;
     public:
         toBackupTool();
-        virtual const char *menuItem();
-        virtual toToolWidget* toolWindow(QWidget *parent, toConnection &connection);
-        void closeWindow(toConnection &connection);
+
+        const char *menuItem() override;
+        toToolWidget* toolWindow(QWidget *parent, toConnection &connection) override;
+        bool canHandle(const toConnection &conn) override;
+        void closeWindow(toConnection &connection) override;
+
     protected:
         std::map<toConnection *, QWidget *> Windows;
-        virtual const char **pictureXPM(void);
+        const char **pictureXPM(void) override;
 };
 
 #endif

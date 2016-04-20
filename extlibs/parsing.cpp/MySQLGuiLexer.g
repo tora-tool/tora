@@ -1122,9 +1122,12 @@ COMMENT_ML_END
 // Bind variables
 BIND_VAR
 	: '?'
-	| ':' ID
+;
+
+BIND_VAR_WITH_NAME:
+        ':' ID
         (
-            LTH (ID|CHAR) (LBRACK UNSIGNED_INTEGER RBRACK)? GTH { $type = BIND_VAR_WITH_PARAMS; }
+            LTH ID (LBRACK UNSIGNED_INTEGER RBRACK)? GTH { $type = BIND_VAR_WITH_PARAMS; }
         )?
 ;
 

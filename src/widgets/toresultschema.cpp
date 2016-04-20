@@ -90,9 +90,15 @@ void toResultSchema::query(const QString &sql, toQueryParams const& param)
     //if (!setSqlAndParams(sql, param))
     //	return ;
 
-    if (connection().getCache().userListExists(toCache::USERS))
+	// Mysql way
+    if (connection().getCache().userListExists(toCache::DATABASES))
     {
         slotUsersFromCache();
+    }
+    // Oracle way
+    else if (connection().getCache().userListExists(toCache::USERS))
+    {
+    	slotUsersFromCache();
     }
     else
     {
@@ -120,7 +126,13 @@ void toResultSchema::slotUsersFromCache(void)
         if (Additional[i] == Selected)
             setCurrentIndex(i);
 
-    QStringList users = connection().getCache().userList(toCache::USERS);
+    QStringList users;
+
+    if (connection().providerIs("Oracle"))
+    	users = connection().getCache().userList(toCache::USERS);
+    else
+    	users = connection().getCache().userList(toCache::DATABASES);
+
     for (QStringList::iterator i = users.begin(); i != users.end(); i++)
     {
         QString t = (*i);
@@ -137,7 +149,8 @@ void toResultSchema::slotUsersFromCache(void)
 void toResultSchema::slotQueryDone(void)
 {
     QAbstractItemModel const* m = model();
-    QList<toCache::CacheEntry*> users;
+    QList<toCache::CacheEntry*> entries;
+    bool isOracle = connection().providerIs("Oracle");
 
     for (int i = 0; i < m->rowCount(); i++)
     {
@@ -145,9 +158,16 @@ void toResultSchema::slotQueryDone(void)
         QString s = m->data(idx).toString();
         if (Additional.contains(s))
             continue;
-        users << new toCacheEntryUser(s);
+        if (isOracle)
+        	entries << new toCacheEntryUser(s);
+        else
+        	entries << new toCacheEntryDatabase(s);
     }
-    connection().getCache().upsertUserList(users);
+
+    if (isOracle)
+    	connection().getCache().upsertUserList(entries);
+    else
+    	connection().getCache().upsertUserList(entries, toCache::DATABASES);
     toResultCombo::slotQueryDone();
 }
 

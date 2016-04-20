@@ -132,6 +132,7 @@ toCache::toCache(toConnection &parentConnection, QString const &description)
     , state(NOT_STARTED)
     , ownersRead(false)
     , usersRead(false)
+    , databasesRead(false)
     , parentConn(parentConnection)
     , ConnectionDescription(description)
     , refCount(1) // we assume that we were created from 1st toConnection
@@ -178,7 +179,7 @@ toCache::CacheEntry* toCache::createCacheEntry(const QString &objOwner,	const QS
         case TRIGGER:
             return new toCacheEntryTrigger(objOwner, objName, comment);
         case DATABASE:
-            return new toCacheEntryDatabase(objOwner, objName, comment);
+            return new toCacheEntryDatabase(objName, comment);
         case USER:
             return new toCacheEntryUser(objOwner);
         default:
@@ -290,8 +291,12 @@ bool toCache::userListExists(UserListType listType) const
 {
     if (listType == USERS)
         return usersRead;
-    else
+    else if (listType == OWNERS)
         return ownersRead;
+    else if (listType == DATABASES)
+    	return databasesRead;
+    else
+    	return false;
 }
 
 /** List of database users / database object owners */
@@ -299,7 +304,7 @@ QStringList toCache::userList(UserListType listType) const
 {
     QReadLocker lock(&cacheLock);
     QStringList retval;
-    QMap<QString, CacheEntry const*> const& map = (listType == USERS ? usersMap : ownersMap);
+    QMap<QString, CacheEntry const*> const& map = (listType == USERS ? usersMap : (listType == OWNERS ? ownersMap : databasesMap));
     Q_FOREACH(CacheEntry const * e, map)
     {
         retval.append(e->name.first);
@@ -469,6 +474,20 @@ void toCache::upsertUserList(QList<CacheEntry*> const& r, UserListType listType)
             else
                 usersMap.insert(username, e);
         }
+        usersRead = true;
+    }
+    else if (listType == DATABASES)
+    {
+    	QString dbname;
+    	Q_FOREACH(CacheEntry const * e, r)
+		{
+            dbname = e->name.first;
+            if (databasesMap.contains(dbname)) // Do not replace existing entry
+                delete e;
+            else
+            	databasesMap.insert(dbname, e);
+		}
+    	databasesRead = true;
     }
     else     // listType == OWNERS
     {
@@ -491,12 +510,8 @@ void toCache::upsertUserList(QList<CacheEntry*> const& r, UserListType listType)
                     ownersMap.insert(username, e);
             }
         }
-    }
-
-    if (listType == USERS)
-        usersRead = true;
-    else
         ownersRead = true;
+    }
 }
 
 void toCache::setCacheState(CacheState c)
@@ -973,9 +988,8 @@ toCacheEntryTrigger::toCacheEntryTrigger(const QString &owner,
 {
 }
 
-toCacheEntryDatabase::toCacheEntryDatabase(const QString &owner,
-        const QString &name, const QString &comment) :
-    toCache::CacheEntry(owner, name, toCache::DATABASE, comment)
+toCacheEntryDatabase::toCacheEntryDatabase(const QString &name, const QString &comment) :
+    toCache::CacheEntry(name, name, toCache::DATABASE, comment)
 {
 }
 

@@ -43,7 +43,7 @@
 Util::RegisterInFactory<toBrowserIndexWidget, toBrowserWidgetFactory, toCache::CacheEntryType> regToBrowserIndexWidget(toCache::INDEX);
 
 static toSQL SQLIndexColsMySQL3("toBrowser:IndexCols",
-                                "SHOW INDEX FROM `:f1<noquote>`.`:f2<noquote>`",
+                                "SHOW INDEX FROM :f1<backquote>.:f2<backquote>",
                                 "Display columns on which an index is built",
                                 "0323",
                                 "QMYSQL");

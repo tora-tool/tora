@@ -155,15 +155,15 @@ inline thread_safe_log templ_get_log_ownthread( int_to_type< idxLog> *i = NULL )
     return thread_safe_log(log);
 }
 
-DOCKLET_LOG(0) // generic debug <0>
-//DISABLE_LOG(1) // exceptions debug<1>
+DOCKLET_LOG(0)   // generic debug <0>
+DISABLE_LOG(1)   // exceptions debug<1>
 DISABLE_LOG(2)
-DISABLE_LOG(3)   // debuger(disabled)
+DISABLE_LOG(3)   // debugger(disabled)
 DISABLE_LOG(4)   // data read(disabled)
 DOCKLET_LOG(5)   // connection provider finder
 DISABLE_LOG(6)   //
 DOCKLET_LOG(7)   //
-//DOCKLET_LOG(8)   // syntax analyzer, QScintilla
+DISABLE_LOG(8)   // syntax analyzer, QScintilla
 DISABLE_LOG(9)   // report focus
 
 ////////////////////////////////////////////////////////////////////////////////

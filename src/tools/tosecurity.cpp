@@ -130,7 +130,7 @@ static toSQL SQLRoleGrant("toSecurity:RoleGrant",
 class toSecurityTool : public toTool
 {
     protected:
-        virtual const char **pictureXPM(void)
+        const char **pictureXPM(void) override
         {
             return const_cast<const char**>(tosecurity_xpm);
         }
@@ -138,15 +138,19 @@ class toSecurityTool : public toTool
         toSecurityTool()
             : toTool(40, "Security Manager")
         { }
-        virtual const char *menuItem()
+        const char *menuItem() override
         {
             return "Security Manager";
         }
-        virtual toToolWidget* toolWindow(QWidget *parent, toConnection &connection)
+        bool canHandle(const toConnection &conn) override
+        {
+            return conn.providerIs("Oracle");
+        }
+        toToolWidget* toolWindow(QWidget *parent, toConnection &connection) override
         {
             return new toSecurity(parent, connection);
         }
-        virtual void closeWindow(toConnection &connection) {};
+        void closeWindow(toConnection &connection) override {};
 };
 
 static toSecurityTool SecurityTool;

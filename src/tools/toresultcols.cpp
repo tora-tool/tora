@@ -90,7 +90,7 @@
 
 static toSQL SQLTableCommentMySQL(
     "toResultCols:TableComment",
-    "SHOW TABLE STATUS FROM `:f1<noquote>` LIKE :f2<char[100]>",
+    "SHOW TABLE STATUS FROM :f1<backquote> LIKE :f2<char[100]>",
     "Display Table comment",
     "0401",
     "QMYSQL");

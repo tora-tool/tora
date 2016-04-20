@@ -73,7 +73,7 @@
 class toSessionTool : public toTool
 {
     protected:
-        virtual const char **pictureXPM(void)
+        const char **pictureXPM(void) override
         {
             return const_cast<const char**>(tosession_xpm);
         }
@@ -81,25 +81,25 @@ class toSessionTool : public toTool
         toSessionTool() : toTool(210, "Sessions")
         { }
 
-        virtual const char *menuItem()
+        const char *menuItem() override
         {
             return "Sessions";
         }
 
-        virtual toToolWidget* toolWindow(QWidget *parent, toConnection &connection)
+        toToolWidget* toolWindow(QWidget *parent, toConnection &connection)
         {
-            if (connection.providerIs("Oracle") || connection.providerIs("QPSQL"))
+            if (connection.providerIs("Oracle") || connection.providerIs("QPSQL") || connection.providerIs("QMYSQL"))
                 return new toSession(parent, connection);
 
             return NULL;
         }
 
-        virtual bool canHandle(const toConnection &conn)
+        bool canHandle(const toConnection &conn) override
         {
-            return conn.providerIs("Oracle") || conn.providerIs("QPSQL");
+            return conn.providerIs("Oracle") || conn.providerIs("QPSQL") || conn.providerIs("QMYSQL");
         }
 
-        virtual void closeWindow(toConnection &connection) {};
+        void closeWindow(toConnection &connection) override {};
 };
 
 
@@ -380,6 +380,13 @@ static toSQL SQLSessionsPg(
     "",
     "",
     "QPSQL");
+
+static toSQL SQLSessionsMySQL(
+    "toSession:ListSession",
+    "show processlist",
+    "",
+    "",
+    "QMYSQL");
 
 toSession::toSession(QWidget *main, toConnection &connection)
     : toToolWidget(SessionTool,

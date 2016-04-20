@@ -58,7 +58,7 @@
 
 class toAnalyzeTool : public toTool
 {
-        virtual const char **pictureXPM(void)
+        const char **pictureXPM(void) override
         {
             return const_cast<const char**>(toanalyze_xpm);
         }
@@ -66,17 +66,17 @@ class toAnalyzeTool : public toTool
         toAnalyzeTool()
             : toTool(320, "Statistics Manager") { }
 
-        virtual void closeWindow(toConnection &connection) {};
+        void closeWindow(toConnection &connection) override {};
 
-        virtual const char *menuItem()
+        const char *menuItem() override
         {
             return "Statistics Manager";
         }
-        virtual toToolWidget* toolWindow(QWidget *parent, toConnection &connection)
+        toToolWidget* toolWindow(QWidget *parent, toConnection &connection) override
         {
             return new toAnalyze(parent, connection);
         }
-        virtual bool canHandle(const toConnection &conn)
+        bool canHandle(const toConnection &conn) override
         {
             return conn.providerIs("Oracle") || conn.providerIs("QMYSQL") || conn.providerIs("QPSQL");
         }

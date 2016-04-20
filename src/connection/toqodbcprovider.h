@@ -56,6 +56,9 @@ class toQODBCProvider : public toQSqlProvider
             return m_displayName;
         };
 
+        /** see: @ref toConnection */
+        virtual toConnection::connectionImpl* createConnectionImpl(toConnection&);
+
 // TODO DEFINE THESE
 #if 0
         /** see: @ref toConnectionProvider::hosts() */
@@ -69,9 +72,6 @@ class toQODBCProvider : public toQSqlProvider
 
         /** see: @ref toConnectionProvider::configurationTab() */
         virtual QWidget *configurationTab(QWidget *parent);
-
-        /** see: @ref toConnection */
-        virtual toConnection::connectionImpl* createConnectionImpl(toConnection&);
 
         /** see: @ref toConnection */
         virtual toConnectionTraits* createConnectionTrait(void);

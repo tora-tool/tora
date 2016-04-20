@@ -94,7 +94,7 @@ static toSQL SQLSQLBody("toBrowser:CodeBody",
 
 // NOTE! MySQL query has an additional argument :f1 which should be set to 'FUNCTION' or 'PROCEDURE'!
 static toSQL SQLSQLBodyMySQL("toBrowser:CodeBody",
-                             "show create :f3<noquote> `:f1<noquote>`.`:f2<noquote>`;",
+                             "show create :f3<noquote> :f1<backquote>.:f2<backquote>;",
                              "",
                              "0500",
                              "QMYSQL");

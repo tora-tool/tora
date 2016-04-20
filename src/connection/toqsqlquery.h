@@ -66,8 +66,7 @@ class qsqlQuery : public queryImpl
 
         toQColumnDescriptionList describe(void) override;
     protected:
-        static toQColumnDescriptionList Describe(const QString &type, QSqlRecord record, int *order, unsigned int orderSize);
-        static QString QueryParam(const QString &in, toQueryParams const &params, QList<QString> &extradata);
+        static toQColumnDescriptionList Describe(const QString &type, QSqlRecord record);
 
         QSqlQuery *Query;
         QSqlRecord Record;
@@ -76,8 +75,6 @@ class qsqlQuery : public queryImpl
         QList<QString> ExtraData;
         bool EOQ;
         unsigned int Column;
-        unsigned int ColumnOrderSize;
-        int *ColumnOrder;
 
         void checkQuery(void);
 

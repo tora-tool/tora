@@ -205,6 +205,7 @@ const Token& mySQLGuiLexer::LA(int pos) const
 		case MySQLGuiLexer::COMMENT_SL:
 			type = Token::X_COMMENT;
 			break;
+		case MySQLGuiLexer::CommonTokenType::TOKEN_EOF - 1: // See UserGuiTraits recover()
 		case MySQLGuiLexer::TOKEN_FAILURE:
 			type = Token::X_FAILURE;
 			break;
@@ -217,6 +218,7 @@ const Token& mySQLGuiLexer::LA(int pos) const
 			type = Token::X_WHITE; 
 			break;
 		case MySQLGuiLexer::BIND_VAR:
+		case MySQLGuiLexer::BIND_VAR_WITH_NAME:
 			type = Token::L_BIND_VAR;
 			break;
 		case MySQLGuiLexer::BIND_VAR_WITH_PARAMS:
@@ -342,4 +344,4 @@ Lexer::token_const_iterator mySQLGuiLexer::findEndToken( Lexer::token_const_iter
 
 };
 
-Util::RegisterInFactory<SQLLexer::mySQLGuiLexer, LexerFactTwoParmSing> reMySQLLexStatement("mySQLGuiLexer");
+Util::RegisterInFactory<SQLLexer::mySQLGuiLexer, LexerFactTwoParmSing> reMySQLLexStatement("MySQLGuiLexer");

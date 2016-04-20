@@ -109,7 +109,7 @@ static toSQL SQLTableIndexPG("toBrowserTableWidget:TableIndex",
                              "QPSQL");
 
 static toSQL SQLTableIndexMySQL3("toBrowserTableWidget:TableIndex",
-                                 "SHOW INDEX FROM `:f1<noquote>`.`:tab<noquote>`",
+                                 "SHOW INDEX FROM :f1<backquote>.:tab<backquote>",
                                  "",
                                  "0300",
                                  "QMYSQL");
@@ -312,7 +312,7 @@ static toSQL SQLTableTriggerMysql("toBrowser:TableTrigger",
                                   "0500",
                                   "QMYSQL");
 static toSQL SQLTableInfoMysql("toBrowser:TableInformation",
-                               "show table status from `:own<noquote>` like :tab",
+                               "show table status from :own<backquote> like :tab",
                                "Display information about a table",
                                "0300",
                                "QMYSQL");

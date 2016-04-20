@@ -33,6 +33,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "connection/toqodbcprovider.h"
+#include "connection/toqsqlconnection.h"
 
 #define QT_DRIVER_NAME "QODBC"
 
@@ -42,6 +43,11 @@ QString toQODBCProvider::m_displayName = ODBC_PROVIDER;
 toQODBCProvider::toQODBCProvider(toConnectionProviderFinder::ConnectionProvirerParams const& p)
     : toQSqlProvider(p)
 {}
+
+toConnection::connectionImpl* toQODBCProvider::createConnectionImpl(toConnection &conn)
+{
+    return new toQSqlConnectionImpl(conn);
+}
 
 /*
 bool toQODBCProvider::initialize()
@@ -70,11 +76,6 @@ QList<QString> toQODBCProvider::options()
 }
 
 QWidget* toQODBCProvider::configurationTab(QWidget *parent)
-{
-	return NULL;
-}
-
-toConnection::connectionImpl* toQODBCProvider::createConnectionImpl(toConnection &con)
 {
 	return NULL;
 }
