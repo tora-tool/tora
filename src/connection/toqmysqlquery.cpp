@@ -64,17 +64,17 @@ QSqlQuery* mysqlQuery::createQuery(const QString &sql)
 {
     QSqlQuery *ret = new QSqlQuery(Connection->Connection);
     ret->setForwardOnly(true);
-
+	bool executed;
     if (!query()->params().empty())
     {
-        QString s = stripBinds(query()->sql());
+        QString s = stripBinds(sql);
         bool prepared = ret->prepare(s);
         bindParam(ret, query()->params());
-        bool executed = ret->exec();
+        executed = ret->exec();
     }
     else
     {
-        bool executed = ret->exec(sql);
+        executed = ret->exec(sql);
     }
     return ret;
 }
@@ -405,8 +405,10 @@ QStringList mysqlQuery::queryParam(const QString &in, toQueryParams const &param
             case SQLLexer::Token::L_BIND_VAR:
             	if (useBinds)
             		BindParams << str;
-            	else
-            		str = toQMySqlTraits::quoteVarcharStatic(str);
+				else {
+					str = toQMySqlTraits::quoteVarcharStatic(*cpar);
+					cpar++;
+				}
             	break;
             case SQLLexer::Token::L_BIND_VAR_WITH_PARAMS:
             {
@@ -422,6 +424,12 @@ QStringList mysqlQuery::queryParam(const QString &in, toQueryParams const &param
                 {
                 	allDatabases = name;
                 	str = name2;
+                } else if (options.contains("noquote")) {
+                	str = *cpar;
+                	cpar++;
+                } else if (options.contains("backquote")) {
+                	str = '`' + *cpar + '`';
+                	cpar++;
                 } else if (useBinds) {
                 	BindParams << name;
                 	str = name2;
@@ -440,8 +448,6 @@ QStringList mysqlQuery::queryParam(const QString &in, toQueryParams const &param
             		cpar++;
             	}
 
-//                if (!options.contains("noquote"))
-//                	str = toQMySqlTraits::quoteVarcharStatic(*cpar);
             	break;
             }
         }

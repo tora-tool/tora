@@ -218,6 +218,7 @@ const Token& mySQLGuiLexer::LA(int pos) const
 			type = Token::X_WHITE; 
 			break;
 		case MySQLGuiLexer::BIND_VAR:
+		case MySQLGuiLexer::BIND_VAR_WITH_NAME:
 			type = Token::L_BIND_VAR;
 			break;
 		case MySQLGuiLexer::BIND_VAR_WITH_PARAMS:
