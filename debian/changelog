@@ -1,3 +1,9 @@
+tora (3.0.41-0ubuntu1) UNRELEASED; urgency=medium
+
+  * MySQL related fixes
+
+ -- Ivan Brezina <ivan@haf>  Thu, 21 Apr 2016 23:01:32 +0200
+
 tora (3.0.21-0ubuntu1) UNRELEASED; urgency=medium
 
   * Fix for bug #24 Bindings variables
