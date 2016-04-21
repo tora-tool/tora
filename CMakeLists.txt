@@ -209,7 +209,7 @@ IF(QT5_BUILD)
     find_package(Qt5MacExtras REQUIRED)
   ENDIF()
   set(QT_INCLUDES
-    ${Qt5Core_INCLUDE_DIRS}	  
+    ${Qt5Core_INCLUDE_DIRS}
     ${Qt5Gui_INCLUDE_DIRS}
     ${Qt5Network_INCLUDE_DIRS}
     ${Qt5PrintSupport_INCLUDE_DIRS}
@@ -279,8 +279,6 @@ ELSE (NOT ENABLE_ORACLE)
   FIND_PACKAGE(Oracle COMPONENTS CLNTSH XML)
   IF(ORACLE_FOUND)
     MESSAGE("Oracle OCI Library Found OK")
-    # what else is hidden in the ifdef hell?!
-    ADD_DEFINITIONS("-DDBLINK")
   ELSE(ORACLE_FOUND)
     MESSAGE(STATUS "No Oracle OCI found. TOra will be build without Oracle support")
     ADD_DEFINITIONS("-DTO_NO_ORACLE")
@@ -389,15 +387,15 @@ SET(CPACK_SOURCE_GENERATOR "TGZ")
 #SET(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}")
 SET(CPACK_SOURCE_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}")
 SET(CPACK_IGNORE_FILES 
-	"\\\\.git"
-	"\\\\.swp$"
-	"\\\\.swp$"
-	"\\\\.#"
-	"/#"
-	"\\\\.tar.gz$"
-	"/CMakeFiles/"
-	"CMakeCache.txt"
-	"refresh-copyright-and-license.pl")
+    "\\\\.git"
+    "\\\\.swp$"
+    "\\\\.swp$"
+    "\\\\.#"
+    "/#"
+    "\\\\.tar.gz$"
+    "/CMakeFiles/"
+    "CMakeCache.txt"
+    "refresh-copyright-and-license.pl")
 SET(CPACK_SOURCE_IGNORE_FILES ${CPACK_IGNORE_FILES})
 INCLUDE(CPack)
 # simulate autotools' "make dist"
@@ -420,9 +418,9 @@ IF (WANT_RPM)
     set(GITVERSION_SHORT "${GITVERSION_MAJOR}.${GITVERSION_MINOR}")    
     
     CONFIGURE_FILE(
-	${CMAKE_SOURCE_DIR}/rpm/${RPM_SPEC}.cmake
-	${CMAKE_SOURCE_DIR}/${RPM_SPEC}
-	@ONLY
+        ${CMAKE_SOURCE_DIR}/rpm/${RPM_SPEC}.cmake
+        ${CMAKE_SOURCE_DIR}/${RPM_SPEC}
+        @ONLY
     )
   ENDIF()
 
@@ -434,9 +432,9 @@ ENDIF (WANT_RPM)
 
 IF (WIN32)
   CONFIGURE_FILE(
-	${CMAKE_SOURCE_DIR}/msi/variables.wxi.cmake
-	${CMAKE_SOURCE_DIR}/msi/variables.wxi
-	@ONLY
+      ${CMAKE_SOURCE_DIR}/msi/variables.wxi.cmake
+      ${CMAKE_SOURCE_DIR}/msi/variables.wxi
+      @ONLY
   )
   # see make_msi64_qt5.bat
   IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT OR CMAKE_INSTALL_PREFIX MATCHES "^C:/Program Files")

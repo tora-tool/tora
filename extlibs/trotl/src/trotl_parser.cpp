@@ -206,8 +206,8 @@ tstring SimplePlsqlParser::colorword(const tstring &i, int color)
 {
 #ifdef __GNUC__
 	char command[256], normal[256];
-	int attr = BRIGHT;
-	int bg = BLACK;
+	//int attr = BRIGHT;
+	//int bg = BLACK;
 	tostream retval;
 	// see: http://www.vias.org/linux-knowhow/lnag_05_05_04.html
 	//	  sprintf(command, "%c[%d;%d;%dm", 0x1B, attr, color + 30, bg + 40);

@@ -1367,7 +1367,7 @@ void DotGraphView::setupPopup()
   ///        this, SLOT(slotSelectLayoutAlgo(const QString&)));
 
   
-  QMenu* layoutPopup = m_popup->addMenu("Layout");
+  //QMenu* layoutPopup = m_popup->addMenu("Layout");
   ///layoutPopup->addAction(m_layoutAlgoSelectAction);
   ///QAction* slc = layoutPopup->addAction("Specify layout command"), this, SLOT(slotLayoutSpecify()));
   ///slc->setWhatsThis("Specify yourself the layout command to use. Given a dot file, it should produce an xdot file on its standard output.");

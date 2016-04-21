@@ -1167,7 +1167,6 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     m_objectsMap[triggerSplitter] = triggerView;
     m_browsersMap[triggerSplitter] = triggerBrowserWidget;
 
-// #ifdef DBLINK
     dblinkSplitter = new QSplitter(Qt::Horizontal, m_mainTab);
     dblinkSplitter->setObjectName(TAB_DBLINK);
 //     m_mainTab->addTab(dblinkSplitter, tr("DBLinks"));
@@ -1205,7 +1204,6 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
 
     m_objectsMap[dblinkSplitter] = dblinkView;
     m_browsersMap[dblinkSplitter] = dblinkBrowserWidget;
-// #endif // dblink
 
     directoriesSplitter = new QSplitter(Qt::Horizontal, m_mainTab);
     directoriesSplitter->setObjectName(TAB_DIRECTORIES);
