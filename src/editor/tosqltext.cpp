@@ -34,6 +34,7 @@
 
 #include "editor/tosqltext.h"
 #include "editor/tosyntaxanalyzernl.h"
+#include "editor/tosyntaxanalyzermysql.h"
 #include "editor/tosyntaxanalyzeroracle.h"
 #include "core/toconnection.h"
 #include "core/toconnectiontraits.h"
@@ -59,6 +60,7 @@ toSqlText::toSqlText(QWidget *parent, const char *name)
     //, m_currentLineMarginHandle(QsciScintilla::markerDefine(QsciScintilla::RightArrow))
     , m_analyzerNL(NULL)
     , m_analyzerOracle(NULL)
+    , m_analyzerMySQL(NULL)
     , m_parserTimer(new QTimer(this))
     , m_parserThread(new QThread(this))
     , m_haveFocus(true)
@@ -190,10 +192,18 @@ void toSqlText::setHighlighter(HighlighterTypeEnum h)
             setLexer(m_currentAnalyzer ? m_currentAnalyzer->createLexer(this) : NULL);
             break;
 #ifdef TORA_EXPERIMENTAL
-        case Mysql:
-            m_currentAnalyzer = NULL;
-            m_worker->setAnalyzer(NULL);
+        case MySQL:
+            if ( m_analyzerMySQL == NULL)
+            	m_analyzerMySQL = new toSyntaxAnalyzerMysql(this);
+            m_currentAnalyzer = m_analyzerMySQL;
+            m_worker->setAnalyzer(m_analyzerMySQL);
             setLexer(m_currentAnalyzer ? m_currentAnalyzer->createLexer(this) : NULL);
+            break;
+        case PostgreSQL:
+        	m_currentAnalyzer = NULL;
+        	m_worker->setAnalyzer(NULL);
+            setLexer(m_currentAnalyzer ? m_currentAnalyzer->createLexer(this) : NULL);
+            break;
 #endif
     }
 #ifdef QT_DEBUG

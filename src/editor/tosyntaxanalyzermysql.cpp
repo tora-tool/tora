@@ -32,5 +32,154 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "core/tosyntaxanalyzer.h"
+#include "editor/tosyntaxanalyzermysql.h"
 
+#include "parsing/tolexermysql.h"
+#include "core/toconfiguration.h"
+#include "editor/tosqltext.h"
+#include <QtCore/QDebug>
+
+#include <Qsci/qscilexer.h>
+#include <Qsci/qscilexersql.h>
+
+#include <iostream>
+
+#include "core/toeditorconfiguration.h"
+#include "core/tostyle.h"
+
+toSyntaxAnalyzerMysql::toSyntaxAnalyzerMysql(toSqlText* parent)
+    : toSyntaxAnalyzer(parent)
+{
+}
+
+toSyntaxAnalyzerMysql::~toSyntaxAnalyzerMysql()
+{
+}
+
+toSyntaxAnalyzer::statementList toSyntaxAnalyzerMysql::getStatements(const QString& text)
+{
+    toSyntaxAnalyzer::statementList retval;
+    std::string str(text.toStdString());
+    try
+    {
+        std::auto_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("OracleGuiLexer", "", "toCustomLexer");
+        lexer->setStatement(str.c_str(), str.length());
+
+        SQLLexer::Lexer::token_const_iterator start = lexer->begin();
+        start = lexer->findStartToken(start);
+        while (start->getTokenType() != SQLLexer::Token::X_EOF)
+        {
+            SQLLexer::Lexer::token_const_iterator end = lexer->findEndToken(start);
+            retval << statement(
+                       start->getPosition().getLine(),
+                       end->getPosition().getLine());
+            start = lexer->findStartToken(end);
+        }
+    }
+    catch (std::exception const &e)
+    {
+        std::string s(e.what());
+        std::cout << s << std::endl;
+    }
+    catch (QString const& e)
+    {
+        qDebug() << e;
+    }
+    catch (...)
+    {
+        qDebug() << __FUNCTION__ ;
+    }
+    return retval;
+}
+
+toSyntaxAnalyzer::statement toSyntaxAnalyzerMysql::getStatementAt(unsigned line, unsigned linePos)
+{
+    toSyntaxAnalyzer::statement retval;
+
+    toScintilla *editor = qobject_cast<toScintilla *>(parent());
+    std::string str(editor->text().toStdString());
+    try
+    {
+        std::auto_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("MysqlGuiLexer", "", "toCustomLexer");
+        lexer->setStatement(str.c_str(), str.length());
+
+        SQLLexer::Lexer::token_const_iterator start = lexer->begin();
+        start = lexer->findStartToken(start);
+        while (start->getTokenType() != SQLLexer::Token::X_EOF)
+        {
+            SQLLexer::Lexer::token_const_iterator end = lexer->findEndToken(start);
+            SQLLexer::Lexer::token_const_iterator nextStart = lexer->findStartToken(end);
+            if (end->getPosition().getLine() < line)
+            {
+                start = nextStart;
+                continue;
+            }
+
+            // The statement was found - setup retval
+            toScintilla *editor = qobject_cast<toScintilla *>(parent());
+            retval = statement(
+                         start->getPosition().getLine(),
+                         end->getPosition().getLine());
+
+            retval.firstWord = start->getText();
+            retval.posFrom = editor->positionFromLineIndex(start->getPosition().getLine()
+                             , start->getPosition().getLinePos());
+            retval.posTo   = editor->positionFromLineIndex(end->getPosition().getLine()
+                             , end->getPosition().getLinePos() + ( end->getTokenType() == SQLLexer::Token::X_EOL ? 0 : end->getLength()));
+            switch (start->getTokenType())
+            {
+                case SQLLexer::Token::L_LPAREN:
+                case SQLLexer::Token::L_DML_INTRODUCER:		// INSERT/UPDATE/DELETE/MERGE
+                    retval.statementType = DML;
+                    break;
+                case SQLLexer::Token::L_SELECT_INTRODUCER:
+                    retval.statementType = SELECT;
+                    break;
+                case SQLLexer::Token::L_PL_INTRODUCER:
+                    retval.statementType = PLSQL;
+                    break;
+                case SQLLexer::Token::L_OTHER_INTRODUCER:
+                    retval.statementType = OTHER;
+                    break;
+                case SQLLexer::Token::X_ONE_LINE:
+                    retval.statementType = SQLPLUS;
+                    break;
+                default:
+                    //	        DDL,        // CREATE
+                    //	        OTHER,      // ALTER SESSION ..., ANALYZE, SET ROLE, EXPLAIN
+                    //	        SQLPLUS		// sqlplus command
+                    retval.statementType = UNKNOWN;
+                    break;
+            }
+            return retval;
+        }
+    }
+    catch (std::exception const &e)
+    {
+        std::string s(e.what());
+        std::cout << s << std::endl;
+    }
+    catch (QString const& e)
+    {
+        qDebug() << e;
+    }
+    catch (...)
+    {
+        qDebug() << __FUNCTION__ ;
+    }
+    return retval;
+}
+
+QsciLexer* toSyntaxAnalyzerMysql::createLexer(QObject* parent)
+{
+	return new toLexerMysql(parent);
+}
+
+void toSyntaxAnalyzerMysql::sanitizeStatement(statement& stat)
+{
+    toScintilla *editor = qobject_cast<toScintilla *>(parent());
+    char *buf = new char[stat.posTo - stat.posFrom + 1];
+    editor->SendScintilla(QsciScintilla::SCI_GETTEXTRANGE, stat.posFrom, stat.posTo, buf);
+    stat.sql = editor->convertTextS2Q(buf);
+    delete []buf;
+}

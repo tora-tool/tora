@@ -50,7 +50,7 @@ Content:
 	Seems that this installer doesn't prompt for any paths/etc.
 	Be sure and disable postgres service after install if you won't be running the server itself
 
-  9. (Optional) Download and install Mysql including development packages. 
+  9. (Optional) Download and install MySQL including development packages. 
      It's a part of default installer - just check its component.
      NOTE: Install it to the path *without* space in its name - Qt has
            problems with compilation in the case of space.

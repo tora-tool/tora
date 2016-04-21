@@ -137,6 +137,7 @@ QT5_WRAP_CPP(TEST4_MOC_SOURCES
   editor/toscintilla.h
   editor/tosqltext.h
   editor/tosyntaxanalyzernl.h
+  editor/tosyntaxanalyzermysql.h
   editor/tosyntaxanalyzeroracle.h
   tools/toresultstats.h
   tools/toresultview.h
@@ -153,6 +154,7 @@ ADD_EXECUTABLE("test4"
   editor/toscintilla.cpp
   editor/tosqltext.cpp
   editor/tosyntaxanalyzernl.cpp
+  editor/tosyntaxanalyzermysql.cpp
   editor/tosyntaxanalyzeroracle.cpp
   tools/toresultstats.cpp
   tools/toresultview.cpp

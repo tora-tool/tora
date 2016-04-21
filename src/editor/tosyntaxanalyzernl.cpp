@@ -256,7 +256,8 @@ void toSyntaxAnalyzerNL::sanitizeStatement(statement &stat)
 
 QSet<QString> toSyntaxAnalyzerNL:: SELECT_INTRODUCERS = QSet<QString>()
         << "SELECT"
-        << "WITH";
+        << "WITH"
+		<< "SHOW"; // MySQL
 
 QSet<QString> toSyntaxAnalyzerNL:: DML_INTRODUCERS = QSet<QString>()
         //<< "SELECT"

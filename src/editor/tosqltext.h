@@ -73,9 +73,10 @@ class toSqlText : public toScintilla
             None   = 10,
             Oracle = 20,
 #if defined(TORA_EXPERIMENTAL)
-            Mysql  = 30,
+            MySQL  = 30,
+            PostgreSQL = 40,
 #endif
-            QsciSql  = 40
+            QsciSql  = 50
         };
 
         // Styles alternating colors for linenumbers
@@ -169,7 +170,7 @@ class toSqlText : public toScintilla
     private:
         HighlighterTypeEnum highlighterType;
 
-        toSyntaxAnalyzer *m_analyzerNL, *m_analyzerOracle, *m_currentAnalyzer;
+        toSyntaxAnalyzer *m_analyzerNL, *m_analyzerOracle, *m_analyzerMySQL, *m_currentAnalyzer;
         QMap<int,QString> styleNames;
         QFont mono; // line numbers font
 
