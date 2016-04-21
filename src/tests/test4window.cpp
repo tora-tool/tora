@@ -102,13 +102,14 @@ void Test4Window::setLexer()
     QString txt = pushButton->text();
     if (txt == "Oracle")
     {
-        editorRight->setHighlighter(toSqlText::Oracle);
-        pushButton->setText("Mysql");
+		editorRight->setHighlighter(toSqlText::MySQL);
+		pushButton->setText("MySQL");
     }
     else
     {
-        editorRight->setHighlighter(toSqlText::Mysql);
-        pushButton->setText("Oracle");
+
+		editorRight->setHighlighter(toSqlText::Oracle);
+		pushButton->setText("Oracle");
     }
 }
 

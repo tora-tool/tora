@@ -90,7 +90,7 @@ void toResultSchema::query(const QString &sql, toQueryParams const& param)
     //if (!setSqlAndParams(sql, param))
     //	return ;
 
-	// Mysql way
+	// MySQL way
     if (connection().getCache().userListExists(toCache::DATABASES))
     {
         slotUsersFromCache();

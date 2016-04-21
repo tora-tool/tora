@@ -32,6 +32,8 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
+#pragma once
+
 #include "parsing/tsqllexer.h"
 #include "core/tosyntaxanalyzer.h"
 
@@ -43,7 +45,7 @@
 class QsciStyle;
 class QsciAbstractAPIs;
 
-class toLexerOracle : public QsciLexerCustom
+class toLexerMysql : public QsciLexerCustom
 {
         Q_OBJECT;
     public:
@@ -53,6 +55,7 @@ class toLexerOracle : public QsciLexerCustom
             Comment    = toSyntaxAnalyzer::Comment,
             Reserved   = toSyntaxAnalyzer::Keyword,
             Builtin    = toSyntaxAnalyzer::KeywordSet5,
+			SingleQuotedString = toSyntaxAnalyzer::SingleQuotedString,
             Identifier = toSyntaxAnalyzer::Identifier,
             Number     = toSyntaxAnalyzer::Number,
             OneLine    = toSyntaxAnalyzer::PlusPrompt,
@@ -61,8 +64,8 @@ class toLexerOracle : public QsciLexerCustom
             MaxStyle
         };
 
-        toLexerOracle(QObject *parent = 0);
-        virtual ~toLexerOracle();
+        toLexerMysql(QObject *parent = 0);
+        virtual ~toLexerMysql();
 
         /* override - reimplemented from QsciLexerCustom */
         const char *language() const override;

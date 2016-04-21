@@ -268,6 +268,7 @@ SET(TORA_MOC_CLASSES
   core/utils.h
   parsing/tsqllexer.h
   core/tosyntaxanalyzer.h
+  editor/tosyntaxanalyzermysql.h
   editor/tosyntaxanalyzernl.h
   editor/tosyntaxanalyzeroracle.h
   parsing/tolexeroracleapis.h 
@@ -283,6 +284,7 @@ SET(TORA_MOC_CLASSES
   editor/todebugeditor.h
   widgets/tosearchreplace.h
   core/tostyle.h
+  parsing/tolexermysql.h
   parsing/tolexeroracle.h
   parsing/toscilexersql.h
 
@@ -519,6 +521,7 @@ SET(TORA_SOURCES
   editor/todebugeditor.cpp
   widgets/tosearchreplace.cpp
   core/tostyle.cpp
+  parsing/tolexermysql.cpp  
   parsing/tolexeroracle.cpp
   parsing/toscilexersql.cpp
 
