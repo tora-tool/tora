@@ -104,7 +104,7 @@ SqlStatement::SqlStatement(OciConnection& conn, const tstring& stmt, ub4 lang, i
 
 	if(get_bindpar_count())
 	{
-		_all_binds = new std::auto_ptr<BindPar> [get_bindpar_count()+1];
+		_all_binds = new std::unique_ptr<BindPar> [get_bindpar_count()+1];
 		_in_binds = new unsigned [get_bindpar_count()+1];
 		_out_binds = new unsigned [get_bindpar_count()+1];
 	}
@@ -241,7 +241,7 @@ void SqlStatement::execute_describe()
 void SqlStatement::define_all()
 {
 	_columns.resize(get_column_count()+1);	// we do not use zero-th position
-	_all_defines= new std::auto_ptr<BindPar> [get_column_count()+1];
+	_all_defines= new std::unique_ptr<BindPar> [get_column_count()+1];
 
 	for(unsigned dpos = 1; dpos <= get_column_count(); ++dpos)
 	{

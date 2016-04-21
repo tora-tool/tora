@@ -25,7 +25,7 @@ void toLexerOracleAPIs::updateAutoCompletionList(const QStringList &context, QSt
     char* bufferText = new char[len+1];
     editor->SendScintilla(QsciScintillaBase::SCI_GETTEXT, len, bufferText);
     bufferText[len] = '\0';
-    std::auto_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("OracleGuiLexer", "", "toCustomLexer");
+    std::unique_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("OracleGuiLexer", "", "toCustomLexer");
     lexer->setStatement(bufferText, len);
     SQLLexer::Lexer::token_const_iterator it = lexer->begin();
     while (it != lexer->end())

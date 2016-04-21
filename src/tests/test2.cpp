@@ -147,7 +147,7 @@ int main(int argc, char **argv)
         for (std::vector<std::string>::const_iterator i = finders.begin(); i != finders.end(); ++i)
         {
             TLOG(5, toDecorator, __HERE__) << "Looking for client: " << *i << std::endl;
-            std::auto_ptr<toConnectionProviderFinder> finder = ConnectionProviderFinderFactory::Instance().create(*i, 0);
+            std::unique_ptr<toConnectionProviderFinder> finder = ConnectionProviderFinderFactory::Instance().create(*i, 0);
             QList<toConnectionProviderFinder::ConnectionProvirerParams> l = finder->find();
             allProviders.append(l);
         }

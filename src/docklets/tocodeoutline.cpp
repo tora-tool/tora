@@ -126,7 +126,7 @@ void toCodeOutline::timerEvent(QTimerEvent *e)
 
     try
     {
-        std::auto_ptr <SQLParser::Statement> stat = StatementFactTwoParmSing::Instance().create("OraclePLSQL", m_lastText, "");
+        std::unique_ptr <SQLParser::Statement> stat = StatementFactTwoParmSing::Instance().create("OraclePLSQL", m_lastText, "");
         TLOG(0, toDecorator, __HERE__) << "Parsing ok:" << std::endl
                                        << stat->root()->toStringRecursive().toStdString() << std::endl;
 

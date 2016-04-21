@@ -67,7 +67,7 @@ int main(int argc, char **argv)
         const char input[] = "a b c aaa ab abc";
         qDebug() << "Lexer input:" << input;
 
-        std::auto_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("OracleGuiLexer", input, "");
+        std::unique_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("OracleGuiLexer", input, "");
         QmlJS::PersistentTrie::Trie trie;
 
         for (int i = 0; i <= 10; i++)

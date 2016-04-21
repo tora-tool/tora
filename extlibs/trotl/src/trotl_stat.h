@@ -31,19 +31,22 @@
 
 */
 
-#ifndef TROTL_STAT_H_
-#define TROTL_STAT_H_
+#pragma once
 
 #include <assert.h>
 #include <vector>
 #include <map>
 
+#ifdef __clang__
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-local-typedef"
+#endif
 
 #include <boost/ptr_container/ptr_vector.hpp>
 
+#ifdef __clang__
 #pragma clang diagnostic pop
+#endif
 
 #include "trotl_export.h"
 #include "trotl_var.h"
@@ -362,8 +365,8 @@ public:	//todo delete me - these fields should not be public
 
 	std::vector<DescribeColumn*> _columns; // TODO move into some SQL-result class
 
-	std::auto_ptr<BindPar> *_all_binds;
-	std::auto_ptr<BindPar> *_all_defines;
+	std::unique_ptr<BindPar> *_all_binds;
+	std::unique_ptr<BindPar> *_all_defines;
 	ub4 *_in_binds, *_out_binds;
 	bool _bound;
 };
@@ -462,5 +465,3 @@ SqlStatement& SqlStatement::operator>> <tstring> (std::vector<tstring> &val);
 //SqlStatement& SqlStatement::operator>> <SqlValue> (SqlValue &val);
 
 };
-
-#endif /*TROTL_STAT_H_*/

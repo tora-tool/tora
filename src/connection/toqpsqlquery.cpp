@@ -404,7 +404,7 @@ QString psqlQuery::stripBinds(const QString &in)
     BindParams.clear();
     QString retval;
     // TODO: no PostgreSQL Lexer ATM
-    std::auto_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("MySQLGuiLexer", "", "toCustomLexer");
+    std::unique_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("MySQLGuiLexer", "", "toCustomLexer");
     lexer->setStatement(in);
 
     SQLLexer::Lexer::token_const_iterator start = lexer->begin();

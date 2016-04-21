@@ -90,5 +90,5 @@ class toLexerOracle : public QsciLexerCustom
 
         QMap<int,QString> styleNames;
         QList<int> styleStack;
-        std::auto_ptr <SQLLexer::Lexer> lexer;
+        std::unique_ptr <SQLLexer::Lexer> lexer;
 };

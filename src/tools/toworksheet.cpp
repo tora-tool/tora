@@ -1680,8 +1680,8 @@ void toWorksheet::slotDescribeNew(void)
     try
     {
     	//using namespace SQLLexer;
-        std::auto_ptr <SQLParser::Statement> stmt;
-        std::auto_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("OracleSQL", currentStat.sql, "");
+        std::unique_ptr <SQLParser::Statement> stmt;
+        std::unique_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("OracleSQL", currentStat.sql, "");
         firstWord = lexer->firstWord();
         currentWord = lexer->wordAt(SQLLexer::Position(line, col));
 

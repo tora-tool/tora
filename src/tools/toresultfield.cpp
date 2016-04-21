@@ -159,8 +159,8 @@ void toResultField::slotQueryDone(void)
 
     //try {
     //  do {
-    //      std::auto_ptr <SQLParser::Statement> stat;
-    //      std::auto_ptr <SQLParser::Lexer> lexer = LexerFactTwoParmSing::Instance().create("OracleSQL", txt, "");
+    //      std::unique_ptr <SQLParser::Statement> stat;
+    //      std::unique_ptr <SQLParser::Lexer> lexer = LexerFactTwoParmSing::Instance().create("OracleSQL", txt, "");
     //      if(firstWord.isEmpty())
     //          break;
     //      firstWord = lexer->firstWord();

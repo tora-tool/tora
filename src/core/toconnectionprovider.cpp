@@ -47,14 +47,14 @@ void toConnectionProviderRegistry::load(toConnectionProviderFinder::ConnectionPr
     }
 
     /* load all dlls. */
-    std::auto_ptr<toConnectionProviderFinder> finder = ConnectionProviderFinderFactory::Instance().create(finderName.toStdString(), 0);
+    std::unique_ptr<toConnectionProviderFinder> finder = ConnectionProviderFinderFactory::Instance().create(finderName.toStdString(), 0);
     if (!finder.get())
         throw QString("Unknown finder to create: %1").arg(finderName);
 
     finder->load(providerParams);
 
     /* dlls are loaded. Create instance of the toConnectioProvider */
-    std::auto_ptr<toConnectionProvider> pProvider = ConnectionProvirerFactory::Instance().create(providerName.toStdString(), providerParams);
+    std::unique_ptr<toConnectionProvider> pProvider = ConnectionProvirerFactory::Instance().create(providerName.toStdString(), providerParams);
     if (!pProvider.get())
         throw QString("Unknown provider to create: %1").arg(providerName);
 

@@ -398,7 +398,7 @@ void toCustomLexerWorker::process(const char*text, unsigned len)
 
     try
     {
-        std::auto_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("OracleGuiLexer", "", "toCustomLexer");
+        std::unique_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("OracleGuiLexer", "", "toCustomLexer");
         lexer->setStatement(text, len);
 
         statements.clear();

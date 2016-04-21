@@ -188,11 +188,11 @@
  *
  *  Example code that instantiates the classes (creates objects through the factory):
  *
- *    std::auto_ptr<Vehicle> newVeh = VehFactNoParmSing::Instance().create("Vehicle");
- *    std::auto_ptr<Vehicle> newSpCar1 = VehFactNoParmSing::Instance().create("SportsCar");
- *    std::auto_ptr<Vehicle> newSpCar2 =
+ *    std::unique_ptr<Vehicle> newVeh = VehFactNoParmSing::Instance().create("Vehicle");
+ *    std::unique_ptr<Vehicle> newSpCar1 = VehFactNoParmSing::Instance().create("SportsCar");
+ *    std::unique_ptr<Vehicle> newSpCar2 =
  *       VehFactTwoParmsSing::Instance().create("SportsCar", "Red", 220);
- *    std::auto_ptr<Vehicle> newTruck =
+ *    std::unique_ptr<Vehicle> newTruck =
  *       VehFactOneParmSing::Instance().create(150, "Big Lights");
  *
  *  Example code using the objects (assume callVirtFunc take Vehicle object by
@@ -338,19 +338,19 @@ namespace Util {
     struct GenericFactoryImpl<Base, Loki::NullType, ClassIdKey>
     {
       typedef typename Loki::TypeTraits<ClassIdKey>::ParameterType ClassIdKeyParm;
-      typedef std::auto_ptr<Base> (*CreateFct)();
+      typedef std::unique_ptr<Base> (*CreateFct)();
       typedef std::map<ClassIdKey, CreateFct> FctRegistry;
 
       public:
 
       template <class Derived>
-      static std::auto_ptr<Base> createInstance() {
-    	  return std::auto_ptr<Base>(new Derived());
+      static std::unique_ptr<Base> createInstance() {
+    	  return std::unique_ptr<Base>(new Derived());
       }
 
-      std::auto_ptr<Base> create (ClassIdKeyParm className) const {
+      std::unique_ptr<Base> create (ClassIdKeyParm className) const {
     	  typename FctRegistry::const_iterator regEntry(mRegistry.find(className));
-    	  return (regEntry == mRegistry.end() ? std::auto_ptr<Base>(0) : (*regEntry).second() );
+    	  return (regEntry == mRegistry.end() ? std::unique_ptr<Base>(nullptr) : (*regEntry).second() );
       }
 
       Base* createPtr (ClassIdKeyParm className) const {
@@ -371,17 +371,17 @@ namespace Util {
     {
     	typedef typename Loki::TypeTraits<ClassIdKey>::ParameterType ClassIdKeyParm;
 	  typedef typename Loki::TypeTraits<P1>::ParameterType P1Parm;
-	  typedef std::auto_ptr<Base> (*CreateFct)(P1Parm);
+	  typedef std::unique_ptr<Base> (*CreateFct)(P1Parm);
 	  typedef std::map<ClassIdKey, CreateFct> FctRegistry;
 
 	  template <class Derived>
-	  static std::auto_ptr<Base> createInstance(P1Parm parm1) {
-		  return std::auto_ptr<Base>(new Derived(parm1));
+	  static std::unique_ptr<Base> createInstance(P1Parm parm1) {
+		  return std::unique_ptr<Base>(new Derived(parm1));
 	  }
 
-	  std::auto_ptr<Base> create(ClassIdKeyParm className, P1Parm parm1) const {
+	  std::unique_ptr<Base> create(ClassIdKeyParm className, P1Parm parm1) const {
 		  typename FctRegistry::const_iterator regEntry (mRegistry.find(className));
-		  return (regEntry == mRegistry.end() ? std::auto_ptr<Base>(0) : (*regEntry).second(parm1) );
+		  return (regEntry == mRegistry.end() ? std::unique_ptr<Base>(nullptr) : (*regEntry).second(parm1) );
 	  }
 
 	  Base* createPtr(ClassIdKeyParm className, P1Parm parm1) const {
@@ -405,18 +405,18 @@ namespace Util {
 	  typedef typename Loki::TypeTraits<ClassIdKey>::ParameterType ClassIdKeyParm;
 	  typedef typename Loki::TypeTraits<P1>::ParameterType P1Parm;
 	  typedef typename Loki::TypeTraits<P2>::ParameterType P2Parm;
-	  typedef std::auto_ptr<Base> (*CreateFct)(P1Parm, P2Parm);
+	  typedef std::unique_ptr<Base> (*CreateFct)(P1Parm, P2Parm);
 	  typedef std::map<ClassIdKey, CreateFct> FctRegistry;
 
 	  template <class Derived>
-	  static std::auto_ptr<Base> createInstance(P1Parm parm1, P2Parm parm2) {
-		  return std::auto_ptr<Base>(new Derived(parm1, parm2));
+	  static std::unique_ptr<Base> createInstance(P1Parm parm1, P2Parm parm2) {
+		  return std::unique_ptr<Base>(new Derived(parm1, parm2));
 	  }
 
-	  std::auto_ptr<Base> create(ClassIdKeyParm className, P1Parm parm1, P2Parm parm2) const
+	  std::unique_ptr<Base> create(ClassIdKeyParm className, P1Parm parm1, P2Parm parm2) const
 	  {
 		  typename FctRegistry::const_iterator regEntry (mRegistry.find(className));
-		  return (regEntry == mRegistry.end() ? std::auto_ptr<Base>(0) : (*regEntry).second(parm1, parm2) );
+		  return (regEntry == mRegistry.end() ? std::unique_ptr<Base>(nullptr) : (*regEntry).second(parm1, parm2) );
 	  }
 
 	  Base* createPtr(ClassIdKeyParm className, P1Parm parm1, P2Parm parm2) const
@@ -443,18 +443,18 @@ namespace Util {
     typedef typename Loki::TypeTraits<P1>::ParameterType P1Parm;
     typedef typename Loki::TypeTraits<P2>::ParameterType P2Parm;
     typedef typename Loki::TypeTraits<P3>::ParameterType P3Parm;
-    typedef std::auto_ptr<Base> (*CreateFct)(P1Parm, P2Parm, P3Parm);
+    typedef std::unique_ptr<Base> (*CreateFct)(P1Parm, P2Parm, P3Parm);
     typedef std::map<ClassIdKey, CreateFct> FctRegistry;
 
     template <class Derived>
-      static std::auto_ptr<Base> createInstance(P1Parm parm1, P2Parm parm2, P3Parm parm3) {
-      return std::auto_ptr<Base>(new Derived(parm1, parm2, parm3));
+      static std::unique_ptr<Base> createInstance(P1Parm parm1, P2Parm parm2, P3Parm parm3) {
+      return std::unique_ptr<Base>(new Derived(parm1, parm2, parm3));
     }
 
-    std::auto_ptr<Base> create(ClassIdKeyParm className, P1Parm parm1, P2Parm parm2, P3Parm parm3) const
+    std::unique_ptr<Base> create(ClassIdKeyParm className, P1Parm parm1, P2Parm parm2, P3Parm parm3) const
     {
     	typename FctRegistry::const_iterator regEntry (mRegistry.find(className));
-    	return (regEntry == mRegistry.end() ? std::auto_ptr<Base>(0) : (*regEntry).second(parm1, parm2, parm3) );
+    	return (regEntry == mRegistry.end() ? std::unique_ptr<Base>(nullptr) : (*regEntry).second(parm1, parm2, parm3) );
     }
 
     Base* createPtr(ClassIdKeyParm className, P1Parm parm1, P2Parm parm2, P3Parm parm3) const
@@ -483,19 +483,19 @@ namespace Util {
     typedef typename Loki::TypeTraits<P2>::ParameterType P2Parm;
     typedef typename Loki::TypeTraits<P3>::ParameterType P3Parm;
     typedef typename Loki::TypeTraits<P4>::ParameterType P4Parm;
-    typedef std::auto_ptr<Base> (*CreateFct)(P1Parm, P2Parm, P3Parm, P4Parm);
+    typedef std::unique_ptr<Base> (*CreateFct)(P1Parm, P2Parm, P3Parm, P4Parm);
     typedef std::map<ClassIdKey, CreateFct> FctRegistry;
 
     template <class Derived>
-    static std::auto_ptr<Base> createInstance(P1Parm parm1, P2Parm parm2, P3Parm parm3, P4Parm parm4)
+    static std::unique_ptr<Base> createInstance(P1Parm parm1, P2Parm parm2, P3Parm parm3, P4Parm parm4)
     {
-    	return std::auto_ptr<Base>(new Derived(parm1, parm2, parm3, parm4));
+    	return std::unique_ptr<Base>(new Derived(parm1, parm2, parm3, parm4));
     }
 
-    std::auto_ptr<Base> create(ClassIdKeyParm className, P1Parm parm1, P2Parm parm2, P3Parm parm3, P4Parm parm4) const
+    std::unique_ptr<Base> create(ClassIdKeyParm className, P1Parm parm1, P2Parm parm2, P3Parm parm3, P4Parm parm4) const
     {
     	typename FctRegistry::const_iterator regEntry (mRegistry.find(className));
-    	return (regEntry == mRegistry.end() ? std::auto_ptr<Base>(0) : (*regEntry).second(parm1, parm2, parm3, parm4) );
+    	return (regEntry == mRegistry.end() ? std::unique_ptr<Base>(nullptr) : (*regEntry).second(parm1, parm2, parm3, parm4) );
     }
 
     Base* createPtr(ClassIdKeyParm className, P1Parm parm1, P2Parm parm2, P3Parm parm3, P4Parm parm4) const

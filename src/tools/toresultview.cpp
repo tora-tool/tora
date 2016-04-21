@@ -1006,7 +1006,7 @@ bool toListView::editSave(bool)
         QString filename = Utils::toSaveFilename(QString::null, settings.extension, this);
         if (filename.isEmpty())
             return false;
-        std::auto_ptr<toListViewFormatter> pFormatter(
+        std::unique_ptr<toListViewFormatter> pFormatter(
             toListViewFormatterFactory::Instance().CreateObject(settings.type));
         return Utils::toWriteFile(filename, exportAsText(settings));
     }
@@ -1050,7 +1050,7 @@ QString toListView::exportAsText(toExportSettings settings)
     if (type < 0)
         return QString::null;
 
-    std::auto_ptr<toListViewFormatter> pFormatter(toListViewFormatterFactory::Instance().CreateObject(type));
+    std::unique_ptr<toListViewFormatter> pFormatter(toListViewFormatterFactory::Instance().CreateObject(type));
     result =  pFormatter->getFormattedString(*this);
 
     return result;
@@ -1072,7 +1072,7 @@ QString toListView::exportAsText(toExportSettings settings)
         progress.setValue(2);
     }
 
-    std::auto_ptr<toListViewFormatter> pFormatter(
+    std::unique_ptr<toListViewFormatter> pFormatter(
         toListViewFormatterFactory::Instance().CreateObject(settings.type));
     settings.owner = owner;
     settings.objectName = objectName;

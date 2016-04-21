@@ -1,5 +1,4 @@
-#ifndef	_T_GUI_TRAITS_H
-#define	_T_GUI_TRAITS_H
+#pragma once
 
 // First thing we always do is include the ANTLR3 generated files, which
 // will automatically include the antlr3 runtime header files.
@@ -203,5 +202,3 @@ namespace Antlr3GuiImpl
     typedef antlr3::Traits<MySQLGuiLexer, EmptyParser, UserTraits>               MySQLGuiLexerTraits;
 
 };
-
-#endif

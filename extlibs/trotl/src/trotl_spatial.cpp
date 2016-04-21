@@ -134,6 +134,7 @@ tstring BindParSpatial::get_string(unsigned int row) const
 				  _stmt._errh,
 				  (OCIColl *)(_global_geom_obj[row]->sdo_elem_info),
 				  &global_nelems));
+	oci_check_error(__TROTL_HERE__, _stmt._errh, res);
 	_stringrepres << " sdo_elem_info size: " << global_nelems;
 
 	/* Get the size of the ordinates array */
@@ -141,6 +142,7 @@ tstring BindParSpatial::get_string(unsigned int row) const
 				  _stmt._errh,
 				  (OCIColl *)(_global_geom_obj[row]->sdo_ordinates),
 				  &global_nords));
+	oci_check_error(__TROTL_HERE__, _stmt._errh, res);
 	_stringrepres << " sdo_ordinates size: " << global_nords;
 
 	/* sc_ops_get_gtype */
@@ -148,6 +150,7 @@ tstring BindParSpatial::get_string(unsigned int row) const
 				     &(_global_geom_obj[row]->sdo_gtype),
 				     (uword)sizeof(int), OCI_NUMBER_SIGNED,
 				     (dvoid *)&gtype));
+	oci_check_error(__TROTL_HERE__, _stmt._errh, res);
 	_stringrepres << " -- gtype: " << gtype;
 
 	/* sc_ops_get_sdo_point */
@@ -159,7 +162,7 @@ tstring BindParSpatial::get_string(unsigned int row) const
 						      &(_global_geom_obj[row]->sdo_point.x),
 						      (uword)sizeof(double),
 						      (dvoid *)&x));
-			
+			oci_check_error(__TROTL_HERE__, _stmt._errh, res);
 			_stringrepres << " -- sdo_point.X: " << x;
 		}
 
@@ -169,7 +172,7 @@ tstring BindParSpatial::get_string(unsigned int row) const
 							&(_global_geom_obj[row]->sdo_point.y),
 							(uword)sizeof(double),
 							(dvoid *)&y));
-
+			oci_check_error(__TROTL_HERE__, _stmt._errh, res);
 			_stringrepres << " -- sdo_point.Y: " << y;
 		}
 
@@ -179,7 +182,7 @@ tstring BindParSpatial::get_string(unsigned int row) const
 							&(_global_geom_obj[row]->sdo_point.z),
 							(uword)sizeof(double),
 							(dvoid *)&z));
-
+			oci_check_error(__TROTL_HERE__, _stmt._errh, res);
 			_stringrepres << " -- sdo_point.Z: " << z;
 		}
 	}
@@ -199,12 +202,13 @@ tstring BindParSpatial::get_string(unsigned int row) const
 					     (sb4)(i), // +1 ?? TODO
 					     (boolean *)&exists,
 					     (dvoid **)&oci_number, (dvoid **)0));
-			
+		oci_check_error(__TROTL_HERE__, _stmt._errh, res);
+
 		res = OCICALL(OCINumberToInt(_stmt._errh,
 					     oci_number,
 					     (uword)sizeof(ub4), OCI_NUMBER_UNSIGNED,
 					     (dvoid *)&element_type));
-			
+		oci_check_error(__TROTL_HERE__, _stmt._errh, res);
 		_stringrepres << "-- element type: " << element_type;
 
 		switch (element_type)

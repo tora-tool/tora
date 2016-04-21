@@ -62,7 +62,7 @@ toSyntaxAnalyzer::statementList toSyntaxAnalyzerOracle::getStatements(const QStr
     std::string str(text.toStdString());
     try
     {
-        std::auto_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("OracleGuiLexer", "", "toCustomLexer");
+        std::unique_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("OracleGuiLexer", "", "toCustomLexer");
         lexer->setStatement(str.c_str(), str.length());
 
         SQLLexer::Lexer::token_const_iterator start = lexer->begin();
@@ -100,7 +100,7 @@ toSyntaxAnalyzer::statement toSyntaxAnalyzerOracle::getStatementAt(unsigned line
     std::string str(editor->text().toStdString());
     try
     {
-        std::auto_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("OracleGuiLexer", "", "toCustomLexer");
+        std::unique_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("OracleGuiLexer", "", "toCustomLexer");
         lexer->setStatement(str.c_str(), str.length());
 
         SQLLexer::Lexer::token_const_iterator start = lexer->begin();

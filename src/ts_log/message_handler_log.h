@@ -103,7 +103,7 @@ class basic_message_handler_log_streambuf
         virtual int sync()
         {
             m_pOwnerStream->on_new_message( get_stream_buffer().str() );
-            m_pStreamBuffer = std::auto_ptr< string_stream_type>( new string_stream_type);
+            m_pStreamBuffer = std::unique_ptr< string_stream_type>( new string_stream_type);
             return 0;
         }
         virtual streambuf_type *setbuf( char_type * buffer, std::streamsize n)
@@ -159,7 +159,7 @@ class basic_message_handler_log_streambuf
         }
     private:
         // holds the Message, until it's flushed
-        std::auto_ptr< string_stream_type> m_pStreamBuffer;
+        std::unique_ptr< string_stream_type> m_pStreamBuffer;
         // the Message Handler Log - where we write into
         ostream_type * m_pOwnerStream;
         // has the last message been written?

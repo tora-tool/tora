@@ -345,7 +345,7 @@ QString mysqlQuery::stripBinds(const QString &in)
 {
     BindParams.clear();
     QString retval;
-    std::auto_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("MySQLLexer", "", "toCustomLexer");
+    std::unique_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("MySQLLexer", "", "toCustomLexer");
     lexer->setStatement(in);
 
     SQLLexer::Lexer::token_const_iterator start = lexer->begin();
@@ -393,7 +393,7 @@ QStringList mysqlQuery::queryParam(const QString &in, toQueryParams const &param
     QString sql, allDatabases;
     toQueryParams::const_iterator cpar = params.constBegin();
 
-    std::auto_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("MySQLGuiLexer", "", "toCustomLexer");
+    std::unique_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("MySQLGuiLexer", "", "toCustomLexer");
     lexer->setStatement(in);
 
     SQLLexer::Lexer::token_const_iterator start = lexer->begin();

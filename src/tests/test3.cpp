@@ -118,7 +118,7 @@ int main(int argc, char **argv)
             TLOG(5, toDecoratorNC, __HERE__) << "Looking for client: " << *i << std::endl;
             try
             {
-                std::auto_ptr<toConnectionProviderFinder> finder = ConnectionProviderFinderFactory::Instance().create(*i, 0);
+                std::unique_ptr<toConnectionProviderFinder> finder = ConnectionProviderFinderFactory::Instance().create(*i, 0);
                 QList<toConnectionProviderFinder::ConnectionProvirerParams> l = finder->find();
                 allProviders.append(l);
                 finderName = finder->name();
