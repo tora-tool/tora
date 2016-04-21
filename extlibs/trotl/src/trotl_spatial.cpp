@@ -187,7 +187,7 @@ tstring BindParSpatial::get_string(unsigned int row) const
 		_stringrepres << "-- sdo_point IS NULL";
 
 	/* Loop through and print all the elements for this geometry */
-	for(unsigned i=0; i<global_nelems; i+=3)
+	for(int i=0; i<global_nelems; i+=3)
 	{
 		boolean        exists;
 		OCINumber      *oci_number;

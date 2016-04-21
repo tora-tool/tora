@@ -473,7 +473,7 @@ DescribeColumn::DescribeColumn(OciConnection &con, OciHandle<OCIStmt> &stmt, uns
 	, _reg_name("")
 {
 		OciParam param(con._env, NULL);
-		sword res = OCICALL(OCIParamGet((OCIStmt*)stmt, OciHandleID<OCIStmt>::get_type_id(), con._env._errh, (dvoid**)(OCIParam**)param, columnPosition));
+		//sword res = OCICALL(OCIParamGet((OCIStmt*)stmt, OciHandleID<OCIStmt>::get_type_id(), con._env._errh, (dvoid**)(OCIParam**)param, columnPosition));
 
 		describe(con, param);
 		// OCI_ATTR_PRECISION The precision of numeric columns. If the precision is nonzero and scale is -127,
