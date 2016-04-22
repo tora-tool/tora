@@ -170,7 +170,7 @@ class toSqlText : public toScintilla
     private:
         HighlighterTypeEnum highlighterType;
 
-        toSyntaxAnalyzer *m_analyzerNL, *m_analyzerOracle, *m_analyzerMySQL, *m_currentAnalyzer;
+        toSyntaxAnalyzer *m_analyzerNL, *m_analyzerOracle, *m_analyzerMySQL, *m_analyzerPostgreSQL, *m_currentAnalyzer;
         QMap<int,QString> styleNames;
         QFont mono; // line numbers font
 

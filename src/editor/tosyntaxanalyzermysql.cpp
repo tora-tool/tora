@@ -62,7 +62,7 @@ toSyntaxAnalyzer::statementList toSyntaxAnalyzerMysql::getStatements(const QStri
     std::string str(text.toStdString());
     try
     {
-        std::unique_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("OracleGuiLexer", "", "toCustomLexer");
+        std::unique_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("MySQLGuiLexer", "", "toSyntaxAnalyzerMysql");
         lexer->setStatement(str.c_str(), str.length());
 
         SQLLexer::Lexer::token_const_iterator start = lexer->begin();

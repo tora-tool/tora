@@ -36,6 +36,7 @@
 #include "editor/tosyntaxanalyzernl.h"
 #include "editor/tosyntaxanalyzermysql.h"
 #include "editor/tosyntaxanalyzeroracle.h"
+#include "editor/tosyntaxanalyzerpostgresql.h"
 #include "core/toconnection.h"
 #include "core/toconnectiontraits.h"
 #include "core/tologger.h"
@@ -61,6 +62,7 @@ toSqlText::toSqlText(QWidget *parent, const char *name)
     , m_analyzerNL(NULL)
     , m_analyzerOracle(NULL)
     , m_analyzerMySQL(NULL)
+	, m_analyzerPostgreSQL(NULL)
     , m_parserTimer(new QTimer(this))
     , m_parserThread(new QThread(this))
     , m_haveFocus(true)
@@ -200,8 +202,10 @@ void toSqlText::setHighlighter(HighlighterTypeEnum h)
             setLexer(m_currentAnalyzer ? m_currentAnalyzer->createLexer(this) : NULL);
             break;
         case PostgreSQL:
-        	m_currentAnalyzer = NULL;
-        	m_worker->setAnalyzer(NULL);
+            if ( m_analyzerPostgreSQL == NULL)
+            	m_analyzerPostgreSQL = new toSyntaxAnalyzerPostgreSQL(this);
+        	m_currentAnalyzer = m_analyzerPostgreSQL;
+        	m_worker->setAnalyzer(m_analyzerPostgreSQL);
             setLexer(m_currentAnalyzer ? m_currentAnalyzer->createLexer(this) : NULL);
             break;
 #endif

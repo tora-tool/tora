@@ -14,6 +14,7 @@ namespace Antlr3GuiImpl
 {
     class PLSQLGuiLexer;
     class MySQLGuiLexer;
+    class PostgreSQLGuiLexer;
     class OraclePLSQLLexer;
     class OraclePLSQLParser;
 };
@@ -81,6 +82,18 @@ namespace Antlr3GuiImpl
                          */
                         state->set_type(ImplTraits::CommonTokenType::TOKEN_EOF - 1);
                         typename ImplTraits::CommonTokenType* t = super::emit();
+
+                        // failure at buffer end
+                        if (t->get_stopIndex() < t->get_startIndex())
+                        {
+                        	auto idx = getCharIndex();
+                        	auto lp  = getCharPositionInLine();
+                        	auto lin = getLine();
+    						state->set_tokenStartCharIndex(getCharIndex());
+    						state->set_tokenStartCharPositionInLine(getCharPositionInLine());
+                        	state->set_tokenStartLine(getLine());
+							throw "lexer error";
+                        }
                         //super::recover();
                     }
             };
@@ -200,5 +213,6 @@ namespace Antlr3GuiImpl
 
     typedef antlr3::Traits<PLSQLGuiLexer, EmptyParser, UserTraits>               PLSQLGuiLexerTraits;
     typedef antlr3::Traits<MySQLGuiLexer, EmptyParser, UserTraits>               MySQLGuiLexerTraits;
+	typedef antlr3::Traits<PostgreSQLGuiLexer, EmptyParser, UserTraits>          PostgreSQLGuiLexerTraits;
 
 };
