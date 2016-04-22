@@ -78,8 +78,8 @@ QString toOracleTraits::quote(QString const &name) const
     }
 
     // Check if given identified is a reserved word
-    int i = 0;
-    //TODO add DefaultKeywords into connection provider traits
+    //int i = 0;
+    // TODO add DefaultKeywords into connection provider traits
     //while (ok && (DefaultKeywords[i] != NULL))
     //{
     //  if (name.compare(DefaultKeywords[i], Qt::CaseInsensitive) == 0)

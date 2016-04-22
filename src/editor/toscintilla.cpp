@@ -378,7 +378,7 @@ void toScintilla::newLine(void)
             for (int i = 0; i < str.length() && str.at(i).isSpace(); i++)
                 ind += str.at(i);
             if (ind.length())
-                insert(ind, false);
+                insertAndSelect(ind, false);
         }
     }
 }
@@ -1282,7 +1282,7 @@ QString toScintilla::getSelectionAsRTF()
     return fp;
 }
 
-void toScintilla::insert(const QString &str, bool select)
+void toScintilla::insertAndSelect(const QString &str, bool select)
 {
     int lineFrom;
     int indexFrom;

@@ -74,5 +74,5 @@ class toOracleTraits: public toConnectionTraits
             return true;
         }
 
-        virtual QList<QString> primaryKeys(toConnection &, toCache::ObjectRef const&) const;
+        QList<QString> primaryKeys(toConnection &, toCache::ObjectRef const&) const override;
 };

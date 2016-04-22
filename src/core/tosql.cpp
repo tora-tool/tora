@@ -307,7 +307,7 @@ void toSQL::loadSQL(const QString &filename)
                     char const* nam = ((const char *)data) + bol;
 					char const* val = ((const char *)data) + endtag + 1;
 					char const* ver;
-					char const* prov;
+					char const* prov(NULL);
                     if (vertag >= 0)
                     {
                         ver = ((const char *)data) + vertag + 1;

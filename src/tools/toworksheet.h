@@ -110,11 +110,11 @@ class toWorksheet : public toToolWidget
         toWorksheet(QWidget *parent, toConnection &connection, bool autoLoad = true);
         virtual ~toWorksheet();
 
-        virtual bool hasTransaction() const; // override fro toToolWidget
+        bool hasTransaction() const override;
 
         toWorksheetEditor *editor(void);
 
-        virtual bool canHandle(const toConnection &);
+        bool canHandle(const toConnection &) override;
 
 #ifdef TORA3_SESSION
         virtual void exportData(std::map<QString, QString> &data, const QString &prefix);
@@ -195,10 +195,10 @@ class toWorksheet : public toToolWidget
         void slotCreatePopupMenu(const QPoint &pos);
 
     protected:
-        void closeEvent(QCloseEvent *event);
+        void closeEvent(QCloseEvent *event) override;
 
-        virtual void focusInEvent(QFocusEvent *e);
-        virtual void focusOutEvent(QFocusEvent *e);
+        void focusInEvent(QFocusEvent *e) override;
+        void focusOutEvent(QFocusEvent *e) override;
 
     private slots:
         void slotPoll(void);

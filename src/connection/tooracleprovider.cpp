@@ -67,15 +67,15 @@ class toOracleProvider : public  toConnectionProvider
         toOracleProvider(toConnectionProviderFinder::ConnectionProvirerParams const& p);
 
         /** see: @ref toConnectionProvider::initialize() */
-        virtual bool initialize();
+        bool initialize() override;
 
         /** see: @ref toConnectionProvider::name() */
-        virtual QString const& name() const
+        QString const& name() const override
         {
             return m_name;
         };
 
-        virtual QString const& displayName() const
+        QString const& displayName() const override
         {
             return m_display_name;
         };

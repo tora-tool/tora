@@ -356,15 +356,6 @@ toTreeWidgetItem *toTreeWidget::toFindItem(const QString &str)
     return FindItem(this->firstChild(), str);
 }
 
-void toTreeWidget::selectAll(bool s)
-{
-    if (!s)
-        QTreeWidget::clearSelection();
-    else
-        QTreeWidget::selectAll();
-}
-
-
 void toTreeWidget::updateContents()
 {
     return;                     // stub

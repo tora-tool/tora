@@ -43,6 +43,7 @@ toConnectionRegistry::~toConnectionRegistry()
 {
     Utils::toBusy::m_enabled = false;
     int size = m_ConnectionsList.size();
+    Q_UNUSED(size);
 }
 
 bool toConnectionRegistry::isEmpty() const
@@ -50,14 +51,14 @@ bool toConnectionRegistry::isEmpty() const
     return m_ConnectionsList.empty();
 }
 
-void toConnectionRegistry::changeConnection(toConnection &conn)
+void toConnectionRegistry::changeConnection(toConnection const&conn)
 {
     Q_ASSERT_X(m_ConnectionsMap.contains(conn.connectionOptions())
                , qPrintable(__QHERE__)
                , qPrintable(QString("Unregistered connection(change): %1").arg(conn.connectionOptions().toString())));
 
     int oldIdx = m_currentConnection.row();
-    m_currentConnection = index(m_ConnectionsList.indexOf(&conn));
+    m_currentConnection = index(m_ConnectionsList.indexOf(const_cast<toConnection*>(&conn)));
     if (oldIdx != m_currentConnection.row())
     {
         emit activeConnectionChanged(m_currentConnection);
@@ -114,6 +115,7 @@ void toConnectionRegistry::removeConnection(toConnection *conn)
 
     beginRemoveRows(QModelIndex(), pos, pos);
     int mRemoved = m_ConnectionsMap.remove(conns.at(0));
+    Q_UNUSED(mRemoved);
     m_ConnectionsList.removeAt(pos);
     m_currentConnection = index((std::min)(pos, m_ConnectionsList.size()-1));
     endRemoveRows();

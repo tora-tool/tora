@@ -963,7 +963,7 @@ void toMain::setNeedCommit(toToolWidget *tool, bool needCommit)
         return;
     }
 
-    toConnection &conn = tool->connection();
+    toConnection const& conn = tool->connection();
     int pos = ConnectionSelection->currentIndex();
 
 #pragma message WARN("Set need commit on connection here")

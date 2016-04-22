@@ -1392,10 +1392,11 @@ void toBrowser::slotWindowActivated(toToolWidget* widget)
     }
 }
 
-QString toBrowser::schema(void)
+QString toBrowser::schema(void) const
 {
     try
     {
+#pragma message WARN("TODO: Override roResutSchema::selected(), handle empty")
         QString ret = Schema->selected();
         if (ret == tr("No schemas"))
             return connection().database();

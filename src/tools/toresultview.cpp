@@ -896,7 +896,7 @@ void toListView::menuCallback(QAction *action)
     else if (action == rightAct)
         setColumnAlignment(MenuColumn, Qt::AlignRight);
     else if (action == selectAllAct)
-        selectAll(true);
+        selectAll();
 //     else if(act ==
 //     case TORESULT_MEMO:
 //         displayMemo();

@@ -57,7 +57,7 @@ class TORA_EXPORT toConnectionRegistry : public QAbstractListModel
         /** Change current connection
          */
         // see void toChangeConnection::changeConnection(QAction *act)
-        void changeConnection(toConnection &);
+        void changeConnection(toConnection const&);
 
         /**
          * Get a list of currently open connections.

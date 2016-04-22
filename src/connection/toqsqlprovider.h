@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef __QSQL_PROVIDER__
-#define __QSQL_PROVIDER__
+#pragma once
 
 #include "core/toconnectionprovider.h"
 #include "core/toconnectiontraits.h"
@@ -56,7 +55,7 @@ class toQSqlProvider : public  toConnectionProvider
         bool initialize() override;
 
         /** see: @ref toConnectionProvider::name() */
-        QString const& name() const = 0;
+        QString const& name() const override = 0 ;
 
         /** see: @ref toConnectionProvider::hosts() */
         QList<QString> hosts() const override;
@@ -76,7 +75,7 @@ class toQSqlProvider : public  toConnectionProvider
         /** see: @ref toConnection
          * TODO used only by toQODBCProvider (implement this in toQODBCProvider)
          */
-        toConnectionTraits* createConnectionTrait(void);
+        toConnectionTraits* createConnectionTrait(void) override;
 };
 
 class toQSqlTraits: public toConnectionTraits
@@ -120,5 +119,3 @@ class toQSqlTraits: public toConnectionTraits
             return false;
         }
 };
-
-#endif

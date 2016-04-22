@@ -68,17 +68,19 @@ QSqlQuery* psqlQuery::createQuery(const QString &sql)
 
     QSqlQuery *ret = new QSqlQuery(*ptr);
     ret->setForwardOnly(true);
-
+    bool prepared, executed;
+    Q_UNUSED(prepared);
+    Q_UNUSED(executed);
     if (!query()->params().empty())
     {
         QString s = stripBinds(query()->sql());
-        bool prepared = ret->prepare(s);
+        prepared = ret->prepare(s);
         bindParam(ret, query()->params());
-        bool executed = ret->exec();
+        executed = ret->exec();
     }
     else
     {
-        bool executed = ret->exec(sql);
+        executed = ret->exec(sql);
     }
     return ret;
 }

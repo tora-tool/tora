@@ -115,7 +115,7 @@ class toSession : public toToolWidget
         toSession(QWidget *parent, toConnection &connection);
         ~toSession();
 
-        virtual bool canHandle(const toConnection &conn);
+        bool canHandle(const toConnection &conn) override;
 
     public slots:
         void slotChangeTab(int);
@@ -133,7 +133,7 @@ class toSession : public toToolWidget
         }
         void slotCancelBackend(void);
         void slotDisconnectSession(void);
-        virtual void slotWindowActivated(toToolWidget*);
+        void slotWindowActivated(toToolWidget*) override;
         void slotDone(void);
         void slotSelectAll(void);
         void slotSelectNone(void);

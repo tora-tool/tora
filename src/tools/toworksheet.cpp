@@ -735,20 +735,20 @@ bool toWorksheet::checkSave()
     // CheckSave is true
     // AutoSave is false or Editor->filemame is empty
     // Display file save dialog
-    QString conn;
+    QString description;
     try
     {
-        conn = connection().description();
+        description = connection().description();
     }
     catch (...)
     {
-        conn = QString::fromLatin1("unknown connection");
+        description = QString::fromLatin1("unknown connection");
     }
 
     // grab focus so user can see file and decide to save
     setFocus(Qt::OtherFocusReason);
 
-    QString str = tr("Save changes to editor for %1?").arg(conn);
+    QString str = tr("Save changes to editor for %1?").arg(description);
     if (!Editor->filename().isEmpty())
         str += QString::fromLatin1("\n(%1)").arg(Editor->filename());
 
@@ -1826,7 +1826,7 @@ void toWorksheet::slotInsertSaved(QAction *act)
     if (!sql.isEmpty())
     {
         Editor->setFocus();
-        Editor->sciEditor()->insert(sql);
+        Editor->sciEditor()->insertAndSelect(sql, false);
     }
 }
 
@@ -1932,7 +1932,7 @@ void toWorksheet::insertStatement(const QString &str)
             t += ";";
         }
 
-        Editor->sciEditor()->insert(t, true);
+        Editor->sciEditor()->insertAndSelect(t, true);
     }
 }
 

@@ -121,7 +121,7 @@ class toOutputTool : public toTool
             return conn.providerIs("Oracle");
         }
 
-        virtual toToolWidget *toolWindow(QWidget *parent, toConnection &connection)
+        toToolWidget *toolWindow(QWidget *parent, toConnection &connection) override
         {
             std::map<toConnection *, QWidget *>::iterator i = Windows.find(&connection);
             if (i != Windows.end())

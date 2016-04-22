@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef __QPGSQL_PROVIDER__
-#define __QPGSQL_PROVIDER__
+#pragma once
 
 #include "connection/toqsqlprovider.h"
 
@@ -49,12 +48,12 @@ class toQPSqlProvider : public toQSqlProvider
         //bool initialize() override;
 
         /** see: @ref toConnectionProvider::name() */
-        virtual QString const& name() const
+        QString const& name() const override
         {
             return m_name;
         };
 
-        virtual QString const& displayName() const
+        QString const& displayName() const override
         {
             return m_displayName;
         };
@@ -71,16 +70,14 @@ class toQPSqlProvider : public toQSqlProvider
         virtual QList<QString> options();
 #endif
         /** see: @ref toConnectionProvider::configurationTab() */
-        virtual QWidget *configurationTab(QWidget *parent);
+        QWidget *configurationTab(QWidget *parent) override;
 
         /** see: @ref toConnection */
-        virtual toConnection::connectionImpl* createConnectionImpl(toConnection&);
+        toConnection::connectionImpl* createConnectionImpl(toConnection&) override;
 
         //** see: @ref toConnection */
-        virtual toConnectionTraits* createConnectionTrait(void);
+        toConnectionTraits* createConnectionTrait(void) override;
 
     private:
         static QString m_name, m_displayName;
 };
-
-#endif

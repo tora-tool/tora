@@ -132,11 +132,11 @@ class toScintilla: public QsciScintilla //, public toEditWidget
 
         void setSelection(int posFrom, int posTo);
 
-        /** Insert text and optionallly mark inserted text.
+        /** Insert text and optionally mark inserted text.
          * @param str String to insert.
          * @param mark True if mark inserted as selected.
          */
-        virtual void insert(const QString &str, bool select = false);
+        void insertAndSelect(const QString &str, bool select = false);
 
         bool findText(const QString &searchText, const QString &replaceText, Search::SearchFlags flags);
         void findStop();
