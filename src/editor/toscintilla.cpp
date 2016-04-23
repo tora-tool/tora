@@ -75,6 +75,7 @@ toScintilla::toScintilla(QWidget *parent, const char *name)
     , m_searchText()
     , m_flags()
     , m_searchIndicator(9) // see QsciScintilla docs
+    , m_showTooTips(false)
 {
     using namespace ToConfiguration;
     if (name)
@@ -214,59 +215,58 @@ void toScintilla::setWordWrap(bool enable)
     }
 }
 
-#ifdef TORA_EXPERIMENTAL
-// experimental support for tooltips
+// implicit tooltip implementation - show word under cursor
+bool toScintilla::showToolTip(toScintilla::ToolTipData const& t)
+{
+    int word_len = t.wordEnd - t.wordStart;
+    if (word_len <= 0)
+        return false;
+    char *buf = new char[word_len + 1];
+    SendScintilla(SCI_GETTEXTRANGE, t.wordStart, t.wordEnd, buf);
+    QString word = bytesAsText(buf);
+    delete[] buf;
+
+    QToolTip::showText(t.globalPos, word, viewport(), t.rect);
+    return true;
+}
+
 bool toScintilla::event(QEvent *event)
 {
-    if (event->type() == QEvent::ToolTip)
+    if (event->type() == QEvent::ToolTip && m_showTooTips)
     {
-    	QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
-//            if (event.type() == QEvent.ToolTip and
-//                hasattr(QToolTip, 'isVisible') and
-//                not QToolTip.isVisible()):
+        ToolTipData t;
 
-    	//send = self.SendScintilla
-        QPoint const& point = helpEvent->pos();
-        //send = self.SendScintilla
-//                pos = send(QSB.SCI_POSITIONFROMPOINTCLOSE, point.x(), point.y())
-		long pos = SendScintilla(SCI_POSITIONFROMPOINTCLOSE, point.x(), point.y());
-//                if pos >= 0:
-//                    start = send(QSB.SCI_WORDSTARTPOSITION, pos, True)
-		long start = SendScintilla(SCI_WORDSTARTPOSITION, pos, true);
-//                    end = send(QSB.SCI_WORDENDPOSITION, pos, True)
-		long end= SendScintilla(SCI_WORDENDPOSITION, pos, true);
-//                    if start != end:
-//                        bytes = '\1' * (end - start)
-//                        send(QSB.SCI_GETTEXTRANGE, start, end, bytes)
-//                        word = bytes.decode('utf8')
-//                        if word.startswith('Q'):
-//                            x_start = send(QSB.SCI_POINTXFROMPOSITION, 0, start)
-		long x_start = SendScintilla(SCI_POINTXFROMPOSITION, 0, start);
-//                            y_start = send(QSB.SCI_POINTYFROMPOSITION, 0, start)
-		long y_start = SendScintilla(SCI_POINTYFROMPOSITION, 0, start);
-//                            x_end = send(QSB.SCI_POINTXFROMPOSITION, 0, end)
-		long x_end = SendScintilla(SCI_POINTXFROMPOSITION, 0, end);
-//                            line = send(QSB.SCI_LINEFROMPOSITION, start)
-		int line = SendScintilla(SCI_LINEFROMPOSITION, start);
-//                            height = send(QSB.SCI_TEXTHEIGHT, line)
-		int height = SendScintilla(SCI_TEXTHEIGHT, line);
-//                            rect = QRect(x_start, y_start, x_end - x_start, height)
-		QRect rect = QRect(x_start, y_start, x_end - x_start, height);
-//                            QToolTip.showText(event.globalPos(), word, self.viewport(), rect)
-        QString word = wordAtPoint(point);
-        if (!word.isEmpty())
+        //https://riverbankcomputing.com/pipermail/qscintilla/2008-November/000381.html
+        QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
+        t.globalPos = helpEvent->globalPos();
+        t.position = helpEvent->pos();
+
+        t.textPosition = SendScintilla(SCI_POSITIONFROMPOINTCLOSE, t.position.x(), t.position.y());
+        if (t.textPosition == -1)
+            return true;
+
+        t.wordStart = SendScintilla(SCI_WORDSTARTPOSITION, t.textPosition, true);
+        t.wordEnd   = SendScintilla(SCI_WORDENDPOSITION, t.textPosition, true);
+        if (t.wordStart == t.wordEnd)
+            return true;
+
+        t.x_start = SendScintilla(SCI_POINTXFROMPOSITION, 0, t.wordStart);
+        t.y_start = SendScintilla(SCI_POINTYFROMPOSITION, 0, t.wordStart);
+        t.x_end   = SendScintilla(SCI_POINTXFROMPOSITION, 0, t.wordEnd);
+        t.line    = SendScintilla(SCI_LINEFROMPOSITION, t.wordStart);
+        t.height  = SendScintilla(SCI_TEXTHEIGHT, t.line);
+        t.rect    = QRect(t.x_start, t.y_start, t.x_end - t.x_start, t.height);
+
+        if (showToolTip(t))
         {
-        	//QToolTip::showText(helpEvent->globalPos(), word);
-			QToolTip::showText(helpEvent->globalPos(), word, viewport(), rect);
-        	return true;
+            return true;
         } else {
-        	QToolTip::hideText();
-        	event->ignore();
+            QToolTip::hideText();
+            event->ignore();
         }
     }
     return QsciScintilla::event(event);
 }
-#endif
 
 void toScintilla::print(const QString  &fname)
 {

@@ -146,40 +146,58 @@ class toScintilla: public QsciScintilla //, public toEditWidget
         int getLevelAt(int line);
         wchar_t getWCharAt(int pos);
 
+        void enableToolTips() { m_showTooTips = true; }
+        void disableToolTips() { m_showTooTips = false; }
+
     public slots:
         void setWordWrap(bool);
 
     protected:
-#ifdef TORA_EXPERIMENTAL
-        // experimental support for tooltips
+        struct ToolTipData
+        {
+            QPoint position;     // Event position
+            QPoint globalPos;
+            long   textPosition; // Sci text position
+            long   wordStart;    // Sci word start position
+            long   wordEnd;      // Sci word end position
+            long   x_start;
+            long   y_start;
+            long   x_end;
+            int    line;         // Sci Line
+            int    height;
+            QRect  rect;
+        };
+
         bool event(QEvent *event) override;
-#endif
+
+        bool showToolTip(ToolTipData const& t);
+
         void print(const QString &fname);
 
         // QsciScintilla API reimplementation
 
         //! \reimp
-        virtual void mousePressEvent(QMouseEvent *e);
+        void mousePressEvent(QMouseEvent *e) override;
 
         //! \reimp
-        virtual void keyPressEvent(QKeyEvent *e);
+        void keyPressEvent(QKeyEvent *e) override;
 
         //! \reimp
-        virtual void focusInEvent(QFocusEvent *e);
+        void focusInEvent(QFocusEvent *e) override;
 
         //! \reimp
-        virtual void focusOutEvent(QFocusEvent *e);
+        void focusOutEvent(QFocusEvent *e) override;
 
         //! \reimp
         // to be overriden
         // unless contextMenuPolicy is set to: Qt::CustomContextMenu, which is usual when toBaseEditor is used
-        virtual void contextMenuEvent(QContextMenuEvent *);
+        void contextMenuEvent(QContextMenuEvent *) override;
 
         //! \reimp
-        virtual void copy();
+        void copy() override;
 
         //! \reimp
-        virtual void paste();
+        void paste() override;
 
         // Copied from Scintilla CharClassify.h (does not support UTF8)
         class CharClassify
@@ -242,7 +260,6 @@ class toScintilla: public QsciScintilla //, public toEditWidget
         void slotLinesChanged();
 
     private:
-
         QPoint DragStart;
 
         QString m_searchText;
@@ -250,6 +267,7 @@ class toScintilla: public QsciScintilla //, public toEditWidget
 
         //! Highlight all occurrences of m_searchText QScintilla indicator
         const int m_searchIndicator;
+        bool m_showTooTips;
 };
 
 #endif
