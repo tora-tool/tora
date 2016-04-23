@@ -85,15 +85,15 @@ namespace Antlr3GuiImpl
 
                         // failure at buffer end
                         if (t->get_stopIndex() < t->get_startIndex())
-                        {
-                        	auto idx = getCharIndex();
-                        	auto lp  = getCharPositionInLine();
-                        	auto lin = getLine();
-    						state->set_tokenStartCharIndex(getCharIndex());
-    						state->set_tokenStartCharPositionInLine(getCharPositionInLine());
-                        	state->set_tokenStartLine(getLine());
-							throw "lexer error";
-                        }
+    					{
+    						//auto idx = super::getCharIndex();
+    						//auto lp  = super::getCharPositionInLine();
+    						//auto lin = super::getLine();
+    						state->set_tokenStartCharIndex(super::getCharIndex());
+    						state->set_tokenStartCharPositionInLine(super::getCharPositionInLine());
+    						state->set_tokenStartLine(super::getLine());
+    						throw "lexer error";
+    					}
                         //super::recover();
                     }
             };
@@ -103,7 +103,7 @@ namespace Antlr3GuiImpl
                     typedef antlr3::CommonToken<ImplTraits> super;
                     typedef typename antlr3::CommonToken<ImplTraits>::TOKEN_TYPE TOKEN_TYPE;
                 public:
-                    ToraToken() : m_block_context(BlkCtx::NONE), super() {};
+                    ToraToken() : super(), m_block_context(BlkCtx::NONE) {};
                     ToraToken( ANTLR_UINT32 type) : super(type), m_block_context(BlkCtx::NONE)  {};
                     ToraToken( TOKEN_TYPE type) : super(type), m_block_context(BlkCtx::NONE)  {};
                     ToraToken( const ToraToken& ctoken ) : super(ctoken), m_block_context(ctoken.m_block_context) {};

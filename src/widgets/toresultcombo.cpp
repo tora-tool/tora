@@ -144,7 +144,7 @@ void toResultCombo::slotPoll(void)
             {
                 QString t = (QString)Query->readValue();
                 QStringList l;
-                for (unsigned i = 1; i < Query->describe().size(); ++i)
+                for (int i = 1; i < Query->describe().size(); ++i)
                 {
                     QString v = (QString)Query->readValue();
                     l.append(v);
