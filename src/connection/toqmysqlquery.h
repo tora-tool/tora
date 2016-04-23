@@ -70,7 +70,7 @@ class mysqlQuery : public qsqlQuery
         toQColumnDescriptionList describe(QSqlRecord record);
         QString stripBinds(const QString &in);
         void bindParam(QSqlQuery *q, toQueryParams const &params);
-        QStringList queryParam(const QString &in, toQueryParams const &params);
+        QStringList queryParam(const QString &in, toQueryParams &params);
 
         QSqlQuery *Query;
         QSqlRecord Record;

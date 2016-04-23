@@ -95,26 +95,19 @@ void toResultField::slotPoll(void)
             return ;
         if (Query)
         {
+            int fieldNo = 1;
             while (Query->hasMore())
             {
                 // For some MySQL statements (say "show create function aaa.bbb") more than one column is returned
                 // and it is not possible to control that (or I do not know how to do it). This workaround will get
                 // a required field (say 3rd) from a result set returned.
-                int fieldNo = whichResultField; // by default this would be set to 1 in constructor
-                while (fieldNo > 1)
-                {
-                    fieldNo--;
-                    Query->readValue();
-                }
-                Unapplied += (QString)Query->readValue();
+                QString val = (QString)Query->readValue();
 
-                // Read any remaining columns for queries with specific field to fetch.
-                // This is primarily used for MySQL statements like "show create..." which
-                // return different uncontrollable number of fields for different users.
-                // If remaining fields are not fetched polling thread will loop.
-                if (whichResultField > 1)
-                    while (!Query->eof())
-                        Query->readValue();
+                if (fieldNo == whichResultField) // by default this would be set to 1 in constructor
+                    Unapplied += val;
+                fieldNo++;
+                if (fieldNo > Query->columnCount())
+                    fieldNo = 1;
             }
             if (Unapplied.length() > THRESHOLD)
             {
@@ -125,7 +118,7 @@ void toResultField::slotPoll(void)
     }
     catch (const QString &exc)
     {
-        delete Query;
+        Query->deleteLater();
         Query = NULL;
         Utils::toStatusMessage(exc);
     }

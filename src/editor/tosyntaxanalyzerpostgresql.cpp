@@ -63,7 +63,7 @@ toSyntaxAnalyzer::statementList toSyntaxAnalyzerPostgreSQL::getStatements(const 
     try
     {
         std::unique_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("PostreSQLGuiLexer", "", "toSyntaxAnalyzerPostgreSQL");
-        lexer->setStatement(str.c_str(), str.length());
+        lexer->setStatement(str.c_str(), (int)str.length());
 
         SQLLexer::Lexer::token_const_iterator start = lexer->begin();
         start = lexer->findStartToken(start);
@@ -101,7 +101,7 @@ toSyntaxAnalyzer::statement toSyntaxAnalyzerPostgreSQL::getStatementAt(unsigned 
     try
     {
         std::unique_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("MysqlGuiLexer", "", "toCustomLexer");
-        lexer->setStatement(str.c_str(), str.length());
+        lexer->setStatement(str.c_str(), (int)str.length());
 
         SQLLexer::Lexer::token_const_iterator start = lexer->begin();
         start = lexer->findStartToken(start);
