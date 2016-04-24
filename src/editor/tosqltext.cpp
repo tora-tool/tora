@@ -464,6 +464,7 @@ void toSqlText::unScheduleParsing()
         m_parserTimer->stop();
 }
 
+#ifdef TORA_EXPERIMENTAL
 bool toSqlText::showToolTip(toSqlText::ToolTipData const& t)
 {
     int start_pos = SendScintilla(QsciScintilla::SCI_POSITIONFROMLINE, t.line);
@@ -477,7 +478,7 @@ bool toSqlText::showToolTip(toSqlText::ToolTipData const& t)
     SendScintilla(SCI_GETTEXTRANGE, start_pos, end_pos, buf);
     QString word = convertTextS2Q(buf);
 
-    std::unique_ptr <SQLLexer::Lexer> lexer(LexerFactTwoParmSing::Instance().create("OracleGuiLexer", "", "toLexerOracle - OracleGuiLexer"));
+    std::unique_ptr <SQLLexer::Lexer> lexer(LexerFactTwoParmSing::Instance().create("OracleGuiLexer", "", "toSqlText::showToolTip"));
     lexer->setStatement(buf, word_len + 1);
     SQLLexer::Lexer::token_const_iterator i = lexer->begin();
     QString toolTipText;
@@ -501,6 +502,7 @@ bool toSqlText::showToolTip(toSqlText::ToolTipData const& t)
 
     return true;
 }
+#endif
 
 void toSqlText::process()
 {

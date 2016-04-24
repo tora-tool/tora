@@ -166,9 +166,9 @@ class toSqlText : public toScintilla
 
         void scheduleParsing();
         void unScheduleParsing();
-
+#ifdef TORA_EXPERIMENTAL
         bool showToolTip(ToolTipData const& t) override;
-
+#endif
     private:
         HighlighterTypeEnum highlighterType;
 
