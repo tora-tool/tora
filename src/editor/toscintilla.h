@@ -170,7 +170,7 @@ class toScintilla: public QsciScintilla //, public toEditWidget
 
         bool event(QEvent *event) override;
 
-        bool showToolTip(ToolTipData const& t);
+        virtual bool showToolTip(ToolTipData const& t);
 
         void print(const QString &fname);
 

@@ -89,6 +89,7 @@ namespace SQLLexer
             inline const Position& getPosition() const;
             inline unsigned getLength() const;
             inline const TokenType& getTokenType() const;
+            inline QString getTokenTypeName() const;
             inline unsigned getOrigTokenType() const;
 
             inline BlockContextEnum getBlockContext() const;
@@ -99,6 +100,10 @@ namespace SQLLexer
 
             inline Token& operator=(const Token& other);
             inline operator const Position&() const;
+
+#ifdef TORA_EXPERIMENTAL
+            QString _mOrigTypeText;
+#endif
 
         protected:
             Position _mPosition;

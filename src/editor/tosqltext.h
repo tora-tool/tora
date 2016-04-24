@@ -159,13 +159,15 @@ class toSqlText : public toScintilla
 
     protected:
         /*! \brief Override QScintilla event handler to display code completion popup */
-        virtual void keyPressEvent(QKeyEvent * e);
+        void keyPressEvent(QKeyEvent * e) override;
 
-        virtual void focusInEvent(QFocusEvent *e);
-        virtual void focusOutEvent(QFocusEvent *e);
+        void focusInEvent(QFocusEvent *e) override;
+        void focusOutEvent(QFocusEvent *e) override;
 
         void scheduleParsing();
         void unScheduleParsing();
+
+        bool showToolTip(ToolTipData const& t) override;
 
     private:
         HighlighterTypeEnum highlighterType;

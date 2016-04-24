@@ -294,6 +294,9 @@ const Token& OracleGuiLexer::LA(int pos) const
 		retvalLA = Token(Position(line, column), length, token->getType(), type);
 		retvalLA.setText(QString::fromUtf8(token->getText().c_str()));
 		retvalLA.setBlockContext(token->getBlockContext());
+#ifdef TORA_EXPERIMENTAL
+		retvalLA._mOrigTypeText = token->getType() == PLSQLGuiLexer::EOF_TOKEN ? "EOF" : (const char *)Antlr3GuiImpl::PLSQLGuiLexerTokens::getTokenName(token->getType());
+#endif
 		return retvalLA;
 	} else
 		throw Exception();

@@ -45,6 +45,10 @@
 #include "editor/toworksheettext.h"
 #include "core/tosyntaxanalyzer.h"
 
+#ifdef TORA_EXPERIMENTAL
+#include "parsing/tsqllexer.h"
+#endif
+
 #include <QListWidget>
 #include <QVBoxLayout>
 #include <QApplication>
@@ -458,6 +462,44 @@ void toSqlText::unScheduleParsing()
 {
     if (m_parserTimer->isActive())
         m_parserTimer->stop();
+}
+
+bool toSqlText::showToolTip(toSqlText::ToolTipData const& t)
+{
+    int start_pos = SendScintilla(QsciScintilla::SCI_POSITIONFROMLINE, t.line);
+    int end_pos   = SendScintilla(QsciScintilla::SCI_GETLINEENDPOSITION, t.line);
+
+    int word_len = end_pos - start_pos;
+    if (word_len <= 0)
+        return false;
+
+    char *buf = new char[word_len + 1];
+    SendScintilla(SCI_GETTEXTRANGE, start_pos, end_pos, buf);
+    QString word = convertTextS2Q(buf);
+
+    std::unique_ptr <SQLLexer::Lexer> lexer(LexerFactTwoParmSing::Instance().create("OracleGuiLexer", "", "toLexerOracle - OracleGuiLexer"));
+    lexer->setStatement(buf, word_len + 1);
+    SQLLexer::Lexer::token_const_iterator i = lexer->begin();
+    QString toolTipText;
+
+    long offset = t.textPosition - start_pos;
+
+    do
+    {
+		if (i->getPosition().getLinePos() > offset)
+			break;
+		toolTipText  = i->getText();
+        toolTipText += i->getPosition().toString();
+        toolTipText += '(' + i->getTokenTypeName() + '/' + i->_mOrigTypeText + ')';
+        i++;
+    }
+    while(i != lexer->end());
+
+    QToolTip::showText(t.globalPos, toolTipText, viewport(), t.rect);
+
+    delete[] buf;
+
+    return true;
 }
 
 void toSqlText::process()
