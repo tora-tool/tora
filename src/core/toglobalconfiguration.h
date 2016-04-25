@@ -75,7 +75,7 @@ namespace ToConfiguration
                 , DisplaySamplesInt     // #define CONF_DISPLAY_SAMPLES
                 , SizeUnit              // #define CONF_SIZE_UNIT
                 , RefreshInterval    // #define CONF_REFRESH
-                , DefaultListFormatInt  // #define CONF_DEFAULT_FORMAT
+                , DefaultListFormatInt  // #define CONF_DEFAULT_FORMAT // Text(0), Tab delimited(1), CSV(2), HTML(3), SQL(4)
                 , Style                 // #define CONF_STYLE
                 , Translation           // #define CONF_LOCALE (Translation)
             };

@@ -193,7 +193,7 @@ class toResultTableView : public QTableView, public toResult, public toEditWidge
         /**
          * Perform copy.
          */
-        virtual void editCopy(void);
+        void editCopy(void) override;
 
         /**
          * Select all contents.

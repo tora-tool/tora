@@ -66,8 +66,8 @@ class toSearchReplace : public QWidget
         void windowClosed();
 
     protected:
-        void showEvent(QShowEvent * e);
-        void closeEvent(QCloseEvent *e);
+        void showEvent(QShowEvent * e) override;
+        void closeEvent(QCloseEvent *e) override;
 
     private:
         Search::SearchFlags sharedFlags();

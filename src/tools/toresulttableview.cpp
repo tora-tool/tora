@@ -706,8 +706,7 @@ QString toResultTableView::exportAsText(toExportSettings settings)
         progress.setValue(2);
     }
 
-    std::unique_ptr<toListViewFormatter> pFormatter(
-        toListViewFormatterFactory::Instance().CreateObject(settings.type));
+    std::unique_ptr<toListViewFormatter> pFormatter(toListViewFormatterFactory::Instance().CreateObject(settings.type));
     // TODO WTF? Owner and Table are now defined in the sub-class toResultTableViewEdit
     //    settings.owner = Owner;
     //    settings.objectName = Table;

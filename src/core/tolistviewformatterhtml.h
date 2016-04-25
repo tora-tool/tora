@@ -40,11 +40,10 @@
 
 class toListViewFormatterHTML : public toListViewFormatter
 {
-    public:
-        toListViewFormatterHTML();
-        virtual ~toListViewFormatterHTML();
-        virtual QString getFormattedString(toExportSettings &settings,
-                                           const QAbstractItemModel * model);
+public:
+	toListViewFormatterHTML();
+	virtual ~toListViewFormatterHTML();
+	QString getFormattedString(toExportSettings &settings, const QAbstractItemModel * model) override;
 };
 
 #endif

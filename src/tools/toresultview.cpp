@@ -1072,8 +1072,7 @@ QString toListView::exportAsText(toExportSettings settings)
         progress.setValue(2);
     }
 
-    std::unique_ptr<toListViewFormatter> pFormatter(
-        toListViewFormatterFactory::Instance().CreateObject(settings.type));
+    std::unique_ptr<toListViewFormatter> pFormatter(toListViewFormatterFactory::Instance().CreateObject(settings.type));
     settings.owner = owner;
     settings.objectName = objectName;
     return pFormatter->getFormattedString(settings, model());
