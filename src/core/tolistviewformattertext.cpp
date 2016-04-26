@@ -55,13 +55,7 @@ toListViewFormatterText::toListViewFormatterText() : toListViewFormatter()
 {
 }
 
-toListViewFormatterText::~toListViewFormatterText()
-{
-}
-
-QString toListViewFormatterText::getFormattedString(toExportSettings &settings,
-        //const toResultModel *model);
-        const QAbstractItemModel * model)
+QString toListViewFormatterText::getFormattedString(toExportSettings &settings, const QAbstractItemModel * model)
 {
     int     columns   = model->columnCount();
     int     rows      = model->rowCount();
@@ -88,10 +82,8 @@ QString toListViewFormatterText::getFormattedString(toExportSettings &settings,
         else
             sizes[i] = 0;
     }
-    sizes[columns - 1] = 1;
 
     // loop through model and get column widths
-    QModelIndex mi;
     for (int row = 0; row < rows; row++)
     {
         for (int column = 0; column < columns - 1; column++)
@@ -101,17 +93,13 @@ QString toListViewFormatterText::getFormattedString(toExportSettings &settings,
             if (!settings.rowsHeader && column == 0)
                 continue;
 
-            mi = model->index(row, column);
-            QVariant data = model->data(mi, Qt::EditRole);
+            QVariant data = model->data(model->index(row, column), Qt::EditRole);
             QString v;
             if (data.isNull())
                 v = "{null}";
             else
                 v = data.toString();
-
-            int len = v.length();
-            if (len > sizes[column])
-                sizes[column] = len;
+            sizes[column] = (std::max)(sizes[column], v.length());
         }
     }
 
@@ -129,9 +117,8 @@ QString toListViewFormatterText::getFormattedString(toExportSettings &settings,
                                 Qt::Horizontal,
                                 Qt::DisplayRole).toString();
 
-            output += value;
-            for (int left = value.length(); left <= sizes[column]; left++)
-                output += ' ';
+            output += value.leftJustified(sizes[column], ' ');
+            output += ' '; // gap between columns
         }
 
         endLine(output);
@@ -143,9 +130,9 @@ QString toListViewFormatterText::getFormattedString(toExportSettings &settings,
                 continue;
             if (!settings.rowsHeader && column == 0)
                 continue;
-            for (int left = 0; left < sizes[column]; left++)
-                output += '=';
-            output += ' ';
+
+            output += QString::fromLatin1("=").leftJustified(sizes[column], '=');
+            output += ' '; // gap between columns
         }
 
         endLine(output);
@@ -163,8 +150,7 @@ QString toListViewFormatterText::getFormattedString(toExportSettings &settings,
                 continue;
             if (!settings.rowsHeader && column == 0)
                 continue;
-            mi = model->index(row, column);
-            QVariant data = model->data(mi, Qt::EditRole);
+            QVariant data = model->data(model->index(row, column), Qt::EditRole);
             QString value;
             if (data.isNull())
                 value = "{null}";

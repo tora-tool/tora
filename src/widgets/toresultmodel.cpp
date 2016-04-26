@@ -595,13 +595,8 @@ QVariant toResultModel::data(int row, QString column) const
  * with the specified orientation.
  *
  */
-QVariant toResultModel::headerData(int section,
-                                   Qt::Orientation orientation,
-                                   int role) const
+QVariant toResultModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    /*if (role != Qt::DisplayRole)
-        return QVariant();*/
-
     if (orientation == Qt::Horizontal)
     {
         if (!HeadersRead)
@@ -612,6 +607,8 @@ QVariant toResultModel::headerData(int section,
 
         if (role == Qt::DisplayRole)
             return Headers[section].name;
+        else if (role == Qt::UserRole)
+            return Headers[section].datatype;
         else
             return QVariant();
     }

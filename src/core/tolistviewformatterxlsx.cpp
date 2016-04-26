@@ -78,15 +78,15 @@ QString toListViewFormatterXLSX::getFormattedString(toExportSettings &settings, 
     "</Workbook>\r\n"
     );
 
-	int columns = model->columnCount();
+    int columns = model->columnCount();
     int rows    = model->rowCount();
 
     QString output;
 
     QVector<int> rlist = selectedRows(settings.selected);
-	QVector<int> clist = selectedColumns(settings.selected);
+    QVector<int> clist = selectedColumns(settings.selected);
 
-	// -1 for XLSX does not support row number
+    // -1 for XLSX does not support row number
     int columnCount = settings.columnsExport == toExportSettings::ColumnsSelected ? clist.size()-1 : columns;
     int rowCount    = settings.rowsExport    == toExportSettings::RowsSelected    ? rlist.size()   : rows;
 
@@ -102,13 +102,15 @@ QString toListViewFormatterXLSX::getFormattedString(toExportSettings &settings, 
         {
             if (settings.columnsExport == toExportSettings::ColumnsSelected && !clist.contains(column))
                 continue;
-            auto mi = model->index(row, column);
-            QVariant data = model->data(mi, Qt::EditRole);
+
+            QVariant data = model->data(model->index(row, column), Qt::EditRole);
+            QVariant type = model->headerData(column, Qt::Horizontal, Qt::UserRole);
+
             QString value;
             if (data.isNull())
                 value = "{null}";
             else
-                value = data.toString();
+                value = data.toString().replace("\"", "&quot;");
 
             output += ROW_LINE.arg("String").arg(value);
         }
