@@ -32,15 +32,13 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOLISTVIEWFORMATTER
-#define TOLISTVIEWFORMATTER
+#pragma once
 
 #include "core/toconfenum.h"
 
 #include <QtCore/QString>
 #include <QtCore/QModelIndexList>
 #include <QtCore/QVector>
-
 
 class toListView;
 class toResultModel;
@@ -151,5 +149,3 @@ protected:
 	virtual QVector<int> selectedRows(const QModelIndexList &selected);
 	virtual QVector<int> selectedColumns(const QModelIndexList &selected);
 };
-
-#endif

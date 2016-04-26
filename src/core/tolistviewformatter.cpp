@@ -68,14 +68,11 @@ void toListViewFormatter::endLine(QString &output)
 #endif
 }
 
-QVector<int> toListViewFormatter::selectedRows(
-    const QModelIndexList &selected)
+QVector<int> toListViewFormatter::selectedRows(const QModelIndexList &selected)
 {
 
     QVector<int> ret;
-    for (QList<QModelIndex>::const_iterator it = selected.begin();
-            it != selected.end();
-            it++)
+    for (QList<QModelIndex>::const_iterator it = selected.begin(); it != selected.end(); it++)
     {
         int r = (*it).row();
         if (!ret.contains(r))
@@ -85,14 +82,11 @@ QVector<int> toListViewFormatter::selectedRows(
     return ret;
 }
 
-QVector<int> toListViewFormatter::selectedColumns(
-    const QModelIndexList &selected)
+QVector<int> toListViewFormatter::selectedColumns(const QModelIndexList &selected)
 {
     QVector<int> ret;
     ret.append(0); // for later check for row headers
-    for (QList<QModelIndex>::const_iterator it = selected.begin();
-            it != selected.end();
-            it++)
+    for (QList<QModelIndex>::const_iterator it = selected.begin(); it != selected.end(); it++)
     {
         int c = (*it).column();
         if (!ret.contains(c))

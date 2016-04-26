@@ -34,7 +34,11 @@
 
 #pragma once
 
-namespace toListViewFormatterIdentifier
+#include "core/tolistviewformatter.h"
+
+class toListViewFormatterXLSX: public toListViewFormatter
 {
-    enum { TEXT, TAB_DELIMITED, CSV, HTML, SQL, XLSX};
-}
+    public:
+        toListViewFormatterXLSX();
+        QString getFormattedString(toExportSettings &settings, const QAbstractItemModel * model) override;
+};

@@ -49,7 +49,7 @@ namespace ToConfiguration
             {
                 // Paths
                 CustomSQL = 2000        // #define CONF_SQL_FILE
-                            , HelpDirectory         // #define CONF_HELP_PATH
+                , HelpDirectory         // #define CONF_HELP_PATH
                 , DefaultSession        // #define CONF_DEFAULT_SESSION
                 , CacheDirectory        // #define CONF_CACHE_DIR
                 , OracleHomeDirectory   // #define CONF_ORACLE_HOME

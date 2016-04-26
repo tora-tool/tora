@@ -450,6 +450,7 @@ SET(TORA_SOURCES
   core/tolistviewformattersql.cpp
   core/tolistviewformattertabdel.cpp
   core/tolistviewformattertext.cpp
+  core/tolistviewformatterxlsx.cpp
   core/tomainwindow.cpp
   main/tomessage.cpp
   core/toquery.cpp
