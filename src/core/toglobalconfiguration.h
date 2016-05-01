@@ -78,6 +78,8 @@ namespace ToConfiguration
                 , DefaultListFormatInt  // #define CONF_DEFAULT_FORMAT // Text(0), Tab delimited(1), CSV(2), HTML(3), SQL(4)
                 , Style                 // #define CONF_STYLE
                 , Translation           // #define CONF_LOCALE (Translation)
+                , ClipboardCHeadersBool // not displayed in the config gui (Copy format: include column headers)
+                , ClipboardRHeadersBool // not displayed in the config gui (Copy format: include row headers)
             };
             virtual QVariant defaultValue(int) const;
 
