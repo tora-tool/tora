@@ -283,7 +283,6 @@ void toTemplateEdit::newTemplate(void)
 
 void toTemplateEdit::changeSelection(void)
 {
-    bool update = false;
     if (LastTemplate != TemplateMap.end())
     {
         if (Name->text() != (*LastTemplate).first || Description->text() != (*LastTemplate).second)
@@ -291,14 +290,12 @@ void toTemplateEdit::changeSelection(void)
             TemplateMap.erase(LastTemplate);
             TemplateMap[Name->text()] = Description->text();
             allocateItem();
-            update = true;
         }
     }
     else if (!Name->text().isEmpty())
     {
         TemplateMap[Name->text()] = Description->text();
         allocateItem();
-        update = true;
     }
     LastTemplate = TemplateMap.end();
 

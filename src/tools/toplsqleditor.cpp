@@ -183,8 +183,8 @@ bool toPLSQLEditor::compile(CompilationType t)
     if (str.isEmpty())
         return true;
 
-    bool body = false;
 #if TORA3_PARSING
+    bool body = false;
     toSQLParse::stringTokenizer tokens(str);
 
     QString token = tokens.getToken();

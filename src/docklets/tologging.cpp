@@ -141,7 +141,7 @@ void toLoggingDocklet::handleSearching(Search::SearchFlags flags)
     if (flags & Search::CaseSensitive)
         f |= QTextDocument::FindCaseSensitively;
 
-    bool ret = log.find(m_search->searchText(), f);
+    /*bool ret =*/ log.find(m_search->searchText(), f);
 }
 
 void toLoggingDocklet::setEditorFocus()
