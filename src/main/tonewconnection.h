@@ -81,7 +81,7 @@ class toNewConnection : public QDialog
         bool eventFilter(QObject *obj, QEvent *event) override;
 
     public slots:
-        virtual void done(int r);
+        void done(int r) override;
 
     public:
         toNewConnection(QWidget* parent = 0,

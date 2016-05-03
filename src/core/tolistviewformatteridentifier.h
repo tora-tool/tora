@@ -32,13 +32,9 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOLISTVIEWFORMATTERIDENTIFIER_H
-#define TOLISTVIEWFORMATTERIDENTIFIER_H
+#pragma once
 
 namespace toListViewFormatterIdentifier
 {
-    enum { TEXT, TAB_DELIMITED, CSV, HTML, SQL};
+    enum { TEXT, TAB_DELIMITED, CSV, HTML, SQL, XLSX};
 }
-
-#endif
-

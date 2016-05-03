@@ -32,15 +32,13 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOLISTVIEWFORMATTER
-#define TOLISTVIEWFORMATTER
+#pragma once
 
 #include "core/toconfenum.h"
 
 #include <QtCore/QString>
 #include <QtCore/QModelIndexList>
 #include <QtCore/QVector>
-
 
 class toListView;
 class toResultModel;
@@ -140,17 +138,14 @@ class toExportSettings
 
 class toListViewFormatter
 {
-    public:
-        toListViewFormatter();
-        virtual ~toListViewFormatter();
-        virtual QString getFormattedString(toExportSettings &settings,
-                                           const QAbstractItemModel * model) = 0;
+public:
+	toListViewFormatter();
+	virtual ~toListViewFormatter();
+	virtual QString getFormattedString(toExportSettings &settings, const QAbstractItemModel * model) = 0;
 
-    protected:
-        virtual void endLine(QString &output);
-        // build a vector of selected rows for easy searching
-        virtual QVector<int> selectedRows(const QModelIndexList &selected);
-        virtual QVector<int> selectedColumns(const QModelIndexList &selected);
+protected:
+	virtual void endLine(QString &output);
+	// build a vector of selected rows for easy searching
+	virtual QVector<int> selectedRows(const QModelIndexList &selected);
+	virtual QVector<int> selectedColumns(const QModelIndexList &selected);
 };
-
-#endif

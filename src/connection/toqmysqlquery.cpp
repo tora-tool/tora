@@ -64,7 +64,7 @@ QSqlQuery* mysqlQuery::createQuery(const QString &sql)
 {
     QSqlQuery *ret = new QSqlQuery(Connection->Connection);
     ret->setForwardOnly(true);
-	bool executed;
+    bool executed;
     if (!query()->params().empty())
     {
         QString s = stripBinds(sql);
@@ -222,8 +222,9 @@ void mysqlQuery::checkQuery(void) // Must *not* call while locked
         msg += Query->lastQuery();
         throw toConnection::exception(toQMySqlConnectionSub::ErrorString(Query->lastError(), msg));
     }
-
-    if (Query->isSelect())
+    // NOTE: mysql_stmt_result_metadata() somethimes returns null for statements like "show create.."
+    // See QTBUG-4008.
+    if (Query->isSelect() || Query->record().count())
     {
         Record = Query->record();
         EOQ = !Query->next();
@@ -238,7 +239,7 @@ void mysqlQuery::checkQuery(void) // Must *not* call while locked
 toQColumnDescriptionList mysqlQuery::describe(QSqlRecord record)
 {
     ColumnDescriptions.clear();
-    for (unsigned int i = 0; i < record.count(); i++)
+    for (int i = 0; i < record.count(); i++)
     {
         toCache::ColumnDescription desc;
         desc.AlignRight = false;
@@ -387,11 +388,12 @@ void mysqlQuery::bindParam(QSqlQuery *q, toQueryParams const &params)
     }
 }
 
-QStringList mysqlQuery::queryParam(const QString &in, toQueryParams const &params)
+QStringList mysqlQuery::queryParam(const QString &in, toQueryParams &params)
 {
-	bool useBinds = toConfigurationNewSingle::Instance().option(MySQL::UseBindsBool).toBool();
+    bool useBinds = toConfigurationNewSingle::Instance().option(MySQL::UseBindsBool).toBool();
     QString sql, allDatabases;
     toQueryParams::const_iterator cpar = params.constBegin();
+    toQueryParams filteredParams;
 
     std::unique_ptr <SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance().create("MySQLGuiLexer", "", "toCustomLexer");
     lexer->setStatement(in);
@@ -403,12 +405,14 @@ QStringList mysqlQuery::queryParam(const QString &in, toQueryParams const &param
         switch (start->getTokenType())
         {
             case SQLLexer::Token::L_BIND_VAR:
-            	if (useBinds)
-            		BindParams << str;
-				else {
-					str = toQMySqlTraits::quoteVarcharStatic(*cpar);
-					cpar++;
-				}
+                if (useBinds)
+                {
+                    BindParams << str;
+                    filteredParams << *cpar;
+                } else {
+                    str = toQMySqlTraits::quoteVarcharStatic(*cpar);
+                }
+                cpar++;
             	break;
             case SQLLexer::Token::L_BIND_VAR_WITH_PARAMS:
             {
@@ -433,6 +437,8 @@ QStringList mysqlQuery::queryParam(const QString &in, toQueryParams const &param
                 } else if (useBinds) {
                 	BindParams << name;
                 	str = name2;
+                	filteredParams << *cpar;
+                	cpar++;
                 } else {
             		if (cpar == params.end())
             			throw toConnection::exception("Not all bind variables supplied");
@@ -451,8 +457,8 @@ QStringList mysqlQuery::queryParam(const QString &in, toQueryParams const &param
             	break;
             }
         }
-		start++;
-		sql.append(str);
+        start++;
+        sql.append(str);
     }
 
     QStringList ret;
@@ -469,5 +475,6 @@ QStringList mysqlQuery::queryParam(const QString &in, toQueryParams const &param
     		ret << new_sql;
     	}
     }
+    params = filteredParams;
     return ret;
 }

@@ -1,9 +1,43 @@
 //Define a grammar to parse statements from postgresql files
 lexer grammar PostgreSQLGuiLexer;
 
+options 
+{
+	language=Cpp;
+}
+
+tokens {
+    BIND_VAR_WITH_PARAMS;
+    UNSIGNED_INTEGER;
+    DOUBLE_COLON;
+}
+
+@lexer::includes 
+{
+#include "UserGuiTraits.hpp"
+#include <vector>
+}
+
+@lexer::namespace{ Antlr3GuiImpl }
+
+@lexer::context {
+  void advanceInput();
+}
+
+@lexer::members {
+
+  void PostgreSQLGuiLexer::advanceInput()
+  {
+    RecognizerSharedStateType *state = get_state();
+    state->set_tokenStartCharIndex(getCharIndex());    
+    state->set_tokenStartCharPositionInLine(getCharPositionInLine());
+    state->set_tokenStartLine(getLine());
+  }
+}
+        
 KEYWORD :
       ABORT
-    | ABSOLUTE
+    | ABSOLUTE_KW
     | ACCESS
     | ACTION
     | ADD
@@ -97,7 +131,7 @@ KEYWORD :
     | DEFERRABLE
     | DEFERRED
     | DEFINER
-    | DELETE
+    | DELETE_KW
     | DELIMITER
     | DELIMITERS
     | DESC
@@ -107,7 +141,7 @@ KEYWORD :
     | DISTINCT
     | DO
     | DOCUMENT
-    | DOMAIN
+    | DOMAIN_KW
     | DOUBLE
     | DROP
     | EACH
@@ -127,7 +161,7 @@ KEYWORD :
     | EXPLAIN
     | EXTERNAL
     | EXTRACT
-    | FALSE
+    | FALSE_KW
     | FAMILY
     | FETCH
     | FIRST
@@ -158,8 +192,8 @@ KEYWORD :
     | IMMEDIATE
     | IMMUTABLE
     | IMPLICIT
-    | IN
-    | INCLUDING
+    | IN_KW
+    | INCLUDING_KW
     | INCREMENT
     | INDEX
     | INDEXES
@@ -187,8 +221,8 @@ KEYWORD :
     | LANGUAGE
     | LARGE
     | LAST
-    | LCCOLLATE
-    | LCCTYPE
+    | LC_COLLATE_KW
+    | LC_CTYPE_KW
     | LEADING
     | LEAST
     | LEFT
@@ -230,7 +264,7 @@ KEYWORD :
     | NOTIFY
     | NOTNULL
     | NOWAIT
-    | NULL
+    | NULL_KW
     | NULLIF
     | NULLS
     | NUMERIC
@@ -246,7 +280,7 @@ KEYWORD :
     | OPTIONS
     | OR
     | ORDER
-    | OUT
+    | OUT_KW
     | OUTER
     | OVER
     | OVERLAPS
@@ -279,7 +313,7 @@ KEYWORD :
     | RECURSIVE
     | REFERENCES
     | REINDEX
-    | RELATIVE
+    | RELATIVE_KW
     | RELEASE
     | RENAME
     | REPEATABLE
@@ -309,7 +343,7 @@ KEYWORD :
     | SERIALIZABLE
     | SERVER
     | SESSION
-    | SESSIONUSER
+    | SESSION_USER
     | SET
     | SETOF
     | SHARE
@@ -326,7 +360,7 @@ KEYWORD :
     | STDIN
     | STDOUT
     | STORAGE
-    | STRICT
+    | STRICT_KW
     | STRIP
     | SUBSTRING
     | SUPERUSER
@@ -349,7 +383,7 @@ KEYWORD :
     | TREAT
     | TRIGGER
     | TRIM
-    | TRUE
+    | TRUE_KW
     | TRUNCATE
     | TRUSTED
     | TYPE
@@ -402,7 +436,7 @@ KEYWORD :
 
 //define keywords
 fragment ABORT          :  'ABORT';
-fragment ABSOLUTE       :  'ABSOLUTE';
+fragment ABSOLUTE_KW      :  'ABSOLUTE';
 fragment ACCESS           :  'ACCESS';
 fragment ACTION           :  'ACTION';
 fragment ADD            :  'ADD';
@@ -510,19 +544,19 @@ fragment DEFAULTS         :  'DEFAULTS';
 fragment DEFERRABLE       :  'DEFERRABLE';
 fragment DEFERRED         :  'DEFERRED';
 fragment DEFINER          :  'DEFINER';
-fragment DELETE         :  'DELETE';
+fragment DELETE_KW        :  'DELETE';
 fragment DELIMITER        :  'DELIMITER';
 fragment DELIMITERS       :  'DELIMITERS';
 fragment DESC             :  'DESC';
 
 fragment DICTIONARY       :  'DICTIONARY';
-fragment DISABLE        :  'DISABLE';
+fragment DISABLE          :  'DISABLE';
 fragment DISCARD          :  'DISCARD';
 fragment DISTINCT         :  'DISTINCT';
 fragment DO               :  'DO';
-fragment DOCUMENT       :  'DOCUMENT';
-fragment DOMAIN         :  'DOMAIN';
-fragment DOUBLE         :  'DOUBLE';
+fragment DOCUMENT         :  'DOCUMENT';
+fragment DOMAIN_KW        :  'DOMAIN';
+fragment DOUBLE           :  'DOUBLE';
 fragment DROP             :  'DROP';
 
 fragment EACH             :  'EACH';
@@ -544,7 +578,7 @@ fragment EXPLAIN          :  'EXPLAIN';
 fragment EXTERNAL         :  'EXTERNAL';
 fragment EXTRACT          :  'EXTRACT';
 
-fragment FALSE          :  'FALSE';
+fragment FALSE_KW         :  'FALSE';
 fragment FAMILY           :  'FAMILY';
 fragment FETCH            :  'FETCH';
 fragment FIRST          :  'FIRST';
@@ -578,17 +612,17 @@ fragment IF             :  'IF';
 fragment ILIKE            :  'ILIKE';
 fragment IMMEDIATE        :  'IMMEDIATE';
 fragment IMMUTABLE        :  'IMMUTABLE';
-fragment IMPLICIT       :  'IMPLICIT';
-fragment IN             :  'IN';
+fragment IMPLICIT         :  'IMPLICIT';
+fragment IN_KW            :  'IN';
 
-fragment INCLUDING        :  'INCLUDING';
+fragment INCLUDING_KW     :  'INCLUDING';
 fragment INCREMENT        :  'INCREMENT';
 fragment INDEX            :  'INDEX';
 fragment INDEXES          :  'INDEXES';
 fragment INHERIT          :  'INHERIT';
 fragment INHERITS         :  'INHERITS';
 fragment INITIALLY        :  'INITIALLY';
-fragment INLINE         :  'INLINE';
+fragment INLINE           :  'INLINE';
 
 fragment INNER          :  'INNER';
 fragment INOUT            :  'INOUT';
@@ -614,8 +648,8 @@ fragment KEY              :  'KEY';
 fragment LANGUAGE         :  'LANGUAGE';
 fragment LARGE          :  'LARGE';
 fragment LAST           :  'LAST';
-fragment LC_COLLATE     :  'LC_COLLATE';
-fragment LC_CTYPE       :  'LC_CTYPE';
+fragment LC_COLLATE_KW    :  'LC_COLLATE';
+fragment LC_CTYPE_KW      :  'LC_CTYPE';
 fragment LEADING          :  'LEADING';
 
 fragment LEAST            :  'LEAST';
@@ -663,7 +697,7 @@ fragment NOTHING          :  'NOTHING';
 fragment NOTIFY           :  'NOTIFY';
 fragment NOTNULL          :  'NOTNULL';
 fragment NOWAIT           :  'NOWAIT';
-fragment NULL           :  'NULL';
+fragment NULL_KW          :  'NULL';
 fragment NULLIF           :  'NULLIF';
 fragment NULLS          :  'NULLS';
 fragment NUMERIC          :  'NUMERIC';
@@ -681,8 +715,8 @@ fragment OPTIONS          :  'OPTIONS';
 fragment OR               :  'OR';
 
 fragment ORDER            :  'ORDER';
-fragment OUT            :  'OUT';
-fragment OUTER          :  'OUTER';
+fragment OUT_KW           :  'OUT';
+fragment OUTER            :  'OUTER';
 fragment OVER             :  'OVER';
 fragment OVERLAPS         :  'OVERLAPS';
 fragment OVERLAY          :  'OVERLAY';
@@ -720,7 +754,7 @@ fragment RECURSIVE        :  'RECURSIVE';
 fragment REFERENCES       :  'REFERENCES';
 fragment REINDEX          :  'REINDEX';
 
-fragment RELATIVE       :  'RELATIVE';
+fragment RELATIVE_KW      :  'RELATIVE';
 fragment RELEASE          :  'RELEASE';
 fragment RENAME           :  'RENAME';
 fragment REPEATABLE       :  'REPEATABLE';
@@ -772,7 +806,7 @@ fragment STATISTICS       :  'STATISTICS';
 fragment STDIN            :  'STDIN';
 fragment STDOUT           :  'STDOUT';
 fragment STORAGE          :  'STORAGE';
-fragment STRICT         :  'STRICT';
+fragment STRICT_KW        :  'STRICT';
 fragment STRIP          :  'STRIP';
 fragment SUBSTRING        :  'SUBSTRING';
 fragment SUPERUSER      :  'SUPERUSER';
@@ -798,7 +832,7 @@ fragment TRANSACTION      :  'TRANSACTION';
 fragment TREAT            :  'TREAT';
 fragment TRIGGER          :  'TRIGGER';
 fragment TRIM             :  'TRIM';
-fragment TRUE           :  'TRUE';
+fragment TRUE_KW          :  'TRUE';
 
 fragment TRUNCATE         :  'TRUNCATE';
 fragment TRUSTED          :  'TRUSTED';
@@ -876,7 +910,6 @@ SHIFT_RIGHT	: '>>' ;
 ALL_FIELDS	: '.*' ;
 
 SEMI	: ';' ;
-COLON	: ':' ;
 DOT	: '.' ;
 COMMA	: ',' ;
 ASTERISK: '*' ;
@@ -893,14 +926,42 @@ POWER_OP: '^' ;
 GTH	: '>' ;
 LTH	: '<' ;
 
-ID : [A-Za-z0-9_]+;
-	:	( 'A'..'Z' | 'a'..'z' | '_' | '$') ( 'A'..'Z' | 'a'..'z' | '_' | '$' | '0'..'9' )*
-
-CHARACTERLITERAL
-    :   '\'' (  ~('\''|'\\') )* '\''
+COLON
+	: ':'
+    {    if ((char) LA(1) == ':') {
+            consume();
+            $type = DOUBLE_COLON;
+        }
+    }        
     ;
 
-OPERATOR
+fragment
+UNSIGNED_INTEGER
+    :    ('0'..'9')+ 
+    ;
+
+NUMBER_LIT
+    :
+	(
+		UNSIGNED_INTEGER ( '.' UNSIGNED_INTEGER? )? ( ('E' | 'e') ('+' | '-')? UNSIGNED_INTEGER )?
+    |	
+		'.' UNSIGNED_INTEGER ( ('E' | 'e') ('+' | '-')? UNSIGNED_INTEGER )?
+    )
+    ;
+
+REGULAR_ID
+	:	( 'A'..'Z' | 'a'..'z' | '_' | '$') ( 'A'..'Z' | 'a'..'z' | '_' | '$' | '0'..'9' )*
+    ;
+
+CHARACTER_LITERAL
+    :   ('U&')? '\'' (  ~('\''|'\\') )* '\''
+    ;
+
+DELIMITED_ID
+    :    '"' (~('"' | '\r' | '\n') | '"' '"')+ '"' 
+    ;
+
+OPERATOR_SYM
 	: DIVIDE
     | MOD_SYM
     | OR_SYM
@@ -929,7 +990,8 @@ OPERATOR
     | BITAND
     | POWER_OP
     | GTH
-    | LTH;
+    | LTH
+	;
 
 fragment
 NEWLINE
@@ -937,10 +999,28 @@ NEWLINE
     |    '\n'
     ;
 
-LINE_COMMENT : '--' ~('\n'|'\r') )* '\r'? (NEWLINE|EOF);
-
-WS
-	: (' ' | '\t' | '\r' | '\n')+
+COMMENT_SL : '--' ( ~('\n'|'\r') )* //(NEWLINE|EOF)
+    ;
+COMMENT_ML
+	: '/*' ( options {greedy=false;} : . )* '*/'
 	;
-	
 
+SPACE
+    :    (' ' | '\t')+
+    ;
+
+LINEEND
+	:
+(
+	n=NEWLINE 
+	{
+		$n->set_type(NEWLINE);
+		get_tokSource()->enqueueToken($n);
+		advanceInput();
+	}
+)
+{ skip(); }
+	;
+
+// Last resort rule matches any character. This lexer should never fail.
+TOKEN_FAILURE : . ;

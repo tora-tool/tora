@@ -264,14 +264,15 @@ SET(TORA_MOC_CLASSES
   core/tosettingtab.h
   widgets/toconnectionwidget.h
   
+  core/tosyntaxanalyzer.h
   core/totool.h
   core/utils.h
-  parsing/tsqllexer.h
-  core/tosyntaxanalyzer.h
   editor/tosyntaxanalyzermysql.h
   editor/tosyntaxanalyzernl.h
   editor/tosyntaxanalyzeroracle.h
+  editor/tosyntaxanalyzerpostgresql.h
   parsing/tolexeroracleapis.h 
+  parsing/tsqllexer.h
   
   editor/tobaseeditor.h
   editor/tocomplpopup.h
@@ -286,6 +287,7 @@ SET(TORA_MOC_CLASSES
   core/tostyle.h
   parsing/tolexermysql.h
   parsing/tolexeroracle.h
+  parsing/tolexerpostgresql.h
   parsing/toscilexersql.h
 
   result/toproviderobserver.h
@@ -448,6 +450,7 @@ SET(TORA_SOURCES
   core/tolistviewformattersql.cpp
   core/tolistviewformattertabdel.cpp
   core/tolistviewformattertext.cpp
+  core/tolistviewformatterxlsx.cpp
   core/tomainwindow.cpp
   main/tomessage.cpp
   core/toquery.cpp
@@ -521,7 +524,8 @@ SET(TORA_SOURCES
   editor/todebugeditor.cpp
   widgets/tosearchreplace.cpp
   core/tostyle.cpp
-  parsing/tolexermysql.cpp  
+  parsing/tolexermysql.cpp
+  parsing/tolexerpostgresql.cpp
   parsing/tolexeroracle.cpp
   parsing/toscilexersql.cpp
 
@@ -555,28 +559,30 @@ SET(TORA_SOURCES
   connection/toqodbcprovider.cpp
   connection/toqsqlquery.cpp
 
-  parsing/tsqlparse.cpp
   core/tosyntaxanalyzer.cpp
   editor/tosyntaxanalyzernl.cpp
   editor/tosyntaxanalyzermysql.cpp
   editor/tosyntaxanalyzeroracle.cpp
-  parsing/PLSQLGuiLexer.cc
-  parsing/tsqllexeroracle2.cc
-  parsing/MySQLGuiLexer.cc
-  parsing/tsqllexermysql.cc
-  parsing/tsqllexermysql2.cc
-  parsing/MySQLLexer.cc
-  parsing/tolexeroracleapis.cpp
+  editor/tosyntaxanalyzerpostgresql.cpp
   core/persistenttrie.cpp
+  parsing/MySQLGuiLexer.cc
+  parsing/MySQLLexer.cc
   parsing/OracleDML.cc
   parsing/OracleDML.hpp
+  parsing/OracleDMLLexer.cc
+  parsing/OracleDMLLexer.hpp
+  parsing/OracleDMLTraits.hpp
   parsing/OracleDML_OracleDMLCommons.cc
   parsing/OracleDML_OracleDMLCommons.hpp
   parsing/OracleDML_OracleDMLKeys.cc
   parsing/OracleDML_OracleDMLKeys.hpp
-  parsing/OracleDMLLexer.cc
-  parsing/OracleDMLLexer.hpp
-  parsing/OracleDMLTraits.hpp
+  parsing/PLSQLGuiLexer.cc
+  parsing/PostgreSQLGuiLexer.cc
+  parsing/tolexeroracleapis.cpp
+  parsing/tsqllexermysql.cc
+  parsing/tsqllexermysql2.cc
+  parsing/tsqllexeroracle2.cc
+  parsing/tsqlparse.cpp  
 
   docklets/toviewconnections.cpp
   docklets/toviewdirectory.cpp
@@ -683,6 +689,7 @@ IF (USE_EXPERIMENTAL)
     parsing/error_handler.cc
     parsing/tplsqlparseoracle.cc
     parsing/tsqllexeroracle.cc
+    parsing/tsqllexerpostgresql.cc    
     parsing/tsqlparseoracle.cc
     parsing/tsqlparseoracle2.cc
     )

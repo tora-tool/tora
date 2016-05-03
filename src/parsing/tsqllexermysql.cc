@@ -196,12 +196,12 @@ const Token& mySQLGuiLexer::LA(int pos) const
 			type = Token::L_STRING;
 			break;
 		case MySQLGuiLexer::COMMENT_ML:
-		case MySQLGuiLexer::COMMENT_ML_PART:
+		//case MySQLGuiLexer::COMMENT_ML_PART:
 			type = Token::X_COMMENT_ML;
 			break;
-		case MySQLGuiLexer::COMMENT_ML_END:
-			type = Token::X_COMMENT_ML_END;
-			break;
+		//case MySQLGuiLexer::COMMENT_ML_END:
+		//	type = Token::X_COMMENT_ML_END;
+		//	break;
 		case MySQLGuiLexer::COMMENT_SL:
 			type = Token::X_COMMENT;
 			break;
@@ -214,7 +214,7 @@ const Token& mySQLGuiLexer::LA(int pos) const
 			break;
 		case MySQLGuiLexer::NEWLINE:
 		case MySQLGuiLexer::SPACE:
-		case MySQLGuiLexer::WHITE:
+		//case MySQLGuiLexer::WHITE:
 			type = Token::X_WHITE; 
 			break;
 		case MySQLGuiLexer::BIND_VAR:

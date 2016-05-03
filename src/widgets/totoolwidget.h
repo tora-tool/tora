@@ -89,7 +89,11 @@ class toToolWidget : public QWidget
         /** Get the current connection.
          * @return Reference to connection.
          */
-        toConnection &connection()
+        toConnection & connection()
+        {
+            return toConnectionWidget::connection();
+        }
+        toConnection const& connection() const
         {
             return toConnectionWidget::connection();
         }

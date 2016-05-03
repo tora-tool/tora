@@ -384,15 +384,6 @@ class toTreeWidget : public QTreeWidget
     public slots:
 
         /**
-         * If select is true, all the items get selected; otherwise all
-         * the items get unselected. This only works in the selection
-         * modes Multi and Extended. In Single and NoSelection mode the
-         * selection of the current item is just set to select
-         */
-        virtual void selectAll(bool);
-
-
-        /**
          * Updates the sizes of the viewport, header, scroll bars and so on
          */
         virtual void updateContents(void);

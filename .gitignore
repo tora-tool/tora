@@ -47,6 +47,9 @@ extlibs/libantlr3c-3.5.1/antlr3config.h
 **/*.wxi
 **/*.msi
 **/*.a
+TOra.VC.VC.opendb
+TOra.VC.db
+gitrevision.bat
 
 ########################################
 #             Eclise                   #

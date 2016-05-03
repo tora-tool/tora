@@ -183,6 +183,7 @@ toMain::toMain()
     std::vector<std::string> finders = ConnectionProviderFinderFactory::Instance().keys();
     // Resulting list of all the providers found
     toProvidersList &allProviders = toProvidersListSing::Instance(); // already populated in main.cpp see splash
+    Q_UNUSED(allProviders);
 
     if (Connections.isEmpty())
     {
@@ -963,7 +964,7 @@ void toMain::setNeedCommit(toToolWidget *tool, bool needCommit)
         return;
     }
 
-    toConnection &conn = tool->connection();
+    toConnection const& conn = tool->connection();
     int pos = ConnectionSelection->currentIndex();
 
 #pragma message WARN("Set need commit on connection here")

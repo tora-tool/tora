@@ -135,10 +135,19 @@ void toConfigurationNew::saveAll()
         QVariant defaultValue = ctx->defaultValue(optionKey);	// defaultValue also determines datatype
         QVariant prefValue = m_settings.value(key);
         QVariant currValue = m_configMap.value(optionKey);
+        // Store new value
         if (!currValue.isNull() && currValue.canConvert(defaultValue.type()) && currValue.convert(defaultValue.type()) && currValue != defaultValue)
         {
             m_settings.beginGroup(ctx->name());
             m_settings.setValue(key, currValue);
+            m_settings.endGroup();
+            continue;
+        }
+        // New value equals to defaltValue (remove it from registry);
+        else if (!currValue.isNull() && currValue.canConvert(defaultValue.type()) && currValue.convert(defaultValue.type()) && currValue == defaultValue)
+        {
+            m_settings.beginGroup(ctx->name());
+            m_settings.remove(key);
             m_settings.endGroup();
             continue;
         }

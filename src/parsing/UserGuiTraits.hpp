@@ -14,6 +14,7 @@ namespace Antlr3GuiImpl
 {
     class PLSQLGuiLexer;
     class MySQLGuiLexer;
+    class PostgreSQLGuiLexer;
     class OraclePLSQLLexer;
     class OraclePLSQLParser;
 };
@@ -81,6 +82,18 @@ namespace Antlr3GuiImpl
                          */
                         state->set_type(ImplTraits::CommonTokenType::TOKEN_EOF - 1);
                         typename ImplTraits::CommonTokenType* t = super::emit();
+
+                        // failure at buffer end
+                        if (t->get_stopIndex() < t->get_startIndex())
+    					{
+    						//auto idx = super::getCharIndex();
+    						//auto lp  = super::getCharPositionInLine();
+    						//auto lin = super::getLine();
+    						state->set_tokenStartCharIndex(super::getCharIndex());
+    						state->set_tokenStartCharPositionInLine(super::getCharPositionInLine());
+    						state->set_tokenStartLine(super::getLine());
+    						throw "lexer error";
+    					}
                         //super::recover();
                     }
             };
@@ -90,7 +103,7 @@ namespace Antlr3GuiImpl
                     typedef antlr3::CommonToken<ImplTraits> super;
                     typedef typename antlr3::CommonToken<ImplTraits>::TOKEN_TYPE TOKEN_TYPE;
                 public:
-                    ToraToken() : m_block_context(BlkCtx::NONE), super() {};
+                    ToraToken() : super(), m_block_context(BlkCtx::NONE) {};
                     ToraToken( ANTLR_UINT32 type) : super(type), m_block_context(BlkCtx::NONE)  {};
                     ToraToken( TOKEN_TYPE type) : super(type), m_block_context(BlkCtx::NONE)  {};
                     ToraToken( const ToraToken& ctoken ) : super(ctoken), m_block_context(ctoken.m_block_context) {};
@@ -200,5 +213,6 @@ namespace Antlr3GuiImpl
 
     typedef antlr3::Traits<PLSQLGuiLexer, EmptyParser, UserTraits>               PLSQLGuiLexerTraits;
     typedef antlr3::Traits<MySQLGuiLexer, EmptyParser, UserTraits>               MySQLGuiLexerTraits;
+	typedef antlr3::Traits<PostgreSQLGuiLexer, EmptyParser, UserTraits>          PostgreSQLGuiLexerTraits;
 
 };

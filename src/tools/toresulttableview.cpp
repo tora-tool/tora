@@ -44,7 +44,7 @@
 #include "widgets/toresultlistformat.h"
 #include "core/tolistviewformatter.h"
 #include "core/tolistviewformatterfactory.h"
-//#include "core/tolistviewformatteridentifier.h"
+#include "core/tolistviewformatteridentifier.h"
 #include "widgets/toworkingwidget.h"
 #include "core/toglobalconfiguration.h"
 #include "core/todatabaseconfig.h"
@@ -52,6 +52,7 @@
 #include <QtCore/QSize>
 #include <QtCore/QTimer>
 #include <QtCore/QtDebug>
+#include <QtCore/QMimeData>
 #include <QtGui/QClipboard>
 #include <QtGui/QFont>
 #include <QtGui/QFontMetrics>
@@ -706,14 +707,12 @@ QString toResultTableView::exportAsText(toExportSettings settings)
         progress.setValue(2);
     }
 
-    std::unique_ptr<toListViewFormatter> pFormatter(
-        toListViewFormatterFactory::Instance().CreateObject(settings.type));
+    std::unique_ptr<toListViewFormatter> pFormatter(toListViewFormatterFactory::Instance().CreateObject(settings.type));
     // TODO WTF? Owner and Table are now defined in the sub-class toResultTableViewEdit
     //    settings.owner = Owner;
     //    settings.objectName = Table;
     return pFormatter->getFormattedString(settings, model());
 }
-
 
 // ---------------------------------------- overrides toEditWidget
 
@@ -747,14 +746,19 @@ void toResultTableView::editPrint()
 void toResultTableView::editCopy()
 {
     QClipboard *clip = qApp->clipboard();
-
+    QMimeData *md = new QMimeData();
     // if there's a selection, then export as text to clipboard
     QModelIndexList sel = selectedIndexes();
     if (sel.size() > 1)
     {
         toExportSettings settings = toResultListFormat::plaintextCopySettings();
         settings.selected = sel;
-        clip->setText(exportAsText(settings));
+        md->setText(exportAsText(settings));
+#ifdef Q_OS_WIN32
+        std::unique_ptr<toListViewFormatter> pFormatter(toListViewFormatterFactory::Instance().CreateObject(toListViewFormatterIdentifier::XLSX));
+        md->setData("XML Spreadsheet", pFormatter->getFormattedString(settings, model()).toUtf8());
+#endif
+        clip->setMimeData(md, QClipboard::Clipboard);
     }
     else
     {

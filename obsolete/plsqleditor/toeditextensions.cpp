@@ -269,7 +269,7 @@ void toEditExtensions::intIndent(int delta)
         }
 
         Current->setSelection(line1, 0, line2, Current->text(line2).length() - 1);
-        Current->insert(res, true);
+        Current->insertAndSelect(res, true);
     }
 }
 
@@ -312,7 +312,7 @@ void toEditExtensions::autoIndentBlock(void)
                 if (col2 == int(t.length()) && t.length() > 0) // Strip last newline if on last col of line
                     l--;
                 res = res.mid(ind.length(), l); // Strip indent.
-                Current->insert(res, true);
+                Current->insertAndSelect(res, true);
             }
         }
         TOCATCH;
@@ -339,7 +339,7 @@ void toEditExtensions::autoIndentBuffer(void)
             catch (...)
             {
                 TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
-                Current->insert(toSQLParse::indent(text.mid(pos)));
+                Current->insertAndSelect(toSQLParse::indent(text.mid(pos)));
             }
         }
         TOCATCH;
@@ -364,7 +364,7 @@ void toEditExtensions::quoteBlock(void)
         else
             text += "\"";
 
-        Current->insert("\"" + text, true);
+        Current->insertAndSelect("\"" + text, true);
     }
 }
 
@@ -392,7 +392,7 @@ void toEditExtensions::unquoteBlock(void)
         else if (text.right(1) == "\"\n")
             text = text.left(text.length() - 2) + "\n";
 
-        Current->insert(text, true);
+        Current->insertAndSelect(text, true);
     }
 }
 
@@ -437,7 +437,7 @@ void toEditExtensions::upperCase(void)
     {
         QString text = Current->selectedText().toUpper();
         if (!text.isEmpty())
-            Current->insert(text, true);
+            Current->insertAndSelect(text, true);
     }
 }
 
@@ -447,7 +447,7 @@ void toEditExtensions::lowerCase(void)
     {
         QString text = Current->selectedText().toLower();
         if (!text.isEmpty())
-            Current->insert(text, true);
+            Current->insertAndSelect(text, true);
     }
 }
 
@@ -497,7 +497,7 @@ void toEditExtensions::obfuscateBlock(void)
             stat.subTokens() = toSQLParse::parse(str);
             QString res;
             ObfuscateStat(stat, res);
-            Current->insert(res, true);
+            Current->insertAndSelect(res, true);
         }
     }
 }
@@ -514,7 +514,7 @@ void toEditExtensions::obfuscateBuffer(void)
             Current->selectAll();
             QString res;
             ObfuscateStat(stat, res);
-            Current->insert(res);
+            Current->insertAndSelect(res, false);
         }
     }
 }

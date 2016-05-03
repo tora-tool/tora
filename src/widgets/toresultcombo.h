@@ -111,7 +111,7 @@ class toResultCombo : public QComboBox, public toResult
     public slots:
         /** Reimplemented for internal reasons.
          */
-        virtual void refresh(void);
+        void refresh(void) override;
 
     protected slots:
         virtual void slotQueryDone(void);

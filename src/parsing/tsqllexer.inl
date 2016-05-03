@@ -2,6 +2,7 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QSet>
+#include <QtCore/QMetaEnum>
 
 namespace SQLLexer
 {
@@ -81,6 +82,9 @@ namespace SQLLexer
 		, _mOrigType(other._mOrigType)
 		, _mBlockContext(other._mBlockContext)
 		, _mTokenType(other._mTokenType)
+#ifdef TORA_EXPERIMENTAL
+        , _mOrigTypeText(other._mOrigTypeText)
+#endif		
 	{
 	};
 
@@ -98,6 +102,12 @@ namespace SQLLexer
 	{
 		return _mTokenType;
 	};
+
+    inline QString Token::getTokenTypeName() const
+    {
+        static int enumIdx = Token::staticMetaObject.indexOfEnumerator("TokenType");
+        return Token::staticMetaObject.enumerator(enumIdx).valueToKey(_mTokenType);
+    };
 
 	inline unsigned Token::getOrigTokenType() const
 	{
@@ -132,6 +142,9 @@ namespace SQLLexer
 		_mOrigType = other._mOrigType;
 		_mBlockContext = other._mBlockContext;
 		_mText = other._mText;
+#ifdef TORA_EXPERIMENTAL
+        _mOrigTypeText = other._mOrigTypeText;
+#endif		
 		return *this;
 	};
 

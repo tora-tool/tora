@@ -176,7 +176,6 @@ class toResultTableView : public QTableView, public toResult, public toEditWidge
          * Export list as a string.
          */
         QString exportAsText(toExportSettings settings);
-
         // ----- overrides toEditWidget
         /**
          * Perform a save on this widget.
@@ -193,7 +192,7 @@ class toResultTableView : public QTableView, public toResult, public toEditWidge
         /**
          * Perform copy.
          */
-        virtual void editCopy(void);
+        void editCopy(void) override;
 
         /**
          * Select all contents.

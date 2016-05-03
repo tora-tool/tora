@@ -17,6 +17,21 @@ tokens {
 
 @lexer::namespace{ Antlr3GuiImpl }
 
+@lexer::context {
+  void advanceInput();
+}
+
+@lexer::members {
+
+  void MySQLGuiLexer::advanceInput()
+  {
+    RecognizerSharedStateType *state = get_state();
+    state->set_tokenStartCharIndex(getCharIndex());    
+    state->set_tokenStartCharPositionInLine(getCharPositionInLine());
+    state->set_tokenStartLine(getLine());
+  }
+}
+        
 MYSQL_RESERVED:
 	  'ACCESSIBLE' 			// fragment ACCESSIBLE_SYM:
 	| 'ACTION' 			// fragment ACTION:
@@ -743,7 +758,7 @@ fragment SIGN                            : 'SIGN';
 fragment SIN                             : 'SIN';
 fragment SLEEP                           : 'SLEEP';
 fragment SOUNDEX                         : 'SOUNDEX';
-fragment SPACE                           : 'SPACE';
+fragment SPACE_KW                        : 'SPACE';
 fragment SQRT                            : 'SQRT';
 fragment STD                             : 'STD';
 fragment STDDEV                          : 'STDDEV';
@@ -857,7 +872,7 @@ fragment CHAR_FUNCTIONS:
 	| RPAD
 	| RTRIM
 	| SOUNDEX
-	| SPACE
+	| SPACE_KW
 	| STRCMP
 	| SUBSTRING_INDEX
 	| SUBSTRING
@@ -1052,24 +1067,31 @@ GTH                             : '>' ;
 LTH                             : '<' ;
 
 fragment
-SPACE_LIT
-    :    ' '
-    |    '\t'
-    ;
-
-fragment
 NEWLINE
     :    '\r' (options{greedy=true;}: '\n')?
     |    '\n'
     ;
 
-WHITE
-	:	( SPACE_LIT | NEWLINE)+
+SPACE
+    :    (' ' | '\t')+
+    ;
+
+LINEEND
+	:
+(
+	n=NEWLINE 
+	{
+		$n->set_type(NEWLINE);
+		get_tokSource()->enqueueToken($n);
+		advanceInput();
+	}
+)
+{ skip(); }//{ $channel=HIDDEN; }
 	;
 
 // http://dev.mysql.com/doc/refman/5.6/en/comments.html
 COMMENT_SL
-	: ('--'|'#') ( ~('\n'|'\r') )* (NEWLINE|EOF)
+	: ('--'|'#') ( ~('\n'|'\r') )* //(NEWLINE|EOF)
 	;		
 COMMENT_ML
 	: '/*' ( options {greedy=false;} : . )* '*/'
@@ -1110,13 +1132,13 @@ fragment USER_VAR_SUBFIX4:	( 'A'..'Z' | 'a'..'z' | '_' | '$' | '0'..'9' | DOT )+
 STRING_LITERAL: TEXT_STRING /*| USER_VAR_SUBFIX2 | USER_VAR_SUBFIX3*/ | USER_VAR_SUBFIX4;
 
 // GUI RULES
-COMMENT_ML_PART
-    :    '/*' (options{greedy=false;} : ~('*/') )* (NEWLINE)
-    ;
+// COMMENT_ML_PART
+//     :    '/*' (options{greedy=false;} : ~('*/') )* (NEWLINE)
+//     ;
 
-COMMENT_ML_END
-    :    '*/'
-    ;
+// COMMENT_ML_END
+//     :    '*/'
+//     ;
 
 // -----------------------------------------------------------------------------
 // Bind variables

@@ -145,6 +145,10 @@ QVariant ToConfiguration::Global::defaultValue(int option) const
             return QVariant(Utils::toGetSessionType());
         case Translation:
             return QVariant(QLocale().name());
+        case ClipboardCHeadersBool:
+            return QVariant((bool)true);
+        case ClipboardRHeadersBool:
+            return QVariant((bool)false);
         default:
             Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Global un-registered enum value: %1").arg(option)));
             return QVariant();

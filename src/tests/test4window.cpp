@@ -69,6 +69,7 @@ Test4Window::Test4Window(const QString &sql)
     editorLeft = new toSqlText(this);
     leftVerticalLayout->addWidget(editorLeft);
     editorLeft->setText(sql);
+    editorLeft->enableToolTips();
 
     editorRight = new toSqlText(this);
     editorRight->setHighlighter(toSqlText::Oracle);
@@ -76,6 +77,7 @@ Test4Window::Test4Window(const QString &sql)
     editorRight->setText(sql);
     editorRight->setMarginType(2, QsciScintilla::TextMarginRightJustified);
     editorRight->setMarginWidth(2, QString::fromLatin1("009"));
+    editorRight->enableToolTips();
 
     connect(oracle, SIGNAL(triggered()), this, SLOT(setOracle()));
     connect(mysql, SIGNAL(triggered()), this, SLOT(setMySQL()));

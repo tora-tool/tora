@@ -111,7 +111,7 @@ class toPLSQL : public toToolWidget
         bool hasCode(const QString &schema, const QString &type, const QString &name);
 
     protected:
-        virtual void closeEvent(QCloseEvent *);
+        void closeEvent(QCloseEvent *) override;
 
     public:
         toPLSQL(QWidget *parent, toConnection &connection);
@@ -133,7 +133,7 @@ class toPLSQL : public toToolWidget
         void nextError(void);
         void showSource(toTreeWidgetItem *);
         void newSheet(void);
-        void slotWindowActivated(toToolWidget *w);
+        void slotWindowActivated(toToolWidget *w) override;
         void closeEditor(void);
         void closeEditor(int);
         void closeAllEditor(void);

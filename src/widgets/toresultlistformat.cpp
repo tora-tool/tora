@@ -33,7 +33,6 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "widgets/toresultlistformat.h"
-
 #include "core/utils.h"
 #include "core/tolistviewformatter.h"
 #include "core/toconfiguration.h"
@@ -58,6 +57,11 @@ toResultListFormat::toResultListFormat(QWidget *parent, DialogType type, const c
     formatCombo->setCurrentIndex(num);
     formatChanged(num);
 
+    bool useColumnHeaders = toConfigurationNewSingle::Instance().option(ToConfiguration::Global::ClipboardCHeadersBool).toBool();
+    bool useRowHeaders = toConfigurationNewSingle::Instance().option(ToConfiguration::Global::ClipboardRHeadersBool).toBool();
+    includeColumnHeaderCheck->setChecked(useColumnHeaders);
+    includeRowHeaderCheck->setChecked(useRowHeaders);
+
     delimiterEdit->setText(toConfigurationNewSingle::Instance().option(Exporter::CsvDelimiter).toString());
     separatorEdit->setText(toConfigurationNewSingle::Instance().option(Exporter::CsvSeparator).toString());
 
@@ -80,6 +84,7 @@ toExportSettings toResultListFormat::exportSettings()
     if (selectedColumnsRadio->isChecked()) c = toExportSettings::ColumnsSelected;
     else c = toExportSettings::ColumnsAll;
 
+
     return toExportSettings(r,
                             c,
                             formatCombo->currentIndex(),
@@ -94,8 +99,8 @@ toExportSettings toResultListFormat::plaintextCopySettings()
     return toExportSettings(toExportSettings::RowsSelected,
                             toExportSettings::ColumnsSelected,
                             0,
-                            false,
-                            false,
+                            toConfigurationNewSingle::Instance().option(ToConfiguration::Global::ClipboardRHeadersBool).toBool(),
+                            toConfigurationNewSingle::Instance().option(ToConfiguration::Global::ClipboardCHeadersBool).toBool(),
                             "",
                             "");
 }
@@ -110,5 +115,8 @@ void toResultListFormat::formatChanged(int pos)
 void toResultListFormat::accept()
 {
     toConfigurationNewSingle::Instance().setOption(ToConfiguration::Global::DefaultListFormatInt, formatCombo->currentIndex());
+    toConfigurationNewSingle::Instance().setOption(ToConfiguration::Global::ClipboardCHeadersBool, includeColumnHeaderCheck->isChecked());
+    toConfigurationNewSingle::Instance().setOption(ToConfiguration::Global::ClipboardRHeadersBool, includeRowHeaderCheck->isChecked());
+
     QDialog::accept();
 }

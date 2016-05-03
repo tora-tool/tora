@@ -170,10 +170,10 @@ void toWaitEvents::setup(int session)
     }
     connect(Types, SIGNAL(selectionChanged()), this, SLOT(changeSelection()));
 
+#ifdef TORA_EXPERIMENTAL
     QFrame *frame = new QFrame(splitter);
     QGridLayout *layout = new QGridLayout(frame);
 
-#ifdef TORA_EXPERIMENTAL
     Delta = new toResultBar(frame);
     Delta->setTitle(tr("System wait events"));
     Delta->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));

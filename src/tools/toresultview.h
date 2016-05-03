@@ -674,7 +674,7 @@ class toListView : public toTreeWidget, public toEditWidget
          */
         virtual void editSelectAll(void)
         {
-            selectAll(true);
+            selectAll();
         }
 
         /** Search for next entry

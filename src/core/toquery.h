@@ -108,7 +108,7 @@ class toQueryAbstr : public QObject
         }
 
         /** Parameters of the current query. */
-        inline toQueryParams const& params(void) const
+        inline toQueryParams & params(void)
         {
             return m_Params;
         }

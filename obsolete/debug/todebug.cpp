@@ -1486,7 +1486,7 @@ void toDebug::readLog(void)
     }
     if (!TargetException.isEmpty())
     {
-        toStatusMessage(TargetException);
+        Utils::toStatusMessage(TargetException);
         TargetException = QString::null;
     }
 }

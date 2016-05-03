@@ -159,18 +159,20 @@ class toSqlText : public toScintilla
 
     protected:
         /*! \brief Override QScintilla event handler to display code completion popup */
-        virtual void keyPressEvent(QKeyEvent * e);
+        void keyPressEvent(QKeyEvent * e) override;
 
-        virtual void focusInEvent(QFocusEvent *e);
-        virtual void focusOutEvent(QFocusEvent *e);
+        void focusInEvent(QFocusEvent *e) override;
+        void focusOutEvent(QFocusEvent *e) override;
 
         void scheduleParsing();
         void unScheduleParsing();
-
+#ifdef TORA_EXPERIMENTAL
+        bool showToolTip(ToolTipData const& t) override;
+#endif
     private:
         HighlighterTypeEnum highlighterType;
 
-        toSyntaxAnalyzer *m_analyzerNL, *m_analyzerOracle, *m_analyzerMySQL, *m_currentAnalyzer;
+        toSyntaxAnalyzer *m_analyzerNL, *m_analyzerOracle, *m_analyzerMySQL, *m_analyzerPostgreSQL, *m_currentAnalyzer;
         QMap<int,QString> styleNames;
         QFont mono; // line numbers font
 

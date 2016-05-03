@@ -896,7 +896,7 @@ void toListView::menuCallback(QAction *action)
     else if (action == rightAct)
         setColumnAlignment(MenuColumn, Qt::AlignRight);
     else if (action == selectAllAct)
-        selectAll(true);
+        selectAll();
 //     else if(act ==
 //     case TORESULT_MEMO:
 //         displayMemo();
@@ -1072,8 +1072,7 @@ QString toListView::exportAsText(toExportSettings settings)
         progress.setValue(2);
     }
 
-    std::unique_ptr<toListViewFormatter> pFormatter(
-        toListViewFormatterFactory::Instance().CreateObject(settings.type));
+    std::unique_ptr<toListViewFormatter> pFormatter(toListViewFormatterFactory::Instance().CreateObject(settings.type));
     settings.owner = owner;
     settings.objectName = objectName;
     return pFormatter->getFormattedString(settings, model());

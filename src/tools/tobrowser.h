@@ -149,7 +149,7 @@ class toBrowser : public toToolWidget
 
         void setNewFilter(toBrowserFilter *filter);
 
-        QString schema(void);
+        QString schema(void) const override;
 
         /*! \brief Get text from the active "object browser" (toResultTableView).
         \see m_objectsMap.
@@ -165,7 +165,7 @@ class toBrowser : public toToolWidget
          */
         int addTab(QSplitter * page, const QString & label, bool enable);
 
-        virtual bool canHandle(const toConnection &conn);
+        bool canHandle(const toConnection &conn) override;
 
         void commitChanges();
         void rollbackChanges();
@@ -185,7 +185,7 @@ class toBrowser : public toToolWidget
         void changeItem(const QModelIndex &);
         void clearFilter(void);
         void defineFilter(void);
-        virtual void slotWindowActivated(toToolWidget*);
+        void slotWindowActivated(toToolWidget*) override;
 
         void changeConnection(void);
 
@@ -238,7 +238,7 @@ class toBrowser : public toToolWidget
         void filterChanged(toViewFilter*);
 
     protected:
-        virtual void closeEvent(QCloseEvent *);
+        void closeEvent(QCloseEvent *) override;
 
     private:
         toResultSchema *Schema;

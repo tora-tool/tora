@@ -135,7 +135,7 @@ void toWorksheetText::keyPressEvent(QKeyEvent * e)
         {
             setSelection(start, end);
             removeSelectedText();
-            insert(shorts.value(key).toString(), false);
+            insert(shorts.value(key).toString());
             pos = SendScintilla(SCI_GETCURRENTPOS);
             SendScintilla(SCI_SETEMPTYSELECTION, pos + shorts.value(key).toByteArray().length());
             e->accept();

@@ -32,9 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOLISTVIEWFORMATTERTEXT_H
-#define TOLISTVIEWFORMATTERTEXT_H
-
+#pragma once
 
 #include "core/tolistviewformatter.h"
 
@@ -42,9 +40,6 @@ class toListViewFormatterText : public toListViewFormatter
 {
     public:
         toListViewFormatterText();
-        virtual ~toListViewFormatterText();
-        virtual QString getFormattedString(toExportSettings &settings,
-                                           const QAbstractItemModel * model);
-};
 
-#endif
+        QString getFormattedString(toExportSettings &settings, const QAbstractItemModel * model) override;
+};

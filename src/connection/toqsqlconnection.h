@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef __QSQL_CONNECTION__
-#define __QSQL_CONNECTION__
+#pragma once
 
 #include "core/toconnection.h"
 #include "core/toconnectionsub.h"
@@ -168,6 +167,3 @@ class toQSqlConnectionSub: public toConnectionSub
         toConnection const& ParentConnection;
         bool HasTransactions;
 };
-
-
-#endif

@@ -123,20 +123,20 @@ SET(PLUGIN_PERMISSIONS WORLD_EXECUTE GROUP_EXECUTE OWNER_EXECUTE WORLD_READ GROU
 ########## check for the CPU we build for                                                           ##########
 
 IF (CMAKE_COMPILER_IS_GNUCC)
-  SET(CMAKE_CXX_FLAGS_DEBUG   "-O0 -fno-inline -rdynamic -fPIE")
-  SET(CMAKE_C_FLAGS_DEBUG     "-O0 -fno-inline -rdynamic -fPIE")
-  SET(CMAKE_CXX_FLAGS_RELEASE "-O2")
-  SET(CMAKE_C_FLAGS_RELEASE   "-O2")
+  SET(CMAKE_CXX_FLAGS_DEBUG   "-Wall -std=c++11 -ggdb3 -O0 -fno-inline -rdynamic -fPIE")
+  SET(CMAKE_C_FLAGS_DEBUG     "-Wall            -ggdb3 -O0 -fno-inline -rdynamic -fPIE")
+  SET(CMAKE_CXX_FLAGS_RELEASE "-Wall -std=c++11 -ggdb3 -O2")
+  SET(CMAKE_C_FLAGS_RELEASE   "-Wall            -ggdb3 -O2")
   SET(CMAKE_CXX_FLAGS         "-Wall -std=c++11 -ggdb3")
   SET(CMAKE_C_FLAGS           "-Wall            -ggdb3")
 ENDIF (CMAKE_COMPILER_IS_GNUCC)
 
 ## matches Linux Clang and also AppleClang
 IF (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  SET(CMAKE_CXX_FLAGS_DEBUG   "-O0 -fno-inline")
-  SET(CMAKE_C_FLAGS_DEBUG     "-O0 -fno-inline")
-  SET(CMAKE_CXX_FLAGS_RELEASE "-O2")
-  SET(CMAKE_C_FLAGS_RELEASE   "-O2")
+  SET(CMAKE_CXX_FLAGS_DEBUG   "-Wall -std=c++11 -ggdb3 -O0 -fno-inline")
+  SET(CMAKE_C_FLAGS_DEBUG     "-Wall            -ggdb3 -O0 -fno-inline")
+  SET(CMAKE_CXX_FLAGS_RELEASE "-Wall -std=c++11 -ggdb3 -O2")
+  SET(CMAKE_C_FLAGS_RELEASE   "-Wall            -ggdb3 -O2")
   SET(CMAKE_CXX_FLAGS         "-Wall -std=c++11 -ggdb3")
   SET(CMAKE_C_FLAGS           "-Wall            -ggdb3")
 ENDIF()

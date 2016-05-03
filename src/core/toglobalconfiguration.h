@@ -49,7 +49,7 @@ namespace ToConfiguration
             {
                 // Paths
                 CustomSQL = 2000        // #define CONF_SQL_FILE
-                            , HelpDirectory         // #define CONF_HELP_PATH
+                , HelpDirectory         // #define CONF_HELP_PATH
                 , DefaultSession        // #define CONF_DEFAULT_SESSION
                 , CacheDirectory        // #define CONF_CACHE_DIR
                 , OracleHomeDirectory   // #define CONF_ORACLE_HOME
@@ -75,9 +75,11 @@ namespace ToConfiguration
                 , DisplaySamplesInt     // #define CONF_DISPLAY_SAMPLES
                 , SizeUnit              // #define CONF_SIZE_UNIT
                 , RefreshInterval    // #define CONF_REFRESH
-                , DefaultListFormatInt  // #define CONF_DEFAULT_FORMAT
+                , DefaultListFormatInt  // #define CONF_DEFAULT_FORMAT // Text(0), Tab delimited(1), CSV(2), HTML(3), SQL(4)
                 , Style                 // #define CONF_STYLE
                 , Translation           // #define CONF_LOCALE (Translation)
+                , ClipboardCHeadersBool // not displayed in the config gui (Copy format: include column headers)
+                , ClipboardRHeadersBool // not displayed in the config gui (Copy format: include row headers)
             };
             virtual QVariant defaultValue(int) const;
 
