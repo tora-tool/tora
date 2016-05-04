@@ -141,20 +141,6 @@ namespace Utils
      */
     QBrush toChartBrush(int index);
 
-    /** Strip extra binds and replace with empty strings.
-     * @param sql The sql to strip.
-     * @return Return a string containing the same statement without binds.
-     */
-    QString toSQLStripBind(const QString &sql);
-
-    /** Strip extra bind specifier from an SQL statement. (That means the extra <***> part after
-     * the bind variable.
-     * @param sql The sql to strip.
-     * @return Return a string containing the same statement without qualifiers, which means the
-     *         sql sent to Oracle and available in the SGA.
-     */
-    QString toSQLStripSpecifier(const QString &sql);
-
     /** Check if a character is valid for an identifier in Oracle.
      * @param c Character to check
      * @return True if it is a valid Oracle identifier.

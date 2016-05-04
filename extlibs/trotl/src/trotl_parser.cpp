@@ -133,7 +133,8 @@ bool SimplePlsqlParser::parse (const tstring &statement)
 	rule<> bracket_cl = ( ch_p('[') >> unumber_tm[boost::bind(&BindVarDecl::setname, boost::ref(_bindvar), "bracket", _1, _2)] >> ch_p(']') );
 
 	rule<> bindvar = (ch_p(':') >>
-	                  (bind_tm)[boost::bind(&BindVarDecl::setname, boost::ref(_bindvar), "bindname", _1, _2)] >>
+	                  (bind_tm|unumber_tm)[boost::bind(&BindVarDecl::setname, boost::ref(_bindvar), "bindname", _1, _2)] >>
+	                  !(
 	                  ch_p('<') >>
 	                  (bind_tm)[boost::bind(&BindVarDecl::setname, boost::ref(_bindvar), "bindtype", _1, _2)] >>
 	                  (!bracket_cl) >>
@@ -141,7 +142,9 @@ bool SimplePlsqlParser::parse (const tstring &statement)
 	                    inout_tm[boost::bind(&BindVarDecl::setname, boost::ref(_bindvar), "inout", _1, _2)] >>
 	                    (!bracket_cl)
 	                   )>>
-	                  ch_p('>'))
+	                  ch_p('>')
+	                  )
+	                  )
 	                 [boost::bind(&SimplePlsqlParser::bindvar_callback, boost::ref(*this), "bindvar", _1, _2)];
 
 	rule<> comment_cl = (confix_p("/*", *(anychar_p | ch_p(':') ) , "*/") | confix_p("--", *anychar_p, eol_p) | confix_p("PROMPT", *anychar_p, eol_p))
@@ -160,7 +163,7 @@ bool SimplePlsqlParser::parse (const tstring &statement)
 #endif
 	                                                       // Begin grammar
 	                                                       *(comment_cl | word_cl | quoted_word_cl |
-	                                                                       bindvar |operator_cl |string_cl| /*eq_cl |*/
+	                                                                       bindvar | operator_cl |string_cl| /*eq_cl |*/
 	                                                                       number_cl | delim_cl)
 #if (BOOST_VERSION >= 103700)
 	                                                       )]
@@ -189,7 +192,8 @@ void SimplePlsqlParser::bindvar_callback(const tstring name, const char *begin, 
 	/* replace OTL specific extension with spaces */
 	tstring::iterator l = find(bindname.begin(), bindname.end(), '<');
 	tstring::iterator r = find(bindname.begin(), bindname.end(), '>');
-	std::fill(l, ++r, ' ');
+	if(l != bindname.end() && r != bindname.end())
+		std::fill(l, ++r, ' ');
 
 	_colored << colorword(str, SimplePlsqlParser::RED);
 

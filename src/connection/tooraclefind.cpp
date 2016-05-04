@@ -167,7 +167,8 @@ QString toOracleInstantFinder::clientVersion(QFileInfo path)
 
     s << major << '.' << minor << '.' << update << '.' << patch << '.' << port;
 EXIT:
-    //bool success = Utils::toLibrary::unLoadLibrary(path, hmodule);
+    bool success = Utils::toLibrary::unLoadLibrary(path, hmodule);
+    Q_UNUSED(success);
     return retval;
 };
 

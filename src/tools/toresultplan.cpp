@@ -518,6 +518,7 @@ void toResultPlanAbstr::queryDone(toEventQuery*)
 		else
 			(*LockedConnection)->rollback();
 		LockedConnection.clear();
+		Explaining = false;
 	}
 
 	planTreeView->queryDone();
@@ -548,6 +549,13 @@ void toResultPlanAbstr::queryPlanTable(toQueryParams const& params)
 {
 	toConnection &conn = toConnection::currentConnection(this);
 #ifndef TO_NO_ORACLE
+	if (Explaining)
+	{
+	    // avoid double run of explanation query
+#pragma message WARN("TODO: find a way how to disable QAction button")
+	    return;
+	}
+
 	if (conn.providerIs("Oracle"))
     {
 		{
@@ -562,7 +570,7 @@ void toResultPlanAbstr::queryPlanTable(toQueryParams const& params)
     	QString explain = QString::fromLatin1("EXPLAIN PLAN SET STATEMENT_ID = '%1' INTO %2 FOR %3").
     			arg(planId).
 				arg(planTable).
-				arg(Utils::toSQLStripSpecifier(params.first()));
+				arg(params.first());
 
     	explainQuery = new toEventQuery(this, LockedConnection, explain, toQueryParams(), toEventQuery::READ_ALL);
         connect(explainQuery, SIGNAL(done(toEventQuery*, unsigned long)), this, SLOT(explainDone(toEventQuery*)));
@@ -575,6 +583,7 @@ void toResultPlanAbstr::queryPlanTable(toQueryParams const& params)
 
 void toResultPlanAbstr::explainDone(toEventQuery*q)
 {
+    Q_ASSERT_X(explainQuery == q, qPrintable(__QHERE__), "Double explain detected");
     disconnect(explainQuery, 0, this, 0);
     explainQuery->stop();
     explainQuery = NULL;
