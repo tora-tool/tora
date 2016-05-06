@@ -31,6 +31,7 @@ tokens {
     DOUBLE_PERIOD;
     SQLPLUS_COMMAND;
     SQLPLUS_SOLIDUS;
+    BIND_VAR_WITH_PARAMS;
 }
 
 @lexer::includes 
@@ -1291,6 +1292,9 @@ BINDVAR
     |    COLON DELIMITED_ID  // not used in SQL but spotted in v$sqltext when using cursor_sharing
     |    COLON UNSIGNED_INTEGER
     |    QUESTION_MARK // not in SQL, not in Oracle, not in OCI, use this for JDBC
+    (    // OTL-like extension still used in Tora
+         LESS_THAN_OP REGULAR_ID (LEFT_BRACKET UNSIGNED_INTEGER RIGHT_BRACKET)? (COMMA REGULAR_ID)? GREATER_THAN_OP { $type = BIND_VAR_WITH_PARAMS; }
+    )?       
     ;
 
 REGULAR_ID

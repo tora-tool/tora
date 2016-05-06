@@ -36,6 +36,7 @@
 
 #include "core/utils.h"
 #include "editor/tomemoeditor.h"
+#include "parsing/tsqllexer.h"
 
 #include <QtCore/QDebug>
 #include <QtCore/QHash>
@@ -48,325 +49,174 @@ QHash<QString, QStringList> toParamGet::Cache;
 
 
 toParamGet::toParamGet(QWidget *parent, const char *name)
-    : QDialog(parent),
-      toHelpContext(QString::fromLatin1("common.html#param"))
+    : QDialog(parent)
+    , toHelpContext(QString::fromLatin1("common.html#param"))
 {
-
-    setModal(true);
+    setupUi(this);
     toHelp::connectDialog(this);
-    resize(500, 480);
-    setWindowTitle(tr("Define binding variables"));
 
-    QHBoxLayout *hlayout = new QHBoxLayout;
-
-    // for buttons on right
-    QWidget *vbox = new QWidget;
-    QVBoxLayout *vlayout = new QVBoxLayout;
-
-    View = new QScrollArea(this);
-    View->setSizePolicy(QSizePolicy::MinimumExpanding,
-                        QSizePolicy::MinimumExpanding);
-    hlayout->addWidget(View);
-
-    // a widget to set as central to scroll area
-    QWidget *ext = new QWidget(View);
-    View->setWidget(ext);
-    View->setWidgetResizable(true);
-
-    Container = new QGridLayout;
-    Container->setSpacing(10);
-    ext->setLayout(Container);
-
-    QPushButton *OkButton = new QPushButton("OkButton", this);
-    OkButton->setText(tr("&Ok"));
-    OkButton->setDefault(true);
-    vlayout->addWidget(OkButton);
-
-    QPushButton *CancelButton = new QPushButton("CancelButton", this);
-    CancelButton->setText(tr("Cancel"));
-    CancelButton->setDefault(false);
-    vlayout->addWidget(CancelButton);
-
-    QSpacerItem* spacer = new QSpacerItem(20,
-                                          20,
-                                          QSizePolicy::Minimum,
-                                          QSizePolicy::Expanding);
-    vlayout->addItem(spacer);
+    Container = qobject_cast<QGridLayout*>(leftWidget->layout());
+    Q_ASSERT_X(Container, qPrintable(__QHERE__), "Invalid layout for leftWidget");
 
     connect(OkButton, SIGNAL(clicked()), this, SLOT(accept()));
     connect(CancelButton, SIGNAL(clicked()), this, SLOT(reject()));
-
-    vbox->setLayout(vlayout);
-    hlayout->addWidget(vbox);
-    setLayout(hlayout);
 }
 
-toQueryParams toParamGet::getParam(toConnection &conn,
-                                   QWidget *parent,
-                                   QString &str,
-                                   bool interactive)
+toQueryParams toParamGet::getParam(toConnection &conn, QWidget *parent, QString &str)
 {
-    std::map<QString, bool> parameters;
-    QStringList names;
-    toParamGet *widget = NULL;
-
-    enum
-    {
-        afterName,
-        inString,
-        normal,
-        comment,
-        multiComment,
-        name,
-        specification,
-        endInput
-    } state;
-    state = normal;
-
-    QChar endString;
-    QString fname;
-    QString direction;
-    QString res;
-
-    QString def = QString::fromLatin1("<char[4000]>");
-
-    int colon = 1;
-
-    int num = 0;
-    for (int i = 0; i < str.length() + 1; i++)
-    {
-        QChar c;
-        QChar nc;
-        QChar pc;
-
-        c = nc = pc = '\n';
-
-        if (i < str.length())
-            c = str.at(i);
-
-        if (i < str.length() - 1)
-            nc = str.at(i + 1);
-
-        if (i - 1 > 0)
-            pc = str.at(i - 1);
-
-        if (state == normal && c == '-' && nc == '-')
-            state = comment;
-        else if (state == normal && c == '/' && nc == '*')
-            state = multiComment;
-        else
-        {
-            switch (state)
-            {
-                case inString:
-                    if (c == endString)
-                        state = normal;
-                    break;
-                case comment:
-                    if (c == '\n')
-                        state = normal;
-                    break;
-                case multiComment:
-                    if (c == '*' && nc == '/')
-                        state = normal;
-                    break;
-                case normal:
-                    switch (c.toLatin1())
-                    {
-                        case '\'':
-                        case '\"':
-                            endString = c;
-                            state = inString;
-                            break;
-                        case ':':
-                            // ignore ::
-                            // this is a type cast for postgres, not a parameter.
-                            if (nc == ':' || pc == ':')
-                                break;
-
-                            if (nc != '=')
-                                state = name;
-                            direction = "";
-                            fname = "";
-                            break;
-                        case '?':
-                            fname = QString::fromLatin1("f");
-                            fname += QString::number(colon);
-                            colon++;
-                            res += QString::fromLatin1(":");
-                            res += fname;
-                            res += def.mid(0, def.length() - 1);
-                            c = def.at(def.length() - 1);
-                            break;
-                    }
-                    break;
-                case name:
-                    if (c.isLetterOrNumber() || c == '_')
-                    {
-                        fname += c;
-                        break;
-                    }
-                    if (fname.isEmpty() //conn && !conn.providerIs("QMYSQL")
-                       )
-                    {
-                        Utils::toStatusMessage(tr("Missing field name"));
-                        throw tr("Missing field name");
-                    }
-                    state = afterName;
-                case afterName:
-                    if (c == '<')
-                        state = specification;
-                    else
-                    {
-                        state = normal;
-                        res += def;
-                    }
-                    break;
-                case specification:
-                    if (c == ',')
-                        state = endInput;
-                    else if (c == '>')
-                        state = normal;
-                    break;
-                case endInput:
-                    if (c == '>')
-                        state = normal;
-                    else
-                        direction += c;
-                    break;
-            }
-        }
-
-        if (state == normal && !fname.isEmpty())
-        {
-            if (direction.isEmpty() ||
-                    direction == "in" ||
-                    direction == "inout")
-            {
-
-                if (!parameters[fname])
-                {
-                    parameters[fname] = true;
-
-                    if (!widget)
-                        widget = new toParamGet(parent);
-
-                    QLabel *id = new QLabel(fname, widget);
-                    widget->Container->addWidget(id, num, 0);
-
-                    QComboBox *edit = new QComboBox(widget);
-                    // to memo finds child by widget name (row)
-                    edit->setObjectName(QString::number(num));
-                    edit->setEditable(true);
-                    edit->setSizePolicy(QSizePolicy::MinimumExpanding,
-                                        QSizePolicy::MinimumExpanding);
-                    edit->setMinimumContentsLength(30);
-                    // take away the completer - it causes:
-                    // #3061131: problem when using parameters in query
-                    //when doing a "select id, name from table1 where name = :pname" TORA asks me for the value of pname. When i enter e.g. "Lars" the query runs.
-                    // When doing the same query again answering "LARS" for the value TORA runs the query again, but not with the second value, it uses the forst one.
-                    edit->setCompleter(0);
-
-                    widget->Container->addWidget(edit, num, 1);
-
-                    if (Cache.contains(fname))
-                    {
-                        edit->addItems(Cache[fname]);
-                    }
-
-                    if (DefaultCache.contains(fname))
-                    {
-                        edit->addItems(DefaultCache[fname]);
-                    }
-
-                    QCheckBox *box = new QCheckBox(tr("NULL"), widget);
-                    connect(box,
-                            SIGNAL(toggled(bool)),
-                            edit,
-                            SLOT(setDisabled(bool)));
-                    if (edit->currentText().isNull())
-                    {
-                        box->setChecked(true);
-                    }
-                    widget->Container->addWidget(box, num, 2);
-
-                    toParamGetButton *btn = new toParamGetButton(
-                        num,
-                        widget);
-                    btn->setText(tr("Edit"));
-                    connect(btn, SIGNAL(clicked(int)),
-                            widget, SLOT(showMemo(int)));
-                    connect(box, SIGNAL(toggled(bool)),
-                            btn, SLOT(setDisabled(bool)));
-                    widget->Container->addWidget(btn, num, 3);
-                    widget->Value.insert(widget->Value.end(), edit);
-
-                    names.append(fname);
-
-                    widget->Container->setRowMinimumHeight(num, 30);
-                    num++;
-                }
-            }
-            fname = "";
-        }
-
-        if (i < str.length())
-            res += c;
-    } // for
-
-    if (widget && num > 0)
-    {
-        // set edit column to stretch
-        widget->Container->setColumnStretch(1, 1);
-        // add widget at bottom of grid that can resize
-        widget->Container->addWidget(new QLabel(widget), num, 0);
-        widget->Container->setRowStretch(num, 1);
-    }
+    const QString def = QString::fromLatin1("<char[4000]>");
 
     toQueryParams ret;
-    if (widget)
+
+    std::unique_ptr <SQLLexer::Lexer> lexer;
+    if (conn.providerIs("Oracle"))
+            lexer = LexerFactTwoParmSing::Instance().create("OracleGuiLexer", str, "toParamGet::getParam");
+    else if(conn.providerIs("QMYSQL"))
+        lexer = LexerFactTwoParmSing::Instance().create("MySQLGuiLexer", str, "toParamGet::getParam");
+    else if(conn.providerIs("QPSQL"))
+        lexer = LexerFactTwoParmSing::Instance().create("PostreSQLGuiLexer", str, "toParamGet::getParam");
+    else
+        throw QString("Unsupported sql dialect: %1").arg(conn.provider());
+
+    QString retvalsql;
+    QStringList BindParamList;        // Keep order of BindParam occurrences
+    SQLLexer::Lexer::token_const_iterator iter = lexer->begin();
+    while (iter->getTokenType() != SQLLexer::Token::X_EOF)
     {
-        (*widget->Value.begin())->setFocus();
-        if (!interactive || widget->exec())
+        switch (iter->getTokenType())
         {
-            int ix = 0;
-            foreach(QComboBox * current, widget->Value)
-            {
-                QString val;
-                if (current)
-                {
-                    if (current->isEnabled())
-                        val = current->currentText();
-                    else
-                        val = QString::null;
-                }
-
-                QString keyName = names.at(ix);
-                ++ix;
-
-                QStringList lst = Cache[keyName];
-                lst.removeAll(val);
-                lst.prepend(val);
-                Cache[keyName] = lst;
-
-                lst = DefaultCache[keyName];
-                lst.removeAll(val);
-
-                ret << val;
-            }
-            delete widget;
+        case SQLLexer::Token::L_BIND_VAR:
+        {
+            QString name = iter->getText();
+			retvalsql += name;
+            if (conn.providerIs("Oracle"))
+                retvalsql+=def;
+            if (!BindParamList.contains(name))
+                BindParamList << name;
         }
-        else
+        break;
+        case SQLLexer::Token::L_BIND_VAR_WITH_PARAMS:
         {
-            delete widget;
-            Utils::toStatusMessage(tr("Aborted execution"), false, false);
-            throw tr("Aborted execution");
+            QString l1 = iter->getText();
+            QString name = l1.left( l1.indexOf('<'));
+            if (!BindParamList.contains(name))
+                BindParamList << name;
+            retvalsql += l1;
+        }
+        break;
+        default:
+            retvalsql += iter->getText();
+            //no break here
+        }
+        iter++;
+    }
+
+    // No bind parameters in the SQL query
+    if (BindParamList.empty())
+        return ret;
+
+    toParamGet *widget = new toParamGet(parent);
+
+    int num = 0;
+    foreach(QString BindParam, BindParamList)
+    {
+        widget->createWidgetRow(BindParam, num);
+        num++;
+    }
+
+    // set edit column to stretch
+    widget->Container->setColumnStretch(1, 1);
+    // add widget at bottom of grid that can resize
+    widget->Container->addWidget(new QLabel(widget), num, 0);
+    widget->Container->setRowStretch(num, 1);
+
+    (*widget->Values.begin())->setFocus();
+    if (widget->exec())
+    {
+        int ix = 0;
+        foreach(QComboBox * current, widget->Values)
+        {
+            QString val;
+            if (current->isEnabled())
+                val = current->currentText();
+            else
+                val = QString::null;
+
+            QString bindName = BindParamList.at(ix);
+            ++ix;
+
+            QStringList lst = Cache[bindName];
+            lst.removeAll(val);
+            lst.prepend(val);
+            Cache[bindName] = lst;
+
+            lst = DefaultCache[bindName];
+            lst.removeAll(val);
+
+            ret << val;
         }
     }
-    str = res;
+    else
+    {
+        Utils::toStatusMessage(tr("Aborted execution"), false, false);
+        throw tr("Aborted execution");
+    }
+    delete widget;
+    str = retvalsql;
     return ret;
 }
 
+void toParamGet::createWidgetRow(const QString &fname, int rownum)
+{
+    //int rownum = Container->rowCount();
+
+    QLabel *id = new QLabel(fname, this);
+    Container->addWidget(id, rownum, 0);
+
+    QComboBox *edit = new QComboBox(this);
+    // to memo finds child by widget name (row)
+    edit->setObjectName(QString::number(rownum));
+    edit->setEditable(true);
+    edit->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+    edit->setMinimumContentsLength(30);
+    // take away the completer - it causes:
+    // #3061131: problem when using parameters in query
+    //when doing a "select id, name from table1 where name = :pname" TORA asks me for the value of pname. When i enter e.g. "Lars" the query runs.
+    // When doing the same query again answering "LARS" for the value TORA runs the query again, but not with the second value, it uses the forst one.
+    edit->setCompleter(0);
+
+    Container->addWidget(edit, rownum, 1);
+
+    if (Cache.contains(fname))
+    {
+        edit->addItems(Cache[fname]);
+    }
+
+    if (DefaultCache.contains(fname))
+    {
+        edit->addItems(DefaultCache[fname]);
+    }
+
+    QCheckBox *box = new QCheckBox(tr("NULL"), this);
+    connect(box, SIGNAL(toggled(bool)), edit, SLOT(setDisabled(bool)));
+    if (edit->currentText().isNull())
+    {
+        box->setChecked(true);
+    }
+    Container->addWidget(box, rownum, 2);
+
+    toParamGetButton *btn = new toParamGetButton(rownum, this);
+    btn->setText(tr("Edit"));
+    btn->setFocusPolicy(Qt::ClickFocus);
+    connect(btn, SIGNAL(clicked(int)), this, SLOT(showMemo(int)));
+    connect(box, SIGNAL(toggled(bool)), btn, SLOT(setDisabled(bool)));
+    Container->addWidget(btn, rownum, 3);
+    Values.insert(Values.end(), edit);
+
+    Container->setRowMinimumHeight(rownum, 30);
+}
+
+#if 0
 void toParamGet::setDefault(toConnection &, const QString &name, const QString &val)
 {
     if (Cache[name].contains(val))
@@ -377,6 +227,7 @@ void toParamGet::setDefault(toConnection &, const QString &name, const QString &
     lst.prepend(val);
     DefaultCache[name] = lst;
 }
+#endif
 
 void toParamGet::showMemo(int row)
 {
@@ -384,11 +235,11 @@ void toParamGet::showMemo(int row)
     if (obj)
     {
         toMemoEditor *memo = new toMemoEditor(this,
-                                              obj->currentText(),
-                                              row,
-                                              0,
-                                              false,
-                                              true);
+                obj->currentText(),
+                row,
+                0,
+                false,
+                true);
         if (memo->exec())
             obj->setItemText(obj->currentIndex(), memo->text());
     }

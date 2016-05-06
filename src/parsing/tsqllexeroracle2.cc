@@ -280,6 +280,9 @@ const Token& OracleGuiLexer::LA(int pos) const
 		case PLSQLGuiLexer::BINDVAR:
 			type = Token::L_BIND_VAR;
 			break;
+		case PLSQLGuiLexer::BIND_VAR_WITH_PARAMS:
+		    type = Token::L_BIND_VAR_WITH_PARAMS;
+		    break;
 		case PLSQLGuiLexer::REGULAR_ID:
 			type = Token::L_IDENTIFIER;
 			break;

@@ -34,21 +34,16 @@
 
 #pragma once
 
+#include "ui_toparamgetui.h"
 #include "core/tohelpcontext.h"
+#include "widgets/tohelp.h"
 #include "core/toquery.h"
 #include <QDialog>
 #include <QPushButton>
-#include <QtGui/QResizeEvent>
-#include <QScrollArea>
-#include <QGridLayout>
-
-#include <list>
-#include <map>
-#include "widgets/tohelp.h"
 
 class toConnection;
-
 class QComboBox;
+class QGridLayout;
 
 class toParamGetButton : public QPushButton
 {
@@ -78,23 +73,9 @@ class toParamGetButton : public QPushButton
  * available also pop up a dialog and ask for values. Also maintains
  * an internal cache of old values.
  */
-class toParamGet : public QDialog, public toHelpContext
+class toParamGet : public QDialog, public Ui::toParamget, public toHelpContext
 {
         Q_OBJECT;
-
-        /** Default values cache
-         */
-        static QHash<QString, QStringList> DefaultCache;
-
-        /** Specified values cache
-         */
-        static QHash<QString, QStringList> Cache;
-
-        QScrollArea *View;
-        QGridLayout *Container;
-
-        QList<QComboBox *> Value;
-        toParamGet(QWidget *parent = 0, const char *name = 0);
 
     public:
         /** Get parameters for specified SQL string.
@@ -105,21 +86,30 @@ class toParamGet : public QDialog, public toHelpContext
          * @param interactive If not interactive simply rewrite the query and pass on the defaults.
          * @return Returns a list of values to feed into the query.
          */
-        static toQueryParams getParam(toConnection &conn,
-                                      QWidget *parent,
-                                      QString &str,
-                                      bool interactive = true);
-
+        static toQueryParams getParam(toConnection &conn, QWidget *parent, QString &str);
+#if 0
         /** Specify a default value for the cache. This can not overwrite a manually
          * specified value by the user.
          * @param conn Connection to get binds for.
          * @param name Name of the bind variable.
          * @param val Value of the bind variable.
          */
-        static void setDefault(toConnection &conn,
-                               const QString &name,
-                               const QString &val);
-
+        static void setDefault(toConnection &conn, const QString &name, const QString &val);
+#endif
     private slots:
         virtual void showMemo(int row);
+    private:
+        /** Default values cache */
+        static QHash<QString, QStringList> DefaultCache;
+
+        /** Specified values cache */
+        static QHash<QString, QStringList> Cache;
+
+        /** GridLayout to put dynamic entries(QComboBox) into */
+        QGridLayout *Container;
+
+        QList<QComboBox *> Values;
+        toParamGet(QWidget *parent = 0, const char *name = 0);
+
+        void createWidgetRow(const QString &name, int num);
 };

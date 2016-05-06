@@ -112,6 +112,8 @@ SET(TORA_UI_SRC
   #obsolete tools/tobrowserindexui.ui
   #obsolete tools/tobrowsertableui.ui
 
+  tools/toparamgetui.ui
+
   tools/tostoragedatafileui.ui
   tools/tostoragedefinitionui.ui
   tools/tostoragedialogui.ui

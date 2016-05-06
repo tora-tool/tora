@@ -1792,7 +1792,7 @@ void toWorksheet::slotDescribeNew(void)
         }
 
     }
-    catch ( SQLParser::ParseException const &e)
+    catch ( SQLParser::ParseException const &)
     {
         buffer = "Parser error\n";
     }
