@@ -117,7 +117,7 @@ void toStorageSetting::saveSetting(void)
 class toStorageTool : public toTool
 {
     protected:
-        virtual const char **pictureXPM(void)
+        const char **pictureXPM(void) override
         {
             return const_cast<const char**>(tostorage_xpm);
         }

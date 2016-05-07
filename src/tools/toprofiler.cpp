@@ -226,7 +226,7 @@ class toProfilerTool : public toTool
         {
             return "PL/SQL Profiler";
         }
-        bool canHandle(const toConnection &conn)
+        bool canHandle(const toConnection &conn) override
         {
             return conn.providerIs("Oracle");
         }

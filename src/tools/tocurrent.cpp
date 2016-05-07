@@ -62,7 +62,7 @@ class toCurrentInfoTool : public toTool
     protected:
         std::map<toConnection *, QWidget *> Windows;
 
-        virtual const char **pictureXPM(void)
+        const char **pictureXPM(void) override
         {
             return const_cast<const char**>(tocurrent_xpm);
         }

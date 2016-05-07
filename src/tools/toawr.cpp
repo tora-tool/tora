@@ -203,7 +203,7 @@ class toAWRTool : public toTool
     protected:
         std::map<toConnection *, QWidget *> Windows;
 
-        virtual const char **pictureXPM(void);
+        const char **pictureXPM(void) override;
     public:
         toAWRTool()
             : toTool(10003, "AWR")
