@@ -91,12 +91,12 @@ class toResultTableView : public QTableView, public toResult, public toEditWidge
         /**
          * Reimplemented to create query and new model
          */
-        virtual void query(const QString &sql, toQueryParams const& param);
+        void query(const QString &sql, toQueryParams const& param) override;
 
         void querySub(QSharedPointer<toConnectionSubLoan> &con, const QString &sql, toQueryParams const& param);
 
         /** Clear result widget */
-        virtual void clearData();
+        void clearData() override;
 
         /**
          * Set statistics widget.
@@ -133,7 +133,7 @@ class toResultTableView : public QTableView, public toResult, public toEditWidge
         /**
          * True by default
          */
-        virtual bool canHandle(const toConnection &)
+        bool canHandle(const toConnection &) override
         {
             return true;
         }
@@ -182,12 +182,12 @@ class toResultTableView : public QTableView, public toResult, public toEditWidge
          *
          * @param askfile Ask filename even if default filename is available.
          */
-        virtual bool editSave(bool askfile);
+        bool editSave(bool askfile) override;
 
         /**
          * Print this widgets contents.
          */
-        virtual void editPrint(void);
+        void editPrint(void) override;
 
         /**
          * Perform copy.
@@ -197,27 +197,18 @@ class toResultTableView : public QTableView, public toResult, public toEditWidge
         /**
          * Select all contents.
          */
-        virtual void editSelectAll(void);
+	void editSelectAll(void) override;
 
         // These methods do not make any sense for readonly "editor" like data table display
-        virtual bool editOpen(const QString&)
-        {
-            return false;
-        }
-        virtual void editUndo() {}
-        virtual void editRedo() {}
-        virtual void editCut() {}
-        virtual void editPaste() {}
-        virtual void editReadAll() {}
-        virtual bool searchNext()
-        {
-            return false;
-        };
-        virtual void searchReplace() {};
-        virtual QString editText()
-        {
-            return "";
-        }
+	bool editOpen(const QString&) override { return false; }
+	void editUndo() override {}
+	void editRedo() override {}
+	void editCut()  override {}
+	void editPaste() override {}
+	void editReadAll() override {}
+	bool searchNext() override { return false; };
+        void searchReplace() override {};
+	QString editText() override { return ""; }
 
         /** Fill in result from the cache rather than executing actual query on database.
          */
@@ -249,7 +240,7 @@ class toResultTableView : public QTableView, public toResult, public toEditWidge
         /**
          * Overrides toResult to keep column sizes and declare a slot
          */
-        virtual void refresh(void);
+        void refresh(void) override;
 
         /**
          * Stop running query.
@@ -306,8 +297,8 @@ class toResultTableView : public QTableView, public toResult, public toEditWidge
                              bool error);
         virtual void slotHandleDoubleClick(const QModelIndex &);
         // override parent
-        virtual void selectionChanged(const QItemSelection &selected,
-                                      const QItemSelection &deselected);
+        void selectionChanged(const QItemSelection &selected,
+			      const QItemSelection &deselected) override;
 
         // apply column rules, numbercolumn, readable columns
         virtual void slotApplyColumnRules(void);
@@ -324,30 +315,30 @@ class toResultTableView : public QTableView, public toResult, public toEditWidge
          *
          * Controls maximum size (height) of a given row.
          */
-        virtual int sizeHintForRow(int row) const;
+        int sizeHintForRow(int row) const override;
 
         /**
          * overridden from parent.
          *
          * Controls a maximum size (width) of a given column.
          */
-        virtual int sizeHintForColumn(int col) const;
+        int sizeHintForColumn(int col) const override;
 
         /**
          * overrides parent to overlay working working message until model
          * is ready
          */
-        virtual void paintEvent(QPaintEvent *event);
+	void paintEvent(QPaintEvent *event) override;
 
         /**
          * Overrides QWidget to resize columns when applicable.
          */
-        virtual void resizeEvent(QResizeEvent *event);
+        void resizeEvent(QResizeEvent *event) override;
 
         /*! Catch special keyboard shortcuts.
             Copy, etc.
         */
-        virtual void keyPressEvent(QKeyEvent * event);
+        void keyPressEvent(QKeyEvent * event) override;
 
         virtual toResultModel* allocModel(toEventQuery *);
         void freeModel();

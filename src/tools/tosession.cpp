@@ -86,7 +86,7 @@ class toSessionTool : public toTool
             return "Sessions";
         }
 
-        toToolWidget* toolWindow(QWidget *parent, toConnection &connection)
+        toToolWidget* toolWindow(QWidget *parent, toConnection &connection) override
         {
             if (connection.providerIs("Oracle") || connection.providerIs("QPSQL") || connection.providerIs("QMYSQL"))
                 return new toSession(parent, connection);

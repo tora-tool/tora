@@ -87,7 +87,7 @@ class toSGATraceSetting
 class toSGATraceTool : public toTool
 {
     protected:
-        virtual const char **pictureXPM(void)
+        const char **pictureXPM(void) override
         {
             return const_cast<const char**>(tosgatrace_xpm);
         }

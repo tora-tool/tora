@@ -233,7 +233,7 @@ class toScintilla: public QsciScintilla //, public toEditWidget
 
     protected:
         virtual void newLine(void);
-        virtual void dropEvent(QDropEvent *);
+        void dropEvent(QDropEvent *) override;
 
         /**
          * This function is called to create a right mouse button popup menu
