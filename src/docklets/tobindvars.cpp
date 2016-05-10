@@ -34,18 +34,27 @@
 
 #include "docklets/tobindvars.h"
 #include "tools/toparamget.h"
+#include "tools/toresulttableview.h"
 #include "core/toconfiguration.h"
 #include "core/toeditorconfiguration.h"
 #include <QPlainTextEdit>
 #include "widgets/tosearchreplace.h"
 
-REGISTER_VIEW("BindVars", toBindVarsDocklet);
+REGISTER_VIEW("Bind Values", toBindVarsDocklet);
+
+class PlainTextEdit: public QPlainTextEdit
+{
+public:
+    using QPlainTextEdit::QPlainTextEdit;
+    bool canInsertFromMimeData(const QMimeData *source) const override;
+    void insertFromMimeData(const QMimeData *source) override;
+};
 
 toBindVarsDocklet::toBindVarsDocklet(QWidget *parent,
                                    toWFlags flags)
-    : toDocklet(tr("BindVars"), parent, flags)
+    : toDocklet(tr("Bind Values"), parent, flags)
     , toEditWidget()
-    , editor(new QPlainTextEdit(this))
+    , editor(new PlainTextEdit(this))
 {
     toEditWidget::FlagSet.Copy = true;
     toEditWidget::FlagSet.Paste = true;
@@ -85,13 +94,13 @@ toBindVarsDocklet::toBindVarsDocklet(QWidget *parent,
 
 QIcon toBindVarsDocklet::icon() const
 {
-    return style()->standardIcon(QStyle::SP_ComputerIcon);
+    return style()->standardIcon(QStyle::SP_TrashIcon);
 }
 
 
 QString toBindVarsDocklet::name() const
 {
-    return tr("BindVars");
+    return tr("Bind Values");
 }
 
 void toBindVarsDocklet::focusInEvent (QFocusEvent *e)
@@ -150,3 +159,44 @@ void toBindVarsDocklet::setEditorFocus()
 {
     editor->setFocus(Qt::OtherFocusReason);
 }
+
+
+bool PlainTextEdit::canInsertFromMimeData(const QMimeData *source) const
+{
+    if (source->hasFormat("application/x-tora"))
+        return true;
+    return QPlainTextEdit::canInsertFromMimeData(source);
+}
+void PlainTextEdit::insertFromMimeData(const QMimeData *source)
+{
+    if (source->hasFormat("application/x-tora"))
+    {
+        toResultTableView *view = NULL;
+        QHash<QString, QStringList> values;
+        QByteArray bpointer = source->data("application/x-tora");
+        bool ok = false;
+        uintptr_t ipointer = bpointer.toLongLong(&ok);
+        if (toResultTableView::Registry.contains(ipointer))
+            view = toResultTableView::Registry[ipointer];
+        else
+            return;
+        toConnection &conn = toConnection::currentConnection(view);
+        QModelIndexList indexes = view->selectionModel()->selectedIndexes();
+        foreach(QModelIndex index, indexes)
+        {
+            QString header = view->model()->headerData(index.column(), Qt::Horizontal, Qt::DisplayRole).toString();
+            QString value = view->model()->data(index, Qt::EditRole).toString();
+            if (value.isEmpty())
+                continue;
+            QStringList &list = values[header];  // will create and insert an empty QStringList if necessary
+			if (list.contains(value))
+				continue;
+			list.append(value);
+        }
+        foreach(QString name, values.keys())
+        {
+            toParamGet::setDefault(conn, QString(":%1").arg(name), values[name]);
+        }
+    }
+    QPlainTextEdit::insertFromMimeData(source);
+};

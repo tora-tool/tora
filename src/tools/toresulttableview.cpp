@@ -62,6 +62,8 @@
 #include <QVBoxLayout>
 #include <QProgressDialog>
 
+QMap<uintptr_t, toResultTableView*> toResultTableView::Registry;
+
 toResultTableView::toResultTableView(QWidget * parent)
     : QTableView(parent)
     , toResult()
@@ -97,6 +99,8 @@ toResultTableView::toResultTableView(bool readable,
     if (name)
         setObjectName(name);
     setup(readable, numberColumn, editable);
+
+    Registry.insert(reinterpret_cast<uintptr_t>(this), this);
 }
 
 void toResultTableView::setup(bool readable, bool numberColumn, bool editable)
@@ -156,6 +160,7 @@ toResultTableView::~toResultTableView()
     if (Model && running())
         Model->stop();
     freeModel();
+    Registry.remove(reinterpret_cast<uintptr_t>(this));
 }
 
 void toResultTableView::query(const QString &sql, toQueryParams const& param)
@@ -754,6 +759,7 @@ void toResultTableView::editCopy()
         toExportSettings settings = toResultListFormat::plaintextCopySettings();
         settings.selected = sel;
         md->setText(exportAsText(settings));
+        md->setData("application/x-tora", QByteArray::number(reinterpret_cast<uintptr_t>(this))); // store pointer to self in clipboard see tobindvar.cpp insertFromMimeData
 #ifdef Q_OS_WIN32
         std::unique_ptr<toListViewFormatter> pFormatter(toListViewFormatterFactory::Instance().CreateObject(toListViewFormatterIdentifier::XLSX));
         md->setData("XML Spreadsheet", pFormatter->getFormattedString(settings, model()).toUtf8());

@@ -95,6 +95,7 @@ class toParamGet : public QDialog, public Ui::toParamget, public toHelpContext
          * @param val Value of the bind variable.
          */
         static void setDefault(toConnection &conn, const QString &name, const QString &val);
+        static void setDefault(toConnection &conn, const QString &name, const QStringList &val);
 
         private slots:
         virtual void showMemo(int row);

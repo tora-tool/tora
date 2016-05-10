@@ -144,12 +144,12 @@ toQueryParams toParamGet::getParam(toConnection &conn, QWidget *parent, QString 
             QString bindName = BindParamList.at(ix);
             ++ix;
 
-            QStringList lst = Cache[bindName];
+            QStringList lst = Cache[bindName.toLower()];
             lst.removeAll(val);
             lst.prepend(val);
-            Cache[bindName] = lst;
+            Cache[bindName.toLower()] = lst;
 
-            lst = DefaultCache[bindName];
+            lst = DefaultCache[bindName.toLower()];
             lst.removeAll(val);
 
             ret << val;
@@ -186,14 +186,14 @@ void toParamGet::createWidgetRow(const QString &fname, int rownum)
 
     Container->addWidget(edit, rownum, 1);
 
-    if (Cache.contains(fname))
+    if (Cache.contains(fname.toLower()))
     {
-        edit->addItems(Cache[fname]);
+        edit->addItems(Cache[fname.toLower()]);
     }
 
-    if (DefaultCache.contains(fname))
+    if (DefaultCache.contains(fname.toLower()))
     {
-        edit->addItems(DefaultCache[fname]);
+        edit->addItems(DefaultCache[fname.toLower()]);
     }
 
     QCheckBox *box = new QCheckBox(tr("NULL"), this);
@@ -217,13 +217,18 @@ void toParamGet::createWidgetRow(const QString &fname, int rownum)
 
 void toParamGet::setDefault(toConnection &, const QString &name, const QString &val)
 {
-    if (Cache[name].contains(val))
+    if (Cache[name.toLower()].contains(val))
         return;
 
-    QStringList lst = DefaultCache[name];
+    QStringList lst = DefaultCache[name.toLower()];
     lst.removeAll(val);
     lst.prepend(val);
-    DefaultCache[name] = lst;
+    DefaultCache[name.toLower()] = lst;
+}
+
+void toParamGet::setDefault(toConnection &, const QString &name, const QStringList &values)
+{
+    DefaultCache[name.toLower()] = values;
 }
 
 void toParamGet::showMemo(int row)

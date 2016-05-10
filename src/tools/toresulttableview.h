@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TORESULTTABLEVIEW_H
-#define TORESULTTABLEVIEW_H
+#pragma once
 
 #include "core/toqvalue.h"
 #include "core/tosql.h"
@@ -213,6 +212,8 @@ class toResultTableView : public QTableView, public toResult, public toEditWidge
         /** Fill in result from the cache rather than executing actual query on database.
          */
         bool queryFromCache(const QString &owner, const QString &type);
+
+        static QMap<uintptr_t, toResultTableView*> Registry;
 
     public slots:
         /**
@@ -536,6 +537,3 @@ class toViewFilter
         }
 #endif
 };
-
-
-#endif
