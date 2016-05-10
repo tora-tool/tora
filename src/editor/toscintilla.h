@@ -126,6 +126,8 @@ class toScintilla: public QsciScintilla //, public toEditWidget
 
         void gotoPosition(int pos);
 
+        void gotoLine(int line);
+
         int positionAfter(int pos, int offset);
 
         using QsciScintilla::setSelection;

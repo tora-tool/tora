@@ -470,7 +470,12 @@ void toScintilla::findPosition(int index, int &line, int &col)
 
 void toScintilla::gotoPosition(int pos)
 {
-    long i = SendScintilla(QsciScintilla::SCI_GOTOPOS, pos);
+    SendScintilla(QsciScintilla::SCI_GOTOPOS, pos);
+}
+
+void toScintilla::gotoLine(int line)
+{
+    SendScintilla(QsciScintilla::SCI_GOTOLINE, line);
 }
 
 int toScintilla::positionAfter(int pos, int offset)

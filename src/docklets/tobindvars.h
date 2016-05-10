@@ -38,22 +38,18 @@
 #include "core/todocklet.h"
 #include "core/toeditwidget.h"
 #include "editor/toeditglobals.h"
-
 #include "loki/Singleton.h"
-
-#include <QListView>
-#include <QDirModel>
-#include <QPlainTextEdit>
 
 class toToolWidget;
 class toSearchReplace;
 
-class toLoggingDocklet : public toDocklet , public toEditWidget
+class toBindVarsDocklet : public toDocklet , public toEditWidget
 {
         Q_OBJECT;
 
     public:
-        toLoggingDocklet(QWidget *parent = 0, toWFlags flags = 0);
+        toBindVarsDocklet(QWidget *parent = 0,
+                         toWFlags flags = 0);
 
         /**
          * Get the action icon name for this docklet
@@ -79,7 +75,7 @@ class toLoggingDocklet : public toDocklet , public toEditWidget
         void editRedo() override {};
         void editCut() override {};
         void editCopy() override;
-        void editPaste() override {};
+        void editPaste() override;
         void editSelectAll() override;
         void editReadAll() override {};
         QString editText() override
@@ -97,7 +93,7 @@ class toLoggingDocklet : public toDocklet , public toEditWidget
         void searchReplace() override;
 
     private:
-        QPlainTextEdit &log;
+        QPlainTextEdit *editor;
         toSearchReplace *m_search;
 
     private slots:

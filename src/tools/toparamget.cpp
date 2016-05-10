@@ -47,7 +47,6 @@
 QHash<QString, QStringList> toParamGet::DefaultCache;
 QHash<QString, QStringList> toParamGet::Cache;
 
-
 toParamGet::toParamGet(QWidget *parent, const char *name)
     : QDialog(parent)
     , toHelpContext(QString::fromLatin1("common.html#param"))
@@ -216,7 +215,6 @@ void toParamGet::createWidgetRow(const QString &fname, int rownum)
     Container->setRowMinimumHeight(rownum, 30);
 }
 
-#if 0
 void toParamGet::setDefault(toConnection &, const QString &name, const QString &val)
 {
     if (Cache[name].contains(val))
@@ -227,7 +225,6 @@ void toParamGet::setDefault(toConnection &, const QString &name, const QString &
     lst.prepend(val);
     DefaultCache[name] = lst;
 }
-#endif
 
 void toParamGet::showMemo(int row)
 {

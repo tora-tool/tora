@@ -403,6 +403,7 @@ IF (USE_EXPERIMENTAL)
   LIST(APPEND TORA_MOC_CLASSES tools/tosandboxtool.h)
   #ENDIF(graphviz_FOUND)
   LIST(APPEND TORA_MOC_CLASSES docklets/tologging.h)
+  LIST(APPEND TORA_MOC_CLASSES docklets/tobindvars.h)
 ENDIF (USE_EXPERIMENTAL)
 
 ################################################################################
@@ -704,6 +705,7 @@ IF (USE_EXPERIMENTAL)
     )
   LIST (APPEND TORA_SOURCES tools/tosandboxtool.cpp)
   LIST (APPEND TORA_SOURCES docklets/tologging.cpp)
+  LIST (APPEND TORA_SOURCES docklets/tobindvars.cpp)
 ENDIF (USE_EXPERIMENTAL)
 
 IF(POPPLER_QT4_FOUND)

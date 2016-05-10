@@ -87,7 +87,7 @@ class toParamGet : public QDialog, public Ui::toParamget, public toHelpContext
          * @return Returns a list of values to feed into the query.
          */
         static toQueryParams getParam(toConnection &conn, QWidget *parent, QString &str);
-#if 0
+
         /** Specify a default value for the cache. This can not overwrite a manually
          * specified value by the user.
          * @param conn Connection to get binds for.
@@ -95,8 +95,8 @@ class toParamGet : public QDialog, public Ui::toParamget, public toHelpContext
          * @param val Value of the bind variable.
          */
         static void setDefault(toConnection &conn, const QString &name, const QString &val);
-#endif
-    private slots:
+
+        private slots:
         virtual void showMemo(int row);
     private:
         /** Default values cache */
