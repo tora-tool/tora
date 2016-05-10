@@ -59,6 +59,8 @@
 #include "toresulttableview.h"
 #include "toresultview.h"
 
+#include <limits>
+
 static toSQL SQLListInvalid("toInvalid:ListInvalid",
                             "SELECT owner \"Owner\",object_name \"Object\",object_type \"Type\",status \"Status\"\n"
                             "  FROM sys.all_objects\n"
@@ -71,12 +73,12 @@ static toSQL SQLListSource("toInvalid:ListSource",
                            "List source of an object.");
 
 static toSQL SQLReadErrors("toInvalid:ReadErrors",
-                           "SELECT Line-1,Text FROM sys.All_Errors\n"
+                           "SELECT Line,Text FROM sys.All_Errors\n"
                            " WHERE OWNER = :f1<char[101]>\n"
                            "   AND NAME = :f2<char[101]>\n"
                            "   AND TYPE = :f3<char[101]>"
                            " ORDER BY Type,Line",
-                           "Get lines with errors in object (Observe first line 0)");
+                           "Get lines with errors in object");
 
 
 class toInvalidTool : public toTool
@@ -287,20 +289,24 @@ void toInvalid::changeSelection(void)
             QString type = Objects->model()->data(row, 3).toString();
 
             Source->refreshWithParams( toQueryParams() << owner << object << type);
+
             QMap<int, QString> Errors;
             toConnectionSubLoan conn(connection());
             toQuery errors(conn,
                            SQLReadErrors,
                            toQueryParams() << owner << object << type);
 
+            int firstErrorLine = (std::numeric_limits<int>::max)();
             while (!errors.eof())
             {
-                int line = errors.readValue().toInt();
+                int line = errors.readValue().toInt() + Source->offset();
                 Errors[line] += QString::fromLatin1(" ");
                 Errors[line] += (QString)errors.readValue();
+                firstErrorLine = (std::min)(firstErrorLine, line);
             }
 
             Source->editor()->setErrors(Errors);
+            Source->editor()->gotoLine(firstErrorLine);
         }
     }
     TOCATCH;

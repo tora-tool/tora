@@ -44,6 +44,7 @@ toResultCode::toResultCode(bool prompt, QWidget *parent, const char *name)
     : toDebugEditor(parent, name)
     , Prompt(prompt)
     , m_heading(true)
+    , m_offset(0)
 {}
 
 toResultCode::toResultCode(QWidget * parent)
@@ -138,7 +139,23 @@ void toResultCode::query(const QString &sql, toQueryParams const& param)
         extract.setPrompt(Prompt);
         extract.setReplace(true); // generate create OR REPLACE statements
         extract.setParallel(toConfigurationNewSingle::Instance().option(Oracle::IncludeParallelBool).toBool());
-        editor()->setText(extract.create(objects));
+        QString text = extract.create(objects);
+        {
+            // Try to detect where create statement really starts
+            m_offset = 0;
+            QStringList lines = text.split(QRegExp("\n|\r\n"));
+            QRegExp pattern(QString::fromLatin1("^\s*[A-Z ]*%1.*%2.*").arg(type).arg(name));
+            foreach(QString line, lines)
+            {
+
+                if (pattern.exactMatch(line))
+                    break;
+                m_offset++;
+            }
+            if(m_offset >= lines.size())
+                m_offset = 0;
+        }
+        editor()->setText(text);
     }
     TOCATCH
 }

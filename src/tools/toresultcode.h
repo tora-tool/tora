@@ -51,7 +51,7 @@ class toResultCode : public toDebugEditor, public toResult
 
         bool Prompt;
         bool m_heading;
-
+        unsigned m_offset; // offset of "CREATE OR REPLACE .. if heading is used
     public:
         /** Create the widget.
          * @param parent Parent widget.
@@ -71,6 +71,9 @@ class toResultCode : public toDebugEditor, public toResult
         {
             m_heading = enable;
         };
+
+        /** Return offset line of the "real" statement start (if headers/prompts are used) */
+        unsigned offset() const { return m_offset; }
 
         /** Ignores sql and extect object name and owner as parameters.
          */
