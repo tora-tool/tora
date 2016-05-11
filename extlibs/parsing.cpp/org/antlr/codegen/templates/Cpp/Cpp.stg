@@ -164,13 +164,6 @@ outputFile( LEXER,
 
 <beginNamespace(actions)>
 <if(LEXER)><if(!PARSER)>
-const ANTLR_UINT8* <name>Tokens::getTokenName(ANTLR_UINT32 index)
-{
-       if( EOF_TOKEN == index)
-               return (ANTLR_UINT8*) "\<EOF>";
-       return TokenNames[index];
-}
-
 /** \brief Table of all token names in symbolic order, mainly used for debugging.
  */
 ANTLR_UINT8* <name>Tokens::TokenNames[<length(tokens)>+4]
@@ -181,6 +174,15 @@ ANTLR_UINT8* <name>Tokens::TokenNames[<length(tokens)>+4]
        (ANTLR_UINT8*) "\<UP>",
        <rest(tokens):{it |(ANTLR_UINT8*) "<it.name>",//<it.type>}; separator="\n">
        };
+
+const ANTLR_UINT8* <name>Tokens::getTokenName(ANTLR_UINT32 index)
+{
+       if( EOF_TOKEN == index)
+               return (ANTLR_UINT8*) "\<EOF>";
+       if( arraysize(TokenNames) \<= index)
+               return (ANTLR_UINT8*) "\<UNKNOWN>";
+       return TokenNames[index];
+}
 <endif><endif>
 
 /** String literals used by <name> that we must do things like MATCHS() with.
@@ -367,6 +369,8 @@ public:
 
 protected:
 	static ANTLR_UINT8* TokenNames[];
+	template\<class T, size_t N>
+	inline static size_t arraysize(const T(&)[N]) { return N; }
 
 <endif>
 };
@@ -762,7 +766,7 @@ ANTLR_UINT8* <name>TokenNames[<length(tokenNames)>+4]
         (ANTLR_UINT8*) "\<EOR>",
         (ANTLR_UINT8*) "\<DOWN>",
         (ANTLR_UINT8*) "\<UP>",
-        <tokenNames:{it |(ANTLR_UINT8*) <it>}; separator=",\n">
+        <rest(tokens):{it |(ANTLR_UINT8*) "<it.name>", //<it.type>}; separator="\n">
        };
 <endif>
 

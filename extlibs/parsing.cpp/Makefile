@@ -75,8 +75,8 @@ clean:
 	rm -f *.o *Lexer*.[ch]pp *Parser.[ch]pp OracleDML_*.[ch]pp OracleDML.[ch]pp t0 t1 t2 t4 t5 m0 m1 s0 s1 s2 s3 p0 p1 check *.tokens
 
 install:
-	#cp PLSQLGuiLexer.cpp ../../src/parsing/PLSQLGuiLexer.cc
-	#cp PLSQLGuiLexer.hpp ../../src/parsing/PLSQLGuiLexer.hpp
+	cp PLSQLGuiLexer.cpp ../../src/parsing/PLSQLGuiLexer.cc
+	cp PLSQLGuiLexer.hpp ../../src/parsing/PLSQLGuiLexer.hpp
 	#cp UserGuiTraits.hpp ../../src/parsing/UserGuiTraits.hpp
 	#cp TokenAttr.hpp     ../../src/parsing/TokenAttr.hpp
 	#cp PLSQLLexer.cpp    ../../src/parsing/PLSQLLexer.cc
