@@ -47,6 +47,7 @@
 
 #ifdef TORA_EXPERIMENTAL
 #include "parsing/tsqllexer.h"
+#include <QToolTip>
 #endif
 
 #include <QListWidget>

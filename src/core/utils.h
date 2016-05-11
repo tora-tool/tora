@@ -483,6 +483,11 @@ namespace Utils
     void toLoadMap(const QString &filename, std::map<QString, QString> &pairs);
     bool toSaveMap(const QString &file, std::map<QString, QString> &pairs);
 
+    inline std::string ptr2str(void *p)
+    {
+    	uintptr_t num = reinterpret_cast<uintptr_t>(p);
+    	return std::to_string(num);
+    }
 }
 
 #endif

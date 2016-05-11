@@ -288,4 +288,4 @@ Lexer::token_const_iterator postgreSQLGuiLexer::findEndToken( Lexer::token_const
 
 };
 
-Util::RegisterInFactory<SQLLexer::postgreSQLGuiLexer, LexerFactTwoParmSing> reMySQLLexStatement("PostreSQLGuiLexer");
+Util::RegisterInFactory<SQLLexer::postgreSQLGuiLexer, LexerFactTwoParmSing> rePostgreSQLLexStatement("PostreSQLGuiLexer");

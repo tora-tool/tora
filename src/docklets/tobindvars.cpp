@@ -37,8 +37,10 @@
 #include "tools/toresulttableview.h"
 #include "core/toconfiguration.h"
 #include "core/toeditorconfiguration.h"
-#include <QPlainTextEdit>
 #include "widgets/tosearchreplace.h"
+
+#include <QPlainTextEdit>
+#include <QtCore/QMimeData>
 
 REGISTER_VIEW("Bind Values", toBindVarsDocklet);
 
@@ -173,11 +175,9 @@ void PlainTextEdit::insertFromMimeData(const QMimeData *source)
     {
         toResultTableView *view = NULL;
         QHash<QString, QStringList> values;
-        QByteArray bpointer = source->data("application/x-tora");
-        bool ok = false;
-        uintptr_t ipointer = bpointer.toLongLong(&ok);
-        if (toResultTableView::Registry.contains(ipointer))
-            view = toResultTableView::Registry[ipointer];
+        QString spointer(source->data("application/x-tora"));
+        if (toResultTableView::Registry.contains(spointer))
+            view = toResultTableView::Registry[spointer];
         else
             return;
         toConnection &conn = toConnection::currentConnection(view);
@@ -189,9 +189,9 @@ void PlainTextEdit::insertFromMimeData(const QMimeData *source)
             if (value.isEmpty())
                 continue;
             QStringList &list = values[header];  // will create and insert an empty QStringList if necessary
-			if (list.contains(value))
-				continue;
-			list.append(value);
+	    if (list.contains(value))
+		continue;
+	    list.append(value);
         }
         foreach(QString name, values.keys())
         {

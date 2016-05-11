@@ -5,6 +5,7 @@
 #include "core/tora_export.h"
 
 #include <QtCore/QObject>
+#include <QPlainTextEdit>
 
 #include <streambuf>
 #include <iostream>

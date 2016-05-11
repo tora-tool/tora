@@ -62,7 +62,7 @@
 #include <QVBoxLayout>
 #include <QProgressDialog>
 
-QMap<uintptr_t, toResultTableView*> toResultTableView::Registry;
+QMap<QString, toResultTableView*> toResultTableView::Registry;
 
 toResultTableView::toResultTableView(QWidget * parent)
     : QTableView(parent)
@@ -78,6 +78,7 @@ toResultTableView::toResultTableView(QWidget * parent)
 
     setObjectName("toResultTableView");
     setup(true, false, false);
+    Registry.insert(Utils::ptr2str(this).c_str(), this);
 }
 
 toResultTableView::toResultTableView(bool readable,
@@ -100,7 +101,7 @@ toResultTableView::toResultTableView(bool readable,
         setObjectName(name);
     setup(readable, numberColumn, editable);
 
-    Registry.insert(reinterpret_cast<uintptr_t>(this), this);
+    Registry.insert(Utils::ptr2str(this).c_str(), this);
 }
 
 void toResultTableView::setup(bool readable, bool numberColumn, bool editable)
@@ -160,7 +161,7 @@ toResultTableView::~toResultTableView()
     if (Model && running())
         Model->stop();
     freeModel();
-    Registry.remove(reinterpret_cast<uintptr_t>(this));
+    Registry.remove(Utils::ptr2str(this).c_str());
 }
 
 void toResultTableView::query(const QString &sql, toQueryParams const& param)
@@ -658,6 +659,10 @@ void toResultTableView::setModel(toResultModel *model)
     emit modelChanged(model);
 }
 
+void toResultTableView::setModel(QAbstractItemModel *model)
+{
+    Q_ASSERT_X(qobject_cast<toResultModel*>(model), qPrintable(__QHERE__), "Invaid QAbstractItemModel subclass");
+}
 
 bool toResultTableView::isRowSelected(QModelIndex index)
 {
@@ -759,7 +764,7 @@ void toResultTableView::editCopy()
         toExportSettings settings = toResultListFormat::plaintextCopySettings();
         settings.selected = sel;
         md->setText(exportAsText(settings));
-        md->setData("application/x-tora", QByteArray::number(reinterpret_cast<uintptr_t>(this))); // store pointer to self in clipboard see tobindvar.cpp insertFromMimeData
+        md->setData("application/x-tora", QByteArray(Utils::ptr2str(this).c_str())); // store pointer to self in clipboard see tobindvar.cpp insertFromMimeData
 #ifdef Q_OS_WIN32
         std::unique_ptr<toListViewFormatter> pFormatter(toListViewFormatterFactory::Instance().CreateObject(toListViewFormatterIdentifier::XLSX));
         md->setData("XML Spreadsheet", pFormatter->getFormattedString(settings, model()).toUtf8());

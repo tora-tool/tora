@@ -42,6 +42,7 @@
 
 class toToolWidget;
 class toSearchReplace;
+class QPlainTextEdit;
 
 class toBindVarsDocklet : public toDocklet , public toEditWidget
 {

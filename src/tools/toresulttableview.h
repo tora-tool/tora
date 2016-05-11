@@ -37,6 +37,7 @@
 #include "core/toqvalue.h"
 #include "core/tosql.h"
 #include "core/toresult.h"
+#include "core/utils.h"
 #include "core/toconnection.h"
 #include "widgets/toresultmodel.h"
 #include "core/toeditwidget.h"
@@ -148,6 +149,7 @@ class toResultTableView : public QTableView, public toResult, public toEditWidge
          * Must be set before query()
          */
         virtual void setModel(toResultModel *model);
+	void setModel(QAbstractItemModel *model) override;
 
         /**
          * Should view read all data.
@@ -213,7 +215,7 @@ class toResultTableView : public QTableView, public toResult, public toEditWidge
          */
         bool queryFromCache(const QString &owner, const QString &type);
 
-        static QMap<uintptr_t, toResultTableView*> Registry;
+        static QMap<QString, toResultTableView*> Registry;
 
     public slots:
         /**
