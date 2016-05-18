@@ -70,7 +70,8 @@ class toMessage : public QDialog, public Ui::toMessageUI
 
     protected:
         //! Save the prefs
-        void hideEvent(QHideEvent * event);
+        void hideEvent(QHideEvent * event) override;
+        bool eventFilter(QObject *obj, QEvent *event) override;
 
 };
 

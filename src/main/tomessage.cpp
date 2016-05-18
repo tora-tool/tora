@@ -55,6 +55,8 @@ toMessage::toMessage(QWidget * parent, toWFlags f)
     restoreGeometry(s.value("geometry", QByteArray()).toByteArray());
     s.endGroup();
 
+    Message->sciEditor()->installEventFilter(this);
+
     connect(buttonBox->button(QDialogButtonBox::Close),
             SIGNAL(clicked()), this, SLOT(hide()));
     connect(buttonBox->button(QDialogButtonBox::Reset),
@@ -81,4 +83,25 @@ void toMessage::hideEvent(QHideEvent * event)
     s.setValue("geometry", saveGeometry());
     s.endGroup();
     event->accept();
+}
+
+bool toMessage::eventFilter(QObject *obj, QEvent *event)
+{
+    if (obj != Message->sciEditor())
+        return false;
+    if(event->type() == QEvent::KeyPress)
+    {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+        if(keyEvent->key() == Qt::Key_Escape || keyEvent->key() == Qt::Key_Return)
+        {
+            close();
+            return true; // mark the event as handled
+        }
+        if(keyEvent->key() == Qt::Key_X && (keyEvent->modifiers() & Qt::ControlModifier))
+        {
+            Message->sciEditor()->clear();
+            return true;
+        }
+    }
+    return false;
 }
