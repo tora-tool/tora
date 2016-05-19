@@ -73,7 +73,7 @@ toViewDirectory::toViewDirectory(QWidget *parent,
     if (!autoload.isEmpty())
         showFile(autoload);
     else
-        findRoot(QDir::currentPath());
+        findRoot(toConfigurationNewSingle::Instance().option(ToConfiguration::Main::LastDir).toString());
 }
 
 
@@ -101,6 +101,9 @@ void toViewDirectory::findRoot(QFileInfo dir)
     // TODO this causes
     // "QPersistentModelIndex::~QPersistentModelIndex: "persistent model indexes corrupted"
     // Model->refresh(parent);
+
+    toConfigurationNewSingle::Instance().setOption(ToConfiguration::Main::LastDir, dir.absoluteFilePath());
+    setToolTip(dir.absoluteFilePath());
 }
 
 
