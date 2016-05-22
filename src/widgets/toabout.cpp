@@ -42,6 +42,10 @@
 
 #include <QtCore/QStringRef>
 
+#ifdef TORA_EXPERIMENTAL
+#include "core/tomemory.h"
+#endif
+
 toAbout::toAbout(QWidget* parent, const char* name, bool modal)
     : QDialog(parent)
 {
@@ -98,6 +102,12 @@ toAbout::toAbout(QWidget* parent, const char* name, bool modal)
 #else
 		version = TORAVERSION;
 #endif
+
+#ifdef TORA_EXPERIMENTAL
+		version.append("<br>");
+		version.append("Memory usage: ").append(QString::number((qulonglong)getCurrentRSS())).append(" M");
+#endif
+
 		textBrowserVersion->setHtml(version);
 	}
 }

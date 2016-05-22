@@ -706,6 +706,7 @@ IF (USE_EXPERIMENTAL)
   LIST (APPEND TORA_SOURCES tools/tosandboxtool.cpp)
   LIST (APPEND TORA_SOURCES docklets/tologging.cpp)
   LIST (APPEND TORA_SOURCES docklets/tobindvars.cpp)
+  LIST (APPEND TORA_SOURCES core/tomemory.cpp)
 ENDIF (USE_EXPERIMENTAL)
 
 IF(POPPLER_QT4_FOUND)
