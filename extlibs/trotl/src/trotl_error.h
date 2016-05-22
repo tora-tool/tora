@@ -50,7 +50,6 @@ struct OciException;
 
 void oci_check_error(tstring where, OCIError* errh, sword res);
 void oci_check_error(tstring where, OCIEnv* envh, sword res);
-void oci_check_error(tstring where, SqlStatement &stmt, sword res); // defined in trotl_stat.cpp
 
 /// error handling functions
 extern __NORETURN void TROTL_EXPORT throw_oci_exception(OciException const & e);
@@ -83,7 +82,7 @@ struct TROTL_EXPORT OciException : public std::exception
 
 	OciException& arg(tstring);
 
-	~OciException() throw() {}
+	virtual ~OciException() throw() {}
 
 	virtual const char* what() const throw()
 	{

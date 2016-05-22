@@ -188,13 +188,13 @@ void SqlStatement::prepare(const tstring& sql, ub4 lang)
 	sword res;
 
 	res = OCICALL(OCIStmtPrepare(_handle/*stmtp*/, _errh, (text*)sql.c_str(), (ub4)sql.length(), lang, OCI_DEFAULT));
-	oci_check_error(__TROTL_HERE__, _errh, res);
+	check_error(__TROTL_HERE__, res);
 
 	/* NOTE this call alse returns other values than mentioned in OCI docs.
 	 * for example "EXPLAIN PLAN FOR ..." returns value 15
 	 */
 	res = OCICALL(OCIAttrGet(_handle/*stmtp*/, get_type_id(), &stmt_type, &size, OCI_ATTR_STMT_TYPE, _errh));
-	oci_check_error(__TROTL_HERE__, _errh, res);
+	check_error(__TROTL_HERE__, res);
 
 	switch(stmt_type)
 	{
@@ -233,7 +233,7 @@ void SqlStatement::execute_describe()
 
 	res = OCICALL(OCIStmtExecute(_conn._svc_ctx, _handle, _errh, _stmt_type == STMT_SELECT ? (ub4) 0 : (ub4) 1,
 	                             0, (OCISnapshot *)0, (OCISnapshot *)0, OCI_DESCRIBE_ONLY));
-	oci_check_error(__TROTL_HERE__, *this, res);
+	check_error(__TROTL_HERE__, res);
 
 	_state |= DESCRIBED;
 }
@@ -287,6 +287,20 @@ void SqlStatement::define_all()
 	_state |= DEFINED;
 }
 
+void SqlStatement::check_error(tstring where, sword res) const
+{
+    if (res == OCI_ERROR)
+    {
+        sb4 errorcode;
+        sword res = OCICALL(OCIErrorGet(_errh, 1/*recordno*/, NULL, &errorcode, (OraText*)NULL, (ub4)0, OCI_HTYPE_ERROR));
+        if (errorcode == 1013)
+        {
+            _conn.reset();
+        }
+    }
+    if (res != OCI_SUCCESS)
+        throw_oci_exception(OciException(where, const_cast<SqlStatement&>(*this)));
+};
 
 ub4 SqlStatement::get_column_count() const
 {
@@ -300,7 +314,7 @@ ub4 SqlStatement::get_column_count() const
 		return _column_count;
 
 	res = OCICALL(OCIAttrGet(_handle, get_type_id(), &_column_count, &size, OCI_ATTR_PARAM_COUNT, _errh));
-	oci_check_error(__TROTL_HERE__, _errh, res);
+	check_error(__TROTL_HERE__, res);
 
 	//get_log().ts( tstring(__HERE_SHORT__))
 	// std::cout
@@ -318,7 +332,7 @@ ub4 SqlStatement::get_bindpar_count() const
 		return _param_count;
 
 	res = OCICALL(OCIAttrGet(_handle, get_type_id(), &_param_count, &size, OCI_ATTR_BIND_COUNT, _errh));
-	oci_check_error(__TROTL_HERE__, _errh, res);
+	check_error(__TROTL_HERE__, res);
 
 	//get_log().ts( tstring(__HERE_SHORT__))
 	//std::cout
@@ -508,15 +522,24 @@ bool SqlStatement::execute_internal(ub4 rows, ub4 mode)
 		_state &= ~EXECUTED;
 		return false;	// There are no additional rows pending to be fetched.
 	case OCI_ERROR:
+	{
 		_state |= STMT_ERROR;
+		sb4 errorcode;
+		sword res = OCICALL(OCIErrorGet(_errh, 1/*recordno*/, NULL, &errorcode, (OraText*)NULL, (ub4)0, OCI_HTYPE_ERROR));
+		if (errorcode == 1013)
+		{
+			_conn.reset();
+		}
 		throw_oci_exception(OciException(__TROTL_HERE__, *this));
+	}
 		//no break here
 	default:
 		if (rows > 0)
 			_state |= EXECUTED;
 		else
 			_state = (_state|EXECUTED) & ~FETCHED;
-		if(res != OCI_SUCCESS_WITH_INFO) oci_check_error(__TROTL_HERE__, _errh, res);
+		if(res != OCI_SUCCESS_WITH_INFO)
+			check_error(__TROTL_HERE__, res);
 		return true;	// There may be more rows available to be fetched (for queries) or the DML statement succeeded.
 	}
 }
@@ -535,7 +558,7 @@ void SqlStatement::fetch(ub4 rows/*=-1*/)
 		sword res2;
 
 		res2 = OCICALL(OCIStmtGetPieceInfo(_handle, _errh, &hdlptr, &hdltype, &in_out, &iter, &idx, &piece));
-		oci_check_error(__TROTL_HERE__, _errh, res2);
+		check_error(__TROTL_HERE__, res2);
 
 		switch(hdltype)
 		{
@@ -566,7 +589,7 @@ void SqlStatement::fetch(ub4 rows/*=-1*/)
 		ub2   rcode = 0;
 
 		res2 = OCICALL(OCIStmtSetPieceInfo((dvoid *)hdlptr, (ub4)hdltype, _errh, (dvoid *) BPp->valuep, &alen, piece, (dvoid *)&indptr, &rcode));
-		oci_check_error(__TROTL_HERE__, _errh, res2);
+		check_error(__TROTL_HERE__, res2);
 
 		res = OCICALL(OCIStmtFetch(_handle, _errh, 1, OCI_FETCH_NEXT, OCI_DEFAULT));
 		if(res == OCI_NEED_DATA || res == OCI_NO_DATA || res == OCI_SUCCESS || res == OCI_SUCCESS_WITH_INFO)
@@ -590,7 +613,7 @@ void SqlStatement::fetch(ub4 rows/*=-1*/)
 		_state &= ~EXECUTED;
 		//no break here
 	default:
-		oci_check_error(__TROTL_HERE__, _errh, res);
+		check_error(__TROTL_HERE__, res);
 		break;
 	}
 
@@ -607,7 +630,7 @@ ub4 SqlStatement::row_count() const
 	ub4 size = sizeof(row_count);
 
 	sword res = OCICALL(OCIAttrGet(_handle/*stmtp*/, get_type_id(), &row_count, &size, OCI_ATTR_ROW_COUNT, _errh));
-	oci_check_error(__TROTL_HERE__, _errh, res);
+	check_error(__TROTL_HERE__, res);
 
 	//std::cout << "ub4 SqlStatement::row_count() const: " << row_count << std::endl;
 
@@ -622,7 +645,7 @@ ub4 SqlStatement::fetched_rows() const
 	ub4 size = sizeof(row_count);
 
 	sword res = OCICALL(OCIAttrGet(_handle, get_type_id(), &row_count, &size, OCI_ATTR_ROWS_FETCHED, _errh));
-	oci_check_error(__TROTL_HERE__, _errh, res);
+	check_error(__TROTL_HERE__, res);
 
 	return row_count;
 }

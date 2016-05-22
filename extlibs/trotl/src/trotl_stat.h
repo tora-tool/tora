@@ -67,13 +67,6 @@ namespace trotl
 class BindParCursor;
 class SqlCursor;
 
-inline void oci_check_error(tstring where, SqlStatement &stmt, sword res)
-{
-	if (res != OCI_SUCCESS)
-		throw_oci_exception(OciException(where, stmt));
-};
-
-
 class TROTL_EXPORT SqlStatement : public OciHandle<OCIStmt>
 {
 	typedef OciHandle<OCIStmt> super;
@@ -315,6 +308,8 @@ protected:
 	/* OCIDefineByPos - for SELECT statements */
 	void define(BindPar &dp);
 	void define_all();
+
+	void check_error(tstring where, sword res) const;
 
 public:	//todo delete me - these fields should not be public
 	inline void pre_read_value()
