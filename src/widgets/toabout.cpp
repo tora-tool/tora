@@ -85,7 +85,7 @@ toAbout::toAbout(QWidget* parent, const char* name, bool modal)
 	// Version Tab
 	{
 		QString version;
-	#if defined(HAVE_GITREVISION_H)
+#if defined(HAVE_GITREVISION_H)
 		version.append("<center><table>");
 		QString format = QString("<tr><td align=\"right\">%1:<td align=\"left\">%2");
 		version.append(format.arg("GITVERSION").arg(GITVERSION));

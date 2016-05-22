@@ -42,6 +42,10 @@
 #include "core/toconf.h"
 #include "core/utils.h"
 
+#ifdef TORA_EXPERIMENTAL
+#include "core/tomemory.h"
+#endif
+
 QVariant ToConfiguration::Global::defaultValue(int option) const
 {
     switch (option)
@@ -149,6 +153,11 @@ QVariant ToConfiguration::Global::defaultValue(int option) const
             return QVariant((bool)true);
         case ClipboardRHeadersBool:
             return QVariant((bool)false);
+#ifdef TORA_EXPERIMENTAL
+        case RamThresholdInt:
+            return QVariant((int)getTotalSystemMemory()*2/3);
+            return QVariant((int)2000);
+#endif
         default:
             Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Global un-registered enum value: %1").arg(option)));
             return QVariant();
