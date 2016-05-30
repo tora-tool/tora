@@ -133,8 +133,8 @@ SET(TORA_UI_SRC
 
   tools/tosgatracesettingui.ui
 
-  #tools/totuningoverviewui.ui
-  #tools/totuningsettingui.ui
+  tools/totuningoverviewui.ui
+  tools/totuningsettingui.ui
 
   tools/tooutputsettingui.ui
 
@@ -369,13 +369,15 @@ SET(TORA_MOC_CLASSES
   tools/toplsqltext.h
   tools/toplsqleditor.h
 
+  tools/totuning.h
+  tools/toresultpie.h
+
   templates/tosqledit.h  
   templates/totemplate.h
 
   #     toproject.h
   
   #TODO tools/toalert.h
-  #TODO tools/totuning.h
   #     todebug.h
   #     todebugtext.h
   #     toeditextensions.h
@@ -650,13 +652,15 @@ SET(TORA_SOURCES
   tools/toplsqleditor.cpp
   tools/toplsqltext.cpp
 
+  tools/totuning.cpp
+  tools/toresultpie.cpp
+
   templates/tosqledit.cpp
   templates/totemplate.cpp
   templates/totemplateprovider.cpp
   #     toproject.cpp
 
   #TODO tools/toalert.cpp
-  #TODO tools/totuning.cpp
 
   #     todebug.cpp
   #     todebugtext.cpp
