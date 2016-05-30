@@ -32,7 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "core/toresultpie.h"
+#include "tools/toresultpie.h"
 #include "core/utils.h"
 #include "core/toconnection.h"
 #include "core/toeventquery.h"
@@ -51,11 +51,7 @@ void toResultPie::start(void)
 {
     if (!Started)
     {
-        try
-        {
-            connect(timer(), SIGNAL(timeout()), this, SLOT(refresh()));
-        }
-        TOCATCH
+		///t connect(timer(), SIGNAL(timeout()), this, SLOT(refresh()));
         Started = true;
     }
 }
@@ -64,11 +60,7 @@ void toResultPie::stop(void)
 {
     if (Started)
     {
-        try
-        {
-            disconnect(timer(), SIGNAL(timeout()), this, SLOT(refresh()));
-        }
-        TOCATCH
+		///t disconnect(timer(), SIGNAL(timeout()), this, SLOT(refresh()));
         Started = false;
     }
 }
@@ -79,8 +71,8 @@ void toResultPie::query(const QString &sql, const toQueryParams &param)
         return ;
 
     start();
-    if (!setSQLParams(sql, param))
-        return ;
+	if (!setSqlAndParams(sql, param))
+		return;
 
     try
     {

@@ -38,42 +38,67 @@
 #include "core/toconnection.h"
 #include "core/tomainwindow.h"
 #include "core/toeventquery.h"
-#include "core/toresultbar.h"
-#include "core/toresultitem.h"
-#include "core/toresultline.h"
-#include "core/toresultlock.h"
-#include "core/toresulttableview.h"
-#include "core/toresultparam.h"
-#include "core/toresultpie.h"
-#include "core/toresultstats.h"
-#include "core/toresultview.h"
+#include "core/toconfiguration.h"
+#include "core/toglobalevent.h"
+#include "core/tosettingtab.h"
+#include "tools/toresultbar.h"
+#include "widgets/toresultitem.h"
+#include "widgets/torefreshcombo.h"
+#include "tools/toresultline.h"
+#include "tools/toresultlock.h"
+#include "tools/toresulttableview.h"
+#include "tools/toresultparam.h"
+#include "tools/toresultpie.h"
+#include "tools/toresultstats.h"
+#include "tools/toresultview.h"
+#include "tools/toresultline.h"
 #include "core/tosql.h"
 #include "core/totool.h"
 #include "core/utils.h"
+#include "core/toglobalconfiguration.h"
 #include "ui_totuningsettingui.h"
 #include "tools/towaitevents.h"
 
 #include <time.h>
 #include <stdio.h>
 
-#include <QtGui/QComboBox>
-#include <QtGui/QToolBar>
+#include <QComboBox>
+#include <QToolBar>
 #include <QtGui/QResizeEvent>
 #include <QtGui/QPixmap>
-#include <QtGui/QAction>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QGridLayout>
+#include <QAction>
+#include <QVBoxLayout>
+#include <QGridLayout>
 #include <QtCore/QString>
 
 #include "icons/refresh.xpm"
 #include "icons/totuning.xpm"
 #include "icons/compile.xpm"
 
-// #define CONF_OVERVIEW "Overview"
-// #define CONF_FILEIO   "File I/O"
-// #define CONF_WAITS    "Wait events"
-// #define CONF_CHART    "chart"
+#define CONF_OVERVIEW "Overview"
+#define CONF_FILEIO   "File I/O"
+#define CONF_WAITS    "Wait events"
+#define CONF_CHART    "chart"
 
+QVariant ToConfiguration::Tuning::defaultValue(int option) const
+{
+    switch (option)
+    {
+    case FirstRunBool:
+		return false;
+    case OverviewBool:
+		return false;
+    case FileIOBool:
+		return false;
+    case WaitsBool:
+		return false;
+    case ChartsBool:
+		return false;
+    default:
+        Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Tuning un-registered enum value: %1").arg(option)));
+        return QVariant();
+    }
+}
 
 static std::list<QString> TabList(void)
 {
@@ -105,6 +130,7 @@ public:
     toTuningSetup(toTool *tool, QWidget* parent = 0, const char* name = 0)
         : QWidget(parent), toSettingTab("tuning.html#preferences"), Tool(tool)
     {
+        using namespace ToConfiguration;
         setupUi(this);
 //         std::list<QString> tabs = TabList();
 //         for (std::list<QString>::iterator i = tabs.begin();i != tabs.end();i++)
@@ -114,40 +140,42 @@ public:
 //                 item->setSelected(true);
 //         }
         toTreeWidgetItem *item = new toTreeWidgetItem(EnabledTabs, CONF_OVERVIEW);
-        item->setSelected(toConfigurationSingle::Instance().tuningOverview());
+        item->setSelected(toConfigurationNewSingle::Instance().option(Tuning::OverviewBool).toBool());
         toTreeWidgetItem *item1 = new toTreeWidgetItem(EnabledTabs, CONF_FILEIO);
-        item1->setSelected(toConfigurationSingle::Instance().tuningFileIO());
+        item1->setSelected(toConfigurationNewSingle::Instance().option(Tuning::FileIOBool).toBool());
         toTreeWidgetItem *item2 = new toTreeWidgetItem(EnabledTabs, CONF_WAITS);
-        item2->setSelected(toConfigurationSingle::Instance().tuningWaits());
+        item2->setSelected(toConfigurationNewSingle::Instance().option(Tuning::WaitsBool).toBool());
         toTreeWidgetItem *item3 = new toTreeWidgetItem(EnabledTabs, CONF_CHART);
-        item3->setSelected(toConfigurationSingle::Instance().tuningCharts());
+        item3->setSelected(toConfigurationNewSingle::Instance().option(Tuning::ChartsBool).toBool());
 
         EnabledTabs->setSorting(0);
     }
+
     virtual void saveSetting(void)
     {
-        for (toTreeWidgetItem *item = EnabledTabs->firstChild(); item; item = item->nextSibling())
-        {
-            // NOTE: OK, it's ugly, but this is the only place where new QSettings fails
-            if (item->text(0) == CONF_OVERVIEW)
-                toConfigurationSingle::Instance().setTuningOverview(item->isSelected());
-            else if (item->text(0) == CONF_FILEIO)
-                toConfigurationSingle::Instance().setTuningFileIO(item->isSelected());
-            else if (item->text(0) == CONF_WAITS)
-                toConfigurationSingle::Instance().setTuningWaits(item->isSelected());
-            else if (item->text(0) == CONF_CHART)
-                toConfigurationSingle::Instance().setTuningCharts(item->isSelected());
+///s        for (toTreeWidgetItem *item = EnabledTabs->firstChild(); item; item = item->nextSibling())
+///s        {
+///s            // NOTE: OK, it's ugly, but this is the only place where new QSettings fails
+///s            if (item->text(0) == CONF_OVERVIEW)
+///s                toConfigurationNewSingle::Instance().setTuningOverview(item->isSelected());
+///s            else if (item->text(0) == CONF_FILEIO)
+///s                toConfigurationNewSingle::Instance().setTuningFileIO(item->isSelected());
+///s            else if (item->text(0) == CONF_WAITS)
+///s                toConfigurationNewSingle::Instance().setTuningWaits(item->isSelected());
+///s            else if (item->text(0) == CONF_CHART)
+///s                toConfigurationNewSingle::Instance().setTuningCharts(item->isSelected());
 
 //             if (item->isSelected() || Tool->config(item->text(0).toLatin1(), "Undefined") != "Undefined")
 //                 Tool->setConfig(item->text(0).toLatin1(), QString::fromLatin1((item->isSelected() ? "Yes" : "")));
-        }
+///s        }
     }
+
 };
 
 class toTuningTool : public toTool
 {
 protected:
-    virtual const char **pictureXPM(void)
+    const char **pictureXPM(void) override
     {
         return const_cast<const char**>(totuning_xpm);
     }
@@ -155,20 +183,24 @@ public:
     toTuningTool()
         : toTool(30, "Server Tuning")
     { }
-    virtual const char *menuItem()
+    const char *menuItem() override
     {
         return "Server Tuning";
     }
-    virtual toToolWidget *toolWindow(QWidget *parent, toConnection &connection)
+    toToolWidget *toolWindow(QWidget *parent, toConnection &connection) override
     {
         return new toTuning(parent, connection);
     }
-    virtual QWidget *configurationTab(QWidget *parent)
+    QWidget *configurationTab(QWidget *parent) override
     {
         return new toTuningSetup(this, parent);
     }
-    virtual void closeWindow(toConnection &connection) {};
+    void closeWindow(toConnection &connection) override {};
+private:
+    static ToConfiguration::Tuning s_tuningConf;
 };
+
+ToConfiguration::Tuning toTuningTool::s_tuningConf;
 
 static toTuningTool TuningTool;
 
@@ -870,17 +902,18 @@ void toTuningOverview::setupChart(toResultLine *chart, const QString &title, con
     toQueryParams params;
     if (postfix == QString::fromLatin1("b/s"))
     {
-        QString unitStr(toConfigurationSingle::Instance().sizeUnit());
+		QString unitStr = toConfigurationNewSingle::Instance().option(ToConfiguration::Global::SizeUnit).toString();
         params << toQValue(Utils::toSizeDecode(unitStr));
         unitStr += QString::fromLatin1("/s");
         chart->setYPostfix(unitStr);
     }
     else
         chart->setYPostfix(postfix);
-    chart->query(sql, params);
+    chart->setSQL(sql);
+    chart->refreshWithParams(params);
 }
 
-toTuningOverview::toTuningOverview(QWidget *parent, const char *name, Qt::WFlags fl)
+toTuningOverview::toTuningOverview(QWidget *parent, const char *name, toWFlags fl)
     : QWidget(parent)
 {
     setupUi(this);
@@ -908,13 +941,13 @@ toTuningOverview::toTuningOverview(QWidget *parent, const char *name, Qt::WFlags
     ClientChart->showGrid(0);
     ClientChart->showLegend(false);
     ClientChart->showAxisLegend(false);
-    ClientChart->query(SQLOverviewClient, toQueryParams());
+    ClientChart->setSQL(SQLOverviewClient);
     ClientChart->setFlow(false);
 
     SharedUsed->showGrid(0);
     SharedUsed->showLegend(false);
     SharedUsed->showAxisLegend(false);
-    SharedUsed->query(SQLOverviewSGAUsed, toQueryParams());
+    SharedUsed->setSQL(SQLOverviewSGAUsed);
     SharedUsed->setFlow(false);
     SharedUsed->setMaxValue(100);
     SharedUsed->setYPostfix(QString::fromLatin1("%"));
@@ -923,13 +956,13 @@ toTuningOverview::toTuningOverview(QWidget *parent, const char *name, Qt::WFlags
     try
     {
         toQueryParams params;
-        params << toQValue(Utils::toSizeDecode(toConfigurationSingle::Instance().sizeUnit()));
+        params << toQValue(Utils::toSizeDecode(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::SizeUnit).toString()));
         FileUsed->query(toSQL::string(SQLOverviewFilespace, toConnection::currentConnection(this)), params);
     }
     TOCATCH
     FileUsed->showLegend(false);
 
-    Done.up();
+    ///d Done.up();
     connect(&Poll, SIGNAL(timeout()), this, SLOT(poll()));
 
     // Will be called later anyway
@@ -938,15 +971,16 @@ toTuningOverview::toTuningOverview(QWidget *parent, const char *name, Qt::WFlags
 
 toTuningOverview::~toTuningOverview()
 {
-    if (Done.available() == 0)
-    {
-        Quit = true;
-        Done.down();
-    }
+///d    if (Done.available() == 0)
+///d    {
+///d        Quit = true;
+///d        Done.down();
+///d    }
 }
 
 void toTuningOverview::stop(void)
 {
+#if 0
     try
     {
         disconnect(toToolWidget::currentTool(this)->timer(), SIGNAL(timeout()), this, SLOT(refresh()));
@@ -969,15 +1003,13 @@ void toTuningOverview::stop(void)
     ClientChart->stop();
     SharedUsed->stop();
     FileUsed->stop();
+#endif
 }
 
 void toTuningOverview::start(void)
 {
-    try
-    {
-        connect(toToolWidget::currentTool(this)->timer(), SIGNAL(timeout()), this, SLOT(refresh()));
-    }
-    TOCATCH
+#if 0
+	connect(toToolWidget::currentTool(this)->timer(), SIGNAL(timeout()), this, SLOT(refresh()));
 
     ArchiveWrite->start();
     BufferHit->start();
@@ -995,6 +1027,7 @@ void toTuningOverview::start(void)
     ClientChart->start();
     SharedUsed->start();
     FileUsed->start();
+#endif
 }
 
 static toSQL SQLOverviewArchive("toTuning:Overview:Archive",
@@ -1108,7 +1141,7 @@ void toTuningOverview::overviewQuery::setValue(const QString &nam, const QString
 {
     if (Parent.Quit)
         throw 1;
-    QMutexLocker lock (&Parent.Lock);
+    ///l QMutexLocker lock (&Parent.Lock);
     Parent.Values[nam] = val;
 }
 
@@ -1230,37 +1263,31 @@ void toTuningOverview::overviewQuery::run(void)
         res = toQuery::readQuery(*Parent.Connection, SQLOverviewDatafiles, toQueryParams());
         setValue("Files", Utils::toShift(res));
     }
-    catch (const QString &str)
-    {
-        fprintf(stderr, "Exception occured:\n\n%s\n", (const char *)str.toLatin1());
-    }
-    catch (int)
-        {}
-    Parent.Done.up();
+    TOCATCH
+    ///d Parent.Done.up();
 }
 
 void toTuningOverview::refresh(void)
 {
-    try
-    {
-        if (Done.getValue() == 1)
-        {
-            Done.down();
-            Quit = false;
-            Connection = &toConnection::currentConnection(this);
-            UnitString = toConfigurationSingle::Instance().sizeUnit();
-            toThread *thread = new toThread(new overviewQuery(*this));
-            thread->start();
-            Poll.start(500);
-        }
-    }
-    TOCATCH
+///d    try
+///d    {
+///d        if (Done.getValue() == 1)
+///d        {
+///d            Done.down();
+///d            Quit = false;
+///d            Connection = &toConnection::currentConnection(this);
+///d            UnitString = toConfigurationNewSingle::Instance().sizeUnit();
+///d            toThread *thread = new toThread(new overviewQuery(*this));
+///d            thread->start();
+///d            Poll.start(500);
+///d        }
+///d    }
+///d    TOCATCH
 }
 
 void toTuningOverview::setValue(QLabel *label, const QString &nam)
 {
-    QMutexLocker lock (&Lock)
-    ;
+    ///l QMutexLocker lock (&Lock);
     std::map<QString, QString>::iterator i = Values.find(nam);
     if (i != Values.end())
     {
@@ -1284,7 +1311,7 @@ void toTuningOverview::poll(void)
         setValue(ParallellServer, "ParallellServer");
 
         {
-            QMutexLocker lock (&Lock);
+            ///l QMutexLocker lock (&Lock);
             std::map<QString, QString>::iterator i = Values.find("Background");
             if (i != Values.end())
             {
@@ -1357,8 +1384,8 @@ void toTuningOverview::poll(void)
 
         setValue(Tablespaces, "Tablespaces");
         setValue(Files, "Files");
-        if (Done.getValue() == 1)
-            Poll.stop();
+///d        if (Done.getValue() == 1)
+///d            Poll.stop();
     }
     TOCATCH
 }
@@ -1400,11 +1427,12 @@ static toSQL SQLControlFiles("toTuning:ControlFileRecords",
 toTuning::toTuning(QWidget *main, toConnection &connection)
     : toToolWidget(TuningTool, "tuning.html", main, connection, "toTuning")
 {
-    if (toConfigurationSingle::Instance().tuningFirstRun())
+    using namespace ToConfiguration;
+    if (toConfigurationNewSingle::Instance().option(Tuning::FirstRunBool).toBool())
     {
         bool def = false;
         if (TOMessageBox::warning(
-                    toMainWidget(),
+                    this,
                     tr("Enable all tuning statistics"),
                     tr("Are you sure you want to enable all tuning features.\n"
                        "This can put heavy strain on a database and unless you\n"
@@ -1419,11 +1447,11 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
             def = true;
         }
 
-        toConfigurationSingle::Instance().setTuningOverview(def);
-        toConfigurationSingle::Instance().setTuningFileIO(def);
-        toConfigurationSingle::Instance().setTuningWaits(def);
-        toConfigurationSingle::Instance().setTuningCharts(def);
-        toConfigurationSingle::Instance().saveConfig();
+        toConfigurationNewSingle::Instance().setOption(Tuning::OverviewBool, def);
+        toConfigurationNewSingle::Instance().setOption(Tuning::FileIOBool, def);
+        toConfigurationNewSingle::Instance().setOption(Tuning::WaitsBool, def);
+        toConfigurationNewSingle::Instance().setOption(Tuning::ChartsBool, def);
+        toConfigurationNewSingle::Instance().saveAll();
     }
 
     QToolBar *toolbar = Utils::toAllocBar(this, tr("Server Tuning"));
@@ -1440,7 +1468,7 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
 
     toolbar->addWidget(new QLabel(tr("Refresh") + " ", toolbar));
 
-    Refresh = Utils::toRefreshCreate(toolbar);
+    Refresh = new toRefreshCombo(toolbar);
     connect(Refresh, SIGNAL(activated(const QString &)), this, SLOT(changeRefresh(const QString &)));
     toolbar->addWidget(Refresh);
 
@@ -1476,12 +1504,8 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
     Overview = new toTuningOverview(this, "overview");
     Tabs->addTab(Overview, tr("&Overview"));
 
-    try
-    {
-    	Utils::toRefreshParse(timer());
-        connect(timer(), SIGNAL(timeout()), Overview, SLOT(refresh()));
-    }
-    TOCATCH;
+	///d Utils::toRefreshParse(timer());
+	///tconnect(timer(), SIGNAL(timeout()), Overview, SLOT(refresh()));
 
     ChartContainer = new QScrollArea(Tabs);
     QWidget *chartWidget = new QWidget(ChartContainer);
@@ -1493,7 +1517,7 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
     QVBoxLayout *chartBox = new QVBoxLayout;
     chartWidget->setLayout(chartBox);
 
-    QString unitStr = toConfigurationSingle::Instance().sizeUnit();
+    QString unitStr = toConfigurationNewSingle::Instance().option(Global::SizeUnit).toString();
     toQueryParams unit;
     unit << toQValue(Utils::toSizeDecode(unitStr));
 
@@ -1530,7 +1554,7 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
                     chart->setFlow(false);
                 else
                     chart->setYPostfix(QString::fromLatin1("/s"));
-                chart->query(toSQL::sql(*i), par);
+                ///q chart->query(toSQL::sql(*i), par);
             }
             else if (parts[3].mid(1, 1) == QString::fromLatin1("L") || parts[3].mid(1, 1) == QString::fromLatin1("C"))
             {
@@ -1541,7 +1565,7 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
                     chart = new toResultLine(chartWidget);
                 chartBox->addWidget(chart);
                 Charts.append(chart);
-                toQList par;
+                toQueryParams par;
                 if (parts[3].mid(2, 1) == QString::fromLatin1("B"))
                     chart->setYPostfix(tr(" blocks/s"));
                 else if (parts[3].mid(2, 1) == QString::fromLatin1("S"))
@@ -1558,7 +1582,7 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
                 }
                 else
                     chart->setYPostfix(QString::fromLatin1("/s"));
-                chart->query(toSQL::sql(*i), par);
+                ///d chart->query(toSQL::sql(*i), par);
             }
             else if (parts[3].mid(1, 1) == QString::fromLatin1("P"))
             {
@@ -1568,11 +1592,11 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
                 Charts.append(chart);
                 if (parts[3].mid(2, 1) == QString::fromLatin1("S"))
                 {
-                    chart->query(toSQL::sql(*i), unit);
+                    ///q chart->query(toSQL::sql(*i), unit);
                     chart->setPostfix(unitStr);
                 }
-                else
-                    chart->query(toSQL::sql(*i), toQueryParams());
+                ///q else
+                    ///q chart->query(toSQL::sql(*i), toQueryParams());
             }
             else
                 Utils::toStatusMessage(tr("Wrong format of name on chart (%1).").arg(QString(*i)));
@@ -1625,13 +1649,13 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
     connect(Tabs, SIGNAL(currentChanged(int)), this, SLOT(changeTab(int)));
     ToolMenu = NULL;
 
-    if (!toConfigurationSingle::Instance().tuningOverview())
+    if (!toConfigurationNewSingle::Instance().option(Tuning::OverviewBool).toBool())
         enableTab(CONF_OVERVIEW, false);
-    if (!toConfigurationSingle::Instance().tuningFileIO())
+    if (!toConfigurationNewSingle::Instance().option(Tuning::FileIOBool).toBool())
         enableTab(CONF_FILEIO, false);
-    if (!toConfigurationSingle::Instance().tuningWaits())
+	if (!toConfigurationNewSingle::Instance().option(Tuning::WaitsBool).toBool())
         enableTab(CONF_WAITS, false);
-    if (!toConfigurationSingle::Instance().tuningCharts())
+    if (!toConfigurationNewSingle::Instance().option(Tuning::ChartsBool).toBool())
         enableTab(CONF_CHART, false);
     refresh();
     setFocusProxy(Tabs);
@@ -1665,7 +1689,7 @@ void toTuning::showTabMenu(void)
     std::list<QString> tab = TabList();
     for (std::list<QString>::iterator i = tab.begin(); i != tab.end(); i++)
     {
-        QAction *act = new QAction(tr((*i).toAscii().constData()), tabMenu);
+        QAction *act = new QAction(*i, tabMenu);
         QWidget *widget = tabWidget(*i);
 
         act->setCheckable(true);
@@ -1688,6 +1712,7 @@ void toTuning::enableTabMenu(QAction *act)
 
 void toTuning::enableTab(const QString &name, bool enable)
 {
+	using namespace ToConfiguration;
     QWidget *widget = NULL;
     if (name == CONF_OVERVIEW)
     {
@@ -1696,7 +1721,7 @@ void toTuning::enableTab(const QString &name, bool enable)
         else
             Overview->stop();
 
-        toConfigurationSingle::Instance().setTuningOverview(enable);
+        toConfigurationNewSingle::Instance().setOption(Tuning::OverviewBool, enable);
         widget = Overview;
     }
     else if (name == CONF_CHART)
@@ -1706,40 +1731,40 @@ void toTuning::enableTab(const QString &name, bool enable)
             toResultLine *line = dynamic_cast<toResultLine *>(child);
             if (line)
             {
-                if (enable)
-                    line->start();
-                else
-                    line->stop();
+                ///d if (enable)
+                ///d     line->start();
+                ///d else
+                ///d     line->stop();
             }
             toResultBar *bar = dynamic_cast<toResultBar *>(child);
             if (bar)
             {
-                if (enable)
-                    bar->start();
-                else
-                    bar->stop();
+                ///d if (enable)
+                ///d    bar->start();
+                ///d else
+                ///d    bar->stop();
             }
             toResultPie *pie = dynamic_cast<toResultPie *>(child);
             if (pie)
             {
-                if (enable)
-                    pie->start();
-                else
-                    pie->stop();
+                ///d if (enable)
+                ///d     pie->start();
+                ///d else
+                ///d     pie->stop();
             }
         }
 
-        toConfigurationSingle::Instance().setTuningCharts(enable);
+        toConfigurationNewSingle::Instance().setOption(Tuning::ChartsBool, enable);
         widget = ChartContainer;
     }
     else if (name == CONF_WAITS)
     {
-        if (enable)
-            Waits->start();
-        else
-            Waits->stop();
+        ///d if (enable)
+        ///d    Waits->start();
+        ///d else
+        ///d    Waits->stop();
 
-        toConfigurationSingle::Instance().setTuningWaits(enable);
+        toConfigurationNewSingle::Instance().setOption(Tuning::WaitsBool, enable);
         widget = Waits;
     }
     else if (name == CONF_FILEIO)
@@ -1749,7 +1774,7 @@ void toTuning::enableTab(const QString &name, bool enable)
         else
             FileIO->stop();
 
-        toConfigurationSingle::Instance().setTuningFileIO(enable);
+        toConfigurationNewSingle::Instance().setOption(Tuning::FileIOBool, enable);
         widget = FileIO;
     }
 
@@ -1800,7 +1825,7 @@ void toTuning::slotWindowActivated(toToolWidget *widget)
             ToolMenu->addAction(refreshAct);
             ToolMenu->addAction(changeRefreshAct);
 
-            toMainWidget()->addCustomMenu(ToolMenu);
+            toGlobalEventSingle::Instance().addCustomMenu(ToolMenu);
         }
     }
     else
@@ -1812,15 +1837,12 @@ void toTuning::slotWindowActivated(toToolWidget *widget)
 
 void toTuning::changeRefresh(const QString &str)
 {
-    try
-    {
-        Utils::toRefreshParse(timer(), str);
-    }
-    TOCATCH
+	///d Utils::toRefreshParse(timer(), str);
 }
 
 void toTuning::refresh(void)
 {
+    using namespace ToConfiguration;
     LastTab = Tabs->currentWidget();
     if (LastTab == Overview)
     {
@@ -1871,7 +1893,7 @@ void toTuning::refresh(void)
         LibraryCache->refresh();
     else if (LastTab == ControlFiles)
     {
-        QString unit = toConfigurationSingle::Instance().sizeUnit();
+        QString unit = toConfigurationNewSingle::Instance().option(Global::SizeUnit).toString();
         ControlFiles->refreshWithParams(toQueryParams() << QString::number(Utils::toSizeDecode(unit)) << unit);
     }
     else if (LastTab == Options)
@@ -1943,8 +1965,9 @@ toTuningFileIO::toTuningFileIO(QWidget *parent)
 {
     try
     {
+#if 0
         connect(toToolWidget::currentTool(this)->timer(), SIGNAL(timeout()), this, SLOT(refresh()));
-
+#endif
         // fscking qscrollarea won't resize unless this is added
         QHBoxLayout *h = new QHBoxLayout;
         h->setSpacing(0);
@@ -2268,18 +2291,14 @@ std::list<double> toTuningMiss::transform(std::list<double> &inp)
 
 void toTuningFileIO::stop(void)
 {
-    try
-    {
-        disconnect(toToolWidget::currentTool(this)->timer(), SIGNAL(timeout()), this, SLOT(refresh()));
-    }
-    TOCATCH
+#if 0
+    disconnect(toToolWidget::currentTool(this)->timer(), SIGNAL(timeout()), this, SLOT(refresh()));
+#endif
 }
 
 void toTuningFileIO::start(void)
 {
-    try
-    {
-        connect(toToolWidget::currentTool(this)->timer(), SIGNAL(timeout()), this, SLOT(refresh()));
-    }
-    TOCATCH
+#if 0
+    connect(toToolWidget::currentTool(this)->timer(), SIGNAL(timeout()), this, SLOT(refresh()));
+#endif
 }

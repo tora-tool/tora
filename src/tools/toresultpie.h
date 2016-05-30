@@ -35,12 +35,12 @@
 #ifndef TORESULTPIE_H
 #define TORESULTPIE_H
 
-#include "core/topiechart.h"
+#include "tools/topiechart.h"
 #include "core/toresult.h"
 
 #include <list>
 
-#include <QtGui/QRegExp>
+#include <QtCore/QRegExp>
 
 class toEventQuery;
 class toSQL;

@@ -32,12 +32,11 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOTUNING_H
-#define TOTUNING_H
+#pragma once
 
 #include "core/totool.h"
 #include "core/tobackground.h"
-#include "core/toresultline.h"
+#include "widgets/totoolwidget.h"
 #include "ui_totuningoverviewui.h"
 
 #include <list>
@@ -47,9 +46,10 @@
 #include <QtCore/QList>
 #include <QtCore/QMutex>
 #include <QtCore/QSemaphore>
+#include <QtCore/QRunnable>
 #include <QtGui/QResizeEvent>
-#include <QtGui/QLabel>
-#include <QtGui/QScrollArea>
+#include <QLabel>
+#include <QScrollArea>
 
 class QAction;
 class QMenu;
@@ -62,11 +62,34 @@ class toConnection;
 class toListView;
 class toEventQuery;
 class toResultItem;
+class toResultLine;
 class toResultLock;
 class toResultTableView;
 class toResultParam;
 class toResultStats;
 class toWaitEvents;
+
+namespace ToConfiguration
+{
+    class Tuning : public ConfigContext
+    {
+            Q_OBJECT;
+            Q_ENUMS(OptionTypeEnum);
+        public:
+            Tuning() : ConfigContext("Tuning", ENUM_REF(Tuning,OptionTypeEnum)) {};
+            enum OptionTypeEnum
+            {
+                /*! True if there are no prefs for tuning.
+                It's used when there is no m_tuningOverview defined in prefs. */
+                FirstRunBool = 16000,
+                OverviewBool,
+                FileIOBool,
+                WaitsBool,
+                ChartsBool
+            };
+            QVariant defaultValue(int option) const;
+    };
+};
 
 class toTuningMiss : public toResultLine
 {
@@ -130,13 +153,13 @@ class toTuningOverview : public QWidget, public Ui::toTuningOverviewUI
     Q_OBJECT;
 
     bool Quit;
-    QSemaphore Done;
+    ///d QSemaphore Done;
     std::map<QString, QString> Values;
     toConnection *Connection;
-    QMutex Lock;
+    ///l QMutex Lock;
     QString UnitString;
 
-    struct overviewQuery : public toTask
+    struct overviewQuery : public QRunnable
     {
         toTuningOverview &Parent;
         overviewQuery(toTuningOverview &parent)
@@ -154,7 +177,7 @@ class toTuningOverview : public QWidget, public Ui::toTuningOverviewUI
     void setupChart(toResultLine *chart, const QString &, const QString &, const toSQL &sql);
     void setValue(QLabel *label, const QString &val);
 public:
-    toTuningOverview(QWidget *parent = 0, const char *name = 0, Qt::WFlags fl = 0);
+    toTuningOverview(QWidget *parent = 0, const char *name = 0, toWFlags fl = 0);
     ~toTuningOverview();
     void stop(void);
     void start(void);
@@ -164,6 +187,7 @@ public slots:
     void poll(void);
 
 private:
+    QTimer *timer();
 };
 
 class toTuning : public toToolWidget
@@ -214,5 +238,3 @@ public slots:
     virtual void showTabMenu(void);
     virtual void enableTabMenu(QAction *);
 };
-
-#endif

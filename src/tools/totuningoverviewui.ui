@@ -1107,17 +1107,17 @@
   <customwidget>
    <class>toResultPie</class>
    <extends>QWidget</extends>
-   <header>core/toresultpie.h</header>
+   <header>tools/toresultpie.h</header>
   </customwidget>
   <customwidget>
    <class>toResultLine</class>
    <extends>QWidget</extends>
-   <header>core/toresultline.h</header>
+   <header>tools/toresultline.h</header>
   </customwidget>
   <customwidget>
    <class>toResultBar</class>
    <extends>QWidget</extends>
-   <header>core/toresultbar.h</header>
+   <header>tools/toresultbar.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
