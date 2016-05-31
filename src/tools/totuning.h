@@ -152,24 +152,8 @@ class toTuningOverview : public QWidget, public Ui::toTuningOverviewUI
 {
     Q_OBJECT;
 
-    bool Quit;
-    ///d QSemaphore Done;
     std::map<QString, QString> Values;
-    toConnection *Connection;
-    ///l QMutex Lock;
     QString UnitString;
-
-    struct overviewQuery : public QRunnable
-    {
-        toTuningOverview &Parent;
-        overviewQuery(toTuningOverview &parent)
-            : Parent(parent)
-        { }
-        virtual void run(void);
-        void setValue(const QString &name, const QString &val);
-    };
-
-    friend struct overviewQuery;
 
     toBackground Poll;
 
@@ -179,11 +163,12 @@ class toTuningOverview : public QWidget, public Ui::toTuningOverviewUI
 public:
     toTuningOverview(QWidget *parent = 0, const char *name = 0, toWFlags fl = 0);
     ~toTuningOverview();
+#if 0
     void stop(void);
     void start(void);
-
+#endif
+    void refresh(toConnection &);
 public slots:
-    void refresh(void);
     void poll(void);
 
 private:
