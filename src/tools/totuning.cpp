@@ -978,14 +978,10 @@ toTuningOverview::~toTuningOverview()
 ///d    }
 }
 
+#if 0
 void toTuningOverview::stop(void)
 {
-#if 0
-    try
-    {
-        disconnect(toToolWidget::currentTool(this)->timer(), SIGNAL(timeout()), this, SLOT(refresh()));
-    }
-    TOCATCH
+    disconnect(toToolWidget::currentTool(this)->timer(), SIGNAL(timeout()), this, SLOT(refresh()));
 
     ArchiveWrite->stop();
     BufferHit->stop();
@@ -1003,12 +999,11 @@ void toTuningOverview::stop(void)
     ClientChart->stop();
     SharedUsed->stop();
     FileUsed->stop();
-#endif
 }
 
 void toTuningOverview::start(void)
 {
-#if 0
+
 	connect(toToolWidget::currentTool(this)->timer(), SIGNAL(timeout()), this, SLOT(refresh()));
 
     ArchiveWrite->start();
@@ -1027,8 +1022,8 @@ void toTuningOverview::start(void)
     ClientChart->start();
     SharedUsed->start();
     FileUsed->start();
-#endif
 }
+#endif
 
 static toSQL SQLOverviewArchive("toTuning:Overview:Archive",
                                 "select count(1),\n"
@@ -1137,64 +1132,57 @@ static toSQL SQLOverviewDatafiles7("toTuning:Overview:Datafiles",
                                    "",
                                    "0703");
 
-void toTuningOverview::overviewQuery::setValue(const QString &nam, const QString &val)
-{
-    if (Parent.Quit)
-        throw 1;
-    ///l QMutexLocker lock (&Parent.Lock);
-    Parent.Values[nam] = val;
-}
-
-void toTuningOverview::overviewQuery::run(void)
+void toTuningOverview::refresh(toConnection &conn)
 {
     try
     {
         toQueryParams params;
-        params << toQValue(Utils::toSizeDecode(Parent.UnitString));
+        params << toQValue(Utils::toSizeDecode(UnitString));
 
-        toQList res = toQuery::readQuery(*Parent.Connection, SQLOverviewArchive, params);
+        toQList res = toQuery::readQuery(conn, SQLOverviewArchive, params);
         QString tmp = Utils::toShift(res);
         tmp += QString::fromLatin1("/");
         tmp += Utils::toShift(res);
-        tmp += Parent.UnitString;
-        setValue("ArchiveInfo", tmp);
+        tmp += UnitString;
+        Values["ArchiveInfo"] = tmp;
 
-        res = toQuery::readQuery(*Parent.Connection, SQLOverviewRound, toQueryParams());
+        res = toQuery::readQuery(conn, SQLOverviewRound, toQueryParams());
         tmp = Utils::toShift(res);
         tmp += QString::fromLatin1(" ms");
-        setValue("SendFromClient", tmp);
+        Values["SendFromClient"] = tmp;
+
         tmp = Utils::toShift(res);
         tmp += QString::fromLatin1(" ms");
-        setValue("SendToClient", tmp);
+        Values["SendToClient"] = tmp;
 
-        res = toQuery::readQuery(*Parent.Connection, SQLOverviewClientTotal, toQueryParams());
+        res = toQuery::readQuery(conn, SQLOverviewClientTotal, toQueryParams());
         tmp = Utils::toShift(res);
-        setValue("TotalClient", tmp);
+        Values["TotalClient"] = tmp;
         tmp = Utils::toShift(res);
-        setValue("ActiveClient", tmp);
+        Values["ActiveClient"] = tmp;
 
         int totJob = 0;
-        res = toQuery::readQuery(*Parent.Connection, SQLOverviewDedicated, toQueryParams());
+        res = toQuery::readQuery(conn, SQLOverviewDedicated, toQueryParams());
         tmp = Utils::toShift(res);
         totJob += tmp.toInt();
-        setValue("DedicatedServer", tmp);
+        Values["DedicatedServer"] = tmp;
 
-        res = toQuery::readQuery(*Parent.Connection, SQLOverviewDispatcher, toQueryParams());
+        res = toQuery::readQuery(conn, SQLOverviewDispatcher, toQueryParams());
         tmp = Utils::toShift(res);
         totJob += tmp.toInt();
-        setValue("DispatcherServer", tmp);
+        Values["DispatcherServer"] = tmp;
 
-        res = toQuery::readQuery(*Parent.Connection, SQLOverviewShared, toQueryParams());
+        res = toQuery::readQuery(conn, SQLOverviewShared, toQueryParams());
         tmp = Utils::toShift(res);
         totJob += tmp.toInt();
-        setValue("SharedServer", tmp);
+        Values["SharedServer"] = tmp;
 
-        res = toQuery::readQuery(*Parent.Connection, SQLOverviewParallell, toQueryParams());
+        res = toQuery::readQuery(conn, SQLOverviewParallell, toQueryParams());
         tmp = Utils::toShift(res);
         totJob += tmp.toInt();
-        setValue("ParallellServer", tmp);
+        Values["ParallellServer"] = tmp;
 
-        res = toQuery::readQuery(*Parent.Connection, SQLOverviewBackground, toQueryParams());
+        res = toQuery::readQuery(conn, SQLOverviewBackground, toQueryParams());
         QStringList back;
         while (!res.empty())
         {
@@ -1225,64 +1213,47 @@ void toTuningOverview::overviewQuery::run(void)
             tmp += QString::fromLatin1("</B>");
             back << tmp;
         }
-        setValue("Background", back.join(QString::fromLatin1(",")));
-        setValue("TotalProcess", QString::number(totJob));
+        Values["Background"] = back.join(QString::fromLatin1(","));
+        Values["TotalProcess"] = QString::number(totJob);
 
         double tot = 0;
         double sql = 0;
-        res = toQuery::readQuery(*Parent.Connection, SQLOverviewSGA, params);
+        res = toQuery::readQuery(conn, SQLOverviewSGA, params);
         while (!res.empty())
         {
             QString nam = Utils::toShift(res);
             tmp = Utils::toShift(res);
             if (nam == "Database Buffers" || nam == "Redo Buffers")
-                setValue(nam.toLatin1(), tmp + Parent.UnitString);
+                Values[nam] = tmp + UnitString;
             else if (nam == "Fixed Size" || nam == "Variable Size")
                 sql += tmp.toDouble();
             tot += tmp.toDouble();
         }
         tmp = toQValue::formatNumber(tot);
-        tmp += Parent.UnitString;
-        setValue("SGATotal", tmp);
+        tmp += UnitString;
+        Values["SGATotal"] = tmp;
         tmp = toQValue::formatNumber(sql);
-        tmp += Parent.UnitString;
-        setValue("SharedSize", tmp);
+        tmp += UnitString;
+        Values["SharedSize"] = tmp;
 
-        res = toQuery::readQuery(*Parent.Connection, SQLOverviewLog, params);
-        setValue("RedoFiles", Utils::toShift(res));
-        setValue("ActiveRedo", Utils::toShift(res));
+        res = toQuery::readQuery(conn, SQLOverviewLog, params);
+        Values["RedoFiles"] = Utils::toShift(res);
+        Values["ActiveRedo"] =  Utils::toShift(res);
         tmp = Utils::toShift(res);
         tmp += QString::fromLatin1("/");
         tmp += Utils::toShift(res);
-        tmp += Parent.UnitString;
-        setValue("RedoSize", tmp);
+        tmp += UnitString;
+        Values["RedoSize"] = tmp;
 
-        res = toQuery::readQuery(*Parent.Connection, SQLOverviewTablespaces, toQueryParams());
-        setValue("Tablespaces", Utils::toShift(res));
+        res = toQuery::readQuery(conn, SQLOverviewTablespaces, toQueryParams());
+        Values["Tablespaces"] = Utils::toShift(res);
 
-        res = toQuery::readQuery(*Parent.Connection, SQLOverviewDatafiles, toQueryParams());
-        setValue("Files", Utils::toShift(res));
+        res = toQuery::readQuery(conn, SQLOverviewDatafiles, toQueryParams());
+        Values["Files"] = Utils::toShift(res);
     }
     TOCATCH
-    ///d Parent.Done.up();
-}
 
-void toTuningOverview::refresh(void)
-{
-///d    try
-///d    {
-///d        if (Done.getValue() == 1)
-///d        {
-///d            Done.down();
-///d            Quit = false;
-///d            Connection = &toConnection::currentConnection(this);
-///d            UnitString = toConfigurationNewSingle::Instance().sizeUnit();
-///d            toThread *thread = new toThread(new overviewQuery(*this));
-///d            thread->start();
-///d            Poll.start(500);
-///d        }
-///d    }
-///d    TOCATCH
+    poll();
 }
 
 void toTuningOverview::setValue(QLabel *label, const QString &nam)
@@ -1506,7 +1477,7 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
 
 	///d Utils::toRefreshParse(timer());
 	///tconnect(timer(), SIGNAL(timeout()), Overview, SLOT(refresh()));
-
+#if TORA_CHARS
     ChartContainer = new QScrollArea(Tabs);
     QWidget *chartWidget = new QWidget(ChartContainer);
     ChartContainer->setWidget(chartWidget);
@@ -1555,6 +1526,7 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
                 else
                     chart->setYPostfix(QString::fromLatin1("/s"));
                 ///q chart->query(toSQL::sql(*i), par);
+                chart->setSqlAndParams(toSQL::sql(*i), par);
             }
             else if (parts[3].mid(1, 1) == QString::fromLatin1("L") || parts[3].mid(1, 1) == QString::fromLatin1("C"))
             {
@@ -1602,7 +1574,7 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
                 Utils::toStatusMessage(tr("Wrong format of name on chart (%1).").arg(QString(*i)));
         }
     }
-
+#endif
     Waits = new toWaitEvents(this, "waits");
     Tabs->addTab(Waits, tr("&Wait events"));
 
@@ -1716,10 +1688,10 @@ void toTuning::enableTab(const QString &name, bool enable)
     QWidget *widget = NULL;
     if (name == CONF_OVERVIEW)
     {
-        if (enable)
-            Overview->start();
-        else
-            Overview->stop();
+        ///d if (enable)
+        ///d     Overview->start();
+        ///d else
+        ///d     Overview->stop();
 
         toConfigurationNewSingle::Instance().setOption(Tuning::OverviewBool, enable);
         widget = Overview;
@@ -1846,7 +1818,7 @@ void toTuning::refresh(void)
     LastTab = Tabs->currentWidget();
     if (LastTab == Overview)
     {
-        Overview->refresh();
+        Overview->refresh(connection());
     }
     else if (LastTab == Indicators)
     {
