@@ -787,6 +787,7 @@ SET(TORA_LIBS
   ${Qt5Xml_LIBRARIES}           # dynamic qt5
   ${TORA_QSCINTILLA_LIB}        # dynamic
   ${TORA_LOKI_LIB} 		# dynamic/static
+  ${Boost_SYSTEM_LIBRARY}       # Linux only, lastest boost releases require this lib for singleton
   ermodel                       # static
   )
 

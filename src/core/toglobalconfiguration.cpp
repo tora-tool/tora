@@ -155,7 +155,7 @@ QVariant ToConfiguration::Global::defaultValue(int option) const
             return QVariant((bool)false);
 #ifdef TORA_EXPERIMENTAL
         case RamThresholdInt:
-            return QVariant((int)getTotalSystemMemory()*2/3);
+            //return QVariant((int)getTotalSystemMemory()*2/3);
             return QVariant((int)2000);
 #endif
         default:

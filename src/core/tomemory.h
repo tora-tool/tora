@@ -7,7 +7,7 @@
 
 #pragma once
 
-size_t getTotalSystemMemory();
+//size_t getTotalSystemMemory();
 
 /**
  * Returns the peak (maximum so far) resident set size (physical
