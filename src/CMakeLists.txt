@@ -377,6 +377,8 @@ SET(TORA_MOC_CLASSES
   tools/toplsqleditor.h
 
   tools/totuning.h
+  tools/totuningfileio.h
+  tools/totuningoverview.h
   tools/toresultpie.h
 
   templates/tosqledit.h  
@@ -663,6 +665,8 @@ SET(TORA_SOURCES
   tools/toplsqltext.cpp
 
   tools/totuning.cpp
+  tools/totuningfileio.cpp
+  tools/totuningoverview.cpp
   tools/toresultpie.cpp
 
   templates/tosqledit.cpp

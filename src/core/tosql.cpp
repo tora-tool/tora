@@ -384,15 +384,15 @@ void toSQL::loadSQL(const QString &filename)
     }
 }
 
-std::list<QString> toSQL::range(const QString &startWith)
+QList<QString> toSQL::range(const QString &startWith)
 {
-    std::list<QString> ret;
+    QList<QString> ret;
     for (sqlMap::iterator i = Definitions->begin(); i != Definitions->end(); i++)
     {
         if ((*i).first > startWith || startWith.isNull())
         {
             if ((*i).first.mid(0, startWith.length()) == startWith || startWith.isNull())
-                ret.insert(ret.end(), (*i).first);
+                ret.append((*i).first);
             else
                 return ret;
         }

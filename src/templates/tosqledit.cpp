@@ -628,20 +628,20 @@ toSQLTemplateItem::toSQLTemplateItem(toSQLTemplateItem *parent,
     , conn(parent->connetion())
 {
     Name = name;
-    std::list<QString> def = toSQL::range(Name + ":");
+    QList<QString> def = toSQL::range(Name + ":");
     if (def.begin() != def.end())
         setExpandable(true);
 }
 
 void toSQLTemplateItem::expand(void)
 {
-    std::list<QString> def;
+    QList<QString> def;
     if (Name.isEmpty())
         def = toSQL::range(Name);
     else
         def = toSQL::range(Name + ":");
     QString last;
-    for (std::list<QString>::iterator sql = def.begin(); sql != def.end(); sql++)
+    for (QList<QString>::iterator sql = def.begin(); sql != def.end(); sql++)
     {
         QString name = *sql;
         if (!Name.isEmpty())
