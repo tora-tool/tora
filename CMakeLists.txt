@@ -56,10 +56,11 @@ IF(GIT_FOUND AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
   ADD_CUSTOM_TARGET(revisiontag ALL)
   # creates gitrevision.h using cmake script
   ADD_CUSTOM_COMMAND(TARGET revisiontag COMMAND ${CMAKE_COMMAND}
-  -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
   -DUSE_EXPERIMENTAL=${USE_EXPERIMENTAL}
   -DTARGET_NAME=revisiontag
-  -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/getgit.cmake)
+  -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/getgit.cmake
+  WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+  )
   add_definitions("-DHAVE_GITREVISION_H=1")
   include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/getgit.cmake)
   set (VERSION ${GITVERSION_SHORT})
