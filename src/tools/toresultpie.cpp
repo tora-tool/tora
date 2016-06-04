@@ -47,38 +47,19 @@ toResultPie::toResultPie(QWidget *parent, const char *name)
     LabelFirst = false;
 }
 
-void toResultPie::start(void)
-{
-    if (!Started)
-    {
-		///t connect(timer(), SIGNAL(timeout()), this, SLOT(refresh()));
-        Started = true;
-    }
-}
-
-void toResultPie::stop(void)
-{
-    if (Started)
-    {
-		///t disconnect(timer(), SIGNAL(timeout()), this, SLOT(refresh()));
-        Started = false;
-    }
-}
-
 void toResultPie::query(const QString &sql, const toQueryParams &param)
 {
     if (!handled() || Query)
         return ;
 
-    start();
 	if (!setSqlAndParams(sql, param))
 		return;
 
     try
     {
         Query = new toEventQuery(this, connection(), sql, param, toEventQuery::READ_ALL);
-        connect(Query, SIGNAL(dataAvailable()), this, SLOT(poll()));
-        connect(Query, SIGNAL(done()), this, SLOT(queryDone()));
+        connect(Query, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(poll()));
+        connect(Query, SIGNAL(done(toEventQuery*, unsigned long)), this, SLOT(queryDone()));
         Query->start();
     }
     TOCATCH
@@ -139,4 +120,5 @@ void toResultPie::queryDone(void)
     delete Query;
     Query = NULL;
     Columns = 0;
-} // queryDone
+	emit done();
+}

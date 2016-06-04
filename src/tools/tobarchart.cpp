@@ -227,11 +227,10 @@ toBarChart::toBarChart (toBarChart *chart, QWidget *parent, const char *name, to
     : toLineChart(chart, parent, name, f)
 {}
 
-#ifdef TORA3_CHART
 toLineChart *toBarChart::openCopy(QWidget *parent)
 {
     toBarChart *newWin = new toBarChart(this,
-                                        parent ? parent : toMainWidget()->workspace(),
+                                        parent ? parent : toMainWindow::lookup(),
                                         NULL,
                                         (Qt::WindowType) (parent ? 0 : Qt::WA_DeleteOnClose));
     if (!parent)
@@ -240,8 +239,7 @@ toLineChart *toBarChart::openCopy(QWidget *parent)
         newWin->raise();
         newWin->setFocus();
 
-        toMainWidget()->updateWindowsMenu();
+        // toMainWidget()->updateWindowsMenu(); chartmanager
     }
     return newWin;
 }
-#endif

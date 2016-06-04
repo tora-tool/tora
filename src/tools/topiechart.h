@@ -214,11 +214,9 @@ class toPieChart : public QWidget
          */
         void editPrint(void);
 
-#ifdef TORA3_CHART
         /** Open in new window
          */
         void openCopy(void);
-#endif
 
         /**
          * create context menus

@@ -47,7 +47,7 @@
 class toEventQuery;
 class toSQL;
 
-/** Display the result of a query in a piechart. The first column of the query should
+/** Display the result of a query in a barchart. The first column of the query should
  * contain the x value and the rest of the columns should be values of the diagram. The
  * legend is the column name. Connects to the tool timer for updates automatically.
  */
@@ -70,8 +70,6 @@ class toResultBar : public toBarChart, public toResult
         toEventQuery *Query;
         unsigned int Columns;
 
-        void query(const QString &sql, toQueryParams const& param, bool first);
-
     public:
         /** Create widget.
          * @param parent Parent of list.
@@ -82,14 +80,7 @@ class toResultBar : public toBarChart, public toResult
         /** Destroy chart
          */
         ~toResultBar();
-#if 0
-        /** Stop automatic updating from tool timer.
-         */
-        void stop();
-        /** Start automatic updating from tool timer.
-         */
-        void start();
-#endif
+
         /** Display actual values or flow/s.
          * @param on Display flow or absolute values.
          */
@@ -107,10 +98,8 @@ class toResultBar : public toBarChart, public toResult
 
         /** Reimplemented abstract method
          */
-        virtual void query(const QString &sql, toQueryParams const& param)
-        {
-            query(sql, param, true);
-        }
+        void query(const QString &sql, toQueryParams const& param) override;
+
         /** Reimplemented for internal reasons.
          */
         virtual void clear(void)
@@ -118,6 +107,7 @@ class toResultBar : public toBarChart, public toResult
             LastStamp = 0;
             LastValues.clear();
             toBarChart::clear();
+            First = true;
         }
 
         /** Transform valueset. Make it possible to perform more complex transformation.
@@ -134,12 +124,15 @@ class toResultBar : public toBarChart, public toResult
             return true;
         }
 
+    signals:
+        void done();
+
     public slots:
         /** Reimplemented for internal reasons.
          */
         virtual void refresh(void)
         {
-            query(sql(), params(), false);
+            query(sql(), params());
         }
 
     protected slots:

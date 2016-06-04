@@ -40,6 +40,7 @@
 #include "core/toconnection.h"
 #include "core/toresult.h"
 #include "core/toconf.h"
+#include "core/tomainwindow.h"
 
 #include <math.h>
 #include <time.h>
@@ -98,17 +99,14 @@ toPieChart::~toPieChart()
 
 void toPieChart::mouseDoubleClickEvent(QMouseEvent *e)
 {
-#ifdef TORA3_CHART
     if (e->button() == Qt::LeftButton)
         openCopy();
-#endif
 }
 
-#ifdef TORA3_CHART
 void toPieChart::openCopy(void)
 {
     QWidget *newWin = new toPieChart(this,
-                                     toMainWidget()->workspace(),
+                                     toMainWindow::lookup(),
                                      NULL,
                                      0);
 
@@ -116,9 +114,8 @@ void toPieChart::openCopy(void)
     newWin->show();
     newWin->raise();
     newWin->setFocus();
-    toMainWidget()->updateWindowsMenu();
+    // toMainWidget()->updateWindowsMenu(); chartmanager
 }
-#endif
 
 void toPieChart::setValues(std::list<double> &values, std::list<QString> &labels)
 {

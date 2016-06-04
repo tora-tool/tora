@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TORESULTPIE_H
-#define TORESULTPIE_H
+#pragma once
 
 #include "tools/topiechart.h"
 #include "core/toresult.h"
@@ -60,18 +59,12 @@ public:
 
     /** Reimplemented for internal reasons.
      */
-    virtual void query(const QString &sql, const toQueryParams &params);
-    virtual bool canHandle(const toConnection &)
+    void query(const QString &sql, const toQueryParams &params) override;
+
+    bool canHandle(const toConnection &) override
     {
         return true;
     }
-
-    /** Stop automatic updating from tool timer.
-     */
-    void stop();
-    /** Start automatic updating from tool timer.
-     */
-    void start();
 
     /** Indicate that the first column should be the label.
      */
@@ -107,73 +100,14 @@ public:
         return ValueFilter;
     }
 
-    // Why are these needed?
-#if 0
-    /** Set the SQL statement of this list
-     * @param sql String containing statement.
-     */
-    void setSQL(const QString &sql)
+    /** override to public */
+    void setParams(toQueryParams const& par)
     {
-        toResult::setSQL(sql);
-    }
-    /** Set the SQL statement of this list. This will also affect @ref Name.
-     * @param sql SQL containing statement.
-     */
-    void setSQL(const toSQL &sql)
-    {
-        toResult::setSQL(sql);
-    }
-    /** Set new SQL and run query.
-     * @param sql New sql.
-     * @see setSQL
-     */
-    void query(const QString &sql)
-    {
-        toResult::query(sql);
-    }
-    /** Set new SQL and run query.
-     * @param sql New sql.
-     * @see setSQL
-     */
-    void query(const toSQL &sql)
-    {
-        toResult::query(sql);
-    }
-    /** Set new SQL and run query.
-     * @param sql New sql.
-     * @see setSQL
-     */
-    void query(const toSQL &sql, toQList &par)
-    {
-        toResult::query(sql, par);
+        toResult::setParams(par);
     }
 
-public slots:
-    /** Reimplemented for internal reasons.
-     */
-    virtual void refresh(void)
-    {
-        toResult::refresh();
-    }
-    /** Reimplemented for internal reasons.
-     */
-    virtual void executeWithParams(const QString &Param1)
-    {
-        toResult::executeWithParams(Param1);
-    }
-    /** Reimplemented For internal reasons.
-     */
-    virtual void executeWithParams(const QString &Param1, const QString &Param2)
-    {
-        toResult::executeWithParams(Param1, Param2);
-    }
-    /** Reimplemented for internal reasons.
-     */
-    virtual void executeWithParams(const QString &Param1, const QString &Param2, const QString &Param3)
-    {
-        toResult::executeWithParams(Param1, Param2, Param3);
-    }
-#endif
+signals:
+    void done();
 
 private slots:
     void poll(void);
@@ -189,5 +123,3 @@ private:
     QRegExp Filter;
     QRegExp ValueFilter;
 };
-
-#endif

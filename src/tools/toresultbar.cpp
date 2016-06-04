@@ -54,47 +54,16 @@ toResultBar::~toResultBar()
 {
     delete Query;
 }
-#if 0
-void toResultBar::start(void)
-{
-    if (!Started)
-    {
-        try
-        {
-            connect(timer(), SIGNAL(timeout()), this, SLOT(refresh()));
-        }
-        TOCATCH
-        Started = true;
-    }
-}
 
-void toResultBar::stop(void)
-{
-    if (Started)
-    {
-        try
-        {
-            disconnect(timer(), SIGNAL(timeout()), this, SLOT(refresh()));
-        }
-        TOCATCH
-        Started = false;
-    }
-}
-#endif
-
-void toResultBar::query(const QString &sql, toQueryParams const& param, bool first)
+void toResultBar::query(const QString &sql, toQueryParams const& param)
 {
     if (!handled() || Query)
         return ;
 
-#if 0
-    start();
-#endif
     setSqlAndParams(sql, param);
 
     try
     {
-        First = first;
         Query = new toEventQuery(this, connection(), sql, param, toEventQuery::READ_ALL);
         connect(Query, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(poll()));
         connect(Query, SIGNAL(done(toEventQuery*, unsigned long)), this, SLOT(queryDone()));
@@ -126,6 +95,7 @@ void toResultBar::poll(void)
                     if (i != desc.begin())
                         labels.push_back((*i).Name);
                 setLabels(labels);
+                First = false;
             }
 
             while (Query->hasMore())
@@ -186,7 +156,8 @@ void toResultBar::queryDone(void)
     delete Query;
     Query = NULL;
     update();
-} // queryDone
+    emit done();
+}
 
 std::list<double> toResultBar::transform(std::list<double> &input)
 {
@@ -197,6 +168,7 @@ void toResultBar::connectionChanged(void)
 {
     toResult::connectionChanged();
     clear();
+    First = true;
 }
 
 void toResultBar::addMenues(QMenu *popup)
