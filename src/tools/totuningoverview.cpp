@@ -290,7 +290,7 @@ void toTuningOverview::setupChart(toResultLine *chart, const QString &title, con
     toQueryParams params;
     if (postfix == QString::fromLatin1("b/s"))
     {
-		QString unitStr = toConfigurationNewSingle::Instance().option(ToConfiguration::Global::SizeUnit).toString();
+        QString unitStr = toConfigurationNewSingle::Instance().option(ToConfiguration::Global::SizeUnit).toString();
         params << toQValue(Utils::toSizeDecode(unitStr));
         unitStr += QString::fromLatin1("/s");
         chart->setYPostfix(unitStr);
@@ -298,15 +298,21 @@ void toTuningOverview::setupChart(toResultLine *chart, const QString &title, con
     else
         chart->setYPostfix(postfix);
     chart->setSQL(sql);
-    chart->refreshWithParams(params);
+    chart->setParams(params);
+
+    charts.append(chart);
+    connect(chart, SIGNAL(done()), mapper, SLOT(map()));
+    mapper->setMapping(chart, charts.indexOf(chart));
 }
 
 toTuningOverview::toTuningOverview(QWidget *parent, const char *name, toWFlags fl)
     : QWidget(parent)
+    , UnitString(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::SizeUnit).toString())
+    , mapper(new QSignalMapper(this))
 {
     setupUi(this);
 
-    BackgroundGroup->setLayout(new QVBoxLayout);
+    GroupBoxBackground->setLayout(new QVBoxLayout);
 
     setupChart(ArchiveWrite, tr("< Archive write"), " " + tr("blocks/s"), SQLOverviewArchiveWrite);
     setupChart(BufferHit, tr("Hitrate"), QString::fromLatin1("%"), SQLOverviewBufferHit);
@@ -323,6 +329,7 @@ toTuningOverview::toTuningOverview(QWidget *parent, const char *name, toWFlags f
     setupChart(PhysicalWrite, tr("Physical write >"), tr(" blocks/s"), SQLOverviewPhysicalWrite);
     setupChart(RedoEntries, tr("Redo entries >"), QString::fromLatin1("/s"), SQLOverviewRedoEntries);
     setupChart(Timescale, tr("Timescale"), QString::null, SQLOverviewTimescale);
+
     Timescale->showAxisLegend(true);
     Timescale->showLast(false);
 
@@ -331,6 +338,9 @@ toTuningOverview::toTuningOverview(QWidget *parent, const char *name, toWFlags f
     ClientChart->showAxisLegend(false);
     ClientChart->setSQL(SQLOverviewClient);
     ClientChart->setFlow(false);
+    connect(ClientChart, SIGNAL(done()), mapper, SLOT(map()));
+    charts.append(ClientChart);
+    mapper->setMapping(ClientChart, charts.indexOf(ClientChart));
 
     SharedUsed->showGrid(0);
     SharedUsed->showLegend(false);
@@ -340,73 +350,25 @@ toTuningOverview::toTuningOverview(QWidget *parent, const char *name, toWFlags f
     SharedUsed->setMaxValue(100);
     SharedUsed->setYPostfix(QString::fromLatin1("%"));
     SharedUsed->showLast(true);
+    connect(SharedUsed, SIGNAL(done()), mapper, SLOT(map()));
+    charts.append(SharedUsed);
+    mapper->setMapping(SharedUsed, charts.indexOf(SharedUsed));
 
-    try
-    {
-        toQueryParams params;
-        params << toQValue(Utils::toSizeDecode(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::SizeUnit).toString()));
-        FileUsed->query(toSQL::string(SQLOverviewFilespace, toConnection::currentConnection(this)), params);
-    }
-    TOCATCH
+    toQueryParams params;
+    params << toQValue(Utils::toSizeDecode(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::SizeUnit).toString()));
+    FileUsed->setSQL(SQLOverviewFilespace);
+    FileUsed->setParams(params);
     FileUsed->showLegend(false);
+    connect(FileUsed, SIGNAL(done()), mapper, SLOT(map()));
+    charts.append(FileUsed);
+    mapper->setMapping(FileUsed, charts.indexOf(FileUsed));
 
-    ///d Done.up();
-    connect(&Poll, SIGNAL(timeout()), this, SLOT(poll()));
-
-    // Will be called later anyway
-    //refresh();
+    connect(mapper, SIGNAL(mapped(int)), this, SLOT(refreshNext(int)));
 }
 
 toTuningOverview::~toTuningOverview()
 {
 }
-
-#if 0
-void toTuningOverview::stop(void)
-{
-    disconnect(toToolWidget::currentTool(this)->timer(), SIGNAL(timeout()), this, SLOT(refresh()));
-
-    ArchiveWrite->stop();
-    BufferHit->stop();
-    ClientInput->stop();
-    ClientOutput->stop();
-    ExecuteCount->stop();
-    LogWrite->stop();
-    LogicalChange->stop();
-    LogicalRead->stop();
-    ParseCount->stop();
-    PhysicalRead->stop();
-    PhysicalWrite->stop();
-    RedoEntries->stop();
-    Timescale->stop();
-    ClientChart->stop();
-    SharedUsed->stop();
-    FileUsed->stop();
-}
-
-void toTuningOverview::start(void)
-{
-
-	connect(toToolWidget::currentTool(this)->timer(), SIGNAL(timeout()), this, SLOT(refresh()));
-
-    ArchiveWrite->start();
-    BufferHit->start();
-    ClientInput->start();
-    ClientOutput->start();
-    ExecuteCount->start();
-    LogWrite->start();
-    LogicalChange->start();
-    LogicalRead->start();
-    ParseCount->start();
-    PhysicalRead->start();
-    PhysicalWrite->start();
-    RedoEntries->start();
-    Timescale->start();
-    ClientChart->start();
-    SharedUsed->start();
-    FileUsed->start();
-}
-#endif
 
 static toSQL SQLOverviewArchive("toTuning:Overview:Archive",
                                 "select count(1),\n"
@@ -517,6 +479,7 @@ static toSQL SQLOverviewDatafiles7("toTuning:Overview:Datafiles",
 
 void toTuningOverview::refresh(toConnection &conn)
 {
+    Utils::toBusy busy;
     try
     {
         toQueryParams params;
@@ -636,7 +599,18 @@ void toTuningOverview::refresh(toConnection &conn)
     }
     TOCATCH
 
-    poll();
+    charts[0]->refresh();
+}
+
+void toTuningOverview::refreshNext(int i)
+{
+    if (i >= 0 && i <= charts.size()-2)
+    {   // refresh next chart
+        charts[i+1]->refresh();
+    } else if (i == charts.size() - 1) {
+        // all charts refreshed
+        poll();
+    }
 }
 
 void toTuningOverview::setValue(QLabel *label, const QString &name)
@@ -674,8 +648,8 @@ void toTuningOverview::poll(void)
                     QLabel *label;
                     if (labIt == Backgrounds.end() || *labIt == NULL)
                     {
-                        label = new QLabel(BackgroundGroup);
-                        BackgroundGroup->layout()->addWidget(label);
+                        label = new QLabel(GroupBoxBackground);
+						GroupBoxBackground->layout()->addWidget(label);
                         label->show();
                         if (labIt == Backgrounds.end())
                         {
@@ -735,25 +709,6 @@ void toTuningOverview::poll(void)
 
         setValue(Tablespaces, "Tablespaces");
         setValue(Files, "Files");
-///d        if (Done.getValue() == 1)
-///d            Poll.stop();
     }
     TOCATCH
-
-    ArchiveWrite->refresh();
-    BufferHit->refresh();
-    ClientInput->refresh();
-    ClientOutput->refresh();
-    ExecuteCount->refresh();
-    LogWrite->refresh();
-    LogicalChange->refresh();
-    LogicalRead->refresh();
-    ParseCount->refresh();
-    PhysicalRead->refresh();
-    PhysicalWrite->refresh();
-    RedoEntries->refresh();
-    Timescale->refresh();
-    ClientChart->refresh();
-    SharedUsed->refresh();
-    FileUsed->refresh();
 }

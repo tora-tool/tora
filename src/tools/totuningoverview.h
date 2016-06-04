@@ -34,53 +34,38 @@
 
 #pragma once
 
-#include "core/tobackground.h"
 #include "ui_totuningoverviewui.h"
 
 #include <QtCore/QMap>
 #include <QtCore/QList>
-//class QAction;
-//class QMenu;
-//class QComboBox;
-//class QWidget;
+
+class QSignalMapper;
 class QLabel;
-//class QTabWidget;
-//class toBarChart;
 class toConnection;
-//class toListView;
-//class toEventQuery;
-//class toResultItem;
-//class toResultLine;
-//class toResultLock;
-//class toResultTableView;
-//class toResultParam;
-//class toResultStats;
-//class toWaitEvents;
 class toResultLine;
 
 class toTuningOverview : public QWidget, public Ui::toTuningOverviewUI
 {
     Q_OBJECT;
-
-    QMap<QString, QString> Values;
-    QString UnitString;
-
-    toBackground Poll;
-
-    QList<QLabel*> Backgrounds;
-    void setupChart(toResultLine *chart, const QString &, const QString &, const toSQL &sql);
-    void setValue(QLabel *label, const QString &val);
 public:
     toTuningOverview(QWidget *parent = 0, const char *name = 0, toWFlags fl = 0);
     ~toTuningOverview();
-#if 0
-    void stop(void);
-    void start(void);
-#endif
+
     void refresh(toConnection &);
+
 public slots:
     void poll(void);
 
+private slots:
+    void refreshNext(int);
+
 private:
-    //QTimer *timer();
+    void setupChart(toResultLine *chart, const QString &, const QString &, const toSQL &sql);
+    void setValue(QLabel *label, const QString &val);
+
+    QSignalMapper *mapper;
+    QList<toResult*> charts;
+    QMap<QString, QString> Values;
+    QString UnitString;
+    QList<QLabel*> Backgrounds;
 };

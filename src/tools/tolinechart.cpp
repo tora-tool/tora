@@ -36,6 +36,7 @@
 
 #include "ui_tolinechartsetupui.h"
 #include "core/utils.h"
+ #include "core/tomainwindow.h"
 #include "core/toconfiguration.h"
 #include "core/toglobalconfiguration.h"
 #include "core/toconf.h"
@@ -810,17 +811,14 @@ void toLineChart::mouseMoveEvent(QMouseEvent *e)
 
 void toLineChart::mouseDoubleClickEvent(QMouseEvent *e)
 {
-#ifdef TORA3_CHART
     if (e->button() == Qt::LeftButton)
         openCopy();
-#endif
 }
 
-#ifdef TORA3_CHART
 toLineChart *toLineChart::openCopy(QWidget *parent)
 {
     toLineChart *newWin = new toLineChart(this,
-                                          parent ? parent : toMainWidget()->workspace(),
+                                          parent ? parent : toMainWindow::lookup(),
                                           NULL,
                                           (toWFlags) (parent ? 0 : Qt::WA_DeleteOnClose));
     if (!parent)
@@ -828,11 +826,10 @@ toLineChart *toLineChart::openCopy(QWidget *parent)
         newWin->show();
         newWin->raise();
         newWin->setFocus();
-        toMainWidget()->updateWindowsMenu();
+        // toMainWidget()->updateWindowsMenu(); chartmanager
     }
     return newWin;
 }
-#endif
 
 toLineChart::~toLineChart()
 {

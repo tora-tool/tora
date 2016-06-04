@@ -93,10 +93,10 @@ class toLineChart : public QWidget
 
         static double round(double round, bool up);
         QRect fixRect(QPoint p1, QPoint p2);
-        virtual void mouseReleaseEvent(QMouseEvent *e);
-        virtual void mouseMoveEvent(QMouseEvent *e);
-        virtual void mouseDoubleClickEvent(QMouseEvent *e);
-        virtual void mousePressEvent(QMouseEvent *e);
+        void mouseReleaseEvent(QMouseEvent *e) override;
+        void mouseMoveEvent(QMouseEvent *e) override;
+        void mouseDoubleClickEvent(QMouseEvent *e) override;
+        void mousePressEvent(QMouseEvent *e) override;
 
         int countSamples(void);
         void clearZoom(void);
@@ -337,11 +337,9 @@ class toLineChart : public QWidget
             update();
         }
 
-#ifdef TORA3_CHART
         /** Open chart in new window.
          */
-        virtual toLineChart *openCopy(QWidget *parent);
-#endif
+        toLineChart *openCopy(QWidget *parent);
 
     signals:
         /** A new value set was added to the chart.
@@ -366,12 +364,12 @@ class toLineChart : public QWidget
         /** Print the chart.
          */
         virtual void editPrint(void);
-#ifdef TORA3_CHART
+
         void openCopy(void)
         {
             openCopy(NULL);
         }
-#endif
+
     protected:
         /** Reimplemented for internal reasons.
          */

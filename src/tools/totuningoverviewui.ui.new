@@ -21,7 +21,14 @@
     <number>6</number>
    </property>
    <item row="4" column="3">
-    <widget class="toResultLine" name="RedoEntries" native="true"/>
+    <widget class="toResultLine" name="RedoEntries" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>10</height>
+      </size>
+     </property>
+    </widget>
    </item>
    <item row="0" column="1">
     <spacer>
@@ -40,7 +47,14 @@
     </spacer>
    </item>
    <item row="1" column="1">
-    <widget class="toResultLine" name="ClientInput" native="true"/>
+    <widget class="toResultLine" name="ClientInput" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>10</height>
+      </size>
+     </property>
+    </widget>
    </item>
    <item row="2" column="5">
     <widget class="toResultLine" name="PhysicalWrite" native="true"/>
@@ -87,7 +101,14 @@
     </spacer>
    </item>
    <item row="2" column="1">
-    <widget class="toResultLine" name="ClientOutput" native="true"/>
+    <widget class="toResultLine" name="ClientOutput" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>10</height>
+      </size>
+     </property>
+    </widget>
    </item>
    <item row="3" column="3">
     <spacer>
@@ -106,7 +127,7 @@
     </spacer>
    </item>
    <item row="0" column="4" rowspan="9">
-    <widget class="QGroupBox" name="GroupBoxSga">
+    <widget class="QGroupBox" name="GroupBoxSGA">
      <property name="title">
       <string>SGA</string>
      </property>
@@ -279,7 +300,14 @@
           </widget>
          </item>
          <item row="1" column="0">
-          <widget class="toResultBar" name="SharedUsed" native="true"/>
+          <widget class="toResultBar" name="SharedUsed" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>10</height>
+            </size>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -320,13 +348,27 @@
     </spacer>
    </item>
    <item row="6" column="3">
-    <widget class="toResultLine" name="ParseCount" native="true"/>
+    <widget class="toResultLine" name="ParseCount" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>10</height>
+      </size>
+     </property>
+    </widget>
    </item>
    <item row="7" column="3">
-    <widget class="toResultLine" name="ExecuteCount" native="true"/>
+    <widget class="toResultLine" name="ExecuteCount" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>10</height>
+      </size>
+     </property>
+    </widget>
    </item>
    <item row="9" column="4" rowspan="2">
-    <widget class="QGroupBox" name="GroupBoxArcLog">
+    <widget class="QGroupBox" name="GroupBoxArclog">
      <property name="title">
       <string>Archive logs</string>
      </property>
@@ -493,7 +535,14 @@
           </widget>
          </item>
          <item row="6" column="0">
-          <widget class="toResultPie" name="FileUsed" native="true"/>
+          <widget class="toResultPie" name="FileUsed" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>10</height>
+            </size>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -629,7 +678,7 @@
     </widget>
    </item>
    <item row="0" column="2" rowspan="11">
-    <widget class="QGroupBox" name="GroupBoxProcesses">
+    <widget class="QGroupBox" name="ProcessGroup">
      <property name="title">
       <string>Processes</string>
      </property>
