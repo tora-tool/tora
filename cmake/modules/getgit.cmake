@@ -133,6 +133,8 @@ else()
   file(APPEND gitrevision.h "#define BUILD_DATE       \"${BUILD_DATE}\"\n")
 endif()
 
+#message(STATUS "Called with CMAKE_SOURCE_DIR ${CMAKE_SOURCE_DIR}")
+
 IF(WIN32)
 CONFIGURE_FILE(
 	${CMAKE_SOURCE_DIR}/msi/gitrevision.wxi.cmake
