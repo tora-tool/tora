@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TORESULTLINE_H
-#define TORESULTLINE_H
+#pragma once
 
 #include "core/toresult.h"
 #include <time.h>
@@ -44,7 +43,6 @@
 class QMenu;
 class toEventQuery;
 class toSQL;
-
 
 /** Display the result of a query in a piechart. The first column of the query should
  * contain the x value and the rest of the columns should be values of the diagram. The
@@ -85,12 +83,13 @@ class toResultLine : public toLineChart, public toResult
             return Flow;
         }
 
+        /** override to public */
+        void setParams(toQueryParams const& par);
+
         /** Reimplemented for internal reasons.
          */
-        virtual void query(const QString &sql, const toQueryParams &param)
-        {
-            query(sql, param, true);
-        }
+        void query(const QString &sql, const toQueryParams &param) override;
+
         /** Reimplemented for internal reasons.
          */
         virtual void clear(void)
@@ -98,6 +97,7 @@ class toResultLine : public toLineChart, public toResult
             LastStamp = 0;
             LastValues.clear();
             toLineChart::clear();
+            First = true;
         }
         /** Transform valueset. Make it possible to perform more complex transformation.
          * called directly before adding the valueset to the chart. After flow transformation.
@@ -109,17 +109,20 @@ class toResultLine : public toLineChart, public toResult
 
         /** Handle any connection
          */
-        virtual bool canHandle(const toConnection &)
+        bool canHandle(const toConnection &conn) override
         {
-            return true;
+            return conn.providerIs("Oracle");
         }
+
+    signals:
+        void done();
 
     public slots:
         /** Reimplemented for internal reasons.
          */
-        virtual void refresh(void)
+        void refresh(void) override
         {
-            query(sql(), params(), false);
+            query(sql(), params());
         }
     protected slots:
         /** Reimplemented for internal reasons.
@@ -134,8 +137,6 @@ class toResultLine : public toLineChart, public toResult
         void editSQL(void);
 
     private:
-        void query(const QString &sql, const toQueryParams &param, bool first);
-
         bool Flow; // Display flow in change per second instead of actual values.
         bool Started;
         time_t LastStamp; // Timestamp of last fetch
@@ -144,5 +145,3 @@ class toResultLine : public toLineChart, public toResult
         toEventQuery *Query;
         unsigned int Columns;
 };
-
-#endif

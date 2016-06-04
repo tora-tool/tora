@@ -158,10 +158,10 @@ void toTuningFileIO::allocCharts(const QString &name)
     labels.insert(labels.end(), tr("Writes"));
     labels.insert(labels.end(), tr("Blocks Written"));
     std::list<QString> labelTime;
-    labelTime.insert(labels.end(), tr("Average"));
-    labelTime.insert(labels.end(), tr("Minimum"));
-    labelTime.insert(labels.end(), tr("Maximum Read"));
-    labelTime.insert(labels.end(), tr("Maximum Write"));
+    labelTime.insert(labelTime.end(), tr("Average"));
+    labelTime.insert(labelTime.end(), tr("Minimum"));
+    labelTime.insert(labelTime.end(), tr("Maximum Read"));
+    labelTime.insert(labelTime.end(), tr("Maximum Write"));
 
     toResultBar *barchart;
     if (name.startsWith(QString::fromLatin1("tspc:")))
@@ -264,8 +264,8 @@ void toTuningFileIO::refresh(void)
             LastStamp = CurrentStamp;
             CurrentStamp = time(NULL);
             Query = new toEventQuery(this, conn, toSQL::string(SQLFileIO, conn), toQueryParams(), toEventQuery::READ_ALL);
-            connect(Query, SIGNAL(dataAvailable()), this, SLOT(poll()));
-            connect(Query, SIGNAL(done()), this, SLOT(queryDone()));
+            connect(Query, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(poll()));
+            connect(Query, SIGNAL(done(toEventQuery*, unsigned long)), this, SLOT(queryDone()));
             Query->start();
             LastTablespace = QString::null;
         }
