@@ -140,6 +140,7 @@ toEventQueryWorker::toEventQueryWorker(toEventQuery *c
 {
     TLOG(7, toDecorator, __HERE__) << "toEventQueryWorker created" << std::endl;
     connect(this, SIGNAL(readRequested()), this, SLOT(slotRead()));
+    Query.moveToThread(c->Thread);
 }
 
 toEventQueryWorker::~toEventQueryWorker()
@@ -152,7 +153,6 @@ void toEventQueryWorker::init()
     TLOG(7, toDecorator, __HERE__) << "toEventQueryWorker init a" << std::endl;
     try
     {
-        Query.moveToThread(this->thread());
         Query.init();
         emit started();
         toQColumnDescriptionList desc = Query.describe();
