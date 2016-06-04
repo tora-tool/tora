@@ -353,7 +353,7 @@ void toResultTableView::createActions()
 
 void toResultTableView::applyFilter()
 {
-    if (!Filter)
+    if (!Filter || !Model)
         return;
 
     Filter->startingQuery();
