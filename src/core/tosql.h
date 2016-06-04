@@ -35,13 +35,10 @@
 #ifndef TOSQL_H
 #define TOSQL_H
 
-
-
 #include <map>
-#include <list>
 
-//Added by qt3to4:
 #include <QtCore/QString>
+#include <QtCore/QList>
 
 class toConnection;
 
@@ -244,7 +241,7 @@ class toSQL
          * @param startWith The string that the name should start with.
          * @return A list of names available.
          */
-        static std::list<QString> range(const QString &startWith);
+        static QList<QString> range(const QString &startWith);
 
         /** Save SQL definitions to file.
          * @param file Filename to save to.

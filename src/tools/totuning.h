@@ -68,6 +68,8 @@ class toResultTableView;
 class toResultParam;
 class toResultStats;
 class toWaitEvents;
+class toTuningOverview;
+class toTuningFileIO;
 
 namespace ToConfiguration
 {
@@ -96,83 +98,6 @@ class toTuningMiss : public toResultLine
 public:
     toTuningMiss(QWidget *parent = 0, const char *name = 0);
     virtual std::list<double> transform(std::list<double> &trans);
-};
-
-class toTuningFileIO : public QWidget
-{
-    Q_OBJECT
-
-    QWidget *TablespaceTime;
-    QWidget *TablespaceReads;
-    QWidget *FileTime;
-    QWidget *FileReads;
-
-    QString LastTablespace;
-    double TblReads;
-    double TblWrites;
-    double TblReadBlk;
-    double TblWriteBlk;
-    double TblAvg;
-    double TblMin;
-    double TblMaxRead;
-    double TblMaxWrite;
-    toEventQuery *Query;
-
-    time_t CurrentStamp;
-    time_t LastStamp;
-    std::map<QString, toBarChart *> ReadsCharts;
-    std::map<QString, toLineChart *> TimeCharts;
-    std::map<QString, std::list<double> > LastValues;
-
-    void saveSample(const QString &, const QString &,
-                    double reads, double writes,
-                    double readBlk, double writeBlk,
-                    double avgTim, double minTim,
-                    double maxRead, double maxWrite);
-
-    void allocCharts(const QString &);
-
-    toBackground Poll;
-public:
-    toTuningFileIO(QWidget *parent = 0);
-    ~toTuningFileIO();
-
-    void stop(void);
-    void start(void);
-public slots:
-    void refresh(void);
-    void changeCharts(int val);
-    void changeConnection(void);
-    void poll(void);
-private slots:
-    void queryDone(void);
-};
-
-class toTuningOverview : public QWidget, public Ui::toTuningOverviewUI
-{
-    Q_OBJECT;
-
-    std::map<QString, QString> Values;
-    QString UnitString;
-
-    toBackground Poll;
-
-    std::list<QLabel *> Backgrounds;
-    void setupChart(toResultLine *chart, const QString &, const QString &, const toSQL &sql);
-    void setValue(QLabel *label, const QString &val);
-public:
-    toTuningOverview(QWidget *parent = 0, const char *name = 0, toWFlags fl = 0);
-    ~toTuningOverview();
-#if 0
-    void stop(void);
-    void start(void);
-#endif
-    void refresh(toConnection &);
-public slots:
-    void poll(void);
-
-private:
-    QTimer *timer();
 };
 
 class toTuning : public toToolWidget
