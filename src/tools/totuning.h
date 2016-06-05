@@ -109,15 +109,12 @@ class toTuning : public toToolWidget
     toResultTableView *LibraryCache;
     toResultTableView *ControlFiles;
     toWaitEvents      *Waits;
-    QScrollArea       *ChartContainer;
 
-    QList<QWidget *> Charts;
-
-    toRefreshCombo   *Refresh;
-    toTuningOverview *Overview;
-    toTuningCharts   *tCharts;
-    toTuningFileIO   *FileIO;
-    QWidget          *LastTab;
+    toRefreshCombo    *Refresh;
+    toTuningOverview  *Overview;
+    toTuningCharts    *Charts;
+    toTuningFileIO    *FileIO;
+    QWidget           *LastTab;
 
     QMenu   *ToolMenu;
     QAction *refreshAct;

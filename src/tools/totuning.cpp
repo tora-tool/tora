@@ -76,9 +76,9 @@
 #include "icons/compile.xpm"
 
 #define CONF_OVERVIEW "Overview"
+#define CONF_CHART    "Charts"
 #define CONF_FILEIO   "File I/O"
 #define CONF_WAITS    "Wait events"
-#define CONF_CHART    "chart"
 
 QVariant ToConfiguration::Tuning::defaultValue(int option) const
 {
@@ -104,20 +104,7 @@ static QList<QString> TabList(void)
 {
     QList<QString> ret;
     ret.append(CONF_OVERVIEW);
-    QList<QString> val = toSQL::range("toTuning:Charts");
-    QString last;
-    for (QList<QString>::iterator i = val.begin(); i != val.end(); i++)
-    {
-        QStringList parts = (*i).split(":");
-        if (parts.count() == 3)
-        {
-            parts.append(parts[2]);
-            parts[2] = QString::fromLatin1("Charts");
-        }
-        if (last != parts[2])
-            ret.append(parts[2]);
-        last = parts[2];
-    }
+    ret.append(CONF_CHART);
     ret.append(CONF_WAITS);
     ret.append(CONF_FILEIO);
     return ret;
@@ -765,8 +752,8 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
 	///d Utils::toRefreshParse(timer());
 	///tconnect(timer(), SIGNAL(timeout()), Overview, SLOT(refresh()));
 
-    tCharts = new toTuningCharts(this);
-    Tabs->addTab(tCharts, tr("&Charts"));
+    Charts = new toTuningCharts(this);
+    Tabs->addTab(Charts, tr("&Charts"));
 
     Waits = new toWaitEvents(this, "waits");
     Tabs->addTab(Waits, tr("&Wait events"));
@@ -828,24 +815,15 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
 
 QWidget *toTuning::tabWidget(const QString &name)
 {
-    QWidget *widget = NULL;
     if (name == CONF_OVERVIEW)
-    {
-        widget = Overview;
-    }
+        return Overview;
     else if (name == CONF_FILEIO)
-    {
-        widget = FileIO;
-    }
+        return FileIO;
     else if (name == CONF_WAITS)
-    {
-        widget = Waits;
-    }
+        return Waits;
     else if (name == CONF_CHART)
-    {
-        widget = ChartContainer;
-    }
-    return widget;
+        return Charts;
+    return NULL;
 }
 
 void toTuning::showTabMenu(void)
@@ -881,92 +859,50 @@ void toTuning::enableTab(const QString &name, bool enable)
     QWidget *widget = NULL;
     if (name == CONF_OVERVIEW)
     {
-        ///d if (enable)
-        ///d     Overview->start();
-        ///d else
-        ///d     Overview->stop();
-
         toConfigurationNewSingle::Instance().setOption(Tuning::OverviewBool, enable);
         widget = Overview;
     }
     else if (name == CONF_CHART)
     {
-        Q_FOREACH(QWidget * child, Charts)
-        {
-            toResultLine *line = dynamic_cast<toResultLine *>(child);
-            if (line)
-            {
-                ///d if (enable)
-                ///d     line->start();
-                ///d else
-                ///d     line->stop();
-            }
-            toResultBar *bar = dynamic_cast<toResultBar *>(child);
-            if (bar)
-            {
-                ///d if (enable)
-                ///d    bar->start();
-                ///d else
-                ///d    bar->stop();
-            }
-            toResultPie *pie = dynamic_cast<toResultPie *>(child);
-            if (pie)
-            {
-                ///d if (enable)
-                ///d     pie->start();
-                ///d else
-                ///d     pie->stop();
-            }
-        }
-
         toConfigurationNewSingle::Instance().setOption(Tuning::ChartsBool, enable);
-        widget = ChartContainer;
+        widget = Charts;
     }
     else if (name == CONF_WAITS)
     {
-        ///d if (enable)
-        ///d    Waits->start();
-        ///d else
-        ///d    Waits->stop();
-
         toConfigurationNewSingle::Instance().setOption(Tuning::WaitsBool, enable);
         widget = Waits;
     }
     else if (name == CONF_FILEIO)
     {
-        ///d if (enable)
-        ///d     FileIO->start();
-        ///d else
-        ///d     FileIO->stop();
-
         toConfigurationNewSingle::Instance().setOption(Tuning::FileIOBool, enable);
         widget = FileIO;
     }
 
-    if (widget)
-    {
-        int ind = Tabs->indexOf(widget);
-        if(ind < 0)
-            return;
+    if (!widget)
+        return;
 
-        if(enable)
-            Tabs->setCurrentIndex(ind);
-        else
+    int ind = Tabs->indexOf(widget);
+    if(ind < 0)
+        return;
+
+    if(enable)
+        Tabs->setCurrentIndex(ind);
+    else
+    {
+        // qtabwidget is enabling some tabs when we disable one,
+        // so i'm going to pick the next tab to show here
+        for(int pos = 0; pos < Tabs->count(); pos++)
         {
-            // qtabwidget is enabling some tabs when we disable one,
-            // so i'm going to pick the next tab to show here
-            for(int pos = 0; pos < Tabs->count(); pos++)
+            if(pos != ind && Tabs->isTabEnabled(pos))
             {
-                if(pos != ind && Tabs->isTabEnabled(pos))
-                {
-                    Tabs->setCurrentIndex(pos);
-                    break;
-                }
+                Tabs->setCurrentIndex(pos);
+                break;
             }
         }
-
-        Tabs->setTabEnabled(ind, enable);
     }
+
+    Tabs->setTabEnabled(ind, enable);
+
 }
 
 void toTuning::changeTab(int index)
@@ -1007,6 +943,10 @@ void toTuning::refresh(void)
     if (LastTab == Overview)
     {
         Overview->refresh(connection());
+    }
+    else if (LastTab == Charts)
+    {
+        Charts->refresh();
     }
     else if (LastTab == Indicators)
     {

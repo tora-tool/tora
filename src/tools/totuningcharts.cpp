@@ -43,6 +43,7 @@
 
 toTuningCharts::toTuningCharts(QWidget *parent)
     : QWidget(parent)
+    , Mapper(new QSignalMapper(this))
 {
     using namespace ToConfiguration;
     QVBoxLayout *chartBox = new QVBoxLayout;
@@ -88,6 +89,8 @@ toTuningCharts::toTuningCharts(QWidget *parent)
                 chart->setYPostfix(QString::fromLatin1("/s"));
             chart->setSQL(toSQL::sql(*i));
             chart->setParams(par);
+            connect(chart, SIGNAL(done()), Mapper, SLOT(map()));
+            Mapper->setMapping(chart, Charts.indexOf(chart));
         }
         else if (parts[3].mid(1, 1) == QString::fromLatin1("L") || parts[3].mid(1, 1) == QString::fromLatin1("C"))
         {
@@ -117,6 +120,8 @@ toTuningCharts::toTuningCharts(QWidget *parent)
                 chart->setYPostfix(QString::fromLatin1("/s"));
             chart->setSQL(toSQL::sql(*i));
             chart->setParams(par);
+            connect(chart, SIGNAL(done()), Mapper, SLOT(map()));
+            Mapper->setMapping(chart, Charts.indexOf(chart));
         }
         else if (parts[3].mid(1, 1) == QString::fromLatin1("P"))
         {
@@ -132,10 +137,15 @@ toTuningCharts::toTuningCharts(QWidget *parent)
             }
             else
                 chart->setSQL(toSQL::sql(*i));
+            connect(chart, SIGNAL(done()), Mapper, SLOT(map()));
+            Mapper->setMapping(chart, Charts.indexOf(chart));
         }
         else
             Utils::toStatusMessage(tr("Wrong format of name on chart (%1).").arg(QString(*i)));
     }
+
+    connect(Mapper, SIGNAL(mapped(int)), this, SLOT(refreshNext(int)));
+
 }
 
 toTuningCharts::~toTuningCharts(void)
@@ -144,6 +154,15 @@ toTuningCharts::~toTuningCharts(void)
 
 void toTuningCharts::refresh(void)
 {
+    Charts[0]->refresh();
+}
+
+void toTuningCharts::refreshNext(int i)
+{
+    if (i >= 0 && i <= Charts.size()-2)
+    {   // refresh next chart
+        Charts[i+1]->refresh();
+    }
 }
 
 toTuningMiss::toTuningMiss(QWidget *parent, const char *name)

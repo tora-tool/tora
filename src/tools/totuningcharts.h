@@ -55,9 +55,13 @@ public:
 
 public slots:
     void refresh(void);
+
 private slots:
+    void refreshNext(int);
+
 private:
-    QList<toResultLine*> Charts;
+    QList<toResult*> Charts;
+    QSignalMapper *Mapper;
 };
 
 class toTuningMiss : public toResultLine

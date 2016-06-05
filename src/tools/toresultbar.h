@@ -124,6 +124,12 @@ class toResultBar : public toBarChart, public toResult
             return true;
         }
 
+        /** override setParams to public */
+        void setParams(toQueryParams const& par)
+        {
+            toResult::setParams(par);
+        }
+
     signals:
         void done();
 

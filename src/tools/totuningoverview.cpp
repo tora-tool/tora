@@ -300,15 +300,15 @@ void toTuningOverview::setupChart(toResultLine *chart, const QString &title, con
     chart->setSQL(sql);
     chart->setParams(params);
 
-    charts.append(chart);
-    connect(chart, SIGNAL(done()), mapper, SLOT(map()));
-    mapper->setMapping(chart, charts.indexOf(chart));
+    Charts.append(chart);
+    connect(chart, SIGNAL(done()), Mapper, SLOT(map()));
+    Mapper->setMapping(chart, Charts.indexOf(chart));
 }
 
 toTuningOverview::toTuningOverview(QWidget *parent)
     : QWidget(parent)
     , UnitString(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::SizeUnit).toString())
-    , mapper(new QSignalMapper(this))
+    , Mapper(new QSignalMapper(this))
 {
     setupUi(this);
 
@@ -338,9 +338,9 @@ toTuningOverview::toTuningOverview(QWidget *parent)
     ClientChart->showAxisLegend(false);
     ClientChart->setSQL(SQLOverviewClient);
     ClientChart->setFlow(false);
-    connect(ClientChart, SIGNAL(done()), mapper, SLOT(map()));
-    charts.append(ClientChart);
-    mapper->setMapping(ClientChart, charts.indexOf(ClientChart));
+    connect(ClientChart, SIGNAL(done()), Mapper, SLOT(map()));
+    Charts.append(ClientChart);
+    Mapper->setMapping(ClientChart, Charts.indexOf(ClientChart));
 
     SharedUsed->showGrid(0);
     SharedUsed->showLegend(false);
@@ -350,20 +350,20 @@ toTuningOverview::toTuningOverview(QWidget *parent)
     SharedUsed->setMaxValue(100);
     SharedUsed->setYPostfix(QString::fromLatin1("%"));
     SharedUsed->showLast(true);
-    connect(SharedUsed, SIGNAL(done()), mapper, SLOT(map()));
-    charts.append(SharedUsed);
-    mapper->setMapping(SharedUsed, charts.indexOf(SharedUsed));
+    connect(SharedUsed, SIGNAL(done()), Mapper, SLOT(map()));
+    Charts.append(SharedUsed);
+    Mapper->setMapping(SharedUsed, Charts.indexOf(SharedUsed));
 
     toQueryParams params;
     params << toQValue(Utils::toSizeDecode(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::SizeUnit).toString()));
     FileUsed->setSQL(SQLOverviewFilespace);
     FileUsed->setParams(params);
     FileUsed->showLegend(false);
-    connect(FileUsed, SIGNAL(done()), mapper, SLOT(map()));
-    charts.append(FileUsed);
-    mapper->setMapping(FileUsed, charts.indexOf(FileUsed));
+    connect(FileUsed, SIGNAL(done()), Mapper, SLOT(map()));
+    Charts.append(FileUsed);
+    Mapper->setMapping(FileUsed, Charts.indexOf(FileUsed));
 
-    connect(mapper, SIGNAL(mapped(int)), this, SLOT(refreshNext(int)));
+    connect(Mapper, SIGNAL(mapped(int)), this, SLOT(refreshNext(int)));
 }
 
 toTuningOverview::~toTuningOverview()
@@ -599,15 +599,15 @@ void toTuningOverview::refresh(toConnection &conn)
     }
     TOCATCH
 
-    charts[0]->refresh();
+    Charts[0]->refresh();
 }
 
 void toTuningOverview::refreshNext(int i)
 {
-    if (i >= 0 && i <= charts.size()-2)
+    if (i >= 0 && i <= Charts.size()-2)
     {   // refresh next chart
-        charts[i+1]->refresh();
-    } else if (i == charts.size() - 1) {
+        Charts[i+1]->refresh();
+    } else if (i == Charts.size() - 1) {
         // all charts refreshed
         poll();
     }

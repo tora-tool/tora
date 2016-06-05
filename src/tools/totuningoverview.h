@@ -63,8 +63,8 @@ private:
     void setupChart(toResultLine *chart, const QString &, const QString &, const toSQL &sql);
     void setValue(QLabel *label, const QString &val);
 
-    QSignalMapper *mapper;
-    QList<toResult*> charts;
+    QSignalMapper *Mapper;
+    QList<toResult*> Charts;
     QMap<QString, QString> Values;
     QString UnitString;
     QList<QLabel*> Backgrounds;
