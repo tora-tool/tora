@@ -305,7 +305,7 @@ void toTuningOverview::setupChart(toResultLine *chart, const QString &title, con
     mapper->setMapping(chart, charts.indexOf(chart));
 }
 
-toTuningOverview::toTuningOverview(QWidget *parent, const char *name, toWFlags fl)
+toTuningOverview::toTuningOverview(QWidget *parent)
     : QWidget(parent)
     , UnitString(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::SizeUnit).toString())
     , mapper(new QSignalMapper(this))

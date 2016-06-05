@@ -44,7 +44,7 @@ static toSQL SQLFileIO("toTuning:FileIO",
                        "       c.avgiotim*10,c.miniotim*10,c.maxiortm*10,c.maxiowtm*10\n"
                        "  from v$tablespace a,v$datafile b,v$filestat c\n"
                        " where a.ts# = b.ts# and b.file# = c.file#\n"
-                       "union\n",
+                       "union\n"
                        "select a.name,b.name,sysdate,\n"
                        "       c.phyrds,c.phywrts,c.phyblkrd,c.phyblkwrt,\n"
                        "       c.avgiotim*10,c.miniotim*10,c.maxiortm*10,c.maxiowtm*10\n"

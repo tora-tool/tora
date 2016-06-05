@@ -48,7 +48,7 @@ class toTuningOverview : public QWidget, public Ui::toTuningOverviewUI
 {
     Q_OBJECT;
 public:
-    toTuningOverview(QWidget *parent = 0, const char *name = 0, toWFlags fl = 0);
+    toTuningOverview(QWidget *parent = 0);
     ~toTuningOverview();
 
     void refresh(toConnection &);

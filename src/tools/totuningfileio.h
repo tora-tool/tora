@@ -35,7 +35,6 @@
 #pragma once
 
 #include <QWidget>
-#include "core/tobackground.h"
 
 #include <map>
 #include <list>
@@ -51,8 +50,6 @@ public:
     toTuningFileIO(QWidget *parent = 0);
     ~toTuningFileIO();
 
-    void stop(void);
-    void start(void);
 public slots:
     void refresh(void);
     void changeCharts(int val);
@@ -91,6 +88,4 @@ private:
                     double maxRead, double maxWrite);
 
     void allocCharts(const QString &);
-
-    toBackground Poll;
 };
