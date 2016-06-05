@@ -61,6 +61,7 @@ class toBarChart;
 class toConnection;
 class toListView;
 class toEventQuery;
+class toRefreshCombo;
 class toResultItem;
 class toResultLine;
 class toResultLock;
@@ -69,6 +70,7 @@ class toResultParam;
 class toResultStats;
 class toWaitEvents;
 class toTuningOverview;
+class toTuningCharts;
 class toTuningFileIO;
 
 namespace ToConfiguration
@@ -93,13 +95,6 @@ namespace ToConfiguration
     };
 };
 
-class toTuningMiss : public toResultLine
-{
-public:
-    toTuningMiss(QWidget *parent = 0, const char *name = 0);
-    virtual std::list<double> transform(std::list<double> &trans);
-};
-
 class toTuning : public toToolWidget
 {
     Q_OBJECT;
@@ -118,8 +113,9 @@ class toTuning : public toToolWidget
 
     QList<QWidget *> Charts;
 
-    QComboBox        *Refresh;
+    toRefreshCombo   *Refresh;
     toTuningOverview *Overview;
+    toTuningCharts   *tCharts;
     toTuningFileIO   *FileIO;
     QWidget          *LastTab;
 
@@ -142,7 +138,6 @@ public:
 public slots:
     virtual void refresh(void);
     virtual void changeTab(int);
-    virtual void changeRefresh(const QString &str);
     virtual void slotWindowActivated(toToolWidget *widget);
 
     virtual void showTabMenu(void);

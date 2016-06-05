@@ -57,34 +57,6 @@ toResultLine::~toResultLine()
     delete Query;
 }
 
-#if 0
-void toResultLine::start(void)
-{
-    if (!Started)
-    {
-        try
-        {
-            connect(timer(), SIGNAL(timeout()), this, SLOT(refresh()));
-        }
-        TOCATCH
-        Started = true;
-    }
-}
-
-void toResultLine::stop(void)
-{
-    if (Started)
-    {
-        try
-        {
-            disconnect(timer(), SIGNAL(timeout()), this, SLOT(refresh()));
-        }
-        TOCATCH
-        Started = false;
-    }
-}
-#endif
-
 void toResultLine::setParams(toQueryParams const& par)
 {
     toResult::setParams(par);
@@ -94,10 +66,8 @@ void toResultLine::query(const QString &sql, const toQueryParams &param)
 {
     if (!handled() || Query)
         return ;
-#if 0
-    start();
-#endif
-    setSqlAndParams(sql, param);
+
+	setSqlAndParams(sql, param);
 
     try
     {

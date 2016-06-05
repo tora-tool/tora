@@ -33,6 +33,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "tools/totuning.h"
+#include "tools/totuningcharts.h"
 #include "tools/totuningoverview.h"
 #include "tools/totuningfileio.h"
 #include "core/tochangeconnection.h"
@@ -726,7 +727,7 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
     toolbar->addWidget(new QLabel(tr("Refresh") + " ", toolbar));
 
     Refresh = new toRefreshCombo(toolbar);
-    connect(Refresh, SIGNAL(activated(const QString &)), this, SLOT(changeRefresh(const QString &)));
+    connect(Refresh->timer(), SIGNAL(timeout(void)), this, SLOT(refresh(void)));
     toolbar->addWidget(Refresh);
 
     // used in pulldown menu
@@ -758,108 +759,14 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
     Tabs = new QTabWidget(this);
     layout()->addWidget(Tabs);
 
-    Overview = new toTuningOverview(this, "overview");
+    Overview = new toTuningOverview(this);
     Tabs->addTab(Overview, tr("&Overview"));
 
 	///d Utils::toRefreshParse(timer());
 	///tconnect(timer(), SIGNAL(timeout()), Overview, SLOT(refresh()));
 
-    ChartContainer = new QScrollArea(Tabs);
-    QWidget *chartWidget = new QWidget(ChartContainer);
-    ChartContainer->setWidget(chartWidget);
-    ChartContainer->setWidgetResizable(true);
-    chartWidget->setMinimumHeight(1800);
-    Tabs->addTab(ChartContainer, tr("&Charts"));
-
-    QVBoxLayout *chartBox = new QVBoxLayout;
-    chartWidget->setLayout(chartBox);
-
-    QString unitStr = toConfigurationNewSingle::Instance().option(Global::SizeUnit).toString();
-    toQueryParams unit;
-    unit << toQValue(Utils::toSizeDecode(unitStr));
-
-    {
-        QList<QString> val = toSQL::range("toTuning:Charts");
-        for (QList<QString>::iterator i = val.begin(); i != val.end(); i++)
-        {
-            QStringList parts = (*i).split(":");
-            if (parts.count() == 3)
-            {
-                parts.append(parts[2]);
-                parts[2] = QString::fromLatin1("Charts");
-            }
-
-            if (parts[3].mid(1, 1) == QString::fromLatin1("B"))
-            {
-                toResultBar *chart = new toResultBar(chartWidget);
-                chartBox->addWidget(chart);
-                Charts.append(chart);
-                chart->setTitle(parts[3].mid(3));
-                toQueryParams par;
-                if (parts[3].mid(2, 1) == QString::fromLatin1("B"))
-                    chart->setYPostfix(tr(" blocks/s"));
-                else if (parts[3].mid(2, 1) == QString::fromLatin1("M"))
-                    chart->setYPostfix(QString::fromLatin1(" ms/s"));
-                else if (parts[3].mid(2, 1) == QString::fromLatin1("S"))
-                {
-                    par = unit;
-                    QString t = unitStr;
-                    t += QString::fromLatin1("/s");
-                    chart->setYPostfix(t);
-                }
-                else if (parts[3].mid(2, 1) == QString::fromLatin1("A"))
-                    chart->setFlow(false);
-                else
-                    chart->setYPostfix(QString::fromLatin1("/s"));
-                chart->setSQL(toSQL::sql(*i));
-                chart->refreshWithParams(par);
-            }
-            else if (parts[3].mid(1, 1) == QString::fromLatin1("L") || parts[3].mid(1, 1) == QString::fromLatin1("C"))
-            {
-                toResultLine *chart;
-                if (parts[3].mid(1, 1) == QString::fromLatin1("C"))
-                    chart = new toTuningMiss(chartWidget);
-                else
-                    chart = new toResultLine(chartWidget);
-                chartBox->addWidget(chart);
-                Charts.append(chart);
-                toQueryParams par;
-                if (parts[3].mid(2, 1) == QString::fromLatin1("B"))
-                    chart->setYPostfix(tr(" blocks/s"));
-                else if (parts[3].mid(2, 1) == QString::fromLatin1("S"))
-                {
-                    par = unit;
-                    QString t = unitStr;
-                    t += QString::fromLatin1("/s");
-                    chart->setYPostfix(t);
-                }
-                else if (parts[3].mid(2, 1) == QString::fromLatin1("P"))
-                {
-                    chart->setYPostfix(QString::fromLatin1(" %"));
-                    chart->setMinValue(0);
-                }
-                else
-                    chart->setYPostfix(QString::fromLatin1("/s"));
-                ///d chart->query(toSQL::sql(*i), par);
-            }
-            else if (parts[3].mid(1, 1) == QString::fromLatin1("P"))
-            {
-                toResultPie *chart = new toResultPie(chartWidget);
-                chart->setTitle(parts[3].mid(3));
-                chartBox->addWidget(chart);
-                Charts.append(chart);
-                if (parts[3].mid(2, 1) == QString::fromLatin1("S"))
-                {
-                    ///q chart->query(toSQL::sql(*i), unit);
-                    chart->setPostfix(unitStr);
-                }
-                ///q else
-                    ///q chart->query(toSQL::sql(*i), toQueryParams());
-            }
-            else
-                Utils::toStatusMessage(tr("Wrong format of name on chart (%1).").arg(QString(*i)));
-        }
-    }
+    tCharts = new toTuningCharts(this);
+    Tabs->addTab(tCharts, tr("&Charts"));
 
     Waits = new toWaitEvents(this, "waits");
     Tabs->addTab(Waits, tr("&Wait events"));
@@ -1027,10 +934,10 @@ void toTuning::enableTab(const QString &name, bool enable)
     }
     else if (name == CONF_FILEIO)
     {
-        if (enable)
-            FileIO->start();
-        else
-            FileIO->stop();
+        ///d if (enable)
+        ///d     FileIO->start();
+        ///d else
+        ///d     FileIO->stop();
 
         toConfigurationNewSingle::Instance().setOption(Tuning::FileIOBool, enable);
         widget = FileIO;
@@ -1091,11 +998,6 @@ void toTuning::slotWindowActivated(toToolWidget *widget)
         delete ToolMenu;
         ToolMenu = NULL;
     }
-}
-
-void toTuning::changeRefresh(const QString &str)
-{
-	///d Utils::toRefreshParse(timer(), str);
 }
 
 void toTuning::refresh(void)
@@ -1191,40 +1093,3 @@ void toTuning::importData(std::map<QString, QString> &data, const QString &prefi
     Waits->importData(data, prefix + ":Waits");
 }
 #endif
-
-toTuningMiss::toTuningMiss(QWidget *parent, const char *name)
-    : toResultLine(parent, name)
-{}
-
-std::list<double> toTuningMiss::transform(std::list<double> &inp)
-{
-    std::list<double> ret;
-    for (std::list<double>::iterator i = inp.begin(); i != inp.end(); i++)
-    {
-        double first = *i;
-        i++;
-        if (i != inp.end())
-        {
-            double second = *i;
-            if (second == 0)
-                ret.insert(ret.end(), 0);
-            else
-                ret.insert(ret.end(), first / second);
-        }
-    }
-    return ret;
-}
-
-void toTuningFileIO::stop(void)
-{
-#if 0
-    disconnect(toToolWidget::currentTool(this)->timer(), SIGNAL(timeout()), this, SLOT(refresh()));
-#endif
-}
-
-void toTuningFileIO::start(void)
-{
-#if 0
-    connect(toToolWidget::currentTool(this)->timer(), SIGNAL(timeout()), this, SLOT(refresh()));
-#endif
-}

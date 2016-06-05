@@ -370,6 +370,7 @@ SET(TORA_MOC_CLASSES
   tools/toplsqleditor.h
 
   tools/totuning.h
+  tools/totuningcharts.h
   tools/totuningfileio.h
   tools/totuningoverview.h
   tools/toresultpie.h
@@ -655,6 +656,7 @@ SET(TORA_SOURCES
   tools/toplsqltext.cpp
 
   tools/totuning.cpp
+  tools/totuningcharts.cpp
   tools/totuningfileio.cpp
   tools/totuningoverview.cpp
   tools/toresultpie.cpp
