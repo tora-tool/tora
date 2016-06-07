@@ -102,6 +102,7 @@ SET(TORA_UI_SRC
   widgets/toresultcontentfilterui.ui
   widgets/toresultlistformatui.ui
   main/tosyntaxsetupui.ui
+  widgets/tosessionsetupui.ui
   widgets/toworksheetsetupui.ui
   widgets/tosearchreplaceui.ui
   main/toconnectionimportui.ui

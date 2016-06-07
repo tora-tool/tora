@@ -36,12 +36,15 @@
 #define TOSESSION_H
 
 #include "widgets/totoolwidget.h"
+#include "ui_tosessionsetupui.h"
+#include "core/tosettingtab.h"
+#include "tools/toresultlong.h"
+
 #include <QLabel>
 #include <QMenu>
 #include <QAction>
 
 #include <list>
-#include "toresultlong.h"
 
 class QComboBox;
 class QSplitter;
@@ -63,7 +66,30 @@ class toRefreshCombo;
 
 #define TO_SESSION_WAIT "toSession:SessionWait"
 #define TO_SESSION_IO   "toSession:SessionIO"
-#define TO_SESSION_TXN   "toSession:SessionTXN"
+#define TO_SESSION_TXN  "toSession:SessionTXN"
+
+namespace ToConfiguration
+{
+    class Session : public ConfigContext
+    {
+            Q_OBJECT;
+            Q_ENUMS(OptionTypeEnum);
+        public:
+            Session() : ConfigContext("Session", ENUM_REF(Session,OptionTypeEnum)) {};
+            enum OptionTypeEnum
+            {
+                KillProcUseKillProcBool = 17000,
+                KillProcName,
+                KillProcSID,
+                KillProcSerial,
+                KillProcInstance,
+                KillProcInstanceBool,
+                KillProcImmediate,
+                KillProcImmediateBool
+            };
+            QVariant defaultValue(int option) const;
+    };
+};
 
 class toSession : public toToolWidget
 {
@@ -145,5 +171,22 @@ class toSession : public toToolWidget
 #ifdef TOEXTENDED_MYSQL
 #include "tosessionmysql.h"
 #endif
+
+class toSessionSetting
+    : public QWidget
+    , public Ui::toSessionSetupUI
+    , public toSettingTab
+{
+        Q_OBJECT;
+        toTool *Tool;
+
+    public:
+        toSessionSetting(toTool *tool, QWidget* parent = 0, const char* name = 0);
+
+        void saveSetting(void) override;
+    private slots:
+        void killProcToggled(bool);
+        void composeKillProc();
+};
 
 #endif

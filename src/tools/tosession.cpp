@@ -33,7 +33,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "tools/tosession.h"
-
+#include "core/toconfiguration.h"
 #include "core/utils.h"
 #include "core/tochangeconnection.h"
 #include "widgets/toresultschema.h"
@@ -69,6 +69,31 @@
 #include "toresulttableview.h"
 // #include "icons/filter.xpm"
 
+QVariant ToConfiguration::Session::defaultValue(int option) const
+{
+	switch (option)
+	{
+	case KillProcUseKillProcBool:
+	    return QVariant(false);
+	case KillProcName:
+		return QVariant("KILL_ADMIN.KILL_SESSION");
+	case KillProcSID:
+		return QVariant("SID");
+	case KillProcSerial:
+		return QVariant("SERIAL");
+	case KillProcInstance:
+		return QVariant("INST_ID");
+	case KillProcInstanceBool:
+		return QVariant(false);
+	case KillProcImmediate:
+		return QVariant("IMMEDIATE");
+	case KillProcImmediateBool:
+		return QVariant(false);
+	default:
+		Q_ASSERT_X(false, qPrintable(__QHERE__), qPrintable(QString("Context Session un-registered enum value: %1").arg(option)));
+		return QVariant();
+	}
+}
 
 class toSessionTool : public toTool
 {
@@ -93,18 +118,24 @@ class toSessionTool : public toTool
 
             return NULL;
         }
-
+        QWidget *configurationTab(QWidget *parent) override
+        {
+            return new toSessionSetting(this, parent);
+        }
         bool canHandle(const toConnection &conn) override
         {
             return conn.providerIs("Oracle") || conn.providerIs("QPSQL") || conn.providerIs("QMYSQL");
         }
 
         void closeWindow(toConnection &connection) override {};
+    private:
+        static ToConfiguration::Session s_sessionConf;
 };
 
 
-static toSessionTool SessionTool;
+ToConfiguration::Session toSessionTool::s_sessionConf;
 
+static toSessionTool SessionTool;
 
 class toSessionFilter  : public toViewFilter
 {
@@ -1043,3 +1074,74 @@ bool toSession::eventFilter(QObject *obj, QEvent *event)
     return QObject::eventFilter(obj, event);
 }
 
+toSessionSetting::toSessionSetting(toTool *tool, QWidget* parent, const char* name)
+    : QWidget(parent)
+    , toSettingTab("TODO")
+    , Tool(tool)
+{
+    using namespace ToConfiguration;
+    setupUi(this);
+    toSettingTab::loadSettings(this);
+
+    connect(radioButtonKillProc, SIGNAL(toggled(bool)), this, SLOT(killProcToggled(bool)));
+    connect(radioButtonKillProc, SIGNAL(toggled(bool)), this, SLOT(composeKillProc()));
+    connect(KillProcSID, SIGNAL(textChanged(const QString&)), this, SLOT(composeKillProc()));
+    connect(KillProcSerial, SIGNAL(textChanged(const QString&)), this, SLOT(composeKillProc()));
+    connect(KillProcInstance, SIGNAL(textChanged(const QString&)), this, SLOT(composeKillProc()));
+    connect(KillProcImmediate, SIGNAL(textChanged(const QString&)), this, SLOT(composeKillProc()));
+    connect(KillProcInstance, SIGNAL(stateChanged(int)), this, SLOT(composeKillProc()));
+    connect(KillProcInstanceBool, SIGNAL(stateChanged(int)), this, SLOT(composeKillProc()));
+    connect(KillProcImmediateBool, SIGNAL(stateChanged(int)), this, SLOT(composeKillProc()));
+
+    toSettingTab::loadSettings(this);
+    radioButtonAlter->setChecked(!toConfigurationNewSingle::Instance().option(Session::KillProcUseKillProcBool).toBool());
+    radioButtonKillProc->setChecked(toConfigurationNewSingle::Instance().option(Session::KillProcUseKillProcBool).toBool());
+}
+
+void toSessionSetting::saveSetting(void)
+{
+    toSettingTab::saveSettings(this);
+}
+
+void toSessionSetting::killProcToggled(bool toggled)
+{
+    using namespace ToConfiguration;
+    KillProcInstance->setEnabled(toggled && KillProcInstanceBool->isChecked());
+    KillProcImmediate->setEnabled(toggled && KillProcImmediateBool->isChecked());
+    toConfigurationNewSingle::Instance().setOption(Session::KillProcUseKillProcBool, toggled);
+}
+
+void toSessionSetting::composeKillProc()
+{
+    static const QString ALTER = "ALTER SYSTEM KILL SESSION '%1,%2'";
+    static const QString KPROC =
+            "begin\n"
+            " %KILL_PROC%(\n"
+            "%SID%\n"
+            "%SERIAL%\n"
+            "%INST_ID%"
+            "%IMMEDIATE%"
+            " );\n"
+            "end;\n";
+
+    QString retval;
+    if (radioButtonAlter->isChecked())
+    {
+        retval = ALTER;
+    } else {
+		retval = QString(KPROC)
+			.replace("%KILL_PROC%", KillProcName->text())
+			.replace("%SID%", QString("   %1 => :%1").arg(KillProcSID->text()))
+			.replace("%SERIAL%", QString("   , %1 => :%1").arg(KillProcSerial->text()));
+		if (KillProcInstanceBool->isChecked())
+		    retval = retval.replace("%INST_ID%", QString("   , %1 => :%1\n").arg(KillProcInstance->text()));
+		else
+		    retval = retval.replace("%INST_ID%", QString(""));
+
+		if (KillProcImmediateBool->isChecked())
+		    retval = retval.replace("%IMMEDIATE%", QString("   , %1 => :%1\n").arg(KillProcImmediate->text()));
+		else
+		    retval = retval.replace("%IMMEDIATE%", QString(""));
+    }
+    SQLText->setText(retval);
+};
