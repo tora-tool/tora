@@ -36,6 +36,7 @@
 #include "core/toconfiguration.h"
 #include "core/utils.h"
 #include "core/tochangeconnection.h"
+#include "core/toconnectionregistry.h"
 #include "widgets/toresultschema.h"
 #include "widgets/toresultitem.h"
 #include "widgets/torefreshcombo.h"
@@ -69,6 +70,8 @@
 #include "toresulttableview.h"
 // #include "icons/filter.xpm"
 
+using namespace ToConfiguration;
+
 QVariant ToConfiguration::Session::defaultValue(int option) const
 {
 	switch (option)
@@ -86,9 +89,11 @@ QVariant ToConfiguration::Session::defaultValue(int option) const
 	case KillProcInstanceBool:
 		return QVariant(false);
 	case KillProcImmediate:
-		return QVariant("IMMEDIATE");
+		return QVariant("IMMEDIAT");
 	case KillProcImmediateBool:
 		return QVariant(false);
+	case KillSessionModeInt:
+	    return QVariant(KillImmediate); // 1 disconnect, 2 kill, 3 kill immediate
 	default:
 		Q_ASSERT_X(false, qPrintable(__QHERE__), qPrintable(QString("Context Session un-registered enum value: %1").arg(option)));
 		return QVariant();
@@ -690,6 +695,56 @@ bool toSession::canHandle(const toConnection &conn)
     return conn.providerIs("Oracle") || conn.providerIs("QPSQL");
 }
 
+const QString toSession::DISCONNECT = "ALTER SYSTEM DISCONNECT SESSION '%1,%2' %3;\n";
+const QString toSession::ALTER = "ALTER SYSTEM KILL SESSION '%1,%2' %3 ;\n";
+const QString toSession::KPROC =
+        "begin\n"
+        " %KILL_PROC%(\n"
+        "%SID%\n"
+        "%SERIAL%\n"
+        "%INST_ID%"
+        "%IMMEDIAT%"
+        " );\n"
+        "end;\n";
+
+QString toSession::sessionKillProcOracle(Session::KillSessionModeEnum mode, const QMap<QString,QString> params)
+{
+    bool useKillProc = toConfigurationNewSingle::Instance().option(Session::KillProcUseKillProcBool).toBool();
+    QString killProcName        = toConfigurationNewSingle::Instance().option(Session::KillProcName).toString();
+    QString killProcSid         = toConfigurationNewSingle::Instance().option(Session::KillProcSID).toString();
+    QString killProcSerial      = toConfigurationNewSingle::Instance().option(Session::KillProcSerial).toString();
+    QString killProcInstance    = toConfigurationNewSingle::Instance().option(Session::KillProcInstance).toString();
+    QString killProcImmediate   = toConfigurationNewSingle::Instance().option(Session::KillProcImmediate).toString();
+    bool killProcInstanceBool   = toConfigurationNewSingle::Instance().option(Session::KillProcInstanceBool).toBool();
+    bool killProcImmediateBool  = toConfigurationNewSingle::Instance().option(Session::KillProcImmediateBool).toBool();
+
+    QString retval;
+
+    if (!useKillProc)
+    {
+        if (mode == Session::Disconnect)
+            retval = DISCONNECT.arg(params.value("SID")).arg(params.value("SERIAL")).arg(params.value("IMMEDIAT") == "true" ? "IMMEDIATE" : "POST_TRANSACTION");
+        else
+            retval = ALTER.arg(params.value("SID")).arg(params.value("SERIAL")).arg(params.value("IMMEDIAT") == "true" ? "IMMEDIATE" : "");
+    } else {
+        retval = QString(KPROC)
+            .replace("%KILL_PROC%", killProcName)
+            .replace("%SID%", QString("   %1 => %2").arg(killProcSid).arg(params.value("SID")))
+            .replace("%SERIAL%", QString("   , %1 => %2").arg(killProcSerial).arg(params.value("SERIAL")));
+        if (killProcInstanceBool)
+            retval = retval.replace("%INST_ID%", QString("   , %1 => %2\n").arg(killProcInstance).arg(params.value("INST_ID")));
+        else
+            retval = retval.replace("%INST_ID%", QString(""));
+
+        if (killProcImmediateBool)
+            retval = retval.replace("%IMMEDIAT%", QString("   , %1 => %2\n").arg(killProcImmediate).arg(params.value("IMMEDIAT")));
+        else
+            retval = retval.replace("%IMMEDIAT%", QString(""));
+    }
+
+    return retval;
+}
+
 void toSession::slotSelectAll()
 {
     Sessions->selectAll();
@@ -956,66 +1011,20 @@ void toSession::slotDisconnectSession()
     QString str(tr("Let transaction(s) finish before disconnecting?"));
     QString sql;
 
-    bool letcommit = false;
-    switch (TOMessageBox::warning(this,
-                                  tr("Commit work?"),
-                                  str,
-                                  tr("&Yes"),
-                                  tr("&No"),
-                                  tr("Cancel")))
+	toSessionDisconnect *widget = new toSessionDisconnect(Sessions, this, "toSessionDisconnect");
+    switch(widget->exec())
     {
-        case 0:
-            letcommit = true;
-            break;
-        case 1:
-            letcommit = false;
-            break;
-        case 2:
-            return;
+    case toSessionDisconnect::Accepted:
+        break;
+    case toSessionDisconnect::Rejected:
+        break;
+    case toSessionDisconnect::Copy:
+        break;
+    default:
+        Utils::toStatusMessage(tr("Aborted execution"), false, false);
+        throw tr("Aborted execution");
     }
 
-    foreach(QModelIndex item, selected)
-    {
-        if (!item.isValid())
-            return;
-
-        QString connectionId = Sessions->model()->data(item.row(), 1).toString();
-        QString serial       = Sessions->model()->data(item.row(), 2).toString();
-
-        QString sess = QString::fromLatin1("'");
-        sess.append(connectionId);
-        sess.append(QString::fromLatin1(","));
-        sess.append(serial);
-        sess.append(QString::fromLatin1("'"));
-
-        if (letcommit)
-        {
-            sql = QString::fromLatin1("ALTER SYSTEM DISCONNECT SESSION ");
-            sql.append(sess);
-            sql.append(QString::fromLatin1(" POST_TRANSACTION"));
-        }
-        else
-        {
-            sql = QString::fromLatin1("ALTER SYSTEM KILL SESSION ");
-            sql.append(sess);
-        }
-
-        try
-        {
-            // oracle can take an awful long time to return
-            toEventQuery *query = new toEventQuery(this
-                                                   , connection()
-                                                   , sql
-                                                   , toQueryParams()
-                                                   , toEventQuery::READ_ALL);
-            connect(query,
-                    SIGNAL(slotDone()),
-                    query,
-                    SLOT(deleteLater()));
-            query->start();
-        }
-        TOCATCH;
-    }
 }
 
 void toSession::slotChangeItem()
@@ -1074,17 +1083,131 @@ bool toSession::eventFilter(QObject *obj, QEvent *event)
     return QObject::eventFilter(obj, event);
 }
 
+toSessionDisconnect::toSessionDisconnect(toResultTableView *sessionView, QWidget *parent, const char *name)
+    : QDialog(parent)
+    , SessionView(sessionView)
+{
+    setupUi(this);
+    SQLText->setMarginWidth(2, 0);
+
+    int killMode = toConfigurationNewSingle::Instance().option(Session::KillSessionModeInt).toInt();
+    DisconnectRdio->setChecked(killMode==Session::Disconnect);
+    KillRdio->setChecked(killMode==Session::Kill);
+    KImmediateRdio->setChecked(killMode==Session::KillImmediate);
+
+    switch(killMode)
+    {
+    case Session::Disconnect:
+        slotKillDisconnect();
+        break;
+    case Session::Kill:
+        slotKill();
+        break;
+    case Session::KillImmediate:
+        slotKillImmediate();
+        break;
+    }
+
+    connect(CopyBtn, SIGNAL(clicked()), this, SLOT(slotCopy()));
+    connect(CancelBtn, SIGNAL(clicked()), this, SLOT(reject()));
+
+    connect(DisconnectRdio, SIGNAL(pressed()), this, SLOT(slotKillDisconnect()));
+    connect(KillRdio, SIGNAL(pressed()), this, SLOT(slotKill()));
+    connect(KImmediateRdio, SIGNAL(pressed()), this, SLOT(slotKillImmediate()));
+}
+
+void toSessionDisconnect::slotKillDisconnect()
+{
+    toConfigurationNewSingle::Instance().setOption(Session::KillSessionModeInt, Session::Disconnect);
+
+    QModelIndexList selected = SessionView->selectionModel()->selectedRows();
+    QString sql;
+
+    foreach(QModelIndex item, selected)
+    {
+        if (!item.isValid())
+            continue;
+
+        QMap<QString,QString> params;
+        QString sid          = SessionView->model()->data(item.row(), 1).toString();
+        QString serial       = SessionView->model()->data(item.row(), 2).toString();
+        params["SID"] = sid;
+        params["SERIAL"] = serial;
+        params["IMMEDIAT"] = "true";
+        sql += toSession::sessionKillProcOracle(Session::Disconnect, params);
+        sql += "\n";
+    }
+    SQLText->setText(sql);
+}
+
+void toSessionDisconnect::slotKill()
+{
+    toConfigurationNewSingle::Instance().setOption(Session::KillSessionModeInt, Session::Kill);
+    QModelIndexList selected = SessionView->selectionModel()->selectedRows();
+    QString sql;
+
+    foreach(QModelIndex item, selected)
+    {
+        if (!item.isValid())
+            continue;
+
+        QMap<QString,QString> params;
+        QString sid          = SessionView->model()->data(item.row(), 1).toString();
+        QString serial       = SessionView->model()->data(item.row(), 2).toString();
+        params["SID"] = sid;
+        params["SERIAL"] = serial;
+        params["IMMEDIAT"] = "false";
+        sql += toSession::sessionKillProcOracle(Session::Kill, params);
+        sql += "\n";
+    }
+
+    SQLText->setText(sql);
+}
+
+void toSessionDisconnect::slotKillImmediate()
+{
+    toConfigurationNewSingle::Instance().setOption(Session::KillSessionModeInt, Session::KillImmediate);
+    QModelIndexList selected = SessionView->selectionModel()->selectedRows();
+    QString sql;
+
+    foreach(QModelIndex item, selected)
+    {
+        if (!item.isValid())
+            continue;
+
+        QMap<QString,QString> params;
+        QString sid          = SessionView->model()->data(item.row(), 1).toString();
+        QString serial       = SessionView->model()->data(item.row(), 2).toString();
+        params["SID"] = sid;
+        params["SERIAL"] = serial;
+        params["IMMEDIAT"] = "true";
+        sql += toSession::sessionKillProcOracle(Session::KillImmediate, params);
+        sql += "\n";
+    }
+    SQLText->setText(sql);
+}
+
+void toSessionDisconnect::slotCopy()
+{
+    this->setResult(Copy);
+    SQLText->selectAll();
+    SQLText->copy();
+    close();
+}
+
 toSessionSetting::toSessionSetting(toTool *tool, QWidget* parent, const char* name)
     : QWidget(parent)
     , toSettingTab("TODO")
     , Tool(tool)
 {
-    using namespace ToConfiguration;
     setupUi(this);
     toSettingTab::loadSettings(this);
 
+    SQLText->setMarginWidth(2, 0);
+
     connect(radioButtonKillProc, SIGNAL(toggled(bool)), this, SLOT(killProcToggled(bool)));
     connect(radioButtonKillProc, SIGNAL(toggled(bool)), this, SLOT(composeKillProc()));
+    connect(KillProcName, SIGNAL(textChanged(const QString&)), this, SLOT(composeKillProc()));
     connect(KillProcSID, SIGNAL(textChanged(const QString&)), this, SLOT(composeKillProc()));
     connect(KillProcSerial, SIGNAL(textChanged(const QString&)), this, SLOT(composeKillProc()));
     connect(KillProcInstance, SIGNAL(textChanged(const QString&)), this, SLOT(composeKillProc()));
@@ -1103,45 +1226,90 @@ void toSessionSetting::saveSetting(void)
     toSettingTab::saveSettings(this);
 }
 
+static toSQL SQLKillProcName(
+    "toSession:QueryKillProcName",
+    "select owner, object_name from all_procedures where object_name like 'KILL%' and rownum = 1",
+    "Guess name of kill_session procedure",
+    "0801",
+    "Oracle"
+);
+
+static toSQL SQLKillProcArgs(
+    "toSession:QueryKillProcArgs",
+    "select ARGUMENT_NAME from ALL_ARGUMENTS where owner = :owner<char[32],in> and object_name = :name<char[32],in> order by position",
+    "Guess parameter names of kill_session procedure",
+    "0801",
+    "Oracle"
+);
+
 void toSessionSetting::killProcToggled(bool toggled)
 {
-    using namespace ToConfiguration;
     KillProcInstance->setEnabled(toggled && KillProcInstanceBool->isChecked());
     KillProcImmediate->setEnabled(toggled && KillProcImmediateBool->isChecked());
     toConfigurationNewSingle::Instance().setOption(Session::KillProcUseKillProcBool, toggled);
+
+    if (!toggled)
+        return;
+    try
+    {
+        // Check if connection exists
+        toConnection &conn = toConnectionRegistrySing::Instance().currentConnection();
+        if (conn.providerIs("Oracle"))
+        {
+            toConnectionSubLoan connSub(conn);
+            QString owner, name;
+            {
+                toQuery queryKill(connSub, SQLKillProcName, toQueryParams());
+                if (queryKill.eof())
+                    return;
+                owner = (QString)queryKill.readValue();
+                name  = (QString)queryKill.readValue();
+                KillProcName->setText(owner + '.' + name);
+            }
+            {
+                toQuery queryKillArgs(connSub, SQLKillProcArgs, toQueryParams() << owner << name);
+                if (!queryKillArgs.eof())
+                    KillProcSID->setText((QString)queryKillArgs.readValue());
+                if (!queryKillArgs.eof())
+                    KillProcSerial->setText((QString)queryKillArgs.readValue());
+                if (!queryKillArgs.eof())
+                    KillProcImmediate->setText((QString)queryKillArgs.readValue());
+                if (!queryKillArgs.eof())
+                    KillProcInstance->setText((QString)queryKillArgs.readValue());
+            }
+        }
+    }
+	catch (QString const &s)
+	{
+		QString a = s;
+		std::cout << qPrintable(a) << std::endl;
+	}
+    catch (...)
+    {
+    }
+
 }
 
 void toSessionSetting::composeKillProc()
 {
-    static const QString ALTER = "ALTER SYSTEM KILL SESSION '%1,%2'";
-    static const QString KPROC =
-            "begin\n"
-            " %KILL_PROC%(\n"
-            "%SID%\n"
-            "%SERIAL%\n"
-            "%INST_ID%"
-            "%IMMEDIATE%"
-            " );\n"
-            "end;\n";
-
     QString retval;
     if (radioButtonAlter->isChecked())
     {
-        retval = ALTER;
+        retval = toSession::ALTER;
     } else {
-		retval = QString(KPROC)
+		retval = QString(toSession::KPROC)
 			.replace("%KILL_PROC%", KillProcName->text())
-			.replace("%SID%", QString("   %1 => :%1").arg(KillProcSID->text()))
-			.replace("%SERIAL%", QString("   , %1 => :%1").arg(KillProcSerial->text()));
+			.replace("%SID%", QString("   %1 => :SID").arg(KillProcSID->text()))
+			.replace("%SERIAL%", QString("   , %1 => :SERIAL").arg(KillProcSerial->text()));
 		if (KillProcInstanceBool->isChecked())
-		    retval = retval.replace("%INST_ID%", QString("   , %1 => :%1\n").arg(KillProcInstance->text()));
+		    retval = retval.replace("%INST_ID%", QString("   , %1 => :INST_ID\n").arg(KillProcInstance->text()));
 		else
 		    retval = retval.replace("%INST_ID%", QString(""));
 
 		if (KillProcImmediateBool->isChecked())
-		    retval = retval.replace("%IMMEDIATE%", QString("   , %1 => :%1\n").arg(KillProcImmediate->text()));
+		    retval = retval.replace("%IMMEDIAT%", QString("   , %1 => :IMMEDIAT\n").arg(KillProcImmediate->text()));
 		else
-		    retval = retval.replace("%IMMEDIATE%", QString(""));
+		    retval = retval.replace("%IMMEDIAT%", QString(""));
     }
     SQLText->setText(retval);
 };

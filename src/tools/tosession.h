@@ -37,6 +37,7 @@
 
 #include "widgets/totoolwidget.h"
 #include "ui_tosessionsetupui.h"
+#include "ui_tosessiondisconnectdlgui.h"
 #include "core/tosettingtab.h"
 #include "tools/toresultlong.h"
 
@@ -85,7 +86,15 @@ namespace ToConfiguration
                 KillProcInstance,
                 KillProcInstanceBool,
                 KillProcImmediate,
-                KillProcImmediateBool
+                KillProcImmediateBool,
+                KillSessionModeInt
+            };
+
+            enum KillSessionModeEnum
+            {
+                Disconnect = 1,
+                Kill,
+                KillImmediate
             };
             QVariant defaultValue(int option) const;
     };
@@ -137,12 +146,14 @@ class toSession : public toToolWidget
         void updateSchemas(void);
         void enableStatistics(bool enable);
 
+        friend class toSessionSetting;
     public:
         toSession(QWidget *parent, toConnection &connection);
         ~toSession();
 
         bool canHandle(const toConnection &conn) override;
 
+        static QString sessionKillProcOracle(ToConfiguration::Session::KillSessionModeEnum, const QMap<QString,QString> params);
     public slots:
         void slotChangeTab(int);
         void slotChangeItem();
@@ -166,11 +177,37 @@ class toSession : public toToolWidget
         void slotFilterChanged(const QString &text);
     protected:
         bool eventFilter(QObject *obj, QEvent *event) override;
+
+        static const QString DISCONNECT;
+        static const QString ALTER;
+        static const QString KPROC;
 };
 
 #ifdef TOEXTENDED_MYSQL
 #include "tosessionmysql.h"
 #endif
+
+class toSessionDisconnect : public QDialog, public Ui::toDisconnectDlg
+{
+    Q_OBJECT;
+    friend class toSession;
+public:
+    toSessionDisconnect(toResultTableView *sessionView, QWidget *parent = 0, const char *name = 0);
+protected:
+    enum ReturnType
+    {
+        Rejected = Rejected,
+        Accepted =  QDialog::Accepted,
+        Copy = 10
+    };
+private slots:
+    void slotKillDisconnect();
+    void slotKill();
+    void slotKillImmediate();
+    void slotCopy();
+private:
+    toResultTableView *SessionView;
+};
 
 class toSessionSetting
     : public QWidget
@@ -187,6 +224,8 @@ class toSessionSetting
     private slots:
         void killProcToggled(bool);
         void composeKillProc();
+
+    private:
 };
 
 #endif

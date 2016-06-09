@@ -132,6 +132,8 @@ SET(TORA_UI_SRC
   tools/torollbackdialogui.ui
   tools/torollbacksettingui.ui
 
+  tools/tosessiondisconnectdlgui.ui
+
   tools/tosgatracesettingui.ui
 
   #tools/totuningoverviewui.ui
