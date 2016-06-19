@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOBARCHART_H
-#define TOBARCHART_H
+#pragma once
 
 #include "tools/tolinechart.h"
 #include "core/utils.h"
@@ -67,4 +66,4 @@ class toBarChart : public toLineChart
         virtual toLineChart *openCopy(QWidget *parent);
 };
 
-#endif
+

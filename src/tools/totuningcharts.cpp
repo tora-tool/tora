@@ -41,6 +41,10 @@
 #include "core/toconfiguration.h"
 #include "core/toglobalconfiguration.h"
 
+#include <QtCore/QSignalMapper>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+
 toTuningCharts::toTuningCharts(QWidget *parent)
     : QWidget(parent)
     , Mapper(new QSignalMapper(this))

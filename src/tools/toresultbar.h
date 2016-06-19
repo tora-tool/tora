@@ -32,18 +32,15 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TORESULTBAR_H
-#define TORESULTBAR_H
+#pragma once
 
+#include "tools/tobarchart.h"
 #include "core/toresult.h"
-
-#include <QMenu>
 
 #include <time.h>
 #include <list>
-#include "tobarchart.h"
 
-
+class QMenu;
 class toEventQuery;
 class toSQL;
 
@@ -102,7 +99,7 @@ class toResultBar : public toBarChart, public toResult
 
         /** Reimplemented for internal reasons.
          */
-        virtual void clear(void)
+        void clear(void)
         {
             LastStamp = 0;
             LastValues.clear();
@@ -119,7 +116,7 @@ class toResultBar : public toBarChart, public toResult
         virtual std::list<double> transform(std::list<double> &input);
         /** Handle any connection
          */
-        virtual bool canHandle(const toConnection &)
+	bool canHandle(const toConnection &) override
         {
             return true;
         }
@@ -136,7 +133,7 @@ class toResultBar : public toBarChart, public toResult
     public slots:
         /** Reimplemented for internal reasons.
          */
-        virtual void refresh(void)
+        void refresh(void) override
         {
             query(sql(), params());
         }
@@ -144,14 +141,13 @@ class toResultBar : public toBarChart, public toResult
     protected slots:
         /** Reimplemented for internal reasons.
          */
-        virtual void connectionChanged(void);
+        void connectionChanged(void) override;
         /** Reimplemented for internal reasons.
          */
-        virtual void addMenues(QMenu *);
+        void addMenues(QMenu *) override;
     private slots:
         void poll(void);
         void editSQL(void);
         void queryDone(void);
 };
 
-#endif
