@@ -38,6 +38,11 @@
 #include "core/toeventquery.h"
 #include "core/tosql.h"
 
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QScrollArea>
+#include <QComboBox>
+
 static toSQL SQLFileIO("toTuning:FileIO",
                        "select a.name,b.name,sysdate,\n"
                        "       c.phyrds,c.phywrts,c.phyblkrd,c.phyblkwrt,\n"

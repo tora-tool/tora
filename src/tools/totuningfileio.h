@@ -36,12 +36,13 @@
 
 #include <QWidget>
 
+#include "tools/tolinechart.h"
+#include "tools/tobarchart.h"
+
 #include <map>
 #include <list>
 
 class toEventQuery;
-class toBarChart;
-class toLineChart;
 
 class toTuningFileIO : public QWidget
 {

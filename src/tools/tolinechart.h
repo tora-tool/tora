@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOLINECHART_H
-#define TOLINECHART_H
+#pragma once
 
 #include <QWidget>
 #include <QtCore/QString>
@@ -350,7 +349,7 @@ class toLineChart : public QWidget
     public slots:
         /** Clear the values from the chart.
          */
-        virtual void clear(void)
+        void clear(void)
         {
             Values.clear();
             XValues.clear();
@@ -373,7 +372,7 @@ class toLineChart : public QWidget
     protected:
         /** Reimplemented for internal reasons.
          */
-        virtual void paintEvent(QPaintEvent *e);
+        void paintEvent(QPaintEvent *e) override;
         /** Reimplemented for internal reasons.
          */
         virtual void addMenues(QMenu *)
@@ -383,4 +382,3 @@ class toLineChart : public QWidget
         void verticalChange(int);
 };
 
-#endif

@@ -36,6 +36,8 @@
 #include "core/toconfiguration.h"
 #include "core/toglobalconfiguration.h"
 
+#include <QtCore/QSignalMapper>
+
 static toSQL SQLOverviewArchiveWrite("toTuning:Overview:ArchiveWrite",
                                      "select sysdate,sum(blocks) from v$archived_log",
                                      "Archive log write",

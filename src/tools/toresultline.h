@@ -84,7 +84,7 @@ class toResultLine : public toLineChart, public toResult
 
         /** Reimplemented for internal reasons.
          */
-        virtual void clear(void)
+        void clear(void)
         {
             LastStamp = 0;
             LastValues.clear();
@@ -119,10 +119,10 @@ class toResultLine : public toLineChart, public toResult
     protected slots:
         /** Reimplemented for internal reasons.
          */
-        virtual void connectionChanged(void);
+        void connectionChanged(void) override;
         /** Reimplemented for internal reasons.
          */
-        virtual void addMenues(QMenu *);
+        void addMenues(QMenu *) override;
     private slots:
         void poll(void);
         void queryDone(void);

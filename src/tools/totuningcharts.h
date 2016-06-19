@@ -42,6 +42,7 @@
 #include <map>
 #include <list>
 
+class QSignalMapper;
 class toEventQuery;
 class toBarChart;
 class toLineChart;
