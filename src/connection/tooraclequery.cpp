@@ -436,6 +436,7 @@ void oracleQuery::trotlQuery::readValue(toQValue &value)
                 }
                 break;
             case SQLT_CLOB:
+            case SQLT_CFILE:
                 {
                     toOracleClob *i = new toOracleClob(_conn);
                     trotl::ConvertorForRead c(_last_buff_row);
@@ -448,6 +449,7 @@ void oracleQuery::trotlQuery::readValue(toQValue &value)
                 }
                 break;
             case SQLT_BLOB:
+            case SQLT_BFILE:
                 {
                     toOracleBlob *i = new toOracleBlob(_conn);
                     trotl::ConvertorForRead c(_last_buff_row);
