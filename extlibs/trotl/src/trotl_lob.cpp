@@ -280,7 +280,7 @@ oraub8	SqlLob::length()
 	return len;
 };
 
-bool	SqlLob::isOpen() const
+bool SqlLob::isOpen() const
 {
 	bOOlean flag;
 	sword res = OCICALL(OCILobIsOpen(_conn._svc_ctx, _conn._env._errh, _loc, &flag));
@@ -288,7 +288,7 @@ bool	SqlLob::isOpen() const
 	return !!flag;
 };
 
-bool	SqlLob::isTemporary() const
+bool SqlLob::isTemporary() const
 {
 	bOOlean flag;
 	sword res = OCICALL(OCILobIsTemporary(_conn._env, _conn._env._errh, _loc, &flag));

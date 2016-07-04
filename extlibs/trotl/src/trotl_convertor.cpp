@@ -85,6 +85,24 @@ void ConvertorForRead::Fire(const BindParClob &BP, SqlClob &CL)
 	}
 };
 
+void ConvertorForRead::Fire(const BindParCFile &BP, SqlClob &CL)
+{
+    CL._ind = BP.indp[_row];
+    if(CL.is_not_null())
+    {
+        if(BP.isTemporary(_row))
+        {
+            sword res = OCICALL(OCILobLocatorAssign(BP._stmt._conn._svc_ctx, BP._env._errh, ((OCILobLocator**)BP.valuep)[_row], &CL._loc));
+            oci_check_error(__TROTL_HERE__, BP._env._errh, res);
+        }
+        else
+        {
+            sword res = OCICALL(OCILobAssign(BP._env, BP._env._errh, ((OCILobLocator**)BP.valuep)[_row], &CL._loc));
+            oci_check_error(__TROTL_HERE__, BP._env._errh, res);
+        }
+    }
+};
+
 void ConvertorForRead::Fire(const BindParBlob &BP, SqlBlob &BL)
 {
 	BL._ind = BP.indp[_row];
@@ -111,6 +129,24 @@ void ConvertorForRead::Fire(const BindParBlob &BP, SqlBlob &BL)
 //		res = OCICALL(OCILobAssign(_conn._env, _conn._env._errh, other._loc, &_loc));	// no support for temporary LOBs
 //#endif
 	}
+};
+
+void ConvertorForRead::Fire(const BindParBFile &BP, SqlBlob &BL)
+{
+    BL._ind = BP.indp[_row];
+    if(BL.is_not_null())
+    {
+        if(BP.isTemporary(_row))
+        {
+            sword res = OCICALL(OCILobLocatorAssign(BP._stmt._conn._svc_ctx, BP._env._errh, ((OCILobLocator**)BP.valuep)[_row], &BL._loc));
+            oci_check_error(__TROTL_HERE__, BP._env._errh, res);
+        }
+        else
+        {
+            sword res = OCICALL(OCILobAssign(BP._env, BP._env._errh, ((OCILobLocator**)BP.valuep)[_row], &BL._loc));
+            oci_check_error(__TROTL_HERE__, BP._env._errh, res);
+        }
+    }
 };
 
 void ConvertorForRead::Fire(const BindParNumber &BP, SqlInt<int> &BL)

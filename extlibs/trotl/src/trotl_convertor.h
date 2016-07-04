@@ -191,6 +191,54 @@ struct TROTL_EXPORT ConvertorForRead: public Convertor
 	}; // TODO is any convesion possible here?
 #endif
 
+    void Fire(const BindParCFile &BP, SqlClob &SV);
+    void Fire(const BindParCFile &BP, SqlDateTime &SV)
+    {
+        OnError(BP, SV);
+    };
+    void Fire(const BindParCFile &BP, SqlBlob &SV)
+    {
+        OnError(BP, SV);
+    };
+    void Fire(const BindParCFile &BP, SqlInt<int> &SV)
+    {
+        OnError(BP, SV);
+    };
+    void Fire(const BindParCFile &BP, SqlInt<unsigned int> &SV)
+    {
+        OnError(BP, SV);
+    };
+    void Fire(const BindParCFile &BP, SqlInt<long> &SV)
+    {
+        OnError(BP, SV);
+    };
+    void Fire(const BindParCFile &BP, SqlInt<unsigned long> &SV)
+    {
+        OnError(BP, SV);
+    };
+    void Fire(const BindParCFile &BP, SqlInt<double> &SV)
+    {
+        OnError(BP, SV);
+    };
+    void Fire(const BindParCFile &BP, SqlInt<float> &SV)
+    {
+        OnError(BP, SV);
+    };
+    void Fire(const BindParCFile &BP, SqlNumber &SV)
+    {
+        OnError(BP, SV);
+    };
+    void Fire(const BindParCFile &BP, SqlCollection &SV)
+    {
+        OnError(BP, SV);
+    };
+#ifdef ORACLE_HAS_XML
+    void Fire(const BindParCFile &BP, SqlXML &SV)
+    {
+        OnError(BP, SV);
+    }; // TODO is any convesion possible here?
+#endif
+
 	void Fire(const BindParBlob &BP, SqlBlob &SV);
 	void Fire(const BindParBlob &BP, SqlDateTime &SV)
 	{
@@ -237,6 +285,54 @@ struct TROTL_EXPORT ConvertorForRead: public Convertor
 	{
 		OnError(BP, SV);
 	};
+#endif
+
+    void Fire(const BindParBFile &BP, SqlBlob &SV);
+    void Fire(const BindParBFile &BP, SqlDateTime &SV)
+    {
+        OnError(BP, SV);
+    };
+    void Fire(const BindParBFile &BP, SqlClob &SV)
+    {
+        OnError(BP, SV);
+    };
+    void Fire(const BindParBFile &BP, SqlInt<int> &SV)
+    {
+        OnError(BP, SV);
+    };
+    void Fire(const BindParBFile &BP, SqlInt<unsigned int> &SV)
+    {
+        OnError(BP, SV);
+    };
+    void Fire(const BindParBFile &BP, SqlInt<long> &SV)
+    {
+        OnError(BP, SV);
+    };
+    void Fire(const BindParBFile &BP, SqlInt<unsigned long> &SV)
+    {
+        OnError(BP, SV);
+    };
+    void Fire(const BindParBFile &BP, SqlInt<double> &SV)
+    {
+        OnError(BP, SV);
+    };
+    void Fire(const BindParBFile &BP, SqlInt<float> &SV)
+    {
+        OnError(BP, SV);
+    };
+    void Fire(const BindParBFile &BP, SqlNumber &SV)
+    {
+        OnError(BP, SV);
+    };
+    void Fire(const BindParBFile &BP, SqlCollection &SV)
+    {
+        OnError(BP, SV);
+    };
+#ifdef ORACLE_HAS_XML
+    void Fire(const BindParBFile &BP, SqlXML &SV)
+    {
+        OnError(BP, SV);
+    };
 #endif
 
 	void Fire(const BindParCollectionTabNum &BP, SqlDateTime &SV)
@@ -341,9 +437,11 @@ private:
 	unsigned int _row;
 };
 
-typedef LOKI_TYPELIST_6(const BindParNumber,
+typedef LOKI_TYPELIST_8(const BindParNumber,
                         const BindParClob,
                         const BindParBlob,
+                        const BindParBFile,
+                        const BindParCFile,
                         const BindParDate,
                         const BindParCollectionTabNum,
                         const BindParCollectionTabVarchar)
