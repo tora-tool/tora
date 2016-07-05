@@ -898,7 +898,9 @@ IF(ORACLE_FOUND)
   	"connection/tooracleprovider.cpp" 
   	"connection/tooracletraits.cpp" 
 	"connection/tooracleconnection.cpp" 
-	"connection/tooraclequery.cpp")
+	"connection/tooraclequery.cpp"
+	"connection/tooracledatatype.cpp"
+        )
   IF(APPLE AND TORA_DEBUG)
     SET(STACK_LIB "stack_lib")
   ENDIF()

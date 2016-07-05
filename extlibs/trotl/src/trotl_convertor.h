@@ -54,400 +54,168 @@ namespace trotl
 
 struct TROTL_EXPORT Convertor
 {
-	void OnError(const BindPar &BP, SqlValue &SV);
-	void OnError(const SqlValue &SV, BindPar &BP);
+    void OnError(const BindPar &BP, SqlValue &SV);
+    void OnError(const SqlValue &SV, BindPar &BP);
 };
 
 struct TROTL_EXPORT ConvertorForRead: public Convertor
 {
-	/*
-	 * This the only way, how can I pass row argument
-	 */
-	ConvertorForRead(unsigned int row) : _row(row) {};
+    /*
+     * This the only way, how can I pass row argument
+     */
+    ConvertorForRead(unsigned int row) : _row(row) {};
 
-	void Fire(const BindParNumber &BP, SqlInt<int> &SV);
-	void Fire(const BindParNumber &BP, SqlInt<unsigned int> &SV);
-	void Fire(const BindParNumber &BP, SqlInt<long> &SV);
-	void Fire(const BindParNumber &BP, SqlInt<unsigned long> &SV);
-	void Fire(const BindParNumber &BP, SqlInt<double> &SV);
-	void Fire(const BindParNumber &BP, SqlInt<float> &SV);
-	void Fire(const BindParNumber &BP, SqlNumber &SV);
-	void Fire(const BindParNumber &BP, SqlCollection &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParNumber &BP, SqlDateTime &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParNumber &BP, SqlBlob &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParNumber &BP, SqlClob &SV)
-	{
-		OnError(BP, SV);
-	};
+    /* BindParNumber */
+    void Fire(const BindParNumber &BP, SqlInt<int> &SV);
+    void Fire(const BindParNumber &BP, SqlInt<unsigned int> &SV);
+    void Fire(const BindParNumber &BP, SqlInt<long> &SV);
+    void Fire(const BindParNumber &BP, SqlInt<unsigned long> &SV);
+    void Fire(const BindParNumber &BP, SqlInt<double> &SV);
+    void Fire(const BindParNumber &BP, SqlInt<float> &SV);
+    void Fire(const BindParNumber &BP, SqlNumber &SV);
+    void Fire(const BindParNumber &BP, SqlCollection &SV)                    { OnError(BP, SV); };
+    void Fire(const BindParNumber &BP, SqlDateTime &SV)                      { OnError(BP, SV); };
+    void Fire(const BindParNumber &BP, SqlBlob &SV)                          { OnError(BP, SV); };
+    void Fire(const BindParNumber &BP, SqlCFile &SV)                         { OnError(BP, SV); };
+    void Fire(const BindParNumber &BP, SqlClob &SV)                          { OnError(BP, SV); };
 #ifdef ORACLE_HAS_XML
-	void Fire(const BindParNumber &BP, SqlXML &SV)
-	{
-		OnError(BP, SV);
-	};
+    void Fire(const BindParNumber &BP, SqlXML &SV)                           { OnError(BP, SV); };
 #endif
 
-	void Fire(const BindParDate &BP, SqlDateTime &SV);
-	void Fire(const BindParDate &BP, SqlClob &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParDate &BP, SqlBlob &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParDate &BP, SqlInt<int> &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParDate &BP, SqlInt<unsigned int> &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParDate &BP, SqlInt<long> &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParDate &BP, SqlInt<unsigned long> &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParDate &BP, SqlInt<double> &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParDate &BP, SqlInt<float> &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParDate &BP, SqlNumber &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParDate &BP, SqlCollection &SV)
-	{
-		OnError(BP, SV);
-	};
+    /* BindParDate */
+    void Fire(const BindParDate &BP, SqlDateTime &SV);
+    void Fire(const BindParDate &BP, SqlCFile &SV)                           { OnError(BP, SV); };
+    void Fire(const BindParDate &BP, SqlClob &SV)                            { OnError(BP, SV); };
+    void Fire(const BindParDate &BP, SqlBlob &SV)                            { OnError(BP, SV); };
+    void Fire(const BindParDate &BP, SqlInt<int> &SV)                        { OnError(BP, SV); };
+    void Fire(const BindParDate &BP, SqlInt<unsigned int> &SV)               { OnError(BP, SV); };
+    void Fire(const BindParDate &BP, SqlInt<long> &SV)                       { OnError(BP, SV); };
+    void Fire(const BindParDate &BP, SqlInt<unsigned long> &SV)              { OnError(BP, SV); };
+    void Fire(const BindParDate &BP, SqlInt<double> &SV)                     { OnError(BP, SV); };
+    void Fire(const BindParDate &BP, SqlInt<float> &SV)                      { OnError(BP, SV); };
+    void Fire(const BindParDate &BP, SqlNumber &SV)                          { OnError(BP, SV); };
+    void Fire(const BindParDate &BP, SqlCollection &SV)                      { OnError(BP, SV); };
 #ifdef ORACLE_HAS_XML
-	void Fire(const BindParDate &BP, SqlXML &SV)
-	{
-		OnError(BP, SV);
-	};
+    void Fire(const BindParDate &BP, SqlXML &SV)                             { OnError(BP, SV); };
 #endif
 
-	void Fire(const BindParClob &BP, SqlClob &SV);
-	void Fire(const BindParClob &BP, SqlDateTime &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParClob &BP, SqlBlob &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParClob &BP, SqlInt<int> &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParClob &BP, SqlInt<unsigned int> &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParClob &BP, SqlInt<long> &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParClob &BP, SqlInt<unsigned long> &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParClob &BP, SqlInt<double> &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParClob &BP, SqlInt<float> &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParClob &BP, SqlNumber &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParClob &BP, SqlCollection &SV)
-	{
-		OnError(BP, SV);
-	};
+    /* BindParClob */
+    void Fire(const BindParClob &BP, SqlClob &SV);
+    void Fire(const BindParClob &BP, SqlDateTime &SV)                        { OnError(BP, SV); };
+    void Fire(const BindParClob &BP, SqlBlob &SV)                            { OnError(BP, SV); };
+    void Fire(const BindParClob &BP, SqlInt<int> &SV)                        { OnError(BP, SV); };
+    void Fire(const BindParClob &BP, SqlInt<unsigned int> &SV)               { OnError(BP, SV); };
+    void Fire(const BindParClob &BP, SqlInt<long> &SV)                       { OnError(BP, SV); };
+    void Fire(const BindParClob &BP, SqlInt<unsigned long> &SV)              { OnError(BP, SV); };
+    void Fire(const BindParClob &BP, SqlInt<double> &SV)                     { OnError(BP, SV); };
+    void Fire(const BindParClob &BP, SqlInt<float> &SV)                      { OnError(BP, SV); };
+    void Fire(const BindParClob &BP, SqlNumber &SV)                          { OnError(BP, SV); };
+    void Fire(const BindParClob &BP, SqlCollection &SV)                      { OnError(BP, SV); };
 #ifdef ORACLE_HAS_XML
-	void Fire(const BindParClob &BP, SqlXML &SV)
-	{
-		OnError(BP, SV);
-	}; // TODO is any convesion possible here?
+    void Fire(const BindParClob &BP, SqlXML &SV)                             { OnError(BP, SV); }; // TODO is any conversion possible here?
 #endif
 
+    /* BindParClob */
     void Fire(const BindParCFile &BP, SqlClob &SV);
-    void Fire(const BindParCFile &BP, SqlDateTime &SV)
-    {
-        OnError(BP, SV);
-    };
-    void Fire(const BindParCFile &BP, SqlBlob &SV)
-    {
-        OnError(BP, SV);
-    };
-    void Fire(const BindParCFile &BP, SqlInt<int> &SV)
-    {
-        OnError(BP, SV);
-    };
-    void Fire(const BindParCFile &BP, SqlInt<unsigned int> &SV)
-    {
-        OnError(BP, SV);
-    };
-    void Fire(const BindParCFile &BP, SqlInt<long> &SV)
-    {
-        OnError(BP, SV);
-    };
-    void Fire(const BindParCFile &BP, SqlInt<unsigned long> &SV)
-    {
-        OnError(BP, SV);
-    };
-    void Fire(const BindParCFile &BP, SqlInt<double> &SV)
-    {
-        OnError(BP, SV);
-    };
-    void Fire(const BindParCFile &BP, SqlInt<float> &SV)
-    {
-        OnError(BP, SV);
-    };
-    void Fire(const BindParCFile &BP, SqlNumber &SV)
-    {
-        OnError(BP, SV);
-    };
-    void Fire(const BindParCFile &BP, SqlCollection &SV)
-    {
-        OnError(BP, SV);
-    };
+    void Fire(const BindParCFile &BP, SqlDateTime &SV)                       { OnError(BP, SV); };
+    void Fire(const BindParCFile &BP, SqlBlob &SV)                           { OnError(BP, SV); };
+    void Fire(const BindParCFile &BP, SqlInt<int> &SV)                       { OnError(BP, SV); };
+    void Fire(const BindParCFile &BP, SqlInt<unsigned int> &SV)              { OnError(BP, SV); };
+    void Fire(const BindParCFile &BP, SqlInt<long> &SV)                      { OnError(BP, SV); };
+    void Fire(const BindParCFile &BP, SqlInt<unsigned long> &SV)             { OnError(BP, SV); };
+    void Fire(const BindParCFile &BP, SqlInt<double> &SV)                    { OnError(BP, SV); };
+    void Fire(const BindParCFile &BP, SqlInt<float> &SV)                     { OnError(BP, SV); };
+    void Fire(const BindParCFile &BP, SqlNumber &SV)                         { OnError(BP, SV); };
+    void Fire(const BindParCFile &BP, SqlCollection &SV)                     { OnError(BP, SV); };
 #ifdef ORACLE_HAS_XML
-    void Fire(const BindParCFile &BP, SqlXML &SV)
-    {
-        OnError(BP, SV);
-    }; // TODO is any convesion possible here?
+    void Fire(const BindParCFile &BP, SqlXML &SV)                            { OnError(BP, SV); }; // TODO is any conversion possible here?
 #endif
 
-	void Fire(const BindParBlob &BP, SqlBlob &SV);
-	void Fire(const BindParBlob &BP, SqlDateTime &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParBlob &BP, SqlClob &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParBlob &BP, SqlInt<int> &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParBlob &BP, SqlInt<unsigned int> &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParBlob &BP, SqlInt<long> &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParBlob &BP, SqlInt<unsigned long> &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParBlob &BP, SqlInt<double> &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParBlob &BP, SqlInt<float> &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParBlob &BP, SqlNumber &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParBlob &BP, SqlCollection &SV)
-	{
-		OnError(BP, SV);
-	};
+    void Fire(const BindParBlob &BP, SqlBlob &SV);
+    void Fire(const BindParBlob &BP, SqlDateTime &SV)                        { OnError(BP, SV); };
+    void Fire(const BindParBlob &BP, SqlCFile &SV)                           { OnError(BP, SV); };
+    void Fire(const BindParBlob &BP, SqlClob &SV)                            { OnError(BP, SV); };
+    void Fire(const BindParBlob &BP, SqlInt<int> &SV)                        { OnError(BP, SV); };
+    void Fire(const BindParBlob &BP, SqlInt<unsigned int> &SV)               { OnError(BP, SV); };
+    void Fire(const BindParBlob &BP, SqlInt<long> &SV)                       { OnError(BP, SV); };
+    void Fire(const BindParBlob &BP, SqlInt<unsigned long> &SV)              { OnError(BP, SV); };
+    void Fire(const BindParBlob &BP, SqlInt<double> &SV)                     { OnError(BP, SV); };
+    void Fire(const BindParBlob &BP, SqlInt<float> &SV)                      { OnError(BP, SV); };
+    void Fire(const BindParBlob &BP, SqlNumber &SV)                          { OnError(BP, SV); };
+    void Fire(const BindParBlob &BP, SqlCollection &SV)                      { OnError(BP, SV); };
 #ifdef ORACLE_HAS_XML
-	void Fire(const BindParBlob &BP, SqlXML &SV)
-	{
-		OnError(BP, SV);
-	};
+    void Fire(const BindParBlob &BP, SqlXML &SV)                             { OnError(BP, SV); };
 #endif
 
+    void Fire(const BindParBFile &BP, SqlDateTime &SV)                       { OnError(BP, SV); };
     void Fire(const BindParBFile &BP, SqlBlob &SV);
-    void Fire(const BindParBFile &BP, SqlDateTime &SV)
-    {
-        OnError(BP, SV);
-    };
-    void Fire(const BindParBFile &BP, SqlClob &SV)
-    {
-        OnError(BP, SV);
-    };
-    void Fire(const BindParBFile &BP, SqlInt<int> &SV)
-    {
-        OnError(BP, SV);
-    };
-    void Fire(const BindParBFile &BP, SqlInt<unsigned int> &SV)
-    {
-        OnError(BP, SV);
-    };
-    void Fire(const BindParBFile &BP, SqlInt<long> &SV)
-    {
-        OnError(BP, SV);
-    };
-    void Fire(const BindParBFile &BP, SqlInt<unsigned long> &SV)
-    {
-        OnError(BP, SV);
-    };
-    void Fire(const BindParBFile &BP, SqlInt<double> &SV)
-    {
-        OnError(BP, SV);
-    };
-    void Fire(const BindParBFile &BP, SqlInt<float> &SV)
-    {
-        OnError(BP, SV);
-    };
-    void Fire(const BindParBFile &BP, SqlNumber &SV)
-    {
-        OnError(BP, SV);
-    };
-    void Fire(const BindParBFile &BP, SqlCollection &SV)
-    {
-        OnError(BP, SV);
-    };
+    void Fire(const BindParBFile &BP, SqlCFile &SV)                          { OnError(BP, SV); };
+    void Fire(const BindParBFile &BP, SqlClob &SV)                           { OnError(BP, SV); };
+    void Fire(const BindParBFile &BP, SqlInt<int> &SV)                       { OnError(BP, SV); };
+    void Fire(const BindParBFile &BP, SqlInt<unsigned int> &SV)              { OnError(BP, SV); };
+    void Fire(const BindParBFile &BP, SqlInt<long> &SV)                      { OnError(BP, SV); };
+    void Fire(const BindParBFile &BP, SqlInt<unsigned long> &SV)             { OnError(BP, SV); };
+    void Fire(const BindParBFile &BP, SqlInt<double> &SV)                    { OnError(BP, SV); };
+    void Fire(const BindParBFile &BP, SqlInt<float> &SV)                     { OnError(BP, SV); };
+    void Fire(const BindParBFile &BP, SqlNumber &SV)                         { OnError(BP, SV); };
+    void Fire(const BindParBFile &BP, SqlCollection &SV)                     { OnError(BP, SV); };
 #ifdef ORACLE_HAS_XML
-    void Fire(const BindParBFile &BP, SqlXML &SV)
-    {
-        OnError(BP, SV);
-    };
+    void Fire(const BindParBFile &BP, SqlXML &SV)                            { OnError(BP, SV); };
 #endif
 
-	void Fire(const BindParCollectionTabNum &BP, SqlDateTime &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParCollectionTabNum &BP, SqlClob &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParCollectionTabNum &BP, SqlBlob &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParCollectionTabNum &BP, SqlNumber &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParCollectionTabNum &BP, SqlCollection &SV);
+    void Fire(const BindParCollectionTabNum &BP, SqlDateTime &SV)            { OnError(BP, SV); };
+    void Fire(const BindParCollectionTabNum &BP, SqlCFile &SV)               { OnError(BP, SV); };
+    void Fire(const BindParCollectionTabNum &BP, SqlClob &SV)                { OnError(BP, SV); };
+    void Fire(const BindParCollectionTabNum &BP, SqlBlob &SV)                { OnError(BP, SV); };
+    void Fire(const BindParCollectionTabNum &BP, SqlNumber &SV)              { OnError(BP, SV); };
+    void Fire(const BindParCollectionTabNum &BP, SqlCollection &SV);
 #ifdef ORACLE_HAS_XML
-	void Fire(const BindParCollectionTabNum &BP, SqlXML &SV)
-	{
-		OnError(BP, SV);
-	};
+    void Fire(const BindParCollectionTabNum &BP, SqlXML &SV)                 { OnError(BP, SV); };
 #endif
 
-	void Fire(const BindParCollectionTabVarchar &BP, SqlClob &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParCollectionTabVarchar &BP, SqlBlob &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParCollectionTabVarchar &BP, SqlDateTime &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParCollectionTabVarchar &BP, SqlNumber &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParCollectionTabVarchar &BP, SqlCollection &SV);
+    void Fire(const BindParCollectionTabVarchar &BP, SqlCFile &SV)           { OnError(BP, SV); };
+    void Fire(const BindParCollectionTabVarchar &BP, SqlClob &SV)            { OnError(BP, SV); };
+    void Fire(const BindParCollectionTabVarchar &BP, SqlBlob &SV)            { OnError(BP, SV); };
+    void Fire(const BindParCollectionTabVarchar &BP, SqlDateTime &SV)        { OnError(BP, SV); };
+    void Fire(const BindParCollectionTabVarchar &BP, SqlNumber &SV)          { OnError(BP, SV); };
+    void Fire(const BindParCollectionTabVarchar &BP, SqlCollection &SV);
 #ifdef ORACLE_HAS_XML
-	void Fire(const BindParCollectionTabVarchar &BP, SqlXML &SV)
-	{
-		OnError(BP, SV);
-	};
+    void Fire(const BindParCollectionTabVarchar &BP, SqlXML &SV)             { OnError(BP, SV); };
 #endif
 
 #ifdef ORACLE_HAS_XML
-	void Fire(const BindParXML &BP, SqlDateTime &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParXML &BP, SqlBlob &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParXML &BP, SqlClob &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParXML &BP, SqlInt<int> &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParXML &BP, SqlInt<unsigned int> &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParXML &BP, SqlInt<long> &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParXML &BP, SqlInt<unsigned long> &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParXML &BP, SqlInt<double> &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParXML &BP, SqlInt<float> &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParXML &BP, SqlNumber &SV)
-	{
-		OnError(BP, SV);
-	};
-	void Fire(const BindParXML &BP, SqlXML &SV);
-	void Fire(const BindParXML &BP, SqlCollection &SV)
-	{
-		OnError(BP, SV);
-	};
+    void Fire(const BindParXML &BP, SqlDateTime &SV)                         { OnError(BP, SV); };
+    void Fire(const BindParXML &BP, SqlBlob &SV)                             { OnError(BP, SV); };
+    void Fire(const BindParXML &BP, SqlClob &SV)                             { OnError(BP, SV); };
+    void Fire(const BindParXML &BP, SqlInt<int> &SV)                         { OnError(BP, SV); };
+    void Fire(const BindParXML &BP, SqlInt<unsigned int> &SV)                { OnError(BP, SV); };
+    void Fire(const BindParXML &BP, SqlInt<long> &SV)                        { OnError(BP, SV); };
+    void Fire(const BindParXML &BP, SqlInt<unsigned long> &SV)               { OnError(BP, SV); };
+    void Fire(const BindParXML &BP, SqlInt<double> &SV)                      { OnError(BP, SV); };
+    void Fire(const BindParXML &BP, SqlInt<float> &SV)                       { OnError(BP, SV); };
+    void Fire(const BindParXML &BP, SqlNumber &SV)                           { OnError(BP, SV); };
+    void Fire(const BindParXML &BP, SqlXML &SV);
+    void Fire(const BindParXML &BP, SqlCollection &SV)                       { OnError(BP, SV); };
 #endif
-
 
 private:
-	ConvertorForRead();
-	unsigned int _row;
+    ConvertorForRead();
+    unsigned int _row;
 };
 
 typedef LOKI_TYPELIST_8(const BindParNumber,
                         const BindParClob,
+                        const BindParCFile,
                         const BindParBlob,
                         const BindParBFile,
-                        const BindParCFile,
                         const BindParDate,
                         const BindParCollectionTabNum,
                         const BindParCollectionTabVarchar)
 TL_DispatcherForReadInput;
 
-typedef LOKI_TYPELIST_5(SqlClob,
+typedef LOKI_TYPELIST_6(
+                        SqlCFile,
+                        SqlClob,
                         SqlBlob,
                         SqlDateTime,
                         SqlNumber,
@@ -474,105 +242,105 @@ void
 
 struct TROTL_EXPORT ConvertorForWrite: public Convertor
 {
-	/*
-	 * This the only way, how can I pass row argument
-	 */
-	ConvertorForWrite(unsigned int row) : _row(row) {};
+    /*
+     * This the only way, how can I pass row argument
+     */
+    ConvertorForWrite(unsigned int row) : _row(row) {};
 
-	void Fire(const SqlDateTime &SV, BindParDate &BP);
-	void Fire(const SqlBlob &SV, BindParBlob &BP);
-	void Fire(const SqlClob &SV, BindParClob &BP);
-	//void Fire(const SqlInt<int> &SV, BindParCInt &BP);
+    void Fire(const SqlDateTime &SV, BindParDate &BP);
+    void Fire(const SqlBlob &SV, BindParBlob &BP);
+    void Fire(const SqlClob &SV, BindParClob &BP);
+ //void Fire(const SqlInt<int> &SV, BindParCInt &BP);
 #ifdef ORACLE_HAS_XML
-	void Fire(const SqlXML &SV, BindParXML &BP);
+ void Fire(const SqlXML &SV, BindParXML &BP);
 #endif
 
-	void Fire(const SqlDateTime &SV, BindParClob &BP)
-	{
-		OnError(SV, BP);
-	};
-	void Fire(const SqlDateTime &SV, BindParBlob &BP)
-	{
-		OnError(SV, BP);
-	}
-	//void Fire(const SqlDateTime &SV, BindParCInt &BP) { OnError(SV, BP); };
+ void Fire(const SqlDateTime &SV, BindParClob &BP)
+ {
+  OnError(SV, BP);
+ };
+ void Fire(const SqlDateTime &SV, BindParBlob &BP)
+ {
+  OnError(SV, BP);
+ }
+ //void Fire(const SqlDateTime &SV, BindParCInt &BP) { OnError(SV, BP); };
 #ifdef ORACLE_HAS_XML
-	void Fire(const SqlDateTime &SV, BindParXML &BP)
-	{
-		OnError(SV, BP);
-	};
+ void Fire(const SqlDateTime &SV, BindParXML &BP)
+ {
+  OnError(SV, BP);
+ };
 #endif
 
-	void Fire(const SqlBlob &SV, BindParDate &BP)
-	{
-		OnError(SV, BP);
-	};
-	void Fire(const SqlBlob &SV, BindParClob &BP)
-	{
-		OnError(SV, BP);
-	};
-	//void Fire(const SqlBlob &SV, BindParCInt &BP) { OnError(SV, BP); };
+ void Fire(const SqlBlob &SV, BindParDate &BP)
+ {
+  OnError(SV, BP);
+ };
+ void Fire(const SqlBlob &SV, BindParClob &BP)
+ {
+  OnError(SV, BP);
+ };
+ //void Fire(const SqlBlob &SV, BindParCInt &BP) { OnError(SV, BP); };
 #ifdef ORACLE_HAS_XML
-	void Fire(const SqlBlob &SV, BindParXML &BP)
-	{
-		OnError(SV, BP);
-	};
+ void Fire(const SqlBlob &SV, BindParXML &BP)
+ {
+  OnError(SV, BP);
+ };
 #endif
 
-	void Fire(const SqlClob &SV, BindParDate &BP)
-	{
-		OnError(SV, BP);
-	};
-	void Fire(const SqlClob &SV, BindParBlob &BP)
-	{
-		OnError(SV, BP);
-	};
-	//void Fire(const SqlClob &SV, BindParCInt &BP) { OnError(SV, BP); };
+ void Fire(const SqlClob &SV, BindParDate &BP)
+ {
+  OnError(SV, BP);
+ };
+ void Fire(const SqlClob &SV, BindParBlob &BP)
+ {
+  OnError(SV, BP);
+ };
+ //void Fire(const SqlClob &SV, BindParCInt &BP) { OnError(SV, BP); };
 #ifdef ORACLE_HAS_XML
-	void Fire(const SqlClob &SV, BindParXML &BP)
-	{
-		OnError(SV, BP);
-	};
+ void Fire(const SqlClob &SV, BindParXML &BP)
+ {
+  OnError(SV, BP);
+ };
 #endif
 
-	void Fire(const SqlInt<int> &SV, BindParDate &BP)
-	{
-		OnError(SV, BP);
-	};
-	void Fire(const SqlInt<int> &SV, BindParBlob &BP)
-	{
-		OnError(SV, BP);
-	}
-	void Fire(const SqlInt<int> &SV, BindParClob &BP)
-	{
-		OnError(SV, BP);
-	};
+ void Fire(const SqlInt<int> &SV, BindParDate &BP)
+ {
+  OnError(SV, BP);
+ };
+ void Fire(const SqlInt<int> &SV, BindParBlob &BP)
+ {
+  OnError(SV, BP);
+ }
+ void Fire(const SqlInt<int> &SV, BindParClob &BP)
+ {
+  OnError(SV, BP);
+ };
 #ifdef ORACLE_HAS_XML
-	void Fire(const SqlInt<int> &SV, BindParXML &BP)
-	{
-		OnError(SV, BP);
-	};
+ void Fire(const SqlInt<int> &SV, BindParXML &BP)
+ {
+  OnError(SV, BP);
+ };
 #endif
 
 #ifdef ORACLE_HAS_XML
-	void Fire(const SqlXML &SV, BindParDate &BP)
-	{
-		OnError(SV, BP);
-	};
-	void Fire(const SqlXML &SV, BindParBlob &BP)
-	{
-		OnError(SV, BP);
-	};
-	void Fire(const SqlXML &SV, BindParClob &BP)
-	{
-		OnError(SV, BP);
-	};
-	//void Fire(const SqlXML &SV, BindParCInt &BP) { OnError(SV, BP); };
+ void Fire(const SqlXML &SV, BindParDate &BP)
+ {
+  OnError(SV, BP);
+ };
+ void Fire(const SqlXML &SV, BindParBlob &BP)
+ {
+  OnError(SV, BP);
+ };
+ void Fire(const SqlXML &SV, BindParClob &BP)
+ {
+  OnError(SV, BP);
+ };
+ //void Fire(const SqlXML &SV, BindParCInt &BP) { OnError(SV, BP); };
 #endif
 
 private:
-	ConvertorForWrite();
-	unsigned int _row;
+ ConvertorForWrite();
+ unsigned int _row;
 };
 
 typedef ::Loki::StaticDispatcher

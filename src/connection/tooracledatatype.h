@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TO_ORACLE_DATATYPE
-#define TO_ORACLE_DATATYPE
+#pragma once
 
 #include "core/toqvalue.h"
 #include "core/tologger.h"
@@ -50,7 +49,7 @@ class toOracleClob: public toQValue::complexType
     public:
         toOracleClob(trotl::OciConnection &_conn)
             : toQValue::complexType()
-            , _data(_conn)
+            , data(_conn)
             , _length(0)
             , _displayData()
             , _toolTipData()
@@ -65,77 +64,11 @@ class toOracleClob: public toQValue::complexType
             return true;
         }
 
-        /* virtual */ QString const& displayData() const throw()
-        {
-            if (!_displayData.isNull())
-                return _displayData;
-            ::trotl::SqlOpenLob clob_open(_data, OCI_LOB_READONLY);
-            char buffer[MAXLOBSHOWN];
-            oraub8 chars_read = 0;
-            unsigned bytes_read = _data.read(&buffer[0], sizeof(buffer), 1, sizeof(buffer), &chars_read);
+        QString const& displayData() const throw() override;
+        QString editData() const throw() override;
+        QString userData() const throw() override;
 
-            TLOG(4, toDecorator, __HERE__) << "Just read CLOB: \"" << buffer << "\"" << std::endl;
-
-            _displayData = QString("{clob}");
-            _displayData += QString::fromUtf8(buffer, bytes_read);
-            if (chars_read != _data.length())
-                _displayData += "...<truncated>";
-            return _displayData;
-        }
-
-        /* virtual */ QString editData() const throw()
-        {
-            ::trotl::SqlOpenLob clob_open(_data, OCI_LOB_READONLY);
-            QString retval = QString("Datatype: Oracle [N]CLOB\nSize: %1 Chars\n").arg(getLength());
-            char buffer[524288];
-            unsigned offset = 0;
-            unsigned to_read = 16 * _data.getChunkSize();
-            oraub8 bytes_read = 0, chars_read = 0;
-
-            while (offset < MAXTOMAXLONG)
-            {
-                oraub8 cr = 0, br = 0;
-                br = _data.read(&buffer[0], sizeof(buffer), offset + 1, to_read, &cr);
-                offset += cr;
-                chars_read += cr;
-                bytes_read += br;
-                if (br == 0) // end of LOB reached
-                    break;
-                retval += QString::fromUtf8(buffer, br);
-            }
-
-            if (offset != _data.length())
-                retval += "\n...<TRUNCATED>";
-            return retval;
-        }
-
-        /* virtual */ QString userData() const throw()
-        {
-            ::trotl::SqlOpenLob clob_open(_data, OCI_LOB_READONLY);
-            QString retval;
-            char buffer[524288];
-            unsigned offset = 0;
-            unsigned to_read = 16 * _data.getChunkSize();
-            oraub8 bytes_read = 0, chars_read = 0;
-
-            while (true)
-            {
-                oraub8 cr = 0, br = 0;
-                br = _data.read(&buffer[0], sizeof(buffer), offset + 1, to_read, &cr);
-                offset += cr;
-                chars_read += cr;
-                bytes_read += br;
-                if (br == 0) // end of LOB reached
-                    break;
-                retval += QString::fromUtf8(buffer, br);
-            }
-
-            if (offset != _data.length())
-                retval += "\n...<TRUNCATED>";
-            return retval;
-        }
-
-        /* virtual */ QString const& tooltipData() const throw()
+        QString const& tooltipData() const throw() override
         {
             if (!_toolTipData.isNull())
                 return _toolTipData;
@@ -143,38 +76,27 @@ class toOracleClob: public toQValue::complexType
             return _toolTipData;
         }
 
-        /* virtual */ QString const& dataTypeName() const
+        QString const& dataTypeName() const override
         {
             static const QString clob("CLOB");
             return clob;
         }
-        /* virtual */ QByteArray read(unsigned offset) const
-        {
-            unsigned chunksize = _data.getChunkSize();
-            char *buffer = (char*)malloc( chunksize ); // TODO use alloc here(or _alloc on MSVC)
-            unsigned int bytes_read;
-            {
-                ::trotl::SqlOpenLob clob_open(_data, OCI_LOB_READONLY);
-                bytes_read = _data.read(buffer, chunksize, offset + 1, chunksize);
-            }
-            QByteArray retval(buffer, bytes_read);
-            free(buffer);
-            return retval;
-        }
-        /* virtual */ void write(QByteArray const &data)
-        {
-        }
-        /* virtual */~toOracleClob()
+
+        QByteArray read(unsigned offset) const override;
+
+        void write(QByteArray const &data) override {}
+
+        virtual ~toOracleClob()
         {
             TLOG(1, toDecorator, __HERE__) << "toOracleClob DELETED:" << this << std::endl;
         }
 
-        mutable trotl::SqlClob _data;
+        mutable trotl::SqlClob data;
     protected:
         oraub8 getLength() const
         {
             if (!_length)
-                _length = _data.length();
+                _length = data.length();
             return _length;
         };
 
@@ -197,78 +119,23 @@ class toOracleBlob: public toQValue::complexType
             , _displayData()
             , _toolTipData()
         {};
-        /* virtual */
+
         bool isBinary() const
         {
             return true;
         }
-        /* virtual */ bool isLarge() const
+        bool isLarge() const
         {
             return true;
         }
 
-        /* virtual */ QString const& displayData() const throw()
-        {
-            if (!_displayData.isNull())
-                return _displayData;
-            ::trotl::SqlOpenLob blob_open(data, OCI_LOB_READONLY);
-            unsigned char buffer[MAXLOBSHOWN / 2];
-            _displayData = QString("{blob}");
+        QString const& displayData() const throw() override;
 
-            unsigned bytes_read = data.read(&buffer[0], sizeof(buffer), 1, sizeof(buffer));
+        QString editData() const throw() override;
 
-            for (unsigned i = 0; i < bytes_read; ++i)
-            {
-                char sbuff[4];
-                snprintf(sbuff, sizeof(sbuff), " %.2X", buffer[i]);
-                _displayData += sbuff;
-            }
+        QString userData() const throw();
 
-            if (bytes_read >= MAXLOBSHOWN / 2)
-                _displayData += "...<truncated>";
-            return _displayData;
-        }
-
-        /* virtual */ QString editData() const throw()
-        {
-            ::trotl::SqlOpenLob clob_open(data, OCI_LOB_READONLY);
-            QString retval = QString("Datatyp pe: Oracle BLOB\nSize: %1B\n").arg(getLength());
-            unsigned char buffer[MAXTOMAXLONG];
-            ub4 chunk_size = data.getChunkSize();
-            unsigned offset = 0;
-
-            while (offset < MAXTOMAXLONG)
-            {
-                unsigned to_read = (std::min)(MAXTOMAXLONG - offset, chunk_size);
-                unsigned bytes_read = data.read(&buffer[offset], MAXTOMAXLONG - offset, offset + 1, to_read);
-
-                if (bytes_read == 0) // end of LOB reached
-                    break;
-
-                for (unsigned i = 0; i < bytes_read; ++i)
-                {
-                    char sbuff[4];
-                    snprintf(sbuff, sizeof(sbuff), " %.2X", buffer[i]);
-                    retval += sbuff;
-                    if ( (offset + i) % 32 == 31)
-                        retval += "\n";
-                }
-
-                offset += bytes_read;
-            }
-
-            if (offset == MAXTOMAXLONG)
-                retval += "\n...<TRUNCATED>";
-            return retval;
-        }
-
-        /* virtual */ QString userData() const throw()
-        {
-            return QString("Datape: Oracle BLOB\nSize: %1B\n")
-                   .arg(data.length());
-        }
-
-        /* virtual */ QString const& tooltipData() const throw()
+        QString const& tooltipData() const throw() override
         {
             if (!_toolTipData.isNull())
                 return _toolTipData;
@@ -276,28 +143,19 @@ class toOracleBlob: public toQValue::complexType
             return _toolTipData;
         }
 
-        /* virtual */ QString const& dataTypeName() const
+        QString const& dataTypeName() const override
         {
             static const QString blob("blob");
             return blob;
         }
-        /* virtual */ QByteArray read(unsigned offset) const
-        {
-            unsigned chunksize = data.getChunkSize();
-            char *buffer = (char*)malloc( chunksize ); // TODO use alloc here(or _alloc on MSVC)
-            unsigned int bytes_read;
-            {
-                ::trotl::SqlOpenLob blob_open(data, OCI_LOB_READONLY);
-                bytes_read = data.read(buffer, chunksize, offset + 1, chunksize);
-            }
-            QByteArray retval(buffer, bytes_read);
-            free(buffer);
-            return retval;
-        }
-        /* virtual */ void write(QByteArray const &data)
+
+        QByteArray read(unsigned offset) const override;
+
+        void write(QByteArray const &data) override
         {
         }
-        /* virtual */~toOracleBlob()
+
+        virtual ~toOracleBlob()
         {
             TLOG(1, toDecorator, __HERE__) << "toOracleBlob DELETED:" << this << std::endl;
         }
@@ -451,5 +309,3 @@ class toOracleCursor: public toQValue::complexType
         //TODO copying prohibited
 };
 //Q_DECLARE_METATYPE(toOracleCursor*)
-
-#endif

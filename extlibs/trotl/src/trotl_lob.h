@@ -133,6 +133,7 @@ struct TROTL_EXPORT SqlLob: public SqlValue
 
 	void flush(ub4 flag=OCI_LOB_BUFFER_NOFREE);
 
+	tstring _dirname, _filename; // used only for BFILEs
 protected:
 	OciConnection&	_conn;
 	OCILobLocator*	_loc;

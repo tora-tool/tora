@@ -613,7 +613,6 @@ void toResultTableView::slotHandleFirst(const toConnection::exception &res,
 
 void toResultTableView::slotHandleDoubleClick(const QModelIndex &index)
 {
-    QVariant data = model()->data(index, Qt::EditRole);
     toModelEditor *ed = new toModelEditor(this, model(), index);
     ed->exec();
 }

@@ -238,9 +238,13 @@ void SqlLob::clear()
 
 ub4	SqlLob::getChunkSize()
 {
-	ub4 size;
-	sword res = OCICALL( OCILobGetChunkSize(_conn._svc_ctx, _conn._env._errh, _loc, &size));
-	oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
+	ub4 size = 8132; // 8132 value usually returned for blobs
+	if (_dirname.empty())
+	{
+	        // OCILobGetChunkSize works only for real BLOBs not for BFILEs
+	        sword res = OCICALL( OCILobGetChunkSize(_conn._svc_ctx, _conn._env._errh, _loc, &size));
+	        oci_check_error(__TROTL_HERE__, _conn._env._errh, res);
+	}
 	return size;
 };
 
