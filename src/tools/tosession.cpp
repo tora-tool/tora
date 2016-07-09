@@ -64,11 +64,13 @@
 #include "icons/refresh.xpm"
 #include "icons/tosession.xpm"
 
-#include "toresultbar.h"
-#include "toresultlock.h"
-#include "toresultstats.h"
-#include "toresulttableview.h"
+#include "tools/toresultbar.h"
+#include "tools/toresultlock.h"
+#include "tools/toresultstats.h"
+#include "tools/toresulttableview.h"
 // #include "icons/filter.xpm"
+
+#include "editor/tosyntaxanalyzernl.h"
 
 using namespace ToConfiguration;
 
@@ -1088,6 +1090,8 @@ toSessionDisconnect::toSessionDisconnect(toResultTableView *sessionView, QWidget
     , SessionView(sessionView)
 {
     setupUi(this);
+    progressBar->setHidden(true);
+
     SQLText->setMarginWidth(2, 0);
 
     int killMode = toConfigurationNewSingle::Instance().option(Session::KillSessionModeInt).toInt();
@@ -1108,6 +1112,7 @@ toSessionDisconnect::toSessionDisconnect(toResultTableView *sessionView, QWidget
         break;
     }
 
+    connect(DisconnectBtn, SIGNAL(clicked()), this, SLOT(slotExecuteAll()));
     connect(CopyBtn, SIGNAL(clicked()), this, SLOT(slotCopy()));
     connect(CancelBtn, SIGNAL(clicked()), this, SLOT(reject()));
 
@@ -1313,3 +1318,38 @@ void toSessionSetting::composeKillProc()
     }
     SQLText->setText(retval);
 };
+
+void toSessionDisconnect::slotExecuteAll()
+{
+    toSyntaxAnalyzerNL analyzer(SQLText);
+    toSyntaxAnalyzer::statementList stats = analyzer.getStatements(SQLText->text());
+
+    int currentStatement = 1;
+    progressBar->setMaximum(1);
+    progressBar->setMaximum(stats.size());
+    progressBar->setVisible(true);
+
+    toConnection &conn = toConnection::currentConnection(SessionView);
+
+    Q_FOREACH(toSyntaxAnalyzer::statement statement, stats)
+    {
+        progressBar->setValue(currentStatement);
+        analyzer.sanitizeStatement(statement);
+        SQLText->SendScintilla(QsciScintilla::SCI_SETSEL, statement.posFrom, statement.posTo);
+
+        qApp->processEvents();
+
+        try
+        {
+        	toConnectionSubLoan c(conn);
+            toQuery query(c, statement.sql, toQueryParams());
+        	query.eof();
+        }
+        catch (QString const& e)
+        {
+        	Utils::toStatusMessage(e, true, true);
+        }
+        currentStatement++;
+    }
+    CancelBtn->setText(tr("Close"));
+}

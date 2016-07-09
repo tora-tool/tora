@@ -14,51 +14,6 @@
    <string>Dialog</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="1">
-    <widget class="QRadioButton" name="KillRdio">
-     <property name="text">
-      <string>Kill normal</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="2">
-    <widget class="QRadioButton" name="KImmediateRdio">
-     <property name="text">
-      <string>Kill immediate</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QRadioButton" name="DisconnectRdio">
-     <property name="text">
-      <string>Disconnect</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="6">
-    <widget class="QPushButton" name="CancelBtn">
-     <property name="text">
-      <string>Cancel</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="5">
-    <widget class="QPushButton" name="CopyBtn">
-     <property name="text">
-      <string>Copy</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="4">
-    <widget class="QPushButton" name="DisconnectBtn">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="text">
-      <string>Disconnect</string>
-     </property>
-    </widget>
-   </item>
    <item row="2" column="0" colspan="7">
     <widget class="toSqlText" name="SQLText">
      <property name="sizePolicy">
@@ -75,7 +30,43 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="0" colspan="4">
+   <item row="0" column="0" colspan="7">
+    <widget class="QLabel" name="label">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Disconnect session(s)?</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QRadioButton" name="KImmediateRdio">
+     <property name="text">
+      <string>Kill immediate</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QRadioButton" name="KillRdio">
+     <property name="text">
+      <string>Kill normal</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QRadioButton" name="DisconnectRdio">
+     <property name="text">
+      <string>Disconnect</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="4">
     <spacer name="horizontalSpacer_2">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -87,6 +78,27 @@
       </size>
      </property>
     </spacer>
+   </item>
+   <item row="4" column="5">
+    <widget class="QPushButton" name="CopyBtn">
+     <property name="text">
+      <string>Copy</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="6">
+    <widget class="QPushButton" name="CancelBtn">
+     <property name="text">
+      <string>Cancel</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="4">
+    <widget class="QPushButton" name="DisconnectBtn">
+     <property name="text">
+      <string>Disconnect</string>
+     </property>
+    </widget>
    </item>
    <item row="1" column="3" colspan="4">
     <spacer name="horizontalSpacer">
@@ -101,18 +113,10 @@
      </property>
     </spacer>
    </item>
-   <item row="0" column="0" colspan="7">
-    <widget class="QLabel" name="label">
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Disconnect session(s)?</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
+   <item row="3" column="0" colspan="7">
+    <widget class="QProgressBar" name="progressBar">
+     <property name="format">
+      <string>%v of %m</string>
      </property>
     </widget>
    </item>

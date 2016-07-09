@@ -205,6 +205,7 @@ private slots:
     void slotKill();
     void slotKillImmediate();
     void slotCopy();
+    void slotExecuteAll();
 private:
     toResultTableView *SessionView;
 };
