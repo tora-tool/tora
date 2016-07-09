@@ -1070,18 +1070,14 @@ void toMain::setCoordinates(int line, int col)
 void toMain::updateStatusMenu(void)
 {
     statusMenu->clear();
-    for (std::list<QString>::iterator i = StatusMessages.begin();
-            i != StatusMessages.end();
-            i++)
+    foreach(QString const& message, StatusMessages)
     {
-
         QAction *s = new QAction(statusMenu);
-        if ((*i).size() > 75)
-            s->setText((*i).left(75) + "...");
+        if (message.length() > 75)
+            s->setText(message.left(75) + "...");
         else
-            s->setText(*i);
-
-        s->setToolTip(*i);
+            s->setText(message);
+        s->setToolTip(message.left(75));
         statusMenu->addAction(s);
     }
 }
@@ -1145,22 +1141,27 @@ toDockbar* toMain::dockbar(toDocklet *let)
 
 void toMain::showMessageImpl(QString str, bool save, bool log)
 {
+    using namespace ToConfiguration;
     if (!str.isEmpty())
     {
-        int sec = toConfigurationNewSingle::Instance().option(ToConfiguration::Global::StatusMessageInt).toInt();
+        int sec = toConfigurationNewSingle::Instance().option(Global::StatusMessageInt).toInt();
         if (save || sec == 0)
             statusBar()->showMessage(str.simplified());
         else
             statusBar()->showMessage(str.simplified(), sec * 1000);
 
-        if (!save && log)
+        if (log)
         {
-            Utils::toPush(StatusMessages, str);
-            if ((int) StatusMessages.size() > toConfigurationNewSingle::Instance().option(ToConfiguration::Global::HistorySizeInt).toInt())
-                Utils::toShift(StatusMessages);
-            statusBar()->setToolTip(str);
+            StatusMessages.append(str);
+            int HistorySize = toConfigurationNewSingle::Instance().option(Global::HistorySizeInt).toInt();
+            if (StatusMessages.size() > HistorySize)
+                StatusMessages.takeFirst();
+        }
 
-            if (!toConfigurationNewSingle::Instance().option(ToConfiguration::Global::MessageStatusbarBool).toBool())
+        if (!save)
+        {
+            statusBar()->setToolTip(str);
+            if (!toConfigurationNewSingle::Instance().option(Global::MessageStatusbarBool).toBool())
                 displayMessage();
         }
     }

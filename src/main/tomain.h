@@ -300,7 +300,7 @@ class toMain : public toMainWindow
         /**
          * Status message storage for status bar
          */
-        std::list<QString> StatusMessages;
+        QList<QString> StatusMessages;
 
         /** Toolbars, Edit, Tools, Connection */
         QToolBar *editToolbar, *toolsToolbar, *connectionToolbar;

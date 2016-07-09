@@ -1100,7 +1100,7 @@ void toWorksheet::query(toSyntaxAnalyzer::statement const& statement, execTypeEn
     RefreshTimer.stop();
 
     if (!Editor->editor()->hasSelectedText() || selectMode)
-        Editor->editor()->SendScintilla(QsciScintilla::SCI_SETSEL, statement.posFrom, statement.posTo);
+        Editor->editor()->setSelection(statement.posFrom, statement.posTo);
 
     TLOG(0, toDecorator, __HERE__)
             << "Current statement: " << std::endl
