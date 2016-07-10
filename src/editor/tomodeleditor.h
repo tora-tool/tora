@@ -77,6 +77,9 @@ class toModelEditor : public QDialog
                       bool sql = false,
                       bool modal = true); // changed to true to prevent random crashes on tora exits with memo opened - petr vanek
 
+    protected:
+        bool eventFilter(QObject *obj, QEvent *event) override;
+
     private slots:
         void openFile(void);
         void saveFile(void);
