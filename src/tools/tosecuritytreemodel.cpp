@@ -339,8 +339,9 @@ void toSecurityTreeModel::setupModelData(const QString & user)
     endResetModel();
 }
 
-void toSecurityTreeModel::sql(const QString &user, std::list<QString> &sqlLst)
+QList<QString> toSecurityTreeModel::sql(const QString &user)
 {
+    QList<QString> retval;
     QString grant("GRANT %1 ON %2 TO %3");
     QString revoke("REVOKE %1 ON %2 FROM %3");
 
@@ -358,9 +359,10 @@ void toSecurityTreeModel::sql(const QString &user, std::list<QString> &sqlLst)
                 if (i->child(j)->isCheckable() && i->child(j)->state() == Qt::Checked)
                     addons += "\n" + i->child(j)->data();
             }
-            sqlLst.push_back(grant.arg(i->data()).arg(i->name()).arg(user) + addons);
+            retval.append(grant.arg(i->data()).arg(i->name()).arg(user) + addons);
         }
         else
-            sqlLst.push_back(revoke.arg(i->data()).arg(i->name()).arg(user));
+            retval.append(revoke.arg(i->data()).arg(i->name()).arg(user));
     }
+    return retval;
 }
