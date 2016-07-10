@@ -345,8 +345,6 @@ class toSecurityUpper : public QValidator
 class toSecurityUser : public QWidget, public Ui::toSecurityUserUI
 {
         toConnection &Connection;
-
-        toSecurityQuota *Quota;
         enum
         {
             password,
@@ -362,7 +360,7 @@ class toSecurityUser : public QWidget, public Ui::toSecurityUserUI
         bool OrgLocked;
         bool OrgExpired;
     public:
-        toSecurityUser(toSecurityQuota *quota, toConnection &conn, QWidget *parent);
+        toSecurityUser(toConnection &conn, QWidget *parent);
         void clear(bool all = true);
         void update();
         void changeUser(const QString &);
@@ -442,7 +440,6 @@ QString toSecurityUser::sql(void)
         else
             extra += QString::fromLatin1("UNLOCK");
     }
-    //extra += Quota->sql();
 
     QString sql;
     if (Name->isEnabled())
@@ -464,8 +461,9 @@ QString toSecurityUser::sql(void)
     return sql;
 }
 
-toSecurityUser::toSecurityUser(toSecurityQuota *quota, toConnection &conn, QWidget *parent)
-    : QWidget(parent), Connection(conn), Quota(quota)
+toSecurityUser::toSecurityUser(toConnection &conn, QWidget *parent)
+    : QWidget(parent)
+    , Connection(conn)
 {
     setupUi(this);
     Name->setValidator(new toSecurityUpper(Name));
@@ -619,7 +617,6 @@ void toSecurityUser::changeUser(const QString &user)
 class toSecurityRole : public QWidget, public Ui::toSecurityRoleUI
 {
         toConnection &Connection;
-        toSecurityQuota *Quota;
         enum
         {
             password,
@@ -628,9 +625,8 @@ class toSecurityRole : public QWidget, public Ui::toSecurityRoleUI
             none
         } AuthType;
     public:
-        toSecurityRole(toSecurityQuota *quota, toConnection &conn, QWidget *parent)
+        toSecurityRole(toConnection &conn, QWidget *parent)
             : QWidget(parent), Connection(conn)
-            , Quota(quota)
             , AuthType(password)
         {
             setupUi(this);
@@ -757,7 +753,7 @@ class toSecurityPage : public QWidget
         toSecurityUser *User;
 
     public:
-        toSecurityPage(toSecurityQuota *quota, toConnection &conn, QWidget *parent)
+        toSecurityPage(toConnection &conn, QWidget *parent)
             : QWidget(parent)
         {
             QVBoxLayout *vbox = new QVBoxLayout;
@@ -765,10 +761,10 @@ class toSecurityPage : public QWidget
             vbox->setContentsMargins(0, 0, 0, 0);
             setLayout(vbox);
 
-            Role = new toSecurityRole(quota, conn, this);
+            Role = new toSecurityRole(conn, this);
             vbox->addWidget(Role);
             Role->hide();
-            User = new toSecurityUser(quota, conn, this);
+            User = new toSecurityUser(conn, this);
             vbox->addWidget(User);
             setFocusProxy(User);
         }
@@ -1281,8 +1277,7 @@ toSecurity::toSecurity(QWidget *main, toConnection &connection)
     UserList->setSelectionMode(toTreeWidget::Single);
     Tabs = new QTabWidget(splitter);
 
-    Quota = new toSecurityQuota(Tabs);
-    General = new toSecurityPage(Quota, connection, Tabs);
+    General = new toSecurityPage(connection, Tabs);
     Tabs->addTab(General, tr("&General"));
 
     RoleGrant = new toSecurityRoleGrant(Tabs);
@@ -1294,6 +1289,7 @@ toSecurity::toSecurity(QWidget *main, toConnection &connection)
     ObjectGrant = new toSecurityObject(Tabs);
     Tabs->addTab(ObjectGrant, tr("&Object Privileges"));
 
+    Quota = new toSecurityQuota(Tabs);
     Tabs->addTab(Quota, tr("&Quota"));
 
     DDL = new toResultCode(Tabs);
