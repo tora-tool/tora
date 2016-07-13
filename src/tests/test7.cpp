@@ -63,7 +63,7 @@ int main(int argc, char **argv)
 	
 	try
 	{
-		auto_ptr <SQLParser::Statement> parser = StatementFactTwoParmSing::Instance().create("OracleDML", qsql, "");
+		unique_ptr<SQLParser::Statement> parser = StatementFactTwoParmSing::Instance().create("OracleDML", qsql, "");
 		parser->dumpTree();
 		toASTWalk(*parser, [](Token const&node)
 			  {
