@@ -55,12 +55,13 @@ toWorksheetText::toWorksheetText(QWidget *parent, const char *name)
     , complTimer(new QTimer(this))
     , m_bookmarkHandle(QsciScintilla::markerDefine(QsciScintilla::Background))
     , m_bookmarkMarginHandle(QsciScintilla::markerDefine(QsciScintilla::RightTriangle))
-	, m_completeEnabled(toConfigurationNewSingle::Instance().option(Editor::UseSpacesForIndentBool).toBool())
+    , m_completeEnabled(toConfigurationNewSingle::Instance().option(Editor::CodeCompleteBool).toBool())
 {
 	if (m_completeEnabled)
 	{
-		QsciScintilla::setAutoCompletionThreshold(0);
-		QsciScintilla::setAutoCompletionSource(QsciScintilla::AcsAPIs);
+		QsciScintilla::setAutoCompletionThreshold(1); // start when a single leading word's char is typed
+		QsciScintilla::setAutoCompletionUseSingle(QsciScintilla::AcusExplicit);
+		QsciScintilla::setAutoCompletionSource(QsciScintilla::AcsAll); // AcsAll := AcsAPIs | AcsDocument
 	}
     QsciScintilla::setAutoIndent(true);
 
@@ -141,6 +142,12 @@ void toWorksheetText::keyPressEvent(QKeyEvent * e)
             e->accept();
             return;
         }
+    }
+    else if (m_completeEnabled && e->modifiers() == Qt::ControlModifier && e->key() == Qt::Key_Space)
+    {
+        autoCompleteFromDocument();
+        e->accept();
+        return;
     }
     else if (m_completeEnabled && e->modifiers() == Qt::ControlModifier && e->key() == Qt::Key_T)
     {

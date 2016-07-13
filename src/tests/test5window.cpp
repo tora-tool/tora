@@ -45,7 +45,7 @@
 #include "core/toraversion.h"
 
 #include "widgets/toworkspace.h"
-//#include "tools/toworksheet.h"
+#include "tools/toworksheet.h"
 #include "tools/toplsqleditor.h"
 #include "tools/toplsqltext.h"
 
@@ -270,7 +270,7 @@ void Test5Window::newFile()
 
 void Test5Window::addTool()
 {
-    toPLSQL *w1 = new toPLSQL(NULL, toConnectionRegistrySing::Instance().currentConnection());
+    toWorksheet *w1 = new toWorksheet(NULL, toConnectionRegistrySing::Instance().currentConnection());
     w1->showMaximized();
     Workspace.addToolWidget(w1);
     w1->show();

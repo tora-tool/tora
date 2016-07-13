@@ -196,13 +196,21 @@ QT5_WRAP_CPP(TEST5_MOC_SOURCES
   tools/tobrowserbasewidget.h
   tools/todescribe.h
   tools/toparamget.h
-  tools/toplsqleditor.h
-  tools/toplsqltext.h
   tools/toresultview.h
   tools/toresultcols.h
   tools/toresultdatasingle.h
   tools/toresulttableview.h
   tools/toresulttableviewedit.h
+  # tools
+  tools/toplsqleditor.h
+  tools/toplsqltext.h
+  tools/toworksheet.h
+  tools/toworksheeteditor.h
+  tools/toresultstats.h
+  tools/toresultplan.h
+  tools/tolinechart.h
+  tools/toresultbar.h
+  tools/tobarchart.h
 	)
 ADD_EXECUTABLE("test5"
   tests/test5.cpp
@@ -212,13 +220,12 @@ ADD_EXECUTABLE("test5"
   tools/tobrowserbasewidget.cpp
   tools/todescribe.cpp
   tools/toparamget.cpp
-  tools/toplsqleditor.cpp
-  tools/toplsqltext.cpp
   tools/toresultcols.cpp
   tools/toresultview.cpp
   tools/toresultdatasingle.cpp
   tools/toresulttableview.cpp
   tools/toresulttableviewedit.cpp
+  tools/toresultplan.cpp
   ${TEST5_MOC_SOURCES}
   ${PCH_SOURCE}  
   ${CORE_SOURCES}   
@@ -226,6 +233,18 @@ ADD_EXECUTABLE("test5"
   ${WIDGETS_SOURCES}
   ${LOGGING_SOURCES}
   ${EDITOR_SOURCES}
+  ${ORACLE_SOURCES}
+  # worksheet tool deps
+  tools/toworksheeteditor.cpp
+  tools/toresultstats.cpp
+  tools/tolinechart.cpp
+  tools/tolinechart.cpp
+  tools/toresultbar.cpp
+  tools/tobarchart.cpp
+  tools/toworksheet.cpp
+  # pl/sql tool deps
+  tools/toplsqleditor.cpp
+  tools/toplsqltext.cpp
   )
 TARGET_LINK_LIBRARIES("test5"
 	Qt5::Core
