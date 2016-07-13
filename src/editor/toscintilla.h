@@ -154,6 +154,12 @@ class toScintilla: public QsciScintilla //, public toEditWidget
     public slots:
         void setWordWrap(bool);
 
+        //! \reimp
+        void copy() override;
+
+        //! \reimp
+        void paste() override;
+
     protected:
         struct ToolTipData
         {
@@ -194,12 +200,6 @@ class toScintilla: public QsciScintilla //, public toEditWidget
         // to be overriden
         // unless contextMenuPolicy is set to: Qt::CustomContextMenu, which is usual when toBaseEditor is used
         void contextMenuEvent(QContextMenuEvent *) override;
-
-        //! \reimp
-        void copy() override;
-
-        //! \reimp
-        void paste() override;
 
         // Copied from Scintilla CharClassify.h (does not support UTF8)
         class CharClassify

@@ -102,6 +102,7 @@ SET(TORA_UI_SRC
   widgets/toresultcontentfilterui.ui
   widgets/toresultlistformatui.ui
   main/tosyntaxsetupui.ui
+  widgets/tosessionsetupui.ui
   widgets/toworksheetsetupui.ui
   widgets/tosearchreplaceui.ui
   main/toconnectionimportui.ui
@@ -130,6 +131,8 @@ SET(TORA_UI_SRC
 
   tools/torollbackdialogui.ui
   tools/torollbacksettingui.ui
+
+  tools/tosessiondisconnectdlgui.ui
 
   tools/tosgatracesettingui.ui
 
@@ -797,6 +800,7 @@ SET(TORA_LIBS
   ${Qt5Xml_LIBRARIES}           # dynamic qt5
   ${TORA_QSCINTILLA_LIB}        # dynamic
   ${TORA_LOKI_LIB} 		# dynamic/static
+  ${Boost_SYSTEM_LIBRARY}       # Linux only, lastest boost releases require this lib for singleton
   ermodel                       # static
   )
 
@@ -904,7 +908,9 @@ IF(ORACLE_FOUND)
   	"connection/tooracleprovider.cpp" 
   	"connection/tooracletraits.cpp" 
 	"connection/tooracleconnection.cpp" 
-	"connection/tooraclequery.cpp")
+	"connection/tooraclequery.cpp"
+	"connection/tooracledatatype.cpp"
+        )
   IF(APPLE AND TORA_DEBUG)
     SET(STACK_LIB "stack_lib")
   ENDIF()

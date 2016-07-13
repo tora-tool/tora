@@ -49,6 +49,8 @@
 #include <QMessageBox> //TODO see utis.h define TOMessageBox QMessageBox(QMessageBox should be included there)
 #include <QToolBar>
 #include <QLabel>
+#include <QtGui/QCloseEvent>
+#include <QAction>
 
 #include <iostream>
 #include <list>

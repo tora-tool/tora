@@ -23,11 +23,20 @@
 
 #elif defined(__linux__) || defined(__linux) || defined(linux) || defined(__gnu_linux__)
 #include <stdio.h>
-
+#include <unistd.h>
 #endif
 
 #else
 #error "Cannot define getPeakRSS( ) or getCurrentRSS( ) for an unknown OS."
+#endif
+
+#if 0
+size_t getTotalSystemMemory()
+{
+    long pages = sysconf(_SC_PHYS_PAGES);
+    long page_size = sysconf(_SC_PAGE_SIZE);
+    return pages * page_size / 1024 / 1024;
+}
 #endif
 
 /**
@@ -92,7 +101,7 @@ size_t getCurrentRSS( )
     if ( task_info( mach_task_self( ), MACH_TASK_BASIC_INFO,
         (task_info_t)&info, &infoCount ) != KERN_SUCCESS )
         return (size_t)0L;      /* Can't access? */
-    return (size_t)info.resident_size;
+    return (size_t)info.resident_size/1024/1024;
 
 #elif defined(__linux__) || defined(__linux) || defined(linux) || defined(__gnu_linux__)
     /* Linux ---------------------------------------------------- */
@@ -106,7 +115,7 @@ size_t getCurrentRSS( )
         return (size_t)0L;      /* Can't read? */
     }
     fclose( fp );
-    return (size_t)rss * (size_t)sysconf( _SC_PAGESIZE);
+    return (size_t)rss * (size_t)sysconf( _SC_PAGESIZE)/1024/1024;
 
 #else
     /* AIX, BSD, Solaris, and Unknown OS ------------------------ */

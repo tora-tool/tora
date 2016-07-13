@@ -85,6 +85,27 @@ void ConvertorForRead::Fire(const BindParClob &BP, SqlClob &CL)
 	}
 };
 
+void ConvertorForRead::Fire(const BindParCFile &BP, SqlClob &CL)
+{
+    CL._ind = BP.indp[_row];
+    if(CL.is_not_null())
+    {
+        sword res = OCICALL(OCILobAssign(BP._env, BP._env._errh, ((OCILobLocator**)BP.valuep)[_row], &CL._loc));
+        oci_check_error(__TROTL_HERE__, BP._env._errh, res);
+
+        char dirname[33], filename[256];
+        ub2 dirnamelen = sizeof(dirname);
+        ub2 filenamelen = sizeof(filename);
+        res = OCICALL(OCILobFileGetName(BP._env, BP._env._errh, ((OCILobLocator**)BP.valuep)[_row],
+                                        (OraText*)dirname, &dirnamelen,
+                                        (OraText*)filename, &filenamelen
+        ));
+        oci_check_error(__TROTL_HERE__, BP._env._errh, res);
+        CL._dirname = tstring(dirname, dirnamelen);
+        CL._filename = tstring(filename, filenamelen);
+    }
+};
+
 void ConvertorForRead::Fire(const BindParBlob &BP, SqlBlob &BL)
 {
 	BL._ind = BP.indp[_row];
@@ -111,6 +132,28 @@ void ConvertorForRead::Fire(const BindParBlob &BP, SqlBlob &BL)
 //		res = OCICALL(OCILobAssign(_conn._env, _conn._env._errh, other._loc, &_loc));	// no support for temporary LOBs
 //#endif
 	}
+};
+
+void ConvertorForRead::Fire(const BindParBFile &BP, SqlBlob &BL)
+{
+        BL._ind = BP.indp[_row];
+        if(BL.is_not_null())
+        {
+               sword res;
+               res = OCICALL(OCILobAssign(BP._env, BP._env._errh, ((OCILobLocator**)BP.valuep)[_row], &BL._loc));
+               oci_check_error(__TROTL_HERE__, BP._env._errh, res);
+
+               char dirname[33], filename[256];
+               ub2 dirnamelen = sizeof(dirname);
+               ub2 filenamelen = sizeof(filename);
+               res = OCICALL(OCILobFileGetName(BP._env, BP._env._errh, ((OCILobLocator**)BP.valuep)[_row],
+                                               (OraText*)dirname, &dirnamelen,
+                                               (OraText*)filename, &filenamelen
+               ));
+               oci_check_error(__TROTL_HERE__, BP._env._errh, res);
+               BL._dirname = tstring(dirname, dirnamelen);
+               BL._filename = tstring(filename, filenamelen);
+        }
 };
 
 void ConvertorForRead::Fire(const BindParNumber &BP, SqlInt<int> &BL)

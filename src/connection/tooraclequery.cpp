@@ -436,10 +436,11 @@ void oracleQuery::trotlQuery::readValue(toQValue &value)
                 }
                 break;
             case SQLT_CLOB:
+            case SQLT_CFILE:
                 {
                     toOracleClob *i = new toOracleClob(_conn);
                     trotl::ConvertorForRead c(_last_buff_row);
-                    trotl::DispatcherForRead::Go(BP, i->_data, c);
+                    trotl::DispatcherForRead::Go(BP, i->data, c);
                     QVariant v;
                     v.setValue((toQValue::complexType*)i);
                     value = toQValue::fromVariant(v);
@@ -448,6 +449,7 @@ void oracleQuery::trotlQuery::readValue(toQValue &value)
                 }
                 break;
             case SQLT_BLOB:
+            case SQLT_BFILE:
                 {
                     toOracleBlob *i = new toOracleBlob(_conn);
                     trotl::ConvertorForRead c(_last_buff_row);

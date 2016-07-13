@@ -31,8 +31,7 @@
 
 */
 
-#ifndef TROTL_LOB_H_
-#define TROTL_LOB_H_
+#pragma once
 
 #include "trotl_export.h"
 #include "trotl_common.h"
@@ -134,6 +133,7 @@ struct TROTL_EXPORT SqlLob: public SqlValue
 
 	void flush(ub4 flag=OCI_LOB_BUFFER_NOFREE);
 
+	tstring _dirname, _filename; // used only for BFILEs
 protected:
 	OciConnection&	_conn;
 	OCILobLocator*	_loc;
@@ -176,6 +176,13 @@ struct TROTL_EXPORT SqlTempBlob : public SqlBlob
 	virtual ~SqlTempBlob();
 };
 
+struct TROTL_EXPORT SqlBFile : public SqlBlob
+{
+    SqlBFile(OciConnection &conn) : SqlBlob(conn) {};
+
+    virtual ~SqlBFile() {};
+};
+
 // CLOB data holder structure
 struct TROTL_EXPORT SqlClob : public SqlLob
 {
@@ -198,6 +205,11 @@ struct TROTL_EXPORT SqlTempClob : public SqlClob
 	virtual ~SqlTempClob();
 };
 
-}
+struct TROTL_EXPORT SqlCFile : public SqlClob
+{
+    SqlCFile(OciConnection &conn) : SqlClob(conn) {};
 
-#endif
+    virtual ~SqlCFile() {};
+};
+
+}

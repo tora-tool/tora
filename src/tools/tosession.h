@@ -36,12 +36,16 @@
 #define TOSESSION_H
 
 #include "widgets/totoolwidget.h"
+#include "ui_tosessionsetupui.h"
+#include "ui_tosessiondisconnectdlgui.h"
+#include "core/tosettingtab.h"
+#include "tools/toresultlong.h"
+
 #include <QLabel>
 #include <QMenu>
 #include <QAction>
 
 #include <list>
-#include "toresultlong.h"
 
 class QComboBox;
 class QSplitter;
@@ -63,7 +67,38 @@ class toRefreshCombo;
 
 #define TO_SESSION_WAIT "toSession:SessionWait"
 #define TO_SESSION_IO   "toSession:SessionIO"
-#define TO_SESSION_TXN   "toSession:SessionTXN"
+#define TO_SESSION_TXN  "toSession:SessionTXN"
+
+namespace ToConfiguration
+{
+    class Session : public ConfigContext
+    {
+            Q_OBJECT;
+            Q_ENUMS(OptionTypeEnum);
+        public:
+            Session() : ConfigContext("Session", ENUM_REF(Session,OptionTypeEnum)) {};
+            enum OptionTypeEnum
+            {
+                KillProcUseKillProcBool = 17000,
+                KillProcName,
+                KillProcSID,
+                KillProcSerial,
+                KillProcInstance,
+                KillProcInstanceBool,
+                KillProcImmediate,
+                KillProcImmediateBool,
+                KillSessionModeInt
+            };
+
+            enum KillSessionModeEnum
+            {
+                Disconnect = 1,
+                Kill,
+                KillImmediate
+            };
+            QVariant defaultValue(int option) const;
+    };
+};
 
 class toSession : public toToolWidget
 {
@@ -111,12 +146,14 @@ class toSession : public toToolWidget
         void updateSchemas(void);
         void enableStatistics(bool enable);
 
+        friend class toSessionSetting;
     public:
         toSession(QWidget *parent, toConnection &connection);
         ~toSession();
 
         bool canHandle(const toConnection &conn) override;
 
+        static QString sessionKillProcOracle(ToConfiguration::Session::KillSessionModeEnum, const QMap<QString,QString> params);
     public slots:
         void slotChangeTab(int);
         void slotChangeItem();
@@ -140,10 +177,56 @@ class toSession : public toToolWidget
         void slotFilterChanged(const QString &text);
     protected:
         bool eventFilter(QObject *obj, QEvent *event) override;
+
+        static const QString DISCONNECT;
+        static const QString ALTER;
+        static const QString KPROC;
 };
 
 #ifdef TOEXTENDED_MYSQL
 #include "tosessionmysql.h"
 #endif
+
+class toSessionDisconnect : public QDialog, public Ui::toDisconnectDlg
+{
+    Q_OBJECT;
+    friend class toSession;
+public:
+    toSessionDisconnect(toResultTableView *sessionView, QWidget *parent = 0, const char *name = 0);
+protected:
+    enum ReturnType
+    {
+        Rejected = Rejected,
+        Accepted =  QDialog::Accepted,
+        Copy = 10
+    };
+private slots:
+    void slotKillDisconnect();
+    void slotKill();
+    void slotKillImmediate();
+    void slotCopy();
+    void slotExecuteAll();
+private:
+    toResultTableView *SessionView;
+};
+
+class toSessionSetting
+    : public QWidget
+    , public Ui::toSessionSetupUI
+    , public toSettingTab
+{
+        Q_OBJECT;
+        toTool *Tool;
+
+    public:
+        toSessionSetting(toTool *tool, QWidget* parent = 0, const char* name = 0);
+
+        void saveSetting(void) override;
+    private slots:
+        void killProcToggled(bool);
+        void composeKillProc();
+
+    private:
+};
 
 #endif

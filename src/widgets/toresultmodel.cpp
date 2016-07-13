@@ -515,56 +515,61 @@ QVariant toResultModel::data(const QModelIndex &index, int role) const
     toRowDesc rowDesc = row[0].getRowDesc();
     QFont fontRet;
 
-    switch (role)
-    {
-        case Qt::ToolTipRole:
-            if (data.isNull())
-                return data.toQVariant();
-            if (data.isComplexType())
-            {
-                toQValue::complexType *i = data.toQVariant().value<toQValue::complexType*>();
-                return QVariant(i->tooltipData());
-            }
-            return data.toQVariant();
-        case Qt::EditRole:
-            if (data.isComplexType())
-            {
-                toQValue::complexType *i = data.toQVariant().value<toQValue::complexType*>();
-                return QVariant(i->editData());
-            }
-            return QVariant(data.editData());
-        case Qt::DisplayRole:
-            if (data.isComplexType())
-            {
-                toQValue::complexType *i = data.toQVariant().value<toQValue::complexType*>();
-                return QVariant(i->displayData());
-            }
-            if (index.column() == 0)
-                return QVariant(rowDesc.key);
-            return QVariant(data.displayData());
-        case Qt::BackgroundRole:
-            if (data.isNull() && toConfigurationNewSingle::Instance().option(ToConfiguration::Database::IndicateEmptyBool).toBool())
-                return QVariant(QColor(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::IndicateEmptyColor).toString()));
-            if (index.column() == 0)
-            {
-                return QPalette().color(QPalette::Window);
-            }
-            return QVariant();
-        case Qt::TextAlignmentRole:
-            return (int) Headers.at(index.column()).align;
-        case Qt::UserRole:
-            return data.toQVariant();
-        case Qt::FontRole:
-            if (rowDesc.status == REMOVED)
-                fontRet.setStrikeOut(true);
-            else if (rowDesc.status == ADDED)
-                fontRet.setBold(true);
-            else if (rowDesc.status == MODIFIED)
-                fontRet.setItalic(true);
-            return fontRet;
-        default:
-            return QVariant();
-    }
+	try
+	{
+		switch (role)
+		{
+		case Qt::ToolTipRole:
+			if (data.isNull())
+				return data.toQVariant();
+			if (data.isComplexType())
+			{
+				toQValue::complexType *i = data.toQVariant().value<toQValue::complexType*>();
+				return QVariant(i->tooltipData());
+			}
+			return data.toQVariant();
+		case Qt::EditRole:
+			if (data.isComplexType())
+			{
+				toQValue::complexType *i = data.toQVariant().value<toQValue::complexType*>();
+				return QVariant(i->editData());
+			}
+			return QVariant(data.editData());
+		case Qt::DisplayRole:
+			if (data.isComplexType())
+			{
+				toQValue::complexType *i = data.toQVariant().value<toQValue::complexType*>();
+				return QVariant(i->displayData());
+			}
+			if (index.column() == 0)
+				return QVariant(rowDesc.key);
+			return QVariant(data.displayData());
+		case Qt::BackgroundRole:
+			if (data.isNull() && toConfigurationNewSingle::Instance().option(ToConfiguration::Database::IndicateEmptyBool).toBool())
+				return QVariant(QColor(toConfigurationNewSingle::Instance().option(ToConfiguration::Database::IndicateEmptyColor).toString()));
+			if (index.column() == 0)
+			{
+				return QPalette().color(QPalette::Window);
+			}
+			return QVariant();
+		case Qt::TextAlignmentRole:
+			return (int)Headers.at(index.column()).align;
+		case Qt::UserRole:
+			return data.toQVariant();
+		case Qt::FontRole:
+			if (rowDesc.status == REMOVED)
+				fontRet.setStrikeOut(true);
+			else if (rowDesc.status == ADDED)
+				fontRet.setBold(true);
+			else if (rowDesc.status == MODIFIED)
+				fontRet.setItalic(true);
+			return fontRet;
+		default:
+			return QVariant();
+		}
+	}
+	TOCATCH
+
     return QVariant();
 }
 
