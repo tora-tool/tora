@@ -52,12 +52,13 @@ toWorksheetText::toWorksheetText(QWidget *parent, const char *name)
     , editorType(SciTe)
     , popup(new toComplPopup(this))
     , m_complAPI(NULL)
-    , complTimer(new QTimer(this))
+    , m_complTimer(new QTimer(this))
     , m_bookmarkHandle(QsciScintilla::markerDefine(QsciScintilla::Background))
     , m_bookmarkMarginHandle(QsciScintilla::markerDefine(QsciScintilla::RightTriangle))
     , m_completeEnabled(toConfigurationNewSingle::Instance().option(Editor::CodeCompleteBool).toBool())
+    , m_completeDelayed((toConfigurationNewSingle::Instance().option(Editor::CodeCompleteDelayInt).toInt() > 0))
 {
-	if (m_completeEnabled)
+	if (m_completeEnabled && !m_completeDelayed)
 	{
 		QsciScintilla::setAutoCompletionThreshold(1); // start when a single leading word's char is typed
 		QsciScintilla::setAutoCompletionUseSingle(QsciScintilla::AcusExplicit);
@@ -85,7 +86,7 @@ toWorksheetText::toWorksheetText(QWidget *parent, const char *name)
         QsciScintilla::setEdgeMode(QsciScintilla::EdgeNone);
 
     connect (this, SIGNAL(cursorPositionChanged(int, int)), this, SLOT(positionChanged(int, int)));
-    connect( complTimer, SIGNAL(timeout()), this, SLOT(autoCompleteFromAPIs()) );
+    connect( m_complTimer, SIGNAL(timeout()), this, SLOT(autoCompleteFromAPIs()) );
 
     connect(&toEditorTypeButtonSingle::Instance(),
             SIGNAL(toggled(int)),
@@ -166,13 +167,13 @@ void toWorksheetText::positionChanged(int row, int col)
 
 	if (col <= 0)
     {
-    	complTimer->stop();
+    	m_complTimer->stop();
     	return;
     }
 
 	// Cursor is not at EOL, not before any word character
 	if( currentChar != 0 && CharClass(currentChar) != CharClassify::ccWord && CharClass(currentChar) != CharClassify::ccSpace) {
-    	complTimer->stop();
+    	m_complTimer->stop();
     	return;
     }
 
@@ -180,9 +181,9 @@ void toWorksheetText::positionChanged(int row, int col)
 	{
 		position = SendScintilla(QsciScintilla::SCI_POSITIONBEFORE, position);
 		currentChar = getWCharAt(position);
-		if (m_completeEnabled && currentChar == L'.')
+		if (m_completeEnabled && m_completeDelayed && currentChar == L'.')
 		{
-			complTimer->start(toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::CodeCompleteDelayInt).toInt());
+			m_complTimer->start(toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::CodeCompleteDelayInt).toInt());
 			return;
 		}
 		if (CharClass(currentChar) != CharClassify::ccWord)
@@ -198,7 +199,7 @@ void toWorksheetText::positionChanged(int row, int col)
 #if 0
 void toWorksheetText::autoCompleteFromAPIs()
 {
-    complTimer->stop(); // it's a must to prevent infinite reopening
+    m_complTimer->stop(); // it's a must to prevent infinite reopening
     {
         toScintilla::autoCompleteFromAPIs();
         return;
@@ -209,7 +210,7 @@ void toWorksheetText::autoCompleteFromAPIs()
 // the Tora way of autocomletition
 void toWorksheetText::autoCompleteFromAPIs()
 {
-    complTimer->stop(); // it's a must to prevent infinite reopening
+    m_complTimer->stop(); // it's a must to prevent infinite reopening
 
     Utils::toBusy busy;
     toConnection &connection = toConnection::currentConnection(this);

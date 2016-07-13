@@ -120,7 +120,7 @@ class toWorksheetText : public toSqlText
 
     protected:
         QsciAbstractAPIs* m_complAPI;
-        QTimer* complTimer;
+        QTimer* m_complTimer;
 
         //! \brief A handler for current line highlighting - margin
         // FIXME: disabled due repainting issues
@@ -132,7 +132,7 @@ class toWorksheetText : public toSqlText
         //! \brief Bookrmarks handler list used for navigation (next/prev)
         QList<int> m_bookmarks;
 
-        bool m_completeEnabled;
+        bool m_completeEnabled, m_completeDelayed;
 };
 
 /**
