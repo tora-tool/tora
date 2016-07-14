@@ -30,6 +30,7 @@ OPTION(TEST_APP4 "simple application - execute toHighlightedText in separate app
 OPTION(TEST_APP5 "simple application - single tool(tabbed)" OFF)
 OPTION(TEST_APP6 "simple application parser(boost/spirit+.dot)" OFF)
 OPTION(TEST_APP7 "simple application parser" OFF)
+OPTION(TEST_APP8 "simple application - wget" ON)
 
 #Set our CMake minimum version
 #Require 2.4.2 for Qt finding
@@ -109,8 +110,8 @@ ENDIF(APPLE)
 # The plugin's .dll must be linked against one of them (usually against tora.lib). 
 # Change this setting if you're compiling some test program(otherwise the test will SEGFAULT)
 IF(WIN32)
-  SET(TORA_LIB ${EXE_NAME}) 
-  #SET(TORA_LIB test4)
+  #SET(TORA_LIB ${EXE_NAME}) 
+  SET(TORA_LIB test5)
 ENDIF()
 
 # Ok, it has to be called after project is set. The we are sure we have size of void pointer set correctly...
