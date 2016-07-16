@@ -58,7 +58,6 @@
 #if QT_VERSION >= 0x050000
 #define TO_ESCAPE(string) string.toHtmlEscaped()
 #else
-#include <QtCore/Qt>
 #define TO_ESCAPE(string) Qt::escape(string)
 #endif
 

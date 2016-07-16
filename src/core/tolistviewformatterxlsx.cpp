@@ -110,7 +110,7 @@ QString toListViewFormatterXLSX::getFormattedString(toExportSettings &settings, 
             if (data.isNull())
                 value = "{null}";
             else
-                value = TO_ESCAPE(data.toString().toHtmlEscaped());
+                value = TO_ESCAPE(data.toString());
 
             output += ROW_LINE.arg("String").arg(value);
         }
