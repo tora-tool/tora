@@ -44,6 +44,7 @@
 #include "core/utils.h"
 #include "core/toconfiguration.h"
 #include "core/toglobalconfiguration.h"
+#include "widgets/toupdater.h"
 
 #include <QtCore/QDir>
 #include <QtCore/QLibrary>
@@ -236,6 +237,8 @@ int main(int argc, char **argv)
     }
 
     QSet<QString> options;
+
+    toUpdaterSingle::Instance().check();
 
     new Test5Window(user, password, database, options);
     int ret = qApp->exec();

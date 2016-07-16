@@ -47,6 +47,7 @@
 #include "core/tologger.h"
 #include "core/toglobalconfiguration.h"
 #include "core/todatabaseconfig.h"
+#include "widgets/toupdater.h"
 
 #ifndef Q_OS_WIN32
 #include <unistd.h>
@@ -72,6 +73,7 @@
 #include <QStyleFactory>
 #include <QApplication>
 #include <QMessageBox>
+#include <QtNetwork/QNetworkProxyFactory>
 
 int main(int argc, char **argv)
 {
@@ -80,6 +82,7 @@ int main(int argc, char **argv)
      * "Fatal IO error 11 (Resource temporarily unavailable) on X server :0"
      */
     QCoreApplication::setAttribute(Qt::AA_X11InitThreads); //  or just XInitThreads();
+    //QNetworkProxyFactory::setUseSystemConfiguration(true);
     toConfigurationNew::setQSettingsEnv();
 
     /*! \warning: Keep the code before QApplication init as small
@@ -150,14 +153,19 @@ int main(int argc, char **argv)
             toSplash splash(NULL);
             splash.show();
 
+            //toUpdaterSingle::Instance().check();
+
             QList<QString> plugins;
 #ifdef Q_OS_WIN
+#if 1
             QString mysqlHome(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::MysqlHomeDirectory).toString());
             QDir mysqlHomeDir(mysqlHome);
             QFileInfo mysqllib(mysqlHomeDir, "libmysql.dll");
             if (!mysqlHome.isEmpty() && mysqlHomeDir.exists() && Utils::toLibrary::isValidLibrary(mysqllib))
             {
+#if 0
                 QCoreApplication::addLibraryPath(mysqlHome);
+#endif
                 plugins << mysqllib.absoluteFilePath();
             }
 
@@ -174,6 +182,7 @@ int main(int argc, char **argv)
                 plugins << pgsqlHome + QDir::separator() + "bin" + QDir::separator() + "libpq.dll";
                 plugins << pgsqlHome + QDir::separator() + "lib" + QDir::separator() + "libpq.dll";
             }
+#endif
 #endif
 
 #ifdef PROVIDERS_PATH

@@ -33,6 +33,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "widgets/toabout.h"
+#include "widgets/toupdater.h"
 
 #include "core/toconf.h"
 #include "core/COPYRIGHT.h"
@@ -110,6 +111,27 @@ toAbout::toAbout(QWidget* parent, const char* name, bool modal)
 
 		textBrowserVersion->setHtml(version);
 	}
+
+
+#if defined(Q_OS_WIN32)
+	{
+        QWidget *tabNewVersion = new QWidget();
+        tabNewVersion->setObjectName(QStringLiteral("tabNewVersion"));
+        verticalLayout_4 = new QVBoxLayout(tabNewVersion);
+        verticalLayout_4->setSpacing(0);
+        verticalLayout_4->setObjectName(QStringLiteral("verticalLayout_4"));
+        verticalLayout_4->setContentsMargins(0, 0, 0, 0);
+
+        toUpdater *textUpdate = &toUpdaterSingle::Instance();
+        textUpdate->check();
+        textUpdate->setObjectName(QStringLiteral("tabNewVersion"));
+
+        verticalLayout_4->addWidget(textUpdate);
+        tabLicense->addTab(tabNewVersion, QString());
+        tabLicense->setTabText(tabLicense->indexOf(tabNewVersion), QApplication::translate("toAboutUI", "NewVersion", 0));
+	}
+#endif
+
 }
 
 toAbout::~toAbout()

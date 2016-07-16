@@ -264,6 +264,7 @@ SET(TORA_MOC_CLASSES
   widgets/totreewidget.h
   widgets/toworkingwidget.h
   widgets/toworkspace.h
+  widgets/toupdater.h
 
   core/tohelpcontext.h
   core/tosettingtab.h
@@ -518,7 +519,8 @@ SET(TORA_SOURCES
   widgets/totreewidget.cpp
   widgets/toworkingwidget.cpp
   widgets/toworkspace.cpp
-  
+  widgets/toupdater.cpp
+
   core/utils.cpp
   core/utils_part.cpp
 

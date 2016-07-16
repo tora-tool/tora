@@ -10,7 +10,7 @@ QNAMRedirect::QNAMRedirect(QWidget *parent)
 	: QMainWindow(parent)
 {
 	_qnam = createQNAM();
-	//_originalUrl = "http://sourceforge.net/projects/tora/files/tora/LastVersion.txt/download";
+	_originalUrl = "http://sourceforge.net/projects/tora/files/tora/LastVersion.txt/download";
 
 	QVBoxLayout* layout = new QVBoxLayout;
 
