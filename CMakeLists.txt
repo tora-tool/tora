@@ -110,8 +110,8 @@ ENDIF(APPLE)
 # The plugin's .dll must be linked against one of them (usually against tora.lib). 
 # Change this setting if you're compiling some test program(otherwise the test will SEGFAULT)
 IF(WIN32)
-  #SET(TORA_LIB ${EXE_NAME}) 
-  SET(TORA_LIB test5)
+  SET(TORA_LIB ${EXE_NAME}) 
+  #SET(TORA_LIB test5)
 ENDIF()
 
 # Ok, it has to be called after project is set. The we are sure we have size of void pointer set correctly...
