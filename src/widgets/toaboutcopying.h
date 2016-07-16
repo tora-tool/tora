@@ -34,17 +34,14 @@
 
 #pragma once
 
-#include "ui_toaboutui.h"
+#include "ui_toaboutcopyingui.h"
 
-class toAbout : public QDialog, public Ui::toAboutUI
+#include <QWidget>
+
+class toAboutCopying : public QWidget, public Ui::toAboutCopyingUI
 {
-        Q_OBJECT
+	Q_OBJECT
 
-    public:
-
-        toAbout(QWidget* parent = 0, const char* name = 0, bool modal = false);
-        virtual ~toAbout();
-
-    protected slots:
-		void updateVersionTab(QString);
+public:
+	toAboutCopying(QWidget* parent = 0, const char* name = 0);
 };

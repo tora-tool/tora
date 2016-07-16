@@ -261,5 +261,10 @@
 
 	<file>widgets/toabout.html</file>
 	<file>widgets/gpl-2.0-standalone.html</file>
+        <file>widgets/COPYRIGHT.TOra.txt</file>
+        <file>widgets/LICENSE.OpenSSL.txt</file>
+        <file>widgets/LICENSE.ANTLR.txt</file>
+        <file>widgets/LICENSE.KGraphViewer.txt</file>
+        <file>widgets/LICENSE.ExtendedTabs.txt</file>
     </qresource>
 </RCC>

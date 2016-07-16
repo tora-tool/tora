@@ -33,14 +33,14 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "widgets/toabout.h"
-
+#include "core/toupdater.h"
 #include "core/toconf.h"
-#include "core/COPYRIGHT.h"
 #include "core/toraversion.h"
 
 #include "icons/largelogo.xpm"
 
 #include <QtCore/QStringRef>
+#include <QtCore/QFile>
 
 #ifdef TORA_EXPERIMENTAL
 #include "core/tomemory.h"
@@ -79,7 +79,7 @@ toAbout::toAbout(QWidget* parent, const char* name, bool modal)
 
 	// Copyright Tab
 	{
-		textBrowserCopyright->setHtml(CopyrightText);
+
 	}
 
 	// Version Tab
@@ -91,7 +91,7 @@ toAbout::toAbout(QWidget* parent, const char* name, bool modal)
 		version.append(format.arg("GITVERSION").arg(GITVERSION));
 		version.append(format.arg("GITVERSION_MAJOR").arg(GITVERSION_MAJOR));
 		version.append(format.arg("GITVERSION_MINOR").arg(GITVERSION_MINOR));
-		version.append(format.arg("GIT_BUILD_TYPE").arg(GIT_BUILD_TYPE));
+		version.append(format.arg("GIT_TYPE").arg(GIT_BUILD_TYPE));
 		version.append(format.arg("GITVERSION_COUNT").arg(GITVERSION_COUNT));
 		version.append(format.arg("GITVERSION_SHA1").arg(GITVERSION_SHA1));
 		version.append(format.arg("GITVERSION_SHORT").arg(GITVERSION_SHORT));
@@ -102,16 +102,33 @@ toAbout::toAbout(QWidget* parent, const char* name, bool modal)
 #else
 		version = TORAVERSION;
 #endif
+		textBrowserVersion->setHtml(version);
 
+#if defined(Q_OS_WIN32)
+		toUpdater &tu = toUpdaterSingle::Instance();
+		connect(&tu, SIGNAL(updatingChanged(QString)), this, SLOT(updateVersionTab(QString)));
+		connect(&tu, SIGNAL(updatingFinished(QString)), this, SLOT(updateVersionTab(QString)));
+		connect(updateButton, SIGNAL(clicked()), &tu, SLOT(check()));
+#endif
+	}
+
+
+	// Memory tab
 #ifdef TORA_EXPERIMENTAL
-		version.append("<br>");
-		version.append("Memory usage: ").append(QString::number((qulonglong)getCurrentRSS())).append(" M");
+	{
+		QString usage("Memory usage: %1 M");
+		textBrowserMemory->setPlainText(usage.arg(QString::number((qulonglong)getCurrentRSS())));
+	}
+#else
 #endif
 
-		textBrowserVersion->setHtml(version);
-	}
 }
 
 toAbout::~toAbout()
 {
+}
+
+void toAbout::updateVersionTab(QString version)
+{
+	textBrowserUpdate->setText(version);
 }

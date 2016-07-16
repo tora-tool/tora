@@ -68,6 +68,9 @@ namespace ToConfiguration
                 , MessageStatusbarBool  // #define CONF_MESSAGE_STATUSBAR
                 , ColorizedConnectionsBool
                 , ColorizedConnectionsMap
+                , UpdateStateInt        // 0 update is not running, 1 update is running, 2 TOra crashed, do not try again on startup
+                , UpdateLastDate        // last date update was run
+                , UpdatesCheckBool
                 // Options (2nd column)
                 , StatusMessageInt      // #define CONF_STATUS_MESSAGE
                 , HistorySizeInt        // #define CONF_STATUS_SAVE

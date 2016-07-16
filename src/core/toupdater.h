@@ -34,17 +34,47 @@
 
 #pragma once
 
-#include "ui_toaboutui.h"
+#include <QtCore/QObject>
+#include <QtCore/QString>
+#include <QtCore/QUrl>
+#include <QtCore/QSet>
 
-class toAbout : public QDialog, public Ui::toAboutUI
+#include "loki/Singleton.h"
+
+class QNetworkReply;
+class QNetworkAccessManager;
+
+class toUpdater : public QObject
 {
-        Q_OBJECT
+    Q_OBJECT
 
-    public:
+public:
+	toUpdater();
+	virtual ~toUpdater();
 
-        toAbout(QWidget* parent = 0, const char* name = 0, bool modal = false);
-        virtual ~toAbout();
+	QString version() const { return m_version; };
+public slots:
+	void check(bool force = true);
 
-    protected slots:
-		void updateVersionTab(QString);
+signals:
+	void updatingChanged(QString);
+	void updatingFinished(QString);
+
+private slots:
+	//void doRequest();
+	void replyFinished(QNetworkReply* reply);
+
+private:
+	bool m_updated;
+	bool m_mode;
+	QNetworkAccessManager *m_qnam;
+	QUrl m_originalUrl;
+	QUrl m_urlRedirectedTo;
+	QSet<QUrl> m_oldUrls;
+	QString m_version;
+
+	QNetworkAccessManager* createQNAM();
+	QUrl redirectUrl(const QUrl& possibleRedirectUrl);
 };
+
+class toUpdaterSingle: public ::Loki::SingletonHolder<toUpdater, Loki::CreateUsingNew, Loki::NoDestroy> {};

@@ -38,6 +38,7 @@
 #include <QtCore/QDir>
 #include <QtCore/QLocale>
 #include <QtCore/QSettings>
+#include <QtCore/QDate>
 
 #include "core/toconf.h"
 #include "core/utils.h"
@@ -130,6 +131,12 @@ QVariant ToConfiguration::Global::defaultValue(int option) const
                 retval["#0000FF"] = QVariant("Testing");
                 return retval;
             }
+        case UpdateStateInt:        // 0 update is not running, 1 update is running, 2 TOra crashed, do not try again on startup
+        	return QVariant((int)0);
+        case UpdateLastDate:        // last date update was run
+        	return QVariant(QDate());
+        case UpdatesCheckBool:
+        	return QVariant((bool)true);
             // Options: (2nd column)
         case StatusMessageInt:
             return QVariant((int)5);

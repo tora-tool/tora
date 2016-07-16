@@ -254,6 +254,20 @@ void toConfigurationNew::setOption <bool>(int option, bool const&newVal)
     m_configMap[option] = QVariant(newVal);
 }
 
+template<> TORA_EXPORT
+void toConfigurationNew::setOption <QDate>(int option, QDate const&newVal)
+{
+#ifdef QT_DEBUG
+    ToConfiguration::ConfigContext const* ctx = m_configContextPtrMap.value(option);
+    QVariant val = ctx->defaultValue(option);
+    Q_ASSERT_X(QVariant::Date == val.type(), qPrintable(__QHERE__), qPrintable(QString("Option enum: %1 oldtype: %2 newtype QDate")
+               .arg(option)
+               .arg(val.typeName())
+                                                                              ));
+#endif
+    m_configMap[option] = QVariant(newVal);
+}
+
 void toConfigurationNew::logUnknownOption(QString const&)
 {
 

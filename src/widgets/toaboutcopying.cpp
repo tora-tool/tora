@@ -32,19 +32,45 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#pragma once
+#include "widgets/toaboutcopying.h"
 
-#include "ui_toaboutui.h"
+#include <QtCore/QFile>
 
-class toAbout : public QDialog, public Ui::toAboutUI
+toAboutCopying::toAboutCopying(QWidget* parent, const char* name)
+    : QWidget(parent)
 {
-        Q_OBJECT
+    if (name)
+        setObjectName(name);
 
-    public:
-
-        toAbout(QWidget* parent = 0, const char* name = 0, bool modal = false);
-        virtual ~toAbout();
-
-    protected slots:
-		void updateVersionTab(QString);
-};
+    setupUi(this);
+    {
+    	QFile f(":/widgets/COPYRIGHT.TOra.txt");
+    	f.open(QFile::ReadOnly);
+    	QString LicenseText = QString::fromUtf8(f.readAll());
+    	textTora->setPlainText(LicenseText);
+    }
+    {
+    	QFile f(":/widgets/LICENSE.OpenSSL.txt");
+    	f.open(QFile::ReadOnly);
+    	QString LicenseText = QString::fromUtf8(f.readAll());
+    	textOpenSSL->setPlainText(LicenseText);
+    }
+    {
+    	QFile f(":/widgets/LICENSE.ANTLR.txt");
+    	f.open(QFile::ReadOnly);
+    	QString LicenseText = QString::fromUtf8(f.readAll());
+    	textANTLR->setPlainText(LicenseText);
+    }
+    {
+    	QFile f(":/widgets/LICENSE.KGraphViewer.txt");
+    	f.open(QFile::ReadOnly);
+    	QString LicenseText = QString::fromUtf8(f.readAll());
+    	textKgraph->setPlainText(LicenseText);
+    }
+    {
+    	QFile f(":/widgets/LICENSE.ExtendedTabs.txt");
+    	f.open(QFile::ReadOnly);
+    	QString LicenseText = QString::fromUtf8(f.readAll());
+    	textExtendedTabs->setPlainText(LicenseText);
+    }
+}
