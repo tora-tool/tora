@@ -44,8 +44,8 @@
 #include <QtCore/QPointer>
 #include <QtCore/QUrl>
 
-toUpdater::toUpdater(QWidget *parent)
-	: QTextBrowser(parent)
+toUpdater::toUpdater()
+	: QObject()
     , m_updated(false)
 {
 	m_qnam = createQNAM();
@@ -72,9 +72,7 @@ void toUpdater::check()
 {
 	if (m_updated)
 		return;
-	QString text = "toUpdater::doRequest doing request to ";
-	text.append(this->m_originalUrl.toString());
-	setText(text);
+	m_version = QString("toUpdater::doRequest doing request to ").arg(m_originalUrl.toString());
 
 	/* Let's just create network request for this predefined URL... */
 	QNetworkRequest request;
@@ -92,10 +90,11 @@ void toUpdater::replyFinished(QNetworkReply* reply)
 	if (reply->error() != QNetworkReply::NoError)
 	{
 		QString errorMsg = QString("Error: %1").arg(ENUM_NAME(QNetworkReply, NetworkError, reply->error()));
-		setText(errorMsg);
+		m_version.append(errorMsg);
 		reply->deleteLater();
 		reply = NULL;
 		m_updated = true;
+		emit updatingFinished(m_version);
 		return;
 	}
 
@@ -127,18 +126,20 @@ void toUpdater::replyFinished(QNetworkReply* reply)
 		 * so we arrived to the final destination...
 		 */
 		QString text = QString("QNAMRedirect::replyFinished: Arrived to %1\n%2").arg(reply->url().toString()).arg(QString(body));
-		setText(text);
+		m_version.append(text);
 		/* ...so this can be cleared. */
 		m_urlRedirectedTo.clear();
 		m_updated = true;
+		emit updatingFinished(m_version);
 		break;
 	}
 	default:
 		QString errorMsg = QString("Error: %1").arg(ENUM_NAME(QNetworkReply, NetworkError, reply->error()));
-		setText(errorMsg);
+		m_version.append(errorMsg);
 		reply->deleteLater();
 		reply = NULL;
 		m_updated = true;
+		emit updatingFinished(m_version);
 		return;
 	}
 
@@ -146,7 +147,7 @@ void toUpdater::replyFinished(QNetworkReply* reply)
 	if(!m_urlRedirectedTo.isEmpty())
 	{
 		QString text = QString("QNAMRedirect::replyFinished: Redirected to %1").arg(m_urlRedirectedTo.toString());
-		setText(text);
+		m_version.append(text);
 
 		/* We'll do another request to the redirection url. */
 		QNetworkRequest request;
@@ -154,6 +155,9 @@ void toUpdater::replyFinished(QNetworkReply* reply)
 		request.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::AlwaysNetwork);
 		request.setRawHeader("User-Agent", "TOraUpdater");
 		this->m_qnam->get(request);
+		emit updatingChanged(m_version);
+	} else {
+		emit updatingFinished(m_version);
 	}
 	/* Clean up. */
 	reply->deleteLater();

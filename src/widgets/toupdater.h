@@ -34,22 +34,28 @@
 
 #pragma once
 
-#include <QTextBrowser>
+#include <QtCore/QObject>
+#include <QtCore/QString>
 #include <QtCore/QUrl>
 
 class QNetworkReply;
 class QNetworkAccessManager;
 
-class toUpdater : public QTextBrowser
+class toUpdater : public QObject
 {
     Q_OBJECT
 
 public:
-	toUpdater(QWidget *parent = 0);
-	~toUpdater();
+	toUpdater();
+	virtual ~toUpdater();
 
+	QString version() const { return m_version; };
 public slots:
 	void check();
+
+signals:
+	void updatingChanged(QString);
+	void updatingFinished(QString);
 
 private slots:
 	//void doRequest();
@@ -61,6 +67,7 @@ private:
 	QUrl m_originalUrl;
 	QUrl m_urlRedirectedTo;
 	QSet<QUrl> m_oldUrls;
+	QString m_version;
 
 	QNetworkAccessManager* createQNAM();
 	QUrl redirectUrl(const QUrl& possibleRedirectUrl);
