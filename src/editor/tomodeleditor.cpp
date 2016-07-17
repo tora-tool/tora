@@ -134,6 +134,7 @@ toModelEditor::toModelEditor(QWidget *parent,
 
     Editable = Model->flags(Current) & Qt::ItemIsEditable;
     Editor->sciEditor()->setReadOnly(!Editable);
+    Editor->sciEditor()->installEventFilter(this);
     Editor->setFocus();
     Editor->setWordWrap(true);
 
@@ -262,6 +263,22 @@ toModelEditor::toModelEditor(QWidget *parent,
     changePosition(Current);
     if (!modal)
         show();
+}
+
+bool toModelEditor::eventFilter(QObject *obj, QEvent *event)
+{
+    if (obj != Editor->sciEditor())
+        return false;
+    if(event->type() == QEvent::KeyPress)
+    {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+        if(keyEvent->key() == Qt::Key_Escape || keyEvent->key() == Qt::Key_Return)
+        {
+            close();
+            return true; // mark the event as handled
+        }
+    }
+    return false;
 }
 
 void toModelEditor::readSettings()

@@ -7293,11 +7293,38 @@ static toSQL SQLDbmsMetadataGetDir("toOracleExtract:DbmsMetadataGetDir",
                                    "                             :nam<char[100]>) FROM dual",
                                    "Get directory creation ddl using dbms_metadata package");
 
+
+static toSQL SQLDbmsMetadataUser    ("toOracleExtract:DbmsMetadataUser",
+        "SELECT DBMS_METADATA.get_ddl(:typ<char[100]>, :nam<char[31]>) FROM dual",
+        "Get DDL for USER"
+        );
+
+static toSQL SQLDbmsMetadataRoles    ("toOracleExtract:DbmsMetadataRoles",
+        "SELECT DBMS_METADATA.GET_GRANTED_DDL('ROLE_GRANT', :nam<char[31]>) from dual",
+        "Get DDL for USER's ROLES");
+
+static toSQL SQLDbmsMetadataObjGrant("toOracleExtract:DbmsMetadataObjGrant",
+        "SELECT DBMS_METADATA.GET_GRANTED_DDL('OBJECT_GRANT', :nam<char[31]>) from dual",
+        "Get DDL for USER's object GRANTS");
+
+static toSQL SQLDbmsMetadataSysGrant("toOracleExtract:DbmsMetadataSysGrant"
+        , "SELECT DBMS_METADATA.GET_GRANTED_DDL('SYSTEM_GRANT', :nam<char[31]>) from dual",
+        "Get DDL for USER's system GRANTS");
+
+static toSQL SQLDbmsMetadataQuota   ("toOracleExtract:DbmsMetadataQuota",
+        "SELECT DBMS_METADATA.GET_GRANTED_DDL('TABLESPACE_QUOTA', :nam<char[31]>) from dual"
+        ,"GET DDL FOR USERS's tablespace QUOTAs");
+
+static toSQL SQLDbmsMetadataDefRole ("toOracleExtract:DbmsMetadataDefRole",
+        "SELECT DBMS_METADATA.GET_GRANTED_DDL('DEFAULT_ROLE', :nam<char[31]>) from dual"
+        ,"Get DDL for USER's default ROLE(s)");
+
 static toSQL SQLDbmsMetadataSetTransform("toOracleExtract:DbmsMetadataGetSetTransform",
-        "begin                                                                                            \n"
-        " DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'SQLTERMINATOR',true);        \n"
-        " DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,'CONSTRAINTS_AS_ALTER',true); \n"
-        "end;                                                                                             \n",
+        "begin                                                                                             \n"
+        " DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM, 'SQLTERMINATOR',true);        \n"
+        " DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM, 'PRETTY', true);              \n"
+        " DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM, 'CONSTRAINTS_AS_ALTER',true); \n"
+        "end;                                                                                              \n",
         "Configure dbms_metadata package");
 
 QString toOracleExtract::createMetadata(toExtract &ext, const QString &owner, const QString &name, const QString &type) const
@@ -7319,8 +7346,83 @@ QString toOracleExtract::createMetadata(toExtract &ext, const QString &owner, co
     else if (type == "PACKAGE")
     	type2 = "PACKAGE_SPEC";
 
-    if (type != "DIRECTORY")
+    if (type == "DIRECTORY")
     {
+        toQuery inf(conn, SQLDbmsMetadataGetDir, toQueryParams() << type << name);
+        if (inf.eof())
+            throw qApp->translate("toOracleExtract", "Couldn't get meta information for %1 %2").arg(type).arg(name);
+
+        if (PROMPT)
+            ret = QString("PROMPT CREATE OR REPLACE %1 %2\n\n").
+            arg(type).
+            arg(QUOTE(name));
+        toQValue sql = inf.readValue();
+        ret += sql.userData();
+    } else if (type == "USER" || type == "ROLE") {
+        try {
+            toQuery user(conn, SQLDbmsMetadataUser, toQueryParams() << type << name);
+            if (user.eof()) throw qApp->translate("toOracleExtract", "Couldn't get meta information for user %1").arg(name);
+            if (PROMPT) ret += QString("PROMPT CREATE %1 %2\n").arg(type).arg(QUOTE(name));
+            ret += user.readValue().userData();
+			if (PROMPT) ret += "\n\n";
+        } catch (QString const& e) {
+			ret += e;
+        }
+
+        try {
+            toQuery roles(conn, SQLDbmsMetadataRoles, toQueryParams() << name);
+            if (roles.eof()) throw qApp->translate("toOracleExtract", "Couldn't get meta information for user %1").arg(name);
+			if (PROMPT) ret += QString("PROMPT ROLES\n");
+            ret += roles.readValue().userData();
+			if (PROMPT) ret += "\n\n";
+        } catch (QString const& e) {
+            Q_UNUSED(e); // ignore ORA-31608
+        }
+
+        try {
+            toQuery obj(conn, SQLDbmsMetadataObjGrant, toQueryParams() << name);
+            if (obj.eof()) throw qApp->translate("toOracleExtract", "Couldn't get meta information for user %1").arg(name);
+			if (PROMPT) ret += QString("PROMPT OBJECT GRANTS\n");
+            ret += obj.readValue().userData();
+			if (PROMPT) ret += "\n\n";
+        } catch (QString const& e) {
+            Q_UNUSED(e); // ignore ORA-31608
+        }
+
+        try {
+            toQuery inf(conn, SQLDbmsMetadataSysGrant, toQueryParams() << name);
+            if (inf.eof()) throw qApp->translate("toOracleExtract", "Couldn't get meta information for user %1").arg(name);
+			if (PROMPT) ret += QString("PROMPT SYSTEM GRANTS\n");
+            ret += inf.readValue().userData();
+			if (PROMPT) ret += "\n\n";
+        } catch (QString const& e) {
+            Q_UNUSED(e); // ignore ORA-31608
+        }
+
+        try {
+            toQuery quota(conn, SQLDbmsMetadataQuota, toQueryParams() << name);
+            if (quota.eof()) throw qApp->translate("toOracleExtract", "Couldn't get meta information for user %1").arg(name);
+			if (PROMPT) ret += QString("PROMPT USER QUOTAS\n");
+            ret += quota.readValue().userData();
+			if (PROMPT) ret += "\n\n";
+        } catch (QString const& e) {
+            Q_UNUSED(e); // ignore ORA-31608
+        }
+
+		if (type == "USER")
+		{
+			try {
+				toQuery defrole(conn, SQLDbmsMetadataDefRole, toQueryParams() << name);
+				if (defrole.eof()) throw qApp->translate("toOracleExtract", "Couldn't get meta information for user %1").arg(name);
+				if (PROMPT) ret += QString("PROMPT USER DEFAULT ROLE(s)\n");
+				ret += defrole.readValue().userData();
+				if (PROMPT) ret += "\n\n";
+			}
+			catch (QString const& e) {
+				ret += e;
+			}
+		}
+    } else {
     	toQuery inf(conn, SQLDbmsMetadataGetDdl, toQueryParams() << type2 << name << owner);
     	if (inf.eof())
     		throw qApp->translate("toOracleExtract", "Couldn't get meta information for %1 %2.%3").arg(type).arg(owner).arg(name);
@@ -7329,17 +7431,6 @@ QString toOracleExtract::createMetadata(toExtract &ext, const QString &owner, co
     		ret = QString("PROMPT CREATE OR REPLACE %1 %2.%3\n\n").
 			arg(type).
 			arg(owner).
-			arg(QUOTE(name));
-    	toQValue sql = inf.readValue();
-    	ret += sql.userData();
-    } else {
-    	toQuery inf(conn, SQLDbmsMetadataGetDir, toQueryParams() << type << name);
-    	if (inf.eof())
-    		throw qApp->translate("toOracleExtract", "Couldn't get meta information for %1 %2").arg(type).arg(name);
-
-    	if (PROMPT)
-    		ret = QString("PROMPT CREATE OR REPLACE %1 %2\n\n").
-			arg(type).
 			arg(QUOTE(name));
     	toQValue sql = inf.readValue();
     	ret += sql.userData();

@@ -75,7 +75,7 @@ class toResultCode : public toDebugEditor, public toResult
         /** Return offset line of the "real" statement start (if headers/prompts are used) */
         unsigned offset() const { return m_offset; }
 
-        /** Ignores sql and extect object name and owner as parameters.
+        /** Ignores sql and extracts object name and owner as parameters.
          */
         virtual void query(const QString &sql, toQueryParams const& param);
 

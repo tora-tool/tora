@@ -39,9 +39,9 @@
 // due the toListView
 #include "ui_tosecurityquotaui.h"
 #include "tools/tosecuritytreemodel.h"
+#include "tools/toresultview.h"
 
 #include <list>
-#include "toresultview.h"
 
 class QMenu;
 class QTabWidget;
@@ -50,8 +50,7 @@ class toConnection;
 // class toListView;
 class toSecurityPage;
 class toSecurityQuota;
-
-
+class toResultCode;
 
 class toSecuritySystem : public toListView
 {
@@ -61,7 +60,7 @@ class toSecuritySystem : public toListView
         toSecuritySystem(QWidget *parent);
         void changeUser(const QString &);
         void eraseUser(bool all = true);
-        void sql(const QString &user, std::list<QString> &sql);
+        QList<QString> sql(const QString &user);
         void update(void);
     public slots:
         virtual void changed(toTreeWidgetItem *item);
@@ -75,7 +74,7 @@ class toSecurityRoleGrant : public toListView
     public:
         toSecurityRoleGrant(QWidget *parent);
         void changeUser(bool user, const QString &);
-        void sql(const QString &user, std::list<QString> &sql);
+        QList<QString> sql(const QString &user);
         void eraseUser(bool user, bool all = true);
         void update(void);
     public slots:
@@ -89,7 +88,7 @@ class toSecurityObject : public QTreeView
     public:
         toSecurityObject(QWidget *parent);
         void changeUser(const QString &);
-        void sql(const QString &user, std::list<QString> &sql);
+        QList<QString> sql(const QString &user);
         void eraseUser(bool all = true);
         void update(void);
     private:
@@ -122,6 +121,7 @@ class toSecurity : public toToolWidget
         toSecurityObject    *ObjectGrant;
         toSecurityPage      *General;
         toSecurityQuota     *Quota;
+        toResultCode        *DDL;
 
         QAction *DropAct;
         QAction *CopyAct;
@@ -132,7 +132,7 @@ class toSecurity : public toToolWidget
         QAction *DisplaySQLAct;
 
         QTabWidget *Tabs;
-        std::list<QString> sql(void);
+        QList<QString> sql(void);
     public:
         toSecurity(QWidget *parent, toConnection &connection);
         virtual void changeUser(bool);
@@ -163,7 +163,7 @@ class toSecurityQuota : public QWidget, public Ui::toSecurityQuotaUI
     public:
         toSecurityQuota(QWidget *parent);
         void changeUser(const QString &);
-        QString sql(void);
+        QList<QString> sql(const QString &user);
         void clear(void);
         void update(void);
     private slots:

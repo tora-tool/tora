@@ -94,8 +94,6 @@ void toOracleSetting::dbmsMetadataClicked(bool)
     IncludeParallelBool->setDisabled(UseDbmsMetadataBool->isChecked());
     IncludePartitionBool->setDisabled(UseDbmsMetadataBool->isChecked());
     IncludeCodeBool->setDisabled(UseDbmsMetadataBool->isChecked());
-    IncludeHeaderBool->setDisabled(UseDbmsMetadataBool->isChecked());
-    IncludePromptBool->setDisabled(UseDbmsMetadataBool->isChecked());
 }
 
 void toOracleSetting::createPlanTable()

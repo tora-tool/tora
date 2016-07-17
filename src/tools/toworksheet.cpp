@@ -1248,7 +1248,7 @@ void toWorksheet::query(toSyntaxAnalyzer::statement const& statement, execTypeEn
                         return ;
                     }
                 }
-                Utils::toStatusMessage(tr("Processing query"), true);
+                Utils::toStatusMessage(tr("Processing query"), true, false);
 
                 stopAct->setEnabled(true);
                 Poll.start(1000);
