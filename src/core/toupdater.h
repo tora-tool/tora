@@ -37,9 +37,6 @@
 #include <QtCore/QObject>
 #include <QtCore/QString>
 #include <QtCore/QUrl>
-#include <QtCore/QSet>
-
-#include "loki/Singleton.h"
 
 class QNetworkReply;
 class QNetworkAccessManager;
@@ -54,7 +51,7 @@ public:
 
 	QString version() const { return m_version; };
 public slots:
-	void check(bool force = true);
+	void check();
 
 signals:
 	void updatingChanged(QString);
@@ -66,7 +63,6 @@ private slots:
 
 private:
 	bool m_updated;
-	bool m_mode;
 	QNetworkAccessManager *m_qnam;
 	QUrl m_originalUrl;
 	QUrl m_urlRedirectedTo;
@@ -75,7 +71,6 @@ private:
 
 	QNetworkAccessManager* createQNAM();
 	QUrl redirectUrl(const QUrl& possibleRedirectUrl);
-	void clear(QNetworkReply *reply);
 };
 
 class toUpdaterSingle: public ::Loki::SingletonHolder<toUpdater, Loki::CreateUsingNew, Loki::NoDestroy> {};
