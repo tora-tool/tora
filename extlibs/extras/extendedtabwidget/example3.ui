@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>395</width>
+    <height>207</height>
+   </rect>
+  </property>
+  <property name="palette">
+   <palette>
+    <active>
+     <colorrole role="Base">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>255</red>
+        <green>255</green>
+        <blue>255</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Window">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>227</red>
+        <green>231</green>
+        <blue>236</blue>
+       </color>
+      </brush>
+     </colorrole>
+    </active>
+    <inactive>
+     <colorrole role="Base">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>255</red>
+        <green>255</green>
+        <blue>255</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Window">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>227</red>
+        <green>231</green>
+        <blue>236</blue>
+       </color>
+      </brush>
+     </colorrole>
+    </inactive>
+    <disabled>
+     <colorrole role="Base">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>227</red>
+        <green>231</green>
+        <blue>236</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Window">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>227</red>
+        <green>231</green>
+        <blue>236</blue>
+       </color>
+      </brush>
+     </colorrole>
+    </disabled>
+   </palette>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <item row="0" column="0">
+    <widget class="ExtendedTabWidget" name="ExtendedTabWidget">
+     <property name="styleSheet">
+      <string notr="true">QStackedWidget
+{
+	background: white;
+}
+
+QPushButton#__qt__passive_pushButton {
+	min-width: 180px;
+	height: 34px;
+	icon-size: 24px;
+    color: #666;
+    text-align: left;
+
+    margin-left: 8px;
+    margin-bottom: 1px;
+    padding-top: 1px;
+    padding-left: 8px;
+
+    border-width: 1px;
+    border-color: #3c3c3c;
+    border-style: solid;
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+    border-right-width: 0px;
+
+    background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1,
+                                       stop: 0    #f2f2f2,
+                                       stop: 0.49 #ebebeb,
+                                       stop: 0.5  #dbdbdb,
+                                       stop: 1    #cfcfcf);
+
+}
+
+QPushButton#__qt__passive_pushButton:hover
+{
+    color: black;
+    background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1,
+                                       stop: 0    #e6f0f6,
+                                       stop: 0.55 #d1e1e9,
+                                       stop: 0.56 #abc8d7,
+                                       stop: 1    #88acc0);
+    border-color: rgba(44, 98, 139, 180); 
+}
+
+QPushButton#__qt__passive_pushButton:checked
+{
+    color: black;
+    margin-left: 0px;
+    padding-left: 16px;
+
+    background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1,
+                                       stop: 0    #e5f4fc,
+                                       stop: 0.55 #c4e5f6,
+                                       stop: 0.56 #98d1ef,
+                                       stop: 1    #68b3db);
+    border-color: #2c628b; 
+}
+
+QPushButton#__qt__passive_pushButton:pressed,
+QPushButton#__qt__passive_pushButton:focus:pressed,
+QPushButton#__qt__passive_pushButton:hover:pressed
+{
+    color: black;
+    margin-left: 4px;
+    padding-left: 12px;
+    background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1,
+                                       stop: 0    #e6f1f7,
+                                       stop: 0.55 #cde3ee,
+                                       stop: 0.56 #a3cadf,
+                                       stop: 1    #7eafc9);
+    border-color: #2c628b; 
+}</string>
+     </property>
+     <property name="pageTitleList">
+      <stringlist>
+       <string>First page</string>
+       <string>Page #2</string>
+       <string>Another page</string>
+       <string>Page title here</string>
+      </stringlist>
+     </property>
+     <widget class="QWidget" name="page">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QRadioButton" name="radioButton">
+         <property name="autoFillBackground">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>RadioButton</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton">
+         <property name="text">
+          <string>PushButton</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>323</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="page_2">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QCheckBox" name="checkBox">
+         <property name="text">
+          <string>CheckBox</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="lineEdit"/>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="lineEdit_2"/>
+       </item>
+       <item>
+        <widget class="QPlainTextEdit" name="plainTextEdit"/>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="page_3"/>
+     <widget class="QWidget" name="page_4">
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0">
+        <widget class="QRadioButton" name="radioButton_2">
+         <property name="text">
+          <string>RadioButton</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QRadioButton" name="radioButton_5">
+         <property name="text">
+          <string>RadioButton</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QRadioButton" name="radioButton_6">
+         <property name="text">
+          <string>RadioButton</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QRadioButton" name="radioButton_4">
+         <property name="text">
+          <string>RadioButton</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QRadioButton" name="radioButton_7">
+         <property name="text">
+          <string>RadioButton</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QRadioButton" name="radioButton_3">
+         <property name="text">
+          <string>RadioButton</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ExtendedTabWidget</class>
+   <extends>QWidget</extends>
+   <header>ExtendedTabWidget.h</header>
+   <addpagemethod>addPage</addpagemethod>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

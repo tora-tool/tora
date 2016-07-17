@@ -1,0 +1,15 @@
+<img src="http://i.imgur.com/98v6fZX.png" /><br />
+<img src="http://i.imgur.com/kjwTGZV.png" /><br />
+<img src="http://i.imgur.com/IKQzJBs.png" />
+<br />
+<h2>Compiling and testing</h2>
+qmake extendedtabwidget.pro CONFIG+=release<br />
+nmake install<br />
+designer example.ui example2.ui example3.ui<br />
+<br />
+<h2>Known bugs</h2>
+Changing current page does not update the QIcon path in the widget properties view.<br />
+Crash Designer when adding and deleting a few pages and then changing current page.<br />
+<br />
+<h2>To Do</h2>
+Add more options through properties (tab position)
