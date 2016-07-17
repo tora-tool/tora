@@ -157,6 +157,20 @@ int main(int argc, char **argv)
 
             QList<QString> plugins;
 #ifdef Q_OS_WIN
+            bool success = false;
+            try
+            {
+                QLibrary library("libeay32.dll");
+                success = library.load();
+            }
+            TOCATCH;
+            try
+            {
+                QLibrary library("ssleay32.dll");
+                success = library.load();
+            }
+            TOCATCH;
+
 #if 1
             QString mysqlHome(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::MysqlHomeDirectory).toString());
             QDir mysqlHomeDir(mysqlHome);
@@ -177,8 +191,8 @@ int main(int argc, char **argv)
                 QCoreApplication::addLibraryPath(pgsqlHome + QDir::separator() + "lib");  // libpq.dll
                 plugins << pgsqlHome + QDir::separator() + "bin" + QDir::separator() + "LIBICONV-2.DLL";
                 plugins << pgsqlHome + QDir::separator() + "bin" + QDir::separator() + "LIBINTL-8.DLL";
-                plugins << pgsqlHome + QDir::separator() + "bin" + QDir::separator() + "libeay32.dll";
-                plugins << pgsqlHome + QDir::separator() + "bin" + QDir::separator() + "ssleay32.dll";
+                //plugins << pgsqlHome + QDir::separator() + "bin" + QDir::separator() + "libeay32.dll";
+                //plugins << pgsqlHome + QDir::separator() + "bin" + QDir::separator() + "ssleay32.dll";
                 plugins << pgsqlHome + QDir::separator() + "bin" + QDir::separator() + "libpq.dll";
                 plugins << pgsqlHome + QDir::separator() + "lib" + QDir::separator() + "libpq.dll";
             }
