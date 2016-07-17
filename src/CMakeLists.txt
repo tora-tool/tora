@@ -89,6 +89,7 @@ SET(TORA_RCC_FILES tora.qrc icons.qrc)
 SET(TORA_UI_SRC
   widgets/connectioncolorsdialogui.ui
   widgets/toaboutui.ui
+  widgets/toaboutcopyingui.ui
   widgets/todatabasesettingui.ui
   tools/todescribeui.ui
   widgets/toglobalsettingui.ui
@@ -222,6 +223,7 @@ SET(TORA_MOC_CLASSES
   core/toqueryimpl.h
   core/toresult.h
   widgets/toabout.h
+  widgets/toaboutcopying.h
   widgets/tobackgroundlabel.h
   tools/tobarchart.h
   tools/tobrowserbasewidget.h # this one is used by widgets/todescribe.h (therefore is not in tools)
@@ -265,7 +267,8 @@ SET(TORA_MOC_CLASSES
   widgets/toworkingwidget.h
   widgets/toworkspace.h
   widgets/toupdater.h
-
+  widgets/ExtendedTabWidget.h
+  
   core/tohelpcontext.h
   core/tosettingtab.h
   widgets/toconnectionwidget.h
@@ -429,6 +432,7 @@ SET(TORA_SOURCES
   core/tocodemodel.cpp
   core/toconfenum.cpp
   widgets/toabout.cpp
+  widgets/toaboutcopying.cpp
   widgets/tobackgroundlabel.cpp     
   tools/tobarchart.cpp
   tools/tobrowserbasewidget.cpp # this one is used by widgets/todescribe.h (therefore is not in tools)
@@ -520,7 +524,8 @@ SET(TORA_SOURCES
   widgets/toworkingwidget.cpp
   widgets/toworkspace.cpp
   widgets/toupdater.cpp
-
+  widgets/ExtendedTabWidget.cpp
+  
   core/utils.cpp
   core/utils_part.cpp
 
