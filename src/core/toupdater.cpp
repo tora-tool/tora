@@ -46,6 +46,7 @@
 #include <QtCore/QPointer>
 #include <QtCore/QUrl>
 #include <QtCore/QDebug>
+#include <QtCore/QDate>
 
 toUpdater::toUpdater()
 	: QObject()
