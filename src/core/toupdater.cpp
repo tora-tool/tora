@@ -34,6 +34,8 @@
 
 #include "widgets/toupdater.h"
 #include "core/utils.h"
+#include "core/toconfiguration.h"
+#include "core/toglobalconfiguration.h"
 
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
@@ -47,6 +49,7 @@
 toUpdater::toUpdater()
 	: QObject()
     , m_updated(false)
+	, m_mode(true)
 {
 	m_qnam = createQNAM();
 	m_originalUrl = "http://sourceforge.net/projects/tora/files/tora/LastVersion.txt/download";
@@ -68,10 +71,20 @@ QNetworkAccessManager* toUpdater::createQNAM()
 	return qnam;
 }
 
-void toUpdater::check()
+void toUpdater::check(bool force)
 {
-	if (m_updated)
+	bool useUpdates = toConfigurationNewSingle::Instance().option(ToConfiguration::Global::UpdatesCheckBool).toBool();
+	QDate lastChecked = toConfigurationNewSingle::Instance().option(ToConfiguration::Global::UpdateLastDate).toDate();
+	int updateState = toConfigurationNewSingle::Instance().option(ToConfiguration::Global::UpdateStateInt).toInt();
+
+	if ( (!force && !useUpdates) // check during startup and check for updates is off
+			|| (!force && updateState == 1) // already running
+			|| (!force && updateState == 2) // update crashed (wrong ver. of OpenSSL loaded)
+			|| (!force && lastChecked.isValid() && lastChecked.daysTo(QDate::currentDate()) < 7)
+	)
 		return;
+
+	m_mode = force;
 	m_version = QString("toUpdater::doRequest doing request to ").arg(m_originalUrl.toString());
 
 	/* Let's just create network request for this predefined URL... */
@@ -81,6 +94,8 @@ void toUpdater::check()
 	request.setRawHeader("User-Agent", "TOraUpdater");
 
 	/* ...and ask the manager to do the request. */
+	toConfigurationNewSingle::Instance().setOption(ToConfiguration::Global::UpdateStateInt, 1);
+	toConfigurationNewSingle::Instance().saveAll();
 	this->m_qnam->get(request);
 }
 
@@ -125,12 +140,15 @@ void toUpdater::replyFinished(QNetworkReply* reply)
 		 * We weren't redirected anymore
 		 * so we arrived to the final destination...
 		 */
-		QString text = QString("QNAMRedirect::replyFinished: Arrived to %1\n%2").arg(reply->url().toString()).arg(QString(body));
+		QString text = QString("QNAMRedirect::replyFinished: Arrived to %1\n%2\n").arg(reply->url().toString()).arg(QString(body));
 		m_version.append(text);
 		/* ...so this can be cleared. */
 		m_urlRedirectedTo.clear();
 		m_updated = true;
 		emit updatingFinished(m_version);
+		toConfigurationNewSingle::Instance().setOption(ToConfiguration::Global::UpdateStateInt, 0);
+		toConfigurationNewSingle::Instance().setOption(ToConfiguration::Global::UpdateLastDate, QDate::currentDate());
+		toConfigurationNewSingle::Instance().saveAll();
 		break;
 	}
 	default:
@@ -146,7 +164,7 @@ void toUpdater::replyFinished(QNetworkReply* reply)
 	/* If the URL is not empty, we're being redirected. */
 	if(!m_urlRedirectedTo.isEmpty())
 	{
-		QString text = QString("QNAMRedirect::replyFinished: Redirected to %1").arg(m_urlRedirectedTo.toString());
+		QString text = QString("QNAMRedirect::replyFinished: Redirected to %1\n").arg(m_urlRedirectedTo.toString());
 		m_version.append(text);
 
 		/* We'll do another request to the redirection url. */

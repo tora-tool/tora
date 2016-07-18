@@ -51,7 +51,7 @@ public:
 
 	QString version() const { return m_version; };
 public slots:
-	void check();
+	void check(bool force = true);
 
 signals:
 	void updatingChanged(QString);
@@ -63,6 +63,7 @@ private slots:
 
 private:
 	bool m_updated;
+	bool m_mode;
 	QNetworkAccessManager *m_qnam;
 	QUrl m_originalUrl;
 	QUrl m_urlRedirectedTo;
