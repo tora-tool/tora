@@ -278,7 +278,7 @@ QPushButton#__qt__passive_pushButton:unchecked
   <customwidget>
    <class>ExtendedTabWidget</class>
    <extends>QWidget</extends>
-   <header>ExtendedTabWidget.h</header>
+   <header>widgets/ExtendedTabWidget.h</header>
    <addpagemethod>addPage</addpagemethod>
    <container>1</container>
   </customwidget>

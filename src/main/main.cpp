@@ -47,7 +47,6 @@
 #include "core/tologger.h"
 #include "core/toglobalconfiguration.h"
 #include "core/todatabaseconfig.h"
-#include "widgets/toupdater.h"
 
 #ifndef Q_OS_WIN32
 #include <unistd.h>

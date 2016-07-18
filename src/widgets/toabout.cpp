@@ -33,14 +33,14 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "widgets/toabout.h"
-#include "widgets/toupdater.h"
-
+#include "core/toupdater.h"
 #include "core/toconf.h"
 #include "core/toraversion.h"
 
 #include "icons/largelogo.xpm"
 
 #include <QtCore/QStringRef>
+#include <QtCore/QFile>
 
 #ifdef TORA_EXPERIMENTAL
 #include "core/tomemory.h"

@@ -32,7 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "widgets/toupdater.h"
+#include "core/toupdater.h"
 #include "core/utils.h"
 #include "core/toconfiguration.h"
 #include "core/toglobalconfiguration.h"
@@ -42,9 +42,10 @@
 #include <QtNetwork/QNetworkReply>
 
 #include <QtCore/QUrl>
-
+#include <QtCore/QMetaEnum>
 #include <QtCore/QPointer>
 #include <QtCore/QUrl>
+#include <QtCore/QDebug>
 
 toUpdater::toUpdater()
 	: QObject()
