@@ -37,6 +37,9 @@
 #include <QtCore/QObject>
 #include <QtCore/QString>
 #include <QtCore/QUrl>
+#include <QtCore/QSet>
+
+#include "loki/Singleton.h"
 
 class QNetworkReply;
 class QNetworkAccessManager;
