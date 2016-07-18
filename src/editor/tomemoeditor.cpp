@@ -94,6 +94,7 @@ toMemoEditor::toMemoEditor(QWidget *parent,
         Editor = new toMemoEditor::toMemoText(this);
     vbox->addWidget(Editor);
     Editor->sciEditor()->setReadOnly(Row < 0 || Col < 0 || listView());
+    Editor->sciEditor()->installEventFilter(this);
     Editor->setFocus();
 
     QDialogButtonBox * buttonBox = new QDialogButtonBox(QDialogButtonBox::Close, Qt::Horizontal, this);
@@ -540,4 +541,20 @@ void toMemoEditor::changeCurrent(toTreeWidgetItem *)
         else
             setText(cur->text(Col));
     }
+}
+
+bool toMemoEditor::eventFilter(QObject *obj, QEvent *event)
+{
+    if (obj != Editor->sciEditor())
+        return false;
+    if(event->type() == QEvent::KeyPress)
+    {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+        if(keyEvent->key() == Qt::Key_Escape || keyEvent->key() == Qt::Key_Return)
+        {
+            close();
+            return true; // mark the event as handled
+        }
+    }
+    return false;
 }

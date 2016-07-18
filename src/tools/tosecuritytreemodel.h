@@ -73,7 +73,7 @@ class toSecurityTreeModel : public QAbstractItemModel
 
         /*! \brief Construct GRANT/REVOKE script based on user's changes.
         */
-        void sql(const QString &user, std::list<QString> &sqlLst);
+        QList<QString> sql(const QString &user);
 
     private:
         //! An universal root item. It's deleted and recreated in setupModelData()

@@ -42,6 +42,7 @@
 #include "editor/tomemoeditor.h"
 #include "core/toconnectionsub.h"
 #include "core/toglobalevent.h"
+#include "tools/toresultcode.h"
 
 #include <QSplitter>
 #include <QToolBar>
@@ -308,9 +309,9 @@ void toSecurityQuota::changeTablespace(void)
     SizeGroup->setEnabled(true);
 }
 
-QString toSecurityQuota::sql(void)
+QList<QString> toSecurityQuota::sql(const QString &user)
 {
-    QString ret;
+    QList<QString> retval;
     for (toTreeWidgetItem *item = Tablespaces->firstChild(); item; item = item->nextSibling())
     {
         if (item->text(1) != item->text(3))
@@ -322,13 +323,10 @@ QString toSecurityQuota::sql(void)
                 siz = QString::fromLatin1("0 K");
             else if (siz == qApp->translate("toSecurityQuota", "Unlimited"))
                 siz = QString::fromLatin1("UNLIMITED");
-            ret += QString::fromLatin1(" QUOTA ");
-            ret += siz;
-            ret += QString::fromLatin1(" ON ");
-            ret += item->text(0);
+            retval.append(QString::fromLatin1("ALTER USER \"%1\" QUOTA %2 ON \"%3\"").arg(user).arg(siz).arg(item->text(0)));
         }
     }
-    return ret;
+    return retval;
 }
 
 class toSecurityUpper : public QValidator
@@ -347,8 +345,6 @@ class toSecurityUpper : public QValidator
 class toSecurityUser : public QWidget, public Ui::toSecurityUserUI
 {
         toConnection &Connection;
-
-        toSecurityQuota *Quota;
         enum
         {
             password,
@@ -364,7 +360,7 @@ class toSecurityUser : public QWidget, public Ui::toSecurityUserUI
         bool OrgLocked;
         bool OrgExpired;
     public:
-        toSecurityUser(toSecurityQuota *quota, toConnection &conn, QWidget *parent);
+        toSecurityUser(toConnection &conn, QWidget *parent);
         void clear(bool all = true);
         void update();
         void changeUser(const QString &);
@@ -444,7 +440,6 @@ QString toSecurityUser::sql(void)
         else
             extra += QString::fromLatin1("UNLOCK");
     }
-    extra += Quota->sql();
 
     QString sql;
     if (Name->isEnabled())
@@ -466,8 +461,9 @@ QString toSecurityUser::sql(void)
     return sql;
 }
 
-toSecurityUser::toSecurityUser(toSecurityQuota *quota, toConnection &conn, QWidget *parent)
-    : QWidget(parent), Connection(conn), Quota(quota)
+toSecurityUser::toSecurityUser(toConnection &conn, QWidget *parent)
+    : QWidget(parent)
+    , Connection(conn)
 {
     setupUi(this);
     Name->setValidator(new toSecurityUpper(Name));
@@ -621,7 +617,6 @@ void toSecurityUser::changeUser(const QString &user)
 class toSecurityRole : public QWidget, public Ui::toSecurityRoleUI
 {
         toConnection &Connection;
-        toSecurityQuota *Quota;
         enum
         {
             password,
@@ -630,9 +625,8 @@ class toSecurityRole : public QWidget, public Ui::toSecurityRoleUI
             none
         } AuthType;
     public:
-        toSecurityRole(toSecurityQuota *quota, toConnection &conn, QWidget *parent)
+        toSecurityRole(toConnection &conn, QWidget *parent)
             : QWidget(parent), Connection(conn)
-            , Quota(quota)
             , AuthType(password)
         {
             setupUi(this);
@@ -680,7 +674,7 @@ QString toSecurityRole::sql(void)
         extra = QString::fromLatin1(" IDENTIFIED EXTERNALLY");
     else if ((AuthType != none) && (Authentication->currentWidget() == NoneTab))
         extra = QString::fromLatin1(" NOT IDENTIFIED");
-    extra += Quota->sql();
+    //extra += Quota->sql();
     QString sql;
     if (Name->isEnabled())
     {
@@ -759,7 +753,7 @@ class toSecurityPage : public QWidget
         toSecurityUser *User;
 
     public:
-        toSecurityPage(toSecurityQuota *quota, toConnection &conn, QWidget *parent)
+        toSecurityPage(toConnection &conn, QWidget *parent)
             : QWidget(parent)
         {
             QVBoxLayout *vbox = new QVBoxLayout;
@@ -767,10 +761,10 @@ class toSecurityPage : public QWidget
             vbox->setContentsMargins(0, 0, 0, 0);
             setLayout(vbox);
 
-            Role = new toSecurityRole(quota, conn, this);
+            Role = new toSecurityRole(conn, this);
             vbox->addWidget(Role);
             Role->hide();
-            User = new toSecurityUser(quota, conn, this);
+            User = new toSecurityUser(conn, this);
             vbox->addWidget(User);
             setFocusProxy(User);
         }
@@ -851,9 +845,9 @@ void toSecurityObject::changeUser(const QString &user)
     m_model->setupModelData(user);
 }
 
-void toSecurityObject::sql(const QString &user, std::list<QString> &sqlLst)
+QList<QString> toSecurityObject::sql(const QString &user)
 {
-    m_model->sql(user, sqlLst);
+    return m_model->sql(user);
 }
 
 toSecuritySystem::toSecuritySystem(QWidget *parent)
@@ -883,60 +877,43 @@ void toSecuritySystem::update(void)
     TOCATCH
 }
 
-void toSecuritySystem::sql(const QString &user, std::list<QString> &sqlLst)
+QList<QString> toSecuritySystem::sql(const QString &user)
 {
+    QList<QString> retval;
     for (toTreeWidgetItem *item = firstChild(); item; item = item->nextSibling())
     {
         QString sql;
+        QString revilege = item->text(0);
         toResultViewCheck *check = dynamic_cast<toResultViewCheck *>(item);
         toResultViewCheck *chld = dynamic_cast<toResultViewCheck *>(item->firstChild());
         if (chld && chld->isOn() && chld->text(1).isEmpty())
         {
-            sql = QString::fromLatin1("GRANT ");
-            sql += item->text(0);
-            sql += QString::fromLatin1(" TO \"");
-            sql += user;
-            sql += QString::fromLatin1("\" WITH ADMIN OPTION");
-            sqlLst.insert(sqlLst.end(), sql);
+            sql = QString::fromLatin1("GRANT %1 TO \"%2\" WITH ADMIN OPTION").arg(revilege).arg(user);
+            retval.append(sql);
         }
         else if (check->isOn() && !item->text(1).isEmpty())
         {
             if (chld && !chld->isOn() && !chld->text(1).isEmpty())
             {
-                sql = QString::fromLatin1("REVOKE ");
-                sql += item->text(0);
-                sql += QString::fromLatin1(" FROM \"");
-                sql += user;
-                sql += QString::fromLatin1("\"");
-                sqlLst.insert(sqlLst.end(), sql);
+                sql = QString::fromLatin1("REVOKE %1 FROM \"%2\"").arg(revilege).arg(user);
+                retval.append(sql);
 
-                sql = QString::fromLatin1("GRANT ");
-                sql += item->text(0);
-                sql += QString::fromLatin1(" TO \"");
-                sql += user;
-                sql += QString::fromLatin1("\"");
-                sqlLst.insert(sqlLst.end(), sql);
+                sql = QString::fromLatin1("GRANT %1 TO \"%2\"").arg(revilege).arg(user);
+                retval.append(sql);
             }
         }
         else if (check->isOn() && item->text(1).isEmpty())
         {
-            sql = QString::fromLatin1("GRANT ");
-            sql += item->text(0);
-            sql += QString::fromLatin1(" TO \"");
-            sql += user;
-            sql += QString::fromLatin1("\"");
-            sqlLst.insert(sqlLst.end(), sql);
+            sql = QString::fromLatin1("GRANT %1 TO \"%2\"").arg(revilege).arg(user);
+            retval.append(sql);
         }
         else if (!check->isOn() && !item->text(1).isEmpty())
         {
-            sql = QString::fromLatin1("REVOKE ");
-            sql += item->text(0);
-            sql += QString::fromLatin1(" FROM \"");
-            sql += user;
-            sql += QString::fromLatin1("\"");
-            sqlLst.insert(sqlLst.end(), sql);
+            sql = QString::fromLatin1("REVOKE %1 FROM \"%2\"").arg(revilege).arg(user);
+            retval.append(sql);
         }
     }
+    return retval;
 }
 
 void toSecuritySystem::changed(toTreeWidgetItem *org)
@@ -1056,14 +1033,16 @@ toTreeWidgetCheck *toSecurityRoleGrant::findChild(toTreeWidgetItem *parent, cons
     return NULL;
 }
 
-void toSecurityRoleGrant::sql(const QString &user, std::list<QString> &sqlLst)
+QList<QString> toSecurityRoleGrant::sql(const QString &user)
 {
+    QList<QString> retval;
     bool any = false;
     bool chg = false;
     QString except;
     QString sql;
     for (toTreeWidgetItem *item = firstChild(); item; item = item->nextSibling())
     {
+        QString roleName = item->text(0);
         toResultViewCheck * check = dynamic_cast<toResultViewCheck *>(item);
         toTreeWidgetCheck *chld = findChild(item, tr("Admin"));
         toTreeWidgetCheck *def = findChild(item, tr("Default"));
@@ -1071,12 +1050,10 @@ void toSecurityRoleGrant::sql(const QString &user, std::list<QString> &sqlLst)
         {
             if (!def->isOn() && check->isOn())
             {
-                if (!except.isEmpty())
-                    except += QString::fromLatin1(",\"");
+                if (except.isEmpty())
+                    except += QString::fromLatin1(" EXCEPT \"%1\"").arg(roleName);
                 else
-                    except += QString::fromLatin1(" EXCEPT \"");
-                except += item->text(0);
-                except += QString::fromLatin1("\"");
+                    except += QString::fromLatin1(", \"%1\"").arg(roleName);
             }
             else if (check->isOn() && def->isOn())
                 any = true;
@@ -1087,67 +1064,41 @@ void toSecurityRoleGrant::sql(const QString &user, std::list<QString> &sqlLst)
         {
             if (check->isOn() && !item->text(1).isEmpty())
             {
-                sql = QString::fromLatin1("REVOKE \"");
-                sql += item->text(0);
-                sql += QString::fromLatin1("\" FROM \"");
-                sql += user;
-                sql += QString::fromLatin1("\"");
-                sqlLst.insert(sqlLst.end(), sql);
+                sql = QString::fromLatin1("REVOKE \"%1\" FROM \"%2\"").arg(roleName).arg(user);
+                retval.append(sql);
             }
-            sql = QString::fromLatin1("GRANT \"");
-            sql += item->text(0);
-            sql += QString::fromLatin1("\" TO \"");
-            sql += user;
-            sql += QString::fromLatin1("\" WITH ADMIN OPTION");
-            sqlLst.insert(sqlLst.end(), sql);
+            sql = QString::fromLatin1("GRANT \"%1\" TO \"%2\" WITH ADMIN OPTION").arg(roleName).arg(user);
+            retval.append(sql);
             chg = true;
         }
         else if (check->isOn() && !item->text(1).isEmpty())
         {
             if (chld && !chld->isOn() && !chld->text(1).isEmpty())
             {
-                sql = QString::fromLatin1("REVOKE \"");
-                sql += item->text(0);
-                sql += QString::fromLatin1("\" FROM \"");
-                sql += user;
-                sql += QString::fromLatin1("\"");
-                sqlLst.insert(sqlLst.end(), sql);
+                sql = QString::fromLatin1("REVOKE \"%1\" FROM \"%2\"").arg(roleName).arg(user);
+                retval.append(sql);
 
-                sql = QString::fromLatin1("GRANT \"");
-                sql += item->text(0);
-                sql += QString::fromLatin1("\" TO \"");
-                sql += user;
-                sql += QString::fromLatin1("\"");
-                sqlLst.insert(sqlLst.end(), sql);
+                sql = QString::fromLatin1("GRANT \"%1\" TO \"%2\"").arg(roleName).arg(user);
+                retval.append(sql);
                 chg = true;
             }
         }
         else if (check->isOn() && item->text(1).isEmpty())
         {
-            sql = QString::fromLatin1("GRANT \"");
-            sql += item->text(0);
-            sql += QString::fromLatin1("\" TO \"");
-            sql += user;
-            sql += QString::fromLatin1("\"");
-            sqlLst.insert(sqlLst.end(), sql);
+            sql = QString::fromLatin1("GRANT \"%1\" TO \"%2\"").arg(roleName).arg(user);
+            retval.append(sql);
             chg = true;
         }
         else if (!check->isOn() && !item->text(1).isEmpty())
         {
-            sql = QString::fromLatin1("REVOKE \"");
-            sql += item->text(0);
-            sql += QString::fromLatin1("\" FROM \"");
-            sql += user;
-            sql += QString::fromLatin1("\"");
-            sqlLst.insert(sqlLst.end(), sql);
+            sql = QString::fromLatin1("REVOKE \"%1\" FROM \"%2\"").arg(roleName).arg(user);
+            retval.append(sql);
             chg = true;
         }
     }
     if (chg)
     {
-        sql = QString::fromLatin1("ALTER USER \"");
-        sql += user;
-        sql += QString::fromLatin1("\" DEFAULT ROLE ");
+        sql = QString::fromLatin1("ALTER USER \"%1\" DEFAULT ROLE ").arg(user);
         if (any)
         {
             sql += QString::fromLatin1("ALL");
@@ -1155,8 +1106,9 @@ void toSecurityRoleGrant::sql(const QString &user, std::list<QString> &sqlLst)
         }
         else
             sql += QString::fromLatin1("NONE");
-        sqlLst.insert(sqlLst.end(), sql);
+        retval.append(sql);
     }
+    return retval;
 }
 
 void toSecurityRoleGrant::changed(toTreeWidgetItem *org)
@@ -1324,25 +1276,34 @@ toSecurity::toSecurity(QWidget *main, toConnection &connection)
     UserList->setRootIsDecorated(true);
     UserList->setSelectionMode(toTreeWidget::Single);
     Tabs = new QTabWidget(splitter);
-    Quota = new toSecurityQuota(Tabs);
-    General = new toSecurityPage(Quota, connection, Tabs);
+
+    General = new toSecurityPage(connection, Tabs);
     Tabs->addTab(General, tr("&General"));
+
     RoleGrant = new toSecurityRoleGrant(Tabs);
     Tabs->addTab(RoleGrant, tr("&Roles"));
+
     SystemGrant = new toSecuritySystem(Tabs);
     Tabs->addTab(SystemGrant, tr("&System Privileges"));
+
     ObjectGrant = new toSecurityObject(Tabs);
     Tabs->addTab(ObjectGrant, tr("&Object Privileges"));
+
+    Quota = new toSecurityQuota(Tabs);
     Tabs->addTab(Quota, tr("&Quota"));
+
+    DDL = new toResultCode(Tabs);
+    Tabs->addTab(DDL, tr("Script"));
+
     UserList->setSelectionMode(toTreeWidget::Single);
     connect(UserList, SIGNAL(selectionChanged(toTreeWidgetItem *)),
             this, SLOT(changeUser(toTreeWidgetItem *)));
     ToolMenu = NULL;
-    // connect(toMainWidget()->workspace(), SIGNAL(subWindowActivated(QMdiSubWindow *)),
-    //         this, SLOT(windowActivated(QMdiSubWindow *)));
+
     refresh();
-    connect(this, SIGNAL(connectionChange()),
-            this, SLOT(refresh()));
+    connect(this, SIGNAL(connectionChange()), this, SLOT(refresh()));
+    connect(Tabs, SIGNAL(currentChanged(int)),this, SLOT(changeTab(int)));
+
     setFocusProxy(Tabs);
 }
 
@@ -1385,39 +1346,38 @@ void toSecurity::slotWindowActivated(toToolWidget *widget)
 
 void toSecurity::displaySQL(void)
 {
-    std::list<QString> lines = sql();
+    QList<QString> lines = sql();
     QString res;
-    for (std::list<QString>::iterator i = lines.begin(); i != lines.end(); i++)
+    foreach(QString line, lines)
     {
-        res += *i;
-        res += QString::fromLatin1(";\n");
+        res += line + ";\n";
     }
-    if (res.length() > 0)
-        new toMemoEditor(this, res, -1, -1, true);
-    else
+    if (res.isEmpty())
         Utils::toStatusMessage(tr("No changes made"));
+    else
+        new toMemoEditor(this, res, -1, -1, true);
 }
 
-std::list<QString> toSecurity::sql(void)
+QList<QString> toSecurity::sql(void)
 {
-    std::list<QString> ret;
+    QList<QString> ret;
+	if (General->name().isEmpty())
+		return ret;
     try
     {
         QString tmp = General->sql();
         if (!tmp.isEmpty())
-            ret.insert(ret.end(), tmp);
+            ret.append(tmp);
         QString name = General->name();
-        if (!name.isEmpty())
-        {
-            SystemGrant->sql(name, ret);
-            ObjectGrant->sql(name, ret);
-            RoleGrant->sql(name, ret);
-        }
+		ret.append(SystemGrant->sql(name));
+		ret.append(ObjectGrant->sql(name));
+		ret.append(RoleGrant->sql(name));
+		ret.append(Quota->sql(name));
     }
     catch (const QString &str)
     {
         Utils::toStatusMessage(str);
-        std::list<QString> empty;
+        QList<QString> empty;
         return empty;
     }
 
@@ -1430,8 +1390,8 @@ void toSecurity::changeUser(bool ask)
     {
         try
         {
-            std::list<QString> sqlList = sql();
-            if (sqlList.size() != 0)
+            QList<QString> sqlList = sql();
+            if (!sqlList.isEmpty())
             {
                 switch (TOMessageBox::warning(this,
                                               tr("Save changes?"),
@@ -1478,6 +1438,10 @@ void toSecurity::changeUser(bool ask)
             RoleGrant->changeUser(user, username);
             SystemGrant->changeUser(username);
             ObjectGrant->changeUser(username);
+			if (user)
+				DDL->query("no sql", toQueryParams() << username << username << QString("USER"));
+			else
+				DDL->query("no sql", toQueryParams() << username << username << QString("ROLE"));
         }
     }
     TOCATCH
@@ -1486,13 +1450,8 @@ void toSecurity::changeUser(bool ask)
 void toSecurity::refresh(void)
 {
     Utils::toBusy busy;
-    disconnect(UserList, SIGNAL(selectionChanged(toTreeWidgetItem *)),
-               this, SLOT(changeUser(toTreeWidgetItem *)));
-    SystemGrant->update();
-    RoleGrant->update();
-    ObjectGrant->update();
-    Quota->update();
-    General->update();
+    UserList->blockSignals(true);
+    //disconnect(UserList, SIGNAL(selectionChanged(toTreeWidgetItem *)), this, SLOT(changeUser(toTreeWidgetItem *)));
 
     UserList->clear();
     try
@@ -1530,27 +1489,33 @@ void toSecurity::refresh(void)
         }
     }
     TOCATCH
-    connect(UserList, SIGNAL(selectionChanged(toTreeWidgetItem *)),
-            this, SLOT(changeUser(toTreeWidgetItem *)));
+
+    General->update();
+    RoleGrant->update();
+    SystemGrant->update();
+    ObjectGrant->update();
+    Quota->update();
+
+    UserList->blockSignals(false);
+    //connect(UserList, SIGNAL(selectionChanged(toTreeWidgetItem *)), this, SLOT(changeUser(toTreeWidgetItem *)));
 }
 
 void toSecurity::saveChanges()
 {
-    std::list<QString> sqlList = sql();
+    QList<QString> sqlList = sql();
     toConnectionSubLoan conn(connection());
-    for (std::list<QString>::iterator i = sqlList.begin(); i != sqlList.end(); i++)
+    foreach(QString sql, sqlList)
     {
         try
         {
-            conn.execute(*i);
+            conn.execute(sql);
         }
         TOCATCH
     }
     if (General->user())
-        UserID = QString::fromLatin1("USER:");
+        UserID = QString::fromLatin1("USER:%1").arg(General->name());
     else
-        UserID = QString::fromLatin1("ROLE:");
-    UserID += General->name();
+        UserID = QString::fromLatin1("ROLE:%1").arg(General->name());
     refresh();
     changeUser(false);
 }

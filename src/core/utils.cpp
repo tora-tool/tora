@@ -307,12 +307,14 @@ namespace Utils
     {
         if (str == QString::fromLatin1("KB"))
             return 1024;
-        if (str == QString::fromLatin1("MB"))
+        else if (str == QString::fromLatin1("MB"))
             return 1024 * 1024;
-        if (str == QString::fromLatin1("GB"))
+        else if (str == QString::fromLatin1("GB"))
             return 1024 * 1024 * 1024;
-        if (str == QString::fromLatin1("TB"))
+        else if (str == QString::fromLatin1("TB"))
             return 1024 * 1024 * 1024 * 1024;
+        else if (str == QString::fromLatin1("PB"))
+            return 1024 * 1024 * 1024 * 1024 * 1024;
         return 1;
     }
 

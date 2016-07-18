@@ -43,14 +43,15 @@
 toResultCode::toResultCode(bool prompt, QWidget *parent, const char *name)
     : toDebugEditor(parent, name)
     , Prompt(prompt)
-    , m_heading(true)
+    , m_heading(toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::IncludeHeaderBool).toBool())
     , m_offset(0)
 {}
 
 toResultCode::toResultCode(QWidget * parent)
     : toDebugEditor(parent, "toResultExtract")
-    , Prompt(false)
-    , m_heading(true)
+    , Prompt(toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::IncludePromptBool).toBool())
+    , m_heading(toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::IncludeHeaderBool).toBool())
+    , m_offset(0)
 {}
 
 static toSQL SQLObjectTypeMySQL("toResultExtract:ObjectType",
