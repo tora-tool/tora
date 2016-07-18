@@ -153,7 +153,7 @@ int main(int argc, char **argv)
             toSplash splash(NULL);
             splash.show();
 
-            //toUpdaterSingle::Instance().check();
+            toUpdaterSingle::Instance().check(/*force=>*/false);
 
             QList<QString> plugins;
 #ifdef Q_OS_WIN

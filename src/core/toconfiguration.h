@@ -78,7 +78,6 @@ class TORA_EXPORT toConfigurationNew: public QObject
 
         template <class T> void setOption(int option, T const&)
         {
-
         };
 
         void saveAll();
@@ -118,6 +117,9 @@ void toConfigurationNew::setOption <int>(int option, int const&);
 
 template<> TORA_EXPORT
 void toConfigurationNew::setOption <bool>(int option, bool const&);
+
+template<> TORA_EXPORT
+void toConfigurationNew::setOption <QDate>(int option, QDate const&);
 
 class TORA_EXPORT toConfigurationNewSingle: public ::Loki::SingletonHolder<toConfigurationNew> {};
 
