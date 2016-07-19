@@ -35,6 +35,9 @@
 #include "widgets/toabout.h"
 #include "core/toupdater.h"
 #include "core/toconf.h"
+#include "core/utils.h"
+#include "core/toconfiguration.h"
+#include "core/toeditorconfiguration.h"
 #include "core/toraversion.h"
 
 #include "icons/largelogo.xpm"
@@ -91,7 +94,7 @@ toAbout::toAbout(QWidget* parent, const char* name, bool modal)
 		version.append(format.arg("GITVERSION").arg(GITVERSION));
 		version.append(format.arg("GITVERSION_MAJOR").arg(GITVERSION_MAJOR));
 		version.append(format.arg("GITVERSION_MINOR").arg(GITVERSION_MINOR));
-		version.append(format.arg("GIT_TYPE").arg(GIT_BUILD_TYPE));
+		version.append(format.arg("GIT_BUILD_TYPE").arg(GIT_BUILD_TYPE));
 		version.append(format.arg("GITVERSION_COUNT").arg(GITVERSION_COUNT));
 		version.append(format.arg("GITVERSION_SHA1").arg(GITVERSION_SHA1));
 		version.append(format.arg("GITVERSION_SHORT").arg(GITVERSION_SHORT));
@@ -102,6 +105,9 @@ toAbout::toAbout(QWidget* parent, const char* name, bool modal)
 #else
 		version = TORAVERSION;
 #endif
+		QFont fixed(Utils::toStringToFont(toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::ConfCodeFont).toString()));
+		textBrowserVersion->setFont(fixed);
+		textBrowserUpdate->setFont(fixed);
 		textBrowserVersion->setHtml(version);
 
 #if defined(Q_OS_WIN32)

@@ -36,6 +36,7 @@
 #include "core/utils.h"
 #include "core/toconfiguration.h"
 #include "core/toglobalconfiguration.h"
+#include "core/toraversion.h"
 
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
@@ -82,12 +83,12 @@ void toUpdater::check(bool force)
 	if ( (!force && !useUpdates) // check during startup and check for updates is off
 			|| (!force && updateState == 1) // already running
 			|| (!force && updateState == 2) // update crashed (wrong ver. of OpenSSL loaded)
-			|| (!force && lastChecked.isValid() && lastChecked.daysTo(QDate::currentDate()) < 7)
+			|| (!force && lastChecked.isValid() && lastChecked.daysTo(QDate::currentDate()) < 31)
 	)
 		return;
 
 	m_mode = force;
-	m_version = QString("toUpdater::doRequest doing request to ").arg(m_originalUrl.toString());
+	m_version = QString("toUpdater::doRequest doing request to %1\n").arg(m_originalUrl.toString());
 
 	/* Let's just create network request for this predefined URL... */
 	QNetworkRequest request;
@@ -108,8 +109,7 @@ void toUpdater::replyFinished(QNetworkReply* reply)
 	{
 		QString errorMsg = QString("Error: %1").arg(ENUM_NAME(QNetworkReply, NetworkError, reply->error()));
 		m_version.append(errorMsg);
-		reply->deleteLater();
-		reply = NULL;
+		clear(reply);
 		m_updated = true;
 		emit updatingFinished(m_version);
 		return;
@@ -132,18 +132,45 @@ void toUpdater::replyFinished(QNetworkReply* reply)
 
 		/* We'll deduct if the redirection is valid in the redirectUrl function */
 		m_urlRedirectedTo = this->redirectUrl(possibleRedirectUrl.toUrl());
+
+		QString text = QString("toUpdater::doRequest: Redirected to %1\n").arg(m_urlRedirectedTo.toString());
+		m_version.append(text);
+
+		/* We'll do another request to the redirection url. */
+		QNetworkRequest request;
+		request.setUrl(m_urlRedirectedTo);
+		request.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::AlwaysNetwork);
+		request.setRawHeader("User-Agent", "TOraUpdater");
+		m_qnam->get(request);
+		emit updatingChanged(m_version);
 		break;
 	}
 	case 200:
 	{
-		QByteArray body = reply->readAll();
+		QByteArray body = reply->read(1024);
 		qDebug() <<  body;
 		/*
 		 * We weren't redirected anymore
 		 * so we arrived to the final destination...
 		 */
-		QString text = QString("QNAMRedirect::replyFinished: Arrived to %1\n%2\n").arg(reply->url().toString()).arg(QString(body));
+		QString text = QString(
+				"toUpdater::doRequest: Arrived to %1\n"
+				"Last version is:\n"
+				"%2").arg(reply->url().toString()).arg(QString(body));
 		m_version.append(text);
+#if defined(HAVE_GITREVISION_H)
+		QStringList lines = QString(body).split(QRegExp("[\r\n]"),QString::SkipEmptyParts);
+		foreach(QString line, lines)
+		{
+			if (line.startsWith("GITVERSION"))
+			{
+				QString version = line.mid(line.lastIndexOf(' ')+1).replace("\"", "");
+				if (version != GITVERSION)
+					Utils::toStatusMessage(QString("New version available: %1").arg(version), false, false);
+				break;
+			}
+		}
+#endif
 		/* ...so this can be cleared. */
 		m_urlRedirectedTo.clear();
 		m_updated = true;
@@ -156,32 +183,13 @@ void toUpdater::replyFinished(QNetworkReply* reply)
 	default:
 		QString errorMsg = QString("Error: %1").arg(ENUM_NAME(QNetworkReply, NetworkError, reply->error()));
 		m_version.append(errorMsg);
-		reply->deleteLater();
-		reply = NULL;
+		clear(reply);
 		m_updated = true;
 		emit updatingFinished(m_version);
 		return;
 	}
 
-	/* If the URL is not empty, we're being redirected. */
-	if(!m_urlRedirectedTo.isEmpty())
-	{
-		QString text = QString("QNAMRedirect::replyFinished: Redirected to %1\n").arg(m_urlRedirectedTo.toString());
-		m_version.append(text);
-
-		/* We'll do another request to the redirection url. */
-		QNetworkRequest request;
-		request.setUrl(m_urlRedirectedTo);
-		request.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::AlwaysNetwork);
-		request.setRawHeader("User-Agent", "TOraUpdater");
-		this->m_qnam->get(request);
-		emit updatingChanged(m_version);
-	} else {
-		emit updatingFinished(m_version);
-	}
-	/* Clean up. */
-	reply->deleteLater();
-	reply = NULL;
+	clear(reply);
 }
 
 QUrl toUpdater::redirectUrl(const QUrl& possibleRedirectUrl)
@@ -198,4 +206,9 @@ QUrl toUpdater::redirectUrl(const QUrl& possibleRedirectUrl)
 	return redirectUrl;
 }
 
-
+void toUpdater::clear(QNetworkReply *reply)
+{
+	reply->deleteLater();
+	reply = NULL;
+	m_oldUrls.clear();
+}
