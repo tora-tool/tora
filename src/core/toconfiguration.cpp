@@ -89,7 +89,9 @@ QVariant toConfigurationNew::option(int optionKey)
 
             QVariant prefValue = m_settings.value(m_enumToOptionMap.value(optionKey));
             if (!prefValue.isNull() && prefValue.canConvert(defaultValue.type()) && prefValue.convert(defaultValue.type()))
+            {
                 m_configMap[optionKey] = prefValue;
+            }
             // We are looking for some complex (non-scalar) type stored in configuration
             else if (defaultValue.type() == QVariant::UserType)
             {
@@ -99,7 +101,6 @@ QVariant toConfigurationNew::option(int optionKey)
                 m_settings.endGroup();
                 m_configMap[optionKey] = v;
             }
-
             m_settings.endGroup();
             m_settings.endGroup();
         }
@@ -135,6 +136,16 @@ void toConfigurationNew::saveAll()
         QVariant defaultValue = ctx->defaultValue(optionKey);	// defaultValue also determines datatype
         QVariant prefValue = m_settings.value(key);
         QVariant currValue = m_configMap.value(optionKey);
+
+        // Let's pretend for a while that defaultValue's type is a String (while it is a date)
+        // Avoid storing Dates in QVariant's binary format. Rather store them as ISODate.
+        // This format is used by default when converting Strings back into Date
+        if (currValue.type() == QVariant::Date && currValue.type() == QVariant::Date)
+        {
+        	currValue = QVariant(currValue.toDate().toString(Qt::ISODate));
+        	defaultValue = QVariant(defaultValue.toDate().toString(Qt::ISODate));
+        }
+
         // Store new value
         if (!currValue.isNull() && currValue.canConvert(defaultValue.type()) && currValue.convert(defaultValue.type()) && currValue != defaultValue)
         {
