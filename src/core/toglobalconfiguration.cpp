@@ -136,7 +136,11 @@ QVariant ToConfiguration::Global::defaultValue(int option) const
         case UpdateLastDate:        // last date update was run
         	return QVariant(QDate());
         case UpdatesCheckBool:
+#ifndef TORA_EXPERIMENTAL
         	return QVariant((bool)true);
+#else
+        	return QVariant((bool)false);
+#endif
             // Options: (2nd column)
         case StatusMessageInt:
             return QVariant((int)5);
