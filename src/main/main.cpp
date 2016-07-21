@@ -82,7 +82,7 @@ int main(int argc, char **argv)
      * "Fatal IO error 11 (Resource temporarily unavailable) on X server :0"
      */
     QCoreApplication::setAttribute(Qt::AA_X11InitThreads); //  or just XInitThreads();
-    //QNetworkProxyFactory::setUseSystemConfiguration(true);
+    QNetworkProxyFactory::setUseSystemConfiguration(true);
     toConfigurationNew::setQSettingsEnv();
 
     /*! \warning: Keep the code before QApplication init as small
