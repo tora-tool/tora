@@ -1156,13 +1156,13 @@ void toMain::showMessageImpl(QString str, bool save, bool log)
             int HistorySize = toConfigurationNewSingle::Instance().option(Global::HistorySizeInt).toInt();
             if (StatusMessages.size() > HistorySize)
                 StatusMessages.takeFirst();
+            if (!toConfigurationNewSingle::Instance().option(Global::MessageStatusbarBool).toBool())
+                displayMessage();
         }
 
         if (!save)
         {
             statusBar()->setToolTip(str);
-            if (!toConfigurationNewSingle::Instance().option(Global::MessageStatusbarBool).toBool())
-                displayMessage();
         }
     }
 }
