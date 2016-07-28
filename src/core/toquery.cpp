@@ -52,6 +52,7 @@ toQueryAbstr::toQueryAbstr(toConnectionSubLoan &conn, const toSQL &sql, toQueryP
     , m_Query(NULL)
 {
 	conn->setLastSql(sql.name());
+	m_SQLName.remove('\'');
 }
 
 toQueryAbstr::toQueryAbstr(toConnectionSubLoan &conn, QString const& sql, toQueryParams const& params)
@@ -64,6 +65,7 @@ toQueryAbstr::toQueryAbstr(toConnectionSubLoan &conn, QString const& sql, toQuer
     , m_Query(NULL)
 {
 	conn->setLastSql(sql.left(20));
+    m_SQLName.remove('\'');
 }
 
 toQueryAbstr::~toQueryAbstr()
