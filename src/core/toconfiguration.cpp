@@ -41,6 +41,7 @@
 #include <QtCore/QLocale>
 #include <QtCore/QSettings>
 #include <QtCore/QDir>
+#include <QtCore/QDate>
 
 toConfigurationNew::toConfigurationNew(QObject *parent)
     : QObject(parent)
