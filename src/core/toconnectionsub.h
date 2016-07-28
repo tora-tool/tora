@@ -118,6 +118,7 @@ class TORA_EXPORT toConnectionSub
         {
         	QMutexLocker l(&mutex);
         	LastSql = last;
+        	LastSql.remove('\'');
         }
 
         toQueryAbstr *Query;
