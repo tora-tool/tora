@@ -125,19 +125,15 @@ class TORA_EXPORT toCache : public QObject
 
         /** Object reference, used as a lookup key
         */
-        class TORA_EXPORT ObjectRef : public QPair<QString, QString> // 1st schema name, 2nd object name
+        class TORA_EXPORT ObjectRef
         {
-                typedef QPair<QString, QString> super;
             public:
-                ObjectRef() : super() {};
-                ObjectRef(const super::first_type &t1, const super::second_type &t2, QString const& ctx) : super(t1, t2), context(ctx) {};
-
-                ObjectRef &operator=(const QPair<super::second_type, super::second_type> &other)
-                {
-                    first = other.first;
-                    second = other.second;
-                    return *this;
-                }
+                ObjectRef() {};
+                ObjectRef(const QString &t1, const QString &t2, QString const& ctx)
+                    : context(ctx)
+                    , first(t1)
+                    , second(t2)
+                {};
 
                 ObjectRef &operator=(const ObjectRef &other)
                 {
@@ -147,12 +143,23 @@ class TORA_EXPORT toCache : public QObject
                     return *this;
                 }
 
+                bool operator==(const ObjectRef &other) const
+                {
+                    return first == other.first && second == other.second;
+                }
+
+                bool operator<(const ObjectRef &other) const
+                {
+                    return first < other.first || (!(other.first < first) && second < other.second);
+                }
+
                 /** convert object reference into a string */
                 QString toString() const;
 
                 /** convert object reference into a string, use connection traits quoting mechanism*/
                 ////QString toString(toConnection &con) const;
 
+                QString first, second;
                 QString context; // tool's active schema
         };
 
