@@ -910,6 +910,18 @@ bool toCache::CacheEntry::operator ==(const toCache::CacheEntry &other) const
 }
 ;
 
+QDataStream& operator<<(QDataStream& stream, const toCache::ObjectRef& o)
+{
+    stream << o.first << o.second;
+    return stream;
+}
+
+QDataStream& operator>>(QDataStream& stream, toCache::ObjectRef& o)
+{
+    stream >> o.first >> o.second;
+    return stream;
+}
+
 QDataStream& operator<<(QDataStream& stream, const toCache::CacheEntry& e)
 {
     stream << e.name << (quint8) e.type << e.comment << e.timestamp
