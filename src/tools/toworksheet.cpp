@@ -944,44 +944,18 @@ static QString unQuote(const QString &str)
 
 bool toWorksheet::describe(toSyntaxAnalyzer::statement const& query)
 {
-    static QRegExp white("\\s");
-    try
-    {
-        if (query.firstWord.startsWith("DESC", Qt::CaseInsensitive))
-        {
-            QStringList parts = query.sql.split(white);
-            slotUnhideResults();
+	static QRegExp desc("\\s*DESC(R(I(B(E)?)?)?)?\\s+",  Qt::CaseInsensitive);
 
-            if (connection().providerIs("Oracle"))
-            {
-                if (parts.count() == 2)
-                {
-                    Columns->changeObject(toCache::ObjectRef(schema(), unQuote(parts[1]), schema()));
-                }
-                else if (parts.count() == 3)
-                {
-                    Columns->changeObject(toCache::ObjectRef(unQuote(parts[1]), unQuote(parts[2]), schema()));
-                }
-                else
-                    throw tr("Wrong number of parameters for describe");
-            }
-            else if (connection().providerIs("QMYSQL"))
-            {
-                if (parts.count() == 2)
-                {
-                    Columns->changeObject(toCache::ObjectRef(schema(), parts[1], schema()));
-                }
-                else
-                    throw tr("Wrong number of parameters for describe");
-            }
-            Current->hide();
-            Columns->show();
-            Current = Columns;
-            return true;
-        }
-    }
-    TOCATCH
-    return false;
+	if (!query.firstWord.startsWith("DESC", Qt::CaseInsensitive))
+		return false;
+
+	int pos = desc.indexIn(query.sql, 0);
+	if (pos == -1)
+		return false;
+
+	Editor->editor()->gotoPosition(query.posFrom + desc.matchedLength());
+	slotDescribe();
+	return true;
 }
 
 QString toWorksheet::schema() const
