@@ -152,12 +152,12 @@ void GraphEdge::updateWithEdge(edge_t* edge)
 
 QTextStream& operator<<(QTextStream& s, const GraphEdge& e)
 {
-  QString srcLabel = e.fromNode()->id();
+  QString srcLabel = QString("\"%1\"").arg(e.fromNode()->id());
   if (dynamic_cast<const GraphSubgraph*>(e.fromNode()))
   {
     srcLabel = QString("subgraph ") + srcLabel;
   }
-  QString tgtLabel = e.toNode()->id();
+  QString tgtLabel = QString("\"%1\"").arg(e.toNode()->id());
   if (dynamic_cast<const GraphSubgraph*>(e.toNode()))
   {
     tgtLabel = QString("subgraph ") + tgtLabel;

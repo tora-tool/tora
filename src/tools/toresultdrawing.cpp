@@ -37,6 +37,8 @@
 #include <QVBoxLayout>
 
 #include "core/utils.h"
+#include "core/toconfiguration.h"
+#include "core/toeditorconfiguration.h"
 
 #include "dotgraph.h"
 #include "dotgraphview.h"
@@ -188,6 +190,7 @@ toResultDrawing::toResultDrawing(QWidget *parent, const char *name, toWFlags f)
 
 void toResultDrawing::query(const QString &, toQueryParams const& params)
 {
+    QFont fixed(Utils::toStringToFont(toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::ConfTextFont).toString()));
     toResult::setParams(params);
     typedef QPair<QString, QString> Reference;
     toConnection &conn = connection();
@@ -247,12 +250,15 @@ void toResultDrawing::query(const QString &, toQueryParams const& params)
         ta["comment"]= t;
         ta["id"]= t;
         ta["tooltip"] = t;
+        ta["fontname"] = fixed.family();
         newGraph.addNewNode(ta);
     }
 
     Q_FOREACH(Reference const&r, references)
     {
         QMap<QString,QString> ea; // edge attreibutes
+        ea["fontname"] = fixed.family();
+        ea["fontsize"] = "12";
         newGraph.addNewEdge(r.first, r.second, ea);
     }
 
