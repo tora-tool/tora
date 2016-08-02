@@ -109,7 +109,7 @@ void GraphNode::updateWithNode(node_t* node)
 
 QTextStream& operator<<(QTextStream& s, const GraphNode& n)
 {
-  s << n.id() << "  ["
+  s << '"' << n.id() << '"' << "  ["
     << dynamic_cast<const GraphElement&>(n)
     <<"];"<<endl;
   return s;
