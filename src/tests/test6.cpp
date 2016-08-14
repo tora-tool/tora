@@ -87,6 +87,10 @@ int main(int argc, char **argv)
         cout << "Parse OK" << endl;
     else
         cout << "Parse Fail at:" << p_info.length << " " << p_info.stop << endl;
+
+    DotRenderOpVec arenderopvec;
+    string s = "c 7 -#000000 B 10 893.39 102.15 908.28 105.35 920.58 108 920.58 108 920.58 108 1307.58 180 1307.58 180 1307.58 180 4331.58 225.05 \\\r\n4803.88 232.08 ";
+    bool r = parse_renderop(s, arenderopvec);
 }
 
 static void usage()
