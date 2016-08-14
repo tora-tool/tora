@@ -65,6 +65,21 @@ class toResultDrawing : public QWidget, public toResult
         virtual void clearData();
 
         DotGraphView *m_dotGraphView;
+
+        struct Table
+        {
+            Table(QString const& name);
+            QString name;
+            mutable unsigned edges; // avoid set limitations
+            unsigned increment() const { return ++edges; }
+        };
+        struct Edge
+        {
+            Edge(QString const& name, QString const& from, QString const& to);
+            Edge(QString const& name, QString const& from, QString const& to, unsigned minlen);
+            QString name, from, to;
+            unsigned minlen;
+        };
     private slots:
         void setDistance(int);
     private:
