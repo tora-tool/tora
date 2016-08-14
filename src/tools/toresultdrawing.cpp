@@ -147,6 +147,47 @@ static toSQL SQLTableFKWithDistance(
     "1000",
     "Oracle");
 
+toResultDrawing::Table::Table(QString const& _name)
+    : name(_name)
+    , edges(0)
+{
+}
+
+inline uint qHash(const toResultDrawing::Table &key, uint seed)
+{
+    return qHash(key.name, seed);
+}
+
+inline bool operator==(toResultDrawing::Table const& one, toResultDrawing::Table const& other)
+{
+	return one.name == other.name;
+}
+
+toResultDrawing::Edge::Edge(QString const& _name, QString const& _from, QString const& _to)
+    : name(_name)
+    , from(_from)
+    , to(_to)
+    , minlen(1)
+{
+}
+
+toResultDrawing::Edge::Edge(QString const& _name, QString const& _from, QString const& _to, unsigned _minlen)
+    : name(_name)
+    , from(_from)
+    , to(_to)
+    , minlen(_minlen)
+{
+}
+
+inline uint qHash(const toResultDrawing::Edge &key, uint seed)
+{
+    return qHash(key.name, seed) ^ qHash(key.from, seed) ^ qHash(key.to, seed);
+}
+
+inline bool operator==(toResultDrawing::Edge const& one, toResultDrawing::Edge const& other)
+{
+	return one.name == other.name && one.from == other.from && one.to == other.to;
+}
 
 toResultDrawing::toResultDrawing(QWidget *parent, const char *name, toWFlags f)
     : QWidget(parent, f)
@@ -192,13 +233,12 @@ void toResultDrawing::query(const QString &, toQueryParams const& params)
 {
     QFont fixed(Utils::toStringToFont(toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::ConfTextFont).toString()));
     toResult::setParams(params);
-    typedef QPair<QString, QString> Reference;
     toConnection &conn = connection();
 
     m_dotGraphView->initEmpty();
     QString schema(params.at(0)), table(params.at(1));
-    QSet<QString> tables;
-    QSet<Reference> references;
+    QSet<Table> tables;
+    QSet<Edge> edges;
 
     tables.insert(table);
 
@@ -208,6 +248,7 @@ void toResultDrawing::query(const QString &, toQueryParams const& params)
     ga["compound"] = "true";
     ga["shape"] = "box";
     ga["rankdir"] = "BT"; // BOTTOM to TOP arrows
+    ga["splines"] = "polyline"; // line polyline curved ortho spline
 
     newGraph.setGraphAttributes(ga);
 
@@ -234,32 +275,47 @@ void toResultDrawing::query(const QString &, toQueryParams const& params)
 
         if ( c5.isNull() && !c1.isNull()) // c5 (column_name) is null - see rollup def
         {
-            tables.insert((QString)c4); // table_name
-            tables.insert((QString)c7); // r_table_name
-            references.insert( Reference((QString)c4, (QString)c7));
+            unsigned i4 = 1, i7 = 1;
+            Table t4(c4), t7(c7);
+            if (tables.contains(t4))
+                i4 = tables.find(t4)->increment();
+            else
+                tables.insert(t4); // table_name
+
+            if (tables.contains(t7))
+                i7 = tables.find(t7)->increment();
+            else
+                tables.insert(t7); // r_table_name
+
+            unsigned minlen = (std::max)(i4, i7); minlen /= 10; minlen += 1;
+            edges.insert(Edge((QString)c1, (QString)c4, (QString)c7, minlen));
         }
     }
 
 
-    Q_FOREACH(QString const&t, tables)
+    Q_FOREACH(Table const&t, tables)
     {
-        QMap<QString,QString> ta; // table atributes
-        ta["name"] = t;
-        ta["label"] = t;
+        QMap<QString,QString> ta; // table attributes
+        ta["name"] = t.name;
+        ta["label"] = t.name;
         ta["fontsize"] = "12";
-        ta["comment"]= t;
-        ta["id"]= t;
-        ta["tooltip"] = t;
+        ta["comment"]= t.name;
+        ta["id"]= t.name;
+        ta["tooltip"] = t.name;
         ta["fontname"] = fixed.family();
         newGraph.addNewNode(ta);
     }
 
-    Q_FOREACH(Reference const&r, references)
+    Q_FOREACH(Edge const&r, edges)
     {
-        QMap<QString,QString> ea; // edge attreibutes
+        QMap<QString,QString> ea; // edge attributes
         ea["fontname"] = fixed.family();
         ea["fontsize"] = "12";
-        newGraph.addNewEdge(r.first, r.second, ea);
+        ea["tooltip"] = r.name;
+        //ea["label"] = r.name;
+        //ea["comment"] = r.name;
+        ea["minlen"] = QString::number(r.minlen);
+        newGraph.addNewEdge(r.from, r.to, ea);
     }
 
     m_dotGraphView->graph()->updateWithGraph(newGraph);

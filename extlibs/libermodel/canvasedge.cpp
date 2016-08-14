@@ -65,10 +65,9 @@ CanvasEdge::CanvasEdge(DotGraphView* view, GraphEdge* e,
   computeBoundingRect();
 //   kDebug() << "boundingRect computed: " << m_boundingRect;
   
-  QString tipStr = QString("%1 -> %2\nlabel='%3'")
+  QString tipStr = QString("%1 -> %2")
     .arg(edge()->fromNode()->id())
-    .arg(edge()->toNode()->id())
-    .arg(e->label());
+    .arg(edge()->toNode()->id());
   setToolTip(tipStr);
 
   // the message should be given (or possible to be given) by the part user
