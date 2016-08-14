@@ -42,7 +42,7 @@ struct DotGraphParsingHelper
   void createsubgraph();
   void setgraphattributes();
   void setsubgraphattributes();
-      void setnodeattributes();
+  void setnodeattributes();
   void setedgeattributes();
   void setattributedlist();
   void createedges();
