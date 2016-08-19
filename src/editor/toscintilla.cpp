@@ -468,7 +468,7 @@ void toScintilla::findPosition(int index, int &line, int &col)
     return ;
 }
 
-void toScintilla::gotoPosition(int pos)
+void toScintilla::gotoPosition(long pos)
 {
     SendScintilla(QsciScintilla::SCI_GOTOPOS, pos);
 }
@@ -478,7 +478,7 @@ void toScintilla::gotoLine(int line)
     SendScintilla(QsciScintilla::SCI_GOTOLINE, line);
 }
 
-int toScintilla::positionAfter(int pos, int offset)
+long toScintilla::positionAfter(long pos, int offset)
 {
     // Allow for multi-byte characters.
     for (int i = 0; i < offset; i++)
@@ -486,7 +486,7 @@ int toScintilla::positionAfter(int pos, int offset)
     return pos;
 }
 
-void toScintilla::setSelection(int posFrom, int posTo)
+void toScintilla::setSelection(long posFrom, long posTo)
 {
     SendScintilla(SCI_SETSEL, posFrom, posTo);
 }
@@ -1566,7 +1566,7 @@ wchar_t toScintilla::getWCharAt(int pos)
 
 toScintilla::CharClassify::cc toScintilla::CharClass(char c)
 {
-	return m_charClasifier.GetClass(c);
+    return m_charClasifier.GetClass(c);
 }
 
 toScintilla::CharClassify toScintilla::m_charClasifier;

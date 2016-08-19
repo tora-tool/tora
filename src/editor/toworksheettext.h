@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOWORKSHEETTEXT_H
-#define TOWORKSHEETTEXT_H
+#pragma once
 
 #include "core/toeditorconfiguration.h"
 #include "editor/tosqltext.h"
@@ -67,6 +66,9 @@ class toWorksheetText : public toSqlText
 
         virtual void setHighlighter(toSqlText::HighlighterTypeEnum);
 
+        // Override QScintilla (display custom toComplPopup window)
+        void autoCompleteFromAPIs() override;
+
     public slots:
         void setEditorType(int);
 
@@ -74,8 +76,6 @@ class toWorksheetText : public toSqlText
         void gotoPrevBookmark();
         void gotoNextBookmark();
 
-        // Override QScintilla (display custom toComplPopup window)
-        virtual void autoCompleteFromAPIs();
 
         // Insert chosen text
         void completeFromAPI(QListWidgetItem * item);
@@ -84,7 +84,7 @@ class toWorksheetText : public toSqlText
 
     protected:
         /*! \brief Override QScintilla event handler to display code completion popup */
-        virtual void keyPressEvent(QKeyEvent * e);
+        void keyPressEvent(QKeyEvent * e) override;
 
         /*! \brief Guess what should be used for code completion
         in this time.
@@ -98,8 +98,8 @@ class toWorksheetText : public toSqlText
 
         void completeWithText(QString const&);
 
-        virtual void focusInEvent(QFocusEvent *e);
-        virtual void focusOutEvent(QFocusEvent *e);
+        void focusInEvent(QFocusEvent *e) override;
+        void focusOutEvent(QFocusEvent *e) override;
 
 #ifdef TORA3_SESSION
         /** Export data to a map.
@@ -148,5 +148,3 @@ class toEditorTypeButton : public toToggleButton
 
 // this one will be usually parented by QStatusBar
 typedef Loki::SingletonHolder<toEditorTypeButton, Loki::CreateUsingNew, Loki::NoDestroy> toEditorTypeButtonSingle;
-
-#endif
