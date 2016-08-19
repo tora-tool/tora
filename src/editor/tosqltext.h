@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOSQLTEXT_H
-#define TOSQLTEXT_H
+#pragma once
 
 #include "editor/toscintilla.h"
 #include "widgets/topushbutton.h"
@@ -227,5 +226,3 @@ class toHighlighterTypeButton : public toToggleButton
 
 // this one will be usually parented by QStatusBar
 typedef Loki::SingletonHolder<toHighlighterTypeButton, Loki::CreateUsingNew, Loki::NoDestroy> toHighlighterTypeButtonSingle;
-
-#endif

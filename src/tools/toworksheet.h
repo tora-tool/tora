@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOWORKSHEET_H
-#define TOWORKSHEET_H
+#pragma once
 
 #include "core/toconnection.h"
 #include "core/toconfenum.h"
@@ -311,4 +310,3 @@ class toWorksheetSetting
         void slotChooseFile(void);
 };
 
-#endif

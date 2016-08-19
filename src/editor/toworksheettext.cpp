@@ -58,12 +58,12 @@ toWorksheetText::toWorksheetText(QWidget *parent, const char *name)
     , m_completeEnabled(toConfigurationNewSingle::Instance().option(Editor::CodeCompleteBool).toBool())
     , m_completeDelayed((toConfigurationNewSingle::Instance().option(Editor::CodeCompleteDelayInt).toInt() > 0))
 {
-	if (m_completeEnabled && !m_completeDelayed)
-	{
-		QsciScintilla::setAutoCompletionThreshold(1); // start when a single leading word's char is typed
-		QsciScintilla::setAutoCompletionUseSingle(QsciScintilla::AcusExplicit);
-		QsciScintilla::setAutoCompletionSource(QsciScintilla::AcsAll); // AcsAll := AcsAPIs | AcsDocument
-	}
+    if (m_completeEnabled && !m_completeDelayed)
+    {
+        QsciScintilla::setAutoCompletionThreshold(1); // start when a single leading word's char is typed
+        QsciScintilla::setAutoCompletionUseSingle(QsciScintilla::AcusExplicit);
+        QsciScintilla::setAutoCompletionSource(QsciScintilla::AcsAll); // AcsAll := AcsAPIs | AcsDocument
+    }
     QsciScintilla::setAutoIndent(true);
 
     // highlight caret line
@@ -123,23 +123,24 @@ void toWorksheetText::setHighlighter(toSqlText::HighlighterTypeEnum e)
 
 void toWorksheetText::keyPressEvent(QKeyEvent * e)
 {
+    long currPosition = currentPosition();
+    long nextPosition = SendScintilla(QsciScintilla::SCI_POSITIONAFTER, currPosition);
     // handle editor shortcuts with TAB
     // It uses qscintilla lowlevel API to handle "word under cursor"
     // This code is taken from sqliteman.com
     if (e->key() == Qt::Key_Tab && toConfigurationNewSingle::Instance().option(Editor::UseEditorShortcutsBool).toBool())
     {
-        long pos = currentPosition();
-        int start = SendScintilla(SCI_WORDSTARTPOSITION, pos, true);
-        int end = SendScintilla(SCI_WORDENDPOSITION, pos, true);
-        QString key(wordAtPosition(pos, true));
+        int start = SendScintilla(SCI_WORDSTARTPOSITION, currPosition, true);
+        int end = SendScintilla(SCI_WORDENDPOSITION, currPosition, true);
+        QString key(wordAtPosition(currPosition, true));
         EditorShortcutsMap shorts(toConfigurationNewSingle::Instance().option(Editor::EditorShortcutsMap).toMap());
         if (shorts.contains(key))
         {
             setSelection(start, end);
             removeSelectedText();
             insert(shorts.value(key).toString());
-            pos = SendScintilla(SCI_GETCURRENTPOS);
-            SendScintilla(SCI_SETEMPTYSELECTION, pos + shorts.value(key).toByteArray().length());
+            currPosition = SendScintilla(SCI_GETCURRENTPOS);
+            SendScintilla(SCI_SETEMPTYSELECTION, currPosition + shorts.value(key).toByteArray().length());
             e->accept();
             return;
         }
@@ -161,38 +162,58 @@ void toWorksheetText::keyPressEvent(QKeyEvent * e)
 
 void toWorksheetText::positionChanged(int row, int col)
 {
-    int position = currentPosition();
-    wchar_t currentChar = getWCharAt(position);
-	TLOG(0, toNoDecorator, __HERE__) << currentChar << std::endl;
+    using namespace ToConfiguration;
+    using cc = toScintilla::CharClassify::cc;
+    using ChClassEnum = toScintilla::CharClassify;
 
-	if (col <= 0)
+    if (col <= 0)
+        goto no_complete;
+
+    if (m_completeEnabled == false || m_completeEnabled == false)
+        goto no_complete;
+
+    long currPosition = currentPosition();
+    long nextPosition = SendScintilla(QsciScintilla::SCI_POSITIONAFTER, currPosition);
+
+    wchar_t currChar = getWCharAt(currPosition);
+    wchar_t nextChar = getWCharAt(nextPosition);
+
+    cc currClass = CharClass(currChar);
+    cc nextClass = CharClass(nextChar);
+
+    TLOG(0, toNoDecorator, __HERE__) << currChar << std::endl;
+
+    if (currChar == 0)
+        goto no_complete;
+
+    if ((currClass == ChClassEnum::ccWord || currClass == ChClassEnum::ccPunctuation) &&
+            (nextClass == CharClassify::ccWord || nextClass == CharClassify::ccPunctuation))
+        goto no_complete;
+
+    // Cursor is not at EOL, not before any word character
+    if (currClass != ChClassEnum::ccWord && currClass != ChClassEnum::ccSpace)
+        goto no_complete;
+
+    for(int i=1, c=col; i<3 && c; i++, c--)
     {
-    	m_complTimer->stop();
-    	return;
+        currPosition = SendScintilla(QsciScintilla::SCI_POSITIONBEFORE, currPosition);
+        currChar = getWCharAt(currPosition);
+        if (currChar == L'.')
+        {
+            m_complTimer->start(toConfigurationNewSingle::Instance().option(Editor::CodeCompleteDelayInt).toInt());
+            return;
+        }
+        if (currClass != CharClassify::ccWord)
+            break;
     }
 
-	// Cursor is not at EOL, not before any word character
-	if( currentChar != 0 && CharClass(currentChar) != CharClassify::ccWord && CharClass(currentChar) != CharClassify::ccSpace) {
-    	m_complTimer->stop();
-    	return;
-    }
-
-	for(int i=1, c=col; i<3 && c; i++, c--)
-	{
-		position = SendScintilla(QsciScintilla::SCI_POSITIONBEFORE, position);
-		currentChar = getWCharAt(position);
-		if (m_completeEnabled && m_completeDelayed && currentChar == L'.')
-		{
-			m_complTimer->start(toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::CodeCompleteDelayInt).toInt());
-			return;
-		}
-		if (CharClass(currentChar) != CharClassify::ccWord)
-			break;
-	}
 // FIXME: disabled due repainting issues
 //    current line marker (margin arrow)
 //    markerDeleteAll(m_currentLineMarginHandle);
 //    markerAdd(row, m_currentLineMarginHandle);
+
+no_complete:
+    m_complTimer->stop();
 }
 
 // the QScintilla way of autocomletition
@@ -295,10 +316,10 @@ void toWorksheetText::completeWithText(QString const& text)
     int start = SendScintilla(SCI_WORDSTARTPOSITION, pos, true);
     int end = SendScintilla(SCI_WORDENDPOSITION, pos, true);
     // The text might be already selected by tableAtCursor
-	if (!hasSelectedText())
-	{
-		setSelection(start, end);
-	}
+    if (!hasSelectedText())
+    {
+        setSelection(start, end);
+    }
     removeSelectedText();
     insert(text);
     SendScintilla(SCI_SETCURRENTPOS,
@@ -371,22 +392,22 @@ void toWorksheetText::gotoNextBookmark()
 
 QStringList toWorksheetText::getCompletionList(QString &partial)
 {
-	TLOG(0, toTimeStart, __HERE__) << "Start" << std::endl;
+    TLOG(0, toTimeStart, __HERE__) << "Start" << std::endl;
     int curline, curcol;
     getCursorPosition (&curline, &curcol);
     QString word = wordAtLineIndex(curline, curcol);
     TLOG(0, toTimeDelta, __HERE__) << "Word at index: " << word << std::endl;
-	QStringList retval = toConnection::currentConnection(this).getCache().completeEntry("" , word);
+    QStringList retval = toConnection::currentConnection(this).getCache().completeEntry("" , word);
     TLOG(0, toTimeDelta, __HERE__) << "Complete entry" << std::endl;
-	QStringList retval2;
-	{
-		//QWidget * parent = parentWidget();
-		//QWidget * parent2 = parent->parentWidget();
-		//if (toWorksheetEditor *editor = dynamic_cast<toWorksheetEditor*>(parentWidget()))
-		//	if(toWorksheet *worksheet = dynamic_cast<toWorksheet*>(editor))
-		//		retval2 = toConnection::currentConnection(this).getCache().completeEntry(worksheet->currentSchema()+'.' ,word);
-		retval2 = toConnection::currentConnection(this).getCache().completeEntry(toToolWidget::currentSchema(this), word);
-	}
+    QStringList retval2;
+    {
+        //QWidget * parent = parentWidget();
+        //QWidget * parent2 = parent->parentWidget();
+        //if (toWorksheetEditor *editor = dynamic_cast<toWorksheetEditor*>(parentWidget()))
+        //	if(toWorksheet *worksheet = dynamic_cast<toWorksheet*>(editor))
+        //		retval2 = toConnection::currentConnection(this).getCache().completeEntry(worksheet->currentSchema()+'.' ,word);
+        retval2 = toConnection::currentConnection(this).getCache().completeEntry(toToolWidget::currentSchema(this), word);
+    }
 
     if (retval2.size() <= 100) // Do not waste CPU on sorting huge completition list TODO: limit the amount of returned entries
         retval2.sort();

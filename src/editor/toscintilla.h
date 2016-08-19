@@ -124,15 +124,15 @@ class toScintilla: public QsciScintilla //, public toEditWidget
          */
         void findPosition(int index, int &line, int &col);
 
-        void gotoPosition(int pos);
+        void gotoPosition(long pos);
 
         void gotoLine(int line);
 
-        int positionAfter(int pos, int offset);
+        long positionAfter(long pos, int offset);
 
         using QsciScintilla::setSelection;
 
-        void setSelection(int posFrom, int posTo);
+        void setSelection(long posFrom, long posTo);
 
         /** Insert text and optionally mark inserted text.
          * @param str String to insert.
