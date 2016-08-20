@@ -278,7 +278,7 @@ void toSecurityTreeModel::setupModelData(const QString & user)
             ; i != objectList.end()
             ; i++)
     {
-        type = (*i)->type;
+        type = toCache::cacheEntryTypeToString((*i)->type);
         owner = (*i)->name.first;
         name = (*i)->name.second;
 
