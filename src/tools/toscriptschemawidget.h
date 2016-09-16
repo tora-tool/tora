@@ -64,6 +64,9 @@ class toScriptSchemaWidget : public QWidget, public Ui::toScriptSchemaWidget
 
         //! Return current connection options
         toConnectionOptions connectionOptions();
+
+        toConnection &connection();
+
         /*! Set the connection string from outside of this widget.
         \param c QString which will be set when its already in the
         ConnectionComboBox
