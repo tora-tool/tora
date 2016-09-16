@@ -58,7 +58,7 @@ namespace ToConfiguration
                 , ObjectNamesUpperBool  // #define CONF_OBJECT_NAMES_UPPER
                 , CodeCompleteBool      // #define CONF_CODE_COMPLETION
                 , CompleteSortBool      // #define CONF_COMPLETION_SORT
-				, CodeCompleteDelayInt
+                , CodeCompleteDelayInt
                 , UseEditorShortcutsBool
                 , EditorShortcutsMap
                 , AutoIndentBool        // #define CONF_AUTO_INDENT
