@@ -69,7 +69,20 @@ QVariant ToConfiguration::Editor::defaultValue(int option) const
         case UseEditorShortcutsBool:
             return QVariant((bool) false);
         case EditorShortcutsMap:
-            return QVariant(QMap<QString, QVariant>());
+            return QVariant(QMap<QString, QVariant>
+            {
+                {"SE", "SELECT"},
+                {"se", "select"},
+                {"FR", "FROM"},
+                {"fr", "from"},
+                {"WH", "WHERE"},
+                {"wh", "where"},
+                {"GR", "GROUP"},
+                {"gr", "group"},
+                {"OR", "ORDER"},
+                {"or", "order"}
+            }
+            );
         case AutoIndentBool:
             return QVariant((bool) true);
         case UseSpacesForIndentBool:

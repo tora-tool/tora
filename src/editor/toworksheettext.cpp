@@ -85,7 +85,7 @@ toWorksheetText::toWorksheetText(QWidget *parent, const char *name)
     else
         QsciScintilla::setEdgeMode(QsciScintilla::EdgeNone);
 
-    connect (this, SIGNAL(cursorPositionChanged(int, int)), this, SLOT(positionChanged(int, int)));
+    //connect (this, SIGNAL(cursorPositionChanged(int, int)), this, SLOT(positionChanged(int, int)));
     connect( m_complTimer, SIGNAL(timeout()), this, SLOT(autoCompleteFromAPIs()) );
 
     connect(&toEditorTypeButtonSingle::Instance(),
@@ -130,8 +130,8 @@ void toWorksheetText::keyPressEvent(QKeyEvent * e)
     // This code is taken from sqliteman.com
     if (e->key() == Qt::Key_Tab && toConfigurationNewSingle::Instance().option(Editor::UseEditorShortcutsBool).toBool())
     {
-        int start = SendScintilla(SCI_WORDSTARTPOSITION, currPosition, true);
-        int end = SendScintilla(SCI_WORDENDPOSITION, currPosition, true);
+        long start = SendScintilla(SCI_WORDSTARTPOSITION, currPosition, true);
+        long end = SendScintilla(SCI_WORDENDPOSITION, currPosition, true);
         QString key(wordAtPosition(currPosition, true));
         EditorShortcutsMap shorts(toConfigurationNewSingle::Instance().option(Editor::EditorShortcutsMap).toMap());
         if (shorts.contains(key))
