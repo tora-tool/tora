@@ -40,6 +40,7 @@
 #include "core/tomainwindow.h"
 //#include "core/toreport.h"
 #include "core/totextview.h"
+#include "core/toextract.h"
 #include "editor/toworksheettext.h"
 #include "tools/toscripttreeitem.h"
 
@@ -376,8 +377,8 @@ void toScript::execute(void)
         std::list<QString> sourceDescription;
         std::list<QString> destinationDescription;
         QString script;
-#ifdef TORA3_EXTRACT
-        toExtract source(toMainWidget()->connection(ScriptUI->Source->connectionString()), this);
+
+        toExtract source(ScriptUI->Source->connection(), this);
         setupExtract(source);
 
         switch (mode)
@@ -486,7 +487,7 @@ void toScript::execute(void)
         if (ScriptUI->Destination->isEnabled())
         {
             std::list<QString> destinationObjects  = createObjectList(ScriptUI->Destination->objectList());
-            toExtract destination(toMainWidget()->connection(ScriptUI->Destination->connectionString()), this);
+            toExtract destination(ScriptUI->Destination->connection(), this);
             setupExtract(destination);
             switch (mode)
             {
@@ -514,9 +515,8 @@ void toScript::execute(void)
                                       mode == MODE_COMPARE || mode == MODE_SEARCH);
         if (!script.isEmpty())
         {
-            WorksheetText->editor()->setText(script);
-            WorksheetText->editor()->setFilename(QString::null);
-            WorksheetText->editor()->setModified(true);
+            WorksheetText->setText(script);
+            WorksheetText->setModified(true);
         }
         if (mode == MODE_SEARCH)
         {
@@ -574,6 +574,7 @@ void toScript::execute(void)
             WorksheetText->hide();
             SearchList->hide();
             Report->show();
+#ifdef TORA_REPORT
             QString res = toGenerateReport(source.connection(), sourceDescription);
             Report->setText(res);
             if (ScriptUI->OutputFile->isChecked())
@@ -597,6 +598,7 @@ void toScript::execute(void)
                     }
                 }
             }
+#endif
         }
         else // TODO migrate
         {
@@ -606,7 +608,7 @@ void toScript::execute(void)
             fillDifference(sourceDescription, DropList);
             fillDifference(destinationDescription, CreateList);
         }
-#endif
+
         if (mode == MODE_COMPARE)
             ScriptUI->Tabs->setCurrentIndex(ScriptUI->Tabs->indexOf(ScriptUI->DifferenceTab));
         else
@@ -753,7 +755,6 @@ void toScript::removeSize(void)
         delete item;
 }
 
-#ifdef TORA3_EXTRACT
 void toScript::setupExtract(toExtract &extr)
 {
     extr.setCode (ScriptUI->IncludeCode->isEnabled() &&
@@ -807,7 +808,6 @@ void toScript::setupExtract(toExtract &extr)
         extr.setResize(siz);
     }
 }
-#endif
 
 void toScript::browseFile(void)
 {

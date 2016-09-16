@@ -109,6 +109,11 @@ toConnectionOptions toScriptSchemaWidget::connectionOptions()
     return data.value<toConnectionOptions>();
 }
 
+toConnection& toScriptSchemaWidget::connection()
+{
+    return toConnectionRegistrySing::Instance().connection(connectionOptions());
+}
+
 void toScriptSchemaWidget::setConnectionString(const QString & c)
 {
     int i = ConnectionComboBox->findText(c);
