@@ -104,7 +104,6 @@ static toScriptTool ScriptTool;
 #define MODE_COMPARE 0
 #define MODE_EXTRACT 1
 #define MODE_SEARCH 2
-#define MODE_MIGRATE 3
 #define MODE_REPORT 4
 
 
@@ -186,26 +185,14 @@ toScript::toScript(QWidget *parent, toConnection &connection)
     group->addButton(ScriptUI->Compare, MODE_COMPARE);
     group->addButton(ScriptUI->Extract, MODE_EXTRACT);
     group->addButton(ScriptUI->Search, MODE_SEARCH);
-    group->addButton(ScriptUI->Migrate, MODE_MIGRATE);
     group->addButton(ScriptUI->Report, MODE_REPORT);
 
-    ScriptUI->Initial->setTitle(tr("&Initial"));
-    ScriptUI->Limit->setTitle(tr("&Limit"));
-    ScriptUI->Next->setTitle(tr("&Next"));
     connect(group, SIGNAL(buttonClicked(int)), this, SLOT(changeMode(int)));
-    ScriptUI->Tabs->setTabEnabled(ScriptUI->Tabs->indexOf(ScriptUI->ResizeTab), false);
-
-    // Remove when migrate and resize is implemented
-#if 1
-    ScriptUI->Migrate->hide();
-#endif
 
     ScriptUI->Source->setConnectionString(connection.description());
     ScriptUI->Destination->setConnectionString(connection.description());
 
     connect(ScriptUI->Browse, SIGNAL(clicked()), this, SLOT(browseFile()));
-    connect(ScriptUI->AddButton, SIGNAL(clicked()), this, SLOT(newSize()));
-    connect(ScriptUI->Remove, SIGNAL(clicked()), this, SLOT(removeSize()));
 
     ScriptUI->Schema->setCurrentIndex(0);
     setFocusProxy(ScriptUI->Tabs);
@@ -216,7 +203,6 @@ toScript::toScript(QWidget *parent, toConnection &connection)
     ScriptUI->Compare->setChecked(s.value("Compare", true).toBool());
     ScriptUI->Extract->setChecked(s.value("Extract", false).toBool());
     ScriptUI->Search->setChecked(s.value("Search", false).toBool());
-    ScriptUI->Migrate->setChecked(s.value("Migrate", false).toBool());
     ScriptUI->Report->setChecked(s.value("Report", false).toBool());
     // checkboxes - options
     ScriptUI->IncludeDDL->setChecked(s.value("IncludeDDL", true).toBool());
@@ -256,7 +242,6 @@ void toScript::closeEvent(QCloseEvent *event)
         s.setValue("Compare", ScriptUI->Compare->isChecked());
         s.setValue("Extract", ScriptUI->Extract->isChecked());
         s.setValue("Search", ScriptUI->Search->isChecked());
-        s.setValue("Migrate", ScriptUI->Migrate->isChecked());
         s.setValue("Report", ScriptUI->Report->isChecked());
         // checkboxes - options
         s.setValue("Report", ScriptUI->Report->isChecked());
@@ -362,8 +347,6 @@ void toScript::execute(void)
             mode = MODE_COMPARE;
         else if (ScriptUI->Extract->isChecked())
             mode = MODE_EXTRACT;
-        else if (ScriptUI->Migrate->isChecked())
-            mode = MODE_SEARCH;
         else if (ScriptUI->Search->isChecked())
             mode = MODE_SEARCH;
         else if (ScriptUI->Report->isChecked())
@@ -478,7 +461,6 @@ void toScript::execute(void)
                 break;
             case MODE_COMPARE:
             case MODE_SEARCH:
-            case MODE_MIGRATE:
             case MODE_REPORT:
                 sourceDescription = source.describe(sourceObjects);
                 break;
@@ -497,7 +479,6 @@ void toScript::execute(void)
                     break;
                 case MODE_REPORT:
                 case MODE_EXTRACT:
-                case MODE_MIGRATE:
                     throw tr("Destination shouldn't be enabled now, internal error");
             }
 
@@ -509,10 +490,8 @@ void toScript::execute(void)
             sourceDescription = drop;
             destinationDescription = create;
         }
-        ScriptUI->Tabs->setTabEnabled(ScriptUI->Tabs->indexOf(ScriptUI->ResultTab),
-                                      mode == MODE_EXTRACT || mode == MODE_SEARCH || mode == MODE_MIGRATE || mode == MODE_REPORT);
-        ScriptUI->Tabs->setTabEnabled(ScriptUI->Tabs->indexOf(ScriptUI->DifferenceTab),
-                                      mode == MODE_COMPARE || mode == MODE_SEARCH);
+        ScriptUI->Tabs->setTabEnabled(ScriptUI->Tabs->indexOf(ScriptUI->ResultTab), mode == MODE_EXTRACT || mode == MODE_SEARCH || mode == MODE_REPORT);
+        ScriptUI->Tabs->setTabEnabled(ScriptUI->Tabs->indexOf(ScriptUI->DifferenceTab), mode == MODE_COMPARE || mode == MODE_SEARCH);
         if (!script.isEmpty())
         {
             WorksheetText->setText(script);
@@ -672,13 +651,8 @@ void toScript::changeMode(int mode)
 
     if (mode == MODE_COMPARE)
         ScriptUI->Destination->setEnabled(true);
-    else if (mode == MODE_EXTRACT || mode == MODE_MIGRATE || mode == MODE_REPORT || mode == MODE_SEARCH)
+    else if (mode == MODE_EXTRACT || mode == MODE_REPORT || mode == MODE_SEARCH)
         ScriptUI->Destination->setEnabled(false);
-
-    if (mode == MODE_EXTRACT)
-        ScriptUI->Tabs->setTabEnabled(ScriptUI->Tabs->indexOf(ScriptUI->ResizeTab), true);
-    else if (mode == MODE_COMPARE || mode == MODE_MIGRATE || mode == MODE_REPORT || mode == MODE_SEARCH)
-        ScriptUI->Tabs->setTabEnabled(ScriptUI->Tabs->indexOf(ScriptUI->ResizeTab), false);
 
     ScriptUI->IncludeContent->setEnabled(mode == MODE_EXTRACT);
     ScriptUI->CommitDistance->setEnabled(mode == MODE_EXTRACT);
@@ -688,14 +662,13 @@ void toScript::changeMode(int mode)
         ScriptUI->IncludeHeader->setEnabled(true);
         ScriptUI->IncludePrompt->setEnabled(true);
     }
-    else if (mode == MODE_COMPARE || mode == MODE_MIGRATE || mode == MODE_REPORT || mode == MODE_SEARCH)
+    else if (mode == MODE_COMPARE || mode == MODE_REPORT || mode == MODE_SEARCH)
     {
         ScriptUI->IncludeHeader->setEnabled(false);
         ScriptUI->IncludePrompt->setEnabled(false);
     }
 
-    if (mode == MODE_COMPARE || mode == MODE_SEARCH
-            || mode == MODE_MIGRATE || mode == MODE_REPORT)
+    if (mode == MODE_COMPARE || mode == MODE_SEARCH || mode == MODE_REPORT)
     {
         ScriptUI->IncludeDDL->setEnabled(false);
         ScriptUI->IncludeDDL->setChecked(true);
@@ -710,9 +683,9 @@ void toScript::changeMode(int mode)
     ScriptUI->IncludeConstraints->setEnabled(ScriptUI->IncludeDDL->isChecked());
     ScriptUI->IncludeIndexes->setEnabled(ScriptUI->IncludeDDL->isChecked());
     ScriptUI->IncludeGrants->setEnabled(ScriptUI->IncludeDDL->isChecked());
-    ScriptUI->IncludeStorage->setEnabled(ScriptUI->IncludeDDL->isChecked() && mode != MODE_MIGRATE);
-    ScriptUI->IncludeParallell->setEnabled(ScriptUI->IncludeDDL->isChecked() && mode != MODE_MIGRATE);
-    ScriptUI->IncludePartition->setEnabled(ScriptUI->IncludeDDL->isChecked() && mode != MODE_MIGRATE);
+    ScriptUI->IncludeStorage->setEnabled(ScriptUI->IncludeDDL->isChecked());
+    ScriptUI->IncludeParallell->setEnabled(ScriptUI->IncludeDDL->isChecked());
+    ScriptUI->IncludePartition->setEnabled(ScriptUI->IncludeDDL->isChecked());
     ScriptUI->IncludeCode->setEnabled(ScriptUI->IncludeDDL->isChecked());
     ScriptUI->IncludeComment->setEnabled(ScriptUI->IncludeDDL->isChecked());
 }
@@ -726,33 +699,6 @@ void toScript::keepOn(toTreeWidgetItem *parent)
     if (!pchk)
         return ;
     pchk->setOn(true);
-}
-
-void toScript::newSize(void)
-{
-    QString init = ScriptUI->Initial->sizeString();
-    QString next = ScriptUI->Next->sizeString();
-    QString max = ScriptUI->Limit->sizeString();
-    QString maxNum;
-    maxNum.sprintf("%010d", ScriptUI->Limit->value());
-
-    for (toTreeWidgetItem *item = ScriptUI->Sizes->firstChild(); item; item = item->nextSibling())
-        if (max == item->text(0))
-        {
-            Utils::toStatusMessage(tr("Replacing existing size with new"), false, false);
-            delete item;
-            break;
-        }
-
-    new toTreeWidgetItem(ScriptUI->Sizes, max, init, next, maxNum);
-    ScriptUI->Sizes->setSorting(3);
-}
-
-void toScript::removeSize(void)
-{
-    toTreeWidgetItem *item = ScriptUI->Sizes->selectedItem();
-    if (item)
-        delete item;
 }
 
 void toScript::setupExtract(toExtract &extr)
@@ -788,25 +734,6 @@ void toScript::setupExtract(toExtract &extr)
     else
         extr.setSchema(ScriptUI->Schema->currentText());
 
-    if (ScriptUI->DontResize->isChecked())
-        extr.setResize(QString::null);
-    else if (ScriptUI->AutoResize->isChecked())
-        extr.setResize(QString::fromLatin1("1"));
-    else
-    {
-        QString siz;
-        for (toTreeWidgetItem *item = ScriptUI->Sizes->firstChild(); item; item = item->nextSibling())
-        {
-            siz += item->text(0);
-            siz += QString::fromLatin1(":");
-            siz += item->text(1);
-            siz += QString::fromLatin1(":");
-            siz += item->text(2);
-            if (item->nextSibling())
-                siz += QString::fromLatin1(":");
-        }
-        extr.setResize(siz);
-    }
 }
 
 void toScript::browseFile(void)

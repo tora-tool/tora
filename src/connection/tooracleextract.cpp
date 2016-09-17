@@ -2381,9 +2381,6 @@ QString toOracleExtract::segmentAttributes(toExtract &ext, toQList &result) cons
 
         if (!toConfigurationNewSingle::Instance().option(Oracle::SkipStorageExceptTablespaceBool).toBool())
         {
-            if (ext.getResize())
-                ext.initialNext(blocks, initial, next);
-
             if (organization == "HEAP")
             {
                 if (cache != "N/A")
@@ -2790,9 +2787,6 @@ void toOracleExtract::describeAttributes(toExtract &ext,
     i++;
     QString blocks = (QString)*i;
     i++;
-
-    if (ext.getResize())
-        ext.initialNext(blocks, initial, next);
 
     QString ret;
     if (organization == "HEAP")
@@ -6293,7 +6287,6 @@ void toOracleExtract::describeView(toExtract &ext,
 QString toOracleExtract::dropConstraint(toExtract &ext,
                                         const QString &schema,
                                         const QString &owner,
-                                        const QString &,
                                         const QString &name) const
 {
     toQList tableName = toQuery::readQuery(CONNECTION,
@@ -6321,7 +6314,6 @@ QString toOracleExtract::dropConstraint(toExtract &ext,
 QString toOracleExtract::dropDatabaseLink(toExtract &ext,
         const QString &,
         const QString &owner,
-        const QString &,
         const QString &name) const
 {
     QString sql = QString("DROP%1 DATABASE LINK %2").
@@ -6360,8 +6352,6 @@ QString toOracleExtract::dropMViewLog(toExtract &ext,
 }
 
 QString toOracleExtract::dropObject(toExtract &ext,
-                                    const QString &,
-                                    const QString &,
                                     const QString &type,
                                     const QString &name) const
 {
@@ -6378,11 +6368,7 @@ QString toOracleExtract::dropObject(toExtract &ext,
     return ret;
 }
 
-QString toOracleExtract::dropProfile(toExtract &ext,
-                                     const QString &,
-                                     const QString &,
-                                     const QString &,
-                                     const QString &name) const
+QString toOracleExtract::dropProfile(toExtract &ext, const QString &name) const
 {
     QString sql = QString("DROP PROFILE %1 CASCADE").arg(QUOTE(name));
     QString ret;
@@ -6419,7 +6405,6 @@ QString toOracleExtract::dropSchemaObject(toExtract &ext,
 QString toOracleExtract::dropSynonym(toExtract &ext,
                                      const QString &schema,
                                      const QString &owner,
-                                     const QString &,
                                      const QString &name) const
 {
     QString sql = QString("DROP%1 SYNONYM %2%3").
@@ -6441,7 +6426,6 @@ QString toOracleExtract::dropSynonym(toExtract &ext,
 QString toOracleExtract::dropTable(toExtract &ext,
                                    const QString &schema,
                                    const QString &,
-                                   const QString &,
                                    const QString &name) const
 {
     QString sql = QString("DROP TABLE %1%2 CASCADE CONSTRAINTS").
@@ -6460,9 +6444,6 @@ QString toOracleExtract::dropTable(toExtract &ext,
 }
 
 QString toOracleExtract::dropTablespace(toExtract &ext,
-                                        const QString &,
-                                        const QString &,
-                                        const QString &,
                                         const QString &name) const
 {
     QString sql = QString("DROP TABLESPACE %1 INCLUDING CONTENTS CASCADE CONSTRAINTS").
@@ -6480,9 +6461,6 @@ QString toOracleExtract::dropTablespace(toExtract &ext,
 }
 
 QString toOracleExtract::dropUser(toExtract &ext,
-                                  const QString &,
-                                  const QString &,
-                                  const QString &,
                                   const QString &name) const
 {
     QString sql = QString("DROP USER %1 CASCADE").
@@ -7327,10 +7305,12 @@ static toSQL SQLDbmsMetadataSetTransform("toOracleExtract:DbmsMetadataGetSetTran
         "end;                                                                                              \n",
         "Configure dbms_metadata package");
 
-QString toOracleExtract::createMetadata(toExtract &ext, const QString &owner, const QString &name, const QString &type) const
+QString toOracleExtract::createMetadata(toExtract &ext, const QString &owner, const QString &name, toExtract::ObjectType typeEnum) const
 {
+    typedef toExtract T;
     toConnectionSubLoan conn(ext.connection());
     QString ret;
+
     /* TODO
      * DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,�PRETTY�,false);
      * DBMS_METADATA.SET_TRANSFORM_PARAM(DBMS_METADATA.SESSION_TRANSFORM,�SQLTERMINATOR�,true);
@@ -7340,29 +7320,26 @@ QString toOracleExtract::createMetadata(toExtract &ext, const QString &owner, co
     toQuery query1(conn, SQLDbmsMetadataSetTransform, toQueryParams());
     query1.eof();
 
-    QString type2 = type;
-    if (type == "PACKAGE BODY")
-    	type2 = "PACKAGE_BODY";
-    else if (type == "PACKAGE")
-    	type2 = "PACKAGE_SPEC";
+    QString typeString = ENUM_NAME(toExtract, ObjectType, typeEnum);
+    typeString.replace('_', ' ');
 
-    if (type == "DIRECTORY")
+    if (typeEnum == T::DIRECTORY)
     {
-        toQuery inf(conn, SQLDbmsMetadataGetDir, toQueryParams() << type << name);
+        toQuery inf(conn, SQLDbmsMetadataGetDir, toQueryParams() << typeString << name);
         if (inf.eof())
-            throw qApp->translate("toOracleExtract", "Couldn't get meta information for %1 %2").arg(type).arg(name);
+            throw qApp->translate("toOracleExtract", "Couldn't get meta information for %1 %2").arg("DIRECTORY").arg(name);
 
         if (PROMPT)
             ret = QString("PROMPT CREATE OR REPLACE %1 %2\n\n").
-            arg(type).
+            arg("DIRECTORY").
             arg(QUOTE(name));
         toQValue sql = inf.readValue();
         ret += sql.userData();
-    } else if (type == "USER" || type == "ROLE") {
+    } else if (typeEnum == T::USER || typeEnum == T::ROLE) {
         try {
-            toQuery user(conn, SQLDbmsMetadataUser, toQueryParams() << type << name);
+            toQuery user(conn, SQLDbmsMetadataUser, toQueryParams() << typeString << name);
             if (user.eof()) throw qApp->translate("toOracleExtract", "Couldn't get meta information for user %1").arg(name);
-            if (PROMPT) ret += QString("PROMPT CREATE %1 %2\n").arg(type).arg(QUOTE(name));
+            if (PROMPT) ret += QString("PROMPT CREATE %1 %2\n").arg(typeString).arg(QUOTE(name));
             ret += user.readValue().userData();
 			if (PROMPT) ret += "\n\n";
         } catch (QString const& e) {
@@ -7409,7 +7386,7 @@ QString toOracleExtract::createMetadata(toExtract &ext, const QString &owner, co
             Q_UNUSED(e); // ignore ORA-31608
         }
 
-		if (type == "USER")
+		if (typeEnum == T::USER)
 		{
 			try {
 				toQuery defrole(conn, SQLDbmsMetadataDefRole, toQueryParams() << name);
@@ -7423,13 +7400,19 @@ QString toOracleExtract::createMetadata(toExtract &ext, const QString &owner, co
 			}
 		}
     } else {
+        QString type2 = typeString;
+        if (typeEnum == T::PACKAGE_BODY)
+            type2 = "PACKAGE_BODY";
+        else if (typeEnum == T::PACKAGE)
+            type2 = "PACKAGE_SPEC";
+
     	toQuery inf(conn, SQLDbmsMetadataGetDdl, toQueryParams() << type2 << name << owner);
     	if (inf.eof())
-    		throw qApp->translate("toOracleExtract", "Couldn't get meta information for %1 %2.%3").arg(type).arg(owner).arg(name);
+    		throw qApp->translate("toOracleExtract", "Couldn't get meta information for %1 %2.%3").arg(typeString).arg(owner).arg(name);
 
     	if (PROMPT)
     		ret = QString("PROMPT CREATE OR REPLACE %1 %2.%3\n\n").
-			arg(type).
+			arg(typeString).
 			arg(owner).
 			arg(QUOTE(name));
     	toQValue sql = inf.readValue();
@@ -7442,267 +7425,134 @@ QString toOracleExtract::createMetadata(toExtract &ext, const QString &owner, co
 
 toOracleExtract::toOracleExtract()
 {
+    typedef toExtract T;
     // Supports Oracle
-    registerExtract(ORACLE_NAME,
-                    QString::null,
-                    QString::null);
+    registerExtract(ORACLE_NAME, QString::null, T::NO_TYPE);
 
     // Register creates
-    registerExtract(ORACLE_NAME,
-                    "CREATE",
-                    "CONSTRAINT");
-    registerExtract(ORACLE_NAME,
-                    "CREATE",
-                    "DATABASE LINK");
-    registerExtract(ORACLE_NAME,
-                    "CREATE",
-                    "DIRECTORY");
-    registerExtract(ORACLE_NAME,
-                    "CREATE",
-                    "EXCHANGE INDEX");
-    registerExtract(ORACLE_NAME,
-                    "CREATE",
-                    "EXCHANGE TABLE");
-    registerExtract(ORACLE_NAME,
-                    "CREATE",
-                    "FUNCTION");
-    registerExtract(ORACLE_NAME,
-                    "CREATE",
-                    "INDEX");
-    registerExtract(ORACLE_NAME,
-                    "CREATE",
-                    "MATERIALIZED VIEW");
-    registerExtract(ORACLE_NAME,
-                    "CREATE",
-                    "MATERIALIZED VIEW LOG");
-    registerExtract(ORACLE_NAME,
-                    "CREATE",
-                    "PACKAGE");
-    registerExtract(ORACLE_NAME,
-                    "CREATE",
-                    "PACKAGE BODY");
-    registerExtract(ORACLE_NAME,
-                    "CREATE",
-                    "PROCEDURE");
-    registerExtract(ORACLE_NAME,
-                    "CREATE",
-                    "PROFILE");
-    registerExtract(ORACLE_NAME,
-                    "CREATE",
-                    "ROLE");
-    registerExtract(ORACLE_NAME,
-                    "CREATE",
-                    "ROLE GRANTS");
-    registerExtract(ORACLE_NAME,
-                    "CREATE",
-                    "ROLLBACK SEGMENT");
-    registerExtract(ORACLE_NAME,
-                    "CREATE",
-                    "SEQUENCE");
-    registerExtract(ORACLE_NAME,
-                    "CREATE",
-                    "SNAPSHOT");
-    registerExtract(ORACLE_NAME,
-                    "CREATE",
-                    "SNAPSHOT LOG");
-    registerExtract(ORACLE_NAME,
-                    "CREATE",
-                    "SYNONYM");
-    registerExtract(ORACLE_NAME,
-                    "CREATE",
-                    "TABLE");
-    registerExtract(ORACLE_NAME,
-                    "CREATE",
-                    "TABLE FAMILY");
-    registerExtract(ORACLE_NAME,
-                    "CREATE",
-                    "TABLE CONTENTS");
-    registerExtract(ORACLE_NAME,
-                    "CREATE",
-                    "TABLE REFERENCES");
-    registerExtract(ORACLE_NAME,
-                    "CREATE",
-                    "TABLESPACE");
-    registerExtract(ORACLE_NAME,
-                    "CREATE",
-                    "TRIGGER");
-    registerExtract(ORACLE_NAME,
-                    "CREATE",
-                    "TYPE");
-    registerExtract(ORACLE_NAME,
-                    "CREATE",
-                    "USER");
-    registerExtract(ORACLE_NAME,
-                    "CREATE",
-                    "USER GRANTS");
-    registerExtract(ORACLE_NAME,
-                    "CREATE",
-                    "VIEW");
+    registerExtract(ORACLE_NAME, "CREATE", T::CONSTRAINT);
+    registerExtract(ORACLE_NAME, "CREATE", T::DATABASE_LINK);
+    registerExtract(ORACLE_NAME, "CREATE", T::DIRECTORY);
+#if 0
+    registerExtract(ORACLE_NAME, "CREATE", "EXCHANGE INDEX");
+    registerExtract(ORACLE_NAME, "CREATE", "EXCHANGE TABLE");
+#endif
+    registerExtract(ORACLE_NAME, "CREATE", T::FUNCTION);
+    registerExtract(ORACLE_NAME, "CREATE", T::INDEX);
+    registerExtract(ORACLE_NAME, "CREATE", T::MATERIALIZED_VIEW);
+#if 0
+    registerExtract(ORACLE_NAME, "CREATE", T::MATERIALIZED_VIEW_LOG);
+#endif
+    registerExtract(ORACLE_NAME, "CREATE", T::PACKAGE);
+    registerExtract(ORACLE_NAME, "CREATE", T::PACKAGE_BODY);
+    registerExtract(ORACLE_NAME, "CREATE", T::PROCEDURE);
+    registerExtract(ORACLE_NAME, "CREATE", T::PROFILE);
+    registerExtract(ORACLE_NAME, "CREATE", T::ROLE);
+#if 0
+    registerExtract(ORACLE_NAME, "CREATE", "ROLE GRANTS");
+    registerExtract(ORACLE_NAME, "CREATE", "ROLLBACK SEGMENT");
+#endif
+    registerExtract(ORACLE_NAME, "CREATE", T::SEQUENCE);
+#if 0
+    registerExtract(ORACLE_NAME, "CREATE", "SNAPSHOT");
+    registerExtract(ORACLE_NAME, "CREATE", "SNAPSHOT LOG");
+#endif
+    registerExtract(ORACLE_NAME, "CREATE", T::SYNONYM);
+    registerExtract(ORACLE_NAME, "CREATE", T::TABLE);
+    registerExtract(ORACLE_NAME, "CREATE", T::TABLE_FAMILY);
+    registerExtract(ORACLE_NAME, "CREATE", T::TABLE_CONTENTS);
+    registerExtract(ORACLE_NAME, "CREATE", T::TABLE_REFERENCES);
+#if 0
+    registerExtract(ORACLE_NAME, "CREATE", T::TABLESPACE);
+#endif
+    registerExtract(ORACLE_NAME, "CREATE", T::TRIGGER);
+    registerExtract(ORACLE_NAME, "CREATE", T::TYPE);
+    registerExtract(ORACLE_NAME, "CREATE", T::USER);
+#if 0
+    registerExtract(ORACLE_NAME, "CREATE", "USER GRANTS");
+#endif
+    registerExtract(ORACLE_NAME, "CREATE", T::VIEW);
 
     // Register describes
-    registerExtract(ORACLE_NAME,
-                    "DESCRIBE",
-                    "CONSTRAINT");
-    registerExtract(ORACLE_NAME,
-                    "DESCRIBE",
-                    "DATABASE LINK");
-    registerExtract(ORACLE_NAME,
-                    "DESCRIBE",
-                    "EXCHANGE INDEX");
-    registerExtract(ORACLE_NAME,
-                    "DESCRIBE",
-                    "EXCHANGE TABLE");
-    registerExtract(ORACLE_NAME,
-                    "DESCRIBE",
-                    "FUNCTION");
-    registerExtract(ORACLE_NAME,
-                    "DESCRIBE",
-                    "INDEX");
-    registerExtract(ORACLE_NAME,
-                    "DESCRIBE",
-                    "MATERIALIZED VIEW");
-    registerExtract(ORACLE_NAME,
-                    "DESCRIBE",
-                    "MATERIALIZED VIEW LOG");
-    registerExtract(ORACLE_NAME,
-                    "DESCRIBE",
-                    "PACKAGE");
-    registerExtract(ORACLE_NAME,
-                    "DESCRIBE",
-                    "PACKAGE BODY");
-    registerExtract(ORACLE_NAME,
-                    "DESCRIBE",
-                    "PROCEDURE");
-    registerExtract(ORACLE_NAME,
-                    "DESCRIBE",
-                    "PROFILE");
-    registerExtract(ORACLE_NAME,
-                    "DESCRIBE",
-                    "ROLE");
-    registerExtract(ORACLE_NAME,
-                    "DESCRIBE",
-                    "ROLE GRANTS");
-    registerExtract(ORACLE_NAME,
-                    "DESCRIBE",
-                    "ROLLBACK SEGMENT");
-    registerExtract(ORACLE_NAME,
-                    "DESCRIBE",
-                    "SEQUENCE");
-    registerExtract(ORACLE_NAME,
-                    "DESCRIBE",
-                    "SNAPSHOT");
-    registerExtract(ORACLE_NAME,
-                    "DESCRIBE",
-                    "SNAPSHOT LOG");
-    registerExtract(ORACLE_NAME,
-                    "DESCRIBE",
-                    "SYNONYM");
-    registerExtract(ORACLE_NAME,
-                    "DESCRIBE",
-                    "TABLE");
-    registerExtract(ORACLE_NAME,
-                    "DESCRIBE",
-                    "TABLE FAMILY");
-    registerExtract(ORACLE_NAME,
-                    "DESCRIBE",
-                    "TABLE CONTENTS");
-    registerExtract(ORACLE_NAME,
-                    "DESCRIBE",
-                    "TABLE REFERENCES");
-    registerExtract(ORACLE_NAME,
-                    "DESCRIBE",
-                    "TABLESPACE");
-    registerExtract(ORACLE_NAME,
-                    "DESCRIBE",
-                    "TRIGGER");
-    registerExtract(ORACLE_NAME,
-                    "DESCRIBE",
-                    "TYPE");
-    registerExtract(ORACLE_NAME,
-                    "DESCRIBE",
-                    "USER");
-    registerExtract(ORACLE_NAME,
-                    "DESCRIBE",
-                    "USER GRANTS");
-    registerExtract(ORACLE_NAME,
-                    "DESCRIBE",
-                    "VIEW");
+    registerExtract(ORACLE_NAME, "DESCRIBE", T::CONSTRAINT);
+    registerExtract(ORACLE_NAME, "DESCRIBE", T::DATABASE_LINK);
+#if 0
+    registerExtract(ORACLE_NAME, "DESCRIBE", "EXCHANGE INDEX");
+    registerExtract(ORACLE_NAME, "DESCRIBE", "EXCHANGE TABLE");
+#endif
+    registerExtract(ORACLE_NAME, "DESCRIBE", T::FUNCTION);
+    registerExtract(ORACLE_NAME, "DESCRIBE", T::INDEX);
+    registerExtract(ORACLE_NAME, "DESCRIBE", T::MATERIALIZED_VIEW);
+#if 0
+    registerExtract(ORACLE_NAME, "DESCRIBE", "MATERIALIZED VIEW LOG");
+#endif
+    registerExtract(ORACLE_NAME, "DESCRIBE", T::PACKAGE);
+    registerExtract(ORACLE_NAME, "DESCRIBE", T::PACKAGE_BODY);
+    registerExtract(ORACLE_NAME, "DESCRIBE", T::PROCEDURE);
+    registerExtract(ORACLE_NAME, "DESCRIBE", T::PROFILE);
+    registerExtract(ORACLE_NAME, "DESCRIBE", T::ROLE);
+#if 0
+    registerExtract(ORACLE_NAME, "DESCRIBE", "ROLE GRANTS");
+    registerExtract(ORACLE_NAME, "DESCRIBE", "ROLLBACK SEGMENT");
+#endif
+    registerExtract(ORACLE_NAME, "DESCRIBE", T::SEQUENCE);
+#if 0
+    registerExtract(ORACLE_NAME, "DESCRIBE", "SNAPSHOT");
+    registerExtract(ORACLE_NAME, "DESCRIBE", "SNAPSHOT LOG");
+#endif
+    registerExtract(ORACLE_NAME, "DESCRIBE", T::SYNONYM);
+    registerExtract(ORACLE_NAME, "DESCRIBE", T::TABLE);
+    registerExtract(ORACLE_NAME, "DESCRIBE", T::TABLE_FAMILY);
+    registerExtract(ORACLE_NAME, "DESCRIBE", T::TABLE_CONTENTS);
+    registerExtract(ORACLE_NAME, "DESCRIBE", T::TABLE_REFERENCES);
+#if 0
+    registerExtract(ORACLE_NAME, "DESCRIBE", "TABLESPACE");
+#endif
+    registerExtract(ORACLE_NAME, "DESCRIBE", T::TRIGGER);
+    registerExtract(ORACLE_NAME, "DESCRIBE", T::TYPE);
+    registerExtract(ORACLE_NAME, "DESCRIBE", T::USER);
+#if 0
+    registerExtract(ORACLE_NAME, "DESCRIBE", "USER GRANTS");
+#endif
+    registerExtract(ORACLE_NAME, "DESCRIBE", T::VIEW);
 
     // Register drops
-    registerExtract(ORACLE_NAME,
-                    "DROP",
-                    "CONSTRAINT");
-    registerExtract(ORACLE_NAME,
-                    "DROP",
-                    "DATABASE LINK");
-    registerExtract(ORACLE_NAME,
-                    "DROP",
-                    "DIMENSION");
-    registerExtract(ORACLE_NAME,
-                    "DROP",
-                    "DIRECTORY");
-    registerExtract(ORACLE_NAME,
-                    "DROP",
-                    "FUNCTION");
-    registerExtract(ORACLE_NAME,
-                    "DROP",
-                    "INDEX");
-    registerExtract(ORACLE_NAME,
-                    "DROP",
-                    "MATERIALIZED VIEW");
-    registerExtract(ORACLE_NAME,
-                    "DROP",
-                    "MATERIALIZED VIEW LOG");
-    registerExtract(ORACLE_NAME,
-                    "DROP",
-                    "PACKAGE");
-    registerExtract(ORACLE_NAME,
-                    "DROP",
-                    "PROCEDURE");
-    registerExtract(ORACLE_NAME,
-                    "DROP",
-                    "PROFILE");
-    registerExtract(ORACLE_NAME,
-                    "DROP",
-                    "ROLE");
-    registerExtract(ORACLE_NAME,
-                    "DROP",
-                    "ROLLBACK SEGMENT");
-    registerExtract(ORACLE_NAME,
-                    "DROP",
-                    "SEQUENCE");
-    registerExtract(ORACLE_NAME,
-                    "DROP",
-                    "SNAPSHOT");
-    registerExtract(ORACLE_NAME,
-                    "DROP",
-                    "SNAPSHOT LOG");
-    registerExtract(ORACLE_NAME,
-                    "DROP",
-                    "SYNONYM");
-    registerExtract(ORACLE_NAME,
-                    "DROP",
-                    "TABLE");
-    registerExtract(ORACLE_NAME,
-                    "DROP",
-                    "TABLESPACE");
-    registerExtract(ORACLE_NAME,
-                    "DROP",
-                    "TRIGGER");
-    registerExtract(ORACLE_NAME,
-                    "DROP",
-                    "TYPE");
-    registerExtract(ORACLE_NAME,
-                    "DROP",
-                    "USER");
-    registerExtract(ORACLE_NAME,
-                    "DROP",
-                    "VIEW");
+    registerExtract(ORACLE_NAME, "DROP", T::CONSTRAINT);
+    registerExtract(ORACLE_NAME, "DROP", T::DATABASE_LINK);
+#if 0
+    registerExtract(ORACLE_NAME, "DROP", "DIMENSION");
+#endif
+    registerExtract(ORACLE_NAME, "DROP", T::DIRECTORY);
+    registerExtract(ORACLE_NAME, "DROP", T::FUNCTION);
+    registerExtract(ORACLE_NAME, "DROP", T::INDEX);
+#if 0
+    registerExtract(ORACLE_NAME, "DROP", "MATERIALIZED VIEW");
+    registerExtract(ORACLE_NAME, "DROP", "MATERIALIZED VIEW LOG");
+#endif
+    registerExtract(ORACLE_NAME, "DROP", T::PACKAGE);
+    registerExtract(ORACLE_NAME, "DROP", T::PROCEDURE);
+    registerExtract(ORACLE_NAME, "DROP", T::PROFILE);
+    registerExtract(ORACLE_NAME, "DROP", T::ROLE);
+#if 0
+    registerExtract(ORACLE_NAME, "DROP", "ROLLBACK SEGMENT");
+#endif
+    registerExtract(ORACLE_NAME, "DROP", T::SEQUENCE);
+#if 0
+    registerExtract(ORACLE_NAME, "DROP", "SNAPSHOT");
+    registerExtract(ORACLE_NAME, "DROP", "SNAPSHOT LOG");
+#endif
+    registerExtract(ORACLE_NAME, "DROP", T::SYNONYM);
+    registerExtract(ORACLE_NAME, "DROP", T::TABLE);
+#if 0
+    registerExtract(ORACLE_NAME, "DROP", "TABLESPACE");
+#endif
+    registerExtract(ORACLE_NAME, "DROP", T::TRIGGER);
+    registerExtract(ORACLE_NAME, "DROP", T::TYPE);
+    registerExtract(ORACLE_NAME, "DROP", T::USER);
+    registerExtract(ORACLE_NAME, "DROP", T::VIEW);
 
     // Register migrates
-    registerExtract(ORACLE_NAME,
-                    "MIGRATE",
-                    "TABLE");
+    registerExtract(ORACLE_NAME, "MIGRATE", T::TABLE);
 
     toExtract::datatype * d;
 //  d = new toExtract::datatype("VARCHAR", 2000);
@@ -7763,8 +7613,7 @@ void toOracleExtract::initialize(toExtract &ext) const
     }
     catch (QString const& exc)
     {
-        DbaSegments = QString("(select '%1' owner,user_segments.* from sys.user_segments)").
-                      arg(CONNECTION.user().toUpper());
+        DbaSegments = QString("(select '%1' owner,user_segments.* from sys.user_segments)").arg(CONNECTION.user().toUpper());
     }
     ext.setState("Segments", DbaSegments);
 
@@ -7784,12 +7633,14 @@ void toOracleExtract::initialize(toExtract &ext) const
 
 void toOracleExtract::create(toExtract &ext,
                              QTextStream &stream,
-                             const QString &type,
+                             toExtract::ObjectType type,
                              const QString &schema,
                              const QString &owner,
                              const QString &name) const
 {
     using namespace ToConfiguration;
+    typedef toExtract T;
+
     clearFlags(ext);
 
     if (toConfigurationNewSingle::Instance().option(Oracle::UseDbmsMetadataBool).toBool())
@@ -7797,222 +7648,196 @@ void toOracleExtract::create(toExtract &ext,
         stream << createMetadata(ext, owner, name, type);
         return;
     }
-
-    if (type == "CONSTRAINT")
-        stream << createConstraint(ext, schema, owner, name);
-    else if (type == "DATABASE LINK")
-        stream << createDBLink(ext, schema, owner, name);
-    else if (type == "DIRECTORY")
-        stream << createDirectory(ext, schema, owner, name);
-    else if (type == "EXCHANGE INDEX")
-        stream << createExchangeIndex(ext, schema, owner, name);
-    else if (type == "EXCHANGE TABLE")
-        stream << createExchangeTable(ext, schema, owner, name);
-    else if (type == "FUNCTION")
-        stream << createFunction(ext, schema, owner, name);
-    else if (type == "INDEX")
-        stream << createIndex(ext, schema, owner, name);
-    else if (type == "MATERIALIZED VIEW")
-        stream << createMaterializedView(ext, schema, owner, name);
-    else if (type == "MATERIALIZED VIEW LOG")
-        stream << createMaterializedViewLog(ext, schema, owner, name);
-    else if (type == "PACKAGE")
-        stream << createPackage(ext, schema, owner, name);
-    else if (type == "PACKAGE BODY")
-        stream << createPackageBody(ext, schema, owner, name);
-    else if (type == "PROCEDURE")
-        stream << createProcedure(ext, schema, owner, name);
-    else if (type == "PROFILE")
-        stream << createProfile(ext, schema, owner, name);
-    else if (type == "ROLE")
-        stream << createRole(ext, schema, owner, name);
-    else if (type == "ROLE GRANTS")
-        stream << grantedPrivs(ext, QUOTE(name), name, 6);
-    else if (type == "ROLLBACK SEGMENT")
-        stream << createRollbackSegment(ext, schema, owner, name);
-    else if (type == "SEQUENCE")
-        stream << createSequence(ext, schema, owner, name);
-    else if (type == "SNAPSHOT")
-        stream << createSnapshot(ext, schema, owner, name);
-    else if (type == "SNAPSHOT LOG")
-        stream << createSnapshotLog(ext, schema, owner, name);
-    else if (type == "SYNONYM")
-        stream << createSynonym(ext, schema, owner, name);
-    else if (type == "TABLE")
-        stream << createTable(ext, schema, owner, name);
-    else if (type == "TABLE FAMILY")
-        stream << createTableFamily(ext, schema, owner, name);
-    else if (type == "TABLE CONTENTS")
-        createTableContents(ext, stream, schema, owner, name);
-    else if (type == "TABLE REFERENCES")
-        stream << createTableReferences(ext, schema, owner, name);
-    else if (type == "TABLESPACE")
-        stream << createTablespace(ext, schema, owner, name);
-    else if (type == "TRIGGER")
-        stream << createTrigger(ext, schema, owner, name);
-    else if (type == "TYPE")
-        stream << createType(ext, schema, owner, name);
-    else if (type == "USER")
-        stream << createUser(ext, schema, owner, name);
-    else if (type == "USER GRANTS")
-    {
-        QString nam;
-        if (ext.getSchema() != "1" && !ext.getSchema().isEmpty())
-            nam = ext.getSchema().toLower();
-        else
-            nam = QUOTE(name);
-        stream << grantedPrivs(ext, nam, name, 4);
-    }
-    else if (type == "VIEW")
-        stream << createView(ext, schema, owner, name);
-    else
-    {
-        throw qApp->translate("toOracleExtract", "Invalid type %1 to create").arg(type);
-    }
+	switch (type)
+	{
+	case T::CONSTRAINT:        stream << createConstraint(ext, schema, owner, name);  break;
+	case T::DATABASE_LINK:     stream << createDBLink(ext, schema, owner, name);      break;
+	case T::DIRECTORY:         stream << createDirectory(ext, schema, owner, name);   break;
+#if 0
+	else if (type == "EXCHANGE INDEX") stream << createExchangeIndex(ext, schema, owner, name);
+	else if (type == "EXCHANGE TABLE") stream << createExchangeTable(ext, schema, owner, name);
+#endif
+	case T::FUNCTION:          stream << createFunction(ext, schema, owner, name);    break;
+	case T::INDEX:             stream << createIndex(ext, schema, owner, name);       break;
+	case T::MATERIALIZED_VIEW: stream << createMaterializedView(ext, schema, owner, name); break;
+#if 0
+	else if (type == "MATERIALIZED VIEW LOG")
+		stream << createMaterializedViewLog(ext, schema, owner, name);
+#endif
+	case T::PACKAGE:           stream << createPackage(ext, schema, owner, name);     break;
+	case T::PACKAGE_BODY:      stream << createPackageBody(ext, schema, owner, name); break;
+	case T::PROCEDURE:         stream << createProcedure(ext, schema, owner, name);   break;
+	case T::PROFILE:           stream << createProfile(ext, schema, owner, name);     break;
+	case T::ROLE:              stream << createRole(ext, schema, owner, name);        break;
+#if 0
+	case T::ROLE GRANTS : stream << grantedPrivs(ext, QUOTE(name), name, 6);     break;
+	case T::ROLLBACK SEGMENT : stream << createRollbackSegment(ext, schema, owner, name); break;
+#endif
+	case T::SEQUENCE:          stream << createSequence(ext, schema, owner, name); break;
+#if 0
+	else if (type == "SNAPSHOT")        stream << createSnapshot(ext, schema, owner, name); break;
+	else if (type == "SNAPSHOT LOG")        stream << createSnapshotLog(ext, schema, owner, name); break;
+#endif
+	case T::SYNONYM:           stream << createSynonym(ext, schema, owner, name); break;
+	case T::TABLE:             stream << createTable(ext, schema, owner, name); break;
+	case T::TABLE_FAMILY:      stream << createTableFamily(ext, schema, owner, name); break;
+	case T::TABLE_CONTENTS:    createTableContents(ext, stream, schema, owner, name); break;
+	case T::TABLE_REFERENCES:  stream << createTableReferences(ext, schema, owner, name); break;
+#if 0
+	case T::TABLESPACE:        stream << createTablespace(ext, schema, owner, name); break;
+#endif
+	case T::TRIGGER:           stream << createTrigger(ext, schema, owner, name); break;
+	case T::TYPE:              stream << createType(ext, schema, owner, name); break;
+	case T::USER:              stream << createUser(ext, schema, owner, name); break;
+#if 0
+	case T::USER_GRANTS:
+	{
+		QString nam;
+		if (ext.getSchema() != "1" && !ext.getSchema().isEmpty())
+			nam = ext.getSchema().toLower();
+		else
+			nam = QUOTE(name);
+		stream << grantedPrivs(ext, nam, name, 4);
+	} break;
+#endif
+	case T::VIEW:              stream << createView(ext, schema, owner, name); break;
+#if 0
+	else
+	{
+		throw qApp->translate("toOracleExtract", "Invalid type %1 to create").arg(type);
+	}
+#endif
+	}
 }
 
 void toOracleExtract::describe(toExtract &ext,
                                std::list<QString> &lst,
-                               const QString &type,
+                               toExtract::ObjectType type,
                                const QString &schema,
                                const QString &owner,
                                const QString &name) const
 {
+    typedef toExtract T;
     clearFlags(ext);
 
-    if (type == "CONSTRAINT")
-        describeConstraint(ext, lst, schema, owner, name);
-    else if (type == "DATABASE LINK")
-        describeDBLink(ext, lst, schema, owner, name);
-    else if (type == "EXCHANGE INDEX")
-        describeExchangeIndex(ext, lst, schema, owner, name);
-    else if (type == "EXCHANGE TABLE")
-        describeExchangeTable(ext, lst, schema, owner, name);
-    else if (type == "FUNCTION")
-        describeFunction(ext, lst, schema, owner, name);
-    else if (type == "INDEX")
-        describeIndex(ext, lst, schema, owner, name);
-    else if (type == "MATERIALIZED VIEW")
-        describeMaterializedView(ext, lst, schema, owner, name);
-    else if (type == "MATERIALIZED VIEW LOG")
-        describeMaterializedViewLog(ext, lst, schema, owner, name);
-    else if (type == "PACKAGE")
-        describePackage(ext, lst, schema, owner, name);
-    else if (type == "PACKAGE BODY")
-        describePackageBody(ext, lst, schema, owner, name);
-    else if (type == "PROCEDURE")
-        describeProcedure(ext, lst, schema, owner, name);
-    else if (type == "PROFILE")
-        describeProfile(ext, lst, schema, owner, name);
-    else if (type == "ROLE")
-        describeRole(ext, lst, schema, owner, name);
-    else if (type == "ROLE GRANTS")
+    switch(type)
     {
-        // A nop, everything is done in describe role
-    }
-    else if (type == "ROLLBACK SEGMENT")
-        describeRollbackSegment(ext, lst, schema, owner, name);
-    else if (type == "SEQUENCE")
-        describeSequence(ext, lst, schema, owner, name);
-    else if (type == "SNAPSHOT")
-        describeSnapshot(ext, lst, schema, owner, name);
-    else if (type == "SNAPSHOT LOG")
-        describeSnapshotLog(ext, lst, schema, owner, name);
-    else if (type == "SYNONYM")
-        describeSynonym(ext, lst, schema, owner, name);
-    else if (type == "TABLE")
-        describeTable(ext, lst, schema, owner, name);
-    else if (type == "TABLE FAMILY")
-        describeTableFamily(ext, lst, schema, owner, name);
-    else if (type == "TABLE REFERENCES")
-        describeTableReferences(ext, lst, schema, owner, name);
-    else if (type == "TABLE CONTENTS")
-    {
-        // A nop, nothing is described of contents
-    }
-    else if (type == "TABLESPACE")
-        describeTablespace(ext, lst, schema, owner, name);
-    else if (type == "TRIGGER")
-        describeTrigger(ext, lst, schema, owner, name);
-    else if (type == "TYPE")
-        describeType(ext, lst, schema, owner, name);
-    else if (type == "USER")
-        describeUser(ext, lst, schema, owner, name);
-    else if (type == "USER GRANTS")
-    {
-        // A nop, everything is done in describe user
-    }
-    else if (type == "VIEW")
-        describeView(ext, lst, schema, owner, name);
-    else
-    {
-        throw qApp->translate("toOracleExtract", "Invalid type %1 to describe").arg(type);
+        case T::CONSTRAINT:       describeConstraint(ext, lst, schema, owner, name); break;
+        case T::DATABASE_LINK:    describeDBLink(ext, lst, schema, owner, name); break;
+#if 0
+        case T::EXCHANGE INDEX:   describeExchangeIndex(ext, lst, schema, owner, name); break;
+        case T::EXCHANGE TABLE:   describeExchangeTable(ext, lst, schema, owner, name); break;
+#endif
+        case T::FUNCTION:         describeFunction(ext, lst, schema, owner, name); break;
+        case T::INDEX:            describeIndex(ext, lst, schema, owner, name); break;
+#if 0
+        case T::MATERIALIZED VIEW:        describeMaterializedView(ext, lst, schema, owner, name); break;
+        case T::MATERIALIZED VIEW LOG:        describeMaterializedViewLog(ext, lst, schema, owner, name); break;
+#endif
+        case T::PACKAGE:          describePackage(ext, lst, schema, owner, name); break;
+        case T::PACKAGE_BODY:     describePackageBody(ext, lst, schema, owner, name); break;
+        case T::PROCEDURE:        describeProcedure(ext, lst, schema, owner, name); break;
+        case T::PROFILE:          describeProfile(ext, lst, schema, owner, name); break;
+        case T::ROLE:             describeRole(ext, lst, schema, owner, name); break;
+#if 0
+        case T::ROLE_GRANTS:
+        {
+            // A nop, everything is done in describe role
+        }
+        case T::ROLLBACK SEGMENT:        describeRollbackSegment(ext, lst, schema, owner, name); break;
+#endif
+        case T::SEQUENCE:         describeSequence(ext, lst, schema, owner, name); break;
+#if 0
+        case T::SNAPSHOT:         describeSnapshot(ext, lst, schema, owner, name); break;
+        case T::SNAPSHOT LOG:     describeSnapshotLog(ext, lst, schema, owner, name); break;
+#endif
+        case T::SYNONYM:          describeSynonym(ext, lst, schema, owner, name); break;
+        case T::TABLE:            describeTable(ext, lst, schema, owner, name); break;
+        case T::TABLE_FAMILY:     describeTableFamily(ext, lst, schema, owner, name); break;
+        case T::TABLE_REFERENCES: describeTableReferences(ext, lst, schema, owner, name); break;
+        case T::TABLE_CONTENTS:
+        {
+            // A nop, nothing is described of contents
+        } break;
+#if 0
+        case T::TABLESPACE:       describeTablespace(ext, lst, schema, owner, name); break;
+#endif
+        case T::TRIGGER:          describeTrigger(ext, lst, schema, owner, name); break;
+        case T::TYPE:             describeType(ext, lst, schema, owner, name); break;
+        case T::USER:             describeUser(ext, lst, schema, owner, name); break;
+#if 0
+        case T::USER_GRANTS:
+        {
+            // A nop, everything is done in describe user
+        } break;
+#endif
+        case T::VIEW:             describeView(ext, lst, schema, owner, name); break;
+#if 0
+        else
+        {
+            throw qApp->translate("toOracleExtract", "Invalid type %1 to describe").arg(type);
+        }
+#endif
     }
 }
 
 void toOracleExtract::drop(toExtract &ext,
                            QTextStream &stream,
-                           const QString &type,
+                           toExtract::ObjectType type,
                            const QString &schema,
                            const QString &owner,
                            const QString &name) const
 {
+    typedef toExtract T;
     clearFlags(ext);
-    if (type == "CONSTRAINT")
-        stream << dropConstraint(ext, schema, owner, type, name);
-    else if (type == "DATABASE LINK")
-        stream << dropDatabaseLink(ext, schema, owner, type, name);
-    else if (type == "DIMENSION")
-        stream << dropSchemaObject(ext, schema, owner, type, name);
-    else if (type == "DIRECTORY")
-        stream << dropObject(ext, schema, owner, type, name);
-    else if (type == "FUNCTION")
-        stream << dropSchemaObject(ext, schema, owner, type, name);
-    else if (type == "INDEX")
-        stream << dropSchemaObject(ext, schema, owner, type, name);
-    else if (type == "MATERIALIZED VIEW")
-        stream << dropSchemaObject(ext, schema, owner, type, name);
-    else if (type == "MATERIALIZED VIEW LOG")
-        stream << dropMViewLog(ext, schema, owner, type, name);
-    else if (type == "PACKAGE")
-        stream << dropSchemaObject(ext, schema, owner, type, name);
-    else if (type == "PROCEDURE")
-        stream << dropSchemaObject(ext, schema, owner, type, name);
-    else if (type == "PROFILE")
-        stream << dropProfile(ext, schema, owner, type, name);
-    else if (type == "ROLE")
-        stream << dropObject(ext, schema, owner, type, name);
-    else if (type == "ROLLBACK SEGMENT")
-        stream << dropObject(ext, schema, owner, type, name);
-    else if (type == "SEQUENCE")
-        stream << dropSchemaObject(ext, schema, owner, type, name);
-    else if (type == "SNAPSHOT")
-        stream << dropSchemaObject(ext, schema, owner, type, name);
-    else if (type == "SNAPSHOT LOG")
-        stream << dropMViewLog(ext, schema, owner, type, name);
-    else if (type == "SYNONYM")
-        stream << dropSynonym(ext, schema, owner, type, name);
-    else if (type == "TABLE")
-        stream << dropTable(ext, schema, owner, type, name);
-    else if (type == "TABLESPACE")
-        stream << dropTablespace(ext, schema, owner, type, name);
-    else if (type == "TRIGGER")
-        stream << dropSchemaObject(ext, schema, owner, type, name);
-    else if (type == "TYPE")
-        stream << dropSchemaObject(ext, schema, owner, type, name);
-    else if (type == "USER")
-        stream << dropUser(ext, schema, owner, type, name);
-    else if (type == "VIEW")
-        stream << dropSchemaObject(ext, schema, owner, type, name);
+
+    switch(type)
+    {
+        case T::CONSTRAINT:           stream << dropConstraint(ext, schema, owner, name); break;
+        case T::DATABASE_LINK:        stream << dropDatabaseLink(ext, schema, owner, name); break;
+#if 0
+        case T::DIMENSION:            stream << dropSchemaObject(ext, schema, owner, type, name); break;
+#endif
+        case T::DIRECTORY:            stream << dropObject(ext, "DIRECTORY", name); break;
+        case T::FUNCTION:             stream << dropSchemaObject(ext, schema, owner, "FUNCTION", name); break;
+        case T::INDEX:                stream << dropSchemaObject(ext, schema, owner, "INDEX", name); break;
+#if 0
+        case T::MATERIALIZED VIEW:    stream << dropSchemaObject(ext, schema, owner, type, name); break;
+        case T::MATERIALIZED VIEW LOG:stream << dropMViewLog(ext, schema, owner, type, name); break;
+#endif
+        case T::PACKAGE:              stream << dropSchemaObject(ext, schema, owner, "PACKAGE", name); break;
+        case T::PROCEDURE:            stream << dropSchemaObject(ext, schema, owner, "PACKAGE BODY", name); break;
+        case T::PROFILE:              stream << dropProfile(ext, name); break;
+        case T::ROLE:                 stream << dropObject(ext, "ROLE", name); break;
+#if 0
+        case T::ROLLBACK SEGMENT:     stream << dropObject(ext, schema, owner, type, name); break;
+#endif
+        case T::SEQUENCE:             stream << dropSchemaObject(ext, schema, owner, "SEQUENCE", name); break;
+#if 0
+        case T::SNAPSHOT:             stream << dropSchemaObject(ext, schema, owner, type, name); break;
+        case T::SNAPSHOT LOG:         stream << dropMViewLog(ext, schema, owner, type, name); break;
+#endif
+        case T::SYNONYM:              stream << dropSynonym(ext, schema, owner, name); break;
+        case T::TABLE:                stream << dropTable(ext, schema, owner, name); break;
+#if 0
+        case T::TABLESPACE:           stream << dropTablespace(ext, schema, owner, type, name); break;
+#endif
+        case T::TRIGGER:              stream << dropSchemaObject(ext, schema, owner, "TRIGGER", name); break;
+        case T::TYPE:                 stream << dropSchemaObject(ext, schema, owner, "TYPE", name); break;
+        case T::USER:                 stream << dropUser(ext, name); break;
+        case T::VIEW:                 stream << dropSchemaObject(ext, schema, owner, "VIEW", name); break;
+#if 0
     else
     {
         throw qApp->translate("toOracleExtract", "Invalid type %1 to drop").arg(type);
+    }
+#endif
     }
 }
 
 void toOracleExtract::migrate(toExtract &ext,
                               QTextStream &stream,
-                              const QString &type,
+                              toExtract::ObjectType type,
                               std::list<QString> &src,
                               std::list<QString> &dst) const
 {

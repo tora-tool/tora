@@ -819,6 +819,8 @@ void toCache::clearCache()
         return PACKAGE;
     else if (objType == "PACKAGE BODY")
         return PACKAGE_BODY;
+    else if (objType == "PACKAGE_BODY")
+        return PACKAGE_BODY;
     else if (objType == "INDEX")
         return INDEX;
     else if (objType == "SEQUENCE")

@@ -71,7 +71,7 @@ void toDescribe::changeParams(const toCache::ObjectRef &obj)
     }
     QString schema(obj.first), object(obj.second);
 
-    toCache::CacheEntryType objectType = toCache::OTHER;
+    toCache::CacheEntryType objectType = toCache::NO_TYPE;
     toCache::CacheEntry const* cacheEntry; // was object found in cache?
     bool addedNewObject = false; // did we actually add new objects to cache during rereading?
 

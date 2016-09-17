@@ -43,6 +43,8 @@
 class toExtract;
 class toListView;
 class toWorksheetText;
+class toTreeWidget;
+class toTreeWidgetItem;
 class toTextView;
 
 
@@ -104,11 +106,6 @@ class toScript : public toToolWidget
         void changeMode(int);
 
         void keepOn(toTreeWidgetItem *item);
-
-        //! Size tab - add new item
-        void newSize(void);
-        //! Size tab - remove current item
-        void removeSize(void);
 
         /*! Ask user for output location. A file or a directory.
         It's stored in ScriptUI->Filename then
