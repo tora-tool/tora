@@ -171,6 +171,7 @@ class TORA_EXPORT toCache : public QObject
         enum CacheEntryType
 #endif
         {
+            NO_TYPE = 0,
             TABLE = 1,
             VIEW,
             SYNONYM,
@@ -186,6 +187,12 @@ class TORA_EXPORT toCache : public QObject
             TORA_SCHEMA_LIST, // Curious object type - used internally by TORA, if present browser knows that that schema was read from DB
             //TORA_USER_LIST, // Curious object type - used internally by TORA purpose unknown so far.
             USER,
+            ROLE,
+            PROFILE,
+            DATABASE_LINK,
+            TYPE,
+            DIRECTORY,
+            MATERIALIZED_VIEW,
             OTHER
         };
 

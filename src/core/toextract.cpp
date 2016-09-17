@@ -47,8 +47,8 @@
 std::map<QString, toExtract::extractor *> *toExtract::Extractors;
 
 void toExtract::extractor::registerExtract(const QString &db,
-        const QString &oper,
-        const QString &type)
+                                           const QString &oper,
+                                           ObjectType type)
 {
     toExtract::allocExtract();
 
@@ -61,8 +61,8 @@ void toExtract::extractor::registerExtract(const QString &db,
 }
 
 void toExtract::extractor::unregisterExtract(const QString &db,
-        const QString &oper,
-        const QString &type)
+                                             const QString &oper,
+                                             ObjectType type)
 {
     toExtract::allocExtract();
 
@@ -74,12 +74,9 @@ void toExtract::extractor::unregisterExtract(const QString &db,
         (*toExtract::Extractors).erase(i);
 }
 
-void toExtract::extractor::initialize(toExtract &) const
-{}
-
 void toExtract::extractor::create(toExtract &,
                                   QTextStream &,
-                                  const QString &,
+                                  ObjectType,
                                   const QString &,
                                   const QString &,
                                   const QString &) const
@@ -87,7 +84,7 @@ void toExtract::extractor::create(toExtract &,
 
 void toExtract::extractor::describe(toExtract &,
                                     std::list<QString> &,
-                                    const QString &,
+                                    ObjectType,
                                     const QString &,
                                     const QString &,
                                     const QString &) const
@@ -95,14 +92,14 @@ void toExtract::extractor::describe(toExtract &,
 
 void toExtract::extractor::migrate(toExtract &,
                                    QTextStream &,
-                                   const QString &,
+                                   ObjectType,
                                    std::list<QString> &,
                                    std::list<QString> &) const
 {}
 
 void toExtract::extractor::drop(toExtract &,
                                 QTextStream &,
-                                const QString &,
+                                ObjectType,
                                 const QString &,
                                 const QString &,
                                 const QString &) const
@@ -126,19 +123,19 @@ void toExtract::allocExtract(void)
         Extractors = new std::map<QString, extractor *>;
 }
 
-QString toExtract::extractorName(const QString &db, const QString &oper, const QString &type)
+QString toExtract::extractorName(const QString &db, const QString &oper, ObjectType type)
 {
     QString ret(db);
     if (!oper.isEmpty())
         ret += ":" + oper;
-    if (!type.isEmpty())
-        ret += ":" + type;
+	if (type != NO_TYPE)
+		ret += QString(":%1").arg(ENUM_NAME(toExtract, ObjectType, type));
     return ret;
 }
 
 toExtract::extractor *toExtract::findExtractor(toConnection const& conn,
-        const QString &oper,
-        const QString &type)
+                                               const QString &oper,
+                                               ObjectType type)
 {
     allocExtract();
 
@@ -154,7 +151,7 @@ void toExtract::initialize(void)
     if (!Initialized)
     {
         Initialized = true;
-        extractor *ext = findExtractor(QString::null, QString::null);
+        extractor *ext = findExtractor(QString::null, NO_TYPE);
         if (ext)
             ext->initialize(*this);
     }
@@ -173,10 +170,12 @@ toExtract::toExtract(toConnection &conn, QWidget *parent)
     Contents = true;
     Comments = true;
     Partition = true;
+    Code = true;
     Replace = false;
     Schema = "1";
     Initialized = false;
     BlockSize = 8192;
+    CommitDistance = 0;
 }
 
 void toExtract::setState(const QString &name, const QVariant &val)
@@ -287,7 +286,7 @@ void toExtract::parseObject(const QString &object,
 
 bool toExtract::canHandle(const toConnection &conn)
 {
-    return bool(findExtractor(conn, QString::null, QString::null));
+    return bool(findExtractor(conn, QString::null, NO_TYPE));
 }
 
 std::list<toExtract::datatype> toExtract::datatypes()
@@ -295,7 +294,7 @@ std::list<toExtract::datatype> toExtract::datatypes()
     std::list<toExtract::datatype> ret;
     try
     {
-        extractor *ext = findExtractor(connection(), QString::null, QString::null);
+        extractor *ext = findExtractor(connection(), QString::null, NO_TYPE);
         if (ext)
             ret = ext->datatypes();
         ret.sort();
@@ -347,17 +346,17 @@ void toExtract::create(QTextStream &ret, std::list<QString> &objects)
                 throw qApp->translate("toExtract", "Internal error, missing : in object description");
             parseObject(type.right(type.length() - pos - 1), owner, name);
             type.truncate(pos);
-            QString utype = type.toUpper();
+            ObjectType typeEnum = objectTypeFromString(type.toUpper());
             QString schema = intSchema(owner, false);
             try
             {
                 try
                 {
-                    extractor *ext = findExtractor(QString::fromLatin1("CREATE"), utype);
+                    extractor *ext = findExtractor(QString::fromLatin1("CREATE"), typeEnum);
                     if (ext)
                         ext->create(*this,
                                     ret,
-                                    utype,
+                                    typeEnum,
                                     schema,
                                     owner,
                                     name);
@@ -425,7 +424,7 @@ std::list<QString> toExtract::describe(std::list<QString> &objects)
                 throw qApp->translate("toExtract", "Internal error, missing : in object description");
             parseObject(type.right(type.length() - pos - 1), owner, name);
             type.truncate(pos);
-            QString utype = type.toUpper();
+            ObjectType typeEnum = objectTypeFromString(type.toUpper());
             QString schema = intSchema(owner, true);
 
             std::list<QString> cur;
@@ -434,11 +433,11 @@ std::list<QString> toExtract::describe(std::list<QString> &objects)
             {
                 try
                 {
-                    extractor *ext = findExtractor(QString::fromLatin1("DESCRIBE"), utype);
+                    extractor *ext = findExtractor(QString::fromLatin1("DESCRIBE"), typeEnum);
                     if (ext)
                         ext->describe(*this,
                                       cur,
-                                      utype,
+                                      typeEnum,
                                       schema,
                                       owner,
                                       name);
@@ -469,6 +468,7 @@ std::list<QString> toExtract::describe(std::list<QString> &objects)
     return ret;
 }
 
+#ifdef TORA3_DROP
 void toExtract::drop(QTextStream &ret, std::list<QString> &objects)
 {
     ret << generateHeading(qApp->translate("toExtract", "DROP"), objects);
@@ -548,6 +548,7 @@ void toExtract::drop(QTextStream &ret, std::list<QString> &objects)
     }
     delete progress;
 }
+#endif
 
 std::map<QString, std::list<QString> > toExtract::migrateGroup(std::list<QString> &grpLst)
 {
@@ -570,6 +571,7 @@ std::map<QString, std::list<QString> > toExtract::migrateGroup(std::list<QString
     return ret;
 }
 
+#ifdef TORA3_MIGRATE
 /* This function can take properties of more than one object as parameters.
    They are later separated by the call to migrateGroup. Migrate function
    for specific object is called separately for each identified object.
@@ -665,6 +667,7 @@ void toExtract::migrate(QTextStream &ret, std::list<QString> &drpLst, std::list<
     }
     delete progress;
 }
+#endif
 
 QString toExtract::generateHeading(const QString &action,
                                    std::list<QString> &lst)
@@ -721,47 +724,6 @@ void toExtract::rethrow(const QString &what, const QString &object, const QStrin
     arg(what).
     arg(object).
     arg(exc);
-}
-
-void toExtract::setSizes(void)
-{
-    Initial.clear();
-    Next.clear();
-    Limit.clear();
-    if (Resize == QString::fromLatin1("1"))
-    {
-        for (int i = 1; i < 10000; i *= 10)
-        {
-            QString str;
-            if (i < 1000)
-            {
-                str = QString::number(40 * i + 1);
-                str += QString::fromLatin1(" K");
-            }
-            else
-                str = QString::fromLatin1("UNLIMITED");
-            Utils::toPush(Initial, str);
-            str = QString::number(5 * BlockSize * i);
-            str += QString::fromLatin1(" K");
-            Utils::toPush(Next, str);
-            Utils::toPush(Limit, str);
-        }
-    }
-    else if (!Resize.isEmpty())
-    {
-        QStringList lst = Resize.split(":");
-        if (lst.count() % 3 != 0)
-            throw qApp->translate("toExtract", "Malformed resize string (Should contain multiple of 3 number of ':')");
-        for (int i = 0; i < lst.count(); i += 3)
-        {
-            if (i + 3 < lst.count())
-                Utils::toPush(Limit, lst[i]);
-            else
-                Utils::toPush(Limit, QString::fromLatin1("UNLIMITED"));
-            Utils::toPush(Initial, lst[i + 1]);
-            Utils::toPush(Next, lst[i + 2]);
-        }
-    }
 }
 
 QString toExtract::intSchema(const QString &owner, bool desc)
@@ -1005,4 +967,58 @@ std::list<toExtract::columnInfo> toExtract::parseColumnDescription(std::list<QSt
     ret.sort();
 
     return ret;
+}
+
+toExtract::ObjectType toExtract::objectTypeFromString(const QString& objType)
+{
+    if (objType == "TABLE")
+        return TABLE;
+    else if (objType == "VIEW")
+        return VIEW;
+    else if (objType == "SYNONYM")
+        return SYNONYM;
+    else if (objType == "PROCEDURE")
+        return PROCEDURE;
+    else if (objType == "FUNCTION")
+        return FUNCTION;
+    else if (objType == "PACKAGE")
+        return PACKAGE;
+    else if (objType == "PACKAGE BODY")
+        return PACKAGE_BODY;
+    else if (objType == "PACKAGE_BODY")
+        return PACKAGE_BODY;
+    else if (objType == "INDEX")
+        return INDEX;
+    else if (objType == "SEQUENCE")
+        return SEQUENCE;
+    else if (objType == "TRIGGER")
+        return TRIGGER;
+    else if (objType == "USER")
+        return USER;
+    else if (objType == "ROLE")
+        return ROLE;
+    else if (objType == "PROFILE")
+        return PROFILE;
+    else if (objType == "DATABASE_LINK")
+        return DATABASE_LINK;
+    else if (objType == "DATABASE LINK")
+        return DATABASE_LINK;
+    else if (objType == "TYPE")
+        return TYPE;
+    else if (objType == "DIRECTORY")
+        return DIRECTORY;
+    else if (objType == "MATERIALIZED_VIEW")
+        return MATERIALIZED_VIEW;
+    else if (objType == "MATERIALIZED VIEW")
+        return MATERIALIZED_VIEW;
+    else if (objType == "TABLE FAMILY")
+        return TABLE_FAMILY;
+    else if (objType == "TABLE CONTENTS")
+        return TABLE_CONTENTS;
+    else if (objType == "TABLE REFERENCES")
+        return TABLE_REFERENCES;
+    else if (objType == "CONSTRAINT")
+        return CONSTRAINT;
+
+    throw qApp->translate("toExtract", "Unsupported object type to handle %1").arg(objType);
 }

@@ -198,6 +198,7 @@ SET(TORA_MOC_CLASSES
   core/todatabaseconfig.h
   tools/todescribe.h
   widgets/todockbar.h
+  core/toextract.h
   core/todocklet.h
   core/toeditablemenu.h
   core/toeditmenu.h

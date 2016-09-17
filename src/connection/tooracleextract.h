@@ -32,11 +32,9 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TO_ORACLEEXTRACT
-#define TO_ORACLEEXTRACT
+#pragma once
 
 //#include "core/utils.h"
-//#include "core/toconf.h"
 //#include "core/toconnection.h"
 #include "core/toextract.h"
 #include "core/tosql.h"
@@ -230,80 +228,44 @@ class toOracleExtract : public toExtract::extractor
                            const QString &name) const;
 
         // Describe functions
-        void describeConstraint(toExtract &ext, std::list<QString> &lst, const QString &schema,
-                                const QString &owner, const QString &name) const;
-        void describeDBLink(toExtract &ext, std::list<QString> &lst, const QString &schema,
-                            const QString &owner, const QString &name) const;
-        void describeExchangeIndex(toExtract &ext, std::list<QString> &lst, const QString &schema,
-                                   const QString &owner, const QString &name) const;
-        void describeExchangeTable(toExtract &ext, std::list<QString> &lst, const QString &schema,
-                                   const QString &owner, const QString &name) const;
-        void describeFunction(toExtract &ext, std::list<QString> &lst, const QString &schema,
-                              const QString &owner, const QString &name) const;
-        void describeIndex(toExtract &ext, std::list<QString> &lst, const QString &schema,
-                           const QString &owner, const QString &name) const;
-        void describeMaterializedView(toExtract &ext, std::list<QString> &lst, const QString &schema,
-                                      const QString &owner, const QString &name) const;
-        void describeMaterializedViewLog(toExtract &ext, std::list<QString> &lst, const QString &schema,
-                                         const QString &owner, const QString &name) const;
-        void describePackage(toExtract &ext, std::list<QString> &lst, const QString &schema,
-                             const QString &owner, const QString &name) const;
-        void describePackageBody(toExtract &ext, std::list<QString> &lst, const QString &schema,
-                                 const QString &owner, const QString &name) const;
-        void describeProcedure(toExtract &ext, std::list<QString> &lst, const QString &schema,
-                               const QString &owner, const QString &name) const;
-        void describeProfile(toExtract &ext, std::list<QString> &lst, const QString &schema,
-                             const QString &owner, const QString &name) const;
-        void describeRole(toExtract &ext, std::list<QString> &lst, const QString &schema,
-                          const QString &owner, const QString &name) const;
-        void describeRollbackSegment(toExtract &ext, std::list<QString> &lst, const QString &schema,
-                                     const QString &owner, const QString &name) const;
-        void describeSequence(toExtract &ext, std::list<QString> &lst, const QString &schema,
-                              const QString &owner, const QString &name) const;
-        void describeSnapshot(toExtract &ext, std::list<QString> &lst, const QString &schema,
-                              const QString &owner, const QString &name) const;
-        void describeSnapshotLog(toExtract &ext, std::list<QString> &lst, const QString &schema,
-                                 const QString &owner, const QString &name) const;
-        void describeSynonym(toExtract &ext, std::list<QString> &lst, const QString &schema,
-                             const QString &owner, const QString &name) const;
-        void describeTable(toExtract &ext, std::list<QString> &lst, const QString &schema,
-                           const QString &owner, const QString &name) const;
-        void describeTableFamily(toExtract &ext, std::list<QString> &lst, const QString &schema,
-                                 const QString &owner, const QString &name) const;
-        void describeTableReferences(toExtract &ext, std::list<QString> &lst, const QString &schema,
-                                     const QString &owner, const QString &name) const;
-        void describeTablespace(toExtract &ext, std::list<QString> &lst, const QString &schema,
-                                const QString &owner, const QString &name) const;
-        void describeTrigger(toExtract &ext, std::list<QString> &lst, const QString &schema,
-                             const QString &owner, const QString &name) const;
-        void describeType(toExtract &ext, std::list<QString> &lst, const QString &schema,
-                          const QString &owner, const QString &name) const;
-        void describeUser(toExtract &ext, std::list<QString> &lst, const QString &schema,
-                          const QString &owner, const QString &name) const;
-        void describeView(toExtract &ext, std::list<QString> &lst, const QString &schema,
-                          const QString &owner, const QString &name) const;
+        void describeConstraint(toExtract &ext, std::list<QString> &lst, const QString &schema, const QString &owner, const QString &name) const;
+        void describeDBLink(toExtract &ext, std::list<QString> &lst, const QString &schema, const QString &owner, const QString &name) const;
+        void describeExchangeIndex(toExtract &ext, std::list<QString> &lst, const QString &schema, const QString &owner, const QString &name) const;
+        void describeExchangeTable(toExtract &ext, std::list<QString> &lst, const QString &schema, const QString &owner, const QString &name) const;
+        void describeFunction(toExtract &ext, std::list<QString> &lst, const QString &schema, const QString &owner, const QString &name) const;
+        void describeIndex(toExtract &ext, std::list<QString> &lst, const QString &schema, const QString &owner, const QString &name) const;
+        void describeMaterializedView(toExtract &ext, std::list<QString> &lst, const QString &schema, const QString &owner, const QString &name) const;
+        void describeMaterializedViewLog(toExtract &ext, std::list<QString> &lst, const QString &schema, const QString &owner, const QString &name) const;
+        void describePackage(toExtract &ext, std::list<QString> &lst, const QString &schema, const QString &owner, const QString &name) const;
+        void describePackageBody(toExtract &ext, std::list<QString> &lst, const QString &schema, const QString &owner, const QString &name) const;
+        void describeProcedure(toExtract &ext, std::list<QString> &lst, const QString &schema, const QString &owner, const QString &name) const;
+        void describeProfile(toExtract &ext, std::list<QString> &lst, const QString &schema, const QString &owner, const QString &name) const;
+        void describeRole(toExtract &ext, std::list<QString> &lst, const QString &schema, const QString &owner, const QString &name) const;
+        void describeRollbackSegment(toExtract &ext, std::list<QString> &lst, const QString &schema, const QString &owner, const QString &name) const;
+        void describeSequence(toExtract &ext, std::list<QString> &lst, const QString &schema, const QString &owner, const QString &name) const;
+        void describeSnapshot(toExtract &ext, std::list<QString> &lst, const QString &schema, const QString &owner, const QString &name) const;
+        void describeSnapshotLog(toExtract &ext, std::list<QString> &lst, const QString &schema, const QString &owner, const QString &name) const;
+        void describeSynonym(toExtract &ext, std::list<QString> &lst, const QString &schema, const QString &owner, const QString &name) const;
+        void describeTable(toExtract &ext, std::list<QString> &lst, const QString &schema, const QString &owner, const QString &name) const;
+        void describeTableFamily(toExtract &ext, std::list<QString> &lst, const QString &schema, const QString &owner, const QString &name) const;
+        void describeTableReferences(toExtract &ext, std::list<QString> &lst, const QString &schema, const QString &owner, const QString &name) const;
+        void describeTablespace(toExtract &ext, std::list<QString> &lst, const QString &schema, const QString &owner, const QString &name) const;
+        void describeTrigger(toExtract &ext, std::list<QString> &lst, const QString &schema, const QString &owner, const QString &name) const;
+        void describeType(toExtract &ext, std::list<QString> &lst, const QString &schema, const QString &owner, const QString &name) const;
+        void describeUser(toExtract &ext, std::list<QString> &lst, const QString &schema, const QString &owner, const QString &name) const;
+        void describeView(toExtract &ext, std::list<QString> &lst, const QString &schema, const QString &owner, const QString &name) const;
 
         // Drop functions
-        QString dropConstraint(toExtract &ext, const QString &schema, const QString &owner,
-                               const QString &type, const QString &name) const;
-        QString dropDatabaseLink(toExtract &ext, const QString &schema, const QString &owner,
-                                 const QString &type, const QString &name) const;
-        QString dropMViewLog(toExtract &ext, const QString &schema, const QString &owner,
-                             const QString &type, const QString &name) const;
-        QString dropObject(toExtract &ext, const QString &schema, const QString &owner,
-                           const QString &type, const QString &name) const;
-        QString dropProfile(toExtract &ext, const QString &schema, const QString &owner,
-                            const QString &type, const QString &name) const;
-        QString dropSchemaObject(toExtract &ext, const QString &schema, const QString &owner,
-                                 const QString &type, const QString &name) const;
-        QString dropSynonym(toExtract &ext, const QString &schema, const QString &owner,
-                            const QString &type, const QString &name) const;
-        QString dropTable(toExtract &ext, const QString &schema, const QString &owner,
-                          const QString &type, const QString &name) const;
-        QString dropTablespace(toExtract &ext, const QString &schema, const QString &owner,
-                               const QString &type, const QString &name) const;
-        QString dropUser(toExtract &ext, const QString &schema, const QString &owner,
-                         const QString &type, const QString &name) const;
+        QString dropConstraint(toExtract &ext, const QString &schema, const QString &owner, const QString &name) const;
+        QString dropDatabaseLink(toExtract &ext, const QString &schema, const QString &owner, const QString &name) const;
+        QString dropMViewLog(toExtract &ext, const QString &schema, const QString &owner, const QString &type, const QString &name) const;
+        QString dropObject(toExtract &ext, const QString &type, const QString &name) const;
+        QString dropProfile(toExtract &ext, const QString &name) const;
+        QString dropSchemaObject(toExtract &ext, const QString &schema, const QString &owner, const QString &type, const QString &name) const;
+        QString dropSynonym(toExtract &ext, const QString &schema, const QString &owner, const QString &name) const;
+        QString dropTable(toExtract &ext, const QString &schema, const QString &owner, const QString &name) const;
+        QString dropTablespace(toExtract &ext, const QString &name) const;
+        QString dropUser(toExtract &ext, const QString &name) const;
 
         // Migrate functions
         QString migrateConstraint(toExtract &ext, std::list<QString> &source,
@@ -328,7 +290,7 @@ class toOracleExtract : public toExtract::extractor
 //                         std::list<QString> &destin) const;
 
         // DBMS_METADATA
-        QString createMetadata(toExtract &ext, const QString &owner, const QString &name, const QString &type) const;
+        QString createMetadata(toExtract &ext, const QString &owner, const QString &name, toExtract::ObjectType type) const;
 
     public:
         // Public interface
@@ -336,21 +298,16 @@ class toOracleExtract : public toExtract::extractor
         toOracleExtract();
         virtual ~toOracleExtract();
 
-        virtual void initialize(toExtract &ext) const;
-        virtual void create(toExtract &ext, QTextStream &stream,
-                            const QString &type, const QString &schema,
-                            const QString &owner, const QString &name) const;
-        virtual void describe(toExtract &ext, std::list<QString> &lst, const QString &type,
-                              const QString &schema, const QString &owner, const QString &name) const;
-        virtual void drop(toExtract &ext, QTextStream &stream, const QString &type, const QString &schema,
-                          const QString &owner, const QString &name) const;
-        virtual void migrate(toExtract &ext,
-                             QTextStream &stream,
-                             const QString &type,
-                             std::list<QString> &src,
-                             std::list<QString> &dst) const;
+        void initialize(toExtract &ext) const override;
 
-        virtual std::list<toExtract::datatype> datatypes() const;
+        void create(toExtract &ext, QTextStream &stream, toExtract::ObjectType type, const QString &schema, const QString &owner, const QString &name) const override;
+
+        void describe(toExtract &ext, std::list<QString> &lst, toExtract::ObjectType type, const QString &schema, const QString &owner, const QString &name) const override;
+
+        void drop(toExtract &ext, QTextStream &stream, toExtract::ObjectType type, const QString &schema, const QString &owner, const QString &name) const override;
+
+        void migrate(toExtract &ext, QTextStream &stream, toExtract::ObjectType type, std::list<QString> &src, std::list<QString> &dst) const override;
+
+        std::list<toExtract::datatype> datatypes() const override;
 };
 
-#endif
