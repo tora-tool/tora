@@ -44,138 +44,41 @@
 #include <QtCore/QString>
 #include <QtNetwork/QHostInfo>
 
-std::map<QString, toExtract::extractor *> *toExtract::Extractors;
-
-void toExtract::extractor::registerExtract(const QString &db,
-                                           const QString &oper,
-                                           ObjectType type)
-{
-    toExtract::allocExtract();
-
-    QString name = toExtract::extractorName(db, oper, type);
-
-    if ((*toExtract::Extractors).find(name) != (*toExtract::Extractors).end())
-        fprintf(stderr, "Extractor %s multiply defined\n", name.toLatin1().constData());
-
-    (*toExtract::Extractors)[name] = this;
-}
-
-void toExtract::extractor::unregisterExtract(const QString &db,
-                                             const QString &oper,
-                                             ObjectType type)
-{
-    toExtract::allocExtract();
-
-    QString name = toExtract::extractorName(db, oper, type);
-    std::map<QString, extractor *>::iterator i = (*toExtract::Extractors).find(name);
-    if (i == (*toExtract::Extractors).end())
-        fprintf(stderr, "Extractor %s not defined on unregistering\n", name.toLatin1().constData());
-    else
-        (*toExtract::Extractors).erase(i);
-}
-
-void toExtract::extractor::create(toExtract &,
-                                  QTextStream &,
-                                  ObjectType,
-                                  const QString &,
-                                  const QString &,
-                                  const QString &) const
-{}
-
-void toExtract::extractor::describe(toExtract &,
-                                    std::list<QString> &,
-                                    ObjectType,
-                                    const QString &,
-                                    const QString &,
-                                    const QString &) const
-{}
-
-void toExtract::extractor::migrate(toExtract &,
-                                   QTextStream &,
-                                   ObjectType,
-                                   std::list<QString> &,
-                                   std::list<QString> &) const
-{}
-
-void toExtract::extractor::drop(toExtract &,
-                                QTextStream &,
-                                ObjectType,
-                                const QString &,
-                                const QString &,
-                                const QString &) const
-{}
-
 std::list<toExtract::datatype> toExtract::extractor::datatypes() const
 {
     std::list<toExtract::datatype> ret;
     return ret;
 }
 
-toExtract::extractor::extractor()
-{}
+toExtract::extractor::extractor(toExtract &parent)
+    : ext(parent)
+{
+}
 
 toExtract::extractor::~extractor()
 {}
 
-void toExtract::allocExtract(void)
-{
-    if (!Extractors)
-        Extractors = new std::map<QString, extractor *>;
-}
-
-QString toExtract::extractorName(const QString &db, const QString &oper, ObjectType type)
-{
-    QString ret(db);
-    if (!oper.isEmpty())
-        ret += ":" + oper;
-	if (type != NO_TYPE)
-		ret += QString(":%1").arg(ENUM_NAME(toExtract, ObjectType, type));
-    return ret;
-}
-
-toExtract::extractor *toExtract::findExtractor(toConnection const& conn,
-                                               const QString &oper,
-                                               ObjectType type)
-{
-    allocExtract();
-
-    QString name = extractorName(conn.provider(), oper, type);
-    std::map<QString, extractor *>::iterator i = (*Extractors).find(name);
-    if (i != (*Extractors).end())
-        return (*i).second;
-    return NULL;
-}
-
-void toExtract::initialize(void)
-{
-    if (!Initialized)
-    {
-        Initialized = true;
-        extractor *ext = findExtractor(QString::null, NO_TYPE);
-        if (ext)
-            ext->initialize(*this);
-    }
-}
-
 toExtract::toExtract(toConnection &conn, QWidget *parent)
-    : Connection(conn), Parent(parent)
+    : Connection(conn)
+    , Parent(parent)
+    , Heading(true)
+    , Prompt(true)
+    , Constraints(true)
+    , Indexes(true)
+    , Grants(true)
+    , Storage(true)
+    , Parallel(true)
+    , Contents(true)
+    , Comments(true)
+    , Partition(true)
+    , Code(true)
+    , Replace(false)
+    , Schema("1")
+    , Initialized(false)
+    , BlockSize(8192)
+    , CommitDistance(0)
 {
-    Heading = true;
-    Prompt = true;
-    Constraints = true;
-    Indexes = true;
-    Grants = true;
-    Storage = true;
-    Parallel = true;
-    Contents = true;
-    Comments = true;
-    Partition = true;
-    Code = true;
-    Replace = false;
-    Schema = "1";
-    Initialized = false;
-    BlockSize = 8192;
-    CommitDistance = 0;
+    ext = ExtractorFactorySing::Instance().create(Connection.provider().toStdString(), *this);
 }
 
 void toExtract::setState(const QString &name, const QVariant &val)
@@ -284,25 +187,6 @@ void toExtract::parseObject(const QString &object,
     }
 }
 
-bool toExtract::canHandle(const toConnection &conn)
-{
-    return bool(findExtractor(conn, QString::null, NO_TYPE));
-}
-
-std::list<toExtract::datatype> toExtract::datatypes()
-{
-    std::list<toExtract::datatype> ret;
-    try
-    {
-        extractor *ext = findExtractor(connection(), QString::null, NO_TYPE);
-        if (ext)
-            ret = ext->datatypes();
-        ret.sort();
-    }
-    TOCATCH
-    return ret;
-}
-
 void toExtract::create(QTextStream &ret, std::list<QString> &objects)
 {
     ret << generateHeading(qApp->translate("toExtract", "CREATE"), objects);
@@ -320,7 +204,6 @@ void toExtract::create(QTextStream &ret, std::list<QString> &objects)
             Parent);
         progress->setWindowTitle(qApp->translate("toExtract", "Creating script"));
     }
-    initialize();
 
     try
     {
@@ -352,10 +235,8 @@ void toExtract::create(QTextStream &ret, std::list<QString> &objects)
             {
                 try
                 {
-                    extractor *ext = findExtractor(QString::fromLatin1("CREATE"), typeEnum);
                     if (ext)
-                        ext->create(*this,
-                                    ret,
+                        ext->create(ret,
                                     typeEnum,
                                     schema,
                                     owner,
@@ -398,7 +279,6 @@ std::list<QString> toExtract::describe(std::list<QString> &objects)
             Parent);
         progress->setWindowTitle(qApp->translate("toExtract", "Creating description"));
     }
-    initialize();
 
     try
     {
@@ -433,10 +313,8 @@ std::list<QString> toExtract::describe(std::list<QString> &objects)
             {
                 try
                 {
-                    extractor *ext = findExtractor(QString::fromLatin1("DESCRIBE"), typeEnum);
                     if (ext)
-                        ext->describe(*this,
-                                      cur,
+                        ext->describe(cur,
                                       typeEnum,
                                       schema,
                                       owner,
@@ -468,87 +346,6 @@ std::list<QString> toExtract::describe(std::list<QString> &objects)
     return ret;
 }
 
-#ifdef TORA3_DROP
-void toExtract::drop(QTextStream &ret, std::list<QString> &objects)
-{
-    ret << generateHeading(qApp->translate("toExtract", "DROP"), objects);
-
-    QProgressDialog *progress = NULL;
-    if (Parent)
-    {
-        progress = new QProgressDialog(
-            qApp->translate("toExtract", "Creating drop script"),
-            qApp->translate("toExtract", "Cancel"),
-            0,
-            objects.size(), Parent);
-        progress->setWindowTitle(qApp->translate("toExtract", "Creating drop script"));
-    }
-    initialize();
-
-    try
-    {
-        Utils::toBusy busy;
-        int num = 1;
-        for (std::list<QString>::iterator i = objects.begin(); i != objects.end(); i++)
-        {
-            if (progress)
-            {
-                progress->setValue(num);
-                progress->setLabelText(*i);
-                qApp->processEvents();
-                if (progress->wasCanceled())
-                    throw qApp->translate("toExtract", "Creating drop script was canceled");
-                num++;
-            }
-
-            QString type = *i;
-            QString owner;
-            QString name;
-            int pos = type.indexOf(QString::fromLatin1(":"));
-            if (pos < 0)
-                throw qApp->translate("toExtract", "Internal error, missing : in object description");
-            parseObject(type.right(type.length() - pos - 1), owner, name);
-            type.truncate(pos);
-            QString utype = type.toUpper();
-            QString schema = intSchema(owner, false);
-
-            try
-            {
-                try
-                {
-                    extractor *ext = findExtractor(QString::fromLatin1("DROP"), utype);
-                    if (ext)
-                        ext->drop(*this,
-                                  ret,
-                                  utype,
-                                  schema,
-                                  owner,
-                                  name);
-                    else
-                    {
-                        throw qApp->translate("toExtract", "Invalid type %1 to drop");
-                        ;
-                    }
-                }
-                catch (const QString &exc)
-                {
-                    rethrow(qApp->translate("toExtract", "Drop script"), *i, exc);
-                }
-            }
-            catch (const QString &exc)
-            {
-                Utils::toStatusMessage(exc);
-            }
-        }
-    }
-    catch (...)
-    {
-        delete progress;
-        throw;
-    }
-    delete progress;
-}
-#endif
 
 std::map<QString, std::list<QString> > toExtract::migrateGroup(std::list<QString> &grpLst)
 {
@@ -571,106 +368,7 @@ std::map<QString, std::list<QString> > toExtract::migrateGroup(std::list<QString
     return ret;
 }
 
-#ifdef TORA3_MIGRATE
-/* This function can take properties of more than one object as parameters.
-   They are later separated by the call to migrateGroup. Migrate function
-   for specific object is called separately for each identified object.
-*/
-void toExtract::migrate(QTextStream &ret, std::list<QString> &drpLst, std::list<QString> &crtLst)
-{
-    std::list<QString> t;
-    t.insert(t.end(), qApp->translate("toExtract", "Object list not available in migration"));
-    ret << generateHeading(qApp->translate("toExtract", "MIGRATE"), t);
-
-    QProgressDialog *progress = NULL;
-
-    std::map<QString, std::list<QString> > objDrp;
-    std::map<QString, std::list<QString> > objCrt;
-
-    objDrp = migrateGroup(drpLst);
-    objCrt = migrateGroup(crtLst);
-
-    for (std::map<QString, std::list<QString> >::iterator j = objCrt.begin(); j != objCrt.end(); j++)
-        objDrp[(*j).first]; // Make sure all objects in the createlist also exists in the droplist
-
-    if (Parent)
-    {
-        progress = new QProgressDialog(
-            qApp->translate("toExtract", "Creating migration script"),
-            qApp->translate("toExtract", "Cancel"),
-            0,
-            objDrp.size());
-        progress->setWindowTitle(qApp->translate("toExtract", "Creating migration script"));
-    }
-    initialize();
-
-    try
-    {
-        Utils::toBusy busy;
-        int num = 1;
-
-        for (std::map<QString, std::list<QString> >::iterator i = objDrp.begin(); i != objDrp.end(); i++)
-        {
-            QString t = (*i).first;
-
-            if (progress)
-            {
-                progress->setValue(num);
-                progress->setLabelText(t);
-                qApp->processEvents();
-                if (progress->wasCanceled())
-                    throw qApp->translate("toExtract", "Creating drop script was canceled");
-            }
-            num++;
-
-            std::list<QString> &crt = objCrt[t];
-            std::list<QString> &drp = objDrp[t];
-            crt.sort();
-            drp.sort();
-            std::list<QString> ctx = splitDescribe(t);
-            QString schema = Utils::toShift(ctx);
-            QString utype = Utils::toShift(ctx).toUpper();
-            QString name = Utils::toShift(ctx);
-
-            try
-            {
-                try
-                {
-                    extractor *ext = findExtractor(QString::fromLatin1("MIGRATE"), utype);
-                    if (ext)
-                        ext->migrate(*this,
-                                     ret,
-                                     utype,
-                                     drp,
-                                     crt);
-                    else
-                    {
-                        throw qApp->translate("toExtract", "Invalid type %1 to migrate").arg(utype);
-                    }
-                }
-                catch (const QString &exc)
-                {
-                    rethrow(qApp->translate("toExtract", "Migration script"), (*i).first, exc);
-                }
-            }
-            catch (const QString &exc)
-            {
-                Utils::toStatusMessage(exc);
-            }
-
-        }
-    }
-    catch (...)
-    {
-        delete progress;
-        throw;
-    }
-    delete progress;
-}
-#endif
-
-QString toExtract::generateHeading(const QString &action,
-                                   std::list<QString> &lst)
+QString toExtract::generateHeading(const QString &action, std::list<QString> &lst)
 {
     if (!Heading)
         return QString::null;
@@ -720,16 +418,15 @@ void toExtract::rethrow(const QString &what, const QString &object, const QStrin
     throw qApp->translate("toExtract", "Error in toExtract\n"
                           "Operation:      %1\n"
                           "Object:         %2\n"
-                          "Error:          %3").
-    arg(what).
-    arg(object).
-    arg(exc);
+                          "Error:          %3")
+    .arg(what)
+    .arg(object)
+    .arg(exc);
 }
 
 QString toExtract::intSchema(const QString &owner, bool desc)
 {
-    if (owner.toUpper() == "PUBLIC")
-        return QString("PUBLIC");
+    if (owner.toUpper() == "PUBLIC") return QString("PUBLIC");
     if (Schema == "1")
     {
         QString ret = Connection.getTraits().quote(owner);
@@ -743,26 +440,6 @@ QString toExtract::intSchema(const QString &owner, bool desc)
     if (!desc)
         ret += ".";
     return ret;
-}
-
-void toExtract::initialNext(const QString &blocks, QString &initial, QString &next)
-{
-    std::list<QString>::iterator iinit = Initial.begin();
-    std::list<QString>::iterator inext = Next.begin();
-    std::list<QString>::iterator ilimit = Limit.begin();
-    while (ilimit != Initial.end())
-    {
-        if (*ilimit == QString::fromLatin1("UNLIMITED") ||
-                (*ilimit).toFloat() > blocks.toFloat())
-        {
-            initial = *iinit;
-            next = *inext;
-            return ;
-        }
-        iinit++;
-        inext++;
-        ilimit++;
-    }
 }
 
 void toExtract::addDescription(std::list<QString> &ret, const std::list<QString> &ctx,
@@ -862,19 +539,6 @@ QString toExtract::contextDescribe(const QString &str, int level)
         return str.mid(0, pos);
     return QString::null;
 }
-
-//QString toExtract::createFromParse(std::list<toSQLParse::statement>::iterator start,
-//                                   std::list<toSQLParse::statement>::iterator end)
-//{
-//    QString ret;
-//    toSQLParse::statement newstat(toSQLParse::statement::Statement);
-//    while (start != end)
-//    {
-//        newstat.subTokens().insert(newstat.subTokens().end(), *start);
-//        start++;
-//    }
-//    return toSQLParse::indentStatement(newstat, connection()).trimmed();
-//}
 
 std::list<toExtract::columnInfo> toExtract::parseColumnDescription(std::list<QString>::const_iterator begin,
         std::list<QString>::const_iterator end,

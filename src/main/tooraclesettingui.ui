@@ -159,21 +159,21 @@
       <item>
        <widget class="QCheckBox" name="IncludeParallelBool">
         <property name="text">
-         <string>Include parallel information</string>
+         <string>Include parallel specification</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QCheckBox" name="IncludePartitionBool">
         <property name="text">
-         <string>Include partition information</string>
+         <string>Include partition specification</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QCheckBox" name="IncludeCodeBool">
         <property name="text">
-         <string>Include code</string>
+         <string>Include code specification</string>
         </property>
        </widget>
       </item>
