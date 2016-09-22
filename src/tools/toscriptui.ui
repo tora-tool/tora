@@ -190,6 +190,9 @@
          </item>
          <item row="2" column="0">
           <widget class="QRadioButton" name="Search">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="text">
             <string>Search</string>
            </property>

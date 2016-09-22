@@ -485,8 +485,7 @@ void toScript::execute(void)
             std::list<QString> drop;
             std::list<QString> create;
 
-            toExtract::srcDst2DropCreate(sourceDescription, destinationDescription,
-                                         drop, create);
+            toExtract::srcDst2DropCreate(sourceDescription, destinationDescription, drop, create);
             sourceDescription = drop;
             destinationDescription = create;
         }
