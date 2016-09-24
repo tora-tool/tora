@@ -86,7 +86,7 @@ QString toOracleExtract::displaySource(
         ret = QString("PROMPT CREATE OR REPLACE %1 %2%3\n\n").
               arg(type).
               arg(schema).
-              arg(QUOTE(name));
+              arg(quote(name));
     bool first = true;
     while (!inf.eof())
     {
@@ -140,7 +140,7 @@ QString toOracleExtract::keyColumns(
             first = false;
         else
             ret += "\n  , ";
-        ret += QUOTE((QString)inf.readValue());
+        ret += quote((QString)inf.readValue());
     }
     return ret;
 }
@@ -204,7 +204,7 @@ QString toOracleExtract::constraintColumns(
             first = false;
         else
             ret += ",\n    ";
-        ret += QUOTE((QString)query.readValue());
+        ret += quote((QString)query.readValue());
     }
     ret += "\n)\n";
     return ret;
@@ -242,13 +242,18 @@ QString toOracleExtract::createComments(
         {
             sql = QString("COMMENT ON TABLE %1%2 IS '%3'").
                   arg(schema).
-                  arg(QUOTE(name)).
+                  arg(quote(name)).
                   arg(prepareDB((QString)inf.readValue()));
             if (PROMPT)
             {
-                ret += "PROMPT ";
-                ret += sql;
-                ret += "\n\n";
+                QStringList lines = sql.split(QRegExp("\n|\r\n|\r"));
+                foreach(QString line, lines)
+                {
+                    ret += "PROMPT ";
+                    ret += line;
+                    ret += "\n";
+                }
+                ret += "\n";
             }
             ret += sql;
             ret += ";\n\n";
@@ -259,14 +264,19 @@ QString toOracleExtract::createComments(
             QString column = (QString)col.readValue();
             sql = QString("COMMENT ON COLUMN %1%2.%3 IS '%4'").
                   arg(schema).
-                  arg(QUOTE(name)).
-                  arg(QUOTE(column)).
+                  arg(quote(name)).
+                  arg(quote(column)).
                   arg(prepareDB((QString)col.readValue()));
             if (PROMPT)
             {
-                ret += "PROMPT ";
-                ret += sql;
-                ret += "\n\n";
+                QStringList lines = sql.split(QRegExp("\n|\r\n|\r"));
+                foreach(QString line, lines)
+                {
+                    ret += "PROMPT ";
+                    ret += line;
+                    ret += "\n";
+                }
+                ret += "\n";
             }
             ret += sql;
             ret += ";\n\n";
@@ -762,8 +772,8 @@ QString toOracleExtract::createTableText(
 
     QString ret;
     if (PROMPT)
-        ret = QString("PROMPT CREATE TABLE %1%2\n\n").arg(schema).arg(QUOTE(name));
-    ret += QString("CREATE TABLE %1%2\n(\n    ").arg(schema).arg(QUOTE(name));
+        ret = QString("PROMPT CREATE TABLE %1%2\n\n").arg(schema).arg(quote(name));
+    ret += QString("CREATE TABLE %1%2\n(\n    ").arg(schema).arg(quote(name));
     ret += tableColumns(owner, name);
     if (organization == "INDEX" && ext.getStorage())
     {
@@ -772,9 +782,9 @@ QString toOracleExtract::createTableText(
             throw qApp->translate("toOracleExtract", "Couldn't find primary key of %1.%2").arg(owner).arg(name);
         QString primary = (QString)*(res.begin());
         QString tablespace = (QString)*(res.rbegin());
-        ret += QString("  , CONSTRAINT %1 PRIMARY KEY\n").arg(QUOTE(primary));
+        ret += QString("  , CONSTRAINT %1 PRIMARY KEY\n").arg(quote(primary));
         ret += indexColumns("      ", owner, primary);
-        ret += QString("      USING TABLESPACE %2\n").arg(QUOTE(tablespace));
+        ret += QString("      USING TABLESPACE %2\n").arg(quote(tablespace));
     }
     ret += ")\n";
     if (!toConfigurationNewSingle::Instance().option(Oracle::SkipOrgMonBool).toBool())
@@ -877,7 +887,7 @@ QString toOracleExtract::createMView(
     toQList result = toQuery::readQuery(connection(), SQLMViewInfo, toQueryParams() << name << owner);
     if (result.empty())
         throw qApp->translate("toOracleExtract", "Couldn't find materialised table %1.%2").
-        arg(QUOTE(owner)).arg(QUOTE(name));
+        arg(quote(owner)).arg(quote(name));
     QString table = (QString)Utils::toShift(result);
     QString buildMode = (QString)Utils::toShift(result);
     QString refreshMethod = (QString)Utils::toShift(result);
@@ -893,7 +903,7 @@ QString toOracleExtract::createMView(
     QString index(inf.readValue());
 
     QString ret;
-    QString sql = QString("CREATE %1 %2%3\n").arg(type).arg(schema).arg(QUOTE(name));
+    QString sql = QString("CREATE %1 %2%3\n").arg(type).arg(schema).arg(quote(name));
     if (PROMPT)
     {
         ret = "PROMPT ";
@@ -920,7 +930,7 @@ QString toOracleExtract::createMView(
         }
         if (!masterRBSeg.isEmpty() && ext.getStorage())
             ret += QString("USING MASTER ROLLBACK SEGMENT %1\n").
-                   arg(QUOTE(masterRBSeg));
+                   arg(quote(masterRBSeg));
     }
 
     if (!updatable.isEmpty())
@@ -1030,7 +1040,7 @@ QString toOracleExtract::createMViewLog(
     QString sql = QString("CREATE %1 LOG ON %2%3\n").
                   arg(type).
                   arg(schema).
-                  arg(QUOTE(name));
+                  arg(quote(name));
     if (PROMPT)
     {
         QString ret = "PROMPT ";
@@ -1059,7 +1069,7 @@ QString toOracleExtract::createMViewLog(
                 first = false;
             else
                 ret += "\n  , ";
-            ret += QUOTE((QString)inf.readValue());
+            ret += quote((QString)inf.readValue());
         }
         ret += ")";
     }
@@ -1909,7 +1919,7 @@ QString toOracleExtract::createPartitionedTable(
                 ret += QString("PARTITION %1 VALUES LESS THAN\n"
                                "      (\n"
                                "        %2\n"
-                               "      )\n").arg(QUOTE(partition)).arg(highValue);
+                               "      )\n").arg(quote(partition)).arg(highValue);
                 ret += segmentAttributes(storage);
                 comma = "  , ";
 
@@ -1925,8 +1935,8 @@ QString toOracleExtract::createPartitionedTable(
                         else
                             ret += "\n          , ";
                         ret += QString("SUBPARTITION %2 TABLESPACE %1").
-                               arg(QUOTE((QString)Utils::toShift(subs))).
-                               arg(QUOTE((QString)Utils::toShift(subs)));
+                               arg(quote((QString)Utils::toShift(subs))).
+                               arg(quote((QString)Utils::toShift(subs)));
                     }
                     ret += "\n        )\n";
                 }
@@ -1944,8 +1954,8 @@ QString toOracleExtract::createPartitionedTable(
                 else
                     ret += "\n  , ";
                 ret += QString("PARTITION %2 TABLESPACE %1").
-                       arg(QUOTE((QString)Utils::toShift(hash))).
-                       arg(QUOTE((QString)Utils::toShift(hash)));
+                       arg(quote((QString)Utils::toShift(hash))).
+                       arg(quote((QString)Utils::toShift(hash)));
             }
         }
         ret += ")\n";
@@ -2054,7 +2064,7 @@ QString toOracleExtract::grantedPrivs(
         {
             QString priv = QString(Utils::toShift(result)).toLower();
             QString schema = ext.intSchema((QString)Utils::toShift(result), false);
-            QString object = QUOTE((QString)Utils::toShift(result));
+            QString object = quote((QString)Utils::toShift(result));
             QString sql = QString("GRANT %1 ON %2%3 TO %4 %5").
                           arg(priv.toLower()).
                           arg(schema).
@@ -2125,7 +2135,7 @@ QString toOracleExtract::indexColumns(
                                       const QString &name)
 {
     toConnectionSubLoan conn(ext.connection());
-    static QRegExp quote("\"");
+    static QRegExp quote_regex("\"");
     static QRegExp func("^sys_nc[0-9]+", Qt::CaseInsensitive);
     toQuery inf(conn, SQLIndexColumns, toQueryParams() << name << owner);
     QString ret = indent;
@@ -2142,21 +2152,21 @@ QString toOracleExtract::indexColumns(
             if (!def.eof())
             {
                 QString function((QString)def.readValue());
-                function.replace(quote, "");
+                function.replace(quote_regex, "");
                 if (asc == "DESC")
                     row = QString("%1 DESC").arg(function, 30);
                 else
                     row = function;
             }
             else if (asc == "DESC")
-                row = QString("%1 DESC").arg(QUOTE(col));
+                row = QString("%1 DESC").arg(quote(col));
             else
-                row = QUOTE(col);
+                row = quote(col);
         }
         else if (asc == "DESC")
-            row = QString("%1 DESC").arg(QUOTE(col));
+            row = QString("%1 DESC").arg(quote(col));
         else
-            row = QUOTE(col);
+            row = quote(col);
         ret += indent;
         if (first)
         {
@@ -2282,7 +2292,7 @@ QString toOracleExtract::rangePartitions(
 
         ret += comma;
         ret += "PARTITION ";
-        ret += QUOTE(partition);
+        ret += quote(partition);
         if (caller != "LOCAL")
             ret += QString(" VALUES LESS THAN (%1)\n").arg(highValue);
         else
@@ -2305,9 +2315,9 @@ QString toOracleExtract::rangePartitions(
                     first = false;
                 else
                     ret += "\n          , ";
-                ret += QUOTE(sub);
+                ret += quote(sub);
                 ret += " TABLESPACE ";
-                ret += QUOTE(tablespace);
+                ret += quote(tablespace);
             }
             ret += "\n        )\n";
         }
@@ -2406,14 +2416,14 @@ QString toOracleExtract::segmentAttributes(toQList &result)
             ret += QString("%1  FREELIST GROUPS   %2\n").arg(indent).arg(freelistGroups);
             if (connection().version() >= "0801")
             {
-                ret += QString("%1  BUFFER_POOL       %2\n").arg(indent).arg(QUOTE(bufferPool));
+                ret += QString("%1  BUFFER_POOL       %2\n").arg(indent).arg(quote(bufferPool));
             }
             ret += indent;
             ret += ")\n";
             if (connection().version() >= "0800")
                 ret += QString("%1%2\n").arg(indent).arg(logging);
         }
-        ret += QString("%1TABLESPACE          %2\n").arg(indent).arg(QUOTE(tablespace));
+        ret += QString("%1TABLESPACE          %2\n").arg(indent).arg(quote(tablespace));
     }
     return ret;
 }
@@ -2708,7 +2718,7 @@ QString toOracleExtract::tableColumns(
             first = false;
         else
             ret += "\n  , ";
-        ret += QString(QUOTE((QString)Utils::toShift(cols))).leftJustified(32);
+        ret += QString(quote((QString)Utils::toShift(cols))).leftJustified(32);
         ret += " ";
         ret += (QString)Utils::toShift(cols);
         QString def = (QString)Utils::toShift(cols);
@@ -2805,11 +2815,11 @@ void toOracleExtract::describeAttributes(
     addDescription(dsp, ctx, "STORAGE", QString("FREELIST GROUPS %1").arg(freelistGroups));
     if (connection().version() >= "0801")
     {
-        addDescription(dsp, ctx, "STORAGE", QString("BUFFER_POOL %1").arg(QUOTE(bufferPool)));
+        addDescription(dsp, ctx, "STORAGE", QString("BUFFER_POOL %1").arg(quote(bufferPool)));
     }
     if (connection().version() >= "0800")
         addDescription(dsp, ctx, "PARAMETERS", logging);
-    addDescription(dsp, ctx, "PARAMETERS", QString("TABLESPACE %1").arg(QUOTE(tablespace)));
+    addDescription(dsp, ctx, "PARAMETERS", QString("TABLESPACE %1").arg(quote(tablespace)));
 }
 
 void toOracleExtract::describeComments(
@@ -2830,7 +2840,7 @@ void toOracleExtract::describeComments(
         while (!col.eof())
         {
             QString column = (QString)col.readValue();
-            addDescription(lst, ctx, "COLUMN", QUOTE(column), "COMMENT", (QString)col.readValue());
+            addDescription(lst, ctx, "COLUMN", quote(column), "COMMENT", (QString)col.readValue());
         }
     }
 }
@@ -2846,7 +2856,7 @@ void toOracleExtract::describePrivs(
     toQList result = toQuery::readQuery(connection(), SQLRolePrivs, toQueryParams() << name);
     while (!result.empty())
     {
-        QString role = QUOTE((QString)Utils::toShift(result));
+        QString role = quote((QString)Utils::toShift(result));
         addDescription(lst, ctx, "GRANT", "ROLE " + role, (QString)Utils::toShift(result));
     }
 
@@ -2863,7 +2873,7 @@ void toOracleExtract::describePrivs(
         QString priv = (QString)Utils::toShift(result);
         QString schema = ext.intSchema((QString)Utils::toShift(result), false);
         QString res = schema;
-        res += QUOTE((QString)Utils::toShift(result));
+        res += quote((QString)Utils::toShift(result));
         addDescription(lst, ctx, "GRANT", priv.toLower(), "ON", res, (QString)Utils::toShift(result));
     }
 }
@@ -2896,7 +2906,7 @@ void toOracleExtract::describeIndexColumns(
         const QString &owner,
         const QString &name)
 {
-    static QRegExp quote("\"");
+    static QRegExp quote_regex("\"");
     static QRegExp func("^sys_nc[0-9]g");
     toConnectionSubLoan conn(ext.connection());
     toQuery inf(conn, SQLIndexColumns, toQueryParams() << name << owner);
@@ -2912,16 +2922,16 @@ void toOracleExtract::describeIndexColumns(
             toQuery def(conn2, SQLIndexFunction, toQueryParams() << col << name << owner);
             QString function((QString)def.readValue());
             inf.readValue(); // we read function index from def, but inf has to be shifted too
-            function.replace(quote, "");
+            function.replace(quote_regex, "");
             if (asc == "DESC")
                 row = QString("%1 DESC").arg(function, 30);
             else
                 row = function;
         }
         else if (asc == "DESC")
-            row = QString("%1 DESC").arg(QUOTE(col));
+            row = QString("%1 DESC").arg(quote(col));
         else
-            row = QUOTE(col);
+            row = quote(col);
         addDescription(lst, ctx, "COLUMN", row);
         addDescription(lst, ctx, "COLUMN", row, "ORDER", QString::number(num));
         num++;
@@ -2935,7 +2945,7 @@ void toOracleExtract::describeMView(std::list<QString> &lst,
     toQList result = toQuery::readQuery(connection(), SQLMViewInfo, toQueryParams() << name << owner);
     if (result.empty())
         throw qApp->translate("toOracleExtract", "Couldn't find materialised table %1.%2").
-        arg(QUOTE(owner)).arg(QUOTE(name));
+        arg(quote(owner)).arg(quote(name));
     QString table = (QString)Utils::toShift(result);
     QString buildMode = (QString)Utils::toShift(result);
     QString refreshMethod = (QString)Utils::toShift(result);
@@ -2954,12 +2964,12 @@ void toOracleExtract::describeMView(std::list<QString> &lst,
     std::list<QString> ctx;
     ctx.insert(ctx.end(), schema);
     ctx.insert(ctx.end(), type);
-    ctx.insert(ctx.end(), QUOTE(name));
+    ctx.insert(ctx.end(), quote(name));
 
     describeMViewTable(lst, ctx, schema, owner, table);
     addDescription(lst, ctx, buildMode);
     ctx.insert(ctx.end(), "INDEX");
-    ctx.insert(ctx.end(), QUOTE(index));
+    ctx.insert(ctx.end(), quote(index));
     describeMViewIndex(lst, ctx, schema, owner, index);
 
     if (refreshMethod != "NEVER REFRESH")
@@ -2970,7 +2980,7 @@ void toOracleExtract::describeMView(std::list<QString> &lst,
         addDescription(lst, ctx, usingPK);
         if (!masterRBSeg.isEmpty() && ext.getStorage())
             addDescription(lst, ctx, QString("USING MASTER ROLLBACK SEGMENT %1").
-                           arg(QUOTE(masterRBSeg)));
+                           arg(quote(masterRBSeg)));
     }
 
     if (!updatable.isEmpty())
@@ -3056,7 +3066,7 @@ void toOracleExtract::describeMViewLog(
     std::list<QString> ctx;
     ctx.insert(ctx.end(), schema);
     ctx.insert(ctx.end(), type);
-    ctx.insert(ctx.end(), QUOTE(name));
+    ctx.insert(ctx.end(), quote(name));
 
     describeMViewTable(lst, ctx, schema, owner, table);
 
@@ -3080,7 +3090,7 @@ void toOracleExtract::describeMViewLog(
                 first = false;
             else
                 col += ",";
-            col += QUOTE((QString)inf.readValue());
+            col += quote((QString)inf.readValue());
         }
         col += ")";
         addDescription(lst, ctx, col);
@@ -3145,7 +3155,7 @@ void toOracleExtract::describePartitions(
             Utils::toPush(storage, Utils::toShift(result));
 
         std::list<QString> cctx = ctx;
-        cctx.insert(cctx.end(), QUOTE(partition));
+        cctx.insert(cctx.end(), quote(partition));
 
         addDescription(lst, cctx);
         if (caller != "LOCAL")
@@ -3160,7 +3170,7 @@ void toOracleExtract::describePartitions(
             {
                 QString sub((QString)inf.readValue());
                 QString tablespace((QString)inf.readValue());
-                addDescription(lst, cctx, "HASH", QString("%1 TABLESPACE %2").arg(QUOTE(sub)).arg(QUOTE(tablespace)));
+                addDescription(lst, cctx, "HASH", QString("%1 TABLESPACE %2").arg(quote(sub)).arg(quote(tablespace)));
             }
         }
     }
@@ -3302,7 +3312,7 @@ void toOracleExtract::describePartitionedTable(
 
                 std::list<QString> cctx = ctx;
                 cctx.insert(cctx.end(), prtstr);
-                cctx.insert(cctx.end(), QUOTE(partition));
+                cctx.insert(cctx.end(), quote(partition));
                 addDescription(lst, cctx, "RANGE", QString("VALUES LESS THAN %2").
                                arg(highValue));
                 describeAttributes(lst, cctx, storage);
@@ -3313,11 +3323,11 @@ void toOracleExtract::describePartitionedTable(
                                                       toQueryParams() << name << partition << owner);
                     while (!subs.empty())
                     {
-                        QString subpart = QUOTE((QString)Utils::toShift(subs));
+                        QString subpart = quote((QString)Utils::toShift(subs));
                         QString tabspac = (QString)Utils::toShift(subs);
                         addDescription(lst, cctx, subprtstr, subpart);
                         addDescription(lst, cctx, subprtstr, subpart,
-                                       QString("TABLESPACE %1").arg(QUOTE(tabspac)));
+                                       QString("TABLESPACE %1").arg(quote(tabspac)));
                     }
                 }
             }
@@ -3328,11 +3338,11 @@ void toOracleExtract::describePartitionedTable(
                                               toQueryParams() << name << owner);
             while (!hash.empty())
             {
-                QString partition = QUOTE((QString)Utils::toShift(hash));
+                QString partition = quote((QString)Utils::toShift(hash));
                 QString tablespac = (QString)Utils::toShift(hash);
                 addDescription(lst, ctx, prtstr, partition);
                 addDescription(lst, ctx, prtstr, partition,
-                               QString("TABLESPACE %1").arg(QUOTE(tablespac)));
+                               QString("TABLESPACE %1").arg(quote(tablespac)));
             }
         }
     }
@@ -3353,7 +3363,7 @@ void toOracleExtract::describeSource(
     std::list<QString> ctx;
     ctx.insert(ctx.end(), schema);
     ctx.insert(ctx.end(), type);
-    ctx.insert(ctx.end(), QUOTE(name));
+    ctx.insert(ctx.end(), quote(name));
     addDescription(lst, ctx);
     addDescription(lst, ctx, displaySource(schema, owner, name, type, true));
 }
@@ -3368,7 +3378,7 @@ void toOracleExtract::describeTableColumns(
     int num = 1;
     while (!cols.empty())
     {
-        QString col = QUOTE((QString)Utils::toShift(cols));
+        QString col = quote((QString)Utils::toShift(cols));
         QString line = (QString)Utils::toShift(cols);
         QString extra = (QString)Utils::toShift(cols);
         extra = extra.trimmed();
@@ -3495,7 +3505,7 @@ QString toOracleExtract::createConstraint(
             "CHECK";
 
         QString sql = QString("ALTER TABLE %1%2 ADD CONSTRAINT %3 %4\n").
-                      arg(schema).arg(QUOTE(table)).arg(QUOTE(name)).arg(type);
+                      arg(schema).arg(quote(table)).arg(quote(name)).arg(type);
         if (PROMPT)
         {
             ret = "PROMPT ";
@@ -3519,7 +3529,7 @@ QString toOracleExtract::createConstraint(
                 toQuery query(conn, SQLConstraintTable, toQueryParams() << rOwner << rName);
                 ret += " REFERENCES ";
                 ret += ext.intSchema(rOwner, false);
-                ret += QUOTE((QString)query.readValue());
+                ret += quote((QString)query.readValue());
                 ret += constraintColumns(rOwner, rName);
 
                 if (delRule == "CASCADE")
@@ -3568,7 +3578,7 @@ QString toOracleExtract::createDBLink(
     QString password((QString)inf.readValue());
     QString host((QString)inf.readValue());
     QString publ = (owner == "PUBLIC") ? " PUBLIC" : "";
-    QString sql = QString("CREATE%1 DATABASE LINK %2").arg(publ).arg(QUOTE(name));
+    QString sql = QString("CREATE%1 DATABASE LINK %2").arg(publ).arg(quote(name));
     QString ret;
     if (PROMPT)
     {
@@ -3602,7 +3612,7 @@ QString toOracleExtract::createDirectory(
         throw qApp->translate("toOracleExtract", "Directory %1 doesn't exist").arg(name);
     QString dname((QString)inf.readValue());
     QString path((QString)inf.readValue());
-    QString sql = QString("CREATE DIRECTORY %1").arg(QUOTE(dname));
+    QString sql = QString("CREATE DIRECTORY %1").arg(quote(dname));
     QString ret;
     if (PROMPT)
     {
@@ -3610,7 +3620,7 @@ QString toOracleExtract::createDirectory(
         ret += sql;
         ret += "\n\n";
     }
-    ret += QString("CREATE DIRECTORY %1 AS '%2';").arg(QUOTE(dname)).arg(path);
+    ret += QString("CREATE DIRECTORY %1 AS '%2';").arg(quote(dname)).arg(path);
     return ret;
 }
 
@@ -3715,7 +3725,7 @@ QString toOracleExtract::createExchangeIndex(
     Utils::toUnShift(result, toQValue(""));
 
     sql = QString("CREATE%1%2 INDEX %3%4 ON %3%5\n").
-          arg(unique).arg(bitmap).arg(schema).arg(segment).arg(QUOTE(table));
+          arg(unique).arg(bitmap).arg(schema).arg(segment).arg(quote(table));
 
     QString ret;
     if (PROMPT)
@@ -4055,9 +4065,9 @@ QString toOracleExtract::createIndex(
                   arg(unique).
                   arg(bitmap).
                   arg(schema).
-                  arg(QUOTE(name)).
+                  arg(quote(name)).
                   arg(schema2).
-                  arg(QUOTE(table));
+                  arg(quote(table));
     if (PROMPT)
     {
         ret = "PROMPT ";
@@ -4074,7 +4084,7 @@ QString toOracleExtract::createIndex(
             return ret;
         }
         ret += QString("INDEXTYPE IS %1.%2\nPARAMETERS ('%3');\n\n").
-               arg(QUOTE(domOwner)).arg(QUOTE(domName)).arg(prepareDB(domParam));
+               arg(quote(domOwner)).arg(quote(domName)).arg(prepareDB(domParam));
         return ret;
     }
     if (connection().version() >= "0800" && ext.getParallel() && ! degree.isEmpty() && ! instances.isEmpty() )
@@ -4187,8 +4197,8 @@ QString toOracleExtract::createProfile(
 
     QString ret;
     if (PROMPT)
-        ret = QString("PROMPT CREATE PROFILE %1\n\n").arg(QUOTE(name));
-    ret += QString("CREATE PROFILE %1\n").arg(QUOTE(name));
+        ret = QString("PROMPT CREATE PROFILE %1\n\n").arg(quote(name));
+    ret += QString("CREATE PROFILE %1\n").arg(quote(name));
 
     while (!info.empty())
     {
@@ -4235,9 +4245,9 @@ QString toOracleExtract::createRole(
 
     QString ret;
     if (PROMPT)
-        ret = QString("PROMPT CREATE ROLE %1\n\n").arg(QUOTE(name));
-    ret += QString("CREATE ROLE %1 %2;\n\n").arg(QUOTE(name)).arg((QString)Utils::toShift(info));
-    ret += grantedPrivs(QUOTE(name), name, 1);
+        ret = QString("PROMPT CREATE ROLE %1\n\n").arg(quote(name));
+    ret += QString("CREATE ROLE %1 %2;\n\n").arg(quote(name)).arg((QString)Utils::toShift(info));
+    ret += grantedPrivs(quote(name), name, 1);
     return ret;
 }
 
@@ -4279,8 +4289,8 @@ QString toOracleExtract::createRollbackSegment(
 
     QString ret;
     if (PROMPT)
-        ret += QString("PROMPT CREATE%1ROLLBACK SEGMENT %2\n\n").arg(isPublic).arg(QUOTE(name));
-    ret += QString("CREATE%1ROLLBACK SEGMENT %2\n\n").arg(isPublic).arg(QUOTE(name));
+        ret += QString("PROMPT CREATE%1ROLLBACK SEGMENT %2\n\n").arg(isPublic).arg(quote(name));
+    ret += QString("CREATE%1ROLLBACK SEGMENT %2\n\n").arg(isPublic).arg(quote(name));
     if (ext.getStorage())
     {
         ret += QString("STORAGE\n(\n"
@@ -4291,7 +4301,7 @@ QString toOracleExtract::createRollbackSegment(
                        "  MAXEXTENTS   %2\n"
                        ")\n"
                        "TABLESPACE     %3;\n\n").
-               arg(minExtent).arg(maxExtent).arg(QUOTE(tablespaceName));
+               arg(minExtent).arg(maxExtent).arg(quote(tablespaceName));
     }
     return ret;
 }
@@ -4347,8 +4357,8 @@ QString toOracleExtract::createSequence(
 
     QString ret;
     if (PROMPT)
-        ret = QString("PROMPT CREATE SEQUENCE %1%2\n\n").arg(schema).arg(QUOTE(name));
-    ret += QString("CREATE SEQUENCE %1%2\n").arg(schema).arg(QUOTE(name));
+        ret = QString("PROMPT CREATE SEQUENCE %1%2\n\n").arg(schema).arg(quote(name));
+    ret += QString("CREATE SEQUENCE %1%2\n").arg(schema).arg(quote(name));
 
     while (!info.empty())
     {
@@ -4404,15 +4414,15 @@ QString toOracleExtract::createSynonym(
     if (dbLink == "NULL")
         dbLink = "";
     else
-        dbLink = "@" + QUOTE(dbLink);
+        dbLink = "@" + quote(dbLink);
     QString useSchema = (schema == "PUBLIC") ? QString("") : schema;
     QString isPublic = (owner == "PUBLIC") ? " PUBLIC" : "";
     QString tableSchema = ext.intSchema(tableOwner, false);
     QString andReplace = (ext.getReplace()) ? " OR REPLACE" : "";
 
     QString sql = QString("CREATE%1%2 SYNONYM %3%4 FOR %5%6%7").
-                  arg(andReplace).arg(isPublic).arg(useSchema).arg(QUOTE(name)).
-                  arg(tableSchema).arg(QUOTE(tableName)).arg(dbLink);
+                  arg(andReplace).arg(isPublic).arg(useSchema).arg(quote(name)).
+                  arg(tableSchema).arg(quote(tableName)).arg(dbLink);
     QString ret;
     if (PROMPT)
     {
@@ -4817,17 +4827,17 @@ void toOracleExtract::createTableContents(
     if (ext.getContents())
     {
         if (PROMPT)
-            stream << QString("PROMPT CONTENTS OF %1%2\n\n").arg(schema).arg(QUOTE(name));
+            stream << QString("PROMPT CONTENTS OF %1%2\n\n").arg(schema).arg(quote(name));
 
         toConnectionSubLoan conn(ext.connection());
-        toQuery query(conn, QString("SELECT * FROM %1.%2").arg(QUOTE(owner)).arg(QUOTE(name)), toQueryParams());
+        toQuery query(conn, QString("SELECT * FROM %1.%2").arg(quote(owner)).arg(quote(name)), toQueryParams());
 
         toQColumnDescriptionList desc = query.describe();
         int cols = query.columns();
         bool first = true;
         QString dateformat(toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::ConfDateFormat).toString());
 
-        QString beg = QString("INSERT INTO %1%2 (").arg(schema).arg(QUOTE(name));
+        QString beg = QString("INSERT INTO %1%2 (").arg(schema).arg(quote(name));
         bool *dates = new bool[desc.size()];
         try
         {
@@ -5081,9 +5091,9 @@ QString toOracleExtract::createTablespace(
     QString sql;
 
     if (extentManagement == "LOCAL" && contents == "TEMPORARY")
-        sql = QString("CREATE TEMPORARY TABLESPACE %1\n").arg(QUOTE(name));
+        sql = QString("CREATE TEMPORARY TABLESPACE %1\n").arg(quote(name));
     else
-        sql = QString("CREATE TABLESPACE %1\n").arg(QUOTE(name));
+        sql = QString("CREATE TABLESPACE %1\n").arg(quote(name));
 
     if (PROMPT)
     {
@@ -5266,7 +5276,7 @@ QString toOracleExtract::createTrigger(
     {
         object = baseType;
     }
-    QString sql = QString("CREATE OR REPLACE TRIGGER %1%2\n").arg(schema).arg(QUOTE(name));
+    QString sql = QString("CREATE OR REPLACE TRIGGER %1%2\n").arg(schema).arg(quote(name));
     QString ret;
     if (PROMPT)
     {
@@ -5293,7 +5303,7 @@ QString toOracleExtract::createTrigger(
     ret += "\n/\n\n";
     if (status != "ENABLE")
     {
-        ret += QString("ALTER TRIGGER %1%2 DISABLE;\n\n").arg(schema).arg(QUOTE(name));
+        ret += QString("ALTER TRIGGER %1%2 DISABLE;\n\n").arg(schema).arg(quote(name));
     }
     return ret;
 }
@@ -5361,7 +5371,7 @@ QString toOracleExtract::createUser(
     if (ext.getSchema() != "1" && !ext.getSchema().isEmpty())
         nam = ext.getSchema().toLower();
     else
-        nam = QUOTE(name);
+        nam = quote(name);
     if (PROMPT)
         ret = QString("PROMPT CREATE USER %1\n\n").arg(nam);
     ret += QString("CREATE USER %1 IDENTIFIED %2\n"
@@ -5370,9 +5380,9 @@ QString toOracleExtract::createUser(
                    "   TEMPORARY TABLESPACE %5\n").
            arg(nam).
            arg(password).
-           arg(QUOTE(profile)).
-           arg(QUOTE(defaultTablespace)).
-           arg(QUOTE(temporaryTablespace));
+           arg(quote(profile)).
+           arg(quote(defaultTablespace)).
+           arg(quote(temporaryTablespace));
 
     if (ext.getStorage())
     {
@@ -5383,7 +5393,7 @@ QString toOracleExtract::createUser(
             QString tab = (QString)Utils::toShift(quota);
             ret += QString("   QUOTA %1 ON %2\n").
                    arg(siz).
-                   arg(QUOTE(tab));
+                   arg(quote(tab));
         }
     }
     ret += ";\n\n";
@@ -5419,11 +5429,11 @@ QString toOracleExtract::createView(
                                         SQLViewSource,
                                         toQueryParams() << name << owner);
     if (source.empty())
-        throw qApp->translate("toOracleExtract", "Couldn't find view %1.%2").arg(QUOTE(owner)).arg(QUOTE(name));
+        throw qApp->translate("toOracleExtract", "Couldn't find view %1.%2").arg(quote(owner)).arg(quote(name));
 
     QString text = (QString)Utils::toShift(source);
     QString ret;
-    QString sql = QString("CREATE OR REPLACE VIEW %1%2\n").arg(schema).arg(QUOTE(name));
+    QString sql = QString("CREATE OR REPLACE VIEW %1%2\n").arg(schema).arg(quote(name));
     if (PROMPT)
     {
         ret = "PROMPT ";
@@ -5440,7 +5450,7 @@ QString toOracleExtract::createView(
     {
         QString str = (QString)Utils::toShift(cols);
         ret += sep;
-        ret += QUOTE(str);
+        ret += quote(str);
         sep = "\n  , ";
     }
     ret += "\n)\n";
@@ -5484,9 +5494,9 @@ void toOracleExtract::describeConstraint(
         std::list<QString> ctx;
         ctx.insert(ctx.end(), schema);
         ctx.insert(ctx.end(), "TABLE");
-        ctx.insert(ctx.end(), QUOTE(table));
+        ctx.insert(ctx.end(), quote(table));
         ctx.insert(ctx.end(), "CONSTRAINT");
-        ctx.insert(ctx.end(), QUOTE(name));
+        ctx.insert(ctx.end(), quote(name));
 
         QString ret = type;
         if (tchr == "C")
@@ -5506,7 +5516,7 @@ void toOracleExtract::describeConstraint(
                 toQuery query(conn, SQLConstraintTable, toQueryParams() << rOwner << rName);
                 ret += " REFERENCES ";
                 ret += ext.intSchema(rOwner, false);
-                ret += QUOTE((QString)query.readValue());
+                ret += quote((QString)query.readValue());
                 ret += constraintColumns(rOwner, rName);
 
                 if (delRule == "CASCADE")
@@ -5546,12 +5556,12 @@ void toOracleExtract::describeDBLink(
     QString password((QString)inf.readValue());
     QString host((QString)inf.readValue());
     QString publ = (owner == "PUBLIC") ? "PUBLIC" : "";
-    QString sql = QString("CREATE%1 DATABASE LINK %2").arg(publ).arg(QUOTE(name));
+    QString sql = QString("CREATE%1 DATABASE LINK %2").arg(publ).arg(quote(name));
     QString ret;
 
     std::list<QString> ctx;
     ctx.insert(ctx.end(), "DATABASE LINK");
-    ctx.insert(ctx.end(), QUOTE(name));
+    ctx.insert(ctx.end(), quote(name));
 
     addDescription(lst, ctx, publ, QString("%1 IDENTIFIED BY %2 USING '%3'").
                    arg(user.toLower()).
@@ -5591,7 +5601,7 @@ void toOracleExtract::describeExchangeIndex(
     std::list<QString> ctx;
     ctx.insert(ctx.end(), schema);
     ctx.insert(ctx.end(), "TABLE");
-    ctx.insert(ctx.end(), QUOTE(table));
+    ctx.insert(ctx.end(), quote(table));
     ctx.insert(ctx.end(), "EXCHANGE INDEX");
     ctx.insert(ctx.end(), segment);
     ctx.insert(ctx.end(), partition);
@@ -5679,8 +5689,8 @@ void toOracleExtract::describeIndex(
     std::list<QString> ctx;
     ctx.insert(ctx.end(), schema);
     ctx.insert(ctx.end(), QString("INDEX"));
-    ctx.insert(ctx.end(), QUOTE(name));
-    addDescription(lst, ctx, "ON", schema2 + QUOTE(table));
+    ctx.insert(ctx.end(), quote(name));
+    addDescription(lst, ctx, "ON", schema2 + quote(table));
     addDescription(lst, ctx, QString("%1%2 INDEX").arg(unique).arg(bitmap).mid(1));
 
     addDescription(lst, ctx);
@@ -5690,8 +5700,8 @@ void toOracleExtract::describeIndex(
     if (domain == "DOMAIN")
     {
         addDescription(lst, ctx, "DOMAIN", QString("INDEXTYPE IS DOMAINOWNER %1.%2").
-                       arg(QUOTE(domOwner)).
-                       arg(QUOTE(domName)));
+                       arg(quote(domOwner)).
+                       arg(quote(domName)));
         addDescription(lst, ctx, "DOMAIN", QString("PARAMETERS %1").arg(domParam));
         return ;
     }
@@ -5772,7 +5782,7 @@ void toOracleExtract::describeProfile(
     std::list<QString> ctx;
     ctx.insert(ctx.end(), "NONE");
     ctx.insert(ctx.end(), "PROFILE");
-    ctx.insert(ctx.end(), QUOTE(name));
+    ctx.insert(ctx.end(), quote(name));
     addDescription(lst, ctx);
 
     while (!info.empty())
@@ -5798,7 +5808,7 @@ void toOracleExtract::describeRole(
     std::list<QString> ctx;
     ctx.insert(ctx.end(), "NONE");
     ctx.insert(ctx.end(), "ROLE");
-    ctx.insert(ctx.end(), QUOTE(name));
+    ctx.insert(ctx.end(), quote(name));
     addDescription(lst, ctx);
     addDescription(lst, ctx, "INFO", (QString)Utils::toShift(info));
     describePrivs(lst, ctx, name);
@@ -5821,10 +5831,10 @@ void toOracleExtract::describeRollbackSegment(
     std::list<QString> ctx;
     ctx.insert(ctx.end(), "NONE");
     ctx.insert(ctx.end(), "ROLLBACK SEGMENT");
-    ctx.insert(ctx.end(), QUOTE(name));
+    ctx.insert(ctx.end(), quote(name));
 
     addDescription(lst, ctx);
-    addDescription(lst, ctx, QString("TABLESPACE %1").arg(QUOTE(tablespaceName)));
+    addDescription(lst, ctx, QString("TABLESPACE %1").arg(quote(tablespaceName)));
 
     if (ext.getStorage())
     {
@@ -5852,7 +5862,7 @@ void toOracleExtract::describeSequence(
     std::list<QString> ctx;
     ctx.insert(ctx.end(), schema);
     ctx.insert(ctx.end(), "SEQUENCE");
-    ctx.insert(ctx.end(), QUOTE(name));
+    ctx.insert(ctx.end(), quote(name));
 
     addDescription(lst, ctx);
 
@@ -5896,14 +5906,14 @@ void toOracleExtract::describeSynonym(
     if (dbLink == "NULL")
         dbLink = "";
     else
-        dbLink = "@" + QUOTE(dbLink);
+        dbLink = "@" + quote(dbLink);
     QString tableSchema = ext.intSchema(tableOwner, true);
 
     std::list<QString> ctx;
 
     ctx.insert(ctx.end(), owner);
     addDescription(lst, ctx, "SYNONYM", QString("%1%2%3").
-                   arg(tableSchema).arg(QUOTE(tableName)).arg(dbLink));
+                   arg(tableSchema).arg(quote(tableName)).arg(dbLink));
 }
 
 void toOracleExtract::describeTable(
@@ -5923,7 +5933,7 @@ void toOracleExtract::describeTable(
     std::list<QString> ctx;
     ctx.insert(ctx.end(), schema);
     ctx.insert(ctx.end(), "TABLE");
-    ctx.insert(ctx.end(), QUOTE(name));
+    ctx.insert(ctx.end(), quote(name));
 
     if (iot_type == "IOT" && ext.getIndexes())
     {
@@ -6024,7 +6034,7 @@ void toOracleExtract::describeTablespace(
         ctx.insert(ctx.end(), "TEMPORARY TABLESPACE");
     else
         ctx.insert(ctx.end(), "TABLESPACE");
-    ctx.insert(ctx.end(), QUOTE(name));
+    ctx.insert(ctx.end(), quote(name));
 
     addDescription(lst, ctx);
 
@@ -6160,7 +6170,7 @@ void toOracleExtract::describeTrigger(
     std::list<QString> ctx;
     ctx.insert(ctx.end(), schema);
     ctx.insert(ctx.end(), "TRIGGER");
-    ctx.insert(ctx.end(), QUOTE(name));
+    ctx.insert(ctx.end(), quote(name));
     addDescription(lst, ctx);
     QString tmp = triggerType;
     tmp += event;
@@ -6214,13 +6224,13 @@ void toOracleExtract::describeUser(
     if (ext.getSchema() != "1" && !ext.getSchema().isEmpty())
         nam = ext.getSchema().toLower();
     else
-        nam = QUOTE(name);
+        nam = quote(name);
     ctx.insert(ctx.end(), nam);
 
     addDescription(lst, ctx);
-    addDescription(lst, ctx, QString("PROFILE %1").arg(QUOTE(profile)));
-    addDescription(lst, ctx, QString("DEFAULT TABLESPACE %1").arg(QUOTE(defaultTablespace)));
-    addDescription(lst, ctx, QString("TEMPORARY TABLESPACE %1").arg(QUOTE(temporaryTablespace)));
+    addDescription(lst, ctx, QString("PROFILE %1").arg(quote(profile)));
+    addDescription(lst, ctx, QString("DEFAULT TABLESPACE %1").arg(quote(defaultTablespace)));
+    addDescription(lst, ctx, QString("TEMPORARY TABLESPACE %1").arg(quote(temporaryTablespace)));
 
     if (ext.getStorage())
     {
@@ -6231,7 +6241,7 @@ void toOracleExtract::describeUser(
             QString tab = (QString)Utils::toShift(quota);
             addDescription(lst, ctx, "QUOTA", QString("%1 ON %2").
                            arg(siz).
-                           arg(QUOTE(tab)));
+                           arg(quote(tab)));
         }
     }
     describePrivs(lst, ctx, name);
@@ -6249,12 +6259,12 @@ void toOracleExtract::describeView(
                                         SQLViewSource,
                                         toQueryParams() << name << owner);
     if (source.empty())
-        throw qApp->translate("toOracleExtract", "Couldn't find view %1.%2").arg(QUOTE(owner)).arg(QUOTE(name));
+        throw qApp->translate("toOracleExtract", "Couldn't find view %1.%2").arg(quote(owner)).arg(quote(name));
 
     std::list<QString> ctx;
     ctx.insert(ctx.end(), schema);
     ctx.insert(ctx.end(), "VIEW");
-    ctx.insert(ctx.end(), QUOTE(name));
+    ctx.insert(ctx.end(), quote(name));
 
     addDescription(lst, ctx);
     QString text = (QString)Utils::toShift(source);
@@ -6262,7 +6272,7 @@ void toOracleExtract::describeView(
     describeComments(lst, ctx, owner, name);
 
     toConnectionSubLoan conn(ext.connection());
-    toQuery query(conn, "SELECT * FROM " + QUOTE(owner) + "." + QUOTE(name) + " WHERE NULL = NULL", toQueryParams());
+    toQuery query(conn, "SELECT * FROM " + quote(owner) + "." + quote(name) + " WHERE NULL = NULL", toQueryParams());
 
     toQColumnDescriptionList desc = query.describe();
     int num = 1;
@@ -6347,14 +6357,14 @@ QString toOracleExtract::createMetadata( const QString &owner, const QString &na
         if (PROMPT)
             ret = QString("PROMPT CREATE OR REPLACE %1 %2\n\n").
             arg("DIRECTORY").
-            arg(QUOTE(name));
+            arg(quote(name));
         toQValue sql = inf.readValue();
         ret += sql.userData();
     } else if (typeEnum == T::USER || typeEnum == T::ROLE) {
         try {
             toQuery user(conn, SQLDbmsMetadataUser, toQueryParams() << typeString << name);
             if (user.eof()) throw qApp->translate("toOracleExtract", "Couldn't get meta information for user %1").arg(name);
-            if (PROMPT) ret += QString("PROMPT CREATE %1 %2\n").arg(typeString).arg(QUOTE(name));
+            if (PROMPT) ret += QString("PROMPT CREATE %1 %2\n").arg(typeString).arg(quote(name));
             ret += user.readValue().userData();
 			if (PROMPT) ret += "\n\n";
         } catch (QString const& e) {
@@ -6429,7 +6439,7 @@ QString toOracleExtract::createMetadata( const QString &owner, const QString &na
     		ret = QString("PROMPT CREATE OR REPLACE %1 %2.%3\n\n").
 			arg(typeString).
 			arg(owner).
-			arg(QUOTE(name));
+			arg(quote(name));
     	toQValue sql = inf.readValue();
     	ret += sql.userData();
     }
@@ -6687,7 +6697,7 @@ void toOracleExtract::create(
 	case T::PROFILE:           stream << createProfile(schema, owner, name);     break;
 	case T::ROLE:              stream << createRole(schema, owner, name);        break;
 #if 0
-	case T::ROLE GRANTS : stream << grantedPrivs(ext, QUOTE(name), name, 6);     break;
+	case T::ROLE GRANTS : stream << grantedPrivs(ext, quote(name), name, 6);     break;
 	case T::ROLLBACK SEGMENT : stream << createRollbackSegment(schema, owner, name); break;
 #endif
 	case T::SEQUENCE:          stream << createSequence(schema, owner, name); break;
@@ -6713,7 +6723,7 @@ void toOracleExtract::create(
 		if (ext.getSchema() != "1" && !ext.getSchema().isEmpty())
 			nam = ext.getSchema().toLower();
 		else
-			nam = QUOTE(name);
+			nam = quote(name);
 		stream << grantedPrivs(ext, nam, name, 4);
 	} break;
 #endif

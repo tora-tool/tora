@@ -236,11 +236,18 @@ void toExtract::create(QTextStream &ret, std::list<QString> &objects)
                 try
                 {
                     if (ext)
+                    {
+                        if(!Initialized)
+                        {
+                            ext->initialize();
+                            Initialized = true;
+                        }
                         ext->create(ret,
                                     typeEnum,
                                     schema,
                                     owner,
                                     name);
+                    }
                     else
                         throw qApp->translate("toExtract", "Invalid type %1 to create").arg(type);
                 }
@@ -314,11 +321,18 @@ std::list<QString> toExtract::describe(std::list<QString> &objects)
                 try
                 {
                     if (ext)
+                    {
+                        if(!Initialized)
+                        {
+                            ext->initialize();
+                            Initialized = true;
+                        }
                         ext->describe(cur,
                                       typeEnum,
                                       schema,
                                       owner,
                                       name);
+                    }
                     else
                     {
                         throw qApp->translate("toExtract", "Invalid type %1 to describe").arg(type);
@@ -686,3 +700,9 @@ toExtract::ObjectType toExtract::objectTypeFromString(const QString& objType)
 
     throw qApp->translate("toExtract", "Unsupported object type to handle %1").arg(objType);
 }
+
+QString toExtract::extractor::quote(QString const& name)
+{
+    return ext.connection().getTraits().quote(name);
+}
+
