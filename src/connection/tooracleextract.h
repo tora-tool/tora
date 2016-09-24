@@ -48,7 +48,6 @@
 // Some convenient defines
 
 static const QString ORACLE_NAME("Oracle");
-#define QUOTE(x) (ext.connection().getTraits().quote(x))
 #define PROMPT (ext.getPrompt())
 
 #define addDescription toExtract::addDescription

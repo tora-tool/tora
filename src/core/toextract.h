@@ -232,6 +232,7 @@ class toExtract :public QObject
                 virtual std::list<datatype> datatypes() const;
             protected:
                 toConnection& connection() { return ext.connection(); }
+                QString quote(QString const& name);
         };
 
         toConnection &Connection;
