@@ -18,7 +18,15 @@
 #include "loki/LokiExport.h"
 
 // Theat all the test programs the same way as the main .EXE file
-#if defined(test1_EXPORTS) || defined(test2_EXPORTS) || defined(test3_EXPORTS) || defined(test4_EXPORTS) || defined(test5_EXPORTS) || defined(test6_EXPORTS) || defined(test7_EXPORTS)
+#if defined(test1_EXPORTS) \
+    || defined(test2_EXPORTS) \
+    || defined(test3_EXPORTS) \
+    || defined(test4_EXPORTS) \
+    || defined(test5_EXPORTS) \
+    || defined(test6_EXPORTS) \
+    || defined(test7_EXPORTS) \
+    || defined(test8_EXPORTS) \
+    || defined(test9_EXPORTS)
 #define tora_EXPORTS
 #endif
 
