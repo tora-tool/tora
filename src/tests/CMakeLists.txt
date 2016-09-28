@@ -331,3 +331,64 @@ IF(PCH_DEFINED)
 ENDIF(PCH_DEFINED)
 SET_TARGET_PROPERTIES("test8" PROPERTIES ENABLE_EXPORTS ON)
 ENDIF(TORA_DEBUG AND TEST_APP8)
+
+IF(TORA_DEBUG AND TEST_APP9)
+# test9
+QT5_WRAP_CPP(TEST9_MOC_SOURCES
+  tests/test9window.h
+  editor/tobaseeditor.h
+  editor/tohighlightededitor.h
+  editor/tomarkededitor.h  
+  editor/tomemoeditor.h
+  editor/toscintilla.h
+  editor/tosqltext.h
+  editor/tosyntaxanalyzernl.h
+  editor/tosyntaxanalyzermysql.h
+  editor/tosyntaxanalyzeroracle.h
+  editor/tosyntaxanalyzerpostgresql.h
+  tools/toresultstats.h
+  tools/toresultview.h
+  )
+QT5_WRAP_UI(TEST9_UI_SOURCES tests/test9ui.ui)
+QT5_ADD_RESOURCES(TEST9_RC_SOURCES tests/test9.qrc)
+ADD_EXECUTABLE("test9"
+  tests/test9.cpp
+  tests/test9window.cpp
+  editor/tobaseeditor.cpp
+  editor/tohighlightededitor.cpp
+  editor/tomarkededitor.cpp
+  editor/tomemoeditor.cpp
+  editor/toscintilla.cpp
+  editor/tosqltext.cpp
+  editor/tosyntaxanalyzernl.cpp
+  editor/tosyntaxanalyzermysql.cpp
+  editor/tosyntaxanalyzeroracle.cpp
+  editor/tosyntaxanalyzerpostgresql.cpp
+  tools/toresultstats.cpp
+  tools/toresultview.cpp
+  ${TEST9_MOC_SOURCES}
+  ${TEST9_UI_SOURCES}
+  ${TEST9_RC_SOURCES}
+  ${PCH_SOURCE}  
+  ${CORE_SOURCES}    
+  ${PARSING_SOURCES} 
+  ${WIDGETS_SOURCES} 
+  ${LOGGING_SOURCES}
+)
+TARGET_LINK_LIBRARIES("test9"
+	Qt5::Core
+	Qt5::Widgets
+	Qt5::Gui
+	Qt5::Network
+	Qt5::PrintSupport
+	${CMAKE_DL_LIBS}
+	${TORA_QSCINTILLA_LIB}
+	${QSCINTILLA_LIBRARIES}	
+	${TORA_LOKI_LIB}
+	antlr3c
+)
+IF(PCH_DEFINED)
+  ADD_PRECOMPILED_HEADER("test9" ${PCH_HEADER} FORCEINCLUDE)
+ENDIF(PCH_DEFINED)
+SET_TARGET_PROPERTIES("test9" PROPERTIES ENABLE_EXPORTS ON)
+ENDIF(TORA_DEBUG AND TEST_APP9)

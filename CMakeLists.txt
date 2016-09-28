@@ -31,6 +31,7 @@ OPTION(TEST_APP5 "simple application - single tool(tabbed)" OFF)
 OPTION(TEST_APP6 "simple application parser(boost/spirit+.dot)" OFF)
 OPTION(TEST_APP7 "simple application parser" OFF)
 OPTION(TEST_APP8 "simple application - wget" ON)
+OPTION(TEST_APP9 "simple application - diff" ON)
 
 #Set our CMake minimum version
 #Require 2.4.2 for Qt finding
