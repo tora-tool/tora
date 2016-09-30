@@ -166,20 +166,24 @@ void toWorksheetText::positionChanged(int row, int col)
     using cc = toScintilla::CharClassify::cc;
     using ChClassEnum = toScintilla::CharClassify;
 
+    long currPosition, nextPosition;
+    wchar_t currChar, nextChar;
+    cc currClass, nextClass;
+    
     if (col <= 0)
         goto no_complete;
 
     if (m_completeEnabled == false || m_completeEnabled == false)
         goto no_complete;
 
-    long currPosition = currentPosition();
-    long nextPosition = SendScintilla(QsciScintilla::SCI_POSITIONAFTER, currPosition);
+    currPosition = currentPosition();
+    nextPosition = SendScintilla(QsciScintilla::SCI_POSITIONAFTER, currPosition);
 
-    wchar_t currChar = getWCharAt(currPosition);
-    wchar_t nextChar = getWCharAt(nextPosition);
+    currChar = getWCharAt(currPosition);
+    nextChar = getWCharAt(nextPosition);
 
-    cc currClass = CharClass(currChar);
-    cc nextClass = CharClass(nextChar);
+    currClass = CharClass(currChar);
+    nextClass = CharClass(nextChar);
 
     TLOG(0, toNoDecorator, __HERE__) << currChar << std::endl;
 

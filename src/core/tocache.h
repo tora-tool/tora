@@ -159,8 +159,8 @@ class TORA_EXPORT toCache : public QObject
                 /** convert object reference into a string, use connection traits quoting mechanism*/
                 ////QString toString(toConnection &con) const;
 
-                QString first, second;
                 QString context; // tool's active schema
+                QString first, second;		
         };
 
         /** Nested class type
