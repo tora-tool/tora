@@ -40,6 +40,9 @@
 
 #include <list>
 #include <map>
+#include <memory>
+
+#include <loki/Factory_alt.h>
 
 #include <QtCore/QFile>
 #include <QtCore/QTextStream>
