@@ -73,4 +73,10 @@ toAboutCopying::toAboutCopying(QWidget* parent, const char* name)
     	QString LicenseText = QString::fromUtf8(f.readAll());
     	textExtendedTabs->setPlainText(LicenseText);
     }
+    {
+        QFile f(":/widgets/LICENSE.dtl.txt");
+        f.open(QFile::ReadOnly);
+        QString LicenseText = QString::fromUtf8(f.readAll());
+        textDTL->setPlainText(LicenseText);
+    }
 }
