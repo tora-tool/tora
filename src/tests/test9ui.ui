@@ -6,45 +6,64 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>943</width>
-    <height>687</height>
+    <width>1225</width>
+    <height>839</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Test9 Window</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="1" column="0">
-     <layout class="QVBoxLayout" name="bottomVerticalLayout">
-      <property name="sizeConstraint">
-       <enum>QLayout::SetMaximumSize</enum>
-      </property>
-     </layout>
-    </item>
-    <item row="0" column="1">
-     <widget class="QScrollBar" name="verticalScrollBar">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
-        <horstretch>0</horstretch>
-        <verstretch>1</verstretch>
-       </sizepolicy>
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>798</height>
+    </size>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_4">
+    <item row="0" column="0">
+     <widget class="QSplitter" name="splitter_2">
+      <property name="minimumSize">
+       <size>
+        <width>1207</width>
+        <height>780</height>
+       </size>
       </property>
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
-     </widget>
-    </item>
-    <item row="0" column="0">
-     <widget class="QSplitter" name="splitter">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <widget class="QWidget" name="horizontalLayoutWidget">
-       <layout class="QHBoxLayout" name="leftHorizontalLayout"/>
+      <widget class="QWidget" name="">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QSplitter" name="splitter">
+          <property name="minimumSize">
+           <size>
+            <width>50</width>
+            <height>310</height>
+           </size>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <widget class="QWidget" name="gridLayoutWidget">
+           <layout class="QGridLayout" name="leftLayout"/>
+          </widget>
+          <widget class="QWidget" name="gridLayoutWidget_2">
+           <layout class="QGridLayout" name="rightLayout"/>
+          </widget>
+         </widget>
+        </item>
+        <item>
+         <widget class="QScrollBar" name="verticalScrollBar">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
-      <widget class="QWidget" name="horizontalLayoutWidget_2">
-       <layout class="QHBoxLayout" name="rightHorizontalLayout"/>
+      <widget class="QWidget" name="gridLayoutWidget_3">
+       <layout class="QGridLayout" name="bottomLayout"/>
       </widget>
      </widget>
     </item>
@@ -55,7 +74,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>943</width>
+     <width>1225</width>
      <height>21</height>
     </rect>
    </property>
@@ -63,21 +82,22 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionLoad"/>
+    <addaction name="actionLoad_Old"/>
+    <addaction name="actionLoad_New"/>
+    <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
-   <widget class="QMenu" name="menuGrammar">
-    <property name="title">
-     <string>Grammar</string>
-    </property>
-   </widget>
    <addaction name="menuFile"/>
-   <addaction name="menuGrammar"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionLoad">
+  <action name="actionLoad_Old">
    <property name="text">
-    <string>Load</string>
+    <string>Load Old</string>
+   </property>
+  </action>
+  <action name="actionLoad_New">
+   <property name="text">
+    <string>Load New</string>
    </property>
   </action>
   <action name="actionQuit">
