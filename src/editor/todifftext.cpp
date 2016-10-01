@@ -43,6 +43,7 @@
 #include <QApplication>
 
 #include <Qsci/qscilexerdiff.h>
+#include <Qsci/qscilexercustom.h>
 
 class Line
 {
@@ -141,6 +142,9 @@ toDiffText::toDiffText(QWidget *parent, const char *name)
 
     QsciLexer *lexer = new DiffLexer(this);
     toScintilla::setLexer(lexer);
+    SendScintilla(QsciScintillaBase::SCI_STYLESETEOLFILLED, QsciLexerDiff::LineRemoved, true);
+    SendScintilla(QsciScintillaBase::SCI_STYLESETEOLFILLED, QsciLexerDiff::LineAdded, true);
+    SendScintilla(QsciScintillaBase::SCI_STYLESETEOLFILLED, QsciLexerDiff::LineChanged, true);
 }
 
 void toDiffText::setText (const QString& oldTxt, const QString& newTxt)
@@ -148,6 +152,8 @@ void toDiffText::setText (const QString& oldTxt, const QString& newTxt)
     using dtl::Diff;
     typedef Line elem;
     typedef std::vector<Line> sequence;
+
+    toScintilla::clear();
 
     QRegExp newline("\n|\r\n|\r");
     QStringList oldLines = oldTxt.split(newline);
@@ -186,13 +192,13 @@ void toDiffText::setText (const QString& oldTxt, const QString& newTxt)
         switch(type)
         {
             case dtl::SES_DELETE:
-                toScintilla::SendScintilla(QsciScintillaBase::SCI_SETSTYLING, line.txt.length(), QsciLexerDiff::LineRemoved);
+                toScintilla::SendScintilla(QsciScintillaBase::SCI_SETSTYLING, line.txt.length()+1, QsciLexerDiff::LineRemoved);
                 break;
             case dtl::SES_COMMON:
                 toScintilla::SendScintilla(QsciScintillaBase::SCI_SETSTYLING, line.txt.length(), QsciLexerDiff::Default);
                 break;
             case dtl::SES_ADD:
-                toScintilla::SendScintilla(QsciScintillaBase::SCI_SETSTYLING, line.txt.length(), QsciLexerDiff::LineAdded);
+                toScintilla::SendScintilla(QsciScintillaBase::SCI_SETSTYLING, line.txt.length()+1, QsciLexerDiff::LineAdded);
                 break;
             default:
                 toScintilla::SendScintilla(QsciScintillaBase::SCI_SETSTYLING, line.txt.length(), QsciLexerDiff::Default);
