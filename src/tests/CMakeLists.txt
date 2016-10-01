@@ -342,6 +342,7 @@ QT5_WRAP_CPP(TEST9_MOC_SOURCES
   editor/tomemoeditor.h
   editor/toscintilla.h
   editor/tosqltext.h
+  editor/todifftext.h  
   editor/tosyntaxanalyzernl.h
   editor/tosyntaxanalyzermysql.h
   editor/tosyntaxanalyzeroracle.h
@@ -360,6 +361,7 @@ ADD_EXECUTABLE("test9"
   editor/tomemoeditor.cpp
   editor/toscintilla.cpp
   editor/tosqltext.cpp
+  editor/todifftext.cpp
   editor/tosyntaxanalyzernl.cpp
   editor/tosyntaxanalyzermysql.cpp
   editor/tosyntaxanalyzeroracle.cpp

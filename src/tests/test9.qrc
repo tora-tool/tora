@@ -3,5 +3,7 @@
 <qresource prefix="/">
   <file>complex05-new.sql</file>
   <file>complex05.sql</file>
+  <file>old.sql</file>
+  <file>new.sql</file>
 </qresource>
 </RCC>

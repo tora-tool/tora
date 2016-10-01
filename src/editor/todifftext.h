@@ -32,50 +32,30 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "tests/test9window.h"
+#pragma once
 
-#include "core/utils.h"
-#include "core/tologger.h"
-#include "core/toconfiguration.h"
+#include "editor/toscintilla.h"
 
-#include <QApplication>
-#include <QtCore/QLibrary>
+#include <QtCore/QString>
 
-int main(int argc, char **argv)
+/**
+ * A widget displaying diff-erence between two strings
+ */
+class toDiffText : public toScintilla
 {
-    int p = 0;
+    Q_OBJECT;
+public:
+    static QColor lightCyan;
+    static QColor lightMagenta;
 
-    toConfigurationNew::setQSettingsEnv();
+    /** Create a new editor.
+     * @param parent Parent of widget.
+     * @param name Name of widget.
+     */
+    toDiffText(QWidget *parent, const char *name = NULL);
+    virtual ~toDiffText() {};
 
-    QApplication app(argc, argv);
-    QStringList args = app.arguments();
+    void setText(const QString &oldTxt, const QString &newTxt);
 
-    QLibrary parsing("parsing");
-    parsing.load();
-
-    QString sql1, sql2;
-    if (args.count() >= 3 && QFile::exists(args[1]) && QFile::exists(args[2]))
-    {
-        sql1 = Utils::toReadFile(args[1]);
-        sql2 = Utils::toReadFile(args[2]);
-    }
-    else
-    {
-        QByteArray bytes;
-        bool r;
-        QFile complexSql(":/old.sql");
-        r = complexSql.open(QIODevice::ReadOnly | QIODevice::Text);
-        bytes = complexSql.readAll();
-        sql1 = QString::fromLatin1(bytes);
-
-        QFile complexNewSql(":/new.sql");
-        r = complexNewSql.open(QIODevice::ReadOnly | QIODevice::Text);
-        bytes = complexNewSql.readAll();
-        sql2 = QString::fromLatin1(bytes);
-    }
-
-    new Test9Window(sql1, sql2);
-    int ret = qApp->exec();
-    return ret;
-}
-
+    private slots:
+};
