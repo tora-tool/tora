@@ -41,7 +41,7 @@
 #include <QMainWindow>
 
 class toSqlText;
-class toScintilla;
+class toDiffText;
 class QPushButton;
 
 class Test9Window : public QMainWindow, Ui::Test9Window
@@ -53,7 +53,8 @@ class Test9Window : public QMainWindow, Ui::Test9Window
         virtual ~Test9Window() {};
 
     public slots:
-        void load();
+        void load_old();
+        void load_new();
         void scrollVerticaly(int value);
         bool eventFilter(QObject* /*obj*/, QEvent* evt) override;
 
@@ -63,7 +64,8 @@ class Test9Window : public QMainWindow, Ui::Test9Window
 
     private:
         toSqlText *editorLeft, *editorRight;
-        toScintilla *editorDiff;
+        toDiffText *editorDiff;
+        QString oldSql, newSql;
 };
 
 #endif

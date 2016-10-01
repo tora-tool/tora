@@ -71,6 +71,8 @@ inline bool operator!=(const Line& lhs, const Line& rhs){ return !(lhs == rhs); 
 
 Test9Window::Test9Window(const QString &sql1, const QString &sql2)
     : Ui::Test9Window()
+    , oldSql(sql1)
+    , newSql(sql2)
 {
     //using dtl::Diff;
     using namespace ToConfiguration;
@@ -88,8 +90,8 @@ Test9Window::Test9Window(const QString &sql1, const QString &sql2)
 
     {
         editorLeft = new toSqlText(this);
-        leftHorizontalLayout->addWidget(editorLeft);
-        editorLeft->setText(sql1);
+        leftLayout->addWidget(editorLeft);
+        editorLeft->setText(oldSql);
         editorLeft->enableToolTips();
         editorLeft->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         editorLeft->viewport()->installEventFilter(this);
@@ -97,8 +99,8 @@ Test9Window::Test9Window(const QString &sql1, const QString &sql2)
 
     {
         editorRight = new toSqlText(this);
-        rightHorizontalLayout->addWidget(editorRight);
-        editorRight->setText(sql2);
+        rightLayout->addWidget(editorRight);
+        editorRight->setText(newSql);
         editorRight->setMarginType(2, QsciScintilla::TextMarginRightJustified);
         editorRight->setMarginWidth(2, QString::fromLatin1("009"));
         editorRight->enableToolTips();
@@ -164,14 +166,14 @@ Test9Window::Test9Window(const QString &sql1, const QString &sql2)
     }
 #endif
 
-    toDiffText *diff = new toDiffText(this);
-    editorDiff = diff;
-    bottomVerticalLayout->addWidget(editorDiff);
+    editorDiff = new toDiffText(this);
+    bottomLayout->addWidget(editorDiff);
     editorDiff->viewport()->installEventFilter(this);
 
-    diff->setText(sql1, sql2);
+    editorDiff->setText(oldSql, newSql);
 
-    connect(actionLoad, SIGNAL(triggered()), this, SLOT(load()));
+    connect(actionLoad_Old, SIGNAL(triggered()), this, SLOT(load_old()));
+    connect(actionLoad_New, SIGNAL(triggered()), this, SLOT(load_new()));
     connect(actionQuit, SIGNAL(triggered()), this, SLOT(close()));
 
     connect(verticalScrollBar, SIGNAL(valueChanged(int)), this, SLOT(scrollVerticaly(int)));
@@ -179,14 +181,25 @@ Test9Window::Test9Window(const QString &sql1, const QString &sql2)
     QMainWindow::show();
 }
 
-void Test9Window::load()
+void Test9Window::load_old()
 {
     QString fn = Utils::toOpenFilename("*.sql", this);
     if (!fn.isEmpty())
     {
-        QString data = Utils::toReadFile(fn);
-        editorLeft->setText(data);
-        editorRight->setText(data);
+        QString oldSql = Utils::toReadFile(fn);
+        editorLeft->setText(oldSql);
+        editorDiff->setText(oldSql, newSql);
+    }
+}
+
+void Test9Window::load_new()
+{
+    QString fn = Utils::toOpenFilename("*.sql", this);
+    if (!fn.isEmpty())
+    {
+        newSql = Utils::toReadFile(fn);
+        editorRight->setText(newSql);
+        editorDiff->setText(oldSql, newSql);
     }
 }
 

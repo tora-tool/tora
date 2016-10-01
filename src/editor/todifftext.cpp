@@ -167,7 +167,6 @@ void toDiffText::setText (const QString& oldTxt, const QString& newTxt)
 
     Diff< elem, sequence > d(Old, New);
     d.compose();
-    std::cout << "editDistance:" << d.getEditDistance() << endl;
 
     auto seq = d.getSes().getSequence();
     int lineNumber = 0;
