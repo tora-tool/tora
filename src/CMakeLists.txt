@@ -290,6 +290,7 @@ SET(TORA_MOC_CLASSES
   editor/toscintilla.h
   editor/tohighlightededitor.h
   editor/tosqltext.h
+  editor/todifftext.h
   editor/toworksheettext.h
   editor/todebugtext.h
   editor/todebugeditor.h
@@ -538,6 +539,7 @@ SET(TORA_SOURCES
   editor/toscintilla.cpp
   editor/tohighlightededitor.cpp
   editor/tosqltext.cpp
+  editor/todifftext.cpp
   editor/toworksheettext.cpp
   editor/todebugtext.cpp
   editor/todebugeditor.cpp
