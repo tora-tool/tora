@@ -132,62 +132,7 @@ void toExtract::srcDst2DropCreate(std::list<QString> &source, std::list<QString>
     }
 }
 
-void toExtract::parseObject(const QString &object,
-                            QString &owner,
-                            QString &name)
-{
-    try
-    {
-        unsigned int search = 0;
-        if (object[0] == '\"')
-        {
-            int pos = object.indexOf('\"', 1);
-            if (pos < 0)
-                throw 1;
-            owner = object.left(pos);
-            owner = owner.right(owner.length() - 1);
-            search = pos + 1;
-        }
-        else
-        {
-            int pos = object.indexOf('.');
-            if (pos < 0)
-                pos = object.length();
-            owner = object.left(pos);
-            search = pos;
-        }
-        if (search >= (unsigned int) object.length())
-        {
-            name = owner;
-            owner = Connection.user();
-            return;
-        }
-        else if (object.at(search) != '.')
-            throw 2;
-        search++;
-        if (object.at(search) == '\"')
-        {
-            int pos = object.indexOf('\"', search + 1);
-            if (pos < 0)
-                throw 3;
-            name = object.left(pos);
-            name = owner.right(pos - search - 1);
-            search = pos + 1;
-            if (search < (unsigned int) object.length())
-                throw 4;
-        }
-        else
-        {
-            name = object.right(object.length() - search);
-        }
-    }
-    catch (int i)
-    {
-        throw qApp->translate("toExtract", "Failed to extract owner and name from (%1), internal error %2").arg(object).arg(i);
-    }
-}
-
-void toExtract::create(QTextStream &ret, std::list<QString> &objects)
+void toExtract::create(QTextStream &ret, const toExtract::ObjectList &objects)
 {
     ret << generateHeading(qApp->translate("toExtract", "CREATE"), objects);
 
@@ -209,26 +154,21 @@ void toExtract::create(QTextStream &ret, std::list<QString> &objects)
     {
         Utils::toBusy busy;
         int num = 1;
-        for (std::list<QString>::iterator i = objects.begin(); i != objects.end(); i++)
+        foreach(auto i, objects)
         {
             if (progress)
             {
                 progress->setValue(num);
-                progress->setLabelText(*i);
+                progress->setLabelText(i.second.toString());
                 qApp->processEvents();
                 if (progress->wasCanceled())
                     throw qApp->translate("toExtract", "Creating script was canceled");
             }
             num++;
 
-            QString type = *i;
-            QString owner;
-            QString name;
-            int pos = type.indexOf(QString::fromLatin1(":"));
-            if (pos < 0)
-                throw qApp->translate("toExtract", "Internal error, missing : in object description");
-            parseObject(type.right(type.length() - pos - 1), owner, name);
-            type.truncate(pos);
+            QString type = i.first;
+            QString owner = Connection.getTraits().unQuote(i.second.owner());
+            QString name  = Connection.getTraits().unQuote(i.second.name());
             ObjectType typeEnum = objectTypeFromString(type.toUpper());
             QString schema = intSchema(owner, false);
             try
@@ -253,7 +193,7 @@ void toExtract::create(QTextStream &ret, std::list<QString> &objects)
                 }
                 catch (const QString &exc)
                 {
-                    rethrow(qApp->translate("toExtract", "Create"), *i, exc);
+                    rethrow(qApp->translate("toExtract", "Create"), i.second.toString(), exc);
                 }
             }
             catch (const QString &exc)
@@ -270,10 +210,9 @@ void toExtract::create(QTextStream &ret, std::list<QString> &objects)
     delete progress;
 }
 
-std::list<QString> toExtract::describe(std::list<QString> &objects)
+std::list<QString> toExtract::describe(const toExtract::ObjectList &objects)
 {
     std::list<QString> ret;
-
     QProgressDialog *progress = NULL;
 
     if (Parent)
@@ -291,26 +230,21 @@ std::list<QString> toExtract::describe(std::list<QString> &objects)
     {
         Utils::toBusy busy;
         int num = 1;
-        for (std::list<QString>::iterator i = objects.begin(); i != objects.end(); i++)
+        foreach(auto i, objects)
         {
             if (progress)
             {
                 progress->setValue(num);
-                progress->setLabelText(*i);
+                progress->setLabelText(i.second.toString());
                 qApp->processEvents();
                 if (progress->wasCanceled())
                     throw qApp->translate("toExtract", "Describe was canceled");
             }
             num++;
 
-            QString type = *i;
-            QString owner;
-            QString name;
-            int pos = type.indexOf(QString::fromLatin1(":"));
-            if (pos < 0)
-                throw qApp->translate("toExtract", "Internal error, missing : in object description");
-            parseObject(type.right(type.length() - pos - 1), owner, name);
-            type.truncate(pos);
+            QString type = i.first;
+            QString owner = Connection.getTraits().unQuote(i.second.owner());
+            QString name  = Connection.getTraits().unQuote(i.second.name());
             ObjectType typeEnum = objectTypeFromString(type.toUpper());
             QString schema = intSchema(owner, true);
 
@@ -340,7 +274,7 @@ std::list<QString> toExtract::describe(std::list<QString> &objects)
                 }
                 catch (const QString &exc)
                 {
-                    rethrow(qApp->translate("toExtract", "Describe"), *i, exc);
+                    rethrow(qApp->translate("toExtract", "Describe"), i.second.toString(), exc);
                 }
                 cur.sort();
                 ret.merge(cur);
@@ -360,29 +294,7 @@ std::list<QString> toExtract::describe(std::list<QString> &objects)
     return ret;
 }
 
-
-std::map<QString, std::list<QString> > toExtract::migrateGroup(std::list<QString> &grpLst)
-{
-    std::map<QString, std::list<QString> > ret;
-    for (std::list<QString>::iterator i = grpLst.begin(); i != grpLst.end(); i++)
-    {
-        std::list<QString> ctx = splitDescribe(*i);
-        if (ctx.size() < 3)
-            Utils::toStatusMessage(qApp->translate("toExtract", "Invalid describe context (<3 parts) \"%1\")").arg(*i));
-        else
-        {
-            QString t = Utils::toShift(ctx);
-            t += QString::fromLatin1("\01");
-            t += Utils::toShift(ctx);
-            t += QString::fromLatin1("\01");
-            t += Utils::toShift(ctx);
-            Utils::toPush(ret[t], *i);
-        }
-    }
-    return ret;
-}
-
-QString toExtract::generateHeading(const QString &action, std::list<QString> &lst)
+QString toExtract::generateHeading(const QString &action, const QList<QPair<QString,toCache::ObjectRef> > &objects)
 {
     if (!Heading)
         return QString::null;
@@ -414,12 +326,12 @@ QString toExtract::generateHeading(const QString &action, std::list<QString> &ls
     {
         str += qApp->translate("toExtract", "-- Generating %1 statement for:\n").arg(action);
     }
-    for (std::list<QString>::iterator i = lst.begin(); i != lst.end(); i++)
+    foreach(auto i, objects)
     {
-        if (!(*i).startsWith(QString::fromLatin1("TABLE REFERENCES")))
+        if (i.first == "TABLE REFERENCES")
         {
             str += QString::fromLatin1("-- ");
-            str += (*i);
+            str += i.second.toString();
             str += QString::fromLatin1("\n");
         }
     }

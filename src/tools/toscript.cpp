@@ -36,13 +36,14 @@
 #include "tools/toscript.h"
 #include "core/utils.h"
 #include "core/totool.h"
-//#include "core/toextract.h"
 #include "core/tomainwindow.h"
 //#include "core/toreport.h"
 #include "core/totextview.h"
 #include "core/toextract.h"
+#include "core/toconfiguration.h"
 #include "editor/toworksheettext.h"
 #include "tools/toscripttreeitem.h"
+#include "connection/tooracleconfiguration.h"
 
 #include <QScrollArea>
 #include <QMessageBox>
@@ -101,11 +102,11 @@ static toScriptTool ScriptTool;
 
 
 // aliases for basic tool modes
-#define MODE_COMPARE 0
-#define MODE_EXTRACT 1
-#define MODE_SEARCH 2
-#define MODE_REPORT 4
-
+typedef int mode_t;
+const mode_t MODE_COMPARE  = 0;
+const mode_t MODE_EXTRACT = 1;
+const mode_t MODE_SEARCH  = 2;
+const mode_t MODE_REPORT  = 4;
 
 toScript::toScript(QWidget *parent, toConnection &connection)
     : toToolWidget(ScriptTool, "script.html", parent, connection, "toScript")
@@ -206,6 +207,7 @@ toScript::toScript(QWidget *parent, toConnection &connection)
     ScriptUI->Report->setChecked(s.value("Report", false).toBool());
     // checkboxes - options
     ScriptUI->IncludeDDL->setChecked(s.value("IncludeDDL", true).toBool());
+    ScriptUI->UseDbmsMetadataBool->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::UseDbmsMetadataBool).toBool());
     ScriptUI->IncludeConstraints->setChecked(s.value("IncludeConstraints", true).toBool());
     ScriptUI->IncludeIndexes->setChecked(s.value("IncludeIndexes", true).toBool());
     ScriptUI->IncludeGrants->setChecked(s.value("IncludeGrants", true).toBool());
@@ -271,18 +273,19 @@ void toScript::closeEvent(QCloseEvent *event)
         event->ignore();
 }
 
-std::list<QString> toScript::createObjectList(QItemSelectionModel * selections)
+toExtract::ObjectList toScript::createObjectList(QItemSelectionModel * selections)
 {
-    std::list<QString> lst;
+    using ObjectRef = toCache::ObjectRef;
+    ObjectList lst;
 
-    std::list<QString> otherGlobal;
-    std::list<QString> profiles;
-    std::list<QString> roles;
-    std::list<QString> tableSpace;
-    std::list<QString> tables;
-    std::list<QString> userOther;
-    std::list<QString> userViews;
-    std::list<QString> users;
+    ObjectList otherGlobal;
+    ObjectList profiles;
+    ObjectList roles;
+    ObjectList tableSpaces;
+    ObjectList tables;
+    ObjectList userOther;
+    ObjectList userViews;
+    ObjectList users;
 
     if (!selections->hasSelection())
         return lst;
@@ -291,49 +294,62 @@ std::list<QString> toScript::createObjectList(QItemSelectionModel * selections)
     foreach (QModelIndex i, selections->selectedIndexes())
     {
         item = static_cast<toScriptTreeItem*>(i.internalPointer());
-        Q_ASSERT_X(item, "toScript::createObjectList()",
-                   "fatal logic error - never shoudl go there");
-
-//         TLOG(2,toDecorator,__HERE__) << "selected: "<< item << item->schema() << item->data() << item->type();
+        Q_ASSERT_X(item, "toScript::createObjectList()", "fatal logic error - never should go there");
+        // TLOG(2,toDecorator,__HERE__) << "selected: "<< item << item->schema() << item->data() << item->type();
 
         if (item->type().isNull())
         {
             continue;
         }
+
         if (item->type() == "TABLESPACE")
-            Utils::toPush(tableSpace, item->type() + ":" + item->data());
+            tableSpaces.append(QPair<QString, ObjectRef>("TABLESPACE", ObjectRef("", item->data(), "")));
         else if (item->type() == "PROFILE")
-            Utils::toPush(profiles, item->type() + ":" + item->data());
+            profiles.append(QPair<QString, ObjectRef>("PROFILE", ObjectRef("", item->data(), "")));
         else if (item->type() == "ROLE")
-            Utils::toPush(roles, item->data());
+            roles.append(QPair<QString, ObjectRef>("ROLE", ObjectRef("", item->data(), "")));
         else if (item->type() == "USER")
-            Utils::toPush(users, item->data());
+            users.append(QPair<QString, ObjectRef>("USER", ObjectRef("", item->data(), "")));
         else if (item->type() == "TABLE")
-            Utils::toPush(tables, item->schema() + "." + item->data());
+            tables.append(QPair<QString, ObjectRef>("TABLE FAMILY", ObjectRef(item->schema(), item->data(), "")));
         else if (item->type() == "VIEW") // just to get it *after* tables
-            Utils::toPush(userViews, "VIEW:" + item->schema() + "." + item->data());
+            userViews.append(QPair<QString, ObjectRef>("VIEW", ObjectRef(item->schema(), item->data(), "")));
         else
             // the rest goes last (pkgs etc.)
-            Utils::toPush(userOther, item->type() + ":" + item->schema() + "." + item->data());
+            userOther.append(QPair<QString, ObjectRef>(item->type(), ObjectRef(item->schema(), item->data(), "")));
     }
 
     if (ScriptUI->IncludeDDL->isChecked())
     {
-        lst.insert(lst.end(), tableSpace.begin(), tableSpace.end());
-        lst.insert(lst.end(), profiles.begin(), profiles.end());
-        lst.insert(lst.end(), otherGlobal.begin(), otherGlobal.end());
-        for_each(roles.begin(), roles.end(), PrefixString(lst, QString::fromLatin1("ROLE:")));
-        for_each(users.begin(), users.end(), PrefixString(lst, QString::fromLatin1("USER:")));
-        for_each(tables.begin(), tables.end(), PrefixString(lst, QString::fromLatin1("TABLE FAMILY:")));
-        lst.insert(lst.end(), userViews.begin(), userViews.end());
-        lst.insert(lst.end(), userOther.begin(), userOther.end());
+        lst.append(tableSpaces);
+        lst.append(profiles);
+        lst.append(otherGlobal);
+        lst.append(roles);
+        lst.append(users);
+        lst.append(tables);
+        lst.append(userViews);
+        lst.append(userOther);
     }
-    for_each(tables.begin(), tables.end(), PrefixString(lst, QString::fromLatin1("TABLE CONTENTS:")));
+
+    foreach(auto i, tables)
+    {
+        lst.append(QPair<QString, ObjectRef>("TABLE CONTENTS", i.second));
+    }
+
     if (ScriptUI->IncludeDDL->isChecked())
     {
-        for_each(tables.begin(), tables.end(), PrefixString(lst, QString::fromLatin1("TABLE REFERENCES:")));
-        for_each(roles.begin(), roles.end(), PrefixString(lst, QString::fromLatin1("ROLE GRANTS:")));
-        for_each(users.begin(), users.end(), PrefixString(lst, QString::fromLatin1("USER GRANTS:")));
+        foreach(auto i, tables)
+        {
+            lst.append(QPair<QString, ObjectRef>("TABLE REFERENCES", i.second));
+        }
+        foreach(auto i, roles)
+        {
+            lst.append(QPair<QString, ObjectRef>("ROLE GRANTS", i.second));
+        }
+        foreach(auto i, users)
+        {
+            lst.append(QPair<QString, ObjectRef>("USER GRANTS", i.second));
+        }
     }
     return lst;
 }
@@ -342,7 +358,7 @@ void toScript::execute(void)
 {
     try
     {
-        int mode;
+        mode_t mode;
         if (ScriptUI->Compare->isChecked())
             mode = MODE_COMPARE;
         else if (ScriptUI->Extract->isChecked())
@@ -356,7 +372,7 @@ void toScript::execute(void)
             Utils::toStatusMessage(tr("No mode selected"));
             return ;
         }
-        std::list<QString> sourceObjects = createObjectList(ScriptUI->Source->objectList());
+        toExtract::ObjectList sourceObjects = createObjectList(ScriptUI->Source->objectList());
         std::list<QString> sourceDescription;
         std::list<QString> destinationDescription;
         QString script;
@@ -426,11 +442,11 @@ void toScript::execute(void)
                     QTextStream pstream(&pfile);
 
                     QRegExp repl("\\W+");
-                    for (std::list<QString>::iterator i = sourceObjects.begin(); i != sourceObjects.end(); i++)
+                    for (auto i = sourceObjects.begin(); i != sourceObjects.end(); i++)
                     {
-                        std::list<QString> t;
-                        t.insert(t.end(), *i);
-                        QString fn = *i;
+                        toExtract::ObjectList t;
+                        t.append(*i);
+                        QString fn = QString("%1_%2").arg(i->first).arg(i->second.toString());
                         fn.replace(repl, "_");
                         fn += ".sql";
                         stream << "@" << fn << "\n";
@@ -468,7 +484,7 @@ void toScript::execute(void)
 
         if (ScriptUI->Destination->isEnabled())
         {
-            std::list<QString> destinationObjects  = createObjectList(ScriptUI->Destination->objectList());
+            ObjectList destinationObjects  = createObjectList(ScriptUI->Destination->objectList());
             toExtract destination(ScriptUI->Destination->connection(), this);
             setupExtract(destination);
             switch (mode)

@@ -156,6 +156,8 @@ class TORA_EXPORT toCache : public QObject
                 /** convert object reference into a string */
                 QString toString() const;
 
+                const QString& owner() const { return first; }
+                const QString& name() const { return second; }
                 /** convert object reference into a string, use connection traits quoting mechanism*/
                 ////QString toString(toConnection &con) const;
 

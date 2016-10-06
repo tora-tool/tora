@@ -63,7 +63,9 @@ class toExtract :public QObject
 {
     Q_OBJECT;
     Q_ENUMS(ObjectType);
-    public:
+public:
+    typedef QList<QPair<QString,toCache::ObjectRef> > ObjectList;
+
         enum ObjectType
         {
             NO_TYPE = toCache::NO_TYPE,  // used internally
@@ -273,16 +275,9 @@ class toExtract :public QObject
 
         // General internal functions
 
-        /** Parse an object string to get owner and name of the object.
-         * @param object Object string on the format {owner}.{name}.
-         * @param owner Reference to string which will get the object owner.
-         * @param name Reference to string which will get the object name.
-         */
-        void parseObject(const QString &object, QString &owner, QString &name);
-
         void rethrow(const QString &what, const QString &object, const QString &exc);
-        QString generateHeading(const QString &action, std::list<QString> &list);
-        static std::map<QString, std::list<QString> > migrateGroup(std::list<QString> &grpLst);
+        QString generateHeading(const QString &action, const ObjectList &objects);
+
     public:
         /** Create a new extractor.
          * @param conn Connection to extract from.
@@ -302,7 +297,7 @@ class toExtract :public QObject
          *               TRIGGER, TYPE, USER, USER GRANTS for Oracle databases.
          * @return A string containing a script to recreate the specified objects.
          */
-        QString create(std::list<QString> &object)
+        QString create(const ObjectList &object)
         {
             QString ret;
             QTextStream s(&ret, QIODevice::WriteOnly);
@@ -321,7 +316,7 @@ class toExtract :public QObject
          *               TABLE CONTENTS, TABLE REFERENCES, TABLESPACE, TRIGGER,
          *               TRIGGER, TYPE, USER, USER GRANTS for Oracle databases.
          */
-        void create(QTextStream &stream, std::list<QString> &object);
+        void create(QTextStream &stream, const ObjectList &objects);
 
         /** Create a description of objects.
          * @param object List of object. This has the format {type}:{schema}.{object}.
@@ -337,7 +332,7 @@ class toExtract :public QObject
          *         considered like a list of strings separated by the character '\001'.
          *         The later in each string the smaller item the change and it is hierachical.
          */
-        std::list<QString> describe(std::list<QString> &object);
+        std::list<QString> describe(const ObjectList &objects);
 
         /** Set a context for this extractor.
          * @param name Name of this context

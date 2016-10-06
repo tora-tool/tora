@@ -37,6 +37,9 @@
 #include "widgets/totoolwidget.h"
 #include "ui_toscriptui.h"
 
+#include "core/tocache.h"
+#include "core/toextract.h"
+
 #include <list>
 #include <algorithm>
 
@@ -76,7 +79,7 @@ class toScript : public toToolWidget
         /*! Create commin string list with all selected objects
         for given objects selection
         */
-        std::list<QString> createObjectList(QItemSelectionModel * selections);
+        toExtract::ObjectList createObjectList(QItemSelectionModel * selections);
 
         void fillDifference(std::list<QString> &objects, toTreeWidget *list);
 
@@ -95,6 +98,8 @@ class toScript : public toToolWidget
         void closeEvent(QCloseEvent *event);
 
     public:
+        typedef QList<QPair<QString,toCache::ObjectRef> > ObjectList;
+
         toScript(QWidget *parent, toConnection &connection);
         virtual ~toScript();
 
