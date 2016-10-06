@@ -57,29 +57,45 @@
          <string>&amp;Options</string>
         </property>
         <layout class="QGridLayout">
-         <property name="margin">
+         <property name="leftMargin">
+          <number>11</number>
+         </property>
+         <property name="topMargin">
+          <number>11</number>
+         </property>
+         <property name="rightMargin">
+          <number>11</number>
+         </property>
+         <property name="bottomMargin">
           <number>11</number>
          </property>
          <property name="spacing">
           <number>6</number>
          </property>
-         <item row="0" column="0">
-          <widget class="QRadioButton" name="Compare">
+         <item row="9" column="2" colspan="2">
+          <widget class="QCheckBox" name="IncludeComment">
            <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="toolTip">
-            <string>Compare two databases or schemas</string>
+            <bool>true</bool>
            </property>
            <property name="text">
-            <string>Compare</string>
+            <string>     Include comments</string>
            </property>
            <property name="checked">
             <bool>true</bool>
            </property>
           </widget>
          </item>
-         <item row="1" column="0">
+         <item row="8" column="2" colspan="2">
+          <widget class="QCheckBox" name="IncludeCode">
+           <property name="text">
+            <string>     Include code specification</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
           <widget class="QRadioButton" name="Extract">
            <property name="toolTip">
             <string>Extract script to recreate database objects.</string>
@@ -92,30 +108,10 @@
            </property>
           </widget>
          </item>
-         <item row="7" column="2" colspan="2">
-          <widget class="QCheckBox" name="IncludeCode">
-           <property name="text">
-            <string>Include code specification</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="2" colspan="2">
+         <item row="5" column="2" colspan="2">
           <widget class="QCheckBox" name="IncludeStorage">
            <property name="text">
-            <string>Include storage specification</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="2" colspan="2">
-          <widget class="QCheckBox" name="IncludeParallell">
-           <property name="text">
-            <string>Include parallel specification</string>
+            <string>     Include storage specification</string>
            </property>
            <property name="checked">
             <bool>true</bool>
@@ -123,32 +119,32 @@
           </widget>
          </item>
          <item row="6" column="2" colspan="2">
+          <widget class="QCheckBox" name="IncludeParallell">
+           <property name="text">
+            <string>     Include parallel specification</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QRadioButton" name="Compare">
+           <property name="toolTip">
+            <string>Compare two databases or schemas</string>
+           </property>
+           <property name="text">
+            <string>Compare</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="2" colspan="2">
           <widget class="QCheckBox" name="IncludePartition">
            <property name="text">
-            <string>Include partition specification</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="2" colspan="2">
-          <widget class="QCheckBox" name="IncludeIndexes">
-           <property name="text">
-            <string>Include indexes</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="8" column="2" colspan="2">
-          <widget class="QCheckBox" name="IncludeComment">
-           <property name="enabled">
-            <bool>true</bool>
-           </property>
-           <property name="text">
-            <string>Include comments</string>
+            <string>     Include partition specification</string>
            </property>
            <property name="checked">
             <bool>true</bool>
@@ -156,22 +152,54 @@
           </widget>
          </item>
          <item row="3" column="2" colspan="2">
-          <widget class="QCheckBox" name="IncludeGrants">
+          <widget class="QCheckBox" name="IncludeIndexes">
            <property name="text">
-            <string>Include grants</string>
+            <string>     Include indexes</string>
            </property>
            <property name="checked">
             <bool>true</bool>
            </property>
           </widget>
          </item>
-         <item row="1" column="2" colspan="2">
-          <widget class="QCheckBox" name="IncludeConstraints">
+         <item row="14" column="2">
+          <widget class="QLabel" name="TextLabel3">
+           <property name="toolTip">
+            <string>Select the schema to generate in script</string>
+           </property>
            <property name="text">
-            <string>Include constraints</string>
+            <string>Generated schema</string>
+           </property>
+           <property name="wordWrap">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="13" column="2">
+          <widget class="QLabel" name="TextLabel1_3">
+           <property name="toolTip">
+            <string>The number of insertstatements to make between each commit (0 means whole table)</string>
+           </property>
+           <property name="text">
+            <string>Commit distance</string>
+           </property>
+           <property name="wordWrap">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QRadioButton" name="Report">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="toolTip">
+            <string>Create database scripts to convert schema or database from source to destination</string>
+           </property>
+           <property name="text">
+            <string>Report</string>
            </property>
            <property name="checked">
-            <bool>true</bool>
+            <bool>false</bool>
            </property>
           </widget>
          </item>
@@ -188,20 +216,43 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="0">
-          <widget class="QRadioButton" name="Search">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
+         <item row="4" column="2" colspan="2">
+          <widget class="QCheckBox" name="IncludeGrants">
            <property name="text">
-            <string>Search</string>
+            <string>     Include grants</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
-         <item row="0" column="1" rowspan="15">
-          <widget class="Line" name="Line3"/>
+         <item row="2" column="2" colspan="2">
+          <widget class="QCheckBox" name="IncludeConstraints">
+           <property name="text">
+            <string>     Include constraints</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
-         <item row="9" column="2" colspan="2">
+         <item row="15" column="2">
+          <spacer>
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="10" column="2" colspan="2">
           <widget class="QCheckBox" name="IncludePrompt">
            <property name="enabled">
             <bool>false</bool>
@@ -220,23 +271,10 @@
            </property>
           </widget>
          </item>
-         <item row="14" column="2">
-          <spacer>
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeType">
-            <enum>QSizePolicy::Expanding</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
+         <item row="0" column="1" rowspan="16">
+          <widget class="Line" name="Line3"/>
          </item>
-         <item row="10" column="2" colspan="2">
+         <item row="11" column="2" colspan="2">
           <widget class="QCheckBox" name="IncludeHeader">
            <property name="enabled">
             <bool>false</bool>
@@ -252,7 +290,7 @@
            </property>
           </widget>
          </item>
-         <item row="13" column="3">
+         <item row="14" column="3">
           <widget class="QComboBox" name="Schema">
            <property name="editable">
             <bool>true</bool>
@@ -272,20 +310,7 @@
            </item>
           </widget>
          </item>
-         <item row="13" column="2">
-          <widget class="QLabel" name="TextLabel3">
-           <property name="toolTip">
-            <string>Select the schema to generate in script</string>
-           </property>
-           <property name="text">
-            <string>Generated schema</string>
-           </property>
-           <property name="wordWrap">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="11" column="2" colspan="2">
+         <item row="12" column="2" colspan="2">
           <widget class="QCheckBox" name="IncludeContent">
            <property name="enabled">
             <bool>false</bool>
@@ -301,20 +326,17 @@
            </property>
           </widget>
          </item>
-         <item row="12" column="2">
-          <widget class="QLabel" name="TextLabel1_3">
-           <property name="toolTip">
-            <string>The number of insertstatements to make between each commit (0 means whole table)</string>
+         <item row="3" column="0">
+          <widget class="QRadioButton" name="Search">
+           <property name="enabled">
+            <bool>false</bool>
            </property>
            <property name="text">
-            <string>Commit distance</string>
-           </property>
-           <property name="wordWrap">
-            <bool>false</bool>
+            <string>Search</string>
            </property>
           </widget>
          </item>
-         <item row="12" column="3">
+         <item row="13" column="3">
           <widget class="QSpinBox" name="CommitDistance">
            <property name="enabled">
             <bool>false</bool>
@@ -324,19 +346,10 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="0">
-          <widget class="QRadioButton" name="Report">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="toolTip">
-            <string>Create database scripts to convert schema or database from source to destination</string>
-           </property>
+         <item row="1" column="2">
+          <widget class="QCheckBox" name="UseDbmsMetadataBool">
            <property name="text">
-            <string>Report</string>
-           </property>
-           <property name="checked">
-            <bool>false</bool>
+            <string>     Use DBMS_METADATA</string>
            </property>
           </widget>
          </item>
@@ -358,7 +371,16 @@
          <string>Output</string>
         </property>
         <layout class="QGridLayout">
-         <property name="margin">
+         <property name="leftMargin">
+          <number>11</number>
+         </property>
+         <property name="topMargin">
+          <number>11</number>
+         </property>
+         <property name="rightMargin">
+          <number>11</number>
+         </property>
+         <property name="bottomMargin">
           <number>11</number>
          </property>
          <property name="spacing">
@@ -402,7 +424,16 @@
            <property name="spacing">
             <number>6</number>
            </property>
-           <property name="margin">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
             <number>0</number>
            </property>
            <item>
@@ -436,7 +467,16 @@
          <string>&amp;Search</string>
         </property>
         <layout class="QGridLayout">
-         <property name="margin">
+         <property name="leftMargin">
+          <number>11</number>
+         </property>
+         <property name="topMargin">
+          <number>11</number>
+         </property>
+         <property name="rightMargin">
+          <number>11</number>
+         </property>
+         <property name="bottomMargin">
           <number>11</number>
          </property>
          <property name="spacing">
@@ -768,6 +808,118 @@
     <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>IncludeDDL</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>UseDbmsMetadataBool</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>210</x>
+     <y>64</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>173</x>
+     <y>87</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>UseDbmsMetadataBool</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>IncludeConstraints</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>173</x>
+     <y>87</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>210</x>
+     <y>110</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>UseDbmsMetadataBool</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>IncludeIndexes</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>173</x>
+     <y>87</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>210</x>
+     <y>133</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>UseDbmsMetadataBool</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>IncludeStorage</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>173</x>
+     <y>87</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>210</x>
+     <y>179</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>UseDbmsMetadataBool</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>IncludeParallell</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>173</x>
+     <y>87</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>210</x>
+     <y>202</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>UseDbmsMetadataBool</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>IncludePartition</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>173</x>
+     <y>87</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>210</x>
+     <y>225</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>UseDbmsMetadataBool</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>IncludeComment</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>173</x>
+     <y>87</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>210</x>
+     <y>271</y>
     </hint>
    </hints>
   </connection>

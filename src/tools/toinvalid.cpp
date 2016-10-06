@@ -180,37 +180,41 @@ void toInvalid::recompileSelected(void)
         if (progress.wasCanceled())
             break;
 
-        QString type = Objects->model()->data((*it).row(), 3).toString();
-        QString name = Objects->model()->data((*it).row(), 2).toString();
+        QString type  = Objects->model()->data((*it).row(), 3).toString();
+        QString owner = Objects->model()->data((*it).row(), 1).toString();
+        QString name  = Objects->model()->data((*it).row(), 2).toString();
         QString sql;
         if (type == "INDEX")
-            sql = "ALTER " + type + " " +
-                  traits.quote(Objects->model()->data((*it).row(), 1).toString()) + "." +
-                  traits.quote(name) + " REBUILD";
+            sql = QString("ALTER INDEX %1.%2 REBUILD")
+            .arg(traits.quote(owner))
+            .arg(traits.quote(name));
         else if (type == "PACKAGE BODY")
-            sql = "ALTER PACKAGE " + traits.quote(Objects->model()->data((*it).row(), 1).toString()) + "." +
-                  traits.quote(Objects->model()->data((*it).row(), 2).toString()) + " COMPILE BODY";
+            sql = QString("ALTER PACKAGE %1.%2 COMPILE BODY")
+            .arg(traits.quote(owner))
+            .arg(traits.quote(name));
         else if (type == "TYPE BODY")
-            sql = "ALTER TYPE " + traits.quote(Objects->model()->data((*it).row(), 1).toString()) + "." +
-                  traits.quote(Objects->model()->data((*it).row(), 2).toString()) + " COMPILE BODY";
+            sql = QString("ALTER TYPE %1.%2 COMPILE BODY")
+            .arg(traits.quote(owner))
+            .arg(traits.quote(name));
         else if ((type == "SYNONYM") && (Objects->model()->data((*it).row(), 1).toString() == "PUBLIC"))
         {
             // only SYS user is allowed to do ALTER PUBLIC SYNONYM ...
             // other users can only do CREATE OR REPLACE PUBLIC SYNONYM ...
-            std::list<QString> objects;
+            QList<QPair<QString,toCache::ObjectRef> > objects;
             toExtract extract(const_cast<toConnection&>(conn.ParentConnection), NULL);
             extract.setCode(true);
             extract.setHeading(false);
             extract.setPrompt(false);
             extract.setReplace(true); // get create OR REPLACE statement
-            objects.insert(objects.end(), type + QString::fromLatin1(":") + "PUBLIC" + QString::fromLatin1(".") + name);
+            objects.append(QPair<QString,toCache::ObjectRef>(type, toCache::ObjectRef("PUBLIC", name, "")));
             sql = extract.create(objects);
             throw tr("recompileSelected SYNONYM not implement yet");
         }
         else
-            sql = "ALTER " + Objects->model()->data((*it).row(), 3).toString() + " " +
-                  traits.quote(Objects->model()->data((*it).row(), 1).toString()) + "." +
-                  traits.quote(Objects->model()->data((*it).row(), 2).toString()) + " COMPILE";
+            sql = QString("ALTER %1 %2.%3 COMPILE")
+            .arg(type)
+            .arg(traits.quote(owner))
+            .arg(traits.quote(name));
 
         try
         {

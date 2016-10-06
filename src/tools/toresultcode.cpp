@@ -40,6 +40,8 @@
 #include "core/toconfiguration.h"
 #include "editor/todebugtext.h"
 
+#include <QtCore/QPair>
+
 toResultCode::toResultCode(bool prompt, QWidget *parent, const char *name)
     : toDebugEditor(parent, name)
     , Prompt(prompt)
@@ -70,6 +72,8 @@ static toSQL SQLObjectType("toResultExtract:ObjectType",
 void toResultCode::query(const QString &sql, toQueryParams const& param)
 {
     using namespace ToConfiguration;
+    using ObjectRef = toCache::ObjectRef;
+
     if (!setSqlAndParams(sql, param))
         return ;
 
@@ -101,6 +105,7 @@ void toResultCode::query(const QString &sql, toQueryParams const& param)
         QString type;
         if (i == params().end())
         {
+            Utils::toBusy busy;
             toConnectionSubLoan c(conn);
             toQuery query(c, SQLObjectType, toQueryParams() << owner << name);
 
@@ -112,27 +117,26 @@ void toResultCode::query(const QString &sql, toQueryParams const& param)
         else
             type = (QString)*i;
 
-        std::list<QString> objects;
+        ObjectRef objectRef(type, name, "");
+        QList<QPair<QString,ObjectRef>> objects;
 
         if (conn.providerIs("Oracle"))
         {
-            if ((type == QString::fromLatin1("TABLE") ||
-                    type == QString::fromLatin1("TABLE PARTITION")) &&
-                    !toConfigurationNewSingle::Instance().option(Oracle::UseDbmsMetadataBool).toBool())
+            if (type == QString::fromLatin1("TABLE"))
             {
-                objects.insert(objects.end(), QString::fromLatin1("TABLE FAMILY:") + owner + QString::fromLatin1(".") + name);
-                objects.insert(objects.end(), QString::fromLatin1("TABLE REFERENCES:") + owner + QString::fromLatin1(".") + name);
+                objects.append(QPair<QString, ObjectRef>("TABLE FAMILY", objectRef));
+                objects.append(QPair<QString, ObjectRef>("TABLE REFERENCES", objectRef));
             }
-            else if (type.startsWith(QString::fromLatin1("PACKAGE")) && Prompt)
+            else if (type.startsWith(QString::fromLatin1("PACKAGE")))
             {
-                objects.insert(objects.end(), QString::fromLatin1("PACKAGE:") + owner + QString::fromLatin1(".") + name);
-                objects.insert(objects.end(), QString::fromLatin1("PACKAGE BODY:") + owner + QString::fromLatin1(".") + name);
+                objects.append(QPair<QString, ObjectRef>("PACKAGE", objectRef));
+                objects.append(QPair<QString, ObjectRef>("PACKAGE BODY", objectRef));
             }
             else
-                objects.insert(objects.end(), type + QString::fromLatin1(":") + owner + QString::fromLatin1(".") + name);
+                objects.append(QPair<QString, ObjectRef>(type, objectRef));
         }
         else
-            objects.insert(objects.end(), type + QString::fromLatin1(":") + owner + QString::fromLatin1(".") + name);
+            objects.append(QPair<QString, ObjectRef>(type, objectRef));
 
         toExtract extract(conn, NULL);
         extract.setCode(toConfigurationNewSingle::Instance().option(Oracle::IncludeCodeBool).toBool());
