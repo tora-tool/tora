@@ -237,20 +237,6 @@ class toScintilla: public QsciScintilla //, public toEditWidget
         virtual void newLine(void);
         void dropEvent(QDropEvent *) override;
 
-        /**
-         * This function is called to create a right mouse button popup menu
-         * at the specified position. If you want to create a custom popup menu,
-         * reimplement this function and return the created popup menu. Ownership
-         * of the popup menu is transferred to the caller.
-         *
-         * Another possibility is to connect to SIGNAL contextMenuToBeDisplayed
-         * and add your own items into it
-         *
-         * Next possibility is to set contextMenuPolicy to Qt::CustomContextMenu
-         * and then handle customContextMenuRequested signal.
-         */
-        virtual QMenu *createPopupMenu(const QPoint& pos);
-
         QString getSelectionAsHTML();
         QString getSelectionAsRTF();
 
