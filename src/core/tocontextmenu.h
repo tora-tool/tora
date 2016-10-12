@@ -32,42 +32,36 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOEDITABLEMENU_H
-#define TOEDITABLEMENU_H
+#pragma once
 
+#include "core/tora_export.h"
 
+class QMenu;
+class QObject;
 
-#include <QMenu>
-#include <QtGui/QKeyEvent>
-
-
-/**
- * A QMenu subclass with editable entries.
+/*
+ * Long story short, Qt supports various ways of context menu handling,
+ * but I did not found a way how various widgets can cooperate on context menu displaying
  *
+ * for example:
+ * toScintilla
+ *  - re-implements contextMenuEvent(QContextMenuEvent *e)
+ *  - creates a new instance of QMenu
+ *  - populates QMenu
+ *  - calls toContextMenuHandler::traverse, so parent widgets can also add their QActions into this menu
+ *     (see toWorksheet::handle)
  */
-class toEditableMenu : public QMenu
+
+/** Abstract interface for widget capable of context menu handling */
+class TORA_EXPORT toContextMenuHandler
 {
-        Q_OBJECT;
+public:
+    toContextMenuHandler() {};
+    virtual ~toContextMenuHandler() {};
 
-        QMenu   *Context;
-        QAction *Remove;
+    /* Iterate widget hierarchy and call handle method - if supported */
+    static void traverse(QObject *, QMenu *menu);
 
-    public:
-        toEditableMenu(QWidget *parent = 0);
-        virtual ~toEditableMenu()
-        {
-        }
-
-    signals:
-        void actionRemoved(QAction *action);
-
-    protected slots:
-        void remove(void);
-
-    protected:
-        void keyPressEvent(QKeyEvent *event) override;
-        void contextMenuEvent(QContextMenuEvent *event) override;
-
+protected:
+    virtual void handle(QObject *obj, QMenu *menu) = 0;
 };
-
-#endif

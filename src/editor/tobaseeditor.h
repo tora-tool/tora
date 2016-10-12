@@ -43,7 +43,7 @@ class toScintilla;
 class QFileSystemWatcher;
 
 /** This class implements toEditWidget API (thus connects this widget to TOra's edit menus)
- *	It connects class toScintilla instance with with toSearchReplace.
+ *  It connects class toScintilla instance with with toSearchReplace.
  */
 class toBaseEditor : public QWidget, public toEditWidget
 {
@@ -54,19 +54,19 @@ class toBaseEditor : public QWidget, public toEditWidget
 
         /** Reimplemented from toEditWidget
          */
-        virtual FlagSetStruct flagSet();
-        virtual QString editText();
-        virtual void editUndo(void);
-        virtual void editRedo(void);
-        virtual void editCut(void);
-        virtual void editCopy(void);
-        virtual void editPaste(void);
-        virtual void editSelectAll(void);
-        virtual void editPrint(void);
-        virtual bool editOpen(const QString &suggestedFile = QString::null);
-        virtual bool editSave(bool askfile);
-        virtual bool searchNext();
-        virtual void editReadAll();
+        FlagSetStruct flagSet() override;
+        QString editText() override;
+        void editUndo(void) override;
+        void editRedo(void) override;
+        void editCut(void) override;
+        void editCopy(void) override;
+        void editPaste(void) override;
+        void editSelectAll(void) override;
+        void editPrint(void) override;
+        bool editOpen(const QString &suggestedFile = QString::null) override;
+        bool editSave(bool askfile) override;
+        bool searchNext() override;
+        void editReadAll() override;
 
         /** Get filename of current file in editor.
          * @return Filename of editor.

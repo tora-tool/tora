@@ -43,13 +43,13 @@
 #include "core/tochangeconnection.h"
 #include "core/toconnectionsub.h"
 #include "core/toconnectiontraits.h"
-#include "toparamget.h"
-#include "toresultbar.h"
-#include "toresultcols.h"
-#include "toresultplan.h"
-#include "toresultstats.h"
-#include "toresulttableview.h"
-#include "toresultview.h"
+#include "tools/toparamget.h"
+#include "tools/toresultbar.h"
+#include "tools/toresultcols.h"
+#include "tools/toresultplan.h"
+#include "tools/toresultstats.h"
+#include "tools/toresulttableview.h"
+#include "tools/toresultview.h"
 #include "widgets/toresultschema.h"
 #include "widgets/toresultitem.h"
 #include "widgets/toresultresources.h"
@@ -593,12 +593,6 @@ void toWorksheet::setup(bool autoLoad)
 
     connect(this, SIGNAL(connectionChange()), this, SLOT(slotConnectionChanged()));
 
-    context = NULL;
-    connect(Editor->editor(),
-            SIGNAL(customContextMenuRequested(const QPoint &)),
-            this,
-            SLOT(slotCreatePopupMenu(const QPoint &)));
-
     connect(&Poll, SIGNAL(timeout()), this, SLOT(slotPoll()));
     connect(this, SIGNAL(connectionChange()), this, SLOT(slotChangeConnection()));
 
@@ -863,6 +857,31 @@ void toWorksheet::focusOutEvent(QFocusEvent *e)
 {
     qDebug() << ">>> toWorksheet::focusOutEvent" << this;
     super::focusOutEvent(e);
+}
+
+void toWorksheet::handle(QObject *obj, QMenu *menu)
+{
+    menu->addSeparator();
+    menu->addAction(executeAct);
+    menu->addAction(executeStepAct);
+    menu->addAction(executeAllAct);
+    menu->addAction(refreshAct);
+
+    menu->addSeparator();
+
+    menu->addAction(describeAct);
+    menu->addAction(describeActNew);
+    menu->addAction(explainAct);
+
+    menu->addSeparator();
+
+    menu->addAction(stopAct);
+
+    menu->addSeparator();
+
+    menu->addAction(SavedMenu->menuAction());
+    menu->addAction(InsertSavedMenu->menuAction());
+    menu->addAction(saveLastAct);
 }
 
 toWorksheet::~toWorksheet()
@@ -2085,57 +2104,6 @@ void toWorksheet::slotStop(void)
     RefreshTimer.stop();
     Result->slotStop();
 }
-
-
-void toWorksheet::slotCreatePopupMenu(const QPoint &pos)
-{
-    toEditMenu &editMenu = toEditMenuSingle::Instance();
-    editMenu.menuAboutToShow();
-
-    if (!context)
-    {
-        context = new QMenu;
-
-        context->addAction(executeAct);
-        context->addAction(executeStepAct);
-        context->addAction(executeAllAct);
-        context->addAction(refreshAct);
-
-        context->addSeparator();
-
-        context->addAction(describeAct);
-        context->addAction(describeActNew);
-        context->addAction(explainAct);
-
-        context->addSeparator();
-
-        context->addAction(editMenu.undoAct);
-        context->addAction(editMenu.redoAct);
-
-        context->addSeparator();
-
-        context->addAction(editMenu.cutAct);
-        context->addAction(editMenu.copyAct);
-        context->addAction(editMenu.pasteAct);
-
-        context->addSeparator();
-
-        context->addAction(editMenu.selectAllAct);
-
-        context->addSeparator();
-
-        context->addAction(stopAct);
-
-        context->addSeparator();
-
-        context->addAction(SavedMenu->menuAction());
-        context->addAction(InsertSavedMenu->menuAction());
-        context->addAction(saveLastAct);
-    }
-
-    context->exec(QCursor::pos());
-}
-
 
 void toWorksheet::slotChangeConnection(void)
 {

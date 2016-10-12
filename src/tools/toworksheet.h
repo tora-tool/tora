@@ -37,6 +37,7 @@
 #include "core/toconnection.h"
 #include "core/toconfenum.h"
 #include "core/tosettingtab.h"
+#include "core/tocontextmenu.h"
 #include "widgets/totoolwidget.h"
 #include "ui_toworksheetsetupui.h"
 
@@ -100,7 +101,7 @@ namespace ToConfiguration
     };
 };
 
-class toWorksheet : public toToolWidget
+class toWorksheet : public toToolWidget, public toContextMenuHandler
 {
         Q_OBJECT;
     public:
@@ -188,17 +189,14 @@ class toWorksheet : public toToolWidget
         void slotLockConnection(bool);
         void slotRefreshModel(toResultModel*);
 
-        /**
-         * create context menus
-         */
-        void slotCreatePopupMenu(const QPoint &pos);
-
     protected:
         void closeEvent(QCloseEvent *event) override;
 
         void focusInEvent(QFocusEvent *e) override;
         void focusOutEvent(QFocusEvent *e) override;
 
+        // Overridden from toContextMenuHandler
+        void handle(QObject *obj, QMenu *menu) override;
     private slots:
         void slotPoll(void);
         void slotChangeConnection(void);
@@ -281,7 +279,7 @@ class toWorksheet : public toToolWidget
         std::map<int, QWidget *> History;
         int LastID;
 
-        QMenu *ToolMenu, *context;
+        QMenu *ToolMenu;
 
         QAction *parseAct, *lockConnectionAct, *executeAct, *executeStepAct,
                 *executeAllAct,
