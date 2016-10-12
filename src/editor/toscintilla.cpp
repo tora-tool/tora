@@ -39,6 +39,8 @@
 #include "core/tologger.h"
 #include "core/tomainwindow.h"
 #include "core/toconf.h"
+#include "core/tocontextmenu.h"
+#include "core/toeditmenu.h"
 
 #include <QApplication>
 #include <QtGui/QClipboard>
@@ -632,6 +634,9 @@ void toScintilla::contextMenuEvent(QContextMenuEvent *e)
  */
 QMenu *toScintilla::createPopupMenu(const QPoint& pos)
 {
+    toEditMenu &editMenu = toEditMenuSingle::Instance();
+    editMenu.menuAboutToShow();
+
     Q_UNUSED(pos);
 
     const bool isEmptyDocument = (lines() == 0);
@@ -640,55 +645,30 @@ QMenu *toScintilla::createPopupMenu(const QPoint& pos)
     QMenu   *popup = new QMenu(this);
     QAction *action;
 
+    // Handle my own context menu fields
     if (!isReadOnly())
     {
-        action = popup->addAction(QIcon(QPixmap(undo_xpm)), tr("&Undo"), this, SLOT(undo()));
-        action->setShortcut(QKeySequence::Undo);
-        action->setEnabled(isUndoAvailable());
-
-        action = popup->addAction(QIcon(QPixmap(redo_xpm)), tr("&Redo"), this, SLOT(redo()));
-        action->setShortcut(QKeySequence::Redo);
-        action->setEnabled(isRedoAvailable());
+        popup->addAction(editMenu.undoAct);
+        popup->addAction(editMenu.redoAct);
 
         popup->addSeparator();
 
-        action = popup->addAction(QIcon(QPixmap(cut_xpm)), tr("Cu&t"), this, SLOT(cut()));
-        action->setShortcut(QKeySequence::Cut);
-        action->setToolTip(tr("Cut to clipboard"));
-        action->setEnabled(hasSelectedText());
+        popup->addAction(editMenu.cutAct);
+    }
 
-        action = popup->addAction(QIcon(QPixmap(copy_xpm)),
-                                  tr("&Copy"),
-                                  this,
-                                  SLOT(copy()));
-        action->setShortcut(QKeySequence::Copy);
-        action->setToolTip(tr("Copy to clipboard"));
-        action->setEnabled(hasSelectedText());
+    popup->addAction(editMenu.copyAct);
 
-        action = popup->addAction(QIcon(QPixmap(paste_xpm)),
-                                  tr("&Paste"),
-                                  this,
-                                  SLOT(paste()));
-        action->setShortcut(QKeySequence::Paste);
-        action->setToolTip(tr("Paste from clipboard"));
-        action->setEnabled(!QApplication::clipboard()->text(
-                               QClipboard::Clipboard).isEmpty());
-
-        action = popup->addAction(tr("Clear"),
-                                  parent(),
-                                  SLOT(clear()));
-        action->setToolTip(tr("Clear editor"));
-        action->setEnabled(!isEmptyDocument);
+    if (!isReadOnly())
+    {
+        popup->addAction(editMenu.pasteAct);
 
         popup->addSeparator();
     }
 
-    action = popup->addAction(tr("Select &All"),
-                              this,
-                              SLOT(selectAll()));
-    action->setShortcut(QKeySequence::SelectAll);
-    action->setEnabled(!isEmptyDocument);
+    popup->addAction(editMenu.selectAllAct);
 
+    // Handle parent widget's context menu fields
+    toContextMenuHandler::traverse(this, popup);
     return popup;
 }
 

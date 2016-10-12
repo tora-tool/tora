@@ -54,8 +54,7 @@ toBaseEditor::toBaseEditor(toScintilla *editor, QWidget *parent)
     setObjectName("toBaseEditor");
 #pragma message WARN("TODO/FIXME: fix this ugly types based init")
     m_editor->setParent(this);
-    m_editor->setContextMenuPolicy(Qt::CustomContextMenu);
-    FlagSet.Paste = !m_editor->isReadOnly(); // show that we do support Paste operation
+    FlagSet.Cut = FlagSet.Paste = !m_editor->isReadOnly(); // show that we do support Cut/Paste operation
 
     Q_ASSERT_X(m_editor, "toBaseEditor init", "editor must be existing instance of toMarkedTextEditor");
 
@@ -97,7 +96,8 @@ toBaseEditor::FlagSetStruct toBaseEditor::flagSet()
 {
     FlagSet.Undo = m_editor->isUndoAvailable();
     FlagSet.Redo = m_editor->isRedoAvailable();
-    FlagSet.Cut = FlagSet.Copy = m_editor->hasSelectedText();
+    FlagSet.Copy = m_editor->hasSelectedText();
+    FlagSet.Cut  = m_editor->hasSelectedText() && !m_editor->isReadOnly();
     return FlagSet;
 }
 
@@ -133,7 +133,7 @@ void toBaseEditor::editPaste(void)
 
 void toBaseEditor::editSelectAll(void)
 {
-    m_editor->selectAll(false);
+    m_editor->selectAll(true);
 }
 
 void toBaseEditor::editPrint(void)

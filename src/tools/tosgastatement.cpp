@@ -112,37 +112,37 @@ toSGAStatement::toSGAStatement(QWidget *parent)
 void toSGAStatement::changeTab(int index)
 {
     if (Address.isEmpty() || Address == QString::fromLatin1("00:0"))
-    	return;
+        return;
 
     CurrentTab = QTabWidget::widget(index);
     try
     {
-    	if (CurrentTab == SQLText)
-    	{
-    		QString sql;
-    		toConnection &conn = toConnection::currentConnection(this);
+        if (CurrentTab == SQLText)
+        {
+            QString sql;
+            toConnection &conn = toConnection::currentConnection(this);
 
-    		if (conn.providerIs("Oracle"))
-    			sql = Utils::toSQLString(conn, Address);
-    		else if (conn.providerIs("QPSQL"))
-    		{
-    			toQList vals = toQuery::readQuery(conn, SQLBackendSql, toQueryParams() << Address);
+            if (conn.providerIs("Oracle"))
+                sql = Utils::toSQLString(conn, Address);
+            else if (conn.providerIs("QPSQL"))
+            {
+                toQList vals = toQuery::readQuery(conn, SQLBackendSql, toQueryParams() << Address);
 
-    			for (toQList::iterator i = vals.begin(); i != vals.end(); i++)
-    				sql.append((QString)*i);
-    		}
+                for (toQList::iterator i = vals.begin(); i != vals.end(); i++)
+                    sql.append((QString)*i);
+            }
 
-    		// TODO: toSQLParse disabled
-    		// if (toConfigurationSingle::Instance().autoIndent())
-    		// sql = toSQLParse::indent(sql);
-    		SQLText->sciEditor()->setText(sql);
-    	}
-    	else if (CurrentTab == Plan)
-    		Plan->queryCursorPlan(toQueryParams() << Address << Cursor);
-    	else if (CurrentTab == Resources)
+            // TODO: toSQLParse disabled
+            // if (toConfigurationSingle::Instance().autoIndent())
+            // sql = toSQLParse::indent(sql);
+            SQLText->sciEditor()->setText(sql);
+        }
+        else if (CurrentTab == Plan)
+            Plan->queryCursorPlan(toQueryParams() << Address << Cursor);
+        else if (CurrentTab == Resources)
             Resources->refreshWithParams(toQueryParams() << Address);
-    	else if (CurrentTab == PlanHistory)
-    		PlanHistory->refreshWithParams(toQueryParams() << Address);
+        else if (CurrentTab == PlanHistory)
+            PlanHistory->refreshWithParams(toQueryParams() << Address);
     }
     TOCATCH;
 }

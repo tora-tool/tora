@@ -32,42 +32,16 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOEDITABLEMENU_H
-#define TOEDITABLEMENU_H
+#include "core/tocontextmenu.h"
 
-
-
-#include <QMenu>
-#include <QtGui/QKeyEvent>
-
-
-/**
- * A QMenu subclass with editable entries.
- *
- */
-class toEditableMenu : public QMenu
+void toContextMenuHandler::traverse(QObject *cur, QMenu *menu)
 {
-        Q_OBJECT;
-
-        QMenu   *Context;
-        QAction *Remove;
-
-    public:
-        toEditableMenu(QWidget *parent = 0);
-        virtual ~toEditableMenu()
-        {
-        }
-
-    signals:
-        void actionRemoved(QAction *action);
-
-    protected slots:
-        void remove(void);
-
-    protected:
-        void keyPressEvent(QKeyEvent *event) override;
-        void contextMenuEvent(QContextMenuEvent *event) override;
-
-};
-
-#endif
+    QObject *parent = cur->parent();
+    while (parent)
+    {
+        toContextMenuHandler *handler = dynamic_cast<toContextMenuHandler*>(parent);
+        if (handler)
+            return handler->handle(cur, menu);
+        parent = parent->parent();
+    }
+}

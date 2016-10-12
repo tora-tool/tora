@@ -195,6 +195,7 @@ SET(TORA_MOC_CLASSES
   core/toconnection.h
   core/toconnectionmodel.h
   core/toconnectionregistry.h
+  core/tocontextmenu.h
   core/todatabaseconfig.h
   tools/todescribe.h
   widgets/todockbar.h
@@ -448,6 +449,7 @@ SET(TORA_SOURCES
   core/toconnectionregistry.cpp
   core/toconnectionsub.cpp
   core/toconnectionsubloan.cpp
+  core/tocontextmenu.cpp
   core/todatabaseconfig.cpp
   tools/todescribe.cpp
   core/todocklet.cpp

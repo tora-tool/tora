@@ -42,6 +42,7 @@ toResultField::toResultField(QWidget *parent, const char *name)
     : toHighlightedEditor(parent, name)
 {
     sciEditor()->setReadOnly(true);
+    FlagSet.Paste = FlagSet.Cut = false;
     Query = NULL;
     whichResultField = 1;
 }
