@@ -257,15 +257,6 @@ class toResultTableView : public QTableView, public toResult, public toEditWidge
     signals:
 
         /**
-         * Called before the menu is displayed so that you can add items
-         * to it before it is shown.
-         *
-         * @param menu Pointer to the menu about to be shown.
-         */
-        void displayMenu(QMenu *menu);
-
-
-        /**
          * Emitted when table's selection changes
          */
         void selectionChanged(void);
@@ -292,7 +283,6 @@ class toResultTableView : public QTableView, public toResult, public toEditWidge
         void modelChanged(toResultModel*);
 
     protected slots:
-        void slotDisplayMenu(const QPoint &pos);
         void slotMenuCallback(QAction *action);
         void slotHandleDone(void);
         void slotHandleReset(void);
@@ -307,7 +297,7 @@ class toResultTableView : public QTableView, public toResult, public toEditWidge
         virtual void slotApplyColumnRules(void);
 
     protected:
-        void createActions(void);
+        void contextMenuEvent(QContextMenuEvent *e) override;
 
         /*! \brief Common setup function called from constructors
         */
@@ -390,7 +380,6 @@ class toResultTableView : public QTableView, public toResult, public toEditWidge
         /**
          * context menu items. may be null
          */
-        QMenu   *Menu;
         QAction *displayAct;
         QAction *refreshAct;
         QAction *leftAct;
@@ -401,7 +390,6 @@ class toResultTableView : public QTableView, public toResult, public toEditWidge
         QAction *copyTransAct;
         QAction *selectAllAct;
         QAction *exportAct;
-        QAction *editAct;
         QAction *rowCountAct;
         QAction *readAllAct;
 };

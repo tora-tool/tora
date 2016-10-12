@@ -56,6 +56,7 @@
 #include "widgets/totabwidget.h"
 #include "widgets/totreewidget.h"
 #include "widgets/torefreshcombo.h"
+#include "editor/toworksheettext.h"
 //obsolete #include "core/tovisualize.h"
 #ifdef TORA3_STAT
 #include "tools/toworksheetstatistic.h"
@@ -446,6 +447,7 @@ void toWorksheet::setup(bool autoLoad)
     ResultTab->addTab(container, tr("&Result"));
 
     Current = Result = new toResultTableView(false, true, container);
+    Result->setObjectName("ResultTab");
     box->addWidget(Result);
     connect(Result, SIGNAL(done(void)), this, SLOT(slotQueryDone(void)));
     connect(Result,
@@ -861,27 +863,36 @@ void toWorksheet::focusOutEvent(QFocusEvent *e)
 
 void toWorksheet::handle(QObject *obj, QMenu *menu)
 {
-    menu->addSeparator();
-    menu->addAction(executeAct);
-    menu->addAction(executeStepAct);
-    menu->addAction(executeAllAct);
-    menu->addAction(refreshAct);
+    QString name = obj->objectName();
 
-    menu->addSeparator();
+    if (toWorksheetText* t = dynamic_cast<toWorksheetText*>(obj))
+    {
+        menu->addSeparator();
+        menu->addAction(executeAct);
+        menu->addAction(executeStepAct);
+        menu->addAction(executeAllAct);
+        menu->addAction(refreshAct);
 
-    menu->addAction(describeAct);
-    menu->addAction(describeActNew);
-    menu->addAction(explainAct);
+        menu->addSeparator();
 
-    menu->addSeparator();
+        menu->addAction(describeAct);
+        menu->addAction(describeActNew);
+        menu->addAction(explainAct);
 
-    menu->addAction(stopAct);
+        menu->addSeparator();
 
-    menu->addSeparator();
+        menu->addAction(stopAct);
 
-    menu->addAction(SavedMenu->menuAction());
-    menu->addAction(InsertSavedMenu->menuAction());
-    menu->addAction(saveLastAct);
+        menu->addSeparator();
+
+        menu->addAction(SavedMenu->menuAction());
+        menu->addAction(InsertSavedMenu->menuAction());
+        menu->addAction(saveLastAct);
+	}
+	else if (obj == Result)
+	{
+		//TODO CopyAsSQLValue
+	}
 }
 
 toWorksheet::~toWorksheet()

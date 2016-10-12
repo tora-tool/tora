@@ -615,37 +615,17 @@ void toScintilla::focusOutEvent (QFocusEvent *e)
 
 void toScintilla::contextMenuEvent(QContextMenuEvent *e)
 {
-    QPointer<toScintilla> that = this;
-    QPointer<QMenu> popup = createPopupMenu( e->pos() );
-    if (!popup)
-        return;
-
-    e->accept();
-
-    popup->exec(e->globalPos());
-    delete popup;
-}
-
-/**
- * This function is called to create a right mouse button popup menu
- * at the specified position. If you want to create a custom popup menu,
- * reimplement this function and return the created popup menu. Ownership
- * of the popup menu is transferred to the caller.
- */
-QMenu *toScintilla::createPopupMenu(const QPoint& pos)
-{
-    toEditMenu &editMenu = toEditMenuSingle::Instance();
-    editMenu.menuAboutToShow();
-
-    Q_UNUSED(pos);
-
-    const bool isEmptyDocument = (lines() == 0);
-
     // create menu
-    QMenu   *popup = new QMenu(this);
-    QAction *action;
+    QMenu *popup = new QMenu(this);
+
+    // Handle parent widget's context menu fields
+    toContextMenuHandler::traverse(this, popup);
 
     // Handle my own context menu fields
+    toEditMenu &editMenu = toEditMenuSingle::Instance();
+    editMenu.menuAboutToShow();
+    const bool isEmptyDocument = (lines() == 0);
+
     if (!isReadOnly())
     {
         popup->addAction(editMenu.undoAct);
@@ -667,9 +647,10 @@ QMenu *toScintilla::createPopupMenu(const QPoint& pos)
 
     popup->addAction(editMenu.selectAllAct);
 
-    // Handle parent widget's context menu fields
-    toContextMenuHandler::traverse(this, popup);
-    return popup;
+    // Display and "run" the menu
+    e->accept();
+    popup->exec(e->globalPos());
+    delete popup;
 }
 
 QString toScintilla::getSelectionAsHTML()
