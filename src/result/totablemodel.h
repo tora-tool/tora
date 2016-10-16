@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOTABLEMODEL_H
-#define TOTABLEMODEL_H
+#pragma once
 
 #include "core/toqvalue.h"
 #include "core/toconnection.h"
@@ -41,8 +40,6 @@
 
 #include <QtCore/QAbstractTableModel>
 #include <QtCore/QList>
-
-#include <list>
 
 /** This is base class for all table based models.
  *  QT does not allow signals to be emitted by templates.
@@ -207,6 +204,9 @@ class toTableModelPriv : public QAbstractTableModel
         void appendRow(const toQueryAbstr::Row &);
         void setHeaders(const toQueryAbstr::HeaderList &);
 
+    protected:
+        void clearAll();
+
     signals:
 
         void headersReceived();
@@ -214,7 +214,6 @@ class toTableModelPriv : public QAbstractTableModel
         void firstResultReceived();
 
     private:
-        void cleanup();
 
         // helpers for sort implementation
         toQueryAbstr::RowList mergesort(toQueryAbstr::RowList&, int, Qt::SortOrder);
@@ -228,27 +227,3 @@ class toTableModelPriv : public QAbstractTableModel
         int SortedOnColumn;
         Qt::SortOrder SortOrder;
 };
-
-//template<typename Traits>
-//class ToTableModel : public toTableModelPriv
-//{
-//public:
-//	typedef toTableModelPriv super;
-//	ToTableModel(QObject *parent = 0);
-//private:
-//	void setup();
-//};
-//
-//template<typename Traits>
-//ToTableModel<Traits>::ToTableModel(QObject *parent)
-//	: super(parent)
-//{
-//	setup();
-//}
-//
-//template<typename Traits>
-//void ToTableModel<Traits>::setup()
-//{
-//}
-
-#endif

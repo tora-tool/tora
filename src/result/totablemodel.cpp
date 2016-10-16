@@ -50,7 +50,7 @@ toTableModelPriv::toTableModelPriv(QObject *parent)
 
 toTableModelPriv::~toTableModelPriv()
 {
-    cleanup();
+    clearAll();
 }
 
 int toTableModelPriv::rowCount(QModelIndex const& parent) const
@@ -388,9 +388,15 @@ Qt::DropActions toTableModelPriv::supportedDropActions() const
     return Qt::IgnoreAction;
 }
 
-void toTableModelPriv::cleanup()
+void toTableModelPriv::clearAll()
 {
+    super::beginRemoveColumns(QModelIndex(), 0, Headers.size());
+    Headers.clear();
+    super::endRemoveColumns();
 
+    super::beginRemoveRows(QModelIndex(), 0, Rows.size());
+    Rows.clear();
+    super::endRemoveRows();
 }
 
 void toTableModelPriv::beginInsertRows(const QModelIndex &parent, int first, int last)

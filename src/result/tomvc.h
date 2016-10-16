@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef __TOMVC_H__
-#define __TOMVC_H__
+#pragma once
 
 #include "core/toresult.h"
 #include "core/toeditwidget.h"
@@ -96,7 +95,7 @@ class TOMVC
     , public _DP< _T>
 {
     public:
-        typedef _T                    Traits;
+        typedef _T                     Traits;
         typedef typename Traits::View  View;
         typedef typename Traits::Model Model;
         typedef typename Traits::Query Query;
@@ -110,7 +109,8 @@ class TOMVC
 
         void setQuery(Query*);
 
-        QWidget *widget();
+        View* view();
+        QWidget* widget();
 
         /**
          * @name toEventQueryObserverObject::Observer
@@ -129,7 +129,7 @@ class TOMVC
 
     private:
         View  *m_view;
-        Query *m_query;
+
         ObserverObject *m_observerObject;
 };
 
@@ -144,7 +144,6 @@ TOMVC<_T, _VP, _DP>::TOMVC(QWidget *parent)
     , ViewPolicy()
     , DataProviderPolicy()
     , m_view(new View(parent))
-    , m_query(NULL)
     , m_observerObject(new ObserverObject(*this, parent))
 {
     m_view->setModel(this);
@@ -171,28 +170,40 @@ void TOMVC<_T, _VP, _DP>::setQuery(Query *query)
 {
     bool retval;
 
-    if ( m_query != NULL && m_query->parent() == this)
+    if ( query->parent() == this)
     {
-        delete m_query;
-        m_query = NULL;
+        // small hack, do not share toEventQuery's ownership with the observer class
+        // hand over the ownership to observer
+        query->setParent(m_observerObject);
     }
 
-    m_query = query;
+    Model::clearAll();
+
     m_observerObject->setQuery(query);
 
-    retval = QObject::connect(m_query, SIGNAL(descriptionAvailable(toEventQuery*, const toQColumnDescriptionList &))
+    retval = QObject::connect(query, SIGNAL(descriptionAvailable(toEventQuery*, const toQColumnDescriptionList &))
                               , m_observerObject, SLOT(eqDescriptionAvailable(toEventQuery*, const toQColumnDescriptionList &)));
     Q_ASSERT_X(retval, qPrintable(__QHERE__), "connect failed: descriptionAvailable");
-    retval = QObject::connect(m_query, SIGNAL(dataAvailable(toEventQuery*))
+    retval = QObject::connect(query, SIGNAL(dataAvailable(toEventQuery*))
                               , m_observerObject, SLOT(eqDataAvailable(toEventQuery*)));
     Q_ASSERT_X(retval, qPrintable(__QHERE__), "connect failed: dataAvailable");
-    retval = QObject::connect(m_query, SIGNAL(error(toEventQuery*, const toConnection::exception &))
+    retval = QObject::connect(query, SIGNAL(error(toEventQuery*, const toConnection::exception &))
                               , m_observerObject, SLOT(eqError(toEventQuery*, const toConnection::exception &)));
     Q_ASSERT_X(retval, qPrintable(__QHERE__), "connect failed: error");
-    retval = QObject::connect(m_query, SIGNAL(done(toEventQuery*,unsigned long))
+    retval = QObject::connect(query, SIGNAL(done(toEventQuery*,unsigned long))
                               , m_observerObject, SLOT(eqDone(toEventQuery*)));
     Q_ASSERT_X(retval, qPrintable(__QHERE__), "connect failed: done");
-    m_query->start();
+    query->start();
+}
+
+template<
+typename _T,
+         template <class> class _VP,
+         template <class> class _DP
+         >
+typename TOMVC< _T, _VP, _DP>::View* TOMVC< _T, _VP, _DP>::view()
+{
+    return m_view;
 }
 
 template<
@@ -278,9 +289,9 @@ void TOMVC< _T, _VP, _DP>::observeData(QObject *q)
 
     try
     {
-        Q_ASSERT_X(m_query != NULL , qPrintable(__QHERE__), " phantom data");
-        Q_ASSERT_X(m_query == query, qPrintable(__QHERE__), " unknown data source");
-        Q_ASSERT_X(m_query->columnCount() >0, qPrintable(__QHERE__), " not described yet");
+        Q_ASSERT_X(m_observerObject->query() != NULL , qPrintable(__QHERE__), " phantom data");
+        Q_ASSERT_X(m_observerObject->query() == query, qPrintable(__QHERE__), " unknown data source");
+        Q_ASSERT_X(m_observerObject->query()->columnCount() >0, qPrintable(__QHERE__), " not described yet");
 
         // TODO to be moved into Policy class (tomvc.h)
         int columns = query->columnCount();
@@ -322,5 +333,3 @@ void TOMVC< _T, _VP, _DP>::observeError(const toConnection::exception &e)
 {
 
 }
-
-#endif

@@ -62,6 +62,8 @@ class toEventQueryObserverObject : public QObject, toEventQuery::Client
 
         void setQuery(toEventQuery *query);
 
+        toEventQuery *query();
+
 //	template<class Traits>
 //	void setModel(typename Traits::Model *model);
 //

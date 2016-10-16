@@ -66,6 +66,7 @@
 
 #include "tools/toresultbar.h"
 #include "tools/toresultlock.h"
+#include "tools/toresultlock2.h"
 #include "tools/toresultstats.h"
 #include "tools/toresulttableview.h"
 // #include "icons/filter.xpm"
@@ -602,6 +603,9 @@ toSession::toSession(QWidget *main, toConnection &connection)
         PendingLocks = new toResultLock(ResultTab);
         ResultTab->addTab(PendingLocks, tr("Pending Locks"));
 
+        PendingLocksNew = new toResultLockNew(ResultTab);
+        ResultTab->addTab(PendingLocksNew, tr("Pending Locks New"));
+
         LockedObjects = new toResultTableView(false, false, ResultTab);
         ResultTab->addTab(LockedObjects, tr("Locked Objects"));
         LockedObjects->setSQL(SQLLockedObject);
@@ -928,7 +932,12 @@ void toSession::slotChangeTab(int index)
         else if (CurrentTab == PendingLocks)
         {
             PendingLocks->clearParams();
-            PendingLocks->query(connectionId, toQueryParams());
+            PendingLocks->refreshWithParams(toQueryParams() << connectionId);
+        }
+        else if (CurrentTab == PendingLocksNew)
+        {
+            PendingLocksNew->clearParams();
+            PendingLocksNew->refreshWithParams(toQueryParams() << connectionId);
         }
         else if (CurrentTab == OpenSplitter)
         {
