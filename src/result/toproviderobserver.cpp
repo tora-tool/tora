@@ -59,6 +59,11 @@ void toEventQueryObserverObject::setQuery(toEventQuery *query)
     m_eventQuery = query;
 }
 
+toEventQuery* toEventQueryObserverObject::query()
+{
+    return m_eventQuery;
+}
+
 void toEventQueryObserverObject::eqDescriptionAvailable(toEventQuery *query, const toQColumnDescriptionList &desc)
 {
     Q_ASSERT_X(m_eventQuery != NULL , qPrintable(__QHERE__), " phantom data");

@@ -69,13 +69,13 @@ class toTreeModelPriv : public QAbstractItemModel
          * Tip: When implementing a table based model, rowCount()
          * should return 0 when the parent is valid.
          */
-        virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
+        int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
         /**
          * Returns the data stored under the given role for the item
          * referred to by the index.
          */
-        virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+        QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
         /**
          * Sets the role data for the item at index to value. Returns true
@@ -90,13 +90,13 @@ class toTreeModelPriv : public QAbstractItemModel
          * reimplementing this function.
          *
          */
-        virtual bool setData(const QModelIndex &, const QVariant &, int role = Qt::EditRole);
+        bool setData(const QModelIndex &, const QVariant &, int role = Qt::EditRole) override;
 
         /**
          * Returns the data for the given role and section in the header
          * with the specified orientation.
          */
-        QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+        QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
         /*! Update the header.name attribute for the horizontal header.
           This method changes data wchich are taken from DB (but it doesn't
@@ -111,7 +111,7 @@ class toTreeModelPriv : public QAbstractItemModel
          * parent. When the parent is valid it means that rowCount is
          * returning the number of children of parent.
          */
-        virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
+        int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
         /**
          * Returns true if there is more data available for parent,
@@ -134,7 +134,7 @@ class toTreeModelPriv : public QAbstractItemModel
         /**
          * Returns the item flags for the given index.
          */
-        virtual Qt::ItemFlags flags(const QModelIndex &index) const;
+        virtual Qt::ItemFlags flags(const QModelIndex &index) const override;
 
         /// This method is not public in @ref QAbstractTableModel
         void beginInsertRows(const QModelIndex &parent, int first, int last);

@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef __TOTREEVIEW_H__
-#define __TOTREEVIEW_H__
+#pragma once
 
 #include "ts_log/ts_log_utils.h"
 
@@ -105,5 +104,3 @@ void DefaultTreeViewPolicy<Traits>::setup(View* pView)
             break;
     }
 }
-
-#endif

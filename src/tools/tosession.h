@@ -57,6 +57,7 @@ class toResultBar;
 class toResultSchema;
 class toResultItem;
 class toResultLock;
+class toResultLockNew;
 class toResultStats;
 class toResultTableView;
 class toSGAStatement;
@@ -118,6 +119,7 @@ class toSession : public toToolWidget
         toResultItem      *ConnectInfo;
         toResultTableView *LockedObjects;
         toResultLock      *PendingLocks;
+        toResultLockNew   *PendingLocksNew;
         toResultTableView *AccessedObjects;
 #ifdef TORA_EXPERIMENTAL
         toResultBar       *WaitBar;

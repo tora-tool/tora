@@ -249,6 +249,7 @@ SET(TORA_MOC_CLASSES
   tools/toresultline.h
   widgets/toresultlistformat.h
   tools/toresultlock.h
+  tools/toresultlock2.h
   tools/toresultlong.h
   widgets/toresultmodel.h
   widgets/toresultmodeledit.h
@@ -509,6 +510,7 @@ SET(TORA_SOURCES
   tools/toresultline.cpp
   widgets/toresultlistformat.cpp
   tools/toresultlock.cpp
+  tools/toresultlock2.cpp
   tools/toresultlong.cpp
   widgets/toresultmodel.cpp
   widgets/toresultmodeledit.cpp

@@ -32,7 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "tools/toresultlock.h"
+#include "tools/toresultlock2.h"
 
 #include "core/toconnection.h"
 #include "core/toeventquery.h"
@@ -41,43 +41,52 @@
 #include "core/totool.h"
 #include "core/utils.h"
 
-#include <map>
+#include <QWidget>
+#include <QVBoxLayout>
 
-
-bool toResultLock::canHandle(const toConnection &conn)
+bool toResultLockNew::canHandle(const toConnection &conn)
 {
     return conn.providerIs("Oracle");
 }
 
-toResultLock::toResultLock(QWidget *parent, const char *name)
-    : toResultView(false, false, parent, name)
+toResultLockNew::toResultLockNew(QWidget *parent, const char *name)
+    : QWidget(parent)
 {
-    setAllColumnsShowFocus(true);
-    setSorting( -1);
-    setRootIsDecorated(true);
-    addColumn(tr("Session"));
-    addColumn(tr("Schema"));
-    addColumn(tr("Osuser"));
-    addColumn(tr("Program"));
-    addColumn(tr("Type"));
-    addColumn(tr("Mode"));
-    addColumn(tr("Request"));
-    addColumn(tr("Object"));
-    addColumn(tr("Grabbed"));
-    addColumn(tr("Requested"));
-    setSQLName(QString::fromLatin1("toResultLock"));
+    if (name)
+        QWidget::setObjectName(name);
+    QVBoxLayout *vbox = new QVBoxLayout;
+    vbox->setSpacing(0);
+    vbox->setContentsMargins(0, 0, 0, 0);
+    QWidget::setLayout(vbox);
+
+    mvc = new ResutLock::MVC(this);
+    QWidget::layout()->addWidget(mvc->widget());
+
+//    setAllColumnsShowFocus(true);
+//    setSorting( -1);
+//    setRootIsDecorated(true);
+//    addColumn(tr("Session"));
+//    addColumn(tr("Schema"));
+//    addColumn(tr("Osuser"));
+//    addColumn(tr("Program"));
+//    addColumn(tr("Type"));
+//    addColumn(tr("Mode"));
+//    addColumn(tr("Request"));
+//    addColumn(tr("Object"));
+//    addColumn(tr("Grabbed"));
+//    addColumn(tr("Requested"));
+    setSQLName(QString::fromLatin1("toResultLockNew"));
 
     Query = NULL;
-    LastItem = NULL;
 }
 
-toResultLock::~toResultLock()
+toResultLockNew::~toResultLockNew()
 {
     if (Query)
         delete Query;
 }
 
-static toSQL SQLBlockingLock("toResultLock:BlockingLocks",
+static toSQL SQLBlockingLock("toResultLockNew:BlockingLocks",
                              "select b.sid,\n"
                              "       b.schemaname,\n"
                              "       b.osuser,\n"
@@ -123,7 +132,7 @@ static toSQL SQLBlockingLock("toResultLock:BlockingLocks",
                              "   and a.request != 0",
                              "List session blocked by a lock");
 
-static toSQL SQLLock("toResultLock:Locks",
+static toSQL SQLLock("toResultLockNew:Locks",
                      "select b.sid,\n"
                      "       b.schemaname,\n"
                      "       b.osuser,\n"
@@ -200,18 +209,10 @@ static toSQL SQLLock("toResultLock:Locks",
 //START WITH a.blocker_is_valid='FALSE'
 //ORDER  BY a.chain_id , LEVEL
 
-void toResultLock::startQuery(void)
-{
-    connect(Query, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(poll()));
-    connect(Query, SIGNAL(done(toEventQuery*, unsigned long)), this, SLOT(queryDone()));
-    Query->start();
-} // startQuery
 
-void toResultLock::query(const QString &sql, const toQueryParams &param)
+void toResultLockNew::query(const QString &sql, const toQueryParams &param)
 {
     Q_UNUSED(sql);
-
-    QString sid;
 
     if (!handled())
         return ;
@@ -219,141 +220,17 @@ void toResultLock::query(const QString &sql, const toQueryParams &param)
     if (!setSqlAndParams(sql, param))
         return ;
 
-    if (Query)
-    {
-        delete Query;
-        Query = NULL;
-    }
-    clear();
-    Checked.clear();
-
     try
     {
-        LastItem = NULL;
         if (!param.isEmpty())
         {
-            Query = new toEventQuery(this, connection(), toSQL::string(SQLLock, connection()), param, toEventQuery::READ_ALL);
+            Query = new toEventQuery(mvc, connection(), toSQL::string(SQLLock, connection()), param, toEventQuery::READ_ALL);
         }
         else
         {
-            Query = new toEventQuery(this, connection(), toSQL::string(SQLBlockingLock, connection()), toQueryParams(), toEventQuery::READ_ALL);
+            Query = new toEventQuery(mvc, connection(), toSQL::string(SQLBlockingLock, connection()), toQueryParams(), toEventQuery::READ_ALL);
         }
-        startQuery();
+        mvc->setQuery(Query);
     }
     TOCATCH
 } // query
-
-void toResultLock::poll(void)
-{
-    try
-    {
-        if (Query)
-        {
-            while (Query->hasMore())
-            {
-                toTreeWidgetItem *item;
-                // Check if item has to be added to top level...
-                if (!LastItem)
-                    item = new toResultViewItem(this, NULL);
-                // ...or attached as a child record to some parent.
-                else
-                    item = new toResultViewItem(LastItem, NULL);
-                toQColumnDescriptionList desc = Query->describe();
-                for (int pos = 0; pos < desc.size(); pos++)
-                    item->setText(pos, (QString)Query->readValue());
-            }
-        }
-    }
-    catch (const QString &exc)
-    {
-        delete Query;
-        Query = NULL;
-        Utils::toStatusMessage(exc);
-    }
-} // poll
-
-// Which column is used as a marker for records processed for children. This
-// column will get value "Yes" so that it is not processed on on subsequent pass.
-#define MARK_COL 20
-
-void toResultLock::queryDone(void)
-{
-    if (Query)
-    {
-        delete Query;
-        Query = NULL;
-    }
-
-    LastItem = NULL;
-    toTreeWidgetItem *next = NULL;
-    for (toTreeWidgetItem *item = firstChild(); item; item = next)
-    {
-        int sid = item->text(0).toInt();
-        if (item->text(MARK_COL).isEmpty())
-        {
-            item->setText(MARK_COL, QString::fromLatin1("Yes"));
-            item->setOpen(true);
-            if (!Checked[sid])
-            {
-                Checked[sid] = true;
-                LastItem = item;
-                toQueryParams par = toQueryParams() << LastItem->text(0);
-                Query = new toEventQuery(this, connection(), toSQL::string(SQLLock, connection()), par, toEventQuery::READ_ALL);
-                startQuery();
-            }
-            else
-            {
-                toTreeWidgetItem *cn = NULL;
-                for (toTreeWidgetItem *ci = firstChild(); ci; ci = cn)
-                {
-                    if (ci != item && ci->text(0) == item->text(0))
-                    {
-                        if (ci->firstChild())
-                        {
-                            ci = ci->firstChild();
-                            cn = new toResultViewItem(item, NULL);
-                            for (int i = 0; i < columns(); i++)
-                                cn->setText(i, ci->text(i));
-                        }
-                        break;
-                    }
-                    if (ci->firstChild())
-                    {
-                        cn = ci->firstChild();
-                    }
-                    else if (ci->nextSibling())
-                        cn = ci->nextSibling();
-                    else
-                    {
-                        cn = ci;
-                        do
-                        {
-                            cn = cn->parent();
-                        }
-                        while (cn && !cn->nextSibling());
-                        if (cn)
-                            cn = cn->nextSibling();
-                    }
-                }
-            }
-            break;
-        }
-        if (item->firstChild())
-        {
-            next = item->firstChild();
-        }
-        else if (item->nextSibling())
-            next = item->nextSibling();
-        else
-        {
-            next = item;
-            do
-            {
-                next = next->parent();
-            }
-            while (next && !next->nextSibling());
-            if (next)
-                next = next->nextSibling();
-        }
-    }
-} // queryDone

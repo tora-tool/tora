@@ -32,41 +32,68 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TORESULTLOCK_H
-#define TORESULTLOCK_H
+#pragma once
 
-#include <map>
-#include "toresultview.h"
+#include "result/tomvc.h"
+#include "result/totreeview.h"
+#include "core/toresult.h"
 
 class toEventQuery;
+
+class toTreeViewPriv;
+
+namespace ResutLock
+{
+    struct Traits : public MVCTraits
+    {
+        enum
+        {
+            AlternatingRowColorsEnabled = true,
+            ShowRowNumber = NoRowNumber,
+            ColumnResize = RowColumResize
+        };
+        typedef toTreeViewPriv View;
+    };
+
+    class MVC
+            : public TOMVC
+              <
+              ::ResutLock::Traits,
+              ::DefaultTreeViewPolicy,
+              ::DefaultDataProviderPolicy
+              >
+    {
+        Q_OBJECT;
+    public:
+        typedef TOMVC<
+                ::ResutLock::Traits,
+                ::DefaultTreeViewPolicy,
+                ::DefaultDataProviderPolicy
+                  > _s;
+        MVC(QWidget *parent) : _s(parent)
+        {};
+        virtual ~MVC() {};
+    };
+}
 
 /**
  * A result table displaying information about locks in a hierarchy
  */
-class toResultLock : public toResultView
+class toResultLockNew: public QWidget, public toResult
 {
         Q_OBJECT
 
         toEventQuery *Query;
-        toTreeWidgetItem *LastItem; // used to point to parent when polling children records
-        std::map<int, bool> Checked; // list of sessions which have been checked for "children"
-
     public:
-        toResultLock(QWidget *parent, const char *name = NULL);
-        ~toResultLock();
+        toResultLockNew(QWidget *parent, const char *name = NULL);
+        ~toResultLockNew();
 
         void query(const QString &sql, const toQueryParams &param) override;
 
         /** Support Oracle
          */
-        virtual bool canHandle(const toConnection &conn);
+        bool canHandle(const toConnection &conn) override;
 
     private:
-        void startQuery(void); // connect signals-slots and start query
-
-    private slots:
-        void poll(void); // Poll query results
-        void queryDone(void); // Clean up query
+        ResutLock::MVC *mvc;
 };
-
-#endif
