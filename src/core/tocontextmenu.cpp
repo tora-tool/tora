@@ -34,6 +34,9 @@
 
 #include "core/tocontextmenu.h"
 
+#include <QtCore/QObject>
+#include <QMenu>
+
 void toContextMenuHandler::traverse(QObject *cur, QMenu *menu)
 {
     QObject *parent = cur->parent();
