@@ -41,7 +41,7 @@
 #include <QtCore/QString>
 
 
-/** An extension of the regular tab widget with posibility to hide
+/** An extension of the regular tab widget with possibility to hide
  * tabs.
  */
 class toTabWidget: public QTabWidget
