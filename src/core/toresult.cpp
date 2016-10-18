@@ -55,14 +55,7 @@ void toResultObject::setup(void)
         Utils::toStatusMessage(tr("Internal error, toResult is not a descendant of toResult"));
         return ;
     }
-    try
-    {
-        QObject::connect(toToolWidget::currentTool(obj), SIGNAL(connectionChange()), this, SLOT(slotConnectionChanged()));
-    }
-    catch (...)
-    {
-        TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
-    }
+    QObject::connect(toToolWidget::currentTool(obj), SIGNAL(connectionChange()), this, SLOT(slotConnectionChanged()));
     try
     {
         if (Result->Handled)
