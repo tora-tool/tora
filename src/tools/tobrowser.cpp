@@ -1592,6 +1592,10 @@ void toBrowser::changeItem(const QModelIndex &)
         m_browsersMap[ix]->setCurrentIndex(toBrowserCodeWidget::SpecTab);
     else if (browser->objectType() == "BODY")
         m_browsersMap[ix]->setCurrentIndex(toBrowserCodeWidget::BodyTab);
+    else if (browser->objectType() == "PACKAGE")
+        m_browsersMap[ix]->setCurrentIndex(toBrowserCodeWidget::BodyTab);
+    else if (browser->objectType() == "PACKAGE BODY")
+        m_browsersMap[ix]->setCurrentIndex(toBrowserCodeWidget::BodyTab);
     else if (browser->objectType() == "TYPE")
         m_browsersMap[ix]->setCurrentIndex(toBrowserCodeWidget::SpecTab);
     else if (browser->objectType() == "PROCEDURE"

@@ -273,6 +273,7 @@ QVariant toCodeModel::data(const QModelIndex &index, int role) const
     if (role == Qt::DecorationRole)
     {
         if (item->type() == "PACKAGE"
+                || item->type() == "PACKAGE BODY"
                 || item->type() == "SPEC"
                 || item->type() == "BODY"
                 || item == packageItem)
@@ -495,7 +496,7 @@ void toCodeModel::addChildContent(const QModelIndex & index)
 
             new toCodeModelItem(item, ctype, ctype, cstatus);
             // "inherit" child status for parent if it's required
-            if ((ctype == "SPEC" || ctype == "BODY")
+            if ((ctype == "SPEC" || ctype == "BODY" || ctype == "PACKAGE" || ctype == "PACKAGE BODY")
                     && cstatus != "VALID")
             {
                 item->setStatus(cstatus);
