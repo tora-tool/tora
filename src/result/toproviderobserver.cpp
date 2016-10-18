@@ -135,4 +135,8 @@ void toEventQueryObserverObject::eqError(toEventQuery *query, const toConnection
     Q_ASSERT_X(false, qPrintable(__QHERE__), "unknown data source");
 }
 
+void toEventQueryObserverObject::connectionChanged(toConnection &connection)
+{
+    m_observer.observeConnectionChanged(connection);
+}
 
