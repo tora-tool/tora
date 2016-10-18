@@ -93,12 +93,17 @@ toToolWidget::toToolWidget(toTool &tool, const QString &ctx, QWidget *parent, to
         {
             toToolWidget *tool = toToolWidget::currentTool(parent);
             if (tool)
-                connect(tool, SIGNAL(connectionChange()), this, SLOT(parentConnection()));
+                connect(tool, SIGNAL(connectionChange(toConnection&)), this, SLOT(parentConnection(toConnection&)));
         }
         catch (std::exception const &e)
         {
             TLOG(1, toDecorator, __HERE__) << "       Ignored exception:" << std::endl
                                            << e.what() << std::endl;
+        }
+        catch (QString const &s)
+        {
+            TLOG(1, toDecorator, __HERE__) << "       Ignored exception:" << std::endl
+                                           << s << std::endl;
         }
         catch (...)
         {
@@ -107,11 +112,11 @@ toToolWidget::toToolWidget(toTool &tool, const QString &ctx, QWidget *parent, to
     }
 }
 
-void toToolWidget::parentConnection(void)
+void toToolWidget::parentConnection(toConnection &connection)
 {
     try
     {
-        setConnection(toConnection::currentConnection(parentWidget()));
+        setConnection(connection);
     }
     TOCATCH
 }
@@ -154,6 +159,7 @@ void toToolWidget::setConnection(toConnection &conn)
         emit toolCaptionChanged();
     }
     emit connectionChange();
+    emit connectionChange(conn);
     toGlobalEventSingle::Instance().setNeedCommit(this, this->hasTransaction());
 }
 

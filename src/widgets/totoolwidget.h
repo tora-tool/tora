@@ -46,6 +46,7 @@
 #include <QWidget>
 
 class toTool;
+class toConnection;
 
 /** Simple baseclass for widgets defining the main tool widget. It is in
  * no way mandatory and all it does is register the widget in the connetion.
@@ -70,6 +71,7 @@ class toToolWidget : public QWidget
         /** Emitted when the connection is changed.
          */
         void connectionChange(void);
+        void connectionChange(toConnection&);
 
         /** Emmited when tool window title is changed
          */
@@ -169,7 +171,7 @@ class toToolWidget : public QWidget
         void setCaption(QString const& caption);
 
     private slots:
-        void parentConnection(void);
+        void parentConnection(toConnection&);
         virtual void slotWindowActivated(toToolWidget*) = 0;
         void toolActivated(toToolWidget*);
     private:
