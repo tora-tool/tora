@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOTOOL_H
-#define TOTOOL_H
+#pragma once
 
 #include "core/tora_export.h"
 
@@ -228,173 +227,6 @@ class toTool : public QObject
         QAction *toolAction;     // For inserting into menus and toolbars
 };
 
-#if 0
-/** This class is used to hold connections for @ref toResult classes.
- * Must be multiply inherited by a widget otherwise it will go kaboom.
- * It will dynamic cast itself to a QWidget from time to time so if that
- * doesn't resolve correctly it will not work.
- */
-class toConnectionWidget
-{
-    public:
-        /** Constructor with the connection it should be set to initially.
-         */
-        toConnectionWidget(toConnection &conn, QWidget *widget);
-        /** Constructor without a connection. Will inherit the connection from a parent connection widget.
-         * NOTE: not used yet
-         */
-        toConnectionWidget(QWidget *widget);
-        /** Destructor.
-         */
-        virtual ~toConnectionWidget();
-        /** Change connection of the widget.
-         */
-        virtual void setConnection(toConnection &conn);
-        /** Get the connection it is pointed to.
-         */
-        virtual toConnection& connection();
-        virtual const toConnection& connection() const;
-    private:
-        toConnection *Connection;
-        QWidget *Widget;
-};
-
-/** Simple baseclass for widgets defining the main tool widget. It is in
- * no way mandatory and all it does is register the widget in the connetion.
- *
- * Tools are common QWidget based objects. The main window - the MDI area -
- * requires them wrapped as QMdiSubWindows. So the tool widget is set as widget()
- * in the toToolWidget constructor.
- *
- * \note: Note that all access to tool widget is done via QMdiSubWindow::widget() in
- * the code. See all available tools' windowActivated() slots for examples.
- *
- * \warning Remember that windowActivated() slot called by toMainWidget()->workspace(),
- * SIGNAL(subWindowActivated(QMdiSubWindow *) has to handle "0" as input parameter
- * so an appropriate test is mandatory.
- */
-class toToolWidget : public QWidget
-    , public toHelpContext
-    , public toConnectionWidget
-{
-        Q_OBJECT;
-    signals:
-        /** Emitted when the connection is changed.
-         */
-        void connectionChange(void);
-
-        /** Emmited when tool window title is changed
-         */
-        void toolCaptionChanged();
-
-    public:
-        /** Create widget and its QMdiSubWindow.
-         * @param ctx Help context for this tool.
-         * @param parent Parent widget.
-         * @param conn Connection of widget.
-         * @param name Name of widget.
-         */
-        toToolWidget(toTool &tool, const QString &ctx, QWidget *parent, toConnection &conn, const char *name = NULL);
-
-        ~toToolWidget();
-
-        /** Get the current connection.
-         * @return Reference to connection.
-         */
-        toConnection &connection()
-        {
-            return toConnectionWidget::connection();
-        }
-
-        virtual QString schema() const
-        {
-        	return "";
-        }
-
-        /** Return the schema name most closely associated with a widget.
-         *   Subclass of toToolWidget has to override schema() method
-         * @return QString schema name closest to the current.
-         */
-        static QString currentSchema(QWidget *cur);
-
-        /** Change connection of tool.
-         */
-        void setConnection(toConnection &conn);
-
-        virtual bool hasTransaction() const
-        {
-            return false; // by default tool does not support transactions
-        }
-
-        /** Get the tool for this tool widget.
-         * @return Reference to a tool object.
-         */
-        toTool& tool(void)
-        {
-            return Tool;
-        }
-
-        /** Check if this tool can handle a specific connection.
-         * @param provider Name of connection.
-         * @return True if connection is handled.
-         */
-        virtual bool canHandle(const toConnection &conn)
-        {
-            return Tool.canHandle(conn);
-        }
-
-        void commitChanges();
-        void rollbackChanges();
-
-        /** Get timer of tool. Used by some results to get update time.
-         * @return Pointer to a timer object.
-         */
-        toTimer *timer(void);
-
-        QAction *activationAction();
-
-#ifdef TORA3_SESSION
-        /** Export data to a map.
-         * @param data A map that can be used to recreate the data of a chart.
-         * @param prefix Prefix to add to the map.
-         */
-        virtual void exportData(std::map<QString, QString> &data, const QString &prefix);
-        /** Import data
-         * @param data Data to read from a map.
-         * @param prefix Prefix to read data from.
-         */
-        virtual void importData(std::map<QString, QString> &data, const QString &prefix);
-#endif
-
-#ifdef QT_DEBUG
-        /* Inherited from QWidget - for debuging purposes only - buggy MDI */
-        virtual void focusInEvent(QFocusEvent *);
-        virtual void enterEvent(QEvent *);
-        virtual void paintEvent(QPaintEvent *);
-        virtual void setVisible(bool visible);
-#endif
-        /** Return the tool widget most closely associated with a widget.
-        * @return Pointer to tool widget.
-        */
-        static toToolWidget* currentTool(QObject *widget);
-
-    protected:
-        /* Set or change title of a tool window.
-         * @param caption Caption to set to the tool.
-         */
-        void setCaption(QString const& caption);
-
-    private slots:
-        void parentConnection(void);
-        virtual void slotWindowActivated(toToolWidget*) = 0;
-        void toolActivated(toToolWidget*);
-    private:
-        toTimer *Timer;
-        toTool &Tool;
-        QAction *Action;
-};
-#endif
-
 /*
  * Get access to the map of tools. Don't modify it. Observe that the index string is not
  * the name of the tool but an internal key used to get tools sorted in the correct
@@ -414,5 +246,3 @@ class toToolsRegistry: public QMap<QString, toTool *>
 };
 
 typedef Loki::SingletonHolder<toToolsRegistry> ToolsRegistrySing;
-
-#endif
