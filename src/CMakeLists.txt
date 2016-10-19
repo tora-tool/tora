@@ -199,6 +199,7 @@ SET(TORA_MOC_CLASSES
   core/todatabaseconfig.h
   tools/todescribe.h
   widgets/todockbar.h
+  widgets/totabledetailview.h
   core/toextract.h
   core/todocklet.h
   core/toeditablemenu.h
@@ -485,6 +486,7 @@ SET(TORA_SOURCES
   main/toconnectionimport.cpp
   widgets/toconnectionwidget.cpp
   widgets/todockbar.cpp
+  widgets/totabledetailview.cpp
   widgets/todatabasesetting.cpp
   widgets/toglobalsetting.cpp
   widgets/tohelpsetup.cpp
