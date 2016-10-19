@@ -79,7 +79,9 @@ namespace ResutLock
 /**
  * A result table displaying information about locks in a hierarchy
  */
-class toResultLockNew: public QWidget, public toResult
+class toResultLockNew
+        : public ResutLock::MVC
+        , public toResult
 {
         Q_OBJECT
 
@@ -95,5 +97,4 @@ class toResultLockNew: public QWidget, public toResult
         bool canHandle(const toConnection &conn) override;
 
     private:
-        ResutLock::MVC *mvc;
 };

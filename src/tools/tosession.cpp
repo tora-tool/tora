@@ -604,7 +604,7 @@ toSession::toSession(QWidget *main, toConnection &connection)
         ResultTab->addTab(PendingLocks, tr("Pending Locks"));
 
         PendingLocksNew = new toResultLockNew(ResultTab);
-        ResultTab->addTab(PendingLocksNew, tr("Pending Locks New"));
+        ResultTab->addTab(PendingLocksNew->view(), tr("Pending Locks New"));
 
         LockedObjects = new toResultTableView(false, false, ResultTab);
         ResultTab->addTab(LockedObjects, tr("Locked Objects"));
@@ -934,7 +934,7 @@ void toSession::slotChangeTab(int index)
             PendingLocks->clearParams();
             PendingLocks->refreshWithParams(toQueryParams() << connectionId);
         }
-        else if (CurrentTab == PendingLocksNew)
+        else if (CurrentTab == PendingLocksNew->view())
         {
             PendingLocksNew->clearParams();
             PendingLocksNew->refreshWithParams(toQueryParams() << connectionId);
