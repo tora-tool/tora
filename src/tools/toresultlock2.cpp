@@ -50,17 +50,17 @@ bool toResultLockNew::canHandle(const toConnection &conn)
 }
 
 toResultLockNew::toResultLockNew(QWidget *parent, const char *name)
-    : QWidget(parent)
+    : ResutLock::MVC(parent)
 {
-    if (name)
-        QWidget::setObjectName(name);
-    QVBoxLayout *vbox = new QVBoxLayout;
-    vbox->setSpacing(0);
-    vbox->setContentsMargins(0, 0, 0, 0);
-    QWidget::setLayout(vbox);
+//    if (name)
+//        QWidget::setObjectName(name);
+//    QVBoxLayout *vbox = new QVBoxLayout;
+//    vbox->setSpacing(0);
+//    vbox->setContentsMargins(0, 0, 0, 0);
+//    QWidget::setLayout(vbox);
 
-    mvc = new ResutLock::MVC(this);
-    QWidget::layout()->addWidget(mvc->widget());
+//    mvc = new ResutLock::MVC(this);
+//    QWidget::layout()->addWidget(mvc->widget());
 
 //    setAllColumnsShowFocus(true);
 //    setSorting( -1);
@@ -82,8 +82,6 @@ toResultLockNew::toResultLockNew(QWidget *parent, const char *name)
 
 toResultLockNew::~toResultLockNew()
 {
-    if (Query)
-        delete Query;
 }
 
 static toSQL SQLBlockingLock("toResultLockNew:BlockingLocks",
@@ -224,13 +222,13 @@ void toResultLockNew::query(const QString &sql, const toQueryParams &param)
     {
         if (!param.isEmpty())
         {
-            Query = new toEventQuery(mvc, connection(), toSQL::string(SQLLock, connection()), param, toEventQuery::READ_ALL);
+            Query = new toEventQuery(this, connection(), toSQL::string(SQLLock, connection()), param, toEventQuery::READ_ALL);
         }
         else
         {
-            Query = new toEventQuery(mvc, connection(), toSQL::string(SQLBlockingLock, connection()), toQueryParams(), toEventQuery::READ_ALL);
+            Query = new toEventQuery(this, connection(), toSQL::string(SQLBlockingLock, connection()), toQueryParams(), toEventQuery::READ_ALL);
         }
-        mvc->setQuery(Query);
+        ResutLock::MVC::setQuery(Query);
     }
     TOCATCH
 } // query
