@@ -402,7 +402,7 @@ IF(TORA_DEBUG AND TEST_APP10)
 ##QT5_ADD_RESOURCES(TEST10_RC_SOURCES tests/test10.qrc)
 ADD_EXECUTABLE("test10"
   tests/test10.cpp
-  widgets/tocodeview.cpp
+  widgets/totabledetailview.cpp
 ##  ${TEST10_MOC_SOURCES}
 ##  ${TEST10_UI_SOURCES}
 ##  ${TEST10_RC_SOURCES}

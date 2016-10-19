@@ -233,7 +233,8 @@ SET(TORA_MOC_CLASSES
   main/toconnectionimport.h
   tools/tolinechart.h
   tools/topiechart.h
-  widgets/topushbutton.h     
+  widgets/toplaintextview.h
+  widgets/topushbutton.h
   widgets/torefreshcombo.h
   tools/toresultbar.h
   tools/toresultcode.h
@@ -494,7 +495,8 @@ SET(TORA_SOURCES
   main/tonewconnection.cpp
   tools/toparamget.cpp
   tools/topiechart.cpp
-  main/topreferences.cpp	
+  main/topreferences.cpp
+  widgets/toplaintextview.cpp
   widgets/topushbutton.cpp
   widgets/torefreshcombo.cpp
   tools/toresultbar.cpp
