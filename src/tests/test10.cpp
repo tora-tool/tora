@@ -41,6 +41,7 @@
 
 #include "widgets/totabledetailview.h"
 #include "widgets/toplaintextview.h"
+#include "widgets/tosqltextview.h"
 
 int main(int argc, char **argv)
 {
@@ -49,11 +50,13 @@ int main(int argc, char **argv)
     QTableView *table = new QTableView();
     toTableDetailView *selectionView = new toTableDetailView();
     toPlainTextView *plaintextView = new toPlainTextView();
+    toSqlTextView *sqltextVew = new toSqlTextView();
 
     QSplitter splitter;
     splitter.addWidget( table );
     splitter.addWidget( selectionView );
     splitter.addWidget( plaintextView );
+    splitter.addWidget( sqltextVew );
 
     QStandardItemModel model( 5, 2 );
     for( int r=0; r<15; r++ )
@@ -67,6 +70,7 @@ int main(int argc, char **argv)
     table->setModel( &model );
     selectionView->setModel( &model );
     plaintextView->setModel ( &model );
+    sqltextVew->setModel ( &model );
 
     selectionView->setSelectionModel( table->selectionModel() );
 
