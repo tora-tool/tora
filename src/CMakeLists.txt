@@ -349,6 +349,7 @@ SET(TORA_MOC_CLASSES
   widgets/toresultschema.h
   widgets/tosearchreplace.h
   widgets/tosplash.h
+  widgets/tosqltextview.h
   widgets/totabledetailview.h
   widgets/totableselect.h
   widgets/totabwidget.h
@@ -637,6 +638,7 @@ SET(TORA_SOURCES
   widgets/toresultschema.cpp
   widgets/tosearchreplace.cpp
   widgets/tosplash.cpp
+  widgets/tosqltextview.cpp
   widgets/totabledetailview.cpp
   widgets/totableselect.cpp
   widgets/totabwidget.cpp
