@@ -40,7 +40,8 @@
 #include <QtGui/QHideEvent>
 #include <QMessageBox>
 #include <QtCore/QList>
-#include "tobrowserbasewidget.h"
+
+#include "tools/tobrowserbasewidget.h"
 
 toDescribe::toDescribe(QWidget * parent)
     : QDialog(parent)
