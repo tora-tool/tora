@@ -87,67 +87,60 @@ SET(TORA_RCC_FILES tora.qrc icons.qrc)
 #                              User interface files                            #
 ################################################################################
 SET(TORA_UI_SRC
-  widgets/connectioncolorsdialogui.ui
-  widgets/toaboutui.ui
-  widgets/toaboutcopyingui.ui
-  widgets/todatabasesettingui.ui
-  tools/todescribeui.ui
-  widgets/toglobalsettingui.ui
-  widgets/tohelpaddfileui.ui
-  widgets/tohelpsetupui.ui
-  widgets/tohelpui.ui
-  tools/tolinechartsetupui.ui	
+  connection/toqmysqlsettingui.ui
+  connection/toqpsqlsettingui.ui
+
+  main/toconnectionimportui.ui
   main/tomessageui.ui
   main/tonewconnectionui.ui
   main/topreferencesui.ui
-  widgets/toresultcontentfilterui.ui
-  widgets/toresultlistformatui.ui
   main/tosyntaxsetupui.ui
-  widgets/tosessionsetupui.ui
-  widgets/toworksheetsetupui.ui
-  widgets/tosearchreplaceui.ui
-  main/toconnectionimportui.ui
-  widgets/totoolsettingui.ui
 
-  #obsolete tools/tobrowserconstraintui.ui
+  result/toresulttabledataui.ui
+
+  shortcuteditor/shortcuteditordialog.ui
+
   tools/tobrowserfilterui.ui
-  #obsolete tools/tobrowserindexui.ui
-  #obsolete tools/tobrowsertableui.ui
-
+  tools/todescribeui.ui
+  tools/todroptablespaceui.ui
+  tools/tolinechartsetupui.ui
+  tools/tooutputsettingui.ui
   tools/toparamgetui.ui
-
+  tools/torollbackdialogui.ui
+  tools/torollbacksettingui.ui
+  tools/toscriptschemawidgetui.ui
+  tools/toscriptui.ui
+  tools/tosecurityquotaui.ui
+  tools/tosecurityroleui.ui
+  tools/tosecurityuserui.ui
+  tools/tosessiondisconnectdlgui.ui
+  tools/tosgatracesettingui.ui
   tools/tostoragedatafileui.ui
   tools/tostoragedefinitionui.ui
   tools/tostoragedialogui.ui
   tools/tostorageprefsui.ui
   tools/tostoragetablespaceui.ui
-  tools/todroptablespaceui.ui
-
-  tools/tosecurityquotaui.ui
-  tools/tosecurityroleui.ui
-  tools/tosecurityuserui.ui
-
-  tools/toscriptui.ui
-  tools/toscriptschemawidgetui.ui
-
-  tools/torollbackdialogui.ui
-  tools/torollbacksettingui.ui
-
-  tools/tosessiondisconnectdlgui.ui
-
-  tools/tosgatracesettingui.ui
-
   tools/totuningoverviewui.ui
   tools/totuningsettingui.ui
 
-  tools/tooutputsettingui.ui
+  widgets/connectioncolorsdialogui.ui
+  widgets/toaboutcopyingui.ui
+  widgets/toaboutui.ui
+  widgets/todatabasesettingui.ui
+  widgets/toglobalsettingui.ui
+  widgets/tohelpaddfileui.ui
+  widgets/tohelpsetupui.ui
+  widgets/tohelpui.ui
+  widgets/toresultcontentfilterui.ui
+  widgets/toresultlistformatui.ui
+  widgets/tosearchreplaceui.ui
+  widgets/tosessionsetupui.ui
+  widgets/totoolsettingui.ui
+  widgets/toworksheetsetupui.ui
 
-  shortcuteditor/shortcuteditordialog.ui
-  
-  connection/toqmysqlsettingui.ui  
-  connection/toqpsqlsettingui.ui 
-  
-  result/toresulttabledataui.ui
+  #obsolete tools/tobrowserconstraintui.ui
+  #obsolete tools/tobrowserindexui.ui
+  #obsolete tools/tobrowsertableui.ui
 
   #     todebugchangeui.ui
   #     todebugwatch.ui
@@ -179,13 +172,8 @@ ENDIF (POPPLER_QT4_FOUND)
 # MOC classses
 SET(TORA_MOC_CLASSES
   # Tora core sorces
-  #obsolete core/todatatype.h
-  #obsolete core/torunnable.h
-  #obsolete core/totaskrunner.h
-  #obsolete core/tothread.h
-  #obsolete core/tovisualize.h
-  #core/toconfiguration.h
-  #core/toconfigurationpriv.h
+  connection/toqmysqlsetting.h
+  connection/toqpsqlsetting.h
   core/tobackground.h
   core/tocache.h
   core/tochangeconnection.h
@@ -197,199 +185,188 @@ SET(TORA_MOC_CLASSES
   core/toconnectionregistry.h
   core/tocontextmenu.h
   core/todatabaseconfig.h
-  tools/todescribe.h
-  widgets/todockbar.h
-  widgets/totabledetailview.h
-  core/toextract.h
   core/todocklet.h
   core/toeditablemenu.h
   core/toeditmenu.h
   core/toeditorconfiguration.h
   core/toeventquery.h
   core/toeventqueryworker.h
-  core/toglobalevent.h
-  widgets/todatabasesetting.h
-  widgets/toglobalsetting.h  
+  core/toextract.h
   core/toglobalconfiguration.h
-  widgets/tohelp.h
-  widgets/tohelpsetup.h
+  core/toglobalevent.h
+  core/tohelpcontext.h
   core/tolistviewformatter.h
-  main/tomain.h
   core/tomainwindow.h
-  editor/tomemoeditor.h
-  main/tomessage.h
-  editor/tomodeleditor.h
-  main/tonewconnection.h  
-  tools/toparamget.h
-  main/topreferences.h
   core/toquery.h
   core/toqueryimpl.h
   core/toresult.h
-  widgets/toabout.h
-  widgets/toaboutcopying.h
-  widgets/tobackgroundlabel.h
-  tools/tobarchart.h
-  tools/tobrowserbasewidget.h # this one is used by widgets/todescribe.h (therefore is not in tools)
+  core/tosettingtab.h
+  core/tostyle.h
+  core/tosyntaxanalyzer.h
+  core/totextview.h
+  core/totool.h
+  core/toupdater.h
+  core/utils.h
+  docklets/toviewconnections.h
+  docklets/toviewdirectory.h
+  editor/tobaseeditor.h
+  editor/tocomplpopup.h
+  editor/todebugeditor.h
+  editor/todebugtext.h
+  editor/todifftext.h
+  editor/tohighlightededitor.h
+  editor/tomarkededitor.h
+  editor/tomemoeditor.h
+  editor/tomodeleditor.h
+  editor/toscintilla.h
+  editor/tosqltext.h
+  editor/tosyntaxanalyzermysql.h
+  editor/tosyntaxanalyzernl.h
+  editor/tosyntaxanalyzeroracle.h
+  editor/tosyntaxanalyzerpostgresql.h
+  editor/toworksheettext.h
+
   main/toconnectionimport.h
+  main/tomain.h
+  main/tomessage.h
+  main/tonewconnection.h
+  main/topreferences.h
+  main/tosyntaxsetup.h
+
+  parsing/tolexermysql.h
+  parsing/tolexeroracle.h
+  parsing/tolexeroracleapis.h
+  parsing/tolexerpostgresql.h
+  parsing/toscilexersql.h
+  parsing/tsqllexer.h
+
+  result/toproviderobserver.h
+  result/toresulttabledata.h
+  result/totablemodel.h
+  result/totableview.h
+  result/totreemodel.h
+  result/totreeview.h
+
+  shortcuteditor/shortcuteditordialog.h
+  shortcuteditor/shortcutmodel.h
+
+  templates/tosqledit.h
+  templates/totemplate.h
+
+  tools/toanalyze.h
+  tools/toawr.h
+  tools/tobackup.h
+  tools/tobackuptool.h
+  tools/tobarchart.h
+  tools/tobrowser.h
+  tools/tobrowseraccesswidget.h
+  tools/tobrowserbasewidget.h # this one is used by widgets/todescribe.h
+  tools/tobrowsercodewidget.h
+  tools/tobrowserdblinkswidget.h
+  tools/tobrowserdirectorieswidget.h
+  tools/tobrowserindexwidget.h
+  tools/tobrowserschemawidget.h
+  tools/tobrowsersequencewidget.h
+  tools/tobrowsersynonymwidget.h
+  tools/tobrowsertablewidget.h
+  tools/tobrowsertriggerwidget.h
+  tools/tobrowserviewwidget.h
+  tools/tocurrent.h
+  tools/todescribe.h
+  tools/tofilesize.h
+  tools/toinvalid.h
   tools/tolinechart.h
+  tools/tooutput.h
+  tools/toparamget.h
   tools/topiechart.h
-  widgets/toplaintextview.h
-  widgets/topushbutton.h
-  widgets/torefreshcombo.h
+  tools/toplsqleditor.h
+  tools/toplsqltext.h
+  tools/toprofiler.h
   tools/toresultbar.h
   tools/toresultcode.h
   tools/toresultcols.h
-  widgets/toresultcolscomment.h
-  widgets/toresultcombo.h
   tools/toresultdatasingle.h
   tools/toresultdepend.h
   tools/toresultdrawing.h
   tools/toresultextent.h
   tools/toresultfield.h
   tools/toresultgrants.h
-  widgets/toresultitem.h
   tools/toresultline.h
-  widgets/toresultlistformat.h
   tools/toresultlock.h
   tools/toresultlock2.h
   tools/toresultlong.h
-  widgets/toresultmodel.h
-  widgets/toresultmodeledit.h
   tools/toresultparam.h
+  tools/toresultpie.h
   tools/toresultplan.h
-  widgets/toresultschema.h
   tools/toresultstats.h
-  tools/toresulttableview.h  
-  tools/toresulttableviewedit.h  
-  tools/toresultview.h
-  widgets/tosplash.h
-  main/tosyntaxsetup.h
-  widgets/totableselect.h  
-  widgets/totabwidget.h
-  widgets/totoolwidget.h
-  core/totextview.h
-  widgets/totreewidget.h
-  widgets/toworkingwidget.h
-  widgets/toworkspace.h
-  core/toupdater.h
-  widgets/ExtendedTabWidget.h
-  
-  core/tohelpcontext.h
-  core/tosettingtab.h
-  widgets/toconnectionwidget.h
-  
-  core/tosyntaxanalyzer.h
-  core/totool.h
-  core/utils.h
-  editor/tosyntaxanalyzermysql.h
-  editor/tosyntaxanalyzernl.h
-  editor/tosyntaxanalyzeroracle.h
-  editor/tosyntaxanalyzerpostgresql.h
-  parsing/tolexeroracleapis.h 
-  parsing/tsqllexer.h
-  
-  editor/tobaseeditor.h
-  editor/tocomplpopup.h
-  editor/tomarkededitor.h
-  editor/toscintilla.h
-  editor/tohighlightededitor.h
-  editor/tosqltext.h
-  editor/todifftext.h
-  editor/toworksheettext.h
-  editor/todebugtext.h
-  editor/todebugeditor.h
-  widgets/tosearchreplace.h
-  core/tostyle.h
-  parsing/tolexermysql.h
-  parsing/tolexeroracle.h
-  parsing/tolexerpostgresql.h
-  parsing/toscilexersql.h
-
-  result/toproviderobserver.h
-  result/totablemodel.h
-  result/totableview.h
-  result/totreemodel.h
-  result/totreeview.h
-  result/toresulttabledata.h
-
-  ts_log/toostream.h
-
-  connection/toqmysqlsetting.h
-  connection/toqpsqlsetting.h
-
-  shortcuteditor/shortcuteditordialog.h
-  shortcuteditor/shortcutmodel.h
-
-  docklets/toviewconnections.h
-  docklets/toviewdirectory.h
-
-  tools/tooutput.h
-  
-  tools/toworksheet.h
-  tools/toworksheetstatistic.h
-  tools/toworksheeteditor.h
-  
-  tools/tosgatrace.h
-  tools/tosgastatement.h
-
-  #obsolete tools/tobrowserconstraint.h
-  tools/tobrowser.h
-  #obsolete tools/tobrowserindex.h
-  #obsolete tools/tobrowsertable.h
-  tools/tobrowseraccesswidget.h
-  tools/tobrowsertablewidget.h
-  tools/tobrowserviewwidget.h
-  tools/tobrowserindexwidget.h
-  tools/tobrowserschemawidget.h
-  tools/tobrowsersequencewidget.h
-  tools/tobrowsersynonymwidget.h
-  tools/tobrowsercodewidget.h
-  tools/tobrowsertriggerwidget.h
-  tools/tobrowserdblinkswidget.h
-  tools/tobrowserdirectorieswidget.h
-
-  tools/tostorage.h
   tools/toresultstorage.h
-  tools/tofilesize.h
-  tools/toanalyze.h
-
-  tools/toawr.h
-
-  tools/tosession.h  
-  tools/towaitevents.h
-
-  tools/toinvalid.h
-  tools/tobackup.h
-  tools/tobackuptool.h
-  tools/tounittest.h
-
-  tools/tosecurity.h
-  tools/tosecuritytreemodel.h
-  tools/tosecuritytreeitem.h
-
-  tools/tocurrent.h 
-
+  tools/toresulttableview.h
+  tools/toresulttableviewedit.h
+  tools/toresultview.h
+  tools/torollback.h
   tools/toscriptschemawidget.h
   tools/toscripttreeitem.h
   tools/toscripttreemodel.h
-
-  tools/toprofiler.h
-
+  tools/tosecurity.h
+  tools/tosecuritytreeitem.h
+  tools/tosecuritytreemodel.h
+  tools/tosession.h
+  tools/tosgastatement.h
+  tools/tosgatrace.h
+  tools/tostorage.h
   tools/totemporary.h
-
-  tools/torollback.h
-
-  tools/toplsqltext.h
-  tools/toplsqleditor.h
-
   tools/totuning.h
   tools/totuningcharts.h
   tools/totuningfileio.h
   tools/totuningoverview.h
-  tools/toresultpie.h
+  tools/tounittest.h
+  tools/towaitevents.h
+  tools/toworksheet.h
+  tools/toworksheeteditor.h
+  tools/toworksheetstatistic.h
 
-  templates/tosqledit.h  
-  templates/totemplate.h
+  ts_log/toostream.h
+
+  widgets/ExtendedTabWidget.h
+  widgets/toabout.h
+  widgets/toaboutcopying.h
+  widgets/tobackgroundlabel.h
+  widgets/toconnectionwidget.h
+  widgets/todatabasesetting.h
+  widgets/todockbar.h
+  widgets/toglobalsetting.h
+  widgets/tohelp.h
+  widgets/tohelpsetup.h
+  widgets/toplaintextview.h
+  widgets/topushbutton.h
+  widgets/torefreshcombo.h
+  widgets/toresultcolscomment.h
+  widgets/toresultcombo.h
+  widgets/toresultitem.h
+  widgets/toresultlistformat.h
+  widgets/toresultmodel.h
+  widgets/toresultmodeledit.h
+  widgets/toresultschema.h
+  widgets/tosearchreplace.h
+  widgets/tosplash.h
+  widgets/totabledetailview.h
+  widgets/totableselect.h
+  widgets/totabwidget.h
+  widgets/totoolwidget.h
+  widgets/totreewidget.h
+  widgets/toworkingwidget.h
+  widgets/toworkspace.h
+
+  #obsolete core/todatatype.h
+  #obsolete core/torunnable.h
+  #obsolete core/totaskrunner.h
+  #obsolete core/tothread.h
+  #obsolete core/tovisualize.h
+  #core/toconfiguration.h
+  #core/toconfigurationpriv.h  
+  #obsolete tools/tobrowserconstraint.h
+  #obsolete tools/tobrowserindex.h
+  #obsolete tools/tobrowsertable.h
 
   #     toproject.h
   
@@ -429,22 +406,32 @@ ENDIF (USE_EXPERIMENTAL)
 ################################################################################
 # sources
 SET(TORA_SOURCES
-  #obsolete core/todatatype.cpp
-  #obsolete core/totaskrunner.cpp
-  #obsolete core/tovisualize.cpp
+  connection/tooracleextract.cpp
+  connection/tooraclesql.cpp
+  connection/toqmysqlconnection.cpp
+  connection/toqmysqlprovider.cpp
+  connection/toqmysqlquery.cpp
+  connection/toqmysqlsetting.cpp
+  connection/toqmysqltraits.cpp
+  connection/toqodbcprovider.cpp
+  connection/toqpsqlconnection.cpp
+  connection/toqpsqlprovider.cpp
+  connection/toqpsqlquery.cpp
+  connection/toqpsqlsetting.cpp
+  connection/toqpsqltraits.cpp
+  connection/toqsqlconnection.cpp
+  connection/toqsqlfind.cpp
+  connection/toqsqlprovider.cpp
+  connection/toqsqlquery.cpp
+  connection/toteradatafind.cpp
+
+  core/persistenttrie.cpp
   core/tobackground.cpp
   core/tocache.cpp
-  core/tochangeconnection.cpp 
+  core/tochangeconnection.cpp
   core/tocodemodel.cpp
   core/toconfenum.cpp
-  widgets/toabout.cpp
-  widgets/toaboutcopying.cpp
-  widgets/tobackgroundlabel.cpp     
-  tools/tobarchart.cpp
-  tools/tobrowserbasewidget.cpp # this one is used by widgets/todescribe.h (therefore is not in tools)
-  #core/toconfiguration.cpp
   core/toconfiguration.cpp
-  #core/toconfigurationpriv.cpp
   core/toconnection.cpp
   core/toconnectionmodel.cpp
   core/toconnectionoptions.cpp
@@ -454,7 +441,6 @@ SET(TORA_SOURCES
   core/toconnectionsubloan.cpp
   core/tocontextmenu.cpp
   core/todatabaseconfig.cpp
-  tools/todescribe.cpp
   core/todocklet.cpp
   core/toeditablemenu.cpp
   core/toeditmenu.cpp
@@ -462,9 +448,9 @@ SET(TORA_SOURCES
   core/toeditwidget.cpp
   core/toeventquery.cpp
   core/toeventqueryworker.cpp
-  core/toextract.cpp  
-  core/toglobalevent.cpp
+  core/toextract.cpp
   core/toglobalconfiguration.cpp
+  core/toglobalevent.cpp
   core/tohelpcontext.cpp
   core/tohtml.cpp
   core/tolistviewformatter.cpp
@@ -475,125 +461,50 @@ SET(TORA_SOURCES
   core/tolistviewformattertext.cpp
   core/tolistviewformatterxlsx.cpp
   core/tomainwindow.cpp
-  main/tomessage.cpp
   core/toquery.cpp
   core/toqvalue.cpp
   core/toresult.cpp
   core/tosettingtab.cpp
   core/tosql.cpp
+  core/tostyle.cpp
+  core/tosyntaxanalyzer.cpp
   core/totextview.cpp
   core/totool.cpp
-  main/tomain.cpp
-  main/toconnectionimport.cpp
-  widgets/toconnectionwidget.cpp
-  widgets/todockbar.cpp
-  widgets/totabledetailview.cpp
-  widgets/todatabasesetting.cpp
-  widgets/toglobalsetting.cpp
-  widgets/tohelpsetup.cpp
-  tools/tolinechart.cpp
-  main/tonewconnection.cpp
-  tools/toparamget.cpp
-  tools/topiechart.cpp
-  main/topreferences.cpp
-  widgets/toplaintextview.cpp
-  widgets/topushbutton.cpp
-  widgets/torefreshcombo.cpp
-  tools/toresultbar.cpp
-  tools/toresultcode.cpp
-  tools/toresultcols.cpp
-  widgets/toresultcolscomment.cpp
-  widgets/toresultcombo.cpp
-  tools/toresultdatasingle.cpp
-  tools/toresultdepend.cpp
-  tools/toresultdrawing.cpp
-  tools/toresultextent.cpp
-  tools/toresultfield.cpp
-  tools/toresultgrants.cpp
-  widgets/toresultitem.cpp
-  tools/toresultline.cpp
-  widgets/toresultlistformat.cpp
-  tools/toresultlock.cpp
-  tools/toresultlock2.cpp
-  tools/toresultlong.cpp
-  widgets/toresultmodel.cpp
-  widgets/toresultmodeledit.cpp
-  tools/toresultparam.cpp
-  tools/toresultplan.cpp
-  widgets/toresultschema.cpp
-  tools/toresultstats.cpp
-  tools/toresulttableview.cpp
-  tools/toresulttableviewedit.cpp
-  tools/toresultview.cpp
-  widgets/tosplash.cpp
-  main/tosyntaxsetup.cpp
-  widgets/totableselect.cpp  
-  widgets/totabwidget.cpp
-  widgets/totoolwidget.cpp
-  widgets/totreewidget.cpp
-  widgets/toworkingwidget.cpp
-  widgets/toworkspace.cpp
   core/toupdater.cpp
-  widgets/ExtendedTabWidget.cpp
-  
   core/utils.cpp
   core/utils_part.cpp
 
-  editor/tomemoeditor.cpp
-  editor/tomodeleditor.cpp  
+  docklets/toviewconnections.cpp
+  docklets/toviewdirectory.cpp
+
   editor/tobaseeditor.cpp
   editor/tocomplpopup.cpp
-  editor/tomarkededitor.cpp
-  editor/toscintilla.cpp
-  editor/tohighlightededitor.cpp
-  editor/tosqltext.cpp
-  editor/todifftext.cpp
-  editor/toworksheettext.cpp
-  editor/todebugtext.cpp
   editor/todebugeditor.cpp
-  widgets/tosearchreplace.cpp
-  core/tostyle.cpp
-  parsing/tolexermysql.cpp
-  parsing/tolexerpostgresql.cpp
-  parsing/tolexeroracle.cpp
-  parsing/toscilexersql.cpp
+  editor/todebugtext.cpp
+  editor/todifftext.cpp
+  editor/tohighlightededitor.cpp
+  editor/tomarkededitor.cpp
+  editor/tomemoeditor.cpp
+  editor/tomodeleditor.cpp
+  editor/toscintilla.cpp
+  editor/tosqltext.cpp
+  editor/tosyntaxanalyzermysql.cpp
+  editor/tosyntaxanalyzernl.cpp
+  editor/tosyntaxanalyzeroracle.cpp
+  editor/tosyntaxanalyzerpostgresql.cpp
+  editor/toworksheettext.cpp
 
-  result/toproviderobserver.cpp
-  result/totablemodel.cpp
-  result/totableview.cpp
-  result/totreemodel.cpp
-  result/totreeview.cpp
-  result/toresulttabledata.cpp
+  main/toconnectionimport.cpp
+  main/tomain.cpp
+  main/tomessage.cpp
+  main/tonewconnection.cpp
+  main/topreferences.cpp
+  main/tosyntaxsetup.cpp
 
   migratetool/sqldeveloper.cpp
   migratetool/squirrelsql.cpp
   migratetool/tora3.cpp
 
-  connection/tooraclesql.cpp
-  connection/tooracleextract.cpp
-  connection/toteradatafind.cpp
-  connection/toqsqlfind.cpp
-  connection/toqsqlconnection.cpp
-  connection/toqsqlprovider.cpp
-  connection/toqmysqlprovider.cpp
-  connection/toqmysqlsetting.cpp
-  connection/toqmysqltraits.cpp
-  connection/toqpsqltraits.cpp
-  connection/toqmysqlconnection.cpp
-  connection/toqmysqlquery.cpp
-  connection/toqpsqlprovider.cpp
-  connection/toqpsqlconnection.cpp
-  connection/toqpsqlquery.cpp
-  connection/toqpsqlsetting.cpp
-  connection/toqodbcprovider.cpp
-  connection/toqsqlquery.cpp
-
-  core/tosyntaxanalyzer.cpp
-  editor/tosyntaxanalyzernl.cpp
-  editor/tosyntaxanalyzermysql.cpp
-  editor/tosyntaxanalyzeroracle.cpp
-  editor/tosyntaxanalyzerpostgresql.cpp
-  core/persistenttrie.cpp
   parsing/MySQLGuiLexer.cc
   parsing/MySQLLexer.cc
   parsing/OracleDML.cc
@@ -607,84 +518,142 @@ SET(TORA_SOURCES
   parsing/OracleDML_OracleDMLKeys.hpp
   parsing/PLSQLGuiLexer.cc
   parsing/PostgreSQLGuiLexer.cc
+  parsing/tolexermysql.cpp
+  parsing/tolexeroracle.cpp
   parsing/tolexeroracleapis.cpp
+  parsing/tolexerpostgresql.cpp
+  parsing/toscilexersql.cpp
   parsing/tsqllexermysql.cc
   parsing/tsqllexermysql2.cc
   parsing/tsqllexeroracle2.cc
-  parsing/tsqlparse.cpp  
+  parsing/tsqlparse.cpp
 
-  docklets/toviewconnections.cpp
-  docklets/toviewdirectory.cpp
+  result/toproviderobserver.cpp
+  result/toresulttabledata.cpp
+  result/totablemodel.cpp
+  result/totableview.cpp
+  result/totreemodel.cpp
+  result/totreeview.cpp
 
-  shortcuteditor/shortcutmodel.cpp
   shortcuteditor/shortcuteditordialog.cpp
-
-  widgets/tohelp.cpp  
-  tools/tooutput.cpp
-
-  tools/toworksheet.cpp
-  tools/toworksheeteditor.cpp
-  tools/toworksheetstatistic.cpp
-
-  tools/tosgatrace.cpp
-  tools/tosgastatement.cpp
-
-  #obsolete tools/tobrowserconstraint.cpp
-  tools/tobrowser.cpp
-  #obsolete tools/tobrowserindex.cpp
-  #obsolete tools/tobrowsertable.cpp
-  tools/tobrowseraccesswidget.cpp
-  tools/tobrowsertablewidget.cpp
-  tools/tobrowserviewwidget.cpp
-  tools/tobrowserindexwidget.cpp
-  tools/tobrowserschemawidget.cpp
-  tools/tobrowsersequencewidget.cpp
-  tools/tobrowsersynonymwidget.cpp
-  tools/tobrowsercodewidget.cpp
-  tools/tobrowsertriggerwidget.cpp
-  tools/tobrowserdblinkswidget.cpp
-  tools/tobrowserdirectorieswidget.cpp
-
-  tools/tostorage.cpp
-  tools/tostoragedefinition.cpp
-  tools/tofilesize.cpp
-  tools/toresultstorage.cpp
-  tools/toanalyze.cpp    
-  tools/toawr.cpp
-
-  tools/tosession.cpp
-  tools/towaitevents.cpp
-  tools/tocurrent.cpp
-  tools/toinvalid.cpp 
-  tools/tobackup.cpp
-  tools/tobackuptool.cpp
-  tools/tounittest.cpp
-  tools/tosecurity.cpp
-  tools/tosecuritytreemodel.cpp
-  tools/tosecuritytreeitem.cpp
-
-  tools/toscriptschemawidget.cpp
-  tools/toscripttreeitem.cpp
-  tools/toscripttreemodel.cpp
-
-  tools/toprofiler.cpp
-
-  tools/totemporary.cpp
-
-  tools/torollback.cpp
-
-  tools/toplsqleditor.cpp
-  tools/toplsqltext.cpp
-
-  tools/totuning.cpp
-  tools/totuningcharts.cpp
-  tools/totuningfileio.cpp
-  tools/totuningoverview.cpp
-  tools/toresultpie.cpp
+  shortcuteditor/shortcutmodel.cpp
 
   templates/tosqledit.cpp
   templates/totemplate.cpp
   templates/totemplateprovider.cpp
+
+  tools/toanalyze.cpp
+  tools/toawr.cpp
+  tools/tobackup.cpp
+  tools/tobackuptool.cpp
+  tools/tobarchart.cpp
+  tools/tobrowser.cpp
+  tools/tobrowseraccesswidget.cpp
+  tools/tobrowserbasewidget.cpp # this one is used by widgets/todescribe.h
+  tools/tobrowsercodewidget.cpp
+  tools/tobrowserdblinkswidget.cpp
+  tools/tobrowserdirectorieswidget.cpp
+  tools/tobrowserindexwidget.cpp
+  tools/tobrowserschemawidget.cpp
+  tools/tobrowsersequencewidget.cpp
+  tools/tobrowsersynonymwidget.cpp
+  tools/tobrowsertablewidget.cpp
+  tools/tobrowsertriggerwidget.cpp
+  tools/tobrowserviewwidget.cpp
+  tools/tocurrent.cpp
+  tools/todescribe.cpp
+  tools/tofilesize.cpp
+  tools/toinvalid.cpp
+  tools/tolinechart.cpp
+  tools/tooutput.cpp
+  tools/toparamget.cpp
+  tools/topiechart.cpp
+  tools/toplsqleditor.cpp
+  tools/toplsqltext.cpp
+  tools/toprofiler.cpp
+  tools/toresultbar.cpp
+  tools/toresultcode.cpp
+  tools/toresultcols.cpp
+  tools/toresultdatasingle.cpp
+  tools/toresultdepend.cpp
+  tools/toresultdrawing.cpp
+  tools/toresultextent.cpp
+  tools/toresultfield.cpp
+  tools/toresultgrants.cpp
+  tools/toresultline.cpp
+  tools/toresultlock.cpp
+  tools/toresultlock2.cpp
+  tools/toresultlong.cpp
+  tools/toresultparam.cpp
+  tools/toresultpie.cpp
+  tools/toresultplan.cpp
+  tools/toresultstats.cpp
+  tools/toresultstorage.cpp
+  tools/toresulttableview.cpp
+  tools/toresulttableviewedit.cpp
+  tools/toresultview.cpp
+  tools/torollback.cpp
+  tools/toscriptschemawidget.cpp
+  tools/toscripttreeitem.cpp
+  tools/toscripttreemodel.cpp
+  tools/tosecurity.cpp
+  tools/tosecuritytreeitem.cpp
+  tools/tosecuritytreemodel.cpp
+  tools/tosession.cpp
+  tools/tosgastatement.cpp
+  tools/tosgatrace.cpp
+  tools/tostorage.cpp
+  tools/tostoragedefinition.cpp
+  tools/totemporary.cpp
+  tools/totuning.cpp
+  tools/totuningcharts.cpp
+  tools/totuningfileio.cpp
+  tools/totuningoverview.cpp
+  tools/tounittest.cpp
+  tools/towaitevents.cpp
+  tools/toworksheet.cpp
+  tools/toworksheeteditor.cpp
+  tools/toworksheetstatistic.cpp
+
+  widgets/ExtendedTabWidget.cpp
+  widgets/toabout.cpp
+  widgets/toaboutcopying.cpp
+  widgets/tobackgroundlabel.cpp
+  widgets/toconnectionwidget.cpp
+  widgets/todatabasesetting.cpp
+  widgets/todockbar.cpp
+  widgets/toglobalsetting.cpp
+  widgets/tohelp.cpp
+  widgets/tohelpsetup.cpp
+  widgets/toplaintextview.cpp
+  widgets/topushbutton.cpp
+  widgets/torefreshcombo.cpp
+  widgets/toresultcolscomment.cpp
+  widgets/toresultcombo.cpp
+  widgets/toresultitem.cpp
+  widgets/toresultlistformat.cpp
+  widgets/toresultmodel.cpp
+  widgets/toresultmodeledit.cpp
+  widgets/toresultschema.cpp
+  widgets/tosearchreplace.cpp
+  widgets/tosplash.cpp
+  widgets/totabledetailview.cpp
+  widgets/totableselect.cpp
+  widgets/totabwidget.cpp
+  widgets/totoolwidget.cpp
+  widgets/totreewidget.cpp
+  widgets/toworkingwidget.cpp
+  widgets/toworkspace.cpp
+
+  #core/toconfiguration.cpp
+  #core/toconfigurationpriv.cpp
+  #obsolete core/todatatype.cpp
+  #obsolete core/totaskrunner.cpp
+  #obsolete core/tovisualize.cpp
+  #obsolete tools/tobrowserconstraint.cpp
+  #obsolete tools/tobrowserindex.cpp
+  #obsolete tools/tobrowsertable.cpp
+
   #     toproject.cpp
 
   #TODO tools/toalert.cpp
