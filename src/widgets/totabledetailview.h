@@ -35,6 +35,7 @@
 #pragma once
 
 #include <QAbstractItemView>
+#include <QLabel>
 
 class toTableDetailView : public QAbstractItemView
 {
