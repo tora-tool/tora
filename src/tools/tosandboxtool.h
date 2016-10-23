@@ -25,12 +25,10 @@ class toEventQuery;
 
 struct SandboxViewTraits : public MVCTraits
 {
-    enum
-    {
-        AlternatingRowColorsEnabled = true,
-        ShowRowNumber = NoRowNumber,
-        ColumnResize = RowColumResize
-    };
+    static const bool AlternatingRowColorsEnabled = true;
+    static const int  ShowRowNumber = NoRowNumber;
+    static const int  ColumnResize = RowColumResize;
+
     //typedef toComboBoxView    View;
     typedef toTreeViewPriv View;
 };

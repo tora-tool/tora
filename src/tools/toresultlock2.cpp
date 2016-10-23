@@ -212,11 +212,11 @@ void toResultLockNew::query(const QString &sql, const toQueryParams &param)
 {
     Q_UNUSED(sql);
 
-    if (!handled())
-        return ;
+    //if (!handled())
+    //    return ;
 
-    if (!setSqlAndParams(sql, param))
-        return ;
+    //if (!setSqlAndParams(sql, param))
+    //    return ;
 
     try
     {

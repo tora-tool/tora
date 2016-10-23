@@ -72,15 +72,12 @@ struct MVCTraits
         CustomColumnResize
     };
 
-    enum
-    {
-        SelectionBehavior = QAbstractItemView::SelectItems,
-        SelectionMode = QAbstractItemView::NoSelection,
-        AlternatingRowColorsEnabled = false,
-        ContextMenuPolicy = Qt::NoContextMenu,
-        ShowRowNumber = TableRowNumber,
-        ColumnResize = NoColumnResize
-    };
+    static const int SelectionBehavior = QAbstractItemView::SelectItems;
+    static const int SelectionMode = QAbstractItemView::NoSelection;
+    static const bool AlternatingRowColorsEnabled = false;
+    static const int ContextMenuPolicy = Qt::NoContextMenu;
+    static const int ShowRowNumber = TableRowNumber;
+    static const int ColumnResize = NoColumnResize;
 };
 
 template<
@@ -127,10 +124,48 @@ class TOMVC
         virtual void observeError(const toConnection::exception &);
         ///@}
 
+        /**
+         * toResult like interface
+         */
+        ///@{
+        /** Get the current connection from the closest tool.
+         * @return Reference to connection.
+         * NOTE: View must inherit from QWidget
+         */
+		toConnection& connection();
+
+        /** Set the SQL statement of this list
+         * @param sql String containing statement.
+         */
+        void setSQL(const QString &sql);
+
+        /** Set the SQL statement of this list. This will also affect @ref Name.
+         * @param sql SQL containing statement.
+         */
+        void setSQL(const toSQL &sql);
+
+        /** Set SQL name of list.
+         */
+        void setSQLName(const QString &name);
+
+        /** Reexecute with changed parameters.
+         * @param list of query parameters
+         */
+		virtual void refreshWithParams(toQueryParams const& params);
+
+    protected:
+        /** Perform a query - can be re-implemented by subclasses
+         */
+        virtual void query();
+
+        ///@}
     private:
         View  *m_view;
 
         ObserverObject *m_observerObject;
+
+        QString m_SQL, m_SQLName;
+        toQueryParams m_Params;
 };
 
 template<
@@ -332,4 +367,78 @@ typename _T,
 void TOMVC< _T, _VP, _DP>::observeError(const toConnection::exception &e)
 {
 
+}
+
+template<
+	typename _T,
+	template <class> class _VP,
+	template <class> class _DP
+>
+toConnection& TOMVC< _T, _VP, _DP>::connection()
+{
+    return toConnection::currentConnection(m_view);
+}
+
+template<
+    typename _T,
+    template <class> class _VP,
+    template <class> class _DP
+>
+void TOMVC< _T, _VP, _DP>::setSQL(const QString &sql)
+{
+    m_SQL = sql;
+}
+
+template<
+    typename _T,
+    template <class> class _VP,
+    template <class> class _DP
+>
+void TOMVC< _T, _VP, _DP>::setSQL(const toSQL &sql)
+{
+    setSQLName(sql.name());
+    try
+    {
+        m_Params.clear();
+        setSQL(toSQL::string(sql, connection()));
+    }
+    catch (QString const& e)
+    {
+        TLOG(8, toDecorator, __HERE__) << e << std::endl;
+        m_SQL.clear();
+        throw (e);
+    }
+}
+
+template<
+    typename _T,
+    template <class> class _VP,
+    template <class> class _DP
+>
+void TOMVC< _T, _VP, _DP>::setSQLName(const QString &name)
+{
+    m_SQLName = name;
+}
+
+template<
+    typename _T,
+    template <class> class _VP,
+    template <class> class _DP
+>
+void TOMVC< _T, _VP, _DP>::refreshWithParams(toQueryParams const& params)
+{
+    m_Params = params;
+    toEventQuery *Query = new toEventQuery(this, connection(), m_SQL, m_Params, toEventQuery::READ_ALL);
+    setQuery(Query);
+}
+
+template<
+    typename _T,
+    template <class> class _VP,
+    template <class> class _DP
+>
+void TOMVC< _T, _VP, _DP>::query()
+{
+    toEventQuery *Query = new toEventQuery(this, connection(), m_SQL, m_Params, toEventQuery::READ_ALL);
+    setQuery(Query);
 }

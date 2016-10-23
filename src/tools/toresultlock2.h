@@ -46,12 +46,10 @@ namespace ResutLock
 {
     struct Traits : public MVCTraits
     {
-        enum
-        {
-            AlternatingRowColorsEnabled = true,
-            ShowRowNumber = NoRowNumber,
-            ColumnResize = RowColumResize
-        };
+        static const bool AlternatingRowColorsEnabled = true;
+        static const int  ShowRowNumber = NoRowNumber;
+        static const int  ColumnResize = RowColumResize;
+
         typedef toTreeViewPriv View;
     };
 
@@ -81,7 +79,7 @@ namespace ResutLock
  */
 class toResultLockNew
         : public ResutLock::MVC
-        , public toResult
+//        , public toResult
 {
         Q_OBJECT
 
@@ -90,11 +88,13 @@ class toResultLockNew
         toResultLockNew(QWidget *parent, const char *name = NULL);
         ~toResultLockNew();
 
-        void query(const QString &sql, const toQueryParams &param) override;
+//        void query(const QString &sql, const toQueryParams &param) override;
+        void query(const QString &sql, const toQueryParams &param);
 
         /** Support Oracle
          */
-        bool canHandle(const toConnection &conn) override;
+//        bool canHandle(const toConnection &conn) override;
+		bool canHandle(const toConnection &conn);
 
     private:
 };
