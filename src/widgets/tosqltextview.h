@@ -34,33 +34,59 @@
 
 #pragma once
 
-#include <QAbstractItemView>
-#include <QLabel>
+class toSqlText;
+class QAbstractItemModel;
+class toSearchReplace;
 
-class toTableDetailView : public QAbstractItemView
+#include "core/toeditwidget.h"
+#include "editor/toeditglobals.h"
+
+#include <QWidget>
+
+/** A tora "Highlighted sql source" version of the @ref QPlainTextEdit widget.
+ */
+class toSqlTextView : public QWidget, public toEditWidget
 {
-    Q_OBJECT
+    Q_OBJECT;
 public:
-    toTableDetailView(QWidget *parent = 0);
 
-    QModelIndex indexAt( const QPoint &point ) const override;
-    void scrollTo( const QModelIndex &index, ScrollHint hint = EnsureVisible ) override;
-    QRect visualRect( const QModelIndex &index ) const override;
+    toSqlTextView(QWidget *parent = 0, const char *name = 0);
 
-protected:
-    int horizontalOffset() const override;
-    bool isIndexHidden( const QModelIndex &index ) const override;
-    QModelIndex moveCursor( CursorAction cursorAction, Qt::KeyboardModifiers modifiers ) override;
-    void setSelection( const QRect &rect, QItemSelectionModel::SelectionFlags flags ) override;
-    int verticalOffset() const override;
-    QRegion visualRegionForSelection( const QItemSelection &selection ) const override;
+    void setReadOnly(bool ro);
+    void setText(const QString &t);
+    void setFilename(const QString &f);
+
+    void editCopy(void) override;
+    void editSelectAll(void) override;
+    bool editSave(bool) override;
+    bool editOpen(const QString&) override { return false; }
+    void editPrint() override {}
+    void editUndo() override {}
+    void editRedo() override {}
+    void editCut() override {}
+    void editPaste() override {}
+    void editReadAll() override {}
+    QString editText() override;
+
+    bool searchNext() override;
+    void searchReplace() override {};
+
+    void focusInEvent (QFocusEvent *e) override;
+
+    void setModel(QAbstractItemModel *model);
 
 protected slots:
-    void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
-    void selectionChanged( const QItemSelection &selected, const QItemSelection &deselected )override;
+    void setEditorFocus();
+    void handleSearching(Search::SearchFlags flags);
 
+    // handle just some of model's signals
+    void modelReset();
+    void rowsInserted(const QModelIndex &parent, int first, int last);
+    void rowsRemoved(const QModelIndex &parent, int first, int last);
 private:
-    void updateText();
-    QLabel *label;
+    toSqlText *m_view;
+    toSearchReplace *m_search;
+    QString m_filename;
+    QAbstractItemModel *m_model;
+    unsigned m_model_column;
 };
-
