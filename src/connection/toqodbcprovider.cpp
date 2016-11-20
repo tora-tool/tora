@@ -39,6 +39,8 @@
 
 #define QT_DRIVER_NAME "QODBC"
 
+#include <QtCore/QSettings>
+
 QString toQODBCProvider::m_name = QT_DRIVER_NAME;
 QString toQODBCProvider::m_displayName = ODBC_PROVIDER;
 
