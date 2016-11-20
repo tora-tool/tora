@@ -37,6 +37,7 @@
 #include "core/toconfiguration.h"
 #include "core/toquery.h"
 #include "core/tosql.h"
+#include "core/utils.h"
 
 #include <QApplication>
 #include <QtCore/QRegExp>

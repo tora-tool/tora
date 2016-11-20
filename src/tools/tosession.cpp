@@ -936,7 +936,7 @@ void toSession::slotChangeTab(int index)
         }
         else if (CurrentTab == PendingLocksNew->view())
         {
-            PendingLocksNew->clearParams();
+            //PendingLocksNew->clearParams();
             PendingLocksNew->refreshWithParams(toQueryParams() << connectionId);
         }
         else if (CurrentTab == OpenSplitter)
