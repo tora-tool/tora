@@ -111,7 +111,6 @@ QString toQSqlConnectionSub::version()
     catch (QString const &str)
     {
         TLOG(1, toDecorator, __HERE__) << "	Ignored exception:" << str << std::endl;
-        Utils::toStatusMessage(str);
         return "unknown version";
     }
     catch (...)
