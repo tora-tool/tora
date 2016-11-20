@@ -69,11 +69,13 @@ toQueryParams toParamGet::getParam(toConnection &conn, QWidget *parent, QString 
 
     std::unique_ptr <SQLLexer::Lexer> lexer;
     if (conn.providerIs("Oracle"))
-            lexer = LexerFactTwoParmSing::Instance().create("OracleGuiLexer", str, "toParamGet::getParam");
-    else if(conn.providerIs("QMYSQL"))
+        lexer = LexerFactTwoParmSing::Instance().create("OracleGuiLexer", str, "toParamGet::getParam");
+    else if (conn.providerIs("QMYSQL"))
         lexer = LexerFactTwoParmSing::Instance().create("MySQLGuiLexer", str, "toParamGet::getParam");
-    else if(conn.providerIs("QPSQL"))
+    else if (conn.providerIs("QPSQL"))
         lexer = LexerFactTwoParmSing::Instance().create("PostreSQLGuiLexer", str, "toParamGet::getParam");
+    else if (conn.providerIs("QODBC")) // TODO: make this configurable. Bo not support bind in QODBC
+        return ret;
     else
         throw QString("Unsupported sql dialect: %1").arg(conn.provider());
 
