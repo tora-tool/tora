@@ -52,6 +52,9 @@ toResultSchema::toResultSchema(QWidget *parent,
         conn.host() + "-" +
         conn.database();
 
+	if (!handled())
+		additionalItem("unsupported");
+
     QString sel = conn.defaultSchema();
 
     if (sel.isEmpty())
@@ -63,9 +66,15 @@ toResultSchema::toResultSchema(QWidget *parent,
     if (sel.isEmpty())
     {
         if (conn.providerIs("QMYSQL"))
+        {
             sel = conn.database();
-        else
+        }
+        else if (conn.providerIs("QODBC"))
+        {
+            sel = "unsupported";
+        } else {
             sel = conn.user();
+        }
     }
 
     // Oracle usernames are always in upper case
@@ -76,6 +85,7 @@ toResultSchema::toResultSchema(QWidget *parent,
     setParams(toQueryParams()); // sets QueryReady = true;
     if (SelectedFound)
         conn.setDefaultSchema(sel);
+
     connect(this, SIGNAL(currentIndexChanged(const QString &)),
             this, SLOT(updateLastSchema(const QString &)));
 
@@ -90,7 +100,7 @@ void toResultSchema::query(const QString &sql, toQueryParams const& param)
     //if (!setSqlAndParams(sql, param))
     //	return ;
 
-	// MySQL way
+    // MySQL way
     if (connection().getCache().userListExists(toCache::DATABASES))
     {
         slotUsersFromCache();
@@ -173,7 +183,7 @@ void toResultSchema::slotQueryDone(void)
 
 void toResultSchema::connectionChanged(void)
 {
-    if ( ! connection().defaultSchema().isEmpty() )
+    if ( !connection().defaultSchema().isEmpty())
     {
         // No need to upperize the string. Oracle has it uppercased already,
         // mysql nad pgsql require it as lowercase.

@@ -46,7 +46,7 @@
 #define QT_PGSQL_DRIVER "QPSQL"
 #define QT_ODBC_DRIVER  "QODBC"
 
-class toQSqlProvider : public  toConnectionProvider
+class toQSqlProvider : public toConnectionProvider
 {
     public:
         toQSqlProvider(toConnectionProviderFinder::ConnectionProvirerParams const& p);

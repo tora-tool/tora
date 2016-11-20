@@ -106,17 +106,18 @@ QString toQSqlConnectionSub::version()
     catch (std::exception const&e)
     {
         TLOG(1, toDecorator, __HERE__) << "	Ignored exception:" << e.what() << std::endl;
-		throw e;
+        throw e;
     }
-    catch (QString const&s)
+    catch (QString const &str)
     {
-        TLOG(1, toDecorator, __HERE__) << "	Ignored exception:" << s << std::endl;
-		throw s;
+        TLOG(1, toDecorator, __HERE__) << "	Ignored exception:" << str << std::endl;
+        Utils::toStatusMessage(str);
+        return "unknown version";
     }
     catch (...)
     {
         TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
-		throw;
+        throw;
     }
     return ret;
 }

@@ -432,6 +432,11 @@ void toNewConnection::changeProvider(int current)
             Host->hide();
             PortLabel->hide();
             Port->hide();
+            QList<QString> databases = ProviderRef.databases("", Username->text(), Password->text());
+            Q_FOREACH(QString const & s, databases)
+            {
+                Database->addItem(s);
+            }
         }
         else
         {
