@@ -111,7 +111,8 @@ void toEventQueryWorker::toQueryPriv::init()
             }
             m_ConnectionSubLoan->setInitialized(true);
         }
-
+#if defined(TORA_EXPERIMENTAL) && 0
+// This breaks Mysql, PostgreSQL, ODBC
         {
             toToolWidget *widget = toWorkSpaceSingle::Instance().currentTool();
             QString title = widget ? widget->windowTitle() : "no window";
@@ -120,6 +121,7 @@ void toEventQueryWorker::toQueryPriv::init()
             m_Query->execute(QString("begin DBMS_APPLICATION_INFO.SET_MODULE('%1','%2'); end;").arg(title).arg(this->m_SQLName));
             delete m_Query;
         }
+#endif
         m_Query = m_ConnectionSubLoan->createQuery(this);
         m_ConnectionSubLoan->setQuery(this);
         m_Query->execute();

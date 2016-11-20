@@ -71,6 +71,7 @@ qsqlQuery::~qsqlQuery()
 void qsqlQuery::execute(void)
 {
     Query = createQuery(query()->sql());
+    checkQuery();
 }
 
 void qsqlQuery::execute(QString const& sql)
@@ -137,16 +138,10 @@ toQValue qsqlQuery::readValue(void)
     // sapdb marks value as invalid on some views
     // for example tables,indexes etc, so ignore this check
     Column++;
-    if (EOQ && ExtraData.begin() != ExtraData.end())
+    if (Column == (unsigned int) Record.count())
     {
-        delete Query;
-        Query = NULL;
-        CurrentExtra = *ExtraData.begin();
-
-        ptr.unlock();
-        Query = createQuery(query()->sql());
-        checkQuery();
-        ptr.lock();
+        Column = 0;
+        EOQ = !Query->next();
     }
 
     return toQValue::fromVariant(val);
@@ -196,37 +191,23 @@ void qsqlQuery::checkQuery(void) // Must *not* call while locked
 {
     LockingPtr<QSqlDatabase> ptr(Connection->Connection, Connection->Lock);
 
-    do
+    if (!Query->isActive())
     {
-        if (!Query->isActive())
-        {
-            QString msg = QString::fromLatin1("Query not active ");
-            msg += query()->sql();
-            throw toQSqlConnectionSub::ErrorString(Query->lastError(), msg);
-        }
-
-        if (Query->isSelect())
-        {
-            Record = Query->record();
-            EOQ = !Query->next();
-            Column = 0;
-        }
-        else
-        {
-            EOQ = true;
-        }
-        if (EOQ && ExtraData.begin() != ExtraData.end())
-        {
-            delete Query;
-            Query = NULL;
-
-            ptr.unlock();
-            //Query = createQuery(QueryParam(parseReorder(query()->sql()), query()->params(), ExtraData));
-            Query = createQuery(query()->sql());
-            ptr.lock();
-        }
+        QString msg = QString::fromLatin1("Query not active ");
+        msg += query()->sql();
+        throw toQSqlConnectionSub::ErrorString(Query->lastError(), msg);
     }
-    while (ExtraData.begin() != ExtraData.end() && EOQ);
+
+    if (Query->isSelect())
+    {
+        Record = Query->record();
+        EOQ = !Query->next();
+        Column = 0;
+    }
+    else
+    {
+        EOQ = true;
+    }
 }
 
 toQColumnDescriptionList qsqlQuery::Describe(const QString &type, QSqlRecord record)

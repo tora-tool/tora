@@ -71,8 +71,6 @@ class qsqlQuery : public queryImpl
         QSqlQuery *Query;
         QSqlRecord Record;
         toQSqlConnectionSub *Connection;
-        QString CurrentExtra;
-        QList<QString> ExtraData;
         bool EOQ;
         unsigned int Column;
 
