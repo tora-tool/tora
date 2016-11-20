@@ -420,22 +420,23 @@ toResultCols::toResultCols(QWidget *parent, const char *name, toWFlags f)
     : QWidget(parent, f)
     , SQL(SQLTableColumns)
 {
-    if (name)
-        setObjectName(name);
-    setup();
+    setup(name);
 }
 
 toResultCols::toResultCols(toSQL const& sql, QWidget *parent, const char *name, toWFlags f)
     : QWidget(parent, f)
     , SQL(sql) // SQL(SQLTableColumns)
 {
-    if (name)
-        setObjectName(name);
-    setup();
+    setup(name);
 }
 
-void toResultCols::setup()
+void toResultCols::setup(const char *name)
 {
+    if (name)
+        setObjectName(name);
+    else
+        setObjectName("toResultCols");
+
     toResult::setSQL(SQL);
 
     QVBoxLayout *vbox = new QVBoxLayout;

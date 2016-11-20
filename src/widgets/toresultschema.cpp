@@ -39,10 +39,12 @@
 #include <QtCore/QSettings>
 
 
-toResultSchema::toResultSchema(QWidget *parent,
-                               const char *name)
+toResultSchema::toResultSchema(QWidget *parent, const char *name)
     : toResultCombo(parent, name)
 {
+    if(name == NULL)
+        setObjectName("toResultSchema");
+
     setSQL(toSQL::sql(toSQL::TOSQL_USERLIST));
 
     toConnection &conn = toConnection::currentConnection(parent);
