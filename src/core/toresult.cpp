@@ -261,6 +261,10 @@ void toResult::changeHandle(void)
 
     widget->setEnabled(handled());
 
+    QString name = widget->objectName();
+    TLOG(1, toNoDecorator, __HERE__) << " Disabling object: " << name << " " << handled() << std::endl;
+
+
     // find totabwidget
     QWidget *parent = widget;
     while (parent && parent->metaObject()->className() != QString("toTabWidget"))

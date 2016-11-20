@@ -112,7 +112,7 @@ class toResultCols : public QWidget, public toResult
     private slots:
         void editComment(bool val);
     private:
-        void setup();
+        void setup(const char *name);
 };
 
 #endif

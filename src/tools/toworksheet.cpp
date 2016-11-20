@@ -442,13 +442,9 @@ void toWorksheet::setup(bool autoLoad)
     connect(Editor->editor(), SIGNAL(modificationChanged(bool)), this, SLOT(slotSetCaption()));
 
     ResultTab = new toTabWidget(EditSplitter);
-    QWidget *container = new QWidget(ResultTab);
-    QVBoxLayout *box = new QVBoxLayout;
-    ResultTab->addTab(container, tr("&Result"));
 
-    Current = Result = new toResultTableView(false, true, container);
-    Result->setObjectName("ResultTab");
-    box->addWidget(Result);
+    Current = Result = new toResultTableView(false, true, ResultTab, "ResultTab");
+    ResultTab->addTab(Result, tr("&Result"));
     connect(Result, SIGNAL(done(void)), this, SLOT(slotQueryDone(void)));
     connect(Result,
             SIGNAL(firstResult(const QString &,
@@ -468,13 +464,9 @@ void toWorksheet::setup(bool autoLoad)
                                    const toConnection::exception &,
                                    bool)));
 
-    Columns = new toResultCols(container, "description");
-    box->addWidget(Columns);
+    Columns = new toResultCols(ResultTab, "description");
+    ResultTab->addTab(Columns, tr("&Columns"));
     Columns->hide();
-
-    box->setContentsMargins(0, 0, 0, 0);
-    container->setLayout(box);
-
     ResultTab->setTabEnabled(ResultTab->indexOf(Columns), false);
 
     Plan = new toResultPlanExplain(ResultTab);
@@ -491,7 +483,7 @@ void toWorksheet::setup(bool autoLoad)
     ResultTab->addTab(ResourceSplitter, tr("&Information"));
 
     StatTab = new QWidget(ResultTab);
-    box = new QVBoxLayout;      // reassigned
+    QVBoxLayout *box = new QVBoxLayout;
 
     QToolBar *stattool = Utils::toAllocBar(StatTab, tr("Worksheet Statistics"));
 
@@ -1657,6 +1649,8 @@ void toWorksheet::slotDescribe(void)
         Columns->changeObject(table);
         Columns->show();
         Current = Columns;
+        ResultTab->setTabEnabled(ResultTab->indexOf(Columns), true);
+        ResultTab->setCurrentIndex(ResultTab->indexOf(Columns));
     }
 }
 
