@@ -527,6 +527,7 @@ SET(TORA_SOURCES
   parsing/tsqllexermysql.cc
   parsing/tsqllexermysql2.cc
   parsing/tsqllexeroracle2.cc
+  parsing/tsqllexerpostgresql.cc
   parsing/tsqlparse.cpp
 
   result/toproviderobserver.cpp
@@ -694,7 +695,6 @@ IF (USE_EXPERIMENTAL)
     parsing/error_handler.cc
     parsing/tplsqlparseoracle.cc
     parsing/tsqllexeroracle.cc
-    parsing/tsqllexerpostgresql.cc    
     parsing/tsqlparseoracle.cc
     parsing/tsqlparseoracle2.cc
     )
