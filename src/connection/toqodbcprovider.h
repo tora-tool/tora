@@ -42,30 +42,30 @@ class toQODBCProvider : public toQSqlProvider
     public:
         toQODBCProvider(toConnectionProviderFinder::ConnectionProvirerParams const& p);
 
-        /** see: @ref toConnectionProvider::initialize() */
-        //virtual bool initialize();
-
         /** see: @ref toConnectionProvider::name() */
-        virtual QString const& name() const
+        QString const& name() const override
         {
             return m_name;
         };
 
-        virtual QString const& displayName() const
+        QString const& displayName() const override
         {
             return m_displayName;
         };
 
         /** see: @ref toConnection */
-        virtual toConnection::connectionImpl* createConnectionImpl(toConnection&);
+        toConnection::connectionImpl* createConnectionImpl(toConnection&) override;
+
+        /** see: @ref toConnectionProvider::databases() */
+        QList<QString> databases(const QString &host, const QString &user, const QString &pwd) const override;
 
 // TODO DEFINE THESE
 #if 0
+        /** see: @ref toConnectionProvider::initialize() */
+        virtual bool initialize();
+
         /** see: @ref toConnectionProvider::hosts() */
         virtual QList<QString> hosts();
-
-        /** see: @ref toConnectionProvider::databases() */
-        virtual QList<QString> databases(const QString &host, const QString &user, const QString &pwd);
 
         /** see: @ref toConnectionProvider::options() */
         virtual QList<QString> options();

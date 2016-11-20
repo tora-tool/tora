@@ -32,6 +32,8 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
+#include "core/utils.h"
+#include "core/tologger.h"
 #include "connection/toqodbcprovider.h"
 #include "connection/toqsqlconnection.h"
 
@@ -49,23 +51,69 @@ toConnection::connectionImpl* toQODBCProvider::createConnectionImpl(toConnection
     return new toQSqlConnectionImpl(conn);
 }
 
+QList<QString> toQODBCProvider::databases(const QString &host, const QString &user, const QString &pwd) const
+{
+    QList<QString> ret;
+#ifdef Q_OS_WIN32
+    {
+        QSettings settings("HKEY_CURRENT_USER\\Software\\ODBC\\ODBC.INI", QSettings::NativeFormat);
+        foreach(QString key, settings.childGroups())
+        {
+            QString s = key;
+            QString t = settings.value(key + '/' + "Driver").toString();
+
+            QFileInfo driver(t);
+            bool valid  = Utils::toLibrary::isValidLibrary(driver); // TODO this one thows, the others don't
+            if (valid)
+            {
+                ret << key;
+                TLOG(5, toNoDecorator, __HERE__) << "Users DSN: " << key << '(' << t << ')'<< " passed."<< std::endl;
+            } else {
+                TLOG(5, toNoDecorator, __HERE__) << "Users DSN: " << key << '(' << t << ')'<< " failed."<< std::endl;
+            }
+        }
+    }
+
+    {
+        QSettings settings("HKEY_LOCAL_MACHINE\\Software\\ODBC\\ODBC.INI", QSettings::NativeFormat);
+        foreach(QString key, settings.childGroups())
+        {
+            QString s = key;
+            QString t = settings.value(key + '/' + "Driver").toString();
+
+            QFileInfo driver(t);
+            bool valid  = Utils::toLibrary::isValidLibrary(driver); // TODO this one thows, the others don't
+            if (valid)
+            {
+                ret << key;
+                TLOG(5, toNoDecorator, __HERE__) << "Machine DSN: " << key << '(' << t << ')'<< " passed."<< std::endl;
+            } else {
+                TLOG(5, toNoDecorator, __HERE__) << "Machine DSN: " << key << '(' << t << ')'<< " failed."<< std::endl;
+            }
+        }
+    }
+
+#else
+    QString envODBC = getenv("ODBCINI");
+    QFileInfo odbcINI(envODBC);
+
+    if (envODBC.isEmpty() || !odbcINI.exists() || !odbcINI.isReadable())
+        odbcINI = QFileInfo("/etc/odbc.ini");
+
+    QSettings settings(odbcINI.absoluteFilePath(), QSettings::IniFormat);
+    foreach(QString key, settings.childGroups())
+    {
+        QString s = key;
+        ret << key;
+    }
+#endif
+    return ret;
+}
+
 /*
 bool toQODBCProvider::initialize()
 {
 	return true;
-}
-
-QList<QString> toQODBCProvider::hosts()
-{
-    QList<QString> ret = QList<QString>() << QString::null << "(TBD) hosts";
-    return ret;
-}
-
-QList<QString> toQODBCProvider::databases(const QString &host, const QString &user, const QString &pwd)
-{
-	QList<QString> ret;
-	ret << "TBD databases";
-	return ret;
 }
 
 QList<QString> toQODBCProvider::options()

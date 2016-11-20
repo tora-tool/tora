@@ -55,35 +55,7 @@ QList<QString> toQSqlProvider::hosts() const
 
 QList<QString> toQSqlProvider::databases(const QString &host, const QString &user, const QString &pwd) const
 {
-    QList<QString> ret;
-#ifdef Q_OS_WIN32
-    QSettings settings("HKEY_CURRENT_USER\\Software\\ODBC\\ODBC.INI\\ODBC Data Sources", QSettings::NativeFormat);
-    foreach(QString key, settings.childGroups())
-    {
-        QString s = key;
-    }
-
-    foreach(QString key, settings.childKeys())
-    {
-        QString s = key;
-        QString t = settings.value(key).toString();
-        ret << key;
-    }
-#else
-    QString envODBC = getenv("ODBCINI");
-    QFileInfo odbcINI(envODBC);
-
-    if (envODBC.isEmpty() || !odbcINI.exists() || !odbcINI.isReadable())
-        odbcINI = QFileInfo("/etc/odbc.ini");
-
-    QSettings settings(odbcINI.absoluteFilePath(), QSettings::IniFormat);
-    foreach(QString key, settings.childGroups())
-    {
-        QString s = key;
-        ret << key;
-    }
-#endif
-    return ret;
+    return QList<QString>{};
 }
 
 QList<QString> toQSqlProvider::options() const
