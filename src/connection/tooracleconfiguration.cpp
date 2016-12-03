@@ -69,6 +69,18 @@ QVariant ToConfiguration::Oracle::defaultValue(int option) const
             return QVariant((bool)true);
         case IncludePromptBool:
             return QVariant((bool)true);
+        case SegmentAttrsBool:
+            return QVariant((bool)true);
+        case StorageBool:
+            return QVariant((bool)true);
+        case TablespaceBool:
+            return QVariant((bool)true);
+        case ConstraintsBool:
+            return QVariant((bool)true);
+        case RefConstraintsBool:
+            return QVariant((bool)true);
+        case ConstraintsAsAlterBool:
+            return QVariant((bool)false);
         default:
             Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Oracle un-registered enum value: %1").arg(option)));
             return QVariant();

@@ -64,6 +64,12 @@ namespace ToConfiguration
                 , IncludeCodeBool          // #define CONF_EXT_INC_CODE
                 , IncludeHeaderBool        // #define CONF_EXT_INC_HEADER
                 , IncludePromptBool        // #define CONF_EXT_INC_PROMPT
+                , SegmentAttrsBool
+                , StorageBool
+                , TablespaceBool
+                , ConstraintsBool
+                , RefConstraintsBool
+                , ConstraintsAsAlterBool
             };
             virtual QVariant defaultValue(int option) const;
             static QString planTable(QString const& schema);
