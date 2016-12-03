@@ -33,6 +33,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "core/tohelpcontext.h"
+#include "core/toconnectionoptions.h"
 #include "core/utils.h"
 #include "ui_tonewconnectionui.h"
 
@@ -62,7 +63,7 @@ class toNewConnection : public QDialog
         // connection created by dialog
         toConnection *NewConnection;
 
-        QString getCurrentProvider(void);
+        QString getCurrentProvider(void) const;
 
         void readSettings(void);
         void writeSettings(bool checkHistory = false);
@@ -76,7 +77,7 @@ class toNewConnection : public QDialog
         void loadPrevious(const QModelIndex & current);
 
         toConnection* makeConnection(bool savePrefs, bool test);
-
+        toConnectionOptions makeConnectionOtions(bool test) const;
     protected:
         bool eventFilter(QObject *obj, QEvent *event) override;
 

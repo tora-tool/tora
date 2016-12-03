@@ -110,10 +110,17 @@ void toConnectionModel::readConfig()
     endResetModel();
 }
 
-void toConnectionModel::append(int ix, toConnectionOptions conn)
+void toConnectionModel::append(toConnectionOptions conn)
 {
+    // find latest id (max+1)
+    QList<int> keys = m_data.keys();
+    qSort(keys);
+    int max = 0;
+    if (!keys.empty())
+        max = keys.last() + 1;
+
     beginResetModel();
-    m_data[ix] = conn;
+    m_data[max] = conn;
     endResetModel();
 }
 
@@ -126,6 +133,46 @@ bool toConnectionModel::removeRow(int row, const QModelIndex &parent)
     endRemoveRows();
 
     return ret;
+}
+
+int toConnectionModel::findConnection(toConnectionOptions const &conn) const
+{
+    return m_data.key(conn, -1);
+}
+
+void toConnectionModel::saveConnection(toConnectionOptions const &opt)
+{
+    int pos = findConnection(opt);
+
+    QSettings Settings;
+    Settings.beginGroup("connections");
+    Settings.beginGroup("history");
+    Settings.beginGroup(QString::number(pos));
+
+    Settings.setValue("provider", opt.provider);
+    Settings.setValue("username", opt.username);
+    if (toConfigurationNewSingle::Instance().option(ToConfiguration::Global::SavePasswordBool).toBool())
+    {
+        Settings.setValue("password", Utils::toObfuscate(opt.password));
+    }
+    Settings.setValue("host",     opt.host);
+    Settings.setValue("port",     opt.port);
+    Settings.setValue("database", opt.database);
+    Settings.setValue("schema",   opt.schema);
+    Settings.setValue("color",    opt.color);
+
+    Settings.remove("options");
+    Settings.beginGroup("options");
+    Q_FOREACH(QString s, opt.options)
+    {
+        Settings.setValue(s, true);
+    }
+    Settings.endGroup(); // options
+
+    Settings.endGroup(); // history/##pos
+    Settings.endGroup(); // history
+    Settings.endGroup(); // connections section
+
 }
 
 QVariant toConnectionModel::headerData(int section, Qt::Orientation orientation, int role) const

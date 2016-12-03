@@ -41,6 +41,7 @@
 #include "core/toconnection.h"
 #include "core/tooracleconst.h"
 #include "core/toconfiguration.h"
+#include "core/tomainwindow.h"
 #include "core/toglobalconfiguration.h"
 
 #include "icons/trash.xpm"
@@ -56,10 +57,6 @@
 
 #include "main/toconnectionimport.h"
 #include "widgets/tohelp.h"
-
-// TODO turn these into enum (QMetaEnum)
-#define CONF_PROVIDER_LIST_SORT_OFFSET "ProvListSort" //Sort by database/connection name, asc
-#define DEFAULT_PROVIDER_LIST_SORT_OFFSET 4
 
 static toConnectionModel     *m_connectionModel = 0;
 static QSortFilterProxyModel *m_proxyModel      = 0;
@@ -182,7 +179,7 @@ toNewConnection::toNewConnection(QWidget* parent, toWFlags fl)
 	searchEdit->installEventFilter(this);
 }
 
-QString toNewConnection::getCurrentProvider()
+QString toNewConnection::getCurrentProvider() const
 {
     QVariant d = Provider->itemData (Provider->currentIndex(), Qt::UserRole );
     return d.toString();
@@ -199,8 +196,8 @@ void toNewConnection::readSettings()
     Previous->resizeColumnsToContents();
     Previous->setSortingEnabled(true);
 
-    int sortList = Settings.value(CONF_PROVIDER_LIST_SORT_OFFSET, DEFAULT_PROVIDER_LIST_SORT_OFFSET).toInt();
-    Previous->sortByColumn(abs(sortList), (sortList >= 0 ? Qt::AscendingOrder : Qt::DescendingOrder));
+    int sortList = toConfigurationNewSingle::Instance().option(ToConfiguration::Main::ConnectionModelSortColumnInt).toInt();
+    Previous->sortByColumn((std::abs)(sortList), (sortList >= 0 ? Qt::AscendingOrder : Qt::DescendingOrder));
     checkBoxRememberPasswords->setChecked(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::SavePasswordBool).toBool());
 
     Previous->hideColumn(0);
@@ -214,10 +211,9 @@ void toNewConnection::writeSettings(bool checkHistory)
     toConfigurationNewSingle::Instance().setOption(ToConfiguration::Global::SavePasswordBool,
             checkBoxRememberPasswords->isChecked());
 
-    Settings.setValue(CONF_PROVIDER_LIST_SORT_OFFSET,
-                      (Previous->horizontalHeader()->sortIndicatorOrder() == Qt:: AscendingOrder ? 1 : -1)*
-                      Previous->horizontalHeader()->sortIndicatorSection());
-
+    toConfigurationNewSingle::Instance().setOption(ToConfiguration::Main::ConnectionModelSortColumnInt,
+                                                   (Previous->horizontalHeader()->sortIndicatorOrder() == Qt:: AscendingOrder ? 1 : -1) * Previous->horizontalHeader()->sortIndicatorSection()
+                                                   );
     Settings.remove("history");
 
     if (!Provider->currentText().isEmpty() && checkHistory)
@@ -279,7 +275,7 @@ void toNewConnection::writeSettings(bool checkHistory)
         }
         Settings.beginGroup("options");
         Q_FOREACH(QString s, opt.options)
-        Settings.setValue(s, true);
+            Settings.setValue(s, true);
         Settings.endGroup();
 
         Settings.endGroup();
@@ -368,7 +364,7 @@ void toNewConnection::done(int r)
     if (!NewConnection)
         return;
 
-    writeSettings();
+    writeSettings(false);
     QDialog::done(r);
 }
 
@@ -522,22 +518,14 @@ void toNewConnection::importButton_clicked()
 
     Previous->setSortingEnabled(false);
 
-    // find latest id (max+1)
-    QList<int> keys = connectionModel()->availableConnections().keys();
-    qSort(keys);
-    int max = 0;
-    if (keys.count() > 0)
-        max = keys.at(keys.count() - 1) + 1;
-
     foreach (toConnectionOptions opt, dia.availableConnections().values())
     {
-        if (findHistory(opt.provider, opt.username, opt.host, opt.database, opt.schema, opt.port) != -1)
+        if (connectionModel()->findConnection(opt) >= 0)
             continue;
 
-        connectionModel()->append(max, opt);
-        ++max;
+        connectionModel()->append(opt);
     }
-    writeSettings();
+    writeSettings(false);
 
     Previous->setSortingEnabled(true);
 }
@@ -569,69 +557,7 @@ toConnection* toNewConnection::makeConnection(bool savePrefs, bool test)
 {
     try
     {
-        QString pass;
-        QString host;
-        QString color = colorComboBox->itemData(colorComboBox->currentIndex()).toString();
-
-        if (Host->isVisible())
-            host = Host->currentText();
-
-        QString schema;
-        if (Schema->isVisible())
-            schema = Schema->text();
-
-        QString optionstring;
-        QSet<QString> options;
-
-        // This connection is just for testing. Do not run any BG queries.
-        if(test)
-        	options.insert("TEST");
-
-        QList<QCheckBox *> widgets = OptionGroup->findChildren<QCheckBox *>();
-        foreach(QCheckBox * box, widgets)
-        {
-            if (!optionstring.isEmpty())
-                optionstring += ",";
-
-            if (box->isChecked())
-            {
-                optionstring += "*";
-
-                // ug. this is awesome. i broke it when i added
-                // accelerators.
-                options.insert(box->text().replace("&", ""));
-            }
-
-            optionstring += box->text();
-        }
-
-        QString provider = getCurrentProvider();
-
-        if (Port->isVisible() && Port->value() != 0 && Port->value())
-            host += ":" + QString::number(Port->value());
-
-        QString database = Database->currentText();
-        int port = Port->value();
-
-        if (Provider->currentText().startsWith(ORACLE_INSTANTCLIENT))
-        {
-            // create the rest of the connect string. this will work
-            // without an ORACLE_HOME.
-            database = "//" + Host->currentText() +
-                       ":" + QString::number(port) +
-                       "/" + database;
-            host = "";
-        }
-
-        toConnectionOptions opts(getCurrentProvider()
-                                 , host
-                                 , database
-                                 , Username->text()
-                                 , Password->text()
-                                 , schema
-                                 , color
-                                 , port
-                                 , options);
+        toConnectionOptions opts = makeConnectionOtions(test);
 
         // checks for existing connection
         foreach(toConnection * conn, toConnectionRegistrySing::Instance().connections())
@@ -640,15 +566,7 @@ toConnection* toNewConnection::makeConnection(bool savePrefs, bool test)
                 return conn;
         }
 
-        toConnection *retCon = new toConnection(
-            provider,
-            Username->text(),
-            Password->text(),
-            host,
-            database,
-            schema,
-            color,
-            options);
+        toConnection *retCon = new toConnection(opts);
 
         if (savePrefs)
             writeSettings(true);
@@ -664,6 +582,61 @@ toConnection* toNewConnection::makeConnection(bool savePrefs, bool test)
                                   str);
         return NULL;
     }
+}
+
+toConnectionOptions toNewConnection::makeConnectionOtions(bool test) const
+{
+    QString database = Database->currentText();
+
+    int port = Port->value();
+
+    QString host;
+    if (Host->isVisible())
+        host = Host->currentText();
+    if (Port->isVisible() && Port->value() != 0 && Port->value())
+        host += ":" + QString::number(Port->value());
+    if (Provider->currentText().startsWith(ORACLE_INSTANTCLIENT))
+    {
+        // create the rest of the connect string. this will work
+        // without an ORACLE_HOME.
+        database = "//" + Host->currentText() +
+                   ":" + QString::number(port) +
+                   "/" + database;
+        host = "";
+    }
+
+    QString schema;
+    if (Schema->isVisible())
+        schema = Schema->text();
+
+    QString color = colorComboBox->itemData(colorComboBox->currentIndex()).toString();
+
+    // This connection is just for testing. Do not run any BG queries.
+    QSet<QString> options;
+    if(test)
+        options.insert("TEST");
+
+    QList<QCheckBox *> widgets = OptionGroup->findChildren<QCheckBox *>();
+    foreach(QCheckBox * box, widgets)
+    {
+        if (box->isChecked())
+        {
+            // ug. this is awesome. i broke it when i added
+            // accelerators.
+            options.insert(box->text().replace("&", ""));
+        }
+    }
+
+    toConnectionOptions opts(getCurrentProvider()
+                             , host
+                             , database
+                             , Username->text()
+                             , Password->text()
+                             , schema
+                             , color
+                             , port
+                             , options);
+    return opts;
 }
 
 bool toNewConnection::eventFilter(QObject *obj, QEvent *event)

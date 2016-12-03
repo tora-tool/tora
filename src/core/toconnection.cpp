@@ -1,4 +1,3 @@
-
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
@@ -96,6 +95,7 @@ toConnection::toConnection(const toConnectionOptions &opts)
     , Password(opts.password)
     , Host(opts.host)
     , Database(opts.database)
+    , Version("0000")
     , Color(opts.color)
     , Options(opts.options)
     , pConnectionImpl(NULL)
@@ -113,14 +113,14 @@ toConnection::toConnection(const toConnectionOptions &opts)
 
     setDefaultSchema(opts.schema);
 
-    pCache = new toCache(*this, description(false).trimmed());
-
-    ////Version = connSub->version();
+    if(!ConnectionOptions.options.contains("TEST"))
     {
+        pCache = new toCache(*this, description(false).trimmed());
+        ////Version = connSub->version();
+
         QMutexLocker clock(&ConnectionLock);
         if (toConfigurationNewSingle::Instance().option(ToConfiguration::Database::ObjectCacheInt) == toCache::ON_CONNECT)
             pCache->readCache();
-
     }
 }
 

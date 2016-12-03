@@ -55,7 +55,7 @@ class toConnectionModel : public QAbstractTableModel
         void readConfig();
         //! \brief Set the m_data and update all connected views.
         void setupData(QMap<int, toConnectionOptions> list);
-        void append(int ix, toConnectionOptions conn);
+        void append(toConnectionOptions conn);
         bool removeRow(int row, const QModelIndex & parent = QModelIndex());
         //! \brief Bring m_data back to caller.
         QMap<int, toConnectionOptions> availableConnections()
@@ -66,6 +66,11 @@ class toConnectionModel : public QAbstractTableModel
         {
             return m_data[ix];
         };
+
+        //! \brief Find connection's index
+        int findConnection(toConnectionOptions const&) const;
+
+        void saveConnection(toConnectionOptions const&);
 
         QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
         QVariant data(const QModelIndex & index, int role = Qt::DisplayRole) const;
