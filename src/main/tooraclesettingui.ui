@@ -127,67 +127,109 @@
      <property name="title">
       <string>Extractor options</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0,0,0,0,0,0">
-      <item>
-       <widget class="QCheckBox" name="UseDbmsMetadataBool">
-        <property name="text">
-         <string>Use DBMS_METADATA</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="IncludeStorageBool">
-        <property name="text">
-         <string>Include storage information</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="SkipOrgMonBool">
-        <property name="text">
-         <string>     Skip organisation and monitoring</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="SkiptStorExTablespaceBool">
-        <property name="text">
-         <string>     Skip storage except tablespace</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="IncludeParallelBool">
-        <property name="text">
-         <string>Include parallel specification</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="IncludePartitionBool">
-        <property name="text">
-         <string>Include partition specification</string>
-        </property>
-       </widget>
-      </item>
-      <item>
+     <layout class="QGridLayout" name="gridLayout1">
+      <item row="10" column="1">
        <widget class="QCheckBox" name="IncludeCodeBool">
         <property name="text">
          <string>Include code specification</string>
         </property>
        </widget>
       </item>
-      <item>
+      <item row="9" column="1">
+       <widget class="QCheckBox" name="IncludePartitionBool">
+        <property name="text">
+         <string>Include partition specification</string>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="0">
+       <widget class="QCheckBox" name="ConstraintsAsAlterBool">
+        <property name="text">
+         <string>Constraints as ALTER</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="1">
+       <widget class="QCheckBox" name="IncludeParallelBool">
+        <property name="text">
+         <string>Include parallel specification</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0">
+       <widget class="QCheckBox" name="TablespaceBool">
+        <property name="text">
+         <string>Tablespace</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QCheckBox" name="IncludeStorageBool">
+        <property name="text">
+         <string>Include storage information</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="0">
+       <widget class="QCheckBox" name="ConstraintsBool">
+        <property name="text">
+         <string>Constraints</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
        <widget class="QCheckBox" name="IncludeHeaderBool">
         <property name="text">
          <string>Include header</string>
         </property>
        </widget>
       </item>
-      <item>
+      <item row="1" column="0">
        <widget class="QCheckBox" name="IncludePromptBool">
         <property name="text">
          <string>Include prompt</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QCheckBox" name="UseDbmsMetadataBool">
+        <property name="text">
+         <string>Use DBMS_METADATA</string>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="0">
+       <widget class="QCheckBox" name="RefConstraintsBool">
+        <property name="text">
+         <string>Ref. Constraints</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="1">
+       <widget class="QCheckBox" name="SkipOrgMonBool">
+        <property name="text">
+         <string>     Skip organisation and monitoring</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0">
+       <widget class="QCheckBox" name="StorageBool">
+        <property name="text">
+         <string>Storage</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="1">
+       <widget class="QCheckBox" name="SkiptStorExTablespaceBool">
+        <property name="text">
+         <string>     Skip storage except tablespace</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QCheckBox" name="SegmentAttrsBool">
+        <property name="text">
+         <string>Segment attributes</string>
         </property>
        </widget>
       </item>
