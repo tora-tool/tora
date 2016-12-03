@@ -55,7 +55,7 @@ namespace ToConfiguration
             enum OptionTypeEnum
             {
                 LastVersion   = 1000 // #define CONF_LAST_VERSION
-                                , FirstInstall       // #define CONF_FIRST_INSTALL
+                , FirstInstall       // #define CONF_FIRST_INSTALL
                 , RecentFiles        // #define CONF_RECENT_FILES
                 , RecentMax          // #define CONF_RECENT_MAX
                 , LastDir            // #define CONF_LAST_DIR
@@ -70,6 +70,7 @@ namespace ToConfiguration
                 , MainWindowState
                 , LeftDockbarState
                 , RightDockbarState
+                , ConnectionModelSortColumnInt
             };
             virtual QVariant defaultValue(int option) const;
 

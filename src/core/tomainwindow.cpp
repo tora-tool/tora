@@ -93,6 +93,8 @@ namespace ToConfiguration
                 return QVariant(QByteArray());
             case RightDockbarState:
                 return QVariant(QByteArray());
+            case ConnectionModelSortColumnInt:
+                return QVariant((int)4);          // #define DEFAULT_PROVIDER_LIST_SORT_OFFSET 4
             default:
                 Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Main un-registered enum value: %1").arg(option)));
                 return QVariant();
