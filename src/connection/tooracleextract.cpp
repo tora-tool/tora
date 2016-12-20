@@ -6134,6 +6134,8 @@ QString toOracleExtract::createMetadata( const QString &owner, const QString &na
             }
             ret += "\n";
         } break;
+        case T::TABLE_REFERENCES:
+            break;
         case T::TABLE_FAMILY:
         {
             toQuery inf(conn, SQLDbmsMetadataGetDdl, toQueryParams() << QString("TABLE") << name << owner);

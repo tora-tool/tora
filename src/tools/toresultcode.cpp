@@ -117,7 +117,7 @@ void toResultCode::query(const QString &sql, toQueryParams const& param)
         else
             type = (QString)*i;
 
-        ObjectRef objectRef(type, name, "");
+        ObjectRef objectRef(owner, name, type);
         QList<QPair<QString,ObjectRef>> objects;
 
         if (conn.providerIs("Oracle"))
