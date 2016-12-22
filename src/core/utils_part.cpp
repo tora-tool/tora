@@ -227,8 +227,8 @@ namespace Utils
     QString toOpenFilename(const QString &filter, QWidget *parent)
     {
         QFileInfo fi(toConfigurationNewSingle::Instance().option(ToConfiguration::Main::LastDir).toString());
-        if ( fi.absoluteDir().exists())
-            return toOpenFilename( fi.absolutePath(), filter, parent);
+        if ( fi.isDir())
+            return toOpenFilename( fi.absoluteFilePath(), filter, parent);
         return toOpenFilename(QDir::currentPath(), filter, parent);
     }
 
