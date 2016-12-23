@@ -250,7 +250,12 @@ void toWorksheetText::autoCompleteFromAPIs()
 
     TLOG(0, toTimeDelta, __HERE__) << "Table at indexb: " << '"' << schemaWord.text() << '"' << ':' << '"' << tableWord.text() << '"' << std::endl;
 
-    setSelection(schemaWord.start(), position);
+    if (!schemaWord.text().isEmpty())
+        setSelection(schemaWord.start(), position);
+    else if (!tableWord.text().isEmpty())
+        setSelection(tableWord.start(), position);
+    else
+        return;
 
     QStringList compleList;
     if (schema.isEmpty())
