@@ -94,7 +94,7 @@ toAbout::toAbout(QWidget* parent, const char* name, bool modal)
 		version.append(format.arg("GITVERSION").arg(GITVERSION));
 		version.append(format.arg("GITVERSION_MAJOR").arg(GITVERSION_MAJOR));
 		version.append(format.arg("GITVERSION_MINOR").arg(GITVERSION_MINOR));
-		version.append(format.arg("GIT_BUILD_TYPE").arg(GIT_BUILD_TYPE));
+		version.append(format.arg("GIT_TYPE").arg(GIT_BUILD_TYPE));
 		version.append(format.arg("GITVERSION_COUNT").arg(GITVERSION_COUNT));
 		version.append(format.arg("GITVERSION_SHA1").arg(GITVERSION_SHA1));
 		version.append(format.arg("GITVERSION_SHORT").arg(GITVERSION_SHORT));
