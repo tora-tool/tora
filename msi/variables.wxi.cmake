@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Include>
   <?define MajorVersion="$(var.GITVERSION_MAJOR)" ?>
-  <?define MinorVersion="0" ?>
+  <?define MinorVersion="$(var.GITVERSION_MINOR)" ?>
   <?define BuildVersion="$(var.GITVERSION_COUNT)" ?>
 
   <!-- Platform = CMAKE_SIZEOF_VOID_P 8=> 64bit -->
