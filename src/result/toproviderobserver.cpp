@@ -127,12 +127,13 @@ void toEventQueryObserverObject::eqDone(toEventQuery*)
 
 void toEventQueryObserverObject::eqError(toEventQuery *query, const toConnection::exception &e)
 {
-    if (query == m_eventQuery)
+    if (m_eventQuery && query == m_eventQuery)
     {
         m_observer.observeError(e);
-        throw (e);
-    }
-    Q_ASSERT_X(false, qPrintable(__QHERE__), "unknown data source");
+		Utils::toStatusMessage(e);
+	} else {
+		Q_ASSERT_X(false, qPrintable(__QHERE__), "unknown data source");
+	}
 }
 
 void toEventQueryObserverObject::connectionChanged(toConnection &connection)

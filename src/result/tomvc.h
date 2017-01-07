@@ -132,7 +132,7 @@ class TOMVC
          * @return Reference to connection.
          * NOTE: View must inherit from QWidget
          */
-		toConnection& connection();
+        toConnection& connection();
 
         /** Set the SQL statement of this list
          * @param sql String containing statement.
@@ -151,12 +151,14 @@ class TOMVC
         /** Reexecute with changed parameters.
          * @param list of query parameters
          */
-		virtual void refreshWithParams(toQueryParams const& params);
+        virtual void refreshWithParams(toQueryParams const& params);
 
     protected:
         /** Perform a query - can be re-implemented by subclasses
          */
         virtual void query();
+
+        void setParams(toQueryParams const& params);
 
         ///@}
     private:
@@ -441,4 +443,14 @@ void TOMVC< _T, _VP, _DP>::query()
 {
     toEventQuery *Query = new toEventQuery(this, connection(), m_SQL, m_Params, toEventQuery::READ_ALL);
     setQuery(Query);
+}
+
+template<
+    typename _T,
+    template <class> class _VP,
+    template <class> class _DP
+>
+void TOMVC< _T, _VP, _DP>::setParams(toQueryParams const& params)
+{
+    m_Params = params;
 }
