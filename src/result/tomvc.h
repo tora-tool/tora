@@ -429,8 +429,13 @@ template<
 >
 void TOMVC< _T, _VP, _DP>::refreshWithParams(toQueryParams const& params)
 {
-    m_Params = params;
-    toEventQuery *Query = new toEventQuery(this, connection(), m_SQL, m_Params, toEventQuery::READ_ALL);
+    setParams(params);
+    QString sql(m_SQL);
+    if(sql.isEmpty())
+    {
+        sql = toSQL::string(m_SQLName, connection());
+    }
+    toEventQuery *Query = new toEventQuery(this, connection(), sql, m_Params, toEventQuery::READ_ALL);
     setQuery(Query);
 }
 
@@ -441,7 +446,12 @@ template<
 >
 void TOMVC< _T, _VP, _DP>::query()
 {
-    toEventQuery *Query = new toEventQuery(this, connection(), m_SQL, m_Params, toEventQuery::READ_ALL);
+    QString sql(m_SQL);
+    if(sql.isEmpty())
+    {
+        sql = toSQL::string(m_SQLName, connection());
+    }
+    toEventQuery *Query = new toEventQuery(this, connection(), sql, m_Params, toEventQuery::READ_ALL);
     setQuery(Query);
 }
 
