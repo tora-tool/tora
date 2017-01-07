@@ -57,7 +57,7 @@ toPlainTextView::toPlainTextView(QWidget *parent /* = 0*/, const char *name /* =
     m_view->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
     m_search = new toSearchReplace(this);
-    m_search->SearchMode->hide();
+    m_search->hide();
 
     QVBoxLayout *l = new QVBoxLayout();
     l->setSpacing(0);
@@ -117,6 +117,16 @@ void toPlainTextView::focusInEvent (QFocusEvent *e)
     QWidget::focusInEvent(e);
 }
 
+void toPlainTextView::setFont(const QFont &f)
+{
+    m_view->setFont(f);
+}
+
+const QFont& toPlainTextView::font()
+{
+    return m_view->font();
+}
+
 void toPlainTextView::setModel(QAbstractItemModel *model)
 {
     m_model = model;
@@ -130,6 +140,7 @@ void toPlainTextView::setModel(QAbstractItemModel *model)
 
 void toPlainTextView::modelReset()
 {
+    m_lines.clear();
     m_view->clear();
     for(int row = 0; row < m_model->rowCount(); row++)
     {
@@ -140,12 +151,23 @@ void toPlainTextView::modelReset()
 
 void toPlainTextView::rowsInserted(const QModelIndex &parent, int first, int last)
 {
-
+    if (!m_lines.contains(first))
+    {
+        for(int row = first; row <= last; row++)
+        {
+            m_lines.insert(row);
+            QModelIndex index = m_model->index(row, m_model_column);
+            m_view->appendPlainText(m_model->data(index).toString());
+        }
+    }
 }
 
 void toPlainTextView::rowsRemoved(const QModelIndex &parent, int first, int last)
 {
-
+	for (int row = first; row <= last; row++)
+	{
+		m_lines.remove(row);
+	}
 }
 
 bool toPlainTextView::searchNext()

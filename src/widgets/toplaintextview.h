@@ -39,6 +39,10 @@ class QAbstractItemModel;
 class toSearchReplace;
 
 #include "core/toeditwidget.h"
+
+#include "core/toconfiguration.h"
+#include "core/toeditorconfiguration.h"
+
 #include "editor/toeditglobals.h"
 
 #include <QWidget>
@@ -75,6 +79,9 @@ public:
 
     void setModel(QAbstractItemModel *model);
 
+    void setFont(const QFont &);
+    const QFont & font();
+
 protected slots:
     void setEditorFocus();
     void handleSearching(Search::SearchFlags flags);
@@ -88,5 +95,25 @@ private:
     toSearchReplace *m_search;
     QString m_filename;
     QAbstractItemModel *m_model;
+    QSet<int> m_lines;
     unsigned m_model_column;
 };
+
+template<typename _T>
+class DefaultPlainTextViewPolicy
+{
+    private:
+        typedef _T Traits;
+        typedef typename Traits::View View;
+    public:
+        void setup(View* pView);
+};
+
+template<typename Traits>
+void DefaultPlainTextViewPolicy<Traits>::setup(View* pView)
+{
+    pView->setContextMenuPolicy( (Qt::ContextMenuPolicy) Traits::ContextMenuPolicy);
+
+    QFont fixed(Utils::toStringToFont(toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::ConfCodeFont).toString()));
+    pView->setFont(fixed);
+}
