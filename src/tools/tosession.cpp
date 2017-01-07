@@ -65,10 +65,11 @@
 #include "icons/tosession.xpm"
 
 #include "tools/toresultbar.h"
-#include "tools/toresultlock.h"
-#include "tools/toresultlock2.h"
 #include "tools/toresultstats.h"
 #include "tools/toresulttableview.h"
+
+#include "result/toresultlock.h"
+
 // #include "icons/filter.xpm"
 
 #include "editor/tosyntaxanalyzernl.h"
@@ -601,10 +602,7 @@ toSession::toSession(QWidget *main, toConnection &connection)
         ResultTab->addTab(ConnectInfo, tr("Connect Info"));
 
         PendingLocks = new toResultLock(ResultTab);
-        ResultTab->addTab(PendingLocks, tr("Pending Locks"));
-
-        PendingLocksNew = new toResultLockNew(ResultTab);
-        ResultTab->addTab(PendingLocksNew->view(), tr("Pending Locks New"));
+        ResultTab->addTab(PendingLocks->view(), tr("Pending Locks"));
 
         LockedObjects = new toResultTableView(false, false, ResultTab);
         ResultTab->addTab(LockedObjects, tr("Locked Objects"));
@@ -929,15 +927,9 @@ void toSession::slotChangeTab(int index)
         {
             LongOps->refreshWithParams(toQueryParams() << connectionId << serial);
         }
-        else if (CurrentTab == PendingLocks)
+        else if (PendingLocks && CurrentTab == PendingLocks->view())
         {
-            PendingLocks->clearParams();
             PendingLocks->refreshWithParams(toQueryParams() << connectionId);
-        }
-        else if (CurrentTab == PendingLocksNew->view())
-        {
-            //PendingLocksNew->clearParams();
-            PendingLocksNew->refreshWithParams(toQueryParams() << connectionId);
         }
         else if (CurrentTab == OpenSplitter)
         {

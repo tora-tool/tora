@@ -64,7 +64,7 @@ class toEventQuery;
 class toRefreshCombo;
 class toResultItem;
 class toResultLine;
-class toResultLock;
+class toResultWaitChains;
 class toResultTableView;
 class toResultParam;
 class toResultStats;
@@ -103,7 +103,7 @@ class toTuning : public toToolWidget
     toListView        *Indicators;
     toResultParam     *Parameters;
     toResultTableView *Options;
-    toResultLock      *BlockingLocks;
+    toResultWaitChains*BlockingLocks;
     toResultItem      *Licenses;
     toResultStats     *Statistics;
     toResultTableView *LibraryCache;

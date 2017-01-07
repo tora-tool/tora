@@ -48,7 +48,7 @@
 #include "widgets/toresultitem.h"
 #include "widgets/torefreshcombo.h"
 #include "tools/toresultline.h"
-#include "tools/toresultlock.h"
+
 #include "tools/toresulttableview.h"
 #include "tools/toresultparam.h"
 #include "tools/toresultpie.h"
@@ -61,6 +61,8 @@
 #include "core/toglobalconfiguration.h"
 #include "ui_totuningsettingui.h"
 #include "tools/towaitevents.h"
+
+#include "result/toresultwaitchains.h"
 
 #include <QComboBox>
 #include <QToolBar>
@@ -775,8 +777,8 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
     Parameters = new toResultParam(Tabs, "parameters");
     Tabs->addTab(Parameters, tr("&Parameters"));
 
-    BlockingLocks = new toResultLock(Tabs, "locks");
-    Tabs->addTab(BlockingLocks, tr("&Blocking locks"));
+    BlockingLocks = new toResultWaitChains(Tabs, "locks");
+    Tabs->addTab(BlockingLocks->view(), tr("&Blocking locks"));
 
     LibraryCache = new toResultTableView(true, false, Tabs, "cache");
     LibraryCache->setSQL(SQLLibraryCache);
@@ -940,55 +942,55 @@ void toTuning::refresh(void)
 {
     using namespace ToConfiguration;
     LastTab = Tabs->currentWidget();
-    if (LastTab == Overview)
-    {
-        Overview->refresh(connection());
-    }
-    else if (LastTab == Charts)
-    {
-        Charts->refresh();
-    }
-    else if (LastTab == Indicators)
-    {
-        Indicators->clear();
-        QList<QString> val = toSQL::range("toTuning:Indicators");
-        toTreeWidgetItem *parent = NULL;
-        toTreeWidgetItem *last = NULL;
-        for (QList<QString>::iterator i = val.begin(); i != val.end(); i++)
-        {
-            try
-            {
-                toQList val = toQuery::readQuery(connection(), toSQL::string(*i, connection()), toQueryParams());
-                QStringList parts = (*i).split(":");
-                if (!parent || parent->text(0) != parts[2])
-                {
-                    parent = new toResultViewItem(Indicators, NULL, parts[2]);
-                    parent->setOpen(true);
-                    last = NULL;
-                }
-                QStringList dsc = toSQL::description(*i).split(".");
-                QString first = dsc[0];
-                first += QString::fromLatin1(".");
-                last = new toResultViewItem(parent, last, first);
-                QString str;
-                for (toQList::iterator j = val.begin(); j != val.end(); j++)
-                    str += *j;
-                last->setText(1, str);
-                if (dsc.count() > 1)
-                    last->setText(2, dsc[1]);
-            }
-            TOCATCH
-        }
-        Indicators->resizeColumnsToContents();
-    }
-    else if (LastTab == Waits)
-        Waits->refresh();
-    else if (LastTab == Statistics)
-        Statistics->slotRefreshStats();
-    else if (LastTab == Parameters)
-        Parameters->refresh();
-    else if (LastTab == BlockingLocks)
-        BlockingLocks->refresh();
+	if (LastTab == Overview)
+	{
+		Overview->refresh(connection());
+	}
+	else if (LastTab == Charts)
+	{
+		Charts->refresh();
+	}
+	else if (LastTab == Indicators)
+	{
+		Indicators->clear();
+		QList<QString> val = toSQL::range("toTuning:Indicators");
+		toTreeWidgetItem *parent = NULL;
+		toTreeWidgetItem *last = NULL;
+		for (QList<QString>::iterator i = val.begin(); i != val.end(); i++)
+		{
+			try
+			{
+				toQList val = toQuery::readQuery(connection(), toSQL::string(*i, connection()), toQueryParams());
+				QStringList parts = (*i).split(":");
+				if (!parent || parent->text(0) != parts[2])
+				{
+					parent = new toResultViewItem(Indicators, NULL, parts[2]);
+					parent->setOpen(true);
+					last = NULL;
+				}
+				QStringList dsc = toSQL::description(*i).split(".");
+				QString first = dsc[0];
+				first += QString::fromLatin1(".");
+				last = new toResultViewItem(parent, last, first);
+				QString str;
+				for (toQList::iterator j = val.begin(); j != val.end(); j++)
+					str += *j;
+				last->setText(1, str);
+				if (dsc.count() > 1)
+					last->setText(2, dsc[1]);
+			}
+			TOCATCH
+		}
+		Indicators->resizeColumnsToContents();
+	}
+	else if (LastTab == Waits)
+		Waits->refresh();
+	else if (LastTab == Statistics)
+		Statistics->slotRefreshStats();
+	else if (LastTab == Parameters)
+		Parameters->refresh();
+	else if (LastTab == BlockingLocks->view())
+		BlockingLocks->refreshWithParams(toQueryParams());
     else if (LastTab == LibraryCache)
         LibraryCache->refresh();
     else if (LastTab == ControlFiles)

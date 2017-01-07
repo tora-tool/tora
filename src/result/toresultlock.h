@@ -36,7 +36,7 @@
 
 #include "result/tomvc.h"
 #include "result/totreeview.h"
-#include "core/toresult.h"
+//#include "core/toresult.h"
 
 class toEventQuery;
 
@@ -75,9 +75,9 @@ namespace ResutLock
 }
 
 /**
- * A result table displaying information about locks in a hierarchy
+ * A result table displaying information about locks
  */
-class toResultLockNew
+class toResultLock
         : public ResutLock::MVC
 //        , public toResult
 {
@@ -85,16 +85,12 @@ class toResultLockNew
 
         toEventQuery *Query;
     public:
-        toResultLockNew(QWidget *parent, const char *name = NULL);
-        ~toResultLockNew();
-
-//        void query(const QString &sql, const toQueryParams &param) override;
-        void query(const QString &sql, const toQueryParams &param);
+        toResultLock(QWidget *parent, const char *name = NULL);
+        ~toResultLock();
 
         /** Support Oracle
          */
-//        bool canHandle(const toConnection &conn) override;
-		bool canHandle(const toConnection &conn);
+        //bool canHandle(const toConnection &conn) /* TODO does not called - override */;
 
     private:
 };
