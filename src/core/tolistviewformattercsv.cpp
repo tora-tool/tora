@@ -35,7 +35,6 @@
 #include "core/tolistviewformattercsv.h"
 #include "core/tolistviewformatterfactory.h"
 #include "core/tolistviewformatteridentifier.h"
-#include "widgets/toresultmodel.h"
 
 #include <QtCore/QRegExp>
 

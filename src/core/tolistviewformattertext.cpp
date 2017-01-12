@@ -35,7 +35,6 @@
 #include "core/tolistviewformattertext.h"
 #include "core/tolistviewformatterfactory.h"
 #include "core/tolistviewformatteridentifier.h"
-#include "widgets/toresultmodel.h"
 
 #include <QtCore/QVector>
 

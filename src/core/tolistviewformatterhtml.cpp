@@ -35,7 +35,6 @@
 #include "core/tolistviewformatterhtml.h"
 #include "core/tolistviewformatterfactory.h"
 #include "core/tolistviewformatteridentifier.h"
-#include "widgets/toresultmodel.h"
 #include "core/utils.h"
 
 #include <QtGui/QTextDocument>
@@ -61,9 +60,8 @@ toListViewFormatterHTML::toListViewFormatterHTML() : toListViewFormatter()
 toListViewFormatterHTML::~toListViewFormatterHTML()
 {
 }
-QString toListViewFormatterHTML::getFormattedString(toExportSettings &settings,
-        //const toResultModel *model);
-        const QAbstractItemModel * model)
+
+QString toListViewFormatterHTML::getFormattedString(toExportSettings &settings, const QAbstractItemModel * model)
 {
     int     columns   = model->columnCount();
     int     rows      = model->rowCount();
@@ -83,14 +81,16 @@ QString toListViewFormatterHTML::getFormattedString(toExportSettings &settings,
         output += QString("<TR>");
         endLine(output);
 
-        for (int j = 0; j < columns; j++)
+        for (int column = 0; column < columns; column++)
         {
-            if (settings.columnsExport == toExportSettings::ColumnsSelected && !clist.contains(j))
+            if (settings.columnsExport == toExportSettings::ColumnsSelected && !clist.contains(column))
+                continue;
+            if (!settings.rowsHeader && column == 0)
                 continue;
             output += QString("\t<TH>");
             endLine(output);
 
-            QString text = TO_ESCAPE(QString(model->headerData(j, Qt::Horizontal, Qt::DisplayRole).toString()));
+            QString text = TO_ESCAPE(QString(model->headerData(column, Qt::Horizontal, Qt::DisplayRole).toString()));
 
             output += "\t\t" + text;
 

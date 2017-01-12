@@ -35,7 +35,6 @@
 #include "core/tolistviewformattertabdel.h"
 #include "core/tolistviewformatterfactory.h"
 #include "core/tolistviewformatteridentifier.h"
-#include "widgets/toresultmodel.h"
 
 #include <iostream>
 #include "tools/toresultview.h"
@@ -59,9 +58,7 @@ toListViewFormatterTabDel::~toListViewFormatterTabDel()
 {
 }
 
-QString toListViewFormatterTabDel::getFormattedString(toExportSettings &settings,
-        //const toResultModel *model);
-        const QAbstractItemModel * model)
+QString toListViewFormatterTabDel::getFormattedString(toExportSettings &settings, const QAbstractItemModel * model)
 {
     int     columns   = model->columnCount();
     int     rows      = model->rowCount();
@@ -73,14 +70,17 @@ QString toListViewFormatterTabDel::getFormattedString(toExportSettings &settings
     QVector<int> rlist = selectedRows(settings.selected);
     QVector<int> clist = selectedColumns(settings.selected);
 
+    // write header data
     if (settings.columnsHeader)
     {
-        for (int j = 0; j < columns; j++)
+        for (int column = 0; column < columns; column++)
         {
-            if (settings.columnsExport == toExportSettings::ColumnsSelected && !clist.contains(j))
+            if (settings.columnsExport == toExportSettings::ColumnsSelected && !clist.contains(column))
+                continue;
+            if (!settings.rowsHeader && column == 0)
                 continue;
             output += QString("%1\t").arg(model->headerData(
-                                              j,
+                                              column,
                                               Qt::Horizontal,
                                               Qt::DisplayRole).toString());
         }
