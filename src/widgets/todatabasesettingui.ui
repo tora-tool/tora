@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>600</width>
-    <height>526</height>
+    <height>556</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -265,7 +265,7 @@
      </layout>
     </widget>
    </item>
-   <item row="5" column="0">
+   <item row="6" column="0">
     <spacer>
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -362,6 +362,43 @@
         </property>
         <property name="shortcut">
          <string>Alt+A</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Extractor options</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="IncludeHeaderBool">
+        <property name="text">
+         <string>Include header</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="IncludePromptBool">
+        <property name="text">
+         <string>Include prompt</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QCheckBox" name="IncludeCodeBool">
+        <property name="text">
+         <string>Include code specification</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QCheckBox" name="IncludeParallelBool">
+        <property name="text">
+         <string>Include parallel specification</string>
         </property>
        </widget>
       </item>

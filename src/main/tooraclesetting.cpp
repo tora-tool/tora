@@ -91,9 +91,9 @@ void toOracleSetting::dbmsMetadataClicked(bool)
     IncludeStorageBool->setDisabled(UseDbmsMetadataBool->isChecked());
     SkipOrgMonBool->setDisabled(UseDbmsMetadataBool->isChecked());
     SkiptStorExTablespaceBool->setDisabled(UseDbmsMetadataBool->isChecked());
-    IncludeParallelBool->setDisabled(UseDbmsMetadataBool->isChecked());
+    //IncludeParallelBool->setDisabled(UseDbmsMetadataBool->isChecked()); // moved into ToConfiguration::Database
     IncludePartitionBool->setDisabled(UseDbmsMetadataBool->isChecked());
-    IncludeCodeBool->setDisabled(UseDbmsMetadataBool->isChecked());
+    // IncludeCodeBool->setDisabled(UseDbmsMetadataBool->isChecked()); // moved into ToConfiguration::Database
 }
 
 void toOracleSetting::createPlanTable()

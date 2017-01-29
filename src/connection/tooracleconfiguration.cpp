@@ -59,15 +59,7 @@ QVariant ToConfiguration::Oracle::defaultValue(int option) const
             return QVariant((bool)false);
         case SkipStorageExceptTablespaceBool:
             return QVariant((bool)false);
-        case IncludeParallelBool:
-            return QVariant((bool)true);
         case IncludePartitionBool:
-            return QVariant((bool)true);
-        case IncludeCodeBool:
-            return QVariant((bool)true);
-        case IncludeHeaderBool:
-            return QVariant((bool)true);
-        case IncludePromptBool:
             return QVariant((bool)true);
         case SegmentAttrsBool:
             return QVariant((bool)true);

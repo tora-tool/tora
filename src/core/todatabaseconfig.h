@@ -60,6 +60,10 @@ namespace ToConfiguration
                 , IndicateEmptyColor  // #define CONF_INDICATE_EMPTY_COLOR
                 , NumberFormatInt     // #define CONF_NUMBER_FORMAT
                 , NumberDecimalsInt   // #define CONF_NUMBER_DECIMALS
+                , IncludeCodeBool          // #define CONF_EXT_INC_CODE
+                , IncludeHeaderBool        // #define CONF_EXT_INC_HEADER
+                , IncludePromptBool        // #define CONF_EXT_INC_PROMPT
+                , IncludeParallelBool      // #define CONF_EXT_INC_PARALLEL
             };
             virtual QVariant defaultValue(int) const;
     };

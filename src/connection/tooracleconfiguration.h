@@ -59,11 +59,7 @@ namespace ToConfiguration
                 , IncludeStorageBool       // #define CONF_EXT_INC_STORAGE
                 , SkipOrgMonBool           // #define CONF_EXT_SKIP_ORGMON
                 , SkipStorageExceptTablespaceBool // #define CONF_EXT_SKIP_STORAGE_EX_TABLESPACE
-                , IncludeParallelBool      // #define CONF_EXT_INC_PARALLEL
                 , IncludePartitionBool     // #define CONF_EXT_INC_PARTITION
-                , IncludeCodeBool          // #define CONF_EXT_INC_CODE
-                , IncludeHeaderBool        // #define CONF_EXT_INC_HEADER
-                , IncludePromptBool        // #define CONF_EXT_INC_PROMPT
                 , SegmentAttrsBool
                 , StorageBool
                 , TablespaceBool

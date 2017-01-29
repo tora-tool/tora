@@ -34,7 +34,7 @@
 
 #include "tools/toresultcode.h"
 
-#include "connection/tooracleconfiguration.h"
+#include "core/todatabaseconfig.h"
 #include "core/utils.h"
 #include "core/toextract.h"
 #include "core/toconfiguration.h"
@@ -42,17 +42,19 @@
 
 #include <QtCore/QPair>
 
+using namespace ToConfiguration;
+
 toResultCode::toResultCode(bool prompt, QWidget *parent, const char *name)
     : toDebugEditor(parent, name)
     , Prompt(prompt)
-    , m_heading(toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::IncludeHeaderBool).toBool())
+    , m_heading(toConfigurationNewSingle::Instance().option(Database::IncludeHeaderBool).toBool())
     , m_offset(0)
 {}
 
 toResultCode::toResultCode(QWidget * parent)
     : toDebugEditor(parent, "toResultExtract")
-    , Prompt(toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::IncludePromptBool).toBool())
-    , m_heading(toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::IncludeHeaderBool).toBool())
+    , Prompt(toConfigurationNewSingle::Instance().option(Database::IncludePromptBool).toBool())
+    , m_heading(toConfigurationNewSingle::Instance().option(Database::IncludeHeaderBool).toBool())
     , m_offset(0)
 {}
 
@@ -71,7 +73,6 @@ static toSQL SQLObjectType("toResultExtract:ObjectType",
 
 void toResultCode::query(const QString &sql, toQueryParams const& param)
 {
-    using namespace ToConfiguration;
     using ObjectRef = toCache::ObjectRef;
 
     if (!setSqlAndParams(sql, param))
@@ -139,11 +140,11 @@ void toResultCode::query(const QString &sql, toQueryParams const& param)
             objects.append(QPair<QString, ObjectRef>(type, objectRef));
 
         toExtract extract(conn, NULL);
-        extract.setCode(toConfigurationNewSingle::Instance().option(Oracle::IncludeCodeBool).toBool());
-        extract.setHeading(m_heading && toConfigurationNewSingle::Instance().option(Oracle::IncludeHeaderBool).toBool());
+        extract.setCode(toConfigurationNewSingle::Instance().option(Database::IncludeCodeBool).toBool());
+        extract.setHeading(m_heading && toConfigurationNewSingle::Instance().option(Database::IncludeHeaderBool).toBool());
         extract.setPrompt(Prompt);
         extract.setReplace(true); // generate create OR REPLACE statements
-        extract.setParallel(toConfigurationNewSingle::Instance().option(Oracle::IncludeParallelBool).toBool());
+        extract.setParallel(toConfigurationNewSingle::Instance().option(Database::IncludeParallelBool).toBool());
         QString text = extract.create(objects);
         {
             // Try to detect where create statement really starts

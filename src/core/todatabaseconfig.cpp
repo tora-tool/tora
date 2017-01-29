@@ -69,6 +69,14 @@ QVariant ToConfiguration::Database::defaultValue(int option) const
             return QVariant((int)0);
         case NumberDecimalsInt:
             return QVariant((int)2);
+        case IncludeCodeBool:
+            return QVariant((bool)true);
+        case IncludeHeaderBool:
+            return QVariant((bool)true);
+        case IncludePromptBool:
+            return QVariant((bool)true);
+        case IncludeParallelBool:
+            return QVariant((bool)true);
         default:
             Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Database un-registered enum value: %1").arg(option)));
             return QVariant();
