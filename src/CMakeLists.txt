@@ -242,6 +242,7 @@ SET(TORA_MOC_CLASSES
 
   result/toproviderobserver.h
   result/toresultlock.h
+  result/toresultplan.h
   result/toresulttabledata.h
   result/toresultwaitchains.h
   result/totablemodel.h
@@ -532,6 +533,7 @@ SET(TORA_SOURCES
 
   result/toproviderobserver.cpp
   result/toresultlock.cpp
+  result/toresultplan.cpp
   result/toresulttabledata.cpp
   result/toresultwaitchains.cpp
   result/totablemodel.cpp

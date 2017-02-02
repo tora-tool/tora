@@ -35,62 +35,79 @@
 #pragma once
 
 #include "result/tomvc.h"
-#include "result/totreeview.h"
-//#include "core/toresult.h"
+#include "widgets/toplaintextview.h"
+#include "widgets/topushbutton.h"
 
-class toEventQuery;
-
-class toTreeViewPriv;
-
-namespace ResutLock
+namespace ResultPlan
 {
-    struct Traits : public MVCTraits
+    struct TraitsA : public MVCTraits
     {
-        static const bool AlternatingRowColorsEnabled = true;
         static const int  ShowRowNumber = NoRowNumber;
         static const int  ColumnResize = RowColumResize;
-
-        typedef toTreeViewPriv View;
+        typedef toPlainTextView View;
     };
 
-    class MVC
+    class MVCA
             : public TOMVC
               <
-              ::ResutLock::Traits,
-              ::DefaultTreeViewPolicy,
+              ::ResultPlan::TraitsA,
+              ::DefaultPlainTextViewPolicy,
               ::DefaultDataProviderPolicy
               >
     {
         Q_OBJECT;
     public:
         typedef TOMVC<
-                ::ResutLock::Traits,
-                ::DefaultTreeViewPolicy,
+                ::ResultPlan::TraitsA,
+                ::DefaultPlainTextViewPolicy,
                 ::DefaultDataProviderPolicy
                   > _s;
-        MVC(QWidget *parent) : _s(parent)
+        MVCA(QWidget *parent) : _s(parent)
         {};
-        virtual ~MVC() {};
+        virtual ~MVCA() {};
     };
 }
 
-/**
- * A result table displaying information about locks
- */
-class toResultLock
-        : public ResutLock::MVC
-//        , public toResult
+class toXPlanFormatButton;
+class QShowEvent;
+class QHideEvent;
+
+class toResultPlanNew : public QWidget
 {
-        Q_OBJECT
+    Q_OBJECT;
+    Q_ENUMS(XPlanFormat);
 
-        toEventQuery *Query;
+public:
+    enum XPlanFormat
+    {
+        BASIC,
+        TYPICAL,
+        SERIAL,
+        ALL,
+        ADVACED,
+        ADAPTIVE
+    };
+
+    toResultPlanNew(QWidget *parent, const char* name = "toResultPlan");
+    ~toResultPlanNew();
+
+    void refreshWithParams(toQueryParams const&);
+
+protected:
+    void showEvent(QShowEvent * event) override;
+    void hideEvent(QHideEvent * event) override;
+
+    ResultPlan::MVCA* mvca;
+    toXPlanFormatButton *explainFormat;
+};
+
+/**
+ * Subclass toToggleButton and iterate over values of HighlighterTypeEnum
+ */
+class toXPlanFormatButton : public toToggleButton
+{
+        Q_OBJECT;
     public:
-        toResultLock(QWidget *parent, const char *name = "toResultLock");
-        ~toResultLock();
-
-        /** Support Oracle
-         */
-        //bool canHandle(const toConnection &conn) /* TODO does not called - override */;
-
-    private:
+        toXPlanFormatButton(QWidget *parent, const char *name = 0);
+        toXPlanFormatButton();
 };

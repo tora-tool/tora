@@ -42,8 +42,10 @@
 #include "core/utils.h"
 #include "editor/toscintilla.h"
 #include "toresultfield.h"
-#include "toresultplan.h"
+#include "tools/toresultplan.h"
 #include "toresulttableview.h"
+
+#include "result/toresultplan.h"
 
 static toSQL SQLParsingSchema(
     "toSGAStatement:ParsingSchema",
@@ -80,9 +82,11 @@ static toSQL SQLPlanHistory("toSGATrace:PlanHistory",
 		" order by 1, 2, 3                                                                             ",
 		"Display sql plan history");
 
-toSGAStatement::toSGAStatement(QWidget *parent)
+toSGAStatement::toSGAStatement(QWidget *parent, const char* name)
     : QTabWidget(parent)
 {
+    if (name)
+        setObjectName(name);
 
     SQLText = new toResultField(this);
     addTab(SQLText, tr("SQL"));
@@ -91,6 +95,10 @@ toSGAStatement::toSGAStatement(QWidget *parent)
     {
     	Plan = new toResultPlanCursor(this);
         addTab(Plan, tr("Execution plan"));
+
+        PlanNew = new toResultPlanNew(this, name);
+        addTab(PlanNew, tr("Execution plan New"));
+
         Resources = new toResultResources(this);
         addTab(Resources, tr("Information"));
 
@@ -139,6 +147,8 @@ void toSGAStatement::changeTab(int index)
         }
         else if (CurrentTab == Plan)
             Plan->queryCursorPlan(toQueryParams() << Address << Cursor);
+        else if (CurrentTab == PlanNew)
+            PlanNew->refreshWithParams(toQueryParams() << Address << Cursor);
         else if (CurrentTab == Resources)
             Resources->refreshWithParams(toQueryParams() << Address);
         else if (CurrentTab == PlanHistory)

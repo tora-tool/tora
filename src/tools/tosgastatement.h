@@ -43,6 +43,7 @@ class QTabWidget;
 class toResultField;
 class toResultItem;
 class toResultPlanCursor;
+class toResultPlanNew;
 class toResultView;
 class toResultTableView;
 
@@ -74,6 +75,7 @@ class toSGAStatement : public QTabWidget
         /** Execution plan of the statement.
          */
         toResultPlanCursor *Plan;
+        toResultPlanNew    *PlanNew;
 
     private slots:
         /** Change the displayed tab.
@@ -83,7 +85,7 @@ class toSGAStatement : public QTabWidget
         /** Create widget.
          * @param parent Parent widget.
          */
-        toSGAStatement(QWidget *parent);
+        toSGAStatement(QWidget *parent, const char* name = NULL);
 
         /** Display another statement.
          * @param address Address of the statement to display.
