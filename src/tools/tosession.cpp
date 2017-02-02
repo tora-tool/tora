@@ -251,6 +251,20 @@ static toSQL SQLOpenCursors(
 	" where sid = :f1<char[101]>",
     "Display open cursors of this session");
 
+static toSQL SQLOpenCursors11g(
+    "toSession:OpenCursor",
+        " select SQL_Text SQL                        \n"
+        "       , CURSOR_TYPE                        \n"
+        "       , LAST_SQL_ACTIVE_TIME               \n"
+        "       , SQL_EXEC_ID                        \n"
+        "       , c.SQL_ID     as \" sql_id\"        \n"
+        "       , child_number as \" child_number\"  \n"
+        " from v$open_cursor c \n"
+        " join (select distinct ADDRESS, HASH_VALUE, SQL_ID, child_number from v$sql_plan) p on c.ADDRESS = p.ADDRESS and c.HASH_VALUE = p.HASH_VALUE and c.sql_id = p.sql_id \n"
+        " where sid = :f1<char[101]>",
+        "",
+        "1101");
+
 static toSQL SQLSessionWait(
     TO_SESSION_WAIT,
     "select sysdate,\n"
