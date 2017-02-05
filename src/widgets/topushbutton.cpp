@@ -180,7 +180,6 @@ toPopupButton::toPopupButton(const QIcon &iconSet,
 toPopupButton::toPopupButton(QWidget *parent, const char *name)
     : QToolButton(parent)
 {
-
     setObjectName(name);
 }
 
@@ -193,6 +192,7 @@ toToggleButton::toToggleButton(QMetaEnum const& e, QWidget *parent, const char* 
         throw QString("ctor toToggleButton - empty enum provided: %1").arg(m_enum.name());
 
     setObjectName(name);
+    setFocusPolicy(Qt::NoFocus);
     setFlat(true);
     setText(m_enum.key(m_idx));
 

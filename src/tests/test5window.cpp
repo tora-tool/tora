@@ -77,7 +77,6 @@ Test5Window::Test5Window(QString const&user, QString const&password, QString con
     {
         m_describeAction = new QAction("&Describe", this);
         this->setCentralWidget(&Workspace);
-        toHighlighterTypeButtonSingle::Instance().setFocusPolicy(Qt::NoFocus);
         toHighlighterTypeButtonSingle::Instance().setDisabled(true);
         statusBar()->addPermanentWidget(&toHighlighterTypeButtonSingle::Instance());
 

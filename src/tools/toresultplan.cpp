@@ -125,11 +125,10 @@ void toResultPlanView::queryDone()
 
 void toResultPlanView::showEvent(QShowEvent * event)
 {
-	QTreeView::showEvent(event);
+    QTreeView::showEvent(event);
     QMainWindow *main = toMainWindow::lookup();
     if(main)
     {
-        toExplainTypeButtonSingle::Instance().setFocusPolicy(Qt::NoFocus);
         toExplainTypeButtonSingle::Instance().setEnabled(true);
         main->statusBar()->insertWidget(0, &toExplainTypeButtonSingle::Instance(), 0);
         toExplainTypeButtonSingle::Instance().show();

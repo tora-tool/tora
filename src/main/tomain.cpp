@@ -488,11 +488,9 @@ void toMain::createStatusbar()
     SelectionLabel->setText("Sel: Normal");
 #endif
 
-    toEditorTypeButtonSingle::Instance().setFocusPolicy(Qt::NoFocus);
     toEditorTypeButtonSingle::Instance().setDisabled(true);
     statusBar()->addPermanentWidget(&toEditorTypeButtonSingle::Instance());
 
-    toHighlighterTypeButtonSingle::Instance().setFocusPolicy(Qt::NoFocus);
     toHighlighterTypeButtonSingle::Instance().setDisabled(true);
     statusBar()->addPermanentWidget(&toHighlighterTypeButtonSingle::Instance());
 
@@ -506,7 +504,6 @@ void toMain::createStatusbar()
 
     QToolButton *dispStatus = new toPopupButton(statusBar(), "dispStatus");
     dispStatus->setIcon(QPixmap(const_cast<const char**>(up_xpm)));
-    dispStatus->setFocusPolicy(Qt::NoFocus);
     statusBar()->addPermanentWidget(dispStatus, 0);
     statusMenu = new QMenu(dispStatus);
     dispStatus->setMenu(statusMenu);

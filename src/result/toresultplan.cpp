@@ -50,7 +50,6 @@ toResultPlanNew::toResultPlanNew(QWidget *parent, const char *name)
     QWidget::setLayout(vbox);
 
     explainFormat = new toXPlanFormatButton(this);
-    explainFormat->setFocusPolicy(Qt::NoFocus);
     explainFormat->setToolTip(name);
 
 //    toResultPlanFormatButton *b = new toResultPlanFormatButton(this);

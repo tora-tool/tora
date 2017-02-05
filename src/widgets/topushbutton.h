@@ -98,7 +98,7 @@ class toRotatingButton : public QPushButton
  */
 class toPopupButton : public QToolButton
 {
-        Q_OBJECT;
+    Q_OBJECT;
     public:
         /** Create button, same constructor as toolbutton except no slots
          */
@@ -116,7 +116,7 @@ class toPopupButton : public QToolButton
  */
 class toToggleButton : public QPushButton
 {
-        Q_OBJECT;
+    Q_OBJECT;
     public:
         toToggleButton(QMetaEnum const& e, QWidget *parent, const char* name = 0);
 
