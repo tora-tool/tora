@@ -187,6 +187,7 @@ class toEventQuery : public QObject
          */
         bool hasMore(void) const;
 
+    public slots:
         /**
          * Stop reading query
          */

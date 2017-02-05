@@ -35,7 +35,9 @@
 #include "core/tomainwindow.h"
 
 static toSQL SQLDisplayCursor("toResultPlan:DisplayCursor",
-                              "SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY_CURSOR(:sqlid<char[40],in>, :chld<char[10],in>))",
+                              "SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY_CURSOR(:sqlid<char[40],in>, :chld<char[10],in>))"
+                              //" WHERE sys.slow_one() = 1 "
+                              ,
                               "Get the contents of SQL plan from using DBMS_XPLAN.DISPLAY_CURSOR",
         "1000");
 
