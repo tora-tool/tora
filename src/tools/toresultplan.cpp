@@ -181,6 +181,7 @@ toExplainTypeButton::toExplainTypeButton(QWidget *parent, const char *name)
 	, name
 	)
 {
+    enablePopUp();
 }
 
 toExplainTypeButton::toExplainTypeButton()
@@ -188,6 +189,7 @@ toExplainTypeButton::toExplainTypeButton()
 	, NULL
 	)
 {
+    enablePopUp();
 }
 
 

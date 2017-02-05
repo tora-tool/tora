@@ -46,8 +46,7 @@ class QToolBar;
 // a button that can be rotated.
 class toRotatingButton : public QPushButton
 {
-        Q_OBJECT;
-
+    Q_OBJECT;
     public:
         enum Rotation
         {
@@ -114,6 +113,9 @@ class toPopupButton : public QToolButton
  * It uses enum values as circular list of string labels
  * See toHighlighterTypeButton as an example
  */
+class QGestureEvent;
+class QListView;
+
 class toToggleButton : public QPushButton
 {
     Q_OBJECT;
@@ -126,14 +128,23 @@ class toToggleButton : public QPushButton
         void setValue(int);
         void setValue(QString const&);
 
+        void enablePopUp();
     private slots:
         void toggle();
+        void toggle(const QModelIndex&);
     signals:
         void toggled(QString const&);
         void toggled(int);
     private:
+        bool event(QEvent *event) override;
+        bool gestureEvent(QGestureEvent *event);
+        void focusOutEvent(QFocusEvent *e) override;
+
         QMetaEnum m_enum;
         int m_idx;
+
+        /* TapAndHoldGesture list menu part */
+        QListView *listView;
 };
 
 #endif

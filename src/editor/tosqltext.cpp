@@ -271,7 +271,7 @@ void toSqlText::setHighlighter(int h) // slot
 
     if (focus == this)
         setHighlighter((HighlighterTypeEnum)h);
-    TLOG(9, toDecorator, __HERE__) << " for: " << focus->metaObject()->className() << std::endl;
+    TLOG(9, toDecorator, __HERE__) << " for: " << (focus ? focus->metaObject()->className() : QString("NULL")) << std::endl;
 }
 
 #ifdef QT_DEBUG

@@ -102,6 +102,7 @@ toXPlanFormatButton::toXPlanFormatButton(QWidget *parent, const char *name)
         , name
         )
 {
+    enablePopUp();
 }
 
 toXPlanFormatButton::toXPlanFormatButton()
@@ -109,4 +110,5 @@ toXPlanFormatButton::toXPlanFormatButton()
         , NULL
         )
 {
+    enablePopUp();
 }
