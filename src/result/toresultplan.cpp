@@ -49,12 +49,13 @@ toResultPlanNew::toResultPlanNew(QWidget *parent, const char *name)
     vbox->setContentsMargins(0, 0, 0, 0);
     QWidget::setLayout(vbox);
 
+    mvca = new ResultPlan::PlanTextMVC(this);
+    mvca->setSQLName("toResultPlan:DisplayCursor");
+    QWidget::layout()->addWidget(mvca->widget());
+
     explainFormat = new toXPlanFormatButton(this);
     explainFormat->setToolTip(name);
 
-    mvca = new ResultPlan::MVCA(this);
-    mvca->setSQLName("toResultPlan:DisplayCursor");
-    QWidget::layout()->addWidget(mvca->widget());
 }
 
 toResultPlanNew::~toResultPlanNew()

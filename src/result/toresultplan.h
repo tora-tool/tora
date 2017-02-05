@@ -40,17 +40,17 @@
 
 namespace ResultPlan
 {
-    struct TraitsA : public MVCTraits
+    struct TraitsPlanText : public MVCTraits
     {
         static const int  ShowRowNumber = NoRowNumber;
         static const int  ColumnResize = RowColumResize;
         typedef toPlainTextView View;
     };
 
-    class MVCA
+    class PlanTextMVC
             : public TOMVC
               <
-              ::ResultPlan::TraitsA,
+              TraitsPlanText,
               ::DefaultPlainTextViewPolicy,
               ::DefaultDataProviderPolicy
               >
@@ -58,13 +58,13 @@ namespace ResultPlan
         Q_OBJECT;
     public:
         typedef TOMVC<
-                ::ResultPlan::TraitsA,
+                TraitsPlanText,
                 ::DefaultPlainTextViewPolicy,
                 ::DefaultDataProviderPolicy
                   > _s;
-        MVCA(QWidget *parent) : _s(parent)
+        PlanTextMVC(QWidget *parent) : _s(parent)
         {};
-        virtual ~MVCA() {};
+        virtual ~PlanTextMVC() {};
     };
 }
 
@@ -97,7 +97,7 @@ protected:
     void showEvent(QShowEvent * event) override;
     void hideEvent(QHideEvent * event) override;
 
-    ResultPlan::MVCA* mvca;
+    ResultPlan::PlanTextMVC* mvca;
     toXPlanFormatButton *explainFormat;
 };
 
