@@ -46,6 +46,7 @@ class toSearchReplace;
 #include "editor/toeditglobals.h"
 
 #include <QWidget>
+#include <QtCore/QSet>
 
 /** A tora plaintext version of the @ref QPlainTextEdit widget.
  */
