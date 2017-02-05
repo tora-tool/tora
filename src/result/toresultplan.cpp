@@ -52,9 +52,6 @@ toResultPlanNew::toResultPlanNew(QWidget *parent, const char *name)
     explainFormat = new toXPlanFormatButton(this);
     explainFormat->setToolTip(name);
 
-//    toResultPlanFormatButton *b = new toResultPlanFormatButton(this);
-//    QWidget::layout()->addWidget(b);
-
     mvca = new ResultPlan::MVCA(this);
     mvca->setSQLName("toResultPlan:DisplayCursor");
     QWidget::layout()->addWidget(mvca->widget());
@@ -78,8 +75,7 @@ void toResultPlanNew::showEvent(QShowEvent * event)
     if(main)
     {
         main->statusBar()->addWidget(explainFormat);
-        //main->statusBar()->insertWidget(0, explainFormat, 0);
-        //explainType->show();
+        explainFormat->show();
     }
 }
 
@@ -97,18 +93,13 @@ void toResultPlanNew::hideEvent(QHideEvent * event)
 //                     toXPlanFormatButton
 ////////////////////////////////////////////////////////////////////////////////
 toXPlanFormatButton::toXPlanFormatButton(QWidget *parent, const char *name)
-        : toToggleButton(toResultPlanNew::staticMetaObject.enumerator(toResultPlanNew::staticMetaObject.indexOfEnumerator("XPlanFormat"))
-        , parent
-        , name
-        )
+    : toToggleButton(ENUM_REF(toResultPlanNew, XPlanFormat), parent, name)
 {
     enablePopUp();
 }
 
 toXPlanFormatButton::toXPlanFormatButton()
-        : toToggleButton(toResultPlanNew::staticMetaObject.enumerator(toResultPlanNew::staticMetaObject.indexOfEnumerator("XPlanFormat"))
-        , NULL
-        )
+    : toToggleButton(ENUM_REF(toResultPlanNew, XPlanFormat), NULL)
 {
     enablePopUp();
 }

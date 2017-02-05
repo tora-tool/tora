@@ -571,17 +571,12 @@ void toSqlTextWorker::setAnalyzer(toSyntaxAnalyzer *analyzer)
 }
 
 toHighlighterTypeButton::toHighlighterTypeButton(QWidget *parent, const char *name)
-    : toToggleButton(toSqlText::staticMetaObject.enumerator(toSqlText::staticMetaObject.indexOfEnumerator("HighlighterTypeEnum"))
-                     , parent
-                     , name
-                    )
+    : toToggleButton(ENUM_REF(toSqlText, HighlighterTypeEnum), parent, name)
 {
 }
 
 toHighlighterTypeButton::toHighlighterTypeButton()
-    : toToggleButton(toSqlText::staticMetaObject.enumerator(toSqlText::staticMetaObject.indexOfEnumerator("HighlighterTypeEnum"))
-                     , NULL
-                    )
+    : toToggleButton(ENUM_REF(toSqlText, HighlighterTypeEnum), NULL)
 {
 }
 

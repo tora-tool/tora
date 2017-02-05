@@ -130,14 +130,15 @@ void toResultPlanView::showEvent(QShowEvent * event)
     if(main)
     {
         toExplainTypeButtonSingle::Instance().setEnabled(true);
-        main->statusBar()->insertWidget(0, &toExplainTypeButtonSingle::Instance(), 0);
+        //main->statusBar()->insertWidget(0, &toExplainTypeButtonSingle::Instance(), 0);
+        main->statusBar()->addWidget(&toExplainTypeButtonSingle::Instance(), 0);
         toExplainTypeButtonSingle::Instance().show();
     }
 }
 
 void toResultPlanView::hideEvent(QHideEvent * event)
 {
-	QTreeView::hideEvent(event);
+    QTreeView::hideEvent(event);
     QMainWindow *main = toMainWindow::lookup();
     if(main)
     {
@@ -176,18 +177,13 @@ void toResultPlanView::resizeEvent(QResizeEvent *event)
 //                     toExplainTypeButton
 ////////////////////////////////////////////////////////////////////////////////
 toExplainTypeButton::toExplainTypeButton(QWidget *parent, const char *name)
-	: toToggleButton(toResultPlanView::staticMetaObject.enumerator(toResultPlanView::staticMetaObject.indexOfEnumerator("ExplainTypeEnum"))
-	, parent
-	, name
-	)
+    : toToggleButton(ENUM_REF(toResultPlanView,ExplainTypeEnum), parent, name)
 {
     enablePopUp();
 }
 
 toExplainTypeButton::toExplainTypeButton()
-	: toToggleButton(toResultPlanView::staticMetaObject.enumerator(toResultPlanView::staticMetaObject.indexOfEnumerator("ExplainTypeEnum"))
-	, NULL
-	)
+    : toToggleButton(ENUM_REF(toResultPlanView,ExplainTypeEnum), NULL)
 {
     enablePopUp();
 }
