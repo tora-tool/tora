@@ -80,11 +80,11 @@ class toResultPlanNew : public QWidget
 public:
     enum XPlanFormat
     {
-        BASIC,
+        BASIC = 0, // see ToConfiguration::Oracle::XPlanFormat
         TYPICAL,
         SERIAL,
         ALL,
-        ADVACED,
+        ADVANCED,
         ADAPTIVE
     };
 
@@ -99,6 +99,7 @@ protected:
 
     ResultPlan::PlanTextMVC* mvca;
     toXPlanFormatButton *explainFormat;
+    QString format;
 };
 
 /**
@@ -110,4 +111,8 @@ class toXPlanFormatButton : public toToggleButton
     public:
         toXPlanFormatButton(QWidget *parent, const char *name = 0);
         toXPlanFormatButton();
+
+    protected:
+        void toggle() override;
+        void toggle(const QModelIndex&) override;
 };

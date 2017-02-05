@@ -129,9 +129,9 @@ class toToggleButton : public QPushButton
         void setValue(QString const&);
 
         void enablePopUp();
-    private slots:
-        void toggle();
-        void toggle(const QModelIndex&);
+    protected slots:
+        virtual void toggle();
+        virtual void toggle(const QModelIndex&);
     signals:
         void toggled(QString const&);
         void toggled(int);

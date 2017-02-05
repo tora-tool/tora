@@ -34,8 +34,13 @@
 #include "result/toresultplan.h"
 #include "core/tomainwindow.h"
 
+#ifndef TO_NO_ORACLE
+#include "core/toconfiguration.h"
+#include "connection/tooracleconfiguration.h"
+#endif
+
 static toSQL SQLDisplayCursor("toResultPlan:DisplayCursor",
-                              "SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY_CURSOR(:sqlid<char[40],in>, :chld<char[10],in>))"
+                              "SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY_CURSOR(:sqlid<char[40],in>, :chld<char[10],in>, :format<char[20],in>))"
                               //" WHERE sys.slow_one() = 1 "
                               ,
                               "Get the contents of SQL plan from using DBMS_XPLAN.DISPLAY_CURSOR",
@@ -57,7 +62,6 @@ toResultPlanNew::toResultPlanNew(QWidget *parent, const char *name)
 
     explainFormat = new toXPlanFormatButton(this);
     explainFormat->setToolTip(name);
-
 }
 
 toResultPlanNew::~toResultPlanNew()
@@ -68,7 +72,13 @@ toResultPlanNew::~toResultPlanNew()
 void
 toResultPlanNew::refreshWithParams (const toQueryParams& params)
 {
-    mvca->refreshWithParams(params);
+    toQueryParams p(params);
+
+#ifndef TO_NO_ORACLE
+    p << toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::XPlanFormat).toString();
+#endif
+
+    mvca->refreshWithParams(p);
 }
 
 void toResultPlanNew::showEvent(QShowEvent * event)
@@ -99,10 +109,34 @@ toXPlanFormatButton::toXPlanFormatButton(QWidget *parent, const char *name)
     : toToggleButton(ENUM_REF(toResultPlanNew, XPlanFormat), parent, name)
 {
     enablePopUp();
+    setEnabled(toConnection::currentConnection(this).providerIs("Oracle"));
+#ifndef TO_NO_ORACLE
+    setValue(toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::XPlanFormat).toString());
+#endif
 }
 
 toXPlanFormatButton::toXPlanFormatButton()
     : toToggleButton(ENUM_REF(toResultPlanNew, XPlanFormat), NULL)
 {
     enablePopUp();
+    setEnabled(toConnection::currentConnection(this).providerIs("Oracle"));
+#ifndef TO_NO_ORACLE
+    setValue(toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::XPlanFormat).toString());
+#endif
+}
+
+void toXPlanFormatButton::toggle()
+{
+    toToggleButton::toggle();
+#ifndef TO_NO_ORACLE
+    toConfigurationNewSingle::Instance().setOption(ToConfiguration::Oracle::XPlanFormat, text());
+#endif
+}
+
+void toXPlanFormatButton::toggle(const QModelIndex &index)
+{
+    toToggleButton::toggle(index);
+#ifndef TO_NO_ORACLE
+    toConfigurationNewSingle::Instance().setOption(ToConfiguration::Oracle::XPlanFormat, text());
+#endif
 }
