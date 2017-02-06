@@ -102,11 +102,10 @@ static toScriptTool ScriptTool;
 
 
 // aliases for basic tool modes
-typedef int mode_t;
-const mode_t MODE_COMPARE  = 0;
-const mode_t MODE_EXTRACT = 1;
-const mode_t MODE_SEARCH  = 2;
-const mode_t MODE_REPORT  = 4;
+static const int MODE_COMPARE = 0;
+static const int MODE_EXTRACT = 1;
+static const int MODE_SEARCH  = 2;
+static const int MODE_REPORT  = 4;
 
 toScript::toScript(QWidget *parent, toConnection &connection)
     : toToolWidget(ScriptTool, "script.html", parent, connection, "toScript")
@@ -358,7 +357,7 @@ void toScript::execute(void)
 {
     try
     {
-        mode_t mode;
+        int mode;
         if (ScriptUI->Compare->isChecked())
             mode = MODE_COMPARE;
         else if (ScriptUI->Extract->isChecked())
