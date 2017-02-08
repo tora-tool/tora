@@ -271,7 +271,7 @@ void toConnection::delWidget(QWidget *widget)
 #ifdef QT_DEBUG
     // Cross check tools connections against connections widgets
     // Iterate over all the tool windows, increment the counter for every tool using this toConnection instance
-    unsigned toolCnt = 0;
+    QSet<QWidget*>::size_type toolCnt = 0;
     QList<toToolWidget*> tools = toWorkSpaceSingle::Instance().toolWindowList();
     Q_FOREACH(toToolWidget *tool, tools)
     {
@@ -507,14 +507,16 @@ void toConnection::putBackSub(toConnectionSub *conn)
 
 void toConnection::allExecute(QString const& sql)
 {
+#if 0
     try
     {
         Q_FOREACH(toConnectionSub *con, Connections)
         {
             //TODO
-            //toQuery q(*con, sql, toQueryParams());
-            //q.eof();
+            toQuery q(*con, sql, toQueryParams());
+            q.eof();
         }
     }
     TOCATCH
+#endif
 }

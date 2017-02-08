@@ -150,7 +150,7 @@ void toResultCode::query(const QString &sql, toQueryParams const& param)
             // Try to detect where create statement really starts
             m_offset = 0;
             QStringList lines = text.split(QRegExp("\n|\r\n"));
-            QRegExp pattern(QString::fromLatin1("^\s*[A-Z ]*%1.*%2.*").arg(type).arg(name));
+            QRegExp pattern(QString::fromLatin1("^\\s*[A-Z ]*%1.*%2.*").arg(type).arg(name));
             foreach(QString line, lines)
             {
 

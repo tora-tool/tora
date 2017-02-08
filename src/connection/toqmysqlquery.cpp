@@ -456,6 +456,8 @@ QStringList mysqlQuery::queryParam(const QString &in, toQueryParams &params)
 
             	break;
             }
+            default: // do nothing
+                break;
         }
         start++;
         sql.append(str);

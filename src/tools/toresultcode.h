@@ -51,7 +51,7 @@ class toResultCode : public toDebugEditor, public toResult
 
         bool Prompt;
         bool m_heading;
-        unsigned m_offset; // offset of "CREATE OR REPLACE .. if heading is used
+        int m_offset; // offset of "CREATE OR REPLACE .. if heading is used
     public:
         /** Create the widget.
          * @param parent Parent widget.
