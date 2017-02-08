@@ -109,8 +109,8 @@ public:
 private:
 	QString m_id;
     QList<toPlanTreeItem*> m_childItems;
-    QVariantList m_itemData;
     toPlanTreeItem *m_parentItem;
+    QVariantList m_itemData;
 };
 
 class toResultPlanModel : public QAbstractItemModel

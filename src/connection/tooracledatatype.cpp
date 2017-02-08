@@ -32,8 +32,6 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#pragma once
-
 #include "connection/tooraclequery.h"
 
 #define MAXTOMAXLONG 30000
@@ -45,9 +43,12 @@
         ReThrowException(exc);                    \
     }                                             \
 
+#if 0
 // TODO do not know how to mark toConnectionSub to Broken
-//        if (exc.is_critical())                    \
-//            conn->Broken = true;                  \
+        if (exc.is_critical())                    \
+            conn->Broken = true;                  \
+
+#endif
 
 QString const& toOracleClob::displayData() const throw()
 {

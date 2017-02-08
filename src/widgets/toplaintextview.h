@@ -39,6 +39,7 @@ class QAbstractItemModel;
 class toSearchReplace;
 
 #include "core/toeditwidget.h"
+#include "core/utils.h"
 #include "editor/toeditglobals.h"
 
 #include <QWidget>

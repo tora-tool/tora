@@ -616,8 +616,8 @@ void toWorksheet::setup(bool autoLoad)
 toWorksheet::toWorksheet(QWidget *main, toConnection &connection, bool autoLoad)
     : toToolWidget(WorksheetTool, "worksheet.html", main, connection, "toWorksheet")
     , CurrentTab(NULL)
-    , lockConnectionActClicked(false)
     , ResultModel(NULL)
+    , lockConnectionActClicked(false)
 {
     createActions();
     setup(autoLoad);
@@ -710,6 +710,7 @@ bool toWorksheet::checkSave()
         return true;
 
     if (toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::AutoSaveBool).toBool() && !Editor->filename().isEmpty())
+    {
         if (Utils::toWriteFile(Editor->filename(), Editor->sciEditor()->text()))
         {
             Editor->sciEditor()->setModified(false);
@@ -719,6 +720,7 @@ bool toWorksheet::checkSave()
         {
             return false;
         }
+    }
 
     // CheckSave is true
     // AutoSave is false or Editor->filemame is empty
@@ -859,6 +861,7 @@ void toWorksheet::handle(QObject *obj, QMenu *menu)
 
     if (toWorksheetText* t = dynamic_cast<toWorksheetText*>(obj))
     {
+        Q_UNUSED(t);
         menu->addSeparator();
         menu->addAction(executeAct);
         menu->addAction(executeStepAct);
@@ -955,13 +958,6 @@ void toWorksheet::slotRefresh(void)
         RefreshTimer.setSingleShot(true);
         RefreshTimer.start(RefreshSeconds * 1000);
     }
-}
-
-static QString unQuote(const QString &str)
-{
-    if (str.at(0).toLatin1() == '\"' && str.at(str.length() - 1).toLatin1() == '\"')
-        return str.left(str.length() - 1).right(str.length() - 2);
-    return str.toUpper();
 }
 
 bool toWorksheet::describe(toSyntaxAnalyzer::statement const& query)

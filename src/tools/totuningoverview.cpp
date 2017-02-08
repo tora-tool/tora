@@ -309,8 +309,8 @@ void toTuningOverview::setupChart(toResultLine *chart, const QString &title, con
 
 toTuningOverview::toTuningOverview(QWidget *parent)
     : QWidget(parent)
-    , UnitString(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::SizeUnit).toString())
     , Mapper(new QSignalMapper(this))
+    , UnitString(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::SizeUnit).toString())
 {
     setupUi(this);
 

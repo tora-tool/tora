@@ -447,9 +447,9 @@ QModelIndex toResultPlanModel::rootIndex() const
 toResultPlanAbstr::toResultPlanAbstr(QWidget *parent)
 	: QWidget(parent)
 	, CursorChildSel(NULL)
+	, Query(NULL)
 	, DisplayChildCombo(false)
 	, Explaining(false)
-	, Query(NULL)
 {
     using namespace ToConfiguration;
     planTreeView = new toResultPlanView(this);
