@@ -37,7 +37,7 @@ OPTION(TEST_APP10 "toCodeView" ON)
 #Set our CMake minimum version
 #Require 2.4.2 for Qt finding
 #Require 2.4.3 for moc change detection and rpath updates for custom cairo install
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.11 FATAL_ERROR) # qt5 requirement
+CMAKE_MINIMUM_REQUIRED(VERSION 3.1 FATAL_ERROR) # qt5 requirement
 #CMAKE_POLICY(SET CMP0046 OLD) # The dependency target "revisiontag" of target "tora" does not exist
 #CMAKE_POLICY(SET CMP0042 OLD) # MACOSX_RPATH
 
@@ -125,24 +125,25 @@ SET(PLUGIN_PERMISSIONS WORLD_EXECUTE GROUP_EXECUTE OWNER_EXECUTE WORLD_READ GROU
 
 ##############################################################################################################
 ########## check for the CPU we build for                                                           ##########
-
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 IF (CMAKE_COMPILER_IS_GNUCC)
-  SET(CMAKE_CXX_FLAGS_DEBUG   "-Wall -std=c++11 -ggdb3 -O0 -fno-inline -rdynamic -fPIE")
-  SET(CMAKE_C_FLAGS_DEBUG     "-Wall            -ggdb3 -O0 -fno-inline -rdynamic -fPIE")
-  SET(CMAKE_CXX_FLAGS_RELEASE "-Wall -std=c++11 -ggdb3 -O2")
-  SET(CMAKE_C_FLAGS_RELEASE   "-Wall            -ggdb3 -O2")
-  SET(CMAKE_CXX_FLAGS         "-Wall -std=c++11 -ggdb3")
-  SET(CMAKE_C_FLAGS           "-Wall            -ggdb3")
+  SET(CMAKE_CXX_FLAGS_DEBUG   "-Wall -ggdb3 -O0 -fno-inline -rdynamic")
+  SET(CMAKE_C_FLAGS_DEBUG     "-Wall -ggdb3 -O0 -fno-inline -rdynamic")
+#   SET(CMAKE_CXX_FLAGS_RELEASE "-Wall -std=c++11 -ggdb3 -O2")
+#   SET(CMAKE_C_FLAGS_RELEASE   "-Wall            -ggdb3 -O2")
+#   SET(CMAKE_CXX_FLAGS         "-Wall -std=c++11 -ggdb3")
+#   SET(CMAKE_C_FLAGS           "-Wall            -ggdb3")
 ENDIF (CMAKE_COMPILER_IS_GNUCC)
 
 ## matches Linux Clang and also AppleClang
 IF (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  SET(CMAKE_CXX_FLAGS_DEBUG   "-Wall -std=c++11 -ggdb3 -O0 -fno-inline")
-  SET(CMAKE_C_FLAGS_DEBUG     "-Wall            -ggdb3 -O0 -fno-inline")
-  SET(CMAKE_CXX_FLAGS_RELEASE "-Wall -std=c++11 -ggdb3 -O2")
-  SET(CMAKE_C_FLAGS_RELEASE   "-Wall            -ggdb3 -O2")
-  SET(CMAKE_CXX_FLAGS         "-Wall -std=c++11 -ggdb3")
-  SET(CMAKE_C_FLAGS           "-Wall            -ggdb3")
+  SET(CMAKE_CXX_FLAGS_DEBUG   "-Wall -ggdb3 -O0 -fno-inline")
+  SET(CMAKE_C_FLAGS_DEBUG     "-Wall -ggdb3 -O0 -fno-inline")
+#   SET(CMAKE_CXX_FLAGS_RELEASE "-Wall -std=c++11 -ggdb3 -O2")
+#   SET(CMAKE_C_FLAGS_RELEASE   "-Wall            -ggdb3 -O2")
+#   SET(CMAKE_CXX_FLAGS         "-Wall -std=c++11 -ggdb3")
+#   SET(CMAKE_C_FLAGS           "-Wall            -ggdb3")
 ENDIF()
 
 #Convert our simpler command line option to the CMake style
@@ -225,12 +226,12 @@ IF(QT5_BUILD)
     LIST(APPEND QT_INCLUDES ${Qt5MacExtras_INCLUDE_DIRS})
   ENDIF()
   include_directories(${QT_INCLUDES})
-  SET(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} ${Qt5Core_EXECUTABLE_COMPILE_FLAGS}")
-  SET(CMAKE_C_FLAGS           "${CMAKE_C_FLAGS}   ${Qt5Core_EXECUTABLE_COMPILE_FLAGS}")
-  STRING(TOUPPER "CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}" _flags_var_name)
-  SET(${_flags_var_name}      "${${_flags_var_name}} ${Qt5Core_EXECUTABLE_COMPILE_FLAGS}")
-  SET("CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}" _flags_var_name)
-  # prevent error "You must build your code with position independent code if Qt was built with..
+  # SET(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} ${Qt5Core_EXECUTABLE_COMPILE_FLAGS}")
+  # SET(CMAKE_C_FLAGS           "${CMAKE_C_FLAGS}   ${Qt5Core_EXECUTABLE_COMPILE_FLAGS}")
+  # STRING(TOUPPER "CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}" _flags_var_name)
+  # SET(${_flags_var_name}      "${${_flags_var_name}} ${Qt5Core_EXECUTABLE_COMPILE_FLAGS}")
+  # SET("CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}" _flags_var_name)
+  # # prevent error "You must build your code with position independent code if Qt was built with..
   if (Qt5_POSITION_INDEPENDENT_CODE)
     SET(CMAKE_POSITION_INDEPENDENT_CODE ON)
   endif()
