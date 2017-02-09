@@ -67,13 +67,13 @@ toWorksheetText::toWorksheetText(QWidget *parent, const char *name)
     QsciScintilla::setAutoIndent(true);
 
     // highlight caret line
-    QsciScintilla::setCaretLineVisible(true);
-#ifdef SCI_LEXER
-    // This is only required until transparency fixes in QScintilla go into stable release
-    QsciScintilla::SendScintilla(QsciScintilla::SCI_SETCARETLINEBACKALPHA, QsciScintilla::SC_ALPHA_NOALPHA);
-#else
-    QsciScintilla::SendScintilla(QsciScintilla::SCI_SETCARETLINEBACKALPHA, 100);
-#endif
+    if (toConfigurationNewSingle::Instance().option(Editor::CaretLineBool).toBool())
+    {
+        QsciScintilla::setCaretLineVisible(true);
+        // This is only required until transparency fixes in QScintilla go into stable release
+        //QsciScintilla::SendScintilla(QsciScintilla::SCI_SETCARETLINEBACKALPHA, QsciScintilla::SC_ALPHA_NOALPHA);
+        QsciScintilla::SendScintilla(QsciScintilla::SCI_SETCARETLINEBACKALPHA, toConfigurationNewSingle::Instance().option(Editor::CaretLineAlphaInt).toInt());
+    }
 
     // handle "max text width" mark
     if (toConfigurationNewSingle::Instance().option(Editor::UseMaxTextWidthMarkBool).toBool())

@@ -52,6 +52,10 @@ QVariant ToConfiguration::Editor::defaultValue(int option) const
             return QVariant((int) 0);
         case EditorTypeInt:
             return QVariant((int) 0);
+        case CaretLineBool:
+            return QVariant((bool) true);
+        case CaretLineAlphaInt:
+            return QVariant((int) 50);
         case UseMaxTextWidthMarkBool:
             return QVariant((bool) false);
         case MaxTextWidthMarkInt:

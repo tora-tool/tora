@@ -102,6 +102,20 @@
         </layout>
        </item>
        <item>
+        <widget class="QCheckBox" name="CaretLineBool">
+         <property name="text">
+          <string>Caret line (Alpha)</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSlider" name="CaretLineAlphaInt">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
           <widget class="QCheckBox" name="UseMaxTextWidthMarkBool">
@@ -723,6 +737,22 @@
     <hint type="destinationlabel">
      <x>20</x>
      <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>CaretLineBool</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>CaretLineAlphaInt</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>314</x>
+     <y>95</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>314</x>
+     <y>119</y>
     </hint>
    </hints>
   </connection>

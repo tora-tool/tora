@@ -52,6 +52,8 @@ namespace ToConfiguration
             {
                 SyntaxHighlightingInt  = 3000 // #define CONF_HIGHLIGHT
                 , EditorTypeInt         // #define CONF_EDITOR_TYPE
+                , CaretLineBool
+                , CaretLineAlphaInt
                 , UseMaxTextWidthMarkBool
                 , MaxTextWidthMarkInt
                 , KeywordUpperBool      // #define CONF_KEYWORD_UPPER
