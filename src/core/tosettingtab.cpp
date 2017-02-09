@@ -40,6 +40,7 @@
 #include <QCheckBox>
 #include <QLineEdit>
 #include <QSpinBox>
+#include <QSlider>
 #include <QComboBox>
 
 void toSettingTab::loadSettings(QWidget *widget)
@@ -85,6 +86,26 @@ void toSettingTab::loadSettings(QWidget *widget)
             {
                 qDebug() << w->objectName() << '#';
                 spin->setDisabled(true);
+            }
+        }
+        else if (QSlider *slider = qobject_cast<QSlider*>(w))
+        {
+            try
+            {
+                QVariant v = toConfigurationNewSingle::Instance().option(slider->objectName());
+                if (v.type() == QVariant::Int)
+                {
+                    slider->setValue(v.toInt());
+                }
+                else
+                {
+                    slider->setDisabled(true);
+                }
+            }
+            catch (...)
+            {
+                qDebug() << w->objectName() << '#';
+                slider->setDisabled(true);
             }
         }
         else if (QLineEdit *edit = qobject_cast<QLineEdit*>(w))
@@ -143,6 +164,10 @@ void toSettingTab::saveSettings(QWidget *widget)
         else if (QSpinBox *spin = qobject_cast<QSpinBox*>(w))
         {
             toConfigurationNewSingle::Instance().setOption(spin->objectName(), spin->value());
+        }
+        else if (QSlider *slider = qobject_cast<QSlider*>(w))
+        {
+            toConfigurationNewSingle::Instance().setOption(slider->objectName(), slider->value());
         }
         else if (QLineEdit *edit = qobject_cast<QLineEdit*>(w))
         {
