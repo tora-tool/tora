@@ -34,6 +34,7 @@
 
 #pragma once
 
+#include "core/toconfiguration.h"
 #include "core/toeditorconfiguration.h"
 #include "editor/tosqltext.h"
 
@@ -81,6 +82,9 @@ class toWorksheetText : public toSqlText
         void completeFromAPI(QListWidgetItem * item);
 
         void positionChanged(int row, int col);
+
+    protected slots:
+        void setCaretAlpha();
 
     protected:
         /*! \brief Override QScintilla event handler to display code completion popup */
@@ -133,6 +137,9 @@ class toWorksheetText : public toSqlText
         QList<int> m_bookmarks;
 
         bool m_completeEnabled, m_completeDelayed;
+
+        OptionObserver<ToConfiguration::Editor::CaretLineBool> m_caretVisible;
+        OptionObserver<ToConfiguration::Editor::CaretLineAlphaInt> m_caretAlpha;
 };
 
 /**

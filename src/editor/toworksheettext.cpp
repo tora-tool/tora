@@ -36,7 +36,6 @@
 #include "tools/toworksheeteditor.h"
 #include "tools/toworksheet.h"
 #include "editor/tocomplpopup.h"
-#include "core/toconfiguration.h"
 #include "core/toconnection.h"
 #include "core/toconnectiontraits.h"
 #include "core/tologger.h"
@@ -66,14 +65,9 @@ toWorksheetText::toWorksheetText(QWidget *parent, const char *name)
     }
     QsciScintilla::setAutoIndent(true);
 
-    // highlight caret line
-    if (toConfigurationNewSingle::Instance().option(Editor::CaretLineBool).toBool())
-    {
-        QsciScintilla::setCaretLineVisible(true);
-        // This is only required until transparency fixes in QScintilla go into stable release
-        //QsciScintilla::SendScintilla(QsciScintilla::SCI_SETCARETLINEBACKALPHA, QsciScintilla::SC_ALPHA_NOALPHA);
-        QsciScintilla::SendScintilla(QsciScintilla::SCI_SETCARETLINEBACKALPHA, toConfigurationNewSingle::Instance().option(Editor::CaretLineAlphaInt).toInt());
-    }
+    setCaretAlpha();
+    connect(&m_caretVisible, SIGNAL(valueChanged(QVariant const&)), this, SLOT(setCaretAlpha()));
+    connect(&m_caretAlpha, SIGNAL(valueChanged(QVariant const&)), this, SLOT(setCaretAlpha()));
 
     // handle "max text width" mark
     if (toConfigurationNewSingle::Instance().option(Editor::UseMaxTextWidthMarkBool).toBool())
@@ -84,6 +78,7 @@ toWorksheetText::toWorksheetText(QWidget *parent, const char *name)
     }
     else
         QsciScintilla::setEdgeMode(QsciScintilla::EdgeNone);
+
 
     //connect (this, SIGNAL(cursorPositionChanged(int, int)), this, SLOT(positionChanged(int, int)));
     connect( m_complTimer, SIGNAL(timeout()), this, SLOT(autoCompleteFromAPIs()) );
@@ -220,6 +215,19 @@ no_complete:
     m_complTimer->stop();
 }
 
+void toWorksheetText::setCaretAlpha()
+{
+    // highlight caret line
+    if ((bool)m_caretVisible)
+    {
+        QsciScintilla::setCaretLineVisible(true);
+        // This is only required until transparency fixes in QScintilla go into stable release
+        //QsciScintilla::SendScintilla(QsciScintilla::SCI_SETCARETLINEBACKALPHA, QsciScintilla::SC_ALPHA_NOALPHA);
+        QsciScintilla::SendScintilla(QsciScintilla::SCI_SETCARETLINEBACKALPHA, (int)m_caretAlpha);
+    } else {
+        QsciScintilla::setCaretLineVisible(false);
+    }
+}
 // the QScintilla way of autocomletition
 #if 0
 void toWorksheetText::autoCompleteFromAPIs()
