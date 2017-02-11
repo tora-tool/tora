@@ -74,7 +74,8 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, toWFlags fl)
     Analyzer = new toSyntaxAnalyzerNL(Example->editor());
     Example->sciEditor()->setReadOnly(true);
 
-    Example->sciEditor()->setText(QString::fromLatin1("PROMPT Create procedure\n"
+    Example->sciEditor()->setText(QString::fromLatin1(
+                                  "PROMPT Create procedure\n"
                                   "create procedure CheckObvious as\n"
                                   "begin\n"
                                   "  Quest:='Great'; -- This variable doesn't exist\n"
@@ -86,6 +87,10 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, toWFlags fl)
                                   " * multi line comment\n"
                                   " */\n"
                                   "end;"));
+    Example->sciEditor()->SendScintilla(QsciScintilla::SCI_SETCARETLINEVISIBLEALWAYS, true);
+
+    connect(CaretLineBool, SIGNAL(stateChanged(int)), this, SLOT(setCaretAlpha()));
+    connect(CaretLineAlphaInt, SIGNAL(valueChanged(int)), this, SLOT(setCaretAlpha()));
 
 #pragma message WARN("TODO: Error line style & Debug line style")
 #if 0
@@ -199,6 +204,21 @@ void toSyntaxSetup::openEditorShortcutsDialog()
 {
     ShortcutEditorDialog dia(this);
     dia.exec();
+}
+
+void toSyntaxSetup::setCaretAlpha()
+{
+    // highlight caret line
+    if (CaretLineBool->isChecked())
+    {
+        Example->sciEditor()->setCaretLineVisible(true);
+        // This is only required until transparency fixes in QScintilla go into stable release
+        //QsciScintilla::SendScintilla(QsciScintilla::SCI_SETCARETLINEBACKALPHA, QsciScintilla::SC_ALPHA_NOALPHA);
+        Example->sciEditor()->SendScintilla(QsciScintilla::SCI_SETCARETLINEBACKALPHA, CaretLineAlphaInt->value());
+    } else {
+        Example->sciEditor()->setCaretLineVisible(false);
+    }
+    CaretLineAlphaInt->setEnabled(CaretLineBool->isChecked());
 }
 
 int toSyntaxSetup::wordClass() const

@@ -65,7 +65,7 @@ class toSyntaxSetup
         toSyntaxSetup(QWidget *parent = 0, const char *name = 0, toWFlags fl = 0);
         virtual void saveSetting(void);
 
-    public slots:
+    protected slots:
         virtual void changeLine(QListWidgetItem *);
         virtual void selectFGColor(void);
         virtual void selectBGColor(void);
@@ -83,6 +83,9 @@ class toSyntaxSetup
             Example->update();
         }
         void openEditorShortcutsDialog();
+
+        void setCaretAlpha();
+
     private:
         int wordClass() const;         // returns enum toSyntaxAnalyzer::wordClass
         void checkFixedWidth(const QFont &fnt);
