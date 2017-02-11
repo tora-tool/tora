@@ -74,6 +74,16 @@ void toConfigurationNew::registerConfigContext(QString const& contextName, QMeta
 
 }
 
+void toConfigurationNew::registerConfigObserver(toConfigOptionObserver *o)
+{
+    m_observers[o->m_option].insert(o);
+}
+
+void toConfigurationNew::unRegisterConfigObserver(toConfigOptionObserver *o)
+{
+    m_observers[o->m_option].remove(o);
+}
+
 QVariant toConfigurationNew::option(int optionKey)
 {
     Q_ASSERT_X( m_configMap.contains(optionKey), qPrintable(__QHERE__), qPrintable(QString("Unknown enum: %1").arg(optionKey)));
@@ -222,6 +232,7 @@ void toConfigurationNew::setOption <QVariant>(int option, QVariant const& newVal
                                                                              ));
 #endif
     m_configMap[option] = newVal;
+    notifyOservers(option, newVal);
 }
 
 template<> TORA_EXPORT
@@ -236,6 +247,7 @@ void toConfigurationNew::setOption <QString>(int option, QString const& newVal)
                                                                                 ));
 #endif
     m_configMap[option] = QVariant(newVal);
+    notifyOservers(option, newVal);
 }
 
 template<> TORA_EXPORT
@@ -250,6 +262,7 @@ void toConfigurationNew::setOption <int>(int option, int const&newVal)
                                                                              ));
 #endif
     m_configMap[option] = QVariant(newVal);
+    notifyOservers(option, newVal);
 }
 
 template<> TORA_EXPORT
@@ -264,6 +277,7 @@ void toConfigurationNew::setOption <bool>(int option, bool const&newVal)
                                                                               ));
 #endif
     m_configMap[option] = QVariant(newVal);
+    notifyOservers(option, newVal);
 }
 
 template<> TORA_EXPORT
@@ -278,9 +292,19 @@ void toConfigurationNew::setOption <QDate>(int option, QDate const&newVal)
                                                                               ));
 #endif
     m_configMap[option] = QVariant(newVal);
+    notifyOservers(option, newVal);
 }
 
 void toConfigurationNew::logUnknownOption(QString const&)
 {
 
+}
+
+void toConfigurationNew::notifyOservers(int option, QVariant const&value) const
+{
+    QSet<toConfigOptionObserver*> const& observers = m_observers.value(option);
+    foreach(toConfigOptionObserver *o, observers)
+    {
+        o->notify(value);
+    }
 }
