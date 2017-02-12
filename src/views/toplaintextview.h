@@ -39,15 +39,17 @@ class QAbstractItemModel;
 class toSearchReplace;
 
 #include "core/toeditwidget.h"
-#include "core/utils.h"
-
-#include "core/toconfiguration.h"
-#include "core/toeditorconfiguration.h"
-
-#include "editor/toeditglobals.h"
 
 #include <QWidget>
 #include <QtCore/QSet>
+
+#include "core/utils.h"
+#include "core/toconfiguration.h"
+#include "core/toeditorconfiguration.h"
+#include "editor/toeditglobals.h"
+
+namespace Views
+{
 
 /** A tora plaintext version of the @ref QPlainTextEdit widget.
  */
@@ -119,3 +121,6 @@ void DefaultPlainTextViewPolicy<Traits>::setup(View* pView)
     QFont fixed(Utils::toStringToFont(toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::ConfCodeFont).toString()));
     pView->setFont(fixed);
 }
+
+}
+

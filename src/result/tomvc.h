@@ -43,18 +43,22 @@
 
 #include "result/toproviderobserver.h"
 #include "result/totablemodel.h"
-#include "result/totableview.h"
 #include "widgets/toworkingwidget.h"
 
 #include <QtCore/QObject>
 #include <QHeaderView>
 
+namespace Views
+{
+    class toTableView;
+}
+
 /** toTableView traits */
 struct MVCTraits
 {
-    typedef toTableModelPriv   Model;
-    typedef toTableViewPriv    View;
-    typedef toEventQuery       Query;
+    typedef toTableModelPriv                       Model;
+    typedef typename Views::toTableView            View;
+    typedef toEventQuery                           Query;
     typedef toEventQueryObserverObject             ObserverObject;
     typedef toEventQueryObserverObject::Observer   Observer;
     typedef toWorkingWidgetNew                     WorkingWidget;

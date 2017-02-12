@@ -32,20 +32,21 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef __TOTABLEVIEW_H__
-#define __TOTABLEVIEW_H__
+#pragma once
 
 #include "ts_log/ts_log_utils.h"
 
-#include <QTableView>
+#include <QTreeView>
 
+namespace Views
+{
 
-class toTableViewPriv : public QTableView
+class toTreeView : public QTreeView
 {
         Q_OBJECT;
-        typedef QTableView super;
+        typedef QTreeView super;
     public:
-        explicit toTableViewPriv(QWidget *parent = 0);
+        explicit toTreeView(QWidget *parent = 0);
 
     public slots:
         virtual void slotApplyColumnRules();
@@ -66,11 +67,10 @@ class toTableViewPriv : public QTableView
     protected:
 
     private:
-        bool m_columnsResized;
 };
 
 template<typename _T>
-class DefaultTableViewPolicy
+class DefaultTreeViewPolicy
 {
     private:
         typedef _T Traits;
@@ -80,17 +80,13 @@ class DefaultTableViewPolicy
 };
 
 template<typename Traits>
-void DefaultTableViewPolicy<Traits>::setup(View* pView)
+void DefaultTreeViewPolicy<Traits>::setup(View* pView)
 {
 
     pView->setSelectionBehavior( (QAbstractItemView::SelectionBehavior) Traits::SelectionBehavior);
     pView->setSelectionMode( (QAbstractItemView::SelectionMode) Traits::SelectionMode);
     pView->setAlternatingRowColors( Traits::AlternatingRowColorsEnabled);
     pView->setContextMenuPolicy( (Qt::ContextMenuPolicy) Traits::ContextMenuPolicy);
-
-    if ( Traits::ShowRowNumber != Traits::BuiltInRowNumber )
-        pView->verticalHeader()->hide();
-    pView->verticalHeader()->setDefaultSectionSize(QFontMetrics(QFont()).height() + 4);
 
     switch (Traits::ColumnResize)
     {
@@ -101,8 +97,8 @@ void DefaultTableViewPolicy<Traits>::setup(View* pView)
             break;
         case Traits::RowColumResize:
             {
-                bool retval = QObject::connect(pView->model(), SIGNAL(firstResultReceived()), pView, SLOT(slotApplyColumnRules()));
-                Q_ASSERT_X(retval, qPrintable(__QHERE__), "Connection failed: Model -> View");
+                //bool retval = QObject::connect(pView->model(), SIGNAL(firstResultReceived()), pView, SLOT(slotApplyColumnRules()));
+                //Q_ASSERT_X(retval, qPrintable(__QHERE__), "Connection failed: Model -> View");
             }
             break;
         case Traits::CustomColumnResize:
@@ -111,4 +107,5 @@ void DefaultTableViewPolicy<Traits>::setup(View* pView)
     }
 }
 
-#endif
+}
+

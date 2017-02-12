@@ -32,15 +32,17 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "result/totreeview.h"
+#include "views/totreeview.h"
 
-toTreeViewPriv::toTreeViewPriv(QWidget *parent)
+using namespace Views;
+
+toTreeView::toTreeView(QWidget *parent)
     : super(parent)
 {
 
 }
 
-int toTreeViewPriv::sizeHintForRow(int row) const
+int toTreeView::sizeHintForRow(int row) const
 {
     int s;
 
@@ -49,7 +51,7 @@ int toTreeViewPriv::sizeHintForRow(int row) const
     return s;
 }
 
-int toTreeViewPriv::sizeHintForColumn(int col) const
+int toTreeView::sizeHintForColumn(int col) const
 {
     int s;
 
@@ -58,6 +60,6 @@ int toTreeViewPriv::sizeHintForColumn(int col) const
     return s;
 }
 
-void toTreeViewPriv::slotApplyColumnRules()
+void toTreeView::slotApplyColumnRules()
 {
 }

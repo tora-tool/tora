@@ -43,6 +43,9 @@ class toSearchReplace;
 
 #include <QWidget>
 
+namespace Views
+{
+
 /** A tora "Highlighted sql source" version of the @ref QPlainTextEdit widget.
  */
 class toSqlTextView : public QWidget, public toEditWidget
@@ -90,3 +93,5 @@ private:
     QAbstractItemModel *m_model;
     unsigned m_model_column;
 };
+
+}

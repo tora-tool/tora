@@ -32,14 +32,18 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "widgets/toplaintextview.h"
-#include "core/utils.h"
+#include "views/tosqltextview.h"
+
 #include <QtGui/QFocusEvent>
 #include <QtGui/QTextDocument>
-#include <QPlainTextEdit>
+
+#include "editor/tosqltext.h"
+#include "core/utils.h"
 #include "widgets/tosearchreplace.h"
 
-toPlainTextView::toPlainTextView(QWidget *parent /* = 0*/, const char *name /* = 0*/)
+using namespace Views;
+
+toSqlTextView::toSqlTextView(QWidget *parent /* = 0*/, const char *name /* = 0*/)
     : QWidget(parent)
     , toEditWidget()
     , m_model(NULL)
@@ -53,11 +57,11 @@ toPlainTextView::toPlainTextView(QWidget *parent /* = 0*/, const char *name /* =
     toEditWidget::FlagSet.SelectAll = true;
     toEditWidget::FlagSet.SelectBlock = false;
 
-    m_view = new QPlainTextEdit(this);
+    m_view = new toSqlText(this);
     m_view->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
     m_search = new toSearchReplace(this);
-    m_search->hide();
+    m_search->SearchMode->hide();
 
     QVBoxLayout *l = new QVBoxLayout();
     l->setSpacing(0);
@@ -66,68 +70,56 @@ toPlainTextView::toPlainTextView(QWidget *parent /* = 0*/, const char *name /* =
     l->addWidget(m_search);
     setLayout(l);
 
-    connect(m_search, SIGNAL(searchNext(Search::SearchFlags)),
-            this, SLOT(handleSearching(Search::SearchFlags)));
-    connect(m_search, SIGNAL(windowClosed()),
-            this, SLOT(setEditorFocus()));
+    connect(m_search, SIGNAL(searchNext(Search::SearchFlags)), this, SLOT(handleSearching(Search::SearchFlags)));
+    connect(m_search, SIGNAL(windowClosed()), this, SLOT(setEditorFocus()));
 }
 
-void toPlainTextView::setReadOnly(bool ro)
+void toSqlTextView::setReadOnly(bool ro)
 {
     m_view->setReadOnly(ro);
 }
 
-void toPlainTextView::setText(const QString &t)
+void toSqlTextView::setText(const QString &t)
 {
-    m_view->setPlainText(t);
+    m_view->setText(t);
 }
 
-void toPlainTextView::setFilename(const QString &f)
+void toSqlTextView::setFilename(const QString &f)
 {
     m_filename = f;
 }
 
-bool toPlainTextView::editSave(bool)
+bool toSqlTextView::editSave(bool)
 {
-    QString fn = Utils::toSaveFilename(m_filename, QString::fromLatin1("*.txt"), this);
+    QString fn = Utils::toSaveFilename(m_filename, QString::fromLatin1("*.sql"), this);
     if (!fn.isEmpty())
     {
-        return Utils::toWriteFile(fn, m_view->toPlainText());
+        return Utils::toWriteFile(fn, m_view->text());
     }
     return false;
 }
 
-QString toPlainTextView::editText()
+QString toSqlTextView::editText()
 {
-    return m_view->toPlainText();
+    return m_view->text();
 }
 
-void toPlainTextView::editCopy(void)
+void toSqlTextView::editCopy(void)
 {
     m_view->copy();
 }
 
-void toPlainTextView::editSelectAll(void)
+void toSqlTextView::editSelectAll(void)
 {
     m_view->selectAll();
 }
 
-void toPlainTextView::focusInEvent (QFocusEvent *e)
+void toSqlTextView::focusInEvent (QFocusEvent *e)
 {
     QWidget::focusInEvent(e);
 }
 
-void toPlainTextView::setFont(const QFont &f)
-{
-    m_view->setFont(f);
-}
-
-const QFont& toPlainTextView::font()
-{
-    return m_view->font();
-}
-
-void toPlainTextView::setModel(QAbstractItemModel *model)
+void toSqlTextView::setModel(QAbstractItemModel *model)
 {
     m_model = model;
     modelReset();
@@ -138,39 +130,41 @@ void toPlainTextView::setModel(QAbstractItemModel *model)
     m_search->setReadOnly(true);
 }
 
-void toPlainTextView::modelReset()
+void toSqlTextView::modelReset()
 {
-    m_lines.clear();
     m_view->clear();
     for(int row = 0; row < m_model->rowCount(); row++)
     {
         QModelIndex index = m_model->index(row, m_model_column);
-        m_view->appendPlainText(m_model->data(index).toString());
-    }
-}
-
-void toPlainTextView::rowsInserted(const QModelIndex &parent, int first, int last)
-{
-    if (!m_lines.contains(first))
-    {
-        for(int row = first; row <= last; row++)
+        m_view->append(m_model->data(index).toString());
+        // new line
+        switch (m_view->eolMode())
         {
-            m_lines.insert(row);
-            QModelIndex index = m_model->index(row, m_model_column);
-            m_view->appendPlainText(m_model->data(index).toString());
+//            case QsciScintilla::EolWindows:
+//                m_view->append("\n\r");
+//                break;
+//            case QsciScintilla::EolMac:
+//                m_view->append("\n");
+//                break;
+            default:
+                // Unix is default one
+                m_view->append("\r");
+                break;
         }
     }
 }
 
-void toPlainTextView::rowsRemoved(const QModelIndex &parent, int first, int last)
+void toSqlTextView::rowsInserted(const QModelIndex &parent, int first, int last)
 {
-	for (int row = first; row <= last; row++)
-	{
-		m_lines.remove(row);
-	}
+
 }
 
-bool toPlainTextView::searchNext()
+void toSqlTextView::rowsRemoved(const QModelIndex &parent, int first, int last)
+{
+
+}
+
+bool toSqlTextView::searchNext()
 {
     if (!m_search->isVisible())
     {
@@ -180,7 +174,7 @@ bool toPlainTextView::searchNext()
     return true;
 }
 
-void toPlainTextView::handleSearching(Search::SearchFlags flags)
+void toSqlTextView::handleSearching(Search::SearchFlags flags)
 {
     QTextDocument::FindFlags f;
     if (flags & Search::WholeWords)
@@ -188,10 +182,10 @@ void toPlainTextView::handleSearching(Search::SearchFlags flags)
     if (flags & Search::CaseSensitive)
         f |= QTextDocument::FindCaseSensitively;
 
-    bool ret = m_view->find(m_search->searchText(), f);
+    //bool ret = m_view->find(m_search->searchText(), f);
 }
 
-void toPlainTextView::setEditorFocus()
+void toSqlTextView::setEditorFocus()
 {
     m_view->setFocus(Qt::OtherFocusReason);
 }

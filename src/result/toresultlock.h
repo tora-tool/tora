@@ -35,12 +35,14 @@
 #pragma once
 
 #include "result/tomvc.h"
-#include "result/totreeview.h"
-//#include "core/toresult.h"
+#include "views/totreeview.h"
 
 class toEventQuery;
 
-class toTreeViewPriv;
+namespace Views
+{
+class toTreeView;
+}
 
 namespace ResutLock
 {
@@ -50,14 +52,14 @@ namespace ResutLock
         static const int  ShowRowNumber = NoRowNumber;
         static const int  ColumnResize = RowColumResize;
 
-        typedef toTreeViewPriv View;
+        typedef Views::toTreeView View;
     };
 
     class MVC
             : public TOMVC
               <
               ::ResutLock::Traits,
-              ::DefaultTreeViewPolicy,
+              Views::DefaultTreeViewPolicy,
               ::DefaultDataProviderPolicy
               >
     {
@@ -65,7 +67,7 @@ namespace ResutLock
     public:
         typedef TOMVC<
                 ::ResutLock::Traits,
-                ::DefaultTreeViewPolicy,
+                Views::DefaultTreeViewPolicy,
                 ::DefaultDataProviderPolicy
                   > _s;
         MVC(QWidget *parent) : _s(parent)

@@ -35,7 +35,7 @@
 #pragma once
 
 #include "result/tomvc.h"
-#include "widgets/toplaintextview.h"
+#include "views/toplaintextview.h"
 #include "widgets/topushbutton.h"
 
 namespace ResultPlan
@@ -44,14 +44,14 @@ namespace ResultPlan
     {
         static const int  ShowRowNumber = NoRowNumber;
         static const int  ColumnResize = RowColumResize;
-        typedef toPlainTextView View;
+        typedef Views::toPlainTextView View;
     };
 
     class PlanTextMVC
             : public TOMVC
               <
               TraitsPlanText,
-              ::DefaultPlainTextViewPolicy,
+              Views::DefaultPlainTextViewPolicy,
               ::DefaultDataProviderPolicy
               >
     {
@@ -59,7 +59,7 @@ namespace ResultPlan
     public:
         typedef TOMVC<
                 TraitsPlanText,
-                ::DefaultPlainTextViewPolicy,
+                Views::DefaultPlainTextViewPolicy,
                 ::DefaultDataProviderPolicy
                   > _s;
         PlanTextMVC(QWidget *parent) : _s(parent)

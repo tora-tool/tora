@@ -32,16 +32,18 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "result/totableview.h"
+#include "views/totableview.h"
 
-toTableViewPriv::toTableViewPriv(QWidget *parent)
+using namespace Views;
+
+toTableView::toTableView(QWidget *parent)
     : QTableView(parent)
     , m_columnsResized(false)
 {
 
 }
 
-int toTableViewPriv::sizeHintForRow(int row) const
+int toTableView::sizeHintForRow(int row) const
 {
     int s;
 
@@ -50,7 +52,7 @@ int toTableViewPriv::sizeHintForRow(int row) const
     return s;
 }
 
-int toTableViewPriv::sizeHintForColumn(int col) const
+int toTableView::sizeHintForColumn(int col) const
 {
     int s;
 
@@ -59,7 +61,7 @@ int toTableViewPriv::sizeHintForColumn(int col) const
     return s;
 }
 
-void toTableViewPriv::slotApplyColumnRules()
+void toTableView::slotApplyColumnRules()
 {
     if (!m_columnsResized)
         super::resizeColumnsToContents();

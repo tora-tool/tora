@@ -36,71 +36,59 @@
 
 #include "ts_log/ts_log_utils.h"
 
-#include <QTreeView>
+#include <QComboBox>
 
-
-class toTreeViewPriv : public QTreeView
+namespace Views
 {
-        Q_OBJECT;
-        typedef QTreeView super;
-    public:
-        explicit toTreeViewPriv(QWidget *parent = 0);
 
-    public slots:
-        virtual void slotApplyColumnRules();
-
-        /** Controls height of all table views in TOra. Will use standart Qt function to
-           calculate a row height and will control that it is not larger than a predefined
-           size. Note: this height is only used in QTableView when resizeRowsToContents
-           is called. */
-        virtual int sizeHintForRow(int row) const;
-
-        /* Controls width of all table views in TOra. Will use standart Qt function to
-           calculate a columns width and will control that it is not larger than a predefined
-           size. Note: this height is only used in QTableView when resizeColumnsToContents
-           is called. Column width is also adjusted when calculating width of column headers! */
-        virtual int sizeHintForColumn(int row) const;
-
-
-    protected:
-
-    private:
+class toComboBoxView : public QComboBox
+{
+    Q_OBJECT;
+    typedef QComboBox super;
+public:
+    explicit toComboBoxView(QWidget *parent = 0) : super(parent) {};
+    virtual ~toComboBoxView() {};
 };
 
 template<typename _T>
-class DefaultTreeViewPolicy
+class DefaultComboBoxViewPolicy
 {
-    private:
-        typedef _T Traits;
-        typedef typename Traits::View View;
-    public:
-        void setup(View* pView);
+private:
+    typedef _T Traits;
+    typedef typename Traits::View View;
+public:
+    void setup(QComboBox* pView);
 };
 
 template<typename Traits>
-void DefaultTreeViewPolicy<Traits>::setup(View* pView)
+void DefaultComboBoxViewPolicy<Traits>::setup(QComboBox* pView)
 {
-
-    pView->setSelectionBehavior( (QAbstractItemView::SelectionBehavior) Traits::SelectionBehavior);
-    pView->setSelectionMode( (QAbstractItemView::SelectionMode) Traits::SelectionMode);
-    pView->setAlternatingRowColors( Traits::AlternatingRowColorsEnabled);
     pView->setContextMenuPolicy( (Qt::ContextMenuPolicy) Traits::ContextMenuPolicy);
+
+    enum SizeAdjustPolicy
+    {
+        AdjustToContents,
+        AdjustToContentsOnFirstShow,
+        AdjustToMinimumContentsLength, // ### Qt 5: remove
+        AdjustToMinimumContentsLengthWithIcon
+    };
 
     switch (Traits::ColumnResize)
     {
         case Traits::NoColumnResize:
             break;
         case Traits::HeaderColumnResize:
-            Q_ASSERT_X(false, qPrintable(__QHERE__), "Not implemented yet");
+            Q_ASSERT_X(false, qPrintable(__QHERE__), "HeaderColumnResize not implemented for Combo");
             break;
         case Traits::RowColumResize:
-            {
-                //bool retval = QObject::connect(pView->model(), SIGNAL(firstResultReceived()), pView, SLOT(slotApplyColumnRules()));
-                //Q_ASSERT_X(retval, qPrintable(__QHERE__), "Connection failed: Model -> View");
-            }
-            break;
+        {
+            pView->setSizeAdjustPolicy(QComboBox::AdjustToContentsOnFirstShow);
+        }
+        break;
         case Traits::CustomColumnResize:
             Q_ASSERT_X(false, qPrintable(__QHERE__), "Not implemented yet");
             break;
     }
+}
+
 }

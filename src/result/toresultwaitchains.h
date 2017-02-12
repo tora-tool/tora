@@ -35,11 +35,9 @@
 #pragma once
 
 #include "result/tomvc.h"
-#include "result/totreeview.h"
+#include "views/totreeview.h"
 
 class toEventQuery;
-
-class toTreeViewPriv;
 
 namespace ResutWaitSchains
 {
@@ -49,14 +47,14 @@ namespace ResutWaitSchains
         static const int  ShowRowNumber = NoRowNumber;
         static const int  ColumnResize = RowColumResize;
 
-        typedef toTreeViewPriv View;
+        typedef Views::toTreeView View;
     };
 
     class MVC
             : public TOMVC
               <
               ::ResutWaitSchains::Traits,
-              ::DefaultTreeViewPolicy,
+              Views::DefaultTreeViewPolicy,
               ::DefaultDataProviderPolicy
               >
     {
@@ -64,7 +62,7 @@ namespace ResutWaitSchains
     public:
         typedef TOMVC<
                 ::ResutWaitSchains::Traits,
-                ::DefaultTreeViewPolicy,
+                 Views::DefaultTreeViewPolicy,
                 ::DefaultDataProviderPolicy
                   > _s;
         MVC(QWidget *parent) : _s(parent)

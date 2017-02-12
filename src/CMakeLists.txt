@@ -246,9 +246,7 @@ SET(TORA_MOC_CLASSES
   result/toresulttabledata.h
   result/toresultwaitchains.h
   result/totablemodel.h
-  result/totableview.h
   result/totreemodel.h
-  result/totreeview.h
 
   shortcuteditor/shortcuteditordialog.h
   shortcuteditor/shortcutmodel.h
@@ -328,6 +326,12 @@ SET(TORA_MOC_CLASSES
 
   ts_log/toostream.h
 
+  views/tocomboview.h
+  views/toplaintextview.h
+  views/tosqltextview.h
+  views/totableview.h
+  views/totreeview.h
+
   widgets/ExtendedTabWidget.h
   widgets/toabout.h
   widgets/toaboutcopying.h
@@ -338,7 +342,6 @@ SET(TORA_MOC_CLASSES
   widgets/toglobalsetting.h
   widgets/tohelp.h
   widgets/tohelpsetup.h
-  widgets/toplaintextview.h
   widgets/topushbutton.h
   widgets/torefreshcombo.h
   widgets/toresultcolscomment.h
@@ -350,7 +353,6 @@ SET(TORA_MOC_CLASSES
   widgets/toresultschema.h
   widgets/tosearchreplace.h
   widgets/tosplash.h
-  widgets/tosqltextview.h
   widgets/totabledetailview.h
   widgets/totableselect.h
   widgets/totabwidget.h
@@ -358,7 +360,7 @@ SET(TORA_MOC_CLASSES
   widgets/totreewidget.h
   widgets/toworkingwidget.h
   widgets/toworkspace.h
-
+  
   #obsolete core/todatatype.h
   #obsolete core/torunnable.h
   #obsolete core/totaskrunner.h
@@ -537,9 +539,7 @@ SET(TORA_SOURCES
   result/toresulttabledata.cpp
   result/toresultwaitchains.cpp
   result/totablemodel.cpp
-  result/totableview.cpp
   result/totreemodel.cpp
-  result/totreeview.cpp
 
   shortcuteditor/shortcuteditordialog.cpp
   shortcuteditor/shortcutmodel.cpp
@@ -629,7 +629,6 @@ SET(TORA_SOURCES
   widgets/toglobalsetting.cpp
   widgets/tohelp.cpp
   widgets/tohelpsetup.cpp
-  widgets/toplaintextview.cpp
   widgets/topushbutton.cpp
   widgets/torefreshcombo.cpp
   widgets/toresultcolscomment.cpp
@@ -641,7 +640,6 @@ SET(TORA_SOURCES
   widgets/toresultschema.cpp
   widgets/tosearchreplace.cpp
   widgets/tosplash.cpp
-  widgets/tosqltextview.cpp
   widgets/totabledetailview.cpp
   widgets/totableselect.cpp
   widgets/totabwidget.cpp
@@ -649,6 +647,11 @@ SET(TORA_SOURCES
   widgets/totreewidget.cpp
   widgets/toworkingwidget.cpp
   widgets/toworkspace.cpp
+
+  views/toplaintextview.cpp
+  views/tosqltextview.cpp
+  views/totableview.cpp
+  views/totreeview.cpp
 
   #core/toconfiguration.cpp
   #core/toconfigurationpriv.cpp
