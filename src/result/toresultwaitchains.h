@@ -36,13 +36,12 @@
 
 #include "result/tomvc.h"
 #include "result/totreeview.h"
-#include "core/toresult.h"
 
 class toEventQuery;
 
 class toTreeViewPriv;
 
-namespace ResutLock
+namespace ResutWaitSchains
 {
     struct Traits : public MVCTraits
     {
@@ -56,7 +55,7 @@ namespace ResutLock
     class MVC
             : public TOMVC
               <
-              ::ResutLock::Traits,
+              ::ResutWaitSchains::Traits,
               ::DefaultTreeViewPolicy,
               ::DefaultDataProviderPolicy
               >
@@ -64,7 +63,7 @@ namespace ResutLock
         Q_OBJECT;
     public:
         typedef TOMVC<
-                ::ResutLock::Traits,
+                ::ResutWaitSchains::Traits,
                 ::DefaultTreeViewPolicy,
                 ::DefaultDataProviderPolicy
                   > _s;
@@ -77,24 +76,15 @@ namespace ResutLock
 /**
  * A result table displaying information about locks in a hierarchy
  */
-class toResultLockNew
-        : public ResutLock::MVC
-//        , public toResult
+class toResultWaitChains
+        : public ResutWaitSchains::MVC
 {
         Q_OBJECT
 
         toEventQuery *Query;
     public:
-        toResultLockNew(QWidget *parent, const char *name = NULL);
-        ~toResultLockNew();
-
-//        void query(const QString &sql, const toQueryParams &param) override;
-        void query(const QString &sql, const toQueryParams &param);
-
-        /** Support Oracle
-         */
-//        bool canHandle(const toConnection &conn) override;
-		bool canHandle(const toConnection &conn);
+        toResultWaitChains(QWidget *parent, const char *name = NULL);
+        ~toResultWaitChains();
 
     private:
 };

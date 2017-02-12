@@ -66,6 +66,7 @@ namespace ToConfiguration
                 , ConstraintsBool
                 , RefConstraintsBool
                 , ConstraintsAsAlterBool
+                , XPlanFormat
             };
             virtual QVariant defaultValue(int option) const;
             static QString planTable(QString const& schema);

@@ -32,7 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "tools/toresultlock2.h"
+#include "result/toresultlock.h"
 
 #include "core/toconnection.h"
 #include "core/toeventquery.h"
@@ -44,12 +44,12 @@
 #include <QWidget>
 #include <QVBoxLayout>
 
-bool toResultLockNew::canHandle(const toConnection &conn)
-{
-    return conn.providerIs("Oracle");
-}
+//bool toResultLock::canHandle(const toConnection &conn)
+//{
+//    return conn.providerIs("Oracle");
+//}
 
-toResultLockNew::toResultLockNew(QWidget *parent, const char *name)
+toResultLock::toResultLock(QWidget *parent, const char *name)
     : ResutLock::MVC(parent)
 {
 //    if (name)
@@ -65,76 +65,20 @@ toResultLockNew::toResultLockNew(QWidget *parent, const char *name)
 //    setAllColumnsShowFocus(true);
 //    setSorting( -1);
 //    setRootIsDecorated(true);
-//    addColumn(tr("Session"));
-//    addColumn(tr("Schema"));
-//    addColumn(tr("Osuser"));
-//    addColumn(tr("Program"));
-//    addColumn(tr("Type"));
-//    addColumn(tr("Mode"));
-//    addColumn(tr("Request"));
-//    addColumn(tr("Object"));
-//    addColumn(tr("Grabbed"));
-//    addColumn(tr("Requested"));
-    setSQLName(QString::fromLatin1("toResultLockNew"));
+    setSQLName(QString::fromLatin1("toResultLock:Locks"));
 
     Query = NULL;
 }
 
-toResultLockNew::~toResultLockNew()
+toResultLock::~toResultLock()
 {
 }
 
-static toSQL SQLBlockingLock("toResultLockNew:BlockingLocks",
-                             "select b.sid,\n"
-                             "       b.schemaname,\n"
-                             "       b.osuser,\n"
-                             "       b.program,\n"
-                             "       decode(a.type,\n"
-                             "              'MR', 'Media Recovery',\n"
-                             "              'RT', 'Redo Thread',\n"
-                             "              'UN', 'User Name',\n"
-                             "              'TX', 'Transaction',\n"
-                             "              'TM', 'DML',\n"
-                             "              'UL', 'PL/SQL User Lock',\n"
-                             "              'DX', 'Distributed Xaction',\n"
-                             "              'CF', 'Control File',\n"
-                             "              'IS', 'Instance State',\n"
-                             "              'FS', 'File Set',\n"
-                             "              'IR', 'Instance Recovery',\n"
-                             "              'ST', 'Disk Space Transaction',\n"
-                             "              'TS', 'Temp Segment',\n"
-                             "              'IV', 'Library Cache Invalidation',\n"
-                             "              'LS', 'Log Start or Switch',\n"
-                             "              'RW', 'Row Wait',\n"
-                             "              'SQ', 'Sequence Number',\n"
-                             "              'TE', 'Extend Table',\n"
-                             "              'TT', 'Temp Table',\n"
-                             "              'Internal ('||a.type||')'),\n"
-                             "       DECODE(a.lmode,0,'None',1,'Null',2,'Row-S',3,'Row-X',4,'Share',5,'S/Row-X',6,'Exclusive',TO_CHAR(a.lmode)),\n"
-                             "       DECODE(a.request,0,'None',1,'Null',2,'Row-S',3,'Row-X',4,'Share',5,'S/Row-X',6,'Exclusive',TO_CHAR(a.request)),\n"
-                             "       d.object_name,\n"
-                             "       ' ',\n"
-                             "       TO_CHAR(SYSDATE-a.CTIME/3600/24)\n"
-                             "  from v$lock a,v$session b,v$locked_object c,sys.all_objects d\n"
-                             " where a.sid = b.sid\n"
-                             "   and c.session_id = a.sid\n"
-                             "   and exists (select 'X'\n"
-                             "                 from v$locked_object bb,\n"
-                             "                      v$lock cc\n"
-                             "                where bb.session_id = cc.sid\n"
-                             "                  and cc.sid != a.sid\n"
-                             "                  and cc.id1 = a.id1\n"
-                             "                  and cc.id2 = a.id2\n"
-                             "                  and bb.object_id = c.object_id)\n"
-                             "   and d.object_id = c.object_id\n"
-                             "   and a.request != 0",
-                             "List session blocked by a lock");
-
-static toSQL SQLLock("toResultLockNew:Locks",
-                     "select b.sid,\n"
-                     "       b.schemaname,\n"
-                     "       b.osuser,\n"
-                     "       b.program,\n"
+static toSQL SQLLock("toResultLock:Locks",
+                     "select b.sid                                                                                 as \"Session\", \n"
+                     "       b.schemaname                                                                          as Schema,  \n"
+                     "       b.osuser                                                                              as Osuser,  \n"
+                     "       b.program                                                                             as Program, \n"
                      "       decode(a.type,\n"
                      "              'MR', 'Media Recovery',\n"
                      "              'RT', 'Redo Thread',\n"
@@ -155,12 +99,12 @@ static toSQL SQLLock("toResultLockNew:Locks",
                      "              'SQ', 'Sequence Number',\n"
                      "              'TE', 'Extend Table',\n"
                      "              'TT', 'Temp Table',\n"
-                     "              'Internal ('||a.type||')'),\n"
-                     "       DECODE(a.lmode,0,'None',1,'Null',2,'Row-S',3,'Row-X',4,'Share',5,'S/Row-X',6,'Exclusive',TO_CHAR(a.lmode)),\n"
-                     "       DECODE(e.request,0,'None',1,'Null',2,'Row-S',3,'Row-X',4,'Share',5,'S/Row-X',6,'Exclusive',TO_CHAR(e.request)),\n"
-                     "       d.object_name,\n"
-                     "       TO_CHAR(SYSDATE-a.CTIME/3600/24),\n"
-                     "       TO_CHAR(SYSDATE-e.CTIME/3600/24)\n"
+                     "              'Internal ('||a.type||')')                                                     as Type, \n"
+                     "       DECODE(a.lmode,0,'None',1,'Null',2,'Row-S',3,'Row-X',4,'Share',5,'S/Row-X',6,'Exclusive',TO_CHAR(a.lmode)) as \"Mode\", \n"
+                     "       DECODE(e.request,0,'None',1,'Null',2,'Row-S',3,'Row-X',4,'Share',5,'S/Row-X',6,'Exclusive',TO_CHAR(e.request)) as Request,\n"
+                     "       d.object_name                                                                         as Object,   \n"
+                     "       TO_CHAR(SYSDATE-a.CTIME/3600/24)                                                      as Grabbed,  \n"
+                     "       TO_CHAR(SYSDATE-e.CTIME/3600/24)                                                      as Requested \n"
                      "  from v$lock a, v$session b,v$locked_object c,sys.all_objects d,v$lock e\n"
                      " where a.sid = b.sid\n"
                      "   and a.lmode != 0\n"
@@ -206,29 +150,3 @@ static toSQL SQLLock("toResultLockNew:Locks",
 //AND    PRIOR a.sess_serial# = a.blocker_sess_serial#
 //START WITH a.blocker_is_valid='FALSE'
 //ORDER  BY a.chain_id , LEVEL
-
-
-void toResultLockNew::query(const QString &sql, const toQueryParams &param)
-{
-    Q_UNUSED(sql);
-
-    //if (!handled())
-    //    return ;
-
-    //if (!setSqlAndParams(sql, param))
-    //    return ;
-
-    try
-    {
-        if (!param.isEmpty())
-        {
-            Query = new toEventQuery(this, connection(), toSQL::string(SQLLock, connection()), param, toEventQuery::READ_ALL);
-        }
-        else
-        {
-            Query = new toEventQuery(this, connection(), toSQL::string(SQLBlockingLock, connection()), toQueryParams(), toEventQuery::READ_ALL);
-        }
-        ResutLock::MVC::setQuery(Query);
-    }
-    TOCATCH
-} // query

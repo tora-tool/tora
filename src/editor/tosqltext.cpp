@@ -271,7 +271,7 @@ void toSqlText::setHighlighter(int h) // slot
 
     if (focus == this)
         setHighlighter((HighlighterTypeEnum)h);
-    TLOG(9, toDecorator, __HERE__) << " for: " << focus->metaObject()->className() << std::endl;
+    TLOG(9, toDecorator, __HERE__) << " for: " << (focus ? focus->metaObject()->className() : QString("NULL")) << std::endl;
 }
 
 #ifdef QT_DEBUG
@@ -571,17 +571,12 @@ void toSqlTextWorker::setAnalyzer(toSyntaxAnalyzer *analyzer)
 }
 
 toHighlighterTypeButton::toHighlighterTypeButton(QWidget *parent, const char *name)
-    : toToggleButton(toSqlText::staticMetaObject.enumerator(toSqlText::staticMetaObject.indexOfEnumerator("HighlighterTypeEnum"))
-                     , parent
-                     , name
-                    )
+    : toToggleButton(ENUM_REF(toSqlText, HighlighterTypeEnum), parent, name)
 {
 }
 
 toHighlighterTypeButton::toHighlighterTypeButton()
-    : toToggleButton(toSqlText::staticMetaObject.enumerator(toSqlText::staticMetaObject.indexOfEnumerator("HighlighterTypeEnum"))
-                     , NULL
-                    )
+    : toToggleButton(ENUM_REF(toSqlText, HighlighterTypeEnum), NULL)
 {
 }
 

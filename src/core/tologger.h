@@ -162,7 +162,7 @@ DISABLE_LOG(3)   // debugger(disabled)
 DISABLE_LOG(4)   // data read(disabled)
 DOCKLET_LOG(5)   // connection provider finder
 DISABLE_LOG(6)   //
-DOCKLET_LOG(7)   //
+//DOCKLET_LOG(7)   //
 DISABLE_LOG(8)   // syntax analyzer, QScintilla
 DISABLE_LOG(9)   // report focus
 

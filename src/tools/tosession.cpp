@@ -65,10 +65,11 @@
 #include "icons/tosession.xpm"
 
 #include "tools/toresultbar.h"
-#include "tools/toresultlock.h"
-#include "tools/toresultlock2.h"
 #include "tools/toresultstats.h"
 #include "tools/toresulttableview.h"
+
+#include "result/toresultlock.h"
+
 // #include "icons/filter.xpm"
 
 #include "editor/tosyntaxanalyzernl.h"
@@ -249,6 +250,20 @@ static toSQL SQLOpenCursors(
 	" join (select distinct ADDRESS, HASH_VALUE, SQL_ID, child_number from v$sql_plan) p on c.ADDRESS = p.ADDRESS and c.HASH_VALUE = p.HASH_VALUE and c.sql_id = p.sql_id \n"
 	" where sid = :f1<char[101]>",
     "Display open cursors of this session");
+
+static toSQL SQLOpenCursors11g(
+    "toSession:OpenCursor",
+        " select SQL_Text SQL                        \n"
+        "       , CURSOR_TYPE                        \n"
+        "       , LAST_SQL_ACTIVE_TIME               \n"
+        "       , SQL_EXEC_ID                        \n"
+        "       , c.SQL_ID     as \" sql_id\"        \n"
+        "       , child_number as \" child_number\"  \n"
+        " from v$open_cursor c \n"
+        " join (select distinct ADDRESS, HASH_VALUE, SQL_ID, child_number from v$sql_plan) p on c.ADDRESS = p.ADDRESS and c.HASH_VALUE = p.HASH_VALUE and c.sql_id = p.sql_id \n"
+        " where sid = :f1<char[101]>",
+        "",
+        "1101");
 
 static toSQL SQLSessionWait(
     TO_SESSION_WAIT,
@@ -601,10 +616,7 @@ toSession::toSession(QWidget *main, toConnection &connection)
         ResultTab->addTab(ConnectInfo, tr("Connect Info"));
 
         PendingLocks = new toResultLock(ResultTab);
-        ResultTab->addTab(PendingLocks, tr("Pending Locks"));
-
-        PendingLocksNew = new toResultLockNew(ResultTab);
-        ResultTab->addTab(PendingLocksNew->view(), tr("Pending Locks New"));
+        ResultTab->addTab(PendingLocks->view(), tr("Pending Locks"));
 
         LockedObjects = new toResultTableView(false, false, ResultTab);
         ResultTab->addTab(LockedObjects, tr("Locked Objects"));
@@ -929,15 +941,9 @@ void toSession::slotChangeTab(int index)
         {
             LongOps->refreshWithParams(toQueryParams() << connectionId << serial);
         }
-        else if (CurrentTab == PendingLocks)
+        else if (PendingLocks && CurrentTab == PendingLocks->view())
         {
-            PendingLocks->clearParams();
             PendingLocks->refreshWithParams(toQueryParams() << connectionId);
-        }
-        else if (CurrentTab == PendingLocksNew->view())
-        {
-            //PendingLocksNew->clearParams();
-            PendingLocksNew->refreshWithParams(toQueryParams() << connectionId);
         }
         else if (CurrentTab == OpenSplitter)
         {

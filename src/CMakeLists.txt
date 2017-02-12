@@ -241,7 +241,10 @@ SET(TORA_MOC_CLASSES
   parsing/tsqllexer.h
 
   result/toproviderobserver.h
+  result/toresultlock.h
+  result/toresultplan.h
   result/toresulttabledata.h
+  result/toresultwaitchains.h
   result/totablemodel.h
   result/totableview.h
   result/totreemodel.h
@@ -292,8 +295,6 @@ SET(TORA_MOC_CLASSES
   tools/toresultfield.h
   tools/toresultgrants.h
   tools/toresultline.h
-  tools/toresultlock.h
-  tools/toresultlock2.h
   tools/toresultlong.h
   tools/toresultparam.h
   tools/toresultpie.h
@@ -531,7 +532,10 @@ SET(TORA_SOURCES
   parsing/tsqlparse.cpp
 
   result/toproviderobserver.cpp
+  result/toresultlock.cpp
+  result/toresultplan.cpp
   result/toresulttabledata.cpp
+  result/toresultwaitchains.cpp
   result/totablemodel.cpp
   result/totableview.cpp
   result/totreemodel.cpp
@@ -583,8 +587,6 @@ SET(TORA_SOURCES
   tools/toresultfield.cpp
   tools/toresultgrants.cpp
   tools/toresultline.cpp
-  tools/toresultlock.cpp
-  tools/toresultlock2.cpp
   tools/toresultlong.cpp
   tools/toresultparam.cpp
   tools/toresultpie.cpp

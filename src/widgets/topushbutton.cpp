@@ -39,6 +39,8 @@
 #include <QStylePainter>
 #include <QToolButton>
 #include <QToolBar>
+#include <QGestureEvent>
+#include <QtCore/QStringListModel>
 
 /**
  * much inspiration from libqxt
@@ -180,7 +182,6 @@ toPopupButton::toPopupButton(const QIcon &iconSet,
 toPopupButton::toPopupButton(QWidget *parent, const char *name)
     : QToolButton(parent)
 {
-
     setObjectName(name);
 }
 
@@ -188,15 +189,40 @@ toToggleButton::toToggleButton(QMetaEnum const& e, QWidget *parent, const char* 
     : QPushButton(parent)
     , m_enum(e)
     , m_idx(0)
+    , listView(NULL)
 {
     if (m_enum.keyCount() == 0)
         throw QString("ctor toToggleButton - empty enum provided: %1").arg(m_enum.name());
 
     setObjectName(name);
+    setFocusPolicy(Qt::NoFocus);
     setFlat(true);
     setText(m_enum.key(m_idx));
 
     connect(this, SIGNAL(released()), this, SLOT(toggle()));
+}
+
+// Note popup list view steals focus, it can not be used in toEditorTypeButton, toHighlighterTypeButton yet
+void toToggleButton::enablePopUp()
+{
+    /* TapAndHoldGesture list menu part */
+    grabGesture(Qt::TapAndHoldGesture);
+    QStringList values;
+    for (int idx = 0; idx < m_enum.keyCount(); idx++)
+    {
+        values.append(m_enum.key(idx));
+    }
+    QStringListModel *model = new QStringListModel(values, this);
+    listView = new QListView(this);
+    listView->setWindowFlags(Qt::ToolTip);
+    listView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    listView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    listView->setModel(model);
+    listView->setFixedSize(listView->sizeHintForColumn(0) + 2 * listView->frameWidth()
+                           , listView->sizeHintForRow(0) * values.size() + 2 * listView->frameWidth());
+    listView->setFocusPolicy(Qt::NoFocus);
+
+    connect(listView, SIGNAL(clicked(const QModelIndex &)), this, SLOT(toggle(const QModelIndex &)));
 }
 
 void toToggleButton::setValue(int val)
@@ -225,8 +251,48 @@ void toToggleButton::setValue(QString const& val)
 
 void toToggleButton::toggle()
 {
+    // Ignore events when in ListView
+    if (listView && listView->isVisible())
+        return;
+
     int idx = ++m_idx < m_enum.keyCount() ? m_idx : m_idx=0;
     setText(m_enum.key(idx));
     emit toggled(text());
     emit toggled(m_enum.value(idx));
+}
+
+void toToggleButton::toggle(const QModelIndex &index)
+{
+    QString value = listView->model()->data(index, Qt::DisplayRole).toString();
+    listView->hide();
+    setValue(value);
+    emit toggled(text());
+    emit toggled(m_idx);
+}
+
+bool toToggleButton::event(QEvent *event)
+{
+    if (listView && event->type() == QEvent::Gesture)
+        return gestureEvent(static_cast<QGestureEvent*>(event));
+    return QPushButton::event(event);
+}
+
+bool toToggleButton::gestureEvent(QGestureEvent *event)
+{
+    if (QGesture *swipe = event->gesture(Qt::TapAndHoldGesture))
+    {
+        QPoint p(0, height());
+        int x = mapToGlobal(p).x();
+        int y = mapToGlobal(p).y() - listView->height();
+        listView->move(x, y);
+        listView->show();
+    }
+    return true;
+}
+
+void toToggleButton::focusOutEvent(QFocusEvent *e)
+{
+    if(listView)
+        listView->hide();
+    QPushButton::focusOutEvent(e);
 }

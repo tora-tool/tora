@@ -476,16 +476,11 @@ void toWorksheetText::importData(std::map<QString, QString> &data, const QString
 #endif
 
 toEditorTypeButton::toEditorTypeButton(QWidget *parent, const char *name)
-    : toToggleButton(toWorksheetText::staticMetaObject.enumerator(toWorksheetText::staticMetaObject.indexOfEnumerator("EditorTypeEnum"))
-                     , parent
-                     , name
-                    )
+    : toToggleButton(ENUM_REF(toWorksheetText, EditorTypeEnum), parent, name)
 {
 }
 
 toEditorTypeButton::toEditorTypeButton()
-    : toToggleButton(toWorksheetText::staticMetaObject.enumerator(toWorksheetText::staticMetaObject.indexOfEnumerator("EditorTypeEnum"))
-                     , NULL
-                    )
+    : toToggleButton(ENUM_REF(toWorksheetText, EditorTypeEnum), NULL)
 {
 }

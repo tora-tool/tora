@@ -44,6 +44,7 @@
 #include "result/toproviderobserver.h"
 #include "result/totablemodel.h"
 #include "result/totableview.h"
+#include "widgets/toworkingwidget.h"
 
 #include <QtCore/QObject>
 #include <QHeaderView>
@@ -56,6 +57,7 @@ struct MVCTraits
     typedef toEventQuery       Query;
     typedef toEventQueryObserverObject             ObserverObject;
     typedef toEventQueryObserverObject::Observer   Observer;
+    typedef toWorkingWidgetNew                     WorkingWidget;
 
     enum RowNumberPolicy
     {
@@ -72,12 +74,14 @@ struct MVCTraits
         CustomColumnResize
     };
 
-    static const int SelectionBehavior = QAbstractItemView::SelectItems;
-    static const int SelectionMode = QAbstractItemView::NoSelection;
+    static const int  SelectionBehavior = QAbstractItemView::SelectItems;
+    static const int  SelectionMode = QAbstractItemView::NoSelection;
     static const bool AlternatingRowColorsEnabled = false;
-    static const int ContextMenuPolicy = Qt::NoContextMenu;
-    static const int ShowRowNumber = TableRowNumber;
-    static const int ColumnResize = NoColumnResize;
+    static const int  ContextMenuPolicy = Qt::NoContextMenu;
+    static const int  ShowRowNumber = TableRowNumber;
+    static const int  ColumnResize = NoColumnResize;
+    static const bool ShowWorkingWidget = true;
+    static const bool WorkingWidgetInteractive = true;
 };
 
 template<
@@ -98,6 +102,7 @@ class TOMVC
         typedef typename Traits::Query Query;
         typedef typename Traits::Observer       Observer;
         typedef typename Traits::ObserverObject ObserverObject;
+        typedef typename Traits::WorkingWidget  WorkingWidget;
         typedef _VP<Traits>           ViewPolicy;
         typedef _DP<Traits>           DataProviderPolicy;
 
@@ -163,6 +168,7 @@ class TOMVC
         ///@}
     private:
         View  *m_view;
+        WorkingWidget *m_workingWidget;
 
         ObserverObject *m_observerObject;
 
@@ -182,10 +188,16 @@ TOMVC<_T, _VP, _DP>::TOMVC(QWidget *parent)
     , DataProviderPolicy()
     , m_view(new View(parent))
     , m_observerObject(new ObserverObject(*this, parent))
+    , m_workingWidget(NULL)
 {
     m_view->setModel(this);
     ViewPolicy::setup(m_view);
     DataProviderPolicy::setup();
+
+    if (_T::ShowWorkingWidget)
+    {
+        m_workingWidget = new WorkingWidget(m_view);
+    }
 }
 
 template<
@@ -230,6 +242,29 @@ void TOMVC<_T, _VP, _DP>::setQuery(Query *query)
     retval = QObject::connect(query, SIGNAL(done(toEventQuery*,unsigned long))
                               , m_observerObject, SLOT(eqDone(toEventQuery*)));
     Q_ASSERT_X(retval, qPrintable(__QHERE__), "connect failed: done");
+
+    if (_T::ShowWorkingWidget)
+    {
+        retval = QObject::connect(query, SIGNAL(descriptionAvailable(toEventQuery*, const toQColumnDescriptionList &))
+                                  , m_workingWidget, SLOT(undisplay()));
+        Q_ASSERT_X(retval, qPrintable(__QHERE__), "connect failed: descriptionAvailable");
+        retval = QObject::connect(query, SIGNAL(dataAvailable(toEventQuery*))
+                                  , m_workingWidget, SLOT(undisplay()));
+        Q_ASSERT_X(retval, qPrintable(__QHERE__), "connect failed: dataAvailable");
+        retval = QObject::connect(query, SIGNAL(error(toEventQuery*, const toConnection::exception &))
+                                  , m_workingWidget, SLOT(undisplay()));
+        Q_ASSERT_X(retval, qPrintable(__QHERE__), "connect failed: error");
+        retval = QObject::connect(query, SIGNAL(done(toEventQuery*,unsigned long))
+                                  , m_workingWidget, SLOT(undisplay()));
+        Q_ASSERT_X(retval, qPrintable(__QHERE__), "connect failed: done");
+
+        if (_T::WorkingWidgetInteractive)
+        {
+            retval = QObject::connect(m_workingWidget, SIGNAL(stop()), query, SLOT(stop()));
+        }
+        m_workingWidget->display();
+    }
+
     query->start();
 }
 
@@ -358,7 +393,6 @@ typename _T,
          >
 void TOMVC< _T, _VP, _DP>::observeDone()
 {
-
 }
 
 template<
@@ -368,7 +402,6 @@ typename _T,
          >
 void TOMVC< _T, _VP, _DP>::observeError(const toConnection::exception &e)
 {
-
 }
 
 template<

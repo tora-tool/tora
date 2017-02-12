@@ -40,11 +40,10 @@
 
 #include "icons/stop.xpm"
 
-
 toWorkingWidget::toWorkingWidget(QWidget * parent)
     : QWidget(parent)
 {
-    CurrentType = toWorkingWidget::Interactive;
+    CurrentType = Interactive;
 
     setAutoFillBackground(true);
     setPalette(QPalette(Qt::white));
@@ -84,7 +83,7 @@ toWorkingWidget::toWorkingWidget(QWidget * parent)
 
 void toWorkingWidget::show()
 {
-    if (CurrentType == toWorkingWidget::Interactive)
+    if (CurrentType == Interactive)
         HWorking->hide();
     QWidget::show();
 }
@@ -108,8 +107,119 @@ void toWorkingWidget::setText(const QString & text)
 void toWorkingWidget::setType(WorkingWidgetType type)
 {
     CurrentType = type;
-    bool e = (type == toWorkingWidget::Interactive);
+    bool e = (type == Interactive);
     WorkingStop->setEnabled(e);
     WorkingStop->setVisible(e);
     WorkingStop->blockSignals(!e);
+}
+
+toWorkingWidgetNew::toWorkingWidgetNew(QWidget * parent)
+    : QWidget(parent)
+{
+    CurrentType = Interactive;
+
+    setAutoFillBackground(true);
+    setPalette(QPalette(Qt::white));
+
+    HWorking = new QWidget(this);
+    HWorking->setAutoFillBackground(true);
+    HWorking->setPalette(QPalette(QColor(241, 241, 169)));
+
+    QVBoxLayout *vbox = new QVBoxLayout;
+    vbox->setSpacing(0);
+    vbox->setContentsMargins(0, 0, 0, 0);
+
+    QHBoxLayout *hbox = new QHBoxLayout;
+
+    WorkingLabel = new QLabel(tr("Waiting..."), HWorking);
+    WorkingLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+    hbox->addWidget(WorkingLabel);
+
+    WorkingStop = new QPushButton(QIcon(QPixmap(stop_xpm)), tr("Stop"), HWorking);
+    WorkingStop->setAutoFillBackground(true);
+    WorkingStop->setBackgroundRole(QPalette::Window);
+    WorkingStop->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+    WorkingStop->setEnabled(CurrentType == Interactive);
+
+    connect(WorkingStop, SIGNAL(clicked()), this, SLOT(stopWorking()));
+
+    hbox->addWidget(WorkingStop);
+
+    HWorking->setLayout(hbox);
+
+    vbox->addWidget(HWorking);
+    vbox->addStretch(0);
+
+    setLayout(vbox);
+    hide();
+
+}
+
+void toWorkingWidgetNew::show()
+{
+    if (CurrentType == Interactive)
+        HWorking->hide();
+    QWidget::show();
+}
+
+void toWorkingWidgetNew::forceShow()
+{
+    HWorking->show();
+}
+
+void toWorkingWidgetNew::stopWorking()
+{
+    emit stop();
+}
+
+void toWorkingWidgetNew::setText(const QString & text)
+{
+    WorkingLabel->setText(text);
+    WorkingStop->setEnabled(true);
+}
+
+void toWorkingWidgetNew::setType(WorkingWidgetType type)
+{
+    CurrentType = type;
+    bool e = (type == Interactive);
+    WorkingStop->setEnabled(e);
+    WorkingStop->setVisible(e);
+    WorkingStop->blockSignals(!e);
+}
+
+bool toWorkingWidgetNew::eventFilter(QObject *obj, QEvent *event)
+{
+	auto type = event->type();
+    switch (event->type())
+    {
+        case QEvent::Paint:
+            setGeometry(parentWidget()->frameGeometry());
+            show();
+            return true;
+        case QEvent::Resize:
+        case QEvent::Move:
+            setGeometry(parentWidget()->frameGeometry());
+            repaint();
+            event->ignore();
+            return true;
+        default:
+            // standard event processing
+            return QWidget::eventFilter(obj, event);
+    }
+}
+
+void toWorkingWidgetNew::display()
+{
+    parentWidget()->installEventFilter(this);
+    QTimer::singleShot(300, this, SLOT(forceShow()));
+}
+
+void toWorkingWidgetNew::undisplay()
+{
+    if (isVisible())
+    {
+        parentWidget()->removeEventFilter(this);
+        hide();
+        parentWidget()->repaint();
+    }
 }

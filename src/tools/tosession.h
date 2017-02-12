@@ -119,7 +119,6 @@ class toSession : public toToolWidget
         toResultItem      *ConnectInfo;
         toResultTableView *LockedObjects;
         toResultLock      *PendingLocks;
-        toResultLockNew   *PendingLocksNew;
         toResultTableView *AccessedObjects;
 #ifdef TORA_EXPERIMENTAL
         toResultBar       *WaitBar;
