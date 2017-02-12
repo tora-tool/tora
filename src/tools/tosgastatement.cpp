@@ -43,9 +43,10 @@
 #include "editor/toscintilla.h"
 #include "toresultfield.h"
 #include "tools/toresultplan.h"
-#include "toresulttableview.h"
+#include "tools/toresulttableview.h"
 
 #include "result/toresultplan.h"
+#include "result/toresultsql.h"
 
 static toSQL SQLParsingSchema(
     "toSGAStatement:ParsingSchema",
@@ -90,6 +91,10 @@ toSGAStatement::toSGAStatement(QWidget *parent, const char* name)
 
     SQLText = new toResultField(this);
     addTab(SQLText, tr("SQL"));
+
+    SQLTextNew = new toResultSql(this);
+    SQLTextNew->setSQLName("Global:SQLTextSQLID");
+    addTab(SQLTextNew->view(), tr("SQL New"));
 
     if (toConnection::currentConnection(this).providerIs("Oracle"))
     {
@@ -144,6 +149,10 @@ void toSGAStatement::changeTab(int index)
             // if (toConfigurationSingle::Instance().autoIndent())
             // sql = toSQLParse::indent(sql);
             SQLText->sciEditor()->setText(sql);
+        }
+        else if (CurrentTab == SQLTextNew->view())
+        {
+            SQLTextNew->refreshWithParams(toQueryParams() << Address);
         }
         else if (CurrentTab == Plan)
             Plan->queryCursorPlan(toQueryParams() << Address << Cursor);

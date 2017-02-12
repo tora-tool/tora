@@ -35,6 +35,8 @@
 #pragma once
 
 #include "core/toqvalue.h"
+#include "result/tomvc.h"
+#include "views/tosqltextview.h"
 
 #include <QTabWidget>
 
@@ -46,17 +48,20 @@ class toResultPlanCursor;
 class toResultPlanNew;
 class toResultView;
 class toResultTableView;
+class toResultSql;
 
 /** This widget displays information about a statement in the Oracle SGA. To get an
  * address use the @ref toSQLToAddress function.
  */
-
 class toSGAStatement : public QTabWidget
 {
         Q_OBJECT
         /** The SQL run.
          */
         toResultField *SQLText;
+
+        toResultSql *SQLTextNew;
+
         /** Tab widget
          */
         QWidget *CurrentTab;

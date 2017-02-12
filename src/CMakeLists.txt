@@ -243,6 +243,7 @@ SET(TORA_MOC_CLASSES
   result/toproviderobserver.h
   result/toresultlock.h
   result/toresultplan.h
+  result/toresultsql.h
   result/toresulttabledata.h
   result/toresultwaitchains.h
   result/totablemodel.h
@@ -532,15 +533,16 @@ SET(TORA_SOURCES
   parsing/tsqllexeroracle2.cc
   parsing/tsqllexerpostgresql.cc
   parsing/tsqlparse.cpp
-
+  
   result/toproviderobserver.cpp
   result/toresultlock.cpp
   result/toresultplan.cpp
+  result/toresultsql.cpp
   result/toresulttabledata.cpp
   result/toresultwaitchains.cpp
   result/totablemodel.cpp
   result/totreemodel.cpp
-
+  
   shortcuteditor/shortcuteditordialog.cpp
   shortcuteditor/shortcutmodel.cpp
 

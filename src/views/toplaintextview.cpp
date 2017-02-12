@@ -168,10 +168,10 @@ void toPlainTextView::rowsInserted(const QModelIndex &parent, int first, int las
 
 void toPlainTextView::rowsRemoved(const QModelIndex &parent, int first, int last)
 {
-	for (int row = first; row <= last; row++)
-	{
-		m_lines.remove(row);
-	}
+    for (int row = first; row <= last; row++)
+    {
+        m_lines.remove(row);
+    }
 }
 
 bool toPlainTextView::searchNext()

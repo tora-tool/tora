@@ -35,51 +35,42 @@
 #pragma once
 
 #include "result/tomvc.h"
-#include "views/totreeview.h"
+#include "views/tosqltextview.h"
 
-class toEventQuery;
-
-namespace ResutWaitSchains
+namespace ResultSqlText
 {
-    struct Traits : public MVCTraits
+    struct TraitsSqlText : public MVCTraits
     {
-        static const bool AlternatingRowColorsEnabled = true;
-        static const int  ShowRowNumber = NoRowNumber;
-        static const int  ColumnResize = RowColumResize;
-
-        typedef Views::toTreeView View;
+        typedef Views::toSqlTextView View;
     };
 
-    class MVC
+    class SqlTextMVC
             : public TOMVC
               <
-              ::ResutWaitSchains::Traits,
-              Views::DefaultTreeViewPolicy,
+              TraitsSqlText,
+              Views::DefaultSqlTextViewPolicy,
               ::DefaultDataProviderPolicy
               >
     {
         Q_OBJECT;
     public:
         typedef TOMVC<
-                ::ResutWaitSchains::Traits,
-                 Views::DefaultTreeViewPolicy,
+                TraitsSqlText,
+                Views::DefaultSqlTextViewPolicy,
                 ::DefaultDataProviderPolicy
                   > _s;
-        MVC(QWidget *parent) : _s(parent)
+        SqlTextMVC(QWidget *parent) : _s(parent)
         {};
-        virtual ~MVC() {};
+        virtual ~SqlTextMVC() {};
     };
+
 }
 
-/**
- * A result table displaying information about locks in a hierarchy
- */
-class toResultWaitChains
-        : public ResutWaitSchains::MVC
+class toResultSql : public ResultSqlText::SqlTextMVC
 {
     Q_OBJECT;
-
 public:
-    toResultWaitChains(QWidget *parent, const char *name = NULL);
-    ~toResultWaitChains();
+    toResultSql(QWidget *parent, const char *name = NULL) : ResultSqlText::SqlTextMVC(parent) {};
+    ~toResultSql() {};
+
 };

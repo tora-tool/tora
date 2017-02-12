@@ -40,6 +40,8 @@ class toSearchReplace;
 
 #include "core/toeditwidget.h"
 #include "editor/toeditglobals.h"
+#include "core/toconfiguration.h"
+#include "core/toeditorconfiguration.h"
 
 #include <QWidget>
 
@@ -74,9 +76,12 @@ public:
     bool searchNext() override;
     void searchReplace() override {};
 
-    void focusInEvent (QFocusEvent *e) override;
+    void setSqlColumn(unsigned column) { m_model_column = column; };
 
     void setModel(QAbstractItemModel *model);
+
+protected:
+    void focusInEvent (QFocusEvent *e) override;
 
 protected slots:
     void setEditorFocus();
@@ -91,7 +96,26 @@ private:
     toSearchReplace *m_search;
     QString m_filename;
     QAbstractItemModel *m_model;
+    QSet<int> m_lines;
     unsigned m_model_column;
 };
+
+template<typename _T>
+class DefaultSqlTextViewPolicy
+{
+    private:
+        typedef _T Traits;
+        typedef typename Traits::View View;
+    public:
+        void setup(View* pView);
+};
+
+template<typename Traits>
+void DefaultSqlTextViewPolicy<Traits>::setup(View* pView)
+{
+    pView->setContextMenuPolicy( (Qt::ContextMenuPolicy) Traits::ContextMenuPolicy);
+    QFont fixed(Utils::toStringToFont(toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::ConfCodeFont).toString()));
+    pView->setFont(fixed);
+}
 
 }

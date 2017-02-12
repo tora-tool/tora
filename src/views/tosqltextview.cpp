@@ -61,7 +61,7 @@ toSqlTextView::toSqlTextView(QWidget *parent /* = 0*/, const char *name /* = 0*/
     m_view->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
     m_search = new toSearchReplace(this);
-    m_search->SearchMode->hide();
+    m_search->hide();
 
     QVBoxLayout *l = new QVBoxLayout();
     l->setSpacing(0);
@@ -132,6 +132,7 @@ void toSqlTextView::setModel(QAbstractItemModel *model)
 
 void toSqlTextView::modelReset()
 {
+    m_lines.clear();
     m_view->clear();
     for(int row = 0; row < m_model->rowCount(); row++)
     {
@@ -156,12 +157,23 @@ void toSqlTextView::modelReset()
 
 void toSqlTextView::rowsInserted(const QModelIndex &parent, int first, int last)
 {
-
+    if (!m_lines.contains(first))
+    {
+        for(int row = first; row <= last; row++)
+        {
+            m_lines.insert(row);
+            QModelIndex index = m_model->index(row, m_model_column);
+            m_view->append(m_model->data(index).toString());
+        }
+    }
 }
 
 void toSqlTextView::rowsRemoved(const QModelIndex &parent, int first, int last)
 {
-
+    for (int row = first; row <= last; row++)
+    {
+        m_lines.remove(row);
+    }
 }
 
 bool toSqlTextView::searchNext()

@@ -47,7 +47,6 @@
 
 toResultWaitChains::toResultWaitChains(QWidget *parent, const char *name)
     : ResutWaitSchains::MVC(parent)
-    , Query(NULL)
 {
     setSQLName(QString::fromLatin1("toResultWaitChains:Chains"));
 }

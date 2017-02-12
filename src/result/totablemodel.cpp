@@ -390,13 +390,10 @@ Qt::DropActions toTableModelPriv::supportedDropActions() const
 
 void toTableModelPriv::clearAll()
 {
-    super::beginRemoveColumns(QModelIndex(), 0, Headers.size());
+    super::beginResetModel();
     Headers.clear();
-    super::endRemoveColumns();
-
-    super::beginRemoveRows(QModelIndex(), 0, Rows.size());
     Rows.clear();
-    super::endRemoveRows();
+    super::endResetModel();
 }
 
 void toTableModelPriv::beginInsertRows(const QModelIndex &parent, int first, int last)
