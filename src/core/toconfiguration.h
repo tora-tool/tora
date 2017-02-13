@@ -39,6 +39,7 @@
 
 #include <QtCore/QStringList>
 #include <QtCore/QMap>
+#include <QtCore/QSet>
 #include <QtCore/QSettings>
 #include <QtCore/QVariant>
 #include <QApplication>
@@ -50,6 +51,7 @@ namespace ToConfiguration
 };
 
 class QMetaEnum;
+class toConfigOptionObserver;
 
 class TORA_EXPORT toConfigurationNew: public QObject
 {
@@ -145,10 +147,10 @@ public:
         toConfigurationNewSingle::Instance().unRegisterConfigObserver(this);
     }
 
-    operator bool()    const { return m_value.toBool();   }
-    operator int()     const { return m_value.toInt();    }
-    operator QString() const { return m_value.toString(); }
-    operator QDate()   const { return m_value.toDate();   }
+    operator bool()    const;
+    operator int()     const;
+    operator QString() const;
+    operator QDate()   const;
 
 public slots:
     void notify(QVariant const newval)

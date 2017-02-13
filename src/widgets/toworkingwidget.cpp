@@ -37,6 +37,8 @@
 #include <QPushButton>
 #include <QLabel>
 #include <QHBoxLayout>
+#include <QtCore/QEvent>
+#include <QtCore/QTimer>
 
 #include "icons/stop.xpm"
 

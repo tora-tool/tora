@@ -42,8 +42,10 @@ class toSearchReplace;
 #include "editor/toeditglobals.h"
 #include "core/toconfiguration.h"
 #include "core/toeditorconfiguration.h"
+#include "core/utils.h"
 
 #include <QWidget>
+#include <QtCore/QSet>
 
 namespace Views
 {

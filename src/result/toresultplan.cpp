@@ -39,6 +39,9 @@
 #include "connection/tooracleconfiguration.h"
 #endif
 
+#include <QVBoxLayout>
+#include <QStatusBar>
+
 static toSQL SQLDisplayCursor("toResultPlan:DisplayCursor",
                               "SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY_CURSOR(:sqlid<char[40],in>, :chld<char[10],in>, :format<char[20],in>))"
                               //" WHERE sys.slow_one() = 1 "

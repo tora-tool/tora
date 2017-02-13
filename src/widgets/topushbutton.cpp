@@ -41,6 +41,7 @@
 #include <QToolBar>
 #include <QGestureEvent>
 #include <QtCore/QStringListModel>
+#include <QListView>
 
 /**
  * much inspiration from libqxt

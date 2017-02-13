@@ -308,3 +308,22 @@ void toConfigurationNew::notifyOservers(int option, QVariant const&value) const
         o->notify(value);
     }
 }
+
+toConfigOptionObserver::operator bool() const
+{
+    return m_value.toBool();
+}
+
+toConfigOptionObserver::operator int() const
+{
+    return m_value.toInt();
+}
+toConfigOptionObserver::operator QString() const
+{
+    return m_value.toString();
+}
+
+toConfigOptionObserver::operator QDate() const
+{
+    return m_value.toDate();
+}

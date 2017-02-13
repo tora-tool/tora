@@ -38,7 +38,6 @@
 #include <QtGui/QTextDocument>
 
 #include "editor/tosqltext.h"
-#include "core/utils.h"
 #include "widgets/tosearchreplace.h"
 
 using namespace Views;
