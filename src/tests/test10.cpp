@@ -41,7 +41,7 @@
 
 #include "widgets/totabledetailview.h"
 #include "widgets/toplaintextview.h"
-#include "widgets/tosqltextview.h"
+#include "editor/tosqltextview.h"
 
 int main(int argc, char **argv)
 {

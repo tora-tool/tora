@@ -32,7 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "widgets/tosqltextview.h"
+#include "editor/tosqltextview.h"
 #include "editor/tosqltext.h"
 #include "core/utils.h"
 #include <QtGui/QFocusEvent>

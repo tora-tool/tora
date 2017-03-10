@@ -220,6 +220,7 @@ SET(TORA_MOC_CLASSES
   editor/tomodeleditor.h
   editor/toscintilla.h
   editor/tosqltext.h
+  editor/tosqltextview.h
   editor/tosyntaxanalyzermysql.h
   editor/tosyntaxanalyzernl.h
   editor/tosyntaxanalyzeroracle.h
@@ -349,7 +350,6 @@ SET(TORA_MOC_CLASSES
   widgets/toresultschema.h
   widgets/tosearchreplace.h
   widgets/tosplash.h
-  widgets/tosqltextview.h
   widgets/totabledetailview.h
   widgets/totableselect.h
   widgets/totabwidget.h
@@ -489,6 +489,7 @@ SET(TORA_SOURCES
   editor/tomodeleditor.cpp
   editor/toscintilla.cpp
   editor/tosqltext.cpp
+  editor/tosqltextview.cpp
   editor/tosyntaxanalyzermysql.cpp
   editor/tosyntaxanalyzernl.cpp
   editor/tosyntaxanalyzeroracle.cpp
@@ -639,7 +640,6 @@ SET(TORA_SOURCES
   widgets/toresultschema.cpp
   widgets/tosearchreplace.cpp
   widgets/tosplash.cpp
-  widgets/tosqltextview.cpp
   widgets/totabledetailview.cpp
   widgets/totableselect.cpp
   widgets/totabwidget.cpp
