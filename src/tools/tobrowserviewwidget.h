@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOBROWSERVIEWWIDGET_H
-#define TOBROWSERVIEWWIDGET_H
+#pragma once
 
 #include "tobrowserbasewidget.h"
 
@@ -45,6 +44,7 @@ class toResultGrants;
 class toResultDepend;
 class toResultCode;
 
+class toResultSql;
 
 /*! \brief View browser for toBrowser tool.
 See toBrowserBaseWidget for more info.
@@ -52,20 +52,18 @@ See toBrowserBaseWidget for more info.
 */
 class toBrowserViewWidget : public toBrowserBaseWidget
 {
-        Q_OBJECT
+    Q_OBJECT;
+public:
+    toBrowserViewWidget(QWidget * parent);
 
-        toResultCols *columnsWidget;
-        toResultField *resultField;
-        toResultTableView *triggersView;
-        toResultTableData *resultData;
-        toResultGrants *grantsView;
-        toResultDepend *resultDependencies;
-        toResultCode *extractView;
-
-    public:
-        toBrowserViewWidget(QWidget * parent);
-
-        void changeConnection();
+    void changeConnection();
+protected:
+    toResultCols *columnsWidget;
+    toResultField *resultField;
+    toResultSql   *resultSQL;
+    toResultTableView *triggersView;
+    toResultTableData *resultData;
+    toResultGrants *grantsView;
+    toResultDepend *resultDependencies;
+    toResultCode *extractView;
 };
-
-#endif

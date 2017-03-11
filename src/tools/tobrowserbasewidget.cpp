@@ -133,7 +133,7 @@ void toBrowserBaseWidget::tabWidget_currentChanged(int ix)
 void toBrowserBaseWidget::updateData(const QString & ix)
 {
     // When changing connection or refreshing a list of objects (tables, indexes etc.)
-    // updateData will be called with shema/object being empty (as after refreshing
+    // updateData will be called with schema/object being empty (as after refreshing
     // nothing is selected yet. We have to clear result pane then without executing
     // any queries.
     if (schema().isEmpty() || object().isEmpty())

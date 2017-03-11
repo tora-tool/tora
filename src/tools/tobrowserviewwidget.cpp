@@ -42,6 +42,8 @@
 #include "toresultgrants.h"
 #include "toresulttableview.h"
 
+#include "result/toresultsql.h"
+
 Util::RegisterInFactory<toBrowserViewWidget, toBrowserWidgetFactory, toCache::CacheEntryType> regToBrowserViewWidget(toCache::VIEW);
 
 static toSQL SQLViewSQLPgSQL("toBrowser:ViewSQL",
@@ -83,6 +85,10 @@ toBrowserViewWidget::toBrowserViewWidget(QWidget * parent)
     resultField->setObjectName("resultField");
     resultField->setSQL(SQLViewSQL);
 
+    resultSQL = new toResultSql(this);
+    resultSQL->setObjectName("resultSQL");
+    resultSQL->setSQL(SQLViewSQL);
+
     triggersView = new toResultTableView(this);
     triggersView->setObjectName("triggersView");
     triggersView->setSQL(SQLViewTrigger);
@@ -115,9 +121,15 @@ void toBrowserViewWidget::changeConnection()
     addTab(columnsWidget, "&Columns");
 
     if (c.providerIs("Oracle") || c.providerIs("SapDB") || c.providerIs("QPSQL"))
+    {
         addTab(resultField, "SQL");
+        addTab(resultSQL->view(), "SQL new");
+    }
     else
+    {
         resultField->hide();
+        resultSQL->view()->hide();
+    }
 
     if (c.providerIs("Oracle"))
     {
