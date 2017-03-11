@@ -206,7 +206,8 @@ public:
 private:
     void parse();
     /* Recursive walk through ANTLR3_BASE_TREE and create AST tree*/
-    void treeWalk(unique_ptr<Antlr3BackendImpl::OracleDML> &psr, QPointer<Token> root, Traits::TreeTypePtr& tree, unsigned &lastindex);
+    void treeWalkAST(unique_ptr<Antlr3BackendImpl::OracleDML> &psr, QPointer<Token> root, Traits::TreeTypePtr& tree);
+    QList<Token*> treeWalkToken(QPointer<Token> root);
 
     /* Walk through Token tree and look for table names, table aliases, ... and try to resolve them
        Note: this function also replaces some instances of Token* with Token's subclass instances
@@ -214,7 +215,7 @@ private:
     void disambiguate();
 
 public:
-    /* Walk through Token tree and look for table names, table aliases, ... and try to resolve them using cached database catalogue*/
+    /* Walk through Token tree and look for table names, table aliases, ... and try to resolve them using cached database catalog*/
     virtual void scanTree(ObjectCache *, QString const&);
 
 private:
@@ -289,24 +290,90 @@ void OracleDMLStatement::parse()
 				   , Token::X_ROOT
 		);
 	_mAST->setTokenATypeName("ROOT");
-	unsigned lastIndex = 0;
 
-	treeWalk(psr, _mAST, langAST.tree, lastIndex);
+
+	// Copy ANTLR AST into Token tree structure
+	treeWalkAST(psr, _mAST, langAST.tree);
+
+	// Get sorted list of Token tree structure leaves
+	QList<Token*> _mLeaves = treeWalkToken(_mAST);
+	qSort(_mLeaves.begin(), _mLeaves.end(),
+	      [](Token* a, Token* b)
+	      {
+	            return a->getPosition() < b->getPosition();
+	      });
+
+
+	QList<Token*>::iterator i = _mLeaves.begin(), j = _mLeaves.begin(); j++;
+	unsigned lastIndex = 0;
+	Token *t1, *t2, *t3; // t1 left leaf, t2 right leaf, t3 chosen leaf
+
+	/* loop over lexer's tokens */
+	while (lastIndex < lexerTokenVector->size())
+	{
+		auto &spacerToken = lexerTokenVector->at(lastIndex++);
+		if (spacerToken.consumed())
+			continue;
+
+		Position spacerPosition(spacerToken.get_line(), spacerToken.get_charPositionInLine());
+
+		t1 = *i;
+		t2 = j == _mLeaves.end() ? NULL : *j;
+CHECK:
+		if (t2 == NULL)
+		{
+			t3 = t1;
+		}
+		else if (spacerPosition < t1->getPosition())
+		{
+			t3 = t1;
+		}
+		else if (t1->getPosition() == spacerPosition)
+		{
+		    continue;
+		}
+		else if (t1->getPosition() < spacerPosition && spacerPosition < t2->getPosition())
+		{
+			t3 = t1->depth() > t2->depth() ? t1 : t2;
+		}
+		else if (spacerPosition == t2->getPosition())
+		{
+		    continue;
+		}
+		else // t2->getPosition < spacerPosition
+		{
+			do
+			{
+				i++; j++;
+				t1 = *i;
+				t2 = j == _mLeaves.end() ? NULL : *j;
+			} while (t2 && t2->getPosition() < spacerPosition);
+			if (t2 == NULL)
+			    t3 = t1;
+			else
+			    goto CHECK;
+		}
+
+		Token *spacerTokenNew = new Token(t3
+			, spacerPosition
+			, spacerToken.getText().c_str()
+			, Token::X_COMMENT
+		);
+		const_cast<Traits::CommonTokenType&>(spacerToken).setConsumed();
+
+		t3->addSpacer(spacerTokenNew);
+
+		t3 = NULL;
+	}
+
 	lexerTokenVector->clear();
 };
 
 /* recursively copy an AST tree into */
-void OracleDMLStatement::treeWalk(unique_ptr<Antlr3BackendImpl::OracleDML> &psr, QPointer<Token> root, Traits::TreeTypePtr &tree, unsigned &lastindex)
+void OracleDMLStatement::treeWalkAST(unique_ptr<Antlr3BackendImpl::OracleDML> &psr, QPointer<Token> root, Traits::TreeTypePtr &tree)
 {
 	using LexerTokens = Antlr3BackendImpl::OracleDMLLexerTokens;
 	auto &children = tree->get_children();
-//	qSort(children.begin(), children.end(),
-//	      [](const Traits::TreeTypePtr&a,const Traits::TreeTypePtr&b)
-//	      {
-//		      return (a->get_token()->get_line() < b->get_token()->get_line())
-//			      || (a->get_token()->get_line() == b->get_token()->get_line() &&
-//				  a->get_token()->get_charPositionInLine() < b->get_token()->get_charPositionInLine());
-//	      });
 	auto ns = tree->toString();
 	for (auto i = children.begin(); i != children.end(); ++i)
 	{
@@ -338,7 +405,7 @@ void OracleDMLStatement::treeWalk(unique_ptr<Antlr3BackendImpl::OracleDML> &psr,
 				auto &grandChildNode = childNode->getChild(0);
 				auto grandChildToken = grandChildNode->get_token();
 
-				treeWalk(psr, root, childNode, lastindex);
+				treeWalkAST(psr, root, childNode);
 				continue;
 			}
 			Token *childTokenNew = new OracleDMLToken(root, *childNode);
@@ -351,60 +418,29 @@ void OracleDMLStatement::treeWalk(unique_ptr<Antlr3BackendImpl::OracleDML> &psr,
 				auto &localToken = lexerTokenVector->at(childToken->get_tokenIndex());
 				const_cast<Traits::CommonTokenType&>(localToken).setConsumed();
 			}
-			treeWalk(psr, childTokenNew, childNode, lastindex);
+			treeWalkAST(psr, childTokenNew, childNode);
 		}
 		else     // if child is a leaf node
 		{
 			/* this is a leaf node */
 			Token *childTokenNew = new OracleDMLToken(root, *childNode);
 			root->appendChild(childTokenNew);
-
-			ANTLR_MARKER uChildLexemeIndex = childToken->get_tokenIndex();
-			auto lexemeTotal = lexerTokenVector->size();
-
-			/* loop over preceding lexer's tokens */
-			while(lastindex <= uChildLexemeIndex)
-			{
-				auto &localToken = lexerTokenVector->at(lastindex);
-				ANTLR_MARKER uLocalLexemeStart = localToken.get_tokenIndex();
-
-				if (uLocalLexemeStart < uChildLexemeIndex && !localToken.consumed())
-				{
-					auto &spacerToken = lexerTokenVector->at(lastindex);
-					Token *spacerTokenNew = new Token(root
-						, Position(spacerToken.get_line(), spacerToken.get_charPositionInLine())
-						, spacerToken.getText().c_str()
-						, Token::X_COMMENT
-						);
-					const_cast<Traits::CommonTokenType&>(localToken).setConsumed();
-					childTokenNew->prependSpacer(spacerTokenNew);
-				}
-
-				if(uLocalLexemeStart == uChildLexemeIndex)
-					break;
-				lastindex++;
-			}
-
-			// Process spaces and comments after parser_token
-			while(++lastindex < lexemeTotal)
-			{
-				auto &spacerToken = lexerTokenVector->at(lastindex);
-				unsigned SpacerLexemeChannel = spacerToken.get_channel();
-
-				if (SpacerLexemeChannel != antlr3::HIDDEN)
-					break;
-
-				Token *spacerTokenNew =  new Token( root
-								    , Position(spacerToken.get_line(), spacerToken.get_charPositionInLine())
-								    , spacerToken.getText().c_str()
-								    , Token::X_COMMENT
-					);
-				const_cast<Traits::CommonTokenType&>(spacerToken).setConsumed();
-				childTokenNew->appendSpacer(spacerTokenNew);
-			}
 		} // else for child is a leaf node
 	} // for each child
 };
+
+QList<Token*> OracleDMLStatement::treeWalkToken(QPointer<Token> root)
+{
+	QList<Token*> tokens;
+    foreach(QPointer<Token> child, root->getChildren())
+    {
+        tokens.append(treeWalkToken(child));
+    }
+
+    if (root->getPosition().isValid())
+        tokens.append(root);
+    return tokens;
+}
 
 void OracleDMLStatement::disambiguate()
 {

@@ -393,7 +393,7 @@ void OracleSQLStatement::treeWalk(pOracleSQLParser psr, QPointer<Token> root,  A
                                                  , (const char*)pSpacerLexeme->getText(pSpacerLexeme)->chars
                                                  , Token::X_COMMENT
                                                );
-                childToken->appendSpacer(spacerToken);
+                childToken->addSpacer(spacerToken);
             }
         } // else for child is a leaf node
     } // for each child
