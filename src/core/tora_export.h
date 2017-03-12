@@ -28,7 +28,16 @@
     || defined(test8_EXPORTS) \
     || defined(test9_EXPORTS) \
     || defined(test10_EXPORTS) \
-    || defined(test11_EXPORTS)
+    || defined(test11_EXPORTS) \
+    || defined(test12_EXPORTS) \
+    || defined(test13_EXPORTS) \
+    || defined(test14_EXPORTS) \
+    || defined(test15_EXPORTS) \
+    || defined(test16_EXPORTS) \
+    || defined(test17_EXPORTS) \
+    || defined(test18_EXPORTS) \
+    || defined(test19_EXPORTS)
+
 #define tora_EXPORTS
 #endif
 

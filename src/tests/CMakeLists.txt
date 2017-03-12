@@ -1,4 +1,4 @@
-
+# NOTE: also check src/core/tora_export.h
 
 #FOREACH(item ${TORA_MOC_SOURCES})
 #STRING(REGEX MATCH ".*/core/moc_.*c..$" item ${item})
@@ -451,6 +451,7 @@ TARGET_LINK_LIBRARIES("test11"
 	${TORA_QSCINTILLA_LIB}
 	${QSCINTILLA_LIBRARIES}
 	antlr3c
+	ermodel
 )
 IF(PCH_DEFINED)
   ADD_PRECOMPILED_HEADER("test11" ${PCH_HEADER} FORCEINCLUDE)
