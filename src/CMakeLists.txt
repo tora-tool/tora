@@ -62,8 +62,6 @@ IF (NOT WANT_INTERNAL_QSCINTILLA)
 ENDIF (NOT WANT_INTERNAL_QSCINTILLA)
 
 IF (USE_EXPERIMENTAL)
-  INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/extlibs/libantlr3c-3.5.1/include)
-  INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/extlibs/libantlr3c-3.5.1)
   IF (POPPLER_QT4_FOUND)
     INCLUDE_DIRECTORIES(${POPPLER_QT4_INCLUDE_DIR})
   ENDIF (POPPLER_QT4_FOUND)
@@ -533,7 +531,8 @@ SET(TORA_SOURCES
   parsing/tsqllexeroracle2.cc
   parsing/tsqllexerpostgresql.cc
   parsing/tsqlparse.cpp
-  
+  parsing/tsqlparseoracle2.cc
+
   result/toproviderobserver.cpp
   result/toresultlock.cpp
   result/toresultplan.cpp
@@ -695,15 +694,8 @@ IF (USE_EXPERIMENTAL)
   LIST(APPEND TORA_SOURCES tools/toscript.cpp)
   LIST(APPEND TORA_SOURCES
     docklets/tocodeoutline.cpp
-    parsing/OraclePLSQLLexer.cc
-    parsing/OraclePLSQLParser.cc
-    parsing/OracleSQLLexer.cc
-    parsing/OracleSQLParser.cc
-    parsing/error_handler.cc
-    parsing/tplsqlparseoracle.cc
-    parsing/tsqllexeroracle.cc
-    parsing/tsqlparseoracle.cc
-    parsing/tsqlparseoracle2.cc
+#    parsing/error_handler.cc
+#    parsing/tplsqlparseoracle.cc
     )
   LIST (APPEND TORA_SOURCES
     docklets/toquerymodel.cpp
@@ -824,10 +816,6 @@ ENDIF()
 IF (POSTGRESQL_FOUND)
    LIST(APPEND TORA_LIBS ${POSTGRESQL_LIBRARIES})
 ENDIF (POSTGRESQL_FOUND)
-
-IF(USE_EXPERIMENTAL)
-  LIST(APPEND TORA_LIBS antlr3c)
-ENDIF(USE_EXPERIMENTAL)
 
 IF(UNIX AND NOT APPLE)
   SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)

@@ -18,10 +18,6 @@ ENDIF(WANT_INTERNAL_QSCINTILLA)
 
 ADD_SUBDIRECTORY(libermodel)
 
-IF (USE_EXPERIMENTAL)
-  ADD_SUBDIRECTORY(libantlr3c-3.5.1)
-ENDIF(USE_EXPERIMENTAL)
-
 # Disabled, partially moved into src/parsing
 # ADD_SUBDIRECTORY(parsing) 
 
