@@ -200,7 +200,7 @@ namespace SQLParser
                 X_ROOT,
                 X_FAILURE,
                 X_COMMENT,
-				X_EOF,
+                X_EOF,
                 // Leaf node
                 L_RESERVED,
                 L_TABLENAME,

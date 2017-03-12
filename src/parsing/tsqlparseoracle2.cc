@@ -6,7 +6,7 @@
 #include "OracleDML_OracleDMLCommons.hpp"
 
 #include "parsing/tsqlparse.h"
-//#include "core/tologger.h"
+#include "core/tologger.h"
 
 #include <QtCore/QPair>
 #include <QtCore/QtAlgorithms>
@@ -181,6 +181,12 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 	case Tokens::SQL92_RESERVED_UNION:
 		tokenTypeRef = S_UNION;
 		break;
+        case Tokens::SQL92_RESERVED_AND:
+                tokenTypeRef = S_COND_AND;
+                break;
+        case Tokens::SQL92_RESERVED_OR:
+                tokenTypeRef = S_COND_OR;
+                break;
 	case Tokens::PLSQL_RESERVED_MINUS:
 		tokenTypeRef = S_MINUS;
 		break;
@@ -216,13 +222,13 @@ private:
 
 public:
     /* Walk through Token tree and look for table names, table aliases, ... and try to resolve them using cached database catalog*/
-    virtual void scanTree(ObjectCache *, QString const&);
+    void scanTree(ObjectCache *, QString const&) override;
 
 private:
     void addTranslation(QString const& alias, Token const *tableOrSubquery, Token const *context);
     void addTableRef(Token const *tableOrSubquery, Token const *context);
 
-	TokenStream::TokensType* lexerTokenVector;
+    TokenStream::TokensType* lexerTokenVector;
 };
 
 OracleDMLStatement::OracleDMLStatement(const QString &statement, const QString &name) : Statement(statement, name)
@@ -408,6 +414,18 @@ void OracleDMLStatement::treeWalkAST(unique_ptr<Antlr3BackendImpl::OracleDML> &p
 				treeWalkAST(psr, root, childNode);
 				continue;
 			}
+
+			if ( tokenType == LexerTokens::SQL92_RESERVED_AND && root->getTokenType() == Token::S_COND_AND)
+			{
+			    treeWalkAST(psr, root, childNode);
+			    continue;
+			}
+			if ( tokenType == LexerTokens::SQL92_RESERVED_OR && root->getTokenType() == Token::S_COND_OR)
+			{
+			    treeWalkAST(psr, root, childNode);
+			    continue;
+			}
+
 			Token *childTokenNew = new OracleDMLToken(root, *childNode);
 			root->appendChild(childTokenNew);
 			// This token "select", "from", "where", "=" is already consumed. Do not prepend it to other tokens
@@ -431,7 +449,7 @@ void OracleDMLStatement::treeWalkAST(unique_ptr<Antlr3BackendImpl::OracleDML> &p
 
 QList<Token*> OracleDMLStatement::treeWalkToken(QPointer<Token> root)
 {
-	QList<Token*> tokens;
+    QList<Token*> tokens;
     foreach(QPointer<Token> child, root->getChildren())
     {
         tokens.append(treeWalkToken(child));
@@ -503,8 +521,8 @@ void OracleDMLStatement::disambiguate()
             */
         case Token::L_TABLEALIAS:
         {
-            if( node.getTokenUsageType() != Token::Declaration )
-                break;
+            //if( node.getTokenUsageType() != Token::Declaration )
+            //    break;
 
             //loop over left brothers until you find either a reserved word or a table name
             QList<QPointer<Token> > const& brothers = node.parent()->getChildren();
@@ -618,6 +636,7 @@ void OracleDMLStatement::scanTree(ObjectCache* o, QString const& cs)
 {
     for(SQLParser::Statement::token_const_iterator i = begin(); i != end(); ++i)
     {
+        Token const& token = *i;
         if( i->getTokenType() == Token::S_IDENTIFIER )
         {
             QString stopToken;
@@ -629,7 +648,7 @@ void OracleDMLStatement::scanTree(ObjectCache* o, QString const& cs)
                 stopToken = k->toString();
                 if( k->getTokenType() == Token::S_COLUMN_LIST)
                 {
-                    //TLOG(0, toNoDecorator, __HERE__) << " Dont Resolve identifier: " << i->toStringRecursive(false).toStdString() << "\t under: " <<  stopToken.toStdString() << std::endl;
+                    TLOG(0, toNoDecorator, __HERE__) << " Dont Resolve identifier: " << i->toStringRecursive(false).toStdString() << "\t under: " <<  stopToken.toStdString() << std::endl;
                     insideColumnList = true;
                     break;
                 }
@@ -647,20 +666,32 @@ void OracleDMLStatement::scanTree(ObjectCache* o, QString const& cs)
                 continue;
 
             TokenIdentifier const& id = static_cast<TokenIdentifier const&>(*i);
-            //TLOG(0, toNoDecorator, __HERE__) << "Resolve identifier: " << id.toStringRecursive(false).toStdString() << "\t under: " <<  stopToken.toStdString() << std::endl;
+            TLOG(8, toNoDecorator, __HERE__) << "Resolve identifier: " << id.toStringRecursive(true).toStdString() << "\t under: " <<  stopToken.toStdString() << std::endl;
 
             QString schemaName, tableName, columnName;
 
             switch(id.childCount()) // odd children should be dots.
             {
             case 0:
-            case 2:
             case 4:
-                //TLOG(0, toNoDecorator, __HERE__) << " invalid length:" << id.childCount() << std::endl;
+                //TLOG(8, toNoDecorator, __HERE__) << " invalid length:" << id.childCount() << std::endl;
                 break;
+            case 2:
+            {
+                // T1.C1
+                tableName = id.child(0)->toStringRecursive(false).toUpper();
+                columnName = id.child(1)->toStringRecursive(false).toUpper();
+                Token const *translatedAlias = translateAlias(tableName, &(*i));
+                if( translatedAlias)
+                {
+                    TLOG(8, toNoDecorator, __HERE__) << "Translation: " << tableName.toStdString() << "\t=>\t: " <<  translatedAlias->toStringRecursive().toStdString() << std::endl;
+                }
+            }
+            break;
             case 1:
                 // We have column name only
                 break;
+#if 0
             case 3:
             {
                 // T1.C1
@@ -683,7 +714,7 @@ void OracleDMLStatement::scanTree(ObjectCache* o, QString const& cs)
                     }
                 }
                 bool columnExists = o->columnExists(cs, tableName, columnName);
-                //TLOG(0, toNoDecorator, __HERE__) << " identifier found " << cs << '.' << tableName << '.' << columnName << ':' << columnExists << std::endl;
+                TLOG(8, toNoDecorator, __HERE__) << " identifier found " << cs << '.' << tableName << '.' << columnName << ':' << columnExists << std::endl;
             }
             break;
 label5:
@@ -696,11 +727,12 @@ label5:
                     columnName = id.child(4)->toStringRecursive(false).toUpper();
                 }
                 bool columnExists = o->columnExists(schemaName, tableName, columnName);
-                //TLOG(0, toNoDecorator, __HERE__) << " identifier found: " << schemaName << '.' << tableName << '.' << columnName << ':' << columnExists << std::endl;
+                TLOG(8, toNoDecorator, __HERE__) << " identifier found: " << schemaName << '.' << tableName << '.' << columnName << ':' << columnExists << std::endl;
             }
             break;
+#endif
             default:
-                //TLOG(0, toNoDecorator, __HERE__) << " unsupported length:" << id.childCount() << std::endl;
+                //TLOG(8, toNoDecorator, __HERE__) << " unsupported length:" << id.childCount() << std::endl;
                 break;
             } // switch(id.childCount()) // odd children should be dots.
         }
