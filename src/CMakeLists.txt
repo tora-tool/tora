@@ -694,8 +694,6 @@ IF (USE_EXPERIMENTAL)
   LIST(APPEND TORA_SOURCES tools/toscript.cpp)
   LIST(APPEND TORA_SOURCES
     docklets/tocodeoutline.cpp
-#    parsing/error_handler.cc
-#    parsing/tplsqlparseoracle.cc
     )
   LIST (APPEND TORA_SOURCES
     docklets/toquerymodel.cpp
