@@ -849,7 +849,9 @@ ADD_EXECUTABLE(${EXE_NAME} ${GUI_TYPE}
   )
 TARGET_LINK_LIBRARIES(${EXE_NAME} ${TORA_LIBS})
 SET_TARGET_PROPERTIES(${EXE_NAME} PROPERTIES ENABLE_EXPORTS ON)
-ADD_DEPENDENCIES(${EXE_NAME} revisiontag) # explicitly say that the executable depends on the svnheader
+IF(HAVE_GIT_VERSION)
+  ADD_DEPENDENCIES(${EXE_NAME} revisiontag) # explicitly say that the executable depends on the gitversion
+ENDIF()
 IF(PCH_DEFINED)
   # NOTE: this macro calls SET_SOURCE_FILES_PROPERTIES macro which set props for source within ALL tagets
   ADD_PRECOMPILED_HEADER(${EXE_NAME} ${PCH_HEADER} FORCEINCLUDE)
