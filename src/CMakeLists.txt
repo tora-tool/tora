@@ -691,17 +691,10 @@ IF(ORACLE_FOUND)
 ENDIF(ORACLE_FOUND)
 
 IF (USE_EXPERIMENTAL)
-  LIST(APPEND TORA_SOURCES tools/toscript.cpp)
-  LIST(APPEND TORA_SOURCES
-    docklets/tocodeoutline.cpp
-    )
-  LIST (APPEND TORA_SOURCES
-    docklets/toquerymodel.cpp
-    docklets/toastwalk.cpp
-    )
-  LIST (APPEND TORA_SOURCES
-    tools/toer.cpp
-    )
+  LIST (APPEND TORA_SOURCES tools/toscript.cpp)
+  LIST (APPEND TORA_SOURCES docklets/tocodeoutline.cpp)
+  LIST (APPEND TORA_SOURCES docklets/toquerymodel.cpp docklets/toastwalk.cpp)
+  LIST (APPEND TORA_SOURCES tools/toer.cpp)
   LIST (APPEND TORA_SOURCES tools/tosandboxtool.cpp)
   LIST (APPEND TORA_SOURCES docklets/tologging.cpp)
   LIST (APPEND TORA_SOURCES docklets/tobindvars.cpp)
