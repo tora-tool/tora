@@ -82,6 +82,8 @@ public:
 
     void setModel(QAbstractItemModel *model);
 
+    void setContextMenuPolicy(Qt::ContextMenuPolicy policy);
+
 protected:
     void focusInEvent (QFocusEvent *e) override;
 

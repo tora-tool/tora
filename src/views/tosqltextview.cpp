@@ -58,6 +58,7 @@ toSqlTextView::toSqlTextView(QWidget *parent /* = 0*/, const char *name /* = 0*/
 
     m_view = new toSqlText(this);
     m_view->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+    m_view->setContextMenuPolicy(Qt::NoContextMenu);
 
     m_search = new toSearchReplace(this);
     m_search->hide();
@@ -127,6 +128,12 @@ void toSqlTextView::setModel(QAbstractItemModel *model)
     connect(model, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(rowsRemoved(const QModelIndex &, int, int)));
     setReadOnly(true);
     m_search->setReadOnly(true);
+}
+
+void toSqlTextView::setContextMenuPolicy(Qt::ContextMenuPolicy policy)
+{
+    QWidget::setContextMenuPolicy(policy);
+    m_view->setContextMenuPolicy(policy);
 }
 
 void toSqlTextView::modelReset()

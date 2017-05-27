@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOSCINTILLA_H
-#define TOSCINTILLA_H
+#pragma once
 
 #include <Qsci/qsciscintilla.h>
 #include "core/toeditwidget.h"
@@ -257,6 +256,3 @@ class toScintilla: public QsciScintilla //, public toEditWidget
         const int m_searchIndicator;
         bool m_showTooTips;
 };
-
-#endif
-
