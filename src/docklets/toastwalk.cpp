@@ -61,7 +61,7 @@ void toASTWalk(SQLParser::Statement *source, DotGraph *target)
                     snode->setNodeID(sg["id"]);
                     target->addNewSubgraph(sg);
 
-                    TLOG(0, toNoDecorator, __HERE__) << "Subgraph: " << clusterName << ":" << node->toStringRecursive(false) << std::endl;
+                    TLOG(8, toNoDecorator, __HERE__) << "Subgraph: " << clusterName << ":" << node->toStringRecursive(false) << std::endl;
                     foreach(SQLParser::Token * table, tables)
                     {
                         if ( table->getTokenType() != SQLParser::Token::S_TABLE_REF)
@@ -100,7 +100,7 @@ void toASTWalk(SQLParser::Statement *source, DotGraph *target)
                             ta["tooltip"] = tt->nodeAlias()->toString();
                         tt->setNodeID(ta["id"]);
                         target->addNewNodeToSubgraph(ta, sg["id"]);
-                        TLOG(0, toNoDecorator, __HERE__) << "new node:" << ta["id"] << " in subgraph: " << sg["id"] << std::endl;
+                        TLOG(8, toNoDecorator, __HERE__) << "new node:" << ta["id"] << " in subgraph: " << sg["id"] << std::endl;
                     }
                     break;
                 }
@@ -143,7 +143,7 @@ void toASTWalk(SQLParser::Statement *source, DotGraph *target)
                             ta["tooltip"] = tt->nodeAlias()->toString();
                         tt->setNodeID(ta["id"]);
                         target->addNewNode(ta);
-                        TLOG(0, toNoDecorator, __HERE__) << "new node:" << ta["id"] << " under X_ROOT" << std::endl;
+                        TLOG(8, toNoDecorator, __HERE__) << "new node:" << ta["id"] << " under X_ROOT" << std::endl;
                     }
                     break;
                 }
@@ -158,11 +158,15 @@ void toASTWalk(SQLParser::Statement *source, DotGraph *target)
                     bool isJoinON = false;
                     bool isJoinUSING = false;
 
-                    TLOG(0, toNoDecorator, __HERE__) << "JC:(" << node.depth() << ')' << std::endl
+                    TLOG(8, toNoDecorator, __HERE__) << "JC:(" << node.depth() << ')' << std::endl
                                                      << node->toStringRecursive().toStdString() << std::endl;
+					TLOG(8, toNoDecorator, __HERE__) << "JC:(" << node.depth() << ')' << std::endl
+						<< node->toLispStringRecursive().toStdString() << std::endl;
+					std::string ns = node->toLispStringRecursive().toStdString();
                     while (subnode.depth() > node.depth())
                     {
-                        ///TLOG(0,toNoDecorator,__HERE__) << "JC:(" << subnode.depth() << ')' << subnode->toString() << std::endl;
+                        TLOG(8,toNoDecorator,__HERE__) << "JC:(" << subnode.depth() << ')' << subnode->toString() << std::endl;
+						QString sn = subnode->toString();
                         switch (subnode->getTokenType())
                         {
                             case SQLParser::Token::L_RESERVED:
@@ -172,23 +176,42 @@ void toASTWalk(SQLParser::Statement *source, DotGraph *target)
                                     isJoinUSING = true;
                                 break;
                             case SQLParser::Token::S_OPERATOR_BINARY:
-                                if (subnode->childCount() != 3) // assuming condition "T1.C1" "=" "T2.C2";
+                                if (subnode->childCount() != 2) 
+									// assuming condition "T1.C1" "=" "T2.C2";
+									// ((= [OPERATOR_BINARY]
+									// ((ANY_ELEMENT[IDENTIFIER]((task[UNASSIGNED]))((id[UNASSIGNED]))))
+									//	((ANY_ELEMENT[IDENTIFIER]((filter[UNASSIGNED]))((task_id[UNASSIGNED])))))))))))
                                     break;
-                                if (subnode->child(0)->getTokenType() == SQLParser::Token::S_IDENTIFIER &&
-                                        subnode->child(2)->getTokenType() == SQLParser::Token::S_IDENTIFIER)
-                                {
-                                    firstTable = subnode->child(0);
-                                    secondTable = subnode->child(2);
-                                    TLOG(0, toNoDecorator, __HERE__) << "!?" << firstTable->toStringRecursive(false) << "->" << secondTable->toStringRecursive(false) << std::endl;
-                                }
+								SQLParser::Statement::token_const_iterator ch0(subnode->child(0));
+								while (ch0->depth() > subnode->depth())
+								{
+									if (ch0->getTokenType() == SQLParser::Token::S_IDENTIFIER)
+									{
+										firstTable = &(*ch0);
+										break;
+									}
+									ch0++;
+								}
+								SQLParser::Statement::token_const_iterator ch1(subnode->child(1));
+								while (ch1->depth() > subnode->depth())
+								{
+									if (ch1->getTokenType() == SQLParser::Token::S_IDENTIFIER)
+									{
+										secondTable = &(*ch1);
+										break;
+									}
+									ch1++;
+								}
+
+                                //TLOG(8, toNoDecorator, __HERE__) << "!?" << firstTable->toStringRecursive(false) << "->" << secondTable->toStringRecursive(false) << std::endl;
                                 break;
                         }
                         subnode++;
                     } // while
 
                     if (isJoinON &&
-                            firstTable && firstTable->childCount() == 3 &&
-                            secondTable && secondTable->childCount() == 3
+                            firstTable && firstTable->childCount() == 2 &&
+                            secondTable && secondTable->childCount() == 2
                        )
                     {
                         SQLParser::Token const *t1 = source->translateAlias(firstTable->child(0)->toStringRecursive(false).toUpper(), &*node);
@@ -238,11 +261,11 @@ void toASTWalk(SQLParser::Statement *source, DotGraph *target)
                                 e1,
                                 e2,
                                 ea);
-                            TLOG(0, toNoDecorator, __HERE__) << "!!" << e1.toStdString() << "->" << e2.toStdString() << std::endl;
+                            TLOG(8, toNoDecorator, __HERE__) << "!!" << e1.toStdString() << "->" << e2.toStdString() << std::endl;
                         }
                         else
                         {
-                            ////TLOG(0,toNoDecorator,__HERE__) << "??" << firstTable->toStringRecursive(false) << "->" << secondTable->toStringRecursive(false) << std::endl;
+                            ////TLOG(8,toNoDecorator,__HERE__) << "??" << firstTable->toStringRecursive(false) << "->" << secondTable->toStringRecursive(false) << std::endl;
                         }
                     }
                     break;
@@ -258,7 +281,7 @@ void toASTWalk(SQLParser::Statement *source, DotGraph *target)
                         {
                             case SQLParser::Token::S_OPERATOR_BINARY:
                                 {
-                                    TLOG(0, toNoDecorator, __HERE__) << "S_OPERATOR_BINARY: " << std::endl
+                                    TLOG(8, toNoDecorator, __HERE__) << "S_OPERATOR_BINARY: " << std::endl
                                                                      << subnode->toStringRecursive() << std::endl;
 
                                     SQLParser::Token const* firstTable = NULL;
@@ -271,7 +294,7 @@ void toASTWalk(SQLParser::Statement *source, DotGraph *target)
                                     {
                                         firstTable = subnode->child(0);
                                         secondTable = subnode->child(2);
-                                        TLOG(0, toNoDecorator, __HERE__) << "!?" << firstTable->toStringRecursive(false) << "->" << secondTable->toStringRecursive(false) << std::endl;
+                                        TLOG(8, toNoDecorator, __HERE__) << "!?" << firstTable->toStringRecursive(false) << "->" << secondTable->toStringRecursive(false) << std::endl;
                                     }
 
                                     SQLParser::Token const *t1 = firstTable ? source->translateAlias(firstTable->child(0)->toStringRecursive(false).toUpper(), &*node) : NULL;
@@ -317,11 +340,11 @@ void toASTWalk(SQLParser::Statement *source, DotGraph *target)
                                             e1,
                                             e2,
                                             ea);
-                                        TLOG(0, toNoDecorator, __HERE__) << "!!" << e1.toStdString() << "->" << e2.toStdString() << std::endl;
+                                        TLOG(8, toNoDecorator, __HERE__) << "!!" << e1.toStdString() << "->" << e2.toStdString() << std::endl;
                                     }
                                     else
                                     {
-                                        ////TLOG(0,toNoDecorator,__HERE__) << "??" << firstTable->toStringRecursive(false) << "->" << secondTable->toStringRecursive(false) << std::endl;
+                                        ////TLOG(8,toNoDecorator,__HERE__) << "??" << firstTable->toStringRecursive(false) << "->" << secondTable->toStringRecursive(false) << std::endl;
                                     }
 
                                     break;

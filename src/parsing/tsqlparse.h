@@ -352,6 +352,21 @@ namespace SQLParser
                 return retval_pre + retval + retval_post;
             };
 
+            QString toLispStringRecursive() const
+            {
+                QString retval;
+                retval += "(";
+                retval += _mStr + "[" + getTokenTypeString() + "]";
+                foreach(QPointer<Token> child, _mChildren)
+                {
+                    retval += "(";
+                    retval += child->toLispStringRecursive();
+                    retval += ")";
+                }
+                retval += ")";
+                return retval;
+            };
+
             inline bool isLeaf() const
             {
                 return _mChildren.isEmpty();

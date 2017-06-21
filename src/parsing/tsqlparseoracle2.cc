@@ -83,9 +83,76 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 			tokenTypeRef = X_FAILURE;
 		}
 		break;
-	case Tokens::SQL92_RESERVED_SELECT:
-	case Tokens::SQL92_RESERVED_WITH:
+	case Tokens::EQUALS_OP:
+	    tokenTypeRef = S_OPERATOR_BINARY;
+	    break;
+	case Tokens::SQL92_RESERVED_ALL:
+	case Tokens::SQL92_RESERVED_ALTER:
+	//case Tokens::SQL92_RESERVED_AND:
+	case Tokens::SQL92_RESERVED_ANY:
+	case Tokens::SQL92_RESERVED_AS:
+	case Tokens::SQL92_RESERVED_ASC:
+	case Tokens::SQL92_RESERVED_BEGIN:
+	case Tokens::SQL92_RESERVED_BETWEEN:
+	case Tokens::SQL92_RESERVED_BY:
+	case Tokens::SQL92_RESERVED_CASE:
+	case Tokens::SQL92_RESERVED_CHECK:
+	case Tokens::SQL92_RESERVED_CONNECT:
+	case Tokens::SQL92_RESERVED_CREATE:
+	case Tokens::SQL92_RESERVED_CURRENT:
+	case Tokens::SQL92_RESERVED_CURSOR:
+	case Tokens::SQL92_RESERVED_DATE:
+	case Tokens::SQL92_RESERVED_DECLARE:
+	case Tokens::SQL92_RESERVED_DEFAULT:
+	case Tokens::SQL92_RESERVED_DELETE:
+	case Tokens::SQL92_RESERVED_DESC:
+	case Tokens::SQL92_RESERVED_DISTINCT:
+	case Tokens::SQL92_RESERVED_DROP:
+	case Tokens::SQL92_RESERVED_ELSE:
+	case Tokens::SQL92_RESERVED_END:
+	case Tokens::SQL92_RESERVED_EXCEPTION:
+	case Tokens::SQL92_RESERVED_EXISTS:
+	case Tokens::SQL92_RESERVED_FALSE:
+	case Tokens::SQL92_RESERVED_FETCH:
+	case Tokens::SQL92_RESERVED_FOR:
 	case Tokens::SQL92_RESERVED_FROM:
+	case Tokens::SQL92_RESERVED_GOTO:
+	case Tokens::SQL92_RESERVED_GRANT:
+	case Tokens::SQL92_RESERVED_GROUP:
+	case Tokens::SQL92_RESERVED_HAVING:
+	case Tokens::SQL92_RESERVED_IN:
+	case Tokens::SQL92_RESERVED_INSERT:
+	//case Tokens::SQL92_RESERVED_INTERSECT:
+	case Tokens::SQL92_RESERVED_INTO:
+	case Tokens::SQL92_RESERVED_IS:
+	case Tokens::SQL92_RESERVED_LIKE:
+	case Tokens::SQL92_RESERVED_NOT:
+	case Tokens::SQL92_RESERVED_NULL:
+	case Tokens::SQL92_RESERVED_OF:
+	case Tokens::SQL92_RESERVED_ON:
+	case Tokens::SQL92_RESERVED_OPTION:
+	//case Tokens::SQL92_RESERVED_OR:
+	case Tokens::SQL92_RESERVED_ORDER:
+	case Tokens::SQL92_RESERVED_OVERLAPS:
+	case Tokens::SQL92_RESERVED_PRIOR:
+	case Tokens::SQL92_RESERVED_PROCEDURE:
+	case Tokens::SQL92_RESERVED_PUBLIC:
+	case Tokens::SQL92_RESERVED_REVOKE:
+	case Tokens::SQL92_RESERVED_SELECT:
+	case Tokens::SQL92_RESERVED_SIZE:
+	case Tokens::SQL92_RESERVED_TABLE:
+	case Tokens::SQL92_RESERVED_THE:
+	case Tokens::SQL92_RESERVED_THEN:
+	case Tokens::SQL92_RESERVED_TO:
+	case Tokens::SQL92_RESERVED_TRUE:
+	//case Tokens::SQL92_RESERVED_UNION:
+	case Tokens::SQL92_RESERVED_UNIQUE:
+	case Tokens::SQL92_RESERVED_UPDATE:
+	case Tokens::SQL92_RESERVED_VALUES:
+	case Tokens::SQL92_RESERVED_VIEW:
+	case Tokens::SQL92_RESERVED_WHEN:
+	case Tokens::SQL92_RESERVED_WHERE:
+	case Tokens::SQL92_RESERVED_WITH:
 	case Tokens::T_FROM:
 	case Tokens::T_RESERVED:
 		tokenTypeRef = L_RESERVED;
