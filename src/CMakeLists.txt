@@ -358,7 +358,10 @@ SET(TORA_MOC_CLASSES
   widgets/totreewidget.h
   widgets/toworkingwidget.h
   widgets/toworkspace.h
-  
+
+  docklets/toquerymodel.h
+  tools/toer.h
+
   #obsolete core/todatatype.h
   #obsolete core/torunnable.h
   #obsolete core/totaskrunner.h
@@ -394,11 +397,9 @@ ENDIF (POPPLER_QT4_FOUND)
 IF (USE_EXPERIMENTAL)
   LIST(APPEND TORA_MOC_CLASSES tools/toscript.h)
   LIST(APPEND TORA_MOC_CLASSES docklets/tocodeoutline.h)
-  #IF(graphviz_FOUND)
-  LIST(APPEND TORA_MOC_CLASSES docklets/toquerymodel.h)
-  LIST(APPEND TORA_MOC_CLASSES tools/toer.h)
+
   LIST(APPEND TORA_MOC_CLASSES tools/tosandboxtool.h)
-  #ENDIF(graphviz_FOUND)
+
   LIST(APPEND TORA_MOC_CLASSES docklets/tologging.h)
   LIST(APPEND TORA_MOC_CLASSES docklets/tobindvars.h)
 ENDIF (USE_EXPERIMENTAL)
@@ -652,6 +653,10 @@ SET(TORA_SOURCES
   views/totableview.cpp
   views/totreeview.cpp
 
+  docklets/toquerymodel.cpp
+  docklets/toastwalk.cpp
+  tools/toer.cpp
+
   #core/toconfiguration.cpp
   #core/toconfigurationpriv.cpp
   #obsolete core/todatatype.cpp
@@ -691,8 +696,6 @@ ENDIF(ORACLE_FOUND)
 IF (USE_EXPERIMENTAL)
   LIST (APPEND TORA_SOURCES tools/toscript.cpp)
   LIST (APPEND TORA_SOURCES docklets/tocodeoutline.cpp)
-  LIST (APPEND TORA_SOURCES docklets/toquerymodel.cpp docklets/toastwalk.cpp)
-  LIST (APPEND TORA_SOURCES tools/toer.cpp)
   LIST (APPEND TORA_SOURCES tools/tosandboxtool.cpp)
   LIST (APPEND TORA_SOURCES docklets/tologging.cpp)
   LIST (APPEND TORA_SOURCES docklets/tobindvars.cpp)
