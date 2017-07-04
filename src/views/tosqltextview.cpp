@@ -58,7 +58,6 @@ toSqlTextView::toSqlTextView(QWidget *parent /* = 0*/, const char *name /* = 0*/
 
     m_view = new toSqlText(this);
     m_view->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-    m_view->setContextMenuPolicy(Qt::NoContextMenu);
 
     m_search = new toSearchReplace(this);
     m_search->hide();

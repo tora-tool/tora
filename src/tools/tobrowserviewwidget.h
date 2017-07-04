@@ -60,7 +60,7 @@ public:
 protected:
     toResultCols *columnsWidget;
     toResultField *resultField;
-    toResultSql   *resultSQL;
+    toResultSql   *resultViewSql;
     toResultTableView *triggersView;
     toResultTableData *resultData;
     toResultGrants *grantsView;

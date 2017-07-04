@@ -39,6 +39,8 @@
 #include "toresultfield.h"
 #include "toresultgrants.h"
 
+#include "result/toresultsql.h"
+
 Util::RegisterInFactory<toBrowserCodeWidget, toBrowserWidgetFactory, toCache::CacheEntryType> regToBrowserCodeWidget1(toCache::FUNCTION);
 Util::RegisterInFactory<toBrowserCodeWidget, toBrowserWidgetFactory, toCache::CacheEntryType> regToBrowserCodeWidget2(toCache::PROCEDURE);
 Util::RegisterInFactory<toBrowserCodeWidget, toBrowserWidgetFactory, toCache::CacheEntryType> regToBrowserCodeWidget3(toCache::PACKAGE);
@@ -114,9 +116,18 @@ toBrowserCodeWidget::toBrowserCodeWidget(QWidget * parent)
     declarationResult->setObjectName("declarationResult");
     declarationResult->setSQL(SQLSQLHead);
 
+    declarationResultSQL = new toResultSql(this);
+    declarationResultSQL->setObjectName("declarationResult");
+    declarationResultSQL->setSQL(SQLSQLHead);
+
     bodyResult = new toResultField(this);
     bodyResult->setObjectName("bodyResult");
     bodyResult->setSQL(SQLSQLBody);
+
+    bodyResultSQL = new toResultSql(this);
+    bodyResultSQL->setObjectName("bodyResult");
+    bodyResultSQL->setSQL(SQLSQLBody);
+
     toConnection & c = toConnection::currentConnection(this);
     if (c.providerIs("QMYSQL"))
         // For MySQL we need value from third column. As it is not a query which is fetching
@@ -142,11 +153,15 @@ void toBrowserCodeWidget::changeConnection()
 
     toConnection & c = toConnection::currentConnection(this);
     if (c.providerIs("Oracle"))
+    {
         addTab(declarationResult, "&Declaration");
-    else
+        addTab(declarationResultSQL->view(), "&DeclarationNew");
+    } else {
         declarationResult->hide();
+    }
 
     addTab(bodyResult, "B&ody");
+    addTab(bodyResultSQL->view(), "B&ody");
 
     if (c.providerIs("Oracle") || c.providerIs("SapDB"))
         addTab(grantsView, "&Grants");

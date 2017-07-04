@@ -621,6 +621,16 @@ void toScintilla::contextMenuEvent(QContextMenuEvent *e)
     // Handle parent widget's context menu fields
     toContextMenuHandler::traverse(this, popup);
 
+    populateContextMenu(popup);
+
+    // Display and "run" the menu
+    e->accept();
+    popup->exec(e->globalPos());
+    delete popup;
+}
+
+void toScintilla::populateContextMenu(QMenu *popup)
+{
     // Handle my own context menu fields
     toEditMenu &editMenu = toEditMenuSingle::Instance();
     editMenu.menuAboutToShow();
@@ -646,11 +656,6 @@ void toScintilla::contextMenuEvent(QContextMenuEvent *e)
     }
 
     popup->addAction(editMenu.selectAllAct);
-
-    // Display and "run" the menu
-    e->accept();
-    popup->exec(e->globalPos());
-    delete popup;
 }
 
 QString toScintilla::getSelectionAsHTML()

@@ -200,6 +200,8 @@ class toScintilla: public QsciScintilla //, public toEditWidget
         // unless contextMenuPolicy is set to: Qt::CustomContextMenu, which is usual when toBaseEditor is used
         void contextMenuEvent(QContextMenuEvent *) override;
 
+        virtual void populateContextMenu(QMenu *);
+
         // Copied from Scintilla CharClassify.h (does not support UTF8)
         class CharClassify
         {

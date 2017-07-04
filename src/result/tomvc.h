@@ -81,7 +81,7 @@ struct MVCTraits
     static const int  SelectionBehavior = QAbstractItemView::SelectItems;
     static const int  SelectionMode = QAbstractItemView::NoSelection;
     static const bool AlternatingRowColorsEnabled = false;
-    static const int  ContextMenuPolicy = Qt::NoContextMenu;
+    static const int  ContextMenuPolicy = Qt::NoContextMenu; // DefaultContextMenu => the widget's QWidget::contextMenuEvent() handler is called
     static const int  ShowRowNumber = TableRowNumber;
     static const int  ColumnResize = NoColumnResize;
     static const bool ShowWorkingWidget = true;

@@ -71,6 +71,8 @@ toSqlText::toSqlText(QWidget *parent, const char *name)
     , m_parserTimer(new QTimer(this))
     , m_parserThread(new QThread(this))
     , m_haveFocus(true)
+    , m_wrap(new QAction("Wrap", this))
+    , m_indent(new QAction("Indent", this))
 {
     using namespace ToConfiguration;
 #if defined(Q_OS_WIN)
@@ -107,6 +109,9 @@ toSqlText::toSqlText(QWidget *parent, const char *name)
     m_parserThread->start();
     setHighlighter(highlighterType);
     scheduleParsing();
+
+    m_wrap->setCheckable(true);
+    m_indent->setCheckable(true);
 }
 
 void toSqlText::keyPressEvent(QKeyEvent * e)
@@ -451,6 +456,14 @@ void toSqlText::focusOutEvent(QFocusEvent *e)
     toHighlighterTypeButtonSingle::Instance().setValue(None);
     unScheduleParsing();
     super::focusOutEvent(e);
+}
+
+void toSqlText::populateContextMenu(QMenu *popup)
+{
+    popup->addAction(m_wrap);
+    popup->addAction(m_indent);
+    popup->addSeparator();
+    super::populateContextMenu(popup);
 }
 
 void toSqlText::scheduleParsing()

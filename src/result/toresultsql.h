@@ -42,7 +42,7 @@ namespace ResultSqlText
     struct TraitsSqlText : public MVCTraits
     {
         typedef Views::toSqlTextView View;
-        static const int  ContextMenuPolicy = Qt::CustomContextMenu;
+        static const int  ContextMenuPolicy = Qt::DefaultContextMenu;
     };
 
     class SqlTextMVC

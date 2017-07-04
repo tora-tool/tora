@@ -85,9 +85,9 @@ toBrowserViewWidget::toBrowserViewWidget(QWidget * parent)
     resultField->setObjectName("resultField");
     resultField->setSQL(SQLViewSQL);
 
-    resultSQL = new toResultSql(this);
-    resultSQL->setObjectName("resultSQL");
-    resultSQL->setSQL(SQLViewSQL);
+    resultViewSql = new toResultSql(this);
+    resultViewSql->setObjectName("resultViewSql");
+    resultViewSql->setSQL(SQLViewSQL);
 
     triggersView = new toResultTableView(this);
     triggersView->setObjectName("triggersView");
@@ -123,12 +123,12 @@ void toBrowserViewWidget::changeConnection()
     if (c.providerIs("Oracle") || c.providerIs("SapDB") || c.providerIs("QPSQL"))
     {
         addTab(resultField, "SQL");
-        addTab(resultSQL->view(), "SQL new");
+        addTab(resultViewSql->view(), "SQL new");
     }
     else
     {
         resultField->hide();
-        resultSQL->view()->hide();
+        resultViewSql->view()->hide();
     }
 
     if (c.providerIs("Oracle"))
