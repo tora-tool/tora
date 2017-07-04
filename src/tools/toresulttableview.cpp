@@ -642,6 +642,7 @@ void toResultTableView::setModel(toResultModel *model)
 void toResultTableView::setModel(QAbstractItemModel *model)
 {
     Q_ASSERT_X(qobject_cast<toResultModel*>(model), qPrintable(__QHERE__), "Invaid QAbstractItemModel subclass");
+    QTableView::setModel(model);
 }
 
 bool toResultTableView::isRowSelected(QModelIndex index)

@@ -50,6 +50,7 @@
 
 class QListWidgetItem;
 class QsciAbstractAPIs;
+class QAction;
 
 class toComplPopup;
 class toSqlTextWorker;
@@ -163,6 +164,10 @@ class toSqlText : public toScintilla
         void focusInEvent(QFocusEvent *e) override;
         void focusOutEvent(QFocusEvent *e) override;
 
+        //void contextMenuEvent(QContextMenuEvent *) override;
+
+        void populateContextMenu(QMenu *) override;
+
         void scheduleParsing();
         void unScheduleParsing();
 #ifdef TORA_EXPERIMENTAL
@@ -180,6 +185,8 @@ class toSqlText : public toScintilla
         QThread *m_parserThread;
         toSqlTextWorker *m_worker;
         bool m_haveFocus; // this flag handles situation when bg thread response is rececived after focus was lost
+
+        QAction *m_wrap, *m_indent;
 };
 
 Q_DECLARE_METATYPE(toSqlText::HighlighterTypeEnum)

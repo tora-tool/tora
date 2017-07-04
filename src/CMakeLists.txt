@@ -62,8 +62,6 @@ IF (NOT WANT_INTERNAL_QSCINTILLA)
 ENDIF (NOT WANT_INTERNAL_QSCINTILLA)
 
 IF (USE_EXPERIMENTAL)
-  INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/extlibs/libantlr3c-3.5.1/include)
-  INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/extlibs/libantlr3c-3.5.1)
   IF (POPPLER_QT4_FOUND)
     INCLUDE_DIRECTORIES(${POPPLER_QT4_INCLUDE_DIR})
   ENDIF (POPPLER_QT4_FOUND)
@@ -291,7 +289,6 @@ SET(TORA_MOC_CLASSES
   tools/toresultdepend.h
   tools/toresultdrawing.h
   tools/toresultextent.h
-  tools/toresultfield.h
   tools/toresultgrants.h
   tools/toresultline.h
   tools/toresultlong.h
@@ -533,7 +530,8 @@ SET(TORA_SOURCES
   parsing/tsqllexeroracle2.cc
   parsing/tsqllexerpostgresql.cc
   parsing/tsqlparse.cpp
-  
+  parsing/tsqlparseoracle2.cc
+
   result/toproviderobserver.cpp
   result/toresultlock.cpp
   result/toresultplan.cpp
@@ -586,7 +584,6 @@ SET(TORA_SOURCES
   tools/toresultdepend.cpp
   tools/toresultdrawing.cpp
   tools/toresultextent.cpp
-  tools/toresultfield.cpp
   tools/toresultgrants.cpp
   tools/toresultline.cpp
   tools/toresultlong.cpp
@@ -692,26 +689,10 @@ IF(ORACLE_FOUND)
 ENDIF(ORACLE_FOUND)
 
 IF (USE_EXPERIMENTAL)
-  LIST(APPEND TORA_SOURCES tools/toscript.cpp)
-  LIST(APPEND TORA_SOURCES
-    docklets/tocodeoutline.cpp
-    parsing/OraclePLSQLLexer.cc
-    parsing/OraclePLSQLParser.cc
-    parsing/OracleSQLLexer.cc
-    parsing/OracleSQLParser.cc
-    parsing/error_handler.cc
-    parsing/tplsqlparseoracle.cc
-    parsing/tsqllexeroracle.cc
-    parsing/tsqlparseoracle.cc
-    parsing/tsqlparseoracle2.cc
-    )
-  LIST (APPEND TORA_SOURCES
-    docklets/toquerymodel.cpp
-    docklets/toastwalk.cpp
-    )
-  LIST (APPEND TORA_SOURCES
-    tools/toer.cpp
-    )
+  LIST (APPEND TORA_SOURCES tools/toscript.cpp)
+  LIST (APPEND TORA_SOURCES docklets/tocodeoutline.cpp)
+  LIST (APPEND TORA_SOURCES docklets/toquerymodel.cpp docklets/toastwalk.cpp)
+  LIST (APPEND TORA_SOURCES tools/toer.cpp)
   LIST (APPEND TORA_SOURCES tools/tosandboxtool.cpp)
   LIST (APPEND TORA_SOURCES docklets/tologging.cpp)
   LIST (APPEND TORA_SOURCES docklets/tobindvars.cpp)
@@ -825,10 +806,6 @@ IF (POSTGRESQL_FOUND)
    LIST(APPEND TORA_LIBS ${POSTGRESQL_LIBRARIES})
 ENDIF (POSTGRESQL_FOUND)
 
-IF(USE_EXPERIMENTAL)
-  LIST(APPEND TORA_LIBS antlr3c)
-ENDIF(USE_EXPERIMENTAL)
-
 IF(UNIX AND NOT APPLE)
   SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
   SET(CMAKE_INSTALL_RPATH "$ORIGIN/")
@@ -862,17 +839,20 @@ ENDIF()
 ################################################################################
 
 IF (TORA_DEBUG AND USE_EXPERIMENTAL AND QT5_BUILD)
+    # CORE sources
     FILE(GLOB CORE_OBJECT_SOURCES "core/*.cpp")
     FILE(GLOB CORE_OBJECT_HEADERS "core/*.h")
     QT5_WRAP_CPP(CORE_OBJECT_MOC_SOURCES ${CORE_OBJECT_HEADERS})
     #ADD_LIBRARY(CORE_OBJECT_LIB OBJECT ${CORE_OBJECT_SOURCES} ${CORE_OBJECT_MOC_SOURCES} ${PCH_SOURCE})
     SET(CORE_SOURCES ${CORE_OBJECT_SOURCES} ${CORE_OBJECT_MOC_SOURCES})
-    
+
+    # PARSING sources
     FILE(GLOB PARSING_OBJECT_SOURCES "parsing/*.cpp" "parsing/*.cc")    
     FILE(GLOB PARSING_OBJECT_HEADERS "parsing/*.h")
     QT5_WRAP_CPP(PARSING_OBJECT_MOC_SOURCES ${PARSING_OBJECT_HEADERS})
     SET(PARSING_SOURCES ${PARSING_OBJECT_SOURCES} ${PARSING_OBJECT_MOC_SOURCES})
 
+    # WIDGETS SOURCES
     FILE(GLOB WIDGETS_OBJECT_SOURCES "widgets/*.cpp")
     FILE(GLOB WIDGETS_OBJECT_UI "widgets/*.ui")
     QT5_WRAP_UI(WIDGETS_OBJECT_UI_SRC ${WIDGETS_OBJECT_UI})
@@ -880,6 +860,13 @@ IF (TORA_DEBUG AND USE_EXPERIMENTAL AND QT5_BUILD)
     QT5_WRAP_CPP(WIDGETS_OBJECT_MOC_SOURCES ${WIDGETS_OBJECT_HEADERS})
     SET(WIDGETS_SOURCES ${WIDGETS_OBJECT_SOURCES} ${WIDGETS_OBJECT_UI_SRC} ${WIDGETS_OBJECT_MOC_SOURCES})
 
+    # VIEWS SOURCES
+    FILE(GLOB VIEWS_OBJECT_SOURCES "views/*.cpp")
+    FILE(GLOB VIEWS_OBJECT_HEADERS "views/*.h")
+    QT5_WRAP_CPP(VIEWS_OBJECT_MOC_SOURCES ${VIEWS_OBJECT_HEADERS})
+    SET(VIEWS_SOURCES ${VIEWS_OBJECT_SOURCES} ${VIEWS_OBJECT_MOC_SOURCES})
+
+    # EDITOR sources
     FILE(GLOB EDITOR_OBJECT_SOURCES "editor/*.cpp")
     FILE(GLOB EDITOR_OBJECT_UI "editor/*.ui")
     QT5_WRAP_UI(EDITOR_OBJECT_UI_SRC ${EDITOR_OBJECT_UI})
@@ -887,6 +874,7 @@ IF (TORA_DEBUG AND USE_EXPERIMENTAL AND QT5_BUILD)
     QT5_WRAP_CPP(EDITOR_OBJECT_MOC_SOURCES ${EDITOR_OBJECT_HEADERS})
     SET(EDITOR_SOURCES ${EDITOR_OBJECT_SOURCES} ${EDITOR_OBJECT_UI_SRC} ${EDITOR_OBJECT_MOC_SOURCES})
 
+    # CONNECTION sources
     FILE(GLOB ORACLE_OBJECT_SOURCES "connection/tooraclefind.cpp" "connection/tooracleconfiguration.cpp" "main/tooraclesetting.cpp")
     FILE(GLOB ORACLE_OBJECT_UI "main/tooraclesettingui.ui")
     QT5_WRAP_UI(ORACLE_OBJECT_UI_SRC ${ORACLE_OBJECT_UI})
@@ -894,6 +882,7 @@ IF (TORA_DEBUG AND USE_EXPERIMENTAL AND QT5_BUILD)
     QT5_WRAP_CPP(ORACLE_OBJECT_MOC_SOURCES ${ORACLE_OBJECT_HEADERS})
     SET(ORACLE_SOURCES ${ORACLE_OBJECT_SOURCES} ${ORACLE_OBJECT_UI_SRC} ${ORACLE_OBJECT_MOC_SOURCES})
 
+    # TS_LOG sources
     FILE(GLOB LOGGING_OBJECT_HEADERS "ts_log/toostream.h")
     QT5_WRAP_CPP(LOGGING_OBJECT_MOC_SOURCES ${LOGGING_OBJECT_HEADERS})
     SET(LOGGING_SOURCES ${LOGGING_OBJECT_MOC_SOURCES})

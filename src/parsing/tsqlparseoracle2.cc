@@ -6,7 +6,7 @@
 #include "OracleDML_OracleDMLCommons.hpp"
 
 #include "parsing/tsqlparse.h"
-//#include "core/tologger.h"
+#include "core/tologger.h"
 
 #include <QtCore/QPair>
 #include <QtCore/QtAlgorithms>
@@ -83,9 +83,76 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 			tokenTypeRef = X_FAILURE;
 		}
 		break;
-	case Tokens::SQL92_RESERVED_SELECT:
-	case Tokens::SQL92_RESERVED_WITH:
+	case Tokens::EQUALS_OP:
+	    tokenTypeRef = S_OPERATOR_BINARY;
+	    break;
+	case Tokens::SQL92_RESERVED_ALL:
+	case Tokens::SQL92_RESERVED_ALTER:
+	//case Tokens::SQL92_RESERVED_AND:
+	case Tokens::SQL92_RESERVED_ANY:
+	case Tokens::SQL92_RESERVED_AS:
+	case Tokens::SQL92_RESERVED_ASC:
+	case Tokens::SQL92_RESERVED_BEGIN:
+	case Tokens::SQL92_RESERVED_BETWEEN:
+	case Tokens::SQL92_RESERVED_BY:
+	case Tokens::SQL92_RESERVED_CASE:
+	case Tokens::SQL92_RESERVED_CHECK:
+	case Tokens::SQL92_RESERVED_CONNECT:
+	case Tokens::SQL92_RESERVED_CREATE:
+	case Tokens::SQL92_RESERVED_CURRENT:
+	case Tokens::SQL92_RESERVED_CURSOR:
+	case Tokens::SQL92_RESERVED_DATE:
+	case Tokens::SQL92_RESERVED_DECLARE:
+	case Tokens::SQL92_RESERVED_DEFAULT:
+	case Tokens::SQL92_RESERVED_DELETE:
+	case Tokens::SQL92_RESERVED_DESC:
+	case Tokens::SQL92_RESERVED_DISTINCT:
+	case Tokens::SQL92_RESERVED_DROP:
+	case Tokens::SQL92_RESERVED_ELSE:
+	case Tokens::SQL92_RESERVED_END:
+	case Tokens::SQL92_RESERVED_EXCEPTION:
+	case Tokens::SQL92_RESERVED_EXISTS:
+	case Tokens::SQL92_RESERVED_FALSE:
+	case Tokens::SQL92_RESERVED_FETCH:
+	case Tokens::SQL92_RESERVED_FOR:
 	case Tokens::SQL92_RESERVED_FROM:
+	case Tokens::SQL92_RESERVED_GOTO:
+	case Tokens::SQL92_RESERVED_GRANT:
+	case Tokens::SQL92_RESERVED_GROUP:
+	case Tokens::SQL92_RESERVED_HAVING:
+	case Tokens::SQL92_RESERVED_IN:
+	case Tokens::SQL92_RESERVED_INSERT:
+	//case Tokens::SQL92_RESERVED_INTERSECT:
+	case Tokens::SQL92_RESERVED_INTO:
+	case Tokens::SQL92_RESERVED_IS:
+	case Tokens::SQL92_RESERVED_LIKE:
+	case Tokens::SQL92_RESERVED_NOT:
+	case Tokens::SQL92_RESERVED_NULL:
+	case Tokens::SQL92_RESERVED_OF:
+	case Tokens::SQL92_RESERVED_ON:
+	case Tokens::SQL92_RESERVED_OPTION:
+	//case Tokens::SQL92_RESERVED_OR:
+	case Tokens::SQL92_RESERVED_ORDER:
+	case Tokens::SQL92_RESERVED_OVERLAPS:
+	case Tokens::SQL92_RESERVED_PRIOR:
+	case Tokens::SQL92_RESERVED_PROCEDURE:
+	case Tokens::SQL92_RESERVED_PUBLIC:
+	case Tokens::SQL92_RESERVED_REVOKE:
+	case Tokens::SQL92_RESERVED_SELECT:
+	case Tokens::SQL92_RESERVED_SIZE:
+	case Tokens::SQL92_RESERVED_TABLE:
+	case Tokens::SQL92_RESERVED_THE:
+	case Tokens::SQL92_RESERVED_THEN:
+	case Tokens::SQL92_RESERVED_TO:
+	case Tokens::SQL92_RESERVED_TRUE:
+	//case Tokens::SQL92_RESERVED_UNION:
+	case Tokens::SQL92_RESERVED_UNIQUE:
+	case Tokens::SQL92_RESERVED_UPDATE:
+	case Tokens::SQL92_RESERVED_VALUES:
+	case Tokens::SQL92_RESERVED_VIEW:
+	case Tokens::SQL92_RESERVED_WHEN:
+	case Tokens::SQL92_RESERVED_WHERE:
+	case Tokens::SQL92_RESERVED_WITH:
 	case Tokens::T_FROM:
 	case Tokens::T_RESERVED:
 		tokenTypeRef = L_RESERVED;
@@ -181,6 +248,12 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 	case Tokens::SQL92_RESERVED_UNION:
 		tokenTypeRef = S_UNION;
 		break;
+        case Tokens::SQL92_RESERVED_AND:
+                tokenTypeRef = S_COND_AND;
+                break;
+        case Tokens::SQL92_RESERVED_OR:
+                tokenTypeRef = S_COND_OR;
+                break;
 	case Tokens::PLSQL_RESERVED_MINUS:
 		tokenTypeRef = S_MINUS;
 		break;
@@ -206,7 +279,8 @@ public:
 private:
     void parse();
     /* Recursive walk through ANTLR3_BASE_TREE and create AST tree*/
-    void treeWalk(unique_ptr<Antlr3BackendImpl::OracleDML> &psr, QPointer<Token> root, Traits::TreeTypePtr& tree, unsigned &lastindex);
+    void treeWalkAST(unique_ptr<Antlr3BackendImpl::OracleDML> &psr, QPointer<Token> root, Traits::TreeTypePtr& tree);
+    QList<Token*> treeWalkToken(QPointer<Token> root);
 
     /* Walk through Token tree and look for table names, table aliases, ... and try to resolve them
        Note: this function also replaces some instances of Token* with Token's subclass instances
@@ -214,14 +288,14 @@ private:
     void disambiguate();
 
 public:
-    /* Walk through Token tree and look for table names, table aliases, ... and try to resolve them using cached database catalogue*/
-    virtual void scanTree(ObjectCache *, QString const&);
+    /* Walk through Token tree and look for table names, table aliases, ... and try to resolve them using cached database catalog*/
+    void scanTree(ObjectCache *, QString const&) override;
 
 private:
     void addTranslation(QString const& alias, Token const *tableOrSubquery, Token const *context);
     void addTableRef(Token const *tableOrSubquery, Token const *context);
 
-	TokenStream::TokensType* lexerTokenVector;
+    TokenStream::TokensType* lexerTokenVector;
 };
 
 OracleDMLStatement::OracleDMLStatement(const QString &statement, const QString &name) : Statement(statement, name)
@@ -289,24 +363,90 @@ void OracleDMLStatement::parse()
 				   , Token::X_ROOT
 		);
 	_mAST->setTokenATypeName("ROOT");
-	unsigned lastIndex = 0;
 
-	treeWalk(psr, _mAST, langAST.tree, lastIndex);
+
+	// Copy ANTLR AST into Token tree structure
+	treeWalkAST(psr, _mAST, langAST.tree);
+
+	// Get sorted list of Token tree structure leaves
+	QList<Token*> _mLeaves = treeWalkToken(_mAST);
+	qSort(_mLeaves.begin(), _mLeaves.end(),
+	      [](Token* a, Token* b)
+	      {
+	            return a->getPosition() < b->getPosition();
+	      });
+
+
+	QList<Token*>::iterator i = _mLeaves.begin(), j = _mLeaves.begin(); j++;
+	unsigned lastIndex = 0;
+	Token *t1, *t2, *t3; // t1 left leaf, t2 right leaf, t3 chosen leaf
+
+	/* loop over lexer's tokens */
+	while (lastIndex < lexerTokenVector->size())
+	{
+		auto &spacerToken = lexerTokenVector->at(lastIndex++);
+		if (spacerToken.consumed())
+			continue;
+
+		Position spacerPosition(spacerToken.get_line(), spacerToken.get_charPositionInLine());
+
+		t1 = *i;
+		t2 = j == _mLeaves.end() ? NULL : *j;
+CHECK:
+		if (t2 == NULL)
+		{
+			t3 = t1;
+		}
+		else if (spacerPosition < t1->getPosition())
+		{
+			t3 = t1;
+		}
+		else if (t1->getPosition() == spacerPosition)
+		{
+		    continue;
+		}
+		else if (t1->getPosition() < spacerPosition && spacerPosition < t2->getPosition())
+		{
+			t3 = t1->depth() > t2->depth() ? t1 : t2;
+		}
+		else if (spacerPosition == t2->getPosition())
+		{
+		    continue;
+		}
+		else // t2->getPosition < spacerPosition
+		{
+			do
+			{
+				i++; j++;
+				t1 = *i;
+				t2 = j == _mLeaves.end() ? NULL : *j;
+			} while (t2 && t2->getPosition() < spacerPosition);
+			if (t2 == NULL)
+			    t3 = t1;
+			else
+			    goto CHECK;
+		}
+
+		Token *spacerTokenNew = new Token(t3
+			, spacerPosition
+			, spacerToken.getText().c_str()
+			, Token::X_COMMENT
+		);
+		const_cast<Traits::CommonTokenType&>(spacerToken).setConsumed();
+
+		t3->addSpacer(spacerTokenNew);
+
+		t3 = NULL;
+	}
+
 	lexerTokenVector->clear();
 };
 
 /* recursively copy an AST tree into */
-void OracleDMLStatement::treeWalk(unique_ptr<Antlr3BackendImpl::OracleDML> &psr, QPointer<Token> root, Traits::TreeTypePtr &tree, unsigned &lastindex)
+void OracleDMLStatement::treeWalkAST(unique_ptr<Antlr3BackendImpl::OracleDML> &psr, QPointer<Token> root, Traits::TreeTypePtr &tree)
 {
 	using LexerTokens = Antlr3BackendImpl::OracleDMLLexerTokens;
 	auto &children = tree->get_children();
-//	qSort(children.begin(), children.end(),
-//	      [](const Traits::TreeTypePtr&a,const Traits::TreeTypePtr&b)
-//	      {
-//		      return (a->get_token()->get_line() < b->get_token()->get_line())
-//			      || (a->get_token()->get_line() == b->get_token()->get_line() &&
-//				  a->get_token()->get_charPositionInLine() < b->get_token()->get_charPositionInLine());
-//	      });
 	auto ns = tree->toString();
 	for (auto i = children.begin(); i != children.end(); ++i)
 	{
@@ -338,9 +478,21 @@ void OracleDMLStatement::treeWalk(unique_ptr<Antlr3BackendImpl::OracleDML> &psr,
 				auto &grandChildNode = childNode->getChild(0);
 				auto grandChildToken = grandChildNode->get_token();
 
-				treeWalk(psr, root, childNode, lastindex);
+				treeWalkAST(psr, root, childNode);
 				continue;
 			}
+
+			if ( tokenType == LexerTokens::SQL92_RESERVED_AND && root->getTokenType() == Token::S_COND_AND)
+			{
+			    treeWalkAST(psr, root, childNode);
+			    continue;
+			}
+			if ( tokenType == LexerTokens::SQL92_RESERVED_OR && root->getTokenType() == Token::S_COND_OR)
+			{
+			    treeWalkAST(psr, root, childNode);
+			    continue;
+			}
+
 			Token *childTokenNew = new OracleDMLToken(root, *childNode);
 			root->appendChild(childTokenNew);
 			// This token "select", "from", "where", "=" is already consumed. Do not prepend it to other tokens
@@ -351,60 +503,29 @@ void OracleDMLStatement::treeWalk(unique_ptr<Antlr3BackendImpl::OracleDML> &psr,
 				auto &localToken = lexerTokenVector->at(childToken->get_tokenIndex());
 				const_cast<Traits::CommonTokenType&>(localToken).setConsumed();
 			}
-			treeWalk(psr, childTokenNew, childNode, lastindex);
+			treeWalkAST(psr, childTokenNew, childNode);
 		}
 		else     // if child is a leaf node
 		{
 			/* this is a leaf node */
 			Token *childTokenNew = new OracleDMLToken(root, *childNode);
 			root->appendChild(childTokenNew);
-
-			ANTLR_MARKER uChildLexemeIndex = childToken->get_tokenIndex();
-			auto lexemeTotal = lexerTokenVector->size();
-
-			/* loop over preceding lexer's tokens */
-			while(lastindex <= uChildLexemeIndex)
-			{
-				auto &localToken = lexerTokenVector->at(lastindex);
-				ANTLR_MARKER uLocalLexemeStart = localToken.get_tokenIndex();
-
-				if (uLocalLexemeStart < uChildLexemeIndex && !localToken.consumed())
-				{
-					auto &spacerToken = lexerTokenVector->at(lastindex);
-					Token *spacerTokenNew = new Token(root
-						, Position(spacerToken.get_line(), spacerToken.get_charPositionInLine())
-						, spacerToken.getText().c_str()
-						, Token::X_COMMENT
-						);
-					const_cast<Traits::CommonTokenType&>(localToken).setConsumed();
-					childTokenNew->prependSpacer(spacerTokenNew);
-				}
-
-				if(uLocalLexemeStart == uChildLexemeIndex)
-					break;
-				lastindex++;
-			}
-
-			// Process spaces and comments after parser_token
-			while(++lastindex < lexemeTotal)
-			{
-				auto &spacerToken = lexerTokenVector->at(lastindex);
-				unsigned SpacerLexemeChannel = spacerToken.get_channel();
-
-				if (SpacerLexemeChannel != antlr3::HIDDEN)
-					break;
-
-				Token *spacerTokenNew =  new Token( root
-								    , Position(spacerToken.get_line(), spacerToken.get_charPositionInLine())
-								    , spacerToken.getText().c_str()
-								    , Token::X_COMMENT
-					);
-				const_cast<Traits::CommonTokenType&>(spacerToken).setConsumed();
-				childTokenNew->appendSpacer(spacerTokenNew);
-			}
 		} // else for child is a leaf node
 	} // for each child
 };
+
+QList<Token*> OracleDMLStatement::treeWalkToken(QPointer<Token> root)
+{
+    QList<Token*> tokens;
+    foreach(QPointer<Token> child, root->getChildren())
+    {
+        tokens.append(treeWalkToken(child));
+    }
+
+    if (root->getPosition().isValid())
+        tokens.append(root);
+    return tokens;
+}
 
 void OracleDMLStatement::disambiguate()
 {
@@ -467,8 +588,8 @@ void OracleDMLStatement::disambiguate()
             */
         case Token::L_TABLEALIAS:
         {
-            if( node.getTokenUsageType() != Token::Declaration )
-                break;
+            //if( node.getTokenUsageType() != Token::Declaration )
+            //    break;
 
             //loop over left brothers until you find either a reserved word or a table name
             QList<QPointer<Token> > const& brothers = node.parent()->getChildren();
@@ -582,6 +703,7 @@ void OracleDMLStatement::scanTree(ObjectCache* o, QString const& cs)
 {
     for(SQLParser::Statement::token_const_iterator i = begin(); i != end(); ++i)
     {
+        Token const& token = *i;
         if( i->getTokenType() == Token::S_IDENTIFIER )
         {
             QString stopToken;
@@ -593,7 +715,7 @@ void OracleDMLStatement::scanTree(ObjectCache* o, QString const& cs)
                 stopToken = k->toString();
                 if( k->getTokenType() == Token::S_COLUMN_LIST)
                 {
-                    //TLOG(0, toNoDecorator, __HERE__) << " Dont Resolve identifier: " << i->toStringRecursive(false).toStdString() << "\t under: " <<  stopToken.toStdString() << std::endl;
+                    TLOG(0, toNoDecorator, __HERE__) << " Dont Resolve identifier: " << i->toStringRecursive(false).toStdString() << "\t under: " <<  stopToken.toStdString() << std::endl;
                     insideColumnList = true;
                     break;
                 }
@@ -611,20 +733,32 @@ void OracleDMLStatement::scanTree(ObjectCache* o, QString const& cs)
                 continue;
 
             TokenIdentifier const& id = static_cast<TokenIdentifier const&>(*i);
-            //TLOG(0, toNoDecorator, __HERE__) << "Resolve identifier: " << id.toStringRecursive(false).toStdString() << "\t under: " <<  stopToken.toStdString() << std::endl;
+            TLOG(8, toNoDecorator, __HERE__) << "Resolve identifier: " << id.toStringRecursive(true).toStdString() << "\t under: " <<  stopToken.toStdString() << std::endl;
 
             QString schemaName, tableName, columnName;
 
             switch(id.childCount()) // odd children should be dots.
             {
             case 0:
-            case 2:
             case 4:
-                //TLOG(0, toNoDecorator, __HERE__) << " invalid length:" << id.childCount() << std::endl;
+                //TLOG(8, toNoDecorator, __HERE__) << " invalid length:" << id.childCount() << std::endl;
                 break;
+            case 2:
+            {
+                // T1.C1
+                tableName = id.child(0)->toStringRecursive(false).toUpper();
+                columnName = id.child(1)->toStringRecursive(false).toUpper();
+                Token const *translatedAlias = translateAlias(tableName, &(*i));
+                if( translatedAlias)
+                {
+                    TLOG(8, toNoDecorator, __HERE__) << "Translation: " << tableName.toStdString() << "\t=>\t: " <<  translatedAlias->toStringRecursive().toStdString() << std::endl;
+                }
+            }
+            break;
             case 1:
                 // We have column name only
                 break;
+#if 0
             case 3:
             {
                 // T1.C1
@@ -647,7 +781,7 @@ void OracleDMLStatement::scanTree(ObjectCache* o, QString const& cs)
                     }
                 }
                 bool columnExists = o->columnExists(cs, tableName, columnName);
-                //TLOG(0, toNoDecorator, __HERE__) << " identifier found " << cs << '.' << tableName << '.' << columnName << ':' << columnExists << std::endl;
+                TLOG(8, toNoDecorator, __HERE__) << " identifier found " << cs << '.' << tableName << '.' << columnName << ':' << columnExists << std::endl;
             }
             break;
 label5:
@@ -660,11 +794,12 @@ label5:
                     columnName = id.child(4)->toStringRecursive(false).toUpper();
                 }
                 bool columnExists = o->columnExists(schemaName, tableName, columnName);
-                //TLOG(0, toNoDecorator, __HERE__) << " identifier found: " << schemaName << '.' << tableName << '.' << columnName << ':' << columnExists << std::endl;
+                TLOG(8, toNoDecorator, __HERE__) << " identifier found: " << schemaName << '.' << tableName << '.' << columnName << ':' << columnExists << std::endl;
             }
             break;
+#endif
             default:
-                //TLOG(0, toNoDecorator, __HERE__) << " unsupported length:" << id.childCount() << std::endl;
+                //TLOG(8, toNoDecorator, __HERE__) << " unsupported length:" << id.childCount() << std::endl;
                 break;
             } // switch(id.childCount()) // odd children should be dots.
         }

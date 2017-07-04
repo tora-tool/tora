@@ -81,11 +81,26 @@ struct MVCTraits
     static const int  SelectionBehavior = QAbstractItemView::SelectItems;
     static const int  SelectionMode = QAbstractItemView::NoSelection;
     static const bool AlternatingRowColorsEnabled = false;
-    static const int  ContextMenuPolicy = Qt::NoContextMenu;
+    static const int  ContextMenuPolicy = Qt::NoContextMenu; // DefaultContextMenu => the widget's QWidget::contextMenuEvent() handler is called
     static const int  ShowRowNumber = TableRowNumber;
     static const int  ColumnResize = NoColumnResize;
     static const bool ShowWorkingWidget = true;
     static const bool WorkingWidgetInteractive = true;
+};
+
+class toResult2
+{
+public:
+    virtual void refreshWithParams(toQueryParams const& params) = 0;
+    virtual void clear() = 0;
+    virtual ~toResult2(){};
+    static toResult2* fromQWidget(QWidget *w)
+    {
+        QAbstractItemView *view = dynamic_cast<QAbstractItemView*>(w);
+        if (view == NULL)
+            return NULL;
+        return dynamic_cast<toResult2*>(view->model());
+    }
 };
 
 template<
@@ -98,6 +113,7 @@ class TOMVC
     , public _T::Observer
     , public _VP< _T>
     , public _DP< _T>
+    , public toResult2
 {
     public:
         typedef _T                     Traits;
@@ -160,7 +176,8 @@ class TOMVC
         /** Reexecute with changed parameters.
          * @param list of query parameters
          */
-        virtual void refreshWithParams(toQueryParams const& params);
+        void refreshWithParams(toQueryParams const& params) override;
+        void clear() override;
 
     protected:
         /** Perform a query - can be re-implemented by subclasses
@@ -474,6 +491,16 @@ void TOMVC< _T, _VP, _DP>::refreshWithParams(toQueryParams const& params)
     }
     toEventQuery *Query = new toEventQuery(this, connection(), sql, m_Params, toEventQuery::READ_ALL);
     setQuery(Query);
+}
+
+template<
+	typename _T,
+	template <class> class _VP,
+	template <class> class _DP
+>
+void TOMVC< _T, _VP, _DP>::clear()
+{
+    Model::clearAll();
 }
 
 template<

@@ -39,11 +39,12 @@
 
 #include <QTabWidget>
 #include <QtCore/QMap>
+#include <QtCore/QPair>
 
 #include "loki/Factory_alt.h"
 
 class toResult;
-
+class toResult2;
 
 /*! \brief Base class for all toBrowser data viewers.
 All "browsers" (the tabs with data, columns, scripts etc.)
@@ -121,6 +122,8 @@ class toBrowserBaseWidget : public QTabWidget
     signals:
         void selected(const QString&);
     private:
+        typedef QPair<toResult*,toResult2*> PRESULT; // intermediate class, till toResult is made obsolete
+
         QString m_schema;
         QString m_type;
         QString m_object;
@@ -141,7 +144,7 @@ class toBrowserBaseWidget : public QTabWidget
         /*! Keep pages in this map. It's used in updateData()
         as a quick access shorcut.
         */
-        QMap<QString, toResult*> m_tabs;
+        QMap<QString, PRESULT> m_tabs;
 
         /*! \brief Performs data refresh.
         Call toResult child its changeParams() if it's really needed.

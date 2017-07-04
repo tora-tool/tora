@@ -38,9 +38,10 @@
 #include "toresultcode.h"
 #include "toresultcols.h"
 #include "toresultdepend.h"
-#include "toresultfield.h"
 #include "toresultgrants.h"
 #include "toresulttableview.h"
+
+#include "result/toresultsql.h"
 
 Util::RegisterInFactory<toBrowserViewWidget, toBrowserWidgetFactory, toCache::CacheEntryType> regToBrowserViewWidget(toCache::VIEW);
 
@@ -79,9 +80,9 @@ toBrowserViewWidget::toBrowserViewWidget(QWidget * parent)
     columnsWidget = new toResultCols(this);
     columnsWidget->setObjectName("columnsWidget");
 
-    resultField = new toResultField(this);
-    resultField->setObjectName("resultField");
-    resultField->setSQL(SQLViewSQL);
+    resultViewSql = new toResultSql(this);
+    resultViewSql->setObjectName("resultViewSql");
+    resultViewSql->setSQL(SQLViewSQL);
 
     triggersView = new toResultTableView(this);
     triggersView->setObjectName("triggersView");
@@ -115,9 +116,13 @@ void toBrowserViewWidget::changeConnection()
     addTab(columnsWidget, "&Columns");
 
     if (c.providerIs("Oracle") || c.providerIs("SapDB") || c.providerIs("QPSQL"))
-        addTab(resultField, "SQL");
+    {
+        addTab(resultViewSql->view(), "SQL");
+    }
     else
-        resultField->hide();
+    {
+        resultViewSql->view()->hide();
+    }
 
     if (c.providerIs("Oracle"))
     {

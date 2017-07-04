@@ -38,6 +38,11 @@
 #include "core/utils.h"
 #include "editor/toscintilla.h"
 
+#ifdef TORA_EXPERIMENTAL
+#include "parsing/tsqllexer.h"
+#include "parsing/tsqlparse.h"
+#endif
+
 toResultField::toResultField(QWidget *parent, const char *name)
     : toHighlightedEditor(parent, name)
 {
@@ -151,73 +156,71 @@ void toResultField::slotQueryDone(void)
     QString txt = sciEditor()->text();
     sciEditor()->getCursorPosition(&line, &col);
 
-    //try {
-    //  do {
-    //      std::unique_ptr <SQLParser::Statement> stat;
-    //      std::unique_ptr <SQLParser::Lexer> lexer = LexerFactTwoParmSing::Instance().create("OracleSQL", txt, "");
-    //      if(firstWord.isEmpty())
-    //          break;
-    //      firstWord = lexer->firstWord();
-    //      currentWord = lexer->currentWord(line, col);
+#ifdef TORA_EXPERIMENTAL
+    try
+    {
+        static QSet<QString> PLSQL_INTRODUCERS
+        {
+            "ANALYZE",            "BEGIN",            "CALL",
+            "COMMIT",            "CREATE",            "DECLARE",
+            "DROP",            "EXPLAIN",            "FUNCTION",
+            "GRANT",            "LOCK",            "PACKAGE",
+            "PACKAGE",            "PROCEDURE",            "ROLLBACK",
+            "SAVEPOINT",            "SET",            "TRUNCATE"
+        };
+        static QSet<QString> DML_INTRODUCERS
+        {
+            "WITH", "SELECT", "INSERT", "UPDATE", "DELETE", "MERGE"
+        };
 
-    //      if( QString::compare("CALL", firstWord, Qt::CaseInsensitive)      == 0 ||
-    //          QString::compare("ANALYZE", firstWord, Qt::CaseInsensitive)   == 0 ||
-    //          QString::compare("DECLARE", firstWord, Qt::CaseInsensitive)   == 0 ||
-    //          QString::compare("BEGIN", firstWord, Qt::CaseInsensitive)     == 0 ||
-    //          QString::compare("CREATE", firstWord, Qt::CaseInsensitive)    == 0 ||
-    //          QString::compare("PROCEDURE", firstWord, Qt::CaseInsensitive)    == 0 ||
-    //          QString::compare("FUNCTION", firstWord, Qt::CaseInsensitive)    == 0 ||
-    //          QString::compare("PACKAGE", firstWord, Qt::CaseInsensitive)     == 0 ||
-    //          QString::compare("LOCK", firstWord, Qt::CaseInsensitive)      == 0 ||
-    //          QString::compare("EXPLAIN", firstWord, Qt::CaseInsensitive)   == 0 ||
-    //          QString::compare("DROP", firstWord, Qt::CaseInsensitive)      == 0 ||
-    //          QString::compare("COMMIT", firstWord, Qt::CaseInsensitive)    == 0 ||
-    //          QString::compare("ROLLBACK", firstWord, Qt::CaseInsensitive)  == 0 ||
-    //          QString::compare("GRANT", firstWord, Qt::CaseInsensitive)     == 0 ||
-    //          QString::compare("TRUNCATE", firstWord, Qt::CaseInsensitive)  == 0 ||
-    //          QString::compare("SAVEPOINT", firstWord, Qt::CaseInsensitive) == 0 ||
-    //          QString::compare("PACKAGE", firstWord, Qt::CaseInsensitive) == 0 ||
-    //          QString::compare("SET", firstWord, Qt::CaseInsensitive) == 0
-    //          )
-    //      {
-    //          std::cout << "PLSQL:" << std::endl;
-    //          if(firstWord == "PACKAGE" || firstWord == "PROCEDURE" || firstWord == "FUNCTION")
-    //              txt = QString("CREATE OR REPLACE ") + txt;
-    //          stat = StatementFactTwoParmSing::Instance().create("OraclePLSQL", txt, "");
-    //          std::cout << stat->root()->toStringRecursive().toStdString() << std::endl;
-    //      } else if( QString::compare("WITH", firstWord, Qt::CaseInsensitive)    == 0 ||
-    //          QString::compare("SELECT", firstWord, Qt::CaseInsensitive)  == 0 ||
-    //          QString::compare("INSERT", firstWord, Qt::CaseInsensitive)  == 0 ||
-    //          QString::compare("UPDATE", firstWord, Qt::CaseInsensitive)  == 0 ||
-    //          QString::compare("DELETE", firstWord, Qt::CaseInsensitive)  == 0 ||
-    //          QString::compare("MERGE", firstWord, Qt::CaseInsensitive)   == 0
-    //          ) {
-    //              std::cout << "SQL:" << std::endl;
-    //              stat = StatementFactTwoParmSing::Instance().create("OracleSQL", txt, "");
-    //              std::cout << stat->root()->toStringRecursive().toStdString() << std::endl;
-    //      } else {
-    //          std::cout << "Unknown:" << firstWord.QString::toStdString() << std::endl;
-    //          throw SQLParser::ParseException();
-    //      }
+        do
+        {
+            std::unique_ptr<SQLParser::Statement> stat;
+            std::unique_ptr<SQLLexer::Lexer> lexer = LexerFactTwoParmSing::Instance ().create ("OracleGuiLexer", txt, "");
+            if (firstWord.isEmpty ())
+                break;
+            firstWord = lexer->firstWord ();
+            currentWord = lexer->wordAt(SQLLexer::Position(line, col));
 
-    //      //QString declName;
-    //      foreach( QString declName, stat->allDeclarations())
-    //      {
-    //          QList<const SQLParser::Token*> decl = stat->declarations(declName);
-    //          foreach(SQLParser::Token const*t, decl)
-    //          {
-    //
-    //              buffer += QString("%1: %2%3\n")
-    //                  .arg(declName)
-    //                  .arg(t->getTokenTypeString())
-    //                  .arg(t->getPosition().toString());
-    //          }
-    //      }
-    //  } while(false);
-    //} catch ( SQLParser::ParseException const &e)
-    //{
-    //  buffer = "Parser error\n";
-    //}
-    //if(!buffer.isEmpty())
-    //  TOMessageBox::information (this, currentWord, buffer );
+            if (PLSQL_INTRODUCERS.contains(firstWord.toUpper()))
+            {
+                std::cout << "PLSQL:" << std::endl;
+                if (firstWord == "PACKAGE" || firstWord == "PROCEDURE" || firstWord == "FUNCTION")
+                    txt = QString ("CREATE OR REPLACE ") + txt;
+                stat = StatementFactTwoParmSing::Instance ().create ("OraclePLSQL", txt, "");
+                std::cout << stat->root ()->toStringRecursive ().toStdString () << std::endl;
+            }
+            else if (DML_INTRODUCERS.contains(firstWord.toUpper()))
+            {
+                std::cout << "SQL:" << std::endl;
+                stat = StatementFactTwoParmSing::Instance ().create ("OracleDML", txt, "");
+                std::cout << stat->root ()->toStringRecursive ().toStdString () << std::endl;
+            }
+            else
+            {
+                std::cout << "Unknown:" << firstWord.QString::toStdString () << std::endl;
+                throw SQLParser::ParseException ();
+            }
+
+            //QString declName;
+            foreach( QString declName, stat->allDeclarations()){
+            QList<const SQLParser::Token*> decl = stat->declarations(declName);
+            foreach(SQLParser::Token const*t, decl)
+            {
+
+                buffer += QString("%1: %2%3\n")
+                .arg(declName)
+                .arg(t->getTokenTypeString())
+                .arg(t->getPosition().toString());
+            }
+        }
+    }while(false);
+}
+catch ( SQLParser::ParseException const &e)
+{
+    buffer = "Parser error\n";
+}
+    if (!buffer.isEmpty ())
+        TOMessageBox::information (this, currentWord, buffer);
+#endif
 } // queryDone

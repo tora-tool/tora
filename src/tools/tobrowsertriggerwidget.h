@@ -43,7 +43,7 @@ class toResultCols;
 class toResultGrants;
 class toResultDepend;
 class toResultCode;
-
+class toResultSql;
 
 /*! \brief Trigger browser for toBrowser tool.
 See toBrowserBaseWidget for more info.
@@ -54,7 +54,7 @@ class toBrowserTriggerWidget : public toBrowserBaseWidget
         Q_OBJECT;
 
         toResultItem *infoView;
-        toResultField *codeView;
+        toResultSql *codeViewSQL;
         toResultCols *columnsWidget;
         toResultGrants *grantsView;
         toResultDepend *dependView;

@@ -37,6 +37,7 @@
 #include "core/toconnectiontraits.h"
 #include "core/utils.h"
 #include "result/toresulttabledata.h"
+#include "result/tomvc.h"
 
 #include <QApplication>
 
@@ -52,9 +53,9 @@ toBrowserBaseWidget::toBrowserBaseWidget(QWidget * parent)
 bool toBrowserBaseWidget::maybeSave()
 {
     bool ret = true;
-    foreach (toResult * i, m_tabs.values())
+    foreach (PRESULT i, m_tabs.values())
     {
-        toResultTableData * d = dynamic_cast<toResultTableData*>(i);
+        toResultTableData * d = dynamic_cast<toResultTableData*>(i.first);
         if (d)
             ret &= d->maybeSave();
     }
@@ -69,19 +70,20 @@ int toBrowserBaseWidget::addTab(QWidget * page, const QString & label)
     int pos = QTabWidget::addTab(page, label);
 
     toResult * r = dynamic_cast<toResult*>(page);
+    toResult2 *r2 = toResult2::fromQWidget(page);
 
-//     TLOG(2,toDecorator,__HERE__) << objectName() << label <<  page;
-    Q_ASSERT_X(r,
+    Q_ASSERT_X(r || r2,
                "toBrowserBaseWidget::addTab",
-               "new tab is not toResult child");
+               "new tab is neither toResult not toResult2 child");
+#if 0
     Q_ASSERT_X(!page->objectName().isEmpty(),
                "toBrowserBaseWidget::addTab",
                "widget objectName cannot be empty; page must have objectName property set");
     Q_ASSERT_X(!m_tabs.contains(page->objectName()),
                "toBrowserBaseWidget::addTab",
                "widget objectName is already used; page objectName must be unique");
-
-    m_tabs[page->objectName()] = r;
+#endif
+    m_tabs[page->objectName()] = PRESULT(r,r2);
     return pos;
 }
 
@@ -133,12 +135,15 @@ void toBrowserBaseWidget::tabWidget_currentChanged(int ix)
 void toBrowserBaseWidget::updateData(const QString & ix)
 {
     // When changing connection or refreshing a list of objects (tables, indexes etc.)
-    // updateData will be called with shema/object being empty (as after refreshing
+    // updateData will be called with schema/object being empty (as after refreshing
     // nothing is selected yet. We have to clear result pane then without executing
     // any queries.
     if (schema().isEmpty() || object().isEmpty())
     {
-        m_tabs[ix]->clearData();
+        if (m_tabs[ix].first)
+            m_tabs[ix].first->clearData();
+        if (m_tabs[ix].second)
+            m_tabs[ix].second->clear();
         return;
     }
 
@@ -150,7 +155,10 @@ void toBrowserBaseWidget::updateData(const QString & ix)
     // object (when the same object name is used for objects of different types).
     if (currentWidget()->objectName() == "extractView")
     {
-        m_tabs[ix]->refreshWithParams(toQueryParams() << Schema << Object << type());
+        if (m_tabs[ix].first)
+            m_tabs[ix].first->refreshWithParams(toQueryParams() << Schema << Object << type());
+        if (m_tabs[ix].second)
+            m_tabs[ix].second->refreshWithParams(toQueryParams() << Schema << Object << type());
         return;
     }
 
@@ -161,11 +169,17 @@ void toBrowserBaseWidget::updateData(const QString & ix)
         // MySQL requires additional parameter to fetch routine (procedure/function) creation script
         // Parameter type must be passed first because it is not possible to rearrange parameters
         // used in SQL.
-        m_tabs[ix]->refreshWithParams(toQueryParams() <<  type() << Schema << Object);
+        if (m_tabs[ix].first)
+            m_tabs[ix].first->refreshWithParams(toQueryParams() <<  type() << Schema << Object);
+        if (m_tabs[ix].second)
+            m_tabs[ix].second->refreshWithParams(toQueryParams() << type() << Schema << Object);
     }
     else
     {
-        m_tabs[ix]->refreshWithParams(toQueryParams() << Schema << Object);
+        if (m_tabs[ix].first)
+            m_tabs[ix].first->refreshWithParams(toQueryParams() << Schema << Object);
+        if (m_tabs[ix].second)
+            m_tabs[ix].second->refreshWithParams(toQueryParams() << Schema << Object);
     }
 }
 

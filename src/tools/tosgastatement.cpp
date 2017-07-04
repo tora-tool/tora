@@ -41,7 +41,6 @@
 #include "core/toconfiguration.h"
 #include "core/utils.h"
 #include "editor/toscintilla.h"
-#include "toresultfield.h"
 #include "tools/toresultplan.h"
 #include "tools/toresulttableview.h"
 
@@ -89,12 +88,9 @@ toSGAStatement::toSGAStatement(QWidget *parent, const char* name)
     if (name)
         setObjectName(name);
 
-    SQLText = new toResultField(this);
-    addTab(SQLText, tr("SQL"));
-
-    SQLTextNew = new toResultSql(this);
-    SQLTextNew->setSQLName("Global:SQLTextSQLID");
-    addTab(SQLTextNew->view(), tr("SQL New"));
+    SQLText = new toResultSql(this);
+    SQLText->setSQLName("Global:SQLTextSQLID");
+    addTab(SQLText->view(), tr("SQL"));
 
     if (toConnection::currentConnection(this).providerIs("Oracle"))
     {
@@ -119,7 +115,7 @@ toSGAStatement::toSGAStatement(QWidget *parent, const char* name)
 
     connect(this, SIGNAL(currentChanged(int)),
             this, SLOT(changeTab(int)));
-    CurrentTab = SQLText;
+    CurrentTab = SQLText->view();
 }
 
 void toSGAStatement::changeTab(int index)
@@ -130,30 +126,8 @@ void toSGAStatement::changeTab(int index)
     CurrentTab = QTabWidget::widget(index);
     try
     {
-        if (CurrentTab == SQLText)
-        {
-            QString sql;
-            toConnection &conn = toConnection::currentConnection(this);
-
-            if (conn.providerIs("Oracle"))
-                sql = Utils::toSQLString(conn, Address);
-            else if (conn.providerIs("QPSQL"))
-            {
-                toQList vals = toQuery::readQuery(conn, SQLBackendSql, toQueryParams() << Address);
-
-                for (toQList::iterator i = vals.begin(); i != vals.end(); i++)
-                    sql.append((QString)*i);
-            }
-
-            // TODO: toSQLParse disabled
-            // if (toConfigurationSingle::Instance().autoIndent())
-            // sql = toSQLParse::indent(sql);
-            SQLText->sciEditor()->setText(sql);
-        }
-        else if (CurrentTab == SQLTextNew->view())
-        {
-            SQLTextNew->refreshWithParams(toQueryParams() << Address);
-        }
+        if (CurrentTab == SQLText->view())
+            SQLText->refreshWithParams(toQueryParams() << Address);
         else if (CurrentTab == Plan)
             Plan->queryCursorPlan(toQueryParams() << Address << Cursor);
         else if (CurrentTab == PlanNew)

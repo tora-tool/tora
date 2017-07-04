@@ -36,8 +36,9 @@
 #include "core/utils.h"
 #include "toresultcode.h"
 #include "toresultdepend.h"
-#include "toresultfield.h"
 #include "toresultgrants.h"
+
+#include "result/toresultsql.h"
 
 Util::RegisterInFactory<toBrowserCodeWidget, toBrowserWidgetFactory, toCache::CacheEntryType> regToBrowserCodeWidget1(toCache::FUNCTION);
 Util::RegisterInFactory<toBrowserCodeWidget, toBrowserWidgetFactory, toCache::CacheEntryType> regToBrowserCodeWidget2(toCache::PROCEDURE);
@@ -110,25 +111,29 @@ toBrowserCodeWidget::toBrowserCodeWidget(QWidget * parent)
 {
     setObjectName("toBrowserCodeWidget");
 
-    declarationResult = new toResultField(this);
-    declarationResult->setObjectName("declarationResult");
-    declarationResult->setSQL(SQLSQLHead);
+    declarationResultSQL = new toResultSql(this);
+    declarationResultSQL->setObjectName("declarationResult");
+    declarationResultSQL->setSQL(SQLSQLHead);
 
-    bodyResult = new toResultField(this);
-    bodyResult->setObjectName("bodyResult");
-    bodyResult->setSQL(SQLSQLBody);
+    bodyResultSQL = new toResultSql(this);
+    bodyResultSQL->setObjectName("bodyResult");
+    bodyResultSQL->setSQL(SQLSQLBody);
+
     toConnection & c = toConnection::currentConnection(this);
+
+#pragma message WARN("TODO/FIXME: toResultSQL::setWhichResultField(3)")
+#if 0
     if (c.providerIs("QMYSQL"))
         // For MySQL we need value from third column. As it is not a query which is fetching
         // routine creation script - particular field cannot be specified (or I do not know
         // how to do it). Therefore we need this workaround.
-        bodyResult->setWhichResultField(3);
+        bodyResultSQL->setWhichResultField(3);
+#endif
 
     grantsView = new toResultGrants(this);
     grantsView->setObjectName("grantsView");
 
     dependsWidget = new toResultDepend(this, "dependsWidget");
-//     dependsWidget->setObjectName("dependsWidget");
 
     extractView = new toResultCode(true, this);
     extractView->setObjectName("extractView");
@@ -142,11 +147,13 @@ void toBrowserCodeWidget::changeConnection()
 
     toConnection & c = toConnection::currentConnection(this);
     if (c.providerIs("Oracle"))
-        addTab(declarationResult, "&Declaration");
-    else
-        declarationResult->hide();
+    {
+        addTab(declarationResultSQL->view(), "&Declaration");
+    } else {
+        declarationResultSQL->view()->hide();
+    }
 
-    addTab(bodyResult, "B&ody");
+    addTab(bodyResultSQL->view(), "B&ody");
 
     if (c.providerIs("Oracle") || c.providerIs("SapDB"))
         addTab(grantsView, "&Grants");

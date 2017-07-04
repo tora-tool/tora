@@ -33,6 +33,8 @@ OPTION(TEST_APP7 "simple application parser" OFF)
 OPTION(TEST_APP8 "simple application - wget" ON)
 OPTION(TEST_APP9 "simple application - diff" ON)
 OPTION(TEST_APP10 "toCodeView" ON)
+OPTION(TEST_APP11 "simple parrser" ON)
+OPTION(TEST_APP12 "simple parrser" ON)
 
 #Set our CMake minimum version
 #Require 2.4.2 for Qt finding

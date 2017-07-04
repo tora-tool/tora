@@ -41,7 +41,7 @@ class toResultField;
 class toResultGrants;
 class toResultDepend;
 class toResultCode;
-
+class toResultSql;
 
 /*! \brief Code browser for toBrowser tool.
 See toBrowserBaseWidget for more info.
@@ -51,8 +51,8 @@ class toBrowserCodeWidget : public toBrowserBaseWidget
 {
         Q_OBJECT
 
-        toResultField *declarationResult;
-        toResultField *bodyResult;
+        toResultSql   *declarationResultSQL;
+        toResultSql   *bodyResultSQL;
         toResultGrants *grantsView;
         toResultDepend *dependsWidget;
         toResultCode *extractView;

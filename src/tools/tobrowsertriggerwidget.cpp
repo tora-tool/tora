@@ -38,8 +38,8 @@
 #include "toresultcode.h"
 #include "toresultcols.h"
 #include "toresultdepend.h"
-#include "toresultfield.h"
 #include "toresultgrants.h"
+#include "result/toresultsql.h"
 
 Util::RegisterInFactory<toBrowserTriggerWidget, toBrowserWidgetFactory, toCache::CacheEntryType> regToBrowserTriggerWidget(toCache::TRIGGER);
 
@@ -82,8 +82,9 @@ toBrowserTriggerWidget::toBrowserTriggerWidget(QWidget * parent)
     infoView = new toResultItem(this, "infoView");
     infoView->setSQL(SQLTriggerInfo);
 
-    codeView = new toResultField(this, "codeView");
-    codeView->setSQL(SQLTriggerBody);
+    codeViewSQL = new toResultSql(this);
+    codeViewSQL->setObjectName("codeView");
+    codeViewSQL->setSQL(SQLTriggerBody);
 
     columnsWidget = new toResultCols(SQLTriggerCols, this, "columnsWidget");
 
@@ -107,7 +108,7 @@ void toBrowserTriggerWidget::changeConnection()
     toConnection & c = toConnection::currentConnection(this);
 
     addTab(infoView, "Info");
-    addTab(codeView, "Code");
+    addTab(codeViewSQL->view(), "Code");
     addTab(columnsWidget, "&Columns");
     addTab(grantsView, "&Grants");
 

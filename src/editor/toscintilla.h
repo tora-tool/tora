@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOSCINTILLA_H
-#define TOSCINTILLA_H
+#pragma once
 
 #include <Qsci/qsciscintilla.h>
 #include "core/toeditwidget.h"
@@ -201,6 +200,8 @@ class toScintilla: public QsciScintilla //, public toEditWidget
         // unless contextMenuPolicy is set to: Qt::CustomContextMenu, which is usual when toBaseEditor is used
         void contextMenuEvent(QContextMenuEvent *) override;
 
+        virtual void populateContextMenu(QMenu *);
+
         // Copied from Scintilla CharClassify.h (does not support UTF8)
         class CharClassify
         {
@@ -257,6 +258,3 @@ class toScintilla: public QsciScintilla //, public toEditWidget
         const int m_searchIndicator;
         bool m_showTooTips;
 };
-
-#endif
-
