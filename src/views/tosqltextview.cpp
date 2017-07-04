@@ -43,7 +43,7 @@
 using namespace Views;
 
 toSqlTextView::toSqlTextView(QWidget *parent /* = 0*/, const char *name /* = 0*/)
-    : QWidget(parent)
+    : QAbstractItemView(parent)
     , toEditWidget()
     , m_model(NULL)
     , m_model_column(0)
@@ -121,6 +121,7 @@ void toSqlTextView::focusInEvent (QFocusEvent *e)
 void toSqlTextView::setModel(QAbstractItemModel *model)
 {
     m_model = model;
+    QAbstractItemView::setModel(model);
     modelReset();
     connect(model, SIGNAL(modelReset()), this, SLOT(modelReset()));
     connect(model, SIGNAL(rowsInserted(const QModelIndex &, int , int)), this, SLOT(rowsInserted(const QModelIndex &, int, int)));

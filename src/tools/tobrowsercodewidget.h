@@ -51,9 +51,7 @@ class toBrowserCodeWidget : public toBrowserBaseWidget
 {
         Q_OBJECT
 
-        toResultField *declarationResult;
         toResultSql   *declarationResultSQL;
-        toResultField *bodyResult;
         toResultSql   *bodyResultSQL;
         toResultGrants *grantsView;
         toResultDepend *dependsWidget;

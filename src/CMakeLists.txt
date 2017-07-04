@@ -289,7 +289,6 @@ SET(TORA_MOC_CLASSES
   tools/toresultdepend.h
   tools/toresultdrawing.h
   tools/toresultextent.h
-  tools/toresultfield.h
   tools/toresultgrants.h
   tools/toresultline.h
   tools/toresultlong.h
@@ -585,7 +584,6 @@ SET(TORA_SOURCES
   tools/toresultdepend.cpp
   tools/toresultdrawing.cpp
   tools/toresultextent.cpp
-  tools/toresultfield.cpp
   tools/toresultgrants.cpp
   tools/toresultline.cpp
   tools/toresultlong.cpp

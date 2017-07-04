@@ -38,7 +38,6 @@
 #include "toresultcode.h"
 #include "toresultcols.h"
 #include "toresultdepend.h"
-#include "toresultfield.h"
 #include "toresultgrants.h"
 #include "toresulttableview.h"
 
@@ -81,10 +80,6 @@ toBrowserViewWidget::toBrowserViewWidget(QWidget * parent)
     columnsWidget = new toResultCols(this);
     columnsWidget->setObjectName("columnsWidget");
 
-    resultField = new toResultField(this);
-    resultField->setObjectName("resultField");
-    resultField->setSQL(SQLViewSQL);
-
     resultViewSql = new toResultSql(this);
     resultViewSql->setObjectName("resultViewSql");
     resultViewSql->setSQL(SQLViewSQL);
@@ -122,12 +117,10 @@ void toBrowserViewWidget::changeConnection()
 
     if (c.providerIs("Oracle") || c.providerIs("SapDB") || c.providerIs("QPSQL"))
     {
-        addTab(resultField, "SQL");
-        addTab(resultViewSql->view(), "SQL new");
+        addTab(resultViewSql->view(), "SQL");
     }
     else
     {
-        resultField->hide();
         resultViewSql->view()->hide();
     }
 

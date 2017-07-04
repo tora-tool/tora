@@ -59,7 +59,6 @@ public:
     void changeConnection();
 protected:
     toResultCols *columnsWidget;
-    toResultField *resultField;
     toResultSql   *resultViewSql;
     toResultTableView *triggersView;
     toResultTableData *resultData;

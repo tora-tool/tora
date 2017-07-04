@@ -54,7 +54,6 @@ class toBrowserTriggerWidget : public toBrowserBaseWidget
         Q_OBJECT;
 
         toResultItem *infoView;
-        toResultField *codeView;
         toResultSql *codeViewSQL;
         toResultCols *columnsWidget;
         toResultGrants *grantsView;

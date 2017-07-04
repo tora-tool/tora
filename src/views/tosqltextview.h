@@ -45,6 +45,7 @@ class toSearchReplace;
 #include "core/utils.h"
 
 #include <QWidget>
+#include <QAbstractItemView>
 #include <QtCore/QSet>
 
 namespace Views
@@ -52,7 +53,7 @@ namespace Views
 
 /** A tora "Highlighted sql source" version of the @ref QPlainTextEdit widget.
  */
-class toSqlTextView : public QWidget, public toEditWidget
+class toSqlTextView : public QAbstractItemView, public toEditWidget
 {
     Q_OBJECT;
 public:
@@ -83,6 +84,17 @@ public:
     void setModel(QAbstractItemModel *model);
 
     void setContextMenuPolicy(Qt::ContextMenuPolicy policy);
+
+    /* QAbstractItemModel method overrides */
+    QRect visualRect(const QModelIndex &index) const override { return QRect(); };
+    void scrollTo(const QModelIndex &index, ScrollHint hint = EnsureVisible) override {};
+    QModelIndex indexAt(const QPoint &point) const override { return QModelIndex(); };
+    QModelIndex moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers modifiers) override { return QModelIndex(); };
+    int horizontalOffset() const override { return 0; };
+    int verticalOffset() const override { return 0; };
+    bool isIndexHidden(const QModelIndex &index) const override { return false; };
+    void setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command) override {};
+    QRegion visualRegionForSelection(const QItemSelection &selection) const override { return QRegion(); };
 
 protected:
     void focusInEvent (QFocusEvent *e) override;

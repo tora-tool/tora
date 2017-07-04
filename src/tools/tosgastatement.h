@@ -42,7 +42,6 @@
 
 class QComboBox;
 class QTabWidget;
-class toResultField;
 class toResultItem;
 class toResultPlanCursor;
 class toResultPlanNew;
@@ -58,9 +57,7 @@ class toSGAStatement : public QTabWidget
         Q_OBJECT
         /** The SQL run.
          */
-        toResultField *SQLText;
-
-        toResultSql *SQLTextNew;
+        toResultSql *SQLText;
 
         /** Tab widget
          */
