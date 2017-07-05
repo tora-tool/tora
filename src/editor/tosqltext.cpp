@@ -50,6 +50,7 @@
 #include <QToolTip>
 #endif
 
+#include <QMenu>
 #include <QListWidget>
 #include <QVBoxLayout>
 #include <QApplication>
