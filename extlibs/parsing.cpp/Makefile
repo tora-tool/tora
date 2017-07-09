@@ -75,8 +75,8 @@ clean:
 	rm -f *.o *Lexer*.[ch]pp *Parser.[ch]pp OracleDML_*.[ch]pp OracleDML.[ch]pp t0 t1 t2 t4 t5 m0 m1 s0 s1 s2 s3 p0 p1 check *.tokens
 
 install:
-	cp PLSQLGuiLexer.cpp ../../src/parsing/PLSQLGuiLexer.cc
-	cp PLSQLGuiLexer.hpp ../../src/parsing/PLSQLGuiLexer.hpp
+	#cp PLSQLGuiLexer.cpp ../../src/parsing/PLSQLGuiLexer.cc
+	#cp PLSQLGuiLexer.hpp ../../src/parsing/PLSQLGuiLexer.hpp
 	#cp UserGuiTraits.hpp ../../src/parsing/UserGuiTraits.hpp
 	#cp TokenAttr.hpp     ../../src/parsing/TokenAttr.hpp
 	#cp PLSQLLexer.cpp    ../../src/parsing/PLSQLLexer.cc
@@ -92,19 +92,19 @@ install:
 	#cp PLSQLParser_SQLPLUSParser.hpp   ../../src/parsing/PLSQLParser_SQLPLUSParser.hpp
 	#cp MySQLLexer.cpp                  ../../src/parsing/MySQLLexer.cc
 	#cp MySQLLexer.hpp                  ../../src/parsing/MySQLLexer.hpp
-	#cp OracleDML.cpp 		   ../../src/parsing/OracleDML.cc
-	#cp OracleDML.hpp		   ../../src/parsing/OracleDML.hpp
-	#cp OracleDML_OracleDMLCommons.cpp  ../../src/parsing/OracleDML_OracleDMLCommons.cc
-	#cp OracleDML_OracleDMLCommons.hpp  ../../src/parsing/OracleDML_OracleDMLCommons.hpp
-	#cp OracleDML_OracleDMLKeys.cpp	   ../../src/parsing/OracleDML_OracleDMLKeys.cc
-	#cp OracleDML_OracleDMLKeys.hpp	   ../../src/parsing/OracleDML_OracleDMLKeys.hpp
-	#cp OracleDMLLexer.cpp		   ../../src/parsing/OracleDMLLexer.cc
-	#cp OracleDMLLexer.hpp		   ../../src/parsing/OracleDMLLexer.hpp
-	#cp OracleDMLTraits.hpp		   ../../src/parsing/OracleDMLTraits.hpp
-	cp MySQLGuiLexer.cpp               ../../src/parsing/MySQLGuiLexer.cc
-	cp MySQLGuiLexer.hpp               ../../src/parsing/MySQLGuiLexer.hpp
-	cp PostgreSQLGuiLexer.cpp          ../../src/parsing/PostgreSQLGuiLexer.cc
-	cp PostgreSQLGuiLexer.hpp          ../../src/parsing/PostgreSQLGuiLexer.hpp
+	cp OracleDML.cpp 		   ../../src/parsing/OracleDML.cc
+	cp OracleDML.hpp		   ../../src/parsing/OracleDML.hpp
+	cp OracleDML_OracleDMLCommons.cpp  ../../src/parsing/OracleDML_OracleDMLCommons.cc
+	cp OracleDML_OracleDMLCommons.hpp  ../../src/parsing/OracleDML_OracleDMLCommons.hpp
+	cp OracleDML_OracleDMLKeys.cpp	   ../../src/parsing/OracleDML_OracleDMLKeys.cc
+	cp OracleDML_OracleDMLKeys.hpp	   ../../src/parsing/OracleDML_OracleDMLKeys.hpp
+	cp OracleDMLLexer.cpp		   ../../src/parsing/OracleDMLLexer.cc
+	cp OracleDMLLexer.hpp		   ../../src/parsing/OracleDMLLexer.hpp
+	cp OracleDMLTraits.hpp		   ../../src/parsing/OracleDMLTraits.hpp
+	#cp MySQLGuiLexer.cpp               ../../src/parsing/MySQLGuiLexer.cc
+	#cp MySQLGuiLexer.hpp               ../../src/parsing/MySQLGuiLexer.hpp
+	#cp PostgreSQLGuiLexer.cpp          ../../src/parsing/PostgreSQLGuiLexer.cc
+	#cp PostgreSQLGuiLexer.hpp          ../../src/parsing/PostgreSQLGuiLexer.hpp
 
 %.u: %.g
 	@echo "Bulding dependencies for "$<

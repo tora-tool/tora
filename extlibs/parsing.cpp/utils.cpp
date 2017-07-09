@@ -183,7 +183,7 @@ namespace Utils
 
 }
 
-#if defined _MSC_VER || defined __CYGWIN__
+#if defined _MSC_VER
 
 #if defined _WIN32 || defined __WIN32__ || defined __EMX__ || defined __DJGPP__
 /* Win32, OS/2, DOS */
