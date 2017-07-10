@@ -106,6 +106,8 @@ tokens {
     PIVOT_ALIAS;
     DATETIME_OP;
     XML_ELEMENT;
+    CONJUNCTION; // and
+    DISJUNCTION; // or
 }
 
 @parser::includes
@@ -283,7 +285,7 @@ query_partition_clause
     |    (LEFT_PAREN)=> expression_list
     |    expression (COMMA expression)*
     )
-        -> ^(partition_key expression_list? (EXPR expression)*)
+        -> ^(partition_key subquery? expression_list? (EXPR expression)*)
     ;
 
 flashback_query_clause
@@ -724,7 +726,8 @@ error_logging_reject_part
 
 dml_table_expression_clause
     :    table_collection_expression -> ^(TABLE_EXPRESSION ^(COLLECTION_MODE table_collection_expression))
-    |    LEFT_PAREN select_statement subquery_restriction_clause? RIGHT_PAREN -> ^(TABLE_EXPRESSION ^(SELECT_MODE select_statement subquery_restriction_clause?))
+    |    LEFT_PAREN select_statement subquery_restriction_clause? RIGHT_PAREN
+         -> ^(TABLE_EXPRESSION ^(NESTED_SUBQUERY LEFT_PAREN ^(SELECT_MODE select_statement subquery_restriction_clause?) RIGHT_PAREN))
     |    tableview_name sample_clause? -> ^(TABLE_EXPRESSION ^(DIRECT_MODE tableview_name sample_clause?))
     ;
 
@@ -787,8 +790,15 @@ expression_wrapper
         -> ^(EXPR expression)
     ;
 
+logical_and_expression_seq
+    :    (and_key negated_expression)+
+    ;
+
 logical_and_expression
-    :    negated_expression ( and_key^ negated_expression )*
+@init    {    int mode = 0;    }
+    :    negated_expression (logical_and_expression_seq {mode = 1;} )?
+         -> { mode == 1 }? ^(CONJUNCTION negated_expression logical_and_expression_seq?)
+         -> negated_expression
     ;
 
 negated_expression
@@ -874,7 +884,7 @@ like_escape_part
 in_elements
 @init    {    int mode = 0;    }
     :    (LEFT_PAREN+ (select_key|with_key)) =>  LEFT_PAREN subquery RIGHT_PAREN
-         -> subquery
+         -> ^(NESTED_SUBQUERY LEFT_PAREN subquery RIGHT_PAREN)
     |    LEFT_PAREN concatenation_wrapper (COMMA concatenation_wrapper)* RIGHT_PAREN
          -> ^(EXPR_LIST concatenation_wrapper+)
     |    constant
