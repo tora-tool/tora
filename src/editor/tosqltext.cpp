@@ -45,6 +45,10 @@
 #include "editor/toworksheettext.h"
 #include "core/tosyntaxanalyzer.h"
 
+#include "parsing/tsqlparse.h"
+
+#include "icons/indent.xpm"
+
 #ifdef TORA_EXPERIMENTAL
 #include "parsing/tsqllexer.h"
 #include <QToolTip>
@@ -72,7 +76,7 @@ toSqlText::toSqlText(QWidget *parent, const char *name)
     , m_parserThread(new QThread(this))
     , m_haveFocus(true)
     , m_wrap(new QAction("Wrap", this))
-    , m_indent(new QAction("Indent", this))
+    , m_indent(new QAction(QPixmap(const_cast<const char**>(indent_xpm)), "Indent", this))
 {
     using namespace ToConfiguration;
 #if defined(Q_OS_WIN)
@@ -110,8 +114,12 @@ toSqlText::toSqlText(QWidget *parent, const char *name)
     setHighlighter(highlighterType);
     scheduleParsing();
 
-    m_wrap->setCheckable(true);
     m_indent->setCheckable(true);
+    m_indent->setShortcut(Qt::CTRL + Qt::ALT + Qt::Key_Backslash);
+    connect(m_indent, SIGNAL(triggered()), this, SLOT(indent()));
+
+    m_wrap->setCheckable(true);
+    connect(m_wrap, SIGNAL(toggled(bool)), this, SLOT(setWordWrap(bool)));
 }
 
 void toSqlText::keyPressEvent(QKeyEvent * e)
@@ -268,6 +276,99 @@ void toSqlText::setHighlighter(HighlighterTypeEnum h)
 
     setFont(Utils::toStringToFont(toConfigurationNewSingle::Instance().option(Editor::ConfCodeFont).toString()));
     //update(); gets called by setFont
+}
+
+void toSqlText::indent() // slot
+{
+    using namespace SQLParser;
+    int cline, cpos;
+    getCursorPosition(&cline, &cpos);
+    toSyntaxAnalyzer::statement stat = analyzer()->getStatementAt(cline, cpos);
+    analyzer()->sanitizeStatement(stat);
+    try
+    {
+        std::unique_ptr <Statement> ast = StatementFactTwoParmSing::Instance().create("OracleDML", stat.sql, "");
+
+        Token const* root = ast->root();
+
+		TLOG(8, toNoDecorator, __HERE__) << root->toLispStringRecursive() << std::endl;
+
+        QList<SQLParser::Token> list;
+        indentPriv(root, list);
+
+        QString str;
+        foreach(Token t, list)
+        {
+			int d1 = t.depth();
+			int d2 = t.metadata().value("INDENT_DEPT").toInt();
+			QString s = t.toString();
+			TLOG(8, toNoDecorator, __HERE__) << d1 << "\t" << d2 << "\t" << s << std::endl;
+			str.append(QString(d2, ' '));
+			str.append(s);
+			str.append("\n");
+        }
+
+        beginUndoAction();
+        setSelection(stat.posFrom, stat.posTo);
+        removeSelectedText();
+        insert(str);
+        endUndoAction();
+    } catch (...) {
+
+    }
+}
+
+void toSqlText::indentPriv(SQLParser::Token const*root, QList<SQLParser::Token> &list)
+{
+    using namespace SQLParser;
+    QRegExp white("^[ \\n\\r\\t]*$");
+
+    Token const*t = root;
+    unsigned depth = 0;
+    while(t->parent())
+    {
+        if (!white.exactMatch(t->toString()))
+            depth++;
+		t = t->parent();
+    }
+
+    QList<SQLParser::Token> me, pre, post;
+    foreach(QPointer<Token> t, root->prevTokens())
+    {
+        if (!white.exactMatch(t->toString()))
+        {
+            Token tok = Token(*t); tok.metadata().insert("INDENT_DEPT", depth);
+            me.append(tok);
+        }
+    }
+    if (!white.exactMatch(root->toString()))
+    {
+        Token tok = Token(*root); tok.metadata().insert("INDENT_DEPT", depth);
+        me.append(tok);
+    }
+    foreach(QPointer<Token> t, root->postTokens())
+    {
+        if (!white.exactMatch(t->toString()))
+        {
+            Token tok = Token(*t); tok.metadata().insert("INDENT_DEPT", depth);
+            me.append(tok);
+        }
+    }
+
+    foreach(QPointer<Token> child, root->getChildren())
+    {
+        Position child_position = child->getValidPosition();
+
+        if(child_position < root->getPosition())
+        {
+            indentPriv(child, pre);
+        } else {
+            indentPriv(child, post);
+        }
+    }
+    list.append(pre);
+    list.append(me);
+    list.append(post);
 }
 
 void toSqlText::setHighlighter(int h) // slot

@@ -40,6 +40,8 @@
 #include "loki/Singleton.h"
 #include "core/tosyntaxanalyzer.h"
 
+#include "parsing/tsqlparse.h"
+
 #include <QtCore/QString>
 #include <QtCore/QTimer>
 #include <QtCore/QStringList>
@@ -144,7 +146,10 @@ class toSqlText : public toScintilla
 
         toSyntaxAnalyzer* analyzer();
 
+        void indentPriv(SQLParser::Token const*, QList<SQLParser::Token>&);
+
     private slots:
+        void indent();
         void setHighlighter(int);
         void process();
         void processed();
