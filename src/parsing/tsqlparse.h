@@ -267,6 +267,7 @@ namespace SQLParser
                 , _mSpacesPrev(other._mSpacesPrev)
                 , _mSpacesPost(other._mSpacesPost)
                 , _mDepth(other._mDepth)
+                , _mMetadata(other._mMetadata)
             {
                 //size_t me = this->size();
                 //size_t oth = other.size();
@@ -321,10 +322,10 @@ namespace SQLParser
             QString toStringFull() const
             {
                 QString retval;
-		foreach(QPointer<Token> space, _mSpacesPrev)
-		{
-			retval += space->toString();
-		}
+                foreach(QPointer<Token> space, _mSpacesPrev)
+                {
+                    retval += space->toString();
+                }
                 retval += this->toString();
                 foreach(QPointer<Token> space, _mSpacesPost)
                 {
@@ -356,7 +357,7 @@ namespace SQLParser
             {
                 QString retval;
                 retval += "(";
-                retval += _mStr + "[" + getTokenTypeString() + "]";
+                retval += _mStr + "/" + getTokenATypeName() + "[" + getTokenTypeString() + "]";
                 foreach(QPointer<Token> child, _mChildren)
                 {
                     retval += "(";
@@ -426,6 +427,18 @@ namespace SQLParser
                 return _mChildren;
             };
 
+            inline QList<QPointer<Token> > const& prevTokens() const
+            {
+                return _mSpacesPrev;
+            }
+
+            inline QList<QPointer<Token> > const& postTokens() const
+            {
+                return _mSpacesPost;
+            }
+
+            inline QMap<QString, QVariant>& metadata() { return _mMetadata; }
+
             //inline Translation& aliasTranslation() { return _mAliasTranslation; };
             //inline Translation const& aliasTranslation() const { return _mAliasTranslation; };
 
@@ -447,6 +460,7 @@ namespace SQLParser
             // TODO use only one of them
             QList<QPointer<Token> > _mChildren;
             QList<QPointer<Token> > _mSpacesPrev, _mSpacesPost;
+            QMap<QString, QVariant> _mMetadata;
             unsigned _mDepth;
     };
 
