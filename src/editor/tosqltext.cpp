@@ -124,6 +124,22 @@ toSqlText::toSqlText(QWidget *parent, const char *name)
 
 void toSqlText::keyPressEvent(QKeyEvent * e)
 {
+    // openscad's explanation:
+    // QScintilla hijacks all keyboard bindings, so any key bound both by QScintilla and the global menus will be shadowed by scintilla.
+    //
+    // Event configuration:
+    //
+    // Default keymap is created: MapDefault in KeyMap.cpp:81
+    // Ctrl-[a-z] (Mac: Cmd-[a-z]) is disabled (qscicommandset.cpp:869)
+    // Add key bindings from cmd_table in qscicommandset.cpp:55
+    //
+    // Event handling:
+    // QScintilla events are first handled in QsciScintilla::event(QEvent *e) (qscintilla.cpp:4129) -> this code overrides any global menu shortcuts if they're bound by qscintilla
+    // QScintilla events are handled in QsciScintillaBase::keyPressEvent(QKeyEvent *e) (qscintillabase.cpp:376) -> this triggers the actual qscintilla operation
+    // If event is not consumed, it bubbles up the event handler (widget) hierarchy
+    //
+    // "accept" all QKeyEvent(s) before QScintilla sees them
+
 #if TORA_INCREMENTAL_SEARCH
     //    if (Search)
     //    {
@@ -166,6 +182,16 @@ void toSqlText::keyPressEvent(QKeyEvent * e)
     //        }
     //    }
 #endif
+
+    // this case is even more special. m_indent QAction is owned by me (toSqlText, descendant of QScintilla)
+    // check if QKeyEvent matched QKeySequence and then call indent method directly
+    if (Utils::toCheckKeyEvent(e, m_indent->shortcut()))
+    {
+        indent();
+        e->accept();
+        return;
+    }
+
     super::keyPressEvent(e);
 }
 
@@ -280,6 +306,7 @@ void toSqlText::setHighlighter(HighlighterTypeEnum h)
 
 void toSqlText::indent() // slot
 {
+    Utils::toBusy busy;
     using namespace SQLParser;
     int cline, cpos;
     getCursorPosition(&cline, &cpos);
@@ -300,7 +327,7 @@ void toSqlText::indent() // slot
         foreach(Token t, list)
         {
 			int d1 = t.depth();
-			int d2 = t.metadata().value("INDENT_DEPT").toInt();
+			int d2 = t.metadata().value("INDENT_DEPTH").toInt();
 			QString s = t.toString();
 			TLOG(8, toNoDecorator, __HERE__) << d1 << "\t" << d2 << "\t" << s << std::endl;
 			str.append(QString(d2, ' '));
@@ -337,20 +364,20 @@ void toSqlText::indentPriv(SQLParser::Token const*root, QList<SQLParser::Token> 
     {
         if (!white.exactMatch(t->toString()))
         {
-            Token tok = Token(*t); tok.metadata().insert("INDENT_DEPT", depth);
+            Token tok = Token(*t); tok.metadata().insert("INDENT_DEPTH", depth);
             me.append(tok);
         }
     }
     if (!white.exactMatch(root->toString()))
     {
-        Token tok = Token(*root); tok.metadata().insert("INDENT_DEPT", depth);
+        Token tok = Token(*root); tok.metadata().insert("INDENT_DEPTH", depth);
         me.append(tok);
     }
     foreach(QPointer<Token> t, root->postTokens())
     {
         if (!white.exactMatch(t->toString()))
         {
-            Token tok = Token(*t); tok.metadata().insert("INDENT_DEPT", depth);
+            Token tok = Token(*t); tok.metadata().insert("INDENT_DEPTH", depth);
             me.append(tok);
         }
     }

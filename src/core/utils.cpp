@@ -452,9 +452,9 @@ namespace Utils
         if ((val & Qt::ALT) == Qt::ALT)
             state |= Qt::ALT;
 
-        val &= 0xfffff;
+        val &= ~Qt::KeyboardModifierMask;
 
-        return (event->modifiers() == Qt::NoModifier && event->key() == val);
+        return (event->modifiers() == state && event->key() == val);
     }
 
     QKeySequence toKeySequence(const QString &key)
