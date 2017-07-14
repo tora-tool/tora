@@ -306,7 +306,7 @@ class toMain : public toMainWindow
         QToolBar *editToolbar, *toolsToolbar, *connectionToolbar;
 
         /** Toolbars for minimizing docklets*/
-        toDockbar *leftDockbar, *rightDockbar;
+        toDockbar *leftDockbar, *rightDockbar, *bottomDockbar;
 
         /** File menu, Recent files menu (child of fileMenu). */
         QMenu *fileMenu, *recentMenu;

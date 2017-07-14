@@ -747,16 +747,16 @@ void toMain::viewCallback(QAction *action)
 
 void toMain::moveDocklet(toDocklet *let, Qt::DockWidgetArea area)
 {
-    if (area == Qt::RightDockWidgetArea)
-    {
-        leftDockbar->removeDocklet(let);
-        rightDockbar->addDocklet(let);
-    }
-
     if (area == Qt::LeftDockWidgetArea)
     {
         rightDockbar->removeDocklet(let);
         leftDockbar->addDocklet(let);
+    }
+
+    if (area == Qt::RightDockWidgetArea)
+    {
+        leftDockbar->removeDocklet(let);
+        rightDockbar->addDocklet(let);
     }
 }
 
