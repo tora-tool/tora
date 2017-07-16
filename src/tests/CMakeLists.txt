@@ -128,14 +128,15 @@ IF(TORA_DEBUG AND TEST_APP4)
 # test4
 QT5_WRAP_CPP(TEST4_MOC_SOURCES
   tests/test4window.h
+  docklets/tosearch.h
   editor/tobaseeditor.h
   editor/tohighlightededitor.h
   editor/tomarkededitor.h  
   editor/tomemoeditor.h
   editor/toscintilla.h
   editor/tosqltext.h
-  editor/tosyntaxanalyzernl.h
   editor/tosyntaxanalyzermysql.h
+  editor/tosyntaxanalyzernl.h
   editor/tosyntaxanalyzeroracle.h
   editor/tosyntaxanalyzerpostgresql.h
   tools/toresultstats.h
@@ -146,14 +147,15 @@ QT5_ADD_RESOURCES(TEST4_RC_SOURCES tests/test4.qrc)
 ADD_EXECUTABLE("test4"
   tests/test4.cpp
   tests/test4window.cpp
+  docklets/tosearch.cpp
   editor/tobaseeditor.cpp
   editor/tohighlightededitor.cpp
   editor/tomarkededitor.cpp
   editor/tomemoeditor.cpp
   editor/toscintilla.cpp
   editor/tosqltext.cpp
-  editor/tosyntaxanalyzernl.cpp
   editor/tosyntaxanalyzermysql.cpp
+  editor/tosyntaxanalyzernl.cpp
   editor/tosyntaxanalyzeroracle.cpp
   editor/tosyntaxanalyzerpostgresql.cpp
   tools/toresultstats.cpp

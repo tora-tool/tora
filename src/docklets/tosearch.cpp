@@ -32,55 +32,40 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOTEXTVIEW_H
-#define TOTEXTVIEW_H
+#include "docklets/tosearch.h"
+#include "widgets/tosearchreplace.h"
 
-#include "core/toeditwidget.h"
-#include "core/utils.h"
-#include "editor/toeditglobals.h"
-
-class QTextBrowser;
-
-/** A tora editwidget version of the @ref QTextEdit widget.
- *  Used as HTML browser
- */
-class toTextView : public QWidget, public toEditWidget
+toSearchReplaceDocklet::toSearchReplaceDocklet(QWidget *parent, toWFlags flags)
+    : QDockWidget(tr("Search/Replace"), parent, flags)
 {
-    Q_OBJECT;
-public:
+    setObjectName("Search Docklet");
+    setAllowedAreas(Qt::BottomDockWidgetArea);
 
-    toTextView(QWidget *parent = 0, const char *name = 0);
+    m_search = new toSearchReplace(this);
+    setWidget(m_search);
 
-    void setFontFamily(const QString &fontFamily);
-    void setReadOnly(bool ro);
-    void setText(const QString &t);
-    void setFilename(const QString &f);
+    QWidgetList widgets = qApp->topLevelWidgets();
+    for (QWidgetList::iterator it = widgets.begin(); it != widgets.end(); it++)
+    {
+        QMainWindow *main = dynamic_cast<QMainWindow *>((*it));
+        if (main)
+        {
+            main->addDockWidget(Qt::BottomDockWidgetArea, this);
+            break;
+        }
+    }
+}
 
-    /** toEditWidget api */
-    void editCopy(void) override;
-    void editSelectAll(void) override;
-    bool editSave(bool) override;
-    bool editOpen(const QString&) override { return false; }
-    void editUndo()    override {}
-    void editRedo()    override {}
-    void editCut()     override {}
-    void editPaste()   override {}
-    void editReadAll() override {}
-    QString editText() override;
+void toSearchReplaceDocklet::focusInEvent (QFocusEvent *e)
+{
+    QDockWidget::focusInEvent(e);
+}
+void toSearchReplaceDocklet::focusOutEvent (QFocusEvent *e)
+{
+    QDockWidget::focusOutEvent(e);
+}
 
-    bool searchNext();
-    void searchReplace() {};
-
-protected:
-    void focusInEvent (QFocusEvent *e) override;
-
-private:
-    QTextBrowser *m_view;
-    QString m_filename;
-
-    private slots:
-    void setEditorFocus();
-    void handleSearching(Search::SearchFlags flags);
-};
-
-#endif
+void toSearchReplaceDocklet::activate (toEditWidget*)
+{
+	m_search->activate();
+}

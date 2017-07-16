@@ -67,9 +67,6 @@ toBindVarsDocklet::toBindVarsDocklet(QWidget *parent,
     editor->setFont(fixed);
     editor->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-    m_search = new toSearchReplace(this);
-    m_search->hide();
-
     setFocusProxy(editor);
 
     QWidget *w = new QWidget(this);
@@ -77,7 +74,6 @@ toBindVarsDocklet::toBindVarsDocklet(QWidget *parent,
     l->setSpacing(0);
     l->setContentsMargins(0, 0, 0, 0);
     l->addWidget(editor);
-    l->addWidget(m_search);
     w->setLayout(l);
 
     setWidget(w);
@@ -86,11 +82,6 @@ toBindVarsDocklet::toBindVarsDocklet(QWidget *parent,
     FlagSet.Paste = true;
     FlagSet.Search = true;
     FlagSet.SelectAll = true;
-
-    connect(m_search, SIGNAL(searchNext(Search::SearchFlags)),
-            this, SLOT(handleSearching(Search::SearchFlags)));
-    connect(m_search, SIGNAL(windowClosed()),
-            this, SLOT(setEditorFocus()));
 }
 
 
@@ -132,18 +123,24 @@ void toBindVarsDocklet::editSelectAll()
 
 bool toBindVarsDocklet::searchNext()
 {
+    throw QString("TODO toBindVarsDocklet::searchNext");
+#if 0
     if (!m_search->isVisible())
     {
         m_search->show();
         m_search->setReadOnly(editor->isReadOnly());
     }
+#endif
     return true;
 }
 
 void toBindVarsDocklet::searchReplace()
 {
+    throw QString("TODO toBindVarsDocklet::searchReplace");
+#if 0
     m_search->setVisible(!m_search->isVisible());
     m_search->setReadOnly(editor->isReadOnly());
+#endif
 }
 
 void toBindVarsDocklet::handleSearching(Search::SearchFlags flags)
@@ -154,7 +151,10 @@ void toBindVarsDocklet::handleSearching(Search::SearchFlags flags)
     if (flags & Search::CaseSensitive)
         f |= QTextDocument::FindCaseSensitively;
 
+    throw QString("TODO toBindVarsDocklet::handleSearching");
+#if 0
     /*bool ret =*/ editor->find(m_search->searchText(), f);
+#endif
 }
 
 void toBindVarsDocklet::setEditorFocus()

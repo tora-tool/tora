@@ -33,6 +33,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "core/toeditmenu.h"
+#include "core/toeditwidget.h"
 #include "ts_log/ts_log_utils.h"
 
 #include "icons/undo.xpm"

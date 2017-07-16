@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOLOGGING_DOCK_H
-#define TOLOGGING_DOCK_H
+#pragma once
 
 #include "core/todocklet.h"
 #include "core/toeditwidget.h"
@@ -46,64 +45,52 @@
 #include <QPlainTextEdit>
 
 class toToolWidget;
-class toSearchReplace;
 
 class toLoggingDocklet : public toDocklet , public toEditWidget
 {
-        Q_OBJECT;
+    Q_OBJECT;
 
-    public:
-        toLoggingDocklet(QWidget *parent = 0, toWFlags flags = 0);
+public:
+    toLoggingDocklet(QWidget *parent = 0, toWFlags flags = 0);
 
-        /**
-         * Get the action icon name for this docklet
-         */
-        QIcon icon() const override;
+    /**
+     * Get the action icon name for this docklet
+     */
+    QIcon icon() const override;
 
-        /**
-         * Get the docklet's name
-         */
-        QString name() const override;
+    /**
+     * Get the docklet's name
+     */
+    QString name() const override;
 
-        // TODO/FIXME: maybe some of things below do have sense...
-        bool editOpen(const QString&) override
-        {
-            return false;
-        };
-        bool editSave(bool) override
-        {
-            return false;
-        };
-        void editPrint() override {};
-        void editUndo() override {};
-        void editRedo() override {};
-        void editCut() override {};
-        void editCopy() override;
-        void editPaste() override {};
-        void editSelectAll() override;
-        void editReadAll() override {};
-        QString editText() override
-        {
-            return "";
-        };
+    // TODO/FIXME: maybe some of things below do have sense...
+    bool editOpen(const QString&) override { return false; };
+    bool editSave(bool)  override { return false;};
+    void editUndo()      override {};
+    void editRedo()      override {};
+    void editCut()       override {};
+    void editCopy()      override;
+    void editPaste()     override {};
+    void editSelectAll() override;
+    void editReadAll()   override {};
+    QString editText()   override { return ""; };
 
-        /** Re-implented from toEditWidget */
-        void focusInEvent (QFocusEvent *e) override;
-        /** Re-implented from toEditWidget */
-        void focusOutEvent (QFocusEvent *e) override;
-        /** Re-implented from toEditWidget */
-        bool searchNext() override;
-        /** Re-implented from toEditWidget */
-        void searchReplace() override;
+    /** Re-implented from toEditWidget */
+    bool searchNext() override;
+    /** Re-implented from toEditWidget */
+    void searchReplace() override;
 
-    private:
-        QPlainTextEdit &log;
-        toSearchReplace *m_search;
+protected:
+    /** Re-implented from toEditWidget */
+    void focusInEvent (QFocusEvent *e) override;
+    /** Re-implented from toEditWidget */
+    void focusOutEvent (QFocusEvent *e) override;
 
-    private slots:
-        void handleSearching(Search::SearchFlags flags);
-        void setEditorFocus();
+private:
+    QPlainTextEdit &log;
+
+private slots:
+    void handleSearching(Search::SearchFlags flags);
+    void setEditorFocus();
 };
 
-
-#endif

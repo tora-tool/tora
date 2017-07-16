@@ -186,11 +186,6 @@ class toResultTableView : public QTableView, public toResult, public toEditWidge
         bool editSave(bool askfile) override;
 
         /**
-         * Print this widgets contents.
-         */
-        void editPrint(void) override;
-
-        /**
          * Perform copy.
          */
         void editCopy(void) override;

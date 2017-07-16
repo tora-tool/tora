@@ -68,7 +68,6 @@ public:
     void editSelectAll(void) override;
     bool editSave(bool) override;
     bool editOpen(const QString&) override { return false; }
-    void editPrint() override {}
     void editUndo() override {}
     void editRedo() override {}
     void editCut() override {}
@@ -109,7 +108,6 @@ protected slots:
     void rowsRemoved(const QModelIndex &parent, int first, int last);
 private:
     toSqlText *m_view;
-    toSearchReplace *m_search;
     QString m_filename;
     QAbstractItemModel *m_model;
     QSet<int> m_lines;

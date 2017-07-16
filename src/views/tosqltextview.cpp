@@ -59,18 +59,11 @@ toSqlTextView::toSqlTextView(QWidget *parent /* = 0*/, const char *name /* = 0*/
     m_view = new toSqlText(this);
     m_view->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-    m_search = new toSearchReplace(this);
-    m_search->hide();
-
     QVBoxLayout *l = new QVBoxLayout();
     l->setSpacing(0);
     l->setContentsMargins(0, 0, 0, 0);
     l->addWidget(m_view);
-    l->addWidget(m_search);
     setLayout(l);
-
-    connect(m_search, SIGNAL(searchNext(Search::SearchFlags)), this, SLOT(handleSearching(Search::SearchFlags)));
-    connect(m_search, SIGNAL(windowClosed()), this, SLOT(setEditorFocus()));
 }
 
 void toSqlTextView::setReadOnly(bool ro)
@@ -127,7 +120,6 @@ void toSqlTextView::setModel(QAbstractItemModel *model)
     connect(model, SIGNAL(rowsInserted(const QModelIndex &, int , int)), this, SLOT(rowsInserted(const QModelIndex &, int, int)));
     connect(model, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(rowsRemoved(const QModelIndex &, int, int)));
     setReadOnly(true);
-    m_search->setReadOnly(true);
 }
 
 void toSqlTextView::setContextMenuPolicy(Qt::ContextMenuPolicy policy)
@@ -184,11 +176,14 @@ void toSqlTextView::rowsRemoved(const QModelIndex &parent, int first, int last)
 
 bool toSqlTextView::searchNext()
 {
+    throw QString("TODO toSqlTextView::searchNext");
+#if 0
     if (!m_search->isVisible())
     {
         m_search->show();
         m_search->setReadOnly(true);
     }
+#endif
     return true;
 }
 

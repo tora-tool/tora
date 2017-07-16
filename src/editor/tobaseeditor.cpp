@@ -136,11 +136,6 @@ void toBaseEditor::editSelectAll(void)
     m_editor->selectAll(true);
 }
 
-void toBaseEditor::editPrint(void)
-{
-    m_editor->print(Filename);
-}
-
 bool toBaseEditor::editOpen(const QString &suggestedFile)
 {
     if (m_editor->isModified())
@@ -233,7 +228,6 @@ void toBaseEditor::setEditFlags()
     if (m_editor->isReadOnly())
     {
         FlagSet.Save = true;
-        FlagSet.Print = true;
         FlagSet.Copy = m_editor->hasSelectedText();
         FlagSet.Paste = false;
         FlagSet.Search = true;
@@ -243,7 +237,6 @@ void toBaseEditor::setEditFlags()
     {
         FlagSet.Open = true;
         FlagSet.Save = true;
-        FlagSet.Print = true;
         FlagSet.Undo = m_editor->isUndoAvailable();
         FlagSet.Redo = m_editor->isRedoAvailable();
         FlagSet.Cut = m_editor->hasSelectedText();

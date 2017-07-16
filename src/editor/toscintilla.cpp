@@ -33,7 +33,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "editor/toscintilla.h"
-#include "editor/toworksheettext.h"
+#include "core/toeditorconfiguration.h"
 #include "core/toconfiguration.h"
 #include "core/toglobalevent.h"
 #include "core/tologger.h"
@@ -44,7 +44,6 @@
 
 #include <QApplication>
 #include <QtGui/QClipboard>
-#include <QPrintDialog>
 #include <QtXml/QDomDocument>
 #include <QShortcut>
 #include <QtCore/QtDebug>
@@ -53,18 +52,8 @@
 #include <QtCore/QMimeData>
 #include <QToolTip>
 
-#include <Qsci/qsciprinter.h>
 #include <Qsci/qscilexersql.h>
 #include "core/tostyle.h"
-
-#include "icons/undo.xpm"
-#include "icons/redo.xpm"
-#include "icons/copy.xpm"
-#include "icons/cut.xpm"
-#include "icons/paste.xpm"
-
-
-#define ACCEL_KEY(k) "\t" + QString("Ctrl+" #k)
 
 void QSciMessage::notify()
 {
@@ -270,41 +259,6 @@ bool toScintilla::event(QEvent *event)
     return QsciScintilla::event(event);
 }
 
-void toScintilla::print(const QString  &fname)
-{
-    QsciPrinter printer;
-
-    QPrintDialog dialog(&printer, this);
-    dialog.setMinMax(1, 1000);
-    dialog.setFromTo(1, 1000);
-
-    if (!fname.isEmpty())
-    {
-        QFileInfo info(fname);
-        dialog.setWindowTitle(tr("Print %1").arg(info.fileName()));
-        printer.setOutputFileName(info.path() +
-                                  QString("/") +
-                                  info.baseName() +
-                                  ".pdf");
-    }
-    else
-        dialog.setWindowTitle(tr("Print Document"));
-
-    // printRange() not handling this and not sure what to do about it
-//     if(hasSelectedText())
-//         dialog.addEnabledOption(QAbstractPrintDialog::PrintSelection);
-
-    if (!dialog.exec())
-        return;
-
-    printer.setCreator(tr(TOAPPNAME));
-
-    // they show up in the print
-    setMarginLineNumbers(0, false);
-    printer.printRange(this);
-    setMarginLineNumbers(0, true);
-}
-
 void toScintilla::copy()
 {
     QsciScintilla::copy();
@@ -439,6 +393,8 @@ void toScintilla::mousePressEvent(QMouseEvent *e)
     QsciScintilla::mousePressEvent(e);
 }
 
+#include "docklets/tosearch.h"
+
 void toScintilla::keyPressEvent(QKeyEvent *e)
 {
     if (e->matches(QKeySequence::Copy))
@@ -447,6 +403,9 @@ void toScintilla::keyPressEvent(QKeyEvent *e)
         copy();
         e->accept();
         return;
+    } else if (Utils::toCheckKeyEvent(e, toEditMenuSingle::Instance().searchReplaceAct->shortcut())) {
+        toSearchReplaceDockletSingle::Instance().show();
+        //toSearchReplaceDockletSingle::Instance().activate(this);
     }
     QsciScintilla::keyPressEvent(e);
 }

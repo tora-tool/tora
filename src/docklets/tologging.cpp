@@ -57,9 +57,6 @@ toLoggingDocklet::toLoggingDocklet(QWidget *parent,
     log.setParent(this);
     log.setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-    m_search = new toSearchReplace(this);
-    m_search->hide();
-
     setFocusProxy(&log);
 
     QWidget *w = new QWidget(this);
@@ -67,11 +64,9 @@ toLoggingDocklet::toLoggingDocklet(QWidget *parent,
     l->setSpacing(0);
     l->setContentsMargins(0, 0, 0, 0);
     l->addWidget(&log);
-    l->addWidget(m_search);
     w->setLayout(l);
 
     setWidget(w);
-
 
 //    FlagSet.Save = true;
 //    FlagSet.Print = true;
@@ -79,10 +74,6 @@ toLoggingDocklet::toLoggingDocklet(QWidget *parent,
     FlagSet.Search = true;
     FlagSet.SelectAll = true;
 
-    connect(m_search, SIGNAL(searchNext(Search::SearchFlags)),
-            this, SLOT(handleSearching(Search::SearchFlags)));
-    connect(m_search, SIGNAL(windowClosed()),
-            this, SLOT(setEditorFocus()));
 }
 
 
@@ -119,18 +110,24 @@ void toLoggingDocklet::editSelectAll()
 
 bool toLoggingDocklet::searchNext()
 {
+    throw QString("TODO toLoggingDocklet::searchNext");
+#if 0
     if (!m_search->isVisible())
     {
         m_search->show();
         m_search->setReadOnly(log.isReadOnly());
     }
+#endif
     return true;
 }
 
 void toLoggingDocklet::searchReplace()
 {
+    throw QString("TODO toLoggingDocklet::searchReplace");
+#if 0
     m_search->setVisible(!m_search->isVisible());
     m_search->setReadOnly(log.isReadOnly());
+#endif
 }
 
 void toLoggingDocklet::handleSearching(Search::SearchFlags flags)
@@ -141,7 +138,10 @@ void toLoggingDocklet::handleSearching(Search::SearchFlags flags)
     if (flags & Search::CaseSensitive)
         f |= QTextDocument::FindCaseSensitively;
 
+    throw QString("TODO toTextView::handleSearching");
+#if 0
     /*bool ret =*/ log.find(m_search->searchText(), f);
+#endif
 }
 
 void toLoggingDocklet::setEditorFocus()

@@ -32,55 +32,46 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOTEXTVIEW_H
-#define TOTEXTVIEW_H
+#pragma once
 
-#include "core/toeditwidget.h"
-#include "core/utils.h"
-#include "editor/toeditglobals.h"
+#include "loki/Singleton.h"
 
-class QTextBrowser;
+#include <QMenu>
 
-/** A tora editwidget version of the @ref QTextEdit widget.
- *  Used as HTML browser
+class QAction;
+
+/** This singleton represents File menu in the main window widget
+ * as this must be accessed from various pieces it was moved into singleton
+ *
  */
-class toTextView : public QWidget, public toEditWidget
+class toFileMenu : public QMenu
 {
     Q_OBJECT;
 public:
+    toFileMenu();
+    virtual ~toFileMenu();
 
-    toTextView(QWidget *parent = 0, const char *name = 0);
+    void menuAboutToShow();
 
-    void setFontFamily(const QString &fontFamily);
-    void setReadOnly(bool ro);
-    void setText(const QString &t);
-    void setFilename(const QString &f);
-
-    /** toEditWidget api */
-    void editCopy(void) override;
-    void editSelectAll(void) override;
-    bool editSave(bool) override;
-    bool editOpen(const QString&) override { return false; }
-    void editUndo()    override {}
-    void editRedo()    override {}
-    void editCut()     override {}
-    void editPaste()   override {}
-    void editReadAll() override {}
-    QString editText() override;
-
-    bool searchNext();
-    void searchReplace() {};
-
-protected:
-    void focusInEvent (QFocusEvent *e) override;
+    QAction *newConnAct, *closeConnAct;
+    QAction *commitAct, *rollbackAct, *currentAct, *stopAct, *refreshAct;
+    QAction *openAct, *saveAct;
+    QMenu   *recentMenu;
+    QAction *saveAsAct;
+#ifdef TORA3_SESSION
+    QAction *openSessionAct, *saveSessionAct;
+    QAction *restoreSessionAct , *closeSessionAct
+#endif
+    QAction *quitAct;
 
 private:
-    QTextBrowser *m_view;
-    QString m_filename;
+    void updateRecent(void);
 
-    private slots:
-    void setEditorFocus();
-    void handleSearching(Search::SearchFlags flags);
+private slots:
+    void slotAboutToShow();
+
+    /** Add recent file */
+    void addRecentFile(const QString &filename);
 };
 
-#endif
+typedef Loki::SingletonHolder<toFileMenu, Loki::CreateUsingNew, Loki::NoDestroy> toFileMenuSingle;

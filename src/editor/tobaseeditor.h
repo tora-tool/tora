@@ -62,7 +62,6 @@ class toBaseEditor : public QWidget, public toEditWidget
         void editCopy(void) override;
         void editPaste(void) override;
         void editSelectAll(void) override;
-        void editPrint(void) override;
         bool editOpen(const QString &suggestedFile = QString::null) override;
         bool editSave(bool askfile) override;
         bool searchNext() override;

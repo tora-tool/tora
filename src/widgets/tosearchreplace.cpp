@@ -51,12 +51,6 @@ toSearchReplace::toSearchReplace(QWidget *parent)
     , toHelpContext(QString::fromLatin1("searchreplace.html"))
 {
     setupUi(this);
-    SearchNext->setIcon(QIcon(":/icons/find_next.png"));
-    SearchPrevious->setIcon(QIcon(":/icons/find_prev.png"));
-    Replace->setIcon(QIcon(":/icons/replace_next.png"));
-    ReplaceAll->setIcon(QIcon(":/icons/replace_all.png"));
-
-    hideButton->setIcon(QPixmap(const_cast<const char**>(close_xpm)));
 
     QAction *action = new QAction(this);
     action->setShortcut(QKeySequence::HelpContents);
@@ -70,7 +64,6 @@ toSearchReplace::toSearchReplace(QWidget *parent)
     connect(SearchPrevious, SIGNAL(clicked()), this, SLOT(act_searchPrevious()));
     connect(Replace, SIGNAL(clicked()), this, SLOT(act_replace()));
     connect(ReplaceAll, SIGNAL(clicked()), this, SLOT(act_replaceAll()));
-    connect(hideButton, SIGNAL(clicked()), this, SLOT(close()));
     connect(SearchText, SIGNAL(editTextChanged(const QString &)),
             this, SLOT(act_searchChanged(const QString &)));
 }
@@ -95,6 +88,13 @@ void toSearchReplace::setReadOnly(bool ro)
     ReplacementText->setEnabled(!ro);
     Replace->setEnabled(!ro);
     ReplaceAll->setEnabled(!ro);
+}
+
+void toSearchReplace::activate()
+{
+    SearchText->setFocus();
+    SearchText->lineEdit()->selectAll();
+    act_searchChanged(SearchText->currentText());
 }
 
 Search::SearchFlags toSearchReplace::sharedFlags()
@@ -165,9 +165,7 @@ void toSearchReplace::act_replaceAll(void)
 
 void toSearchReplace::showEvent(QShowEvent * e)
 {
-    SearchText->setFocus();
-    SearchText->lineEdit()->selectAll();
-    act_searchChanged(SearchText->currentText());
+    activate();
     QWidget::showEvent(e);
 }
 

@@ -488,7 +488,6 @@ toListView::toListView(QWidget *parent, const char *name, toWFlags f)
     , editAct(NULL)
 {
     toEditWidget::FlagSet.Save = true;
-    toEditWidget::FlagSet.Print = true;
     toEditWidget::FlagSet.Search = true;
     toEditWidget::FlagSet.SelectAll = true;
 

@@ -190,6 +190,7 @@ SET(TORA_MOC_CLASSES
   core/toeventquery.h
   core/toeventqueryworker.h
   core/toextract.h
+  core/tofilemenu.h
   core/toglobalconfiguration.h
   core/toglobalevent.h
   core/tohelpcontext.h
@@ -401,6 +402,7 @@ IF (USE_EXPERIMENTAL)
   #ENDIF(graphviz_FOUND)
   LIST(APPEND TORA_MOC_CLASSES docklets/tologging.h)
   LIST(APPEND TORA_MOC_CLASSES docklets/tobindvars.h)
+  LIST(APPEND TORA_MOC_CLASSES docklets/tosearch.h)
 ENDIF (USE_EXPERIMENTAL)
 
 ################################################################################
@@ -451,6 +453,7 @@ SET(TORA_SOURCES
   core/toeventquery.cpp
   core/toeventqueryworker.cpp
   core/toextract.cpp
+  core/tofilemenu.cpp
   core/toglobalconfiguration.cpp
   core/toglobalevent.cpp
   core/tohelpcontext.cpp
@@ -695,6 +698,7 @@ IF (USE_EXPERIMENTAL)
   LIST (APPEND TORA_SOURCES tools/toer.cpp)
   LIST (APPEND TORA_SOURCES tools/tosandboxtool.cpp)
   LIST (APPEND TORA_SOURCES docklets/tologging.cpp)
+  LIST (APPEND TORA_SOURCES docklets/tosearch.cpp)
   LIST (APPEND TORA_SOURCES docklets/tobindvars.cpp)
   LIST (APPEND TORA_SOURCES core/tomemory.cpp)
 ENDIF (USE_EXPERIMENTAL)

@@ -32,55 +32,32 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOTEXTVIEW_H
-#define TOTEXTVIEW_H
+#pragma once
 
-#include "core/toeditwidget.h"
+#include <QDockWidget>
+
 #include "core/utils.h"
-#include "editor/toeditglobals.h"
 
-class QTextBrowser;
+class toSearchReplace;
+class toEditWidget;
 
-/** A tora editwidget version of the @ref QTextEdit widget.
- *  Used as HTML browser
- */
-class toTextView : public QWidget, public toEditWidget
+class toSearchReplaceDocklet : public QDockWidget
 {
     Q_OBJECT;
+
 public:
+    toSearchReplaceDocklet(QWidget *parent = 0, toWFlags flags = 0);
 
-    toTextView(QWidget *parent = 0, const char *name = 0);
+    /** Re-implented from toEditWidget */
+    void focusInEvent (QFocusEvent*) override;
+    /** Re-implented from toEditWidget */
+    void focusOutEvent (QFocusEvent*) override;
 
-    void setFontFamily(const QString &fontFamily);
-    void setReadOnly(bool ro);
-    void setText(const QString &t);
-    void setFilename(const QString &f);
-
-    /** toEditWidget api */
-    void editCopy(void) override;
-    void editSelectAll(void) override;
-    bool editSave(bool) override;
-    bool editOpen(const QString&) override { return false; }
-    void editUndo()    override {}
-    void editRedo()    override {}
-    void editCut()     override {}
-    void editPaste()   override {}
-    void editReadAll() override {}
-    QString editText() override;
-
-    bool searchNext();
-    void searchReplace() {};
-
-protected:
-    void focusInEvent (QFocusEvent *e) override;
-
+    void activate(toEditWidget*);
 private:
-    QTextBrowser *m_view;
-    QString m_filename;
+    toSearchReplace *m_search;
 
-    private slots:
-    void setEditorFocus();
-    void handleSearching(Search::SearchFlags flags);
+private slots:
 };
 
-#endif
+class toSearchReplaceDockletSingle: public ::Loki::SingletonHolder<toSearchReplaceDocklet, Loki::CreateUsingNew, Loki::NoDestroy> {};

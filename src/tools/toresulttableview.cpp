@@ -72,7 +72,6 @@ toResultTableView::toResultTableView(QWidget * parent)
     , Model(NULL)
 {
     toEditWidget::FlagSet.Save = true;
-    toEditWidget::FlagSet.Print = true;
     toEditWidget::FlagSet.Copy = true;
     toEditWidget::FlagSet.Search = true;
     toEditWidget::FlagSet.SelectAll = true;
@@ -93,7 +92,6 @@ toResultTableView::toResultTableView(bool readable,
     , Model(NULL)
 {
     toEditWidget::FlagSet.Save = true;
-    toEditWidget::FlagSet.Print = true;
     toEditWidget::FlagSet.Copy = true;
     toEditWidget::FlagSet.Search = true;
     toEditWidget::FlagSet.SelectAll = true;
@@ -727,12 +725,6 @@ bool toResultTableView::editSave(bool askfile)
 
     return false;
 }
-
-
-void toResultTableView::editPrint()
-{
-}
-
 
 void toResultTableView::editCopy()
 {

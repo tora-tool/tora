@@ -54,20 +54,11 @@ toTextView::toTextView(QWidget *parent /* = 0*/, const char *name /* = 0*/)
     m_view = new QTextBrowser(this);
     m_view->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-    m_search = new toSearchReplace(this);
-    m_search->SearchMode->hide();
-
     QVBoxLayout *l = new QVBoxLayout();
     l->setSpacing(0);
     l->setContentsMargins(0, 0, 0, 0);
     l->addWidget(m_view);
-    l->addWidget(m_search);
     setLayout(l);
-
-    connect(m_search, SIGNAL(searchNext(Search::SearchFlags)),
-            this, SLOT(handleSearching(Search::SearchFlags)));
-    connect(m_search, SIGNAL(windowClosed()),
-            this, SLOT(setEditorFocus()));
 }
 
 void toTextView::setFontFamily(const QString &fontFamily)
@@ -125,11 +116,14 @@ void toTextView::focusInEvent (QFocusEvent *e)
 
 bool toTextView::searchNext()
 {
+    throw QString("TODO toTextView::searchNext");
+#if 0
     if (!m_search->isVisible())
     {
         m_search->show();
         m_search->setReadOnly(true);
     }
+#endif
     return true;
 }
 
@@ -141,7 +135,10 @@ void toTextView::handleSearching(Search::SearchFlags flags)
     if (flags & Search::CaseSensitive)
         f |= QTextDocument::FindCaseSensitively;
 
+    throw QString("TODO toTextView::handleSearching");
+#if 0
     bool ret = m_view->find(m_search->searchText(), f);
+#endif
 }
 
 void toTextView::setEditorFocus()
