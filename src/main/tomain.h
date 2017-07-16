@@ -201,12 +201,6 @@ class toMain : public toMainWindow
         void setNeedCommit(toToolWidget *tool, bool needCommit = true);
 
         /**
-         * Add a new connection. The connection itself must already be created.
-         * Returns the connection or it's duplicate already opened connection.
-         */
-        void addConnection(toConnection *conn);
-
-        /**
          * Set coordinates in the statusbar.
          *
          * Used to indicate current cursor position by child widgets.

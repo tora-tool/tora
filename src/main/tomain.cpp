@@ -133,8 +133,6 @@ toMain::toMain()
             this, SLOT(setCoordinates(int, int)));
     connect(&toGlobalEventSingle::Instance(), SIGNAL(s_createDefaultTool(void)),
             this, SLOT(createDefault()));
-    connect(&toGlobalEventSingle::Instance(), SIGNAL(s_addConnection(toConnection*, bool)),
-            this, SLOT(addConnection(toConnection *conn, bool)));
     connect(&toGlobalEventSingle::Instance(), SIGNAL(s_setNeedCommit(toToolWidget*, bool)),
             this, SLOT(setNeedCommit(toToolWidget*, bool)));
     connect(&toGlobalEventSingle::Instance(), SIGNAL(s_checkCaching()),
@@ -174,36 +172,17 @@ toMain::toMain()
     toProvidersList &allProviders = toProvidersListSing::Instance(); // already populated in main.cpp see splash
     Q_UNUSED(allProviders);
 
-    if (Connections.isEmpty())
-    {
-        try
-        {
-            toConnection *conn;
-
-            do
-            {
-                toNewConnection newConnection(this);
-
-                conn = NULL;
-                if (newConnection.exec())
-                    conn = newConnection.connection();
-                else
-                    break;
-            }
-            while (!conn);
-
-            if (conn)
-                addConnection(conn);
-        }
-        TOCATCH;
-    }
-
 #ifdef QT_DEBUG
     reportTimer = new QTimer(this);
     reportTimer->setInterval(5000);
     connect(reportTimer, SIGNAL(timeout ()), this, SLOT(reportFocus()));
     reportTimer->start();
 #endif
+
+    if (Connections.isEmpty())
+    {
+        addConnection();
+    }
 }
 
 void toMain::createActions()
@@ -759,17 +738,13 @@ void toMain::addConnection(void)
             conn = newConnection.connection();
 
         if (conn)
-            addConnection(conn);
+        {
+            Connections.addConnection(conn);
+            // New connection was added - create a default tool for it
+            createDefault();
+        }
     }
     TOCATCH
-}
-
-void toMain::addConnection(toConnection *newconn)
-{
-    Connections.addConnection(newconn);
-
-    // New connection was added - create a default tool for it
-    createDefault();
 }
 
 void toMain::setNeedCommit(toToolWidget *tool, bool needCommit)
