@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOMEMOEDITOR_H
-#define TOMEMOEDITOR_H
+#pragma once
 
 #include "editor/tomarkededitor.h"
 #include "editor/tohighlightededitor.h"
@@ -50,6 +49,7 @@ class toListView;
 class toBaseEditor;
 class toResultContentEditor;
 
+#if TORA3_MEMOEDITOR
 /** Displays an text in a widget which can optionally be modified and saved back.
  */
 class toMemoEditor : public QDialog

@@ -32,14 +32,14 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOMARKEDEDITOR_H
-#define TOMARKEDEDITOR_H
+#pragma once
 
 #include "editor/tobaseeditor.h"
 #include "core/utils.h"
 
 #include <QtGui/QKeyEvent>
 
+#if TORA3_MEMOEDITOR
 class toMarkedEditor : public toBaseEditor
 {
         Q_OBJECT;
@@ -70,5 +70,4 @@ class TMemoWithExec : public SUPER
                 SUPER::keyPressEvent(e);
         }
 };
-
 #endif

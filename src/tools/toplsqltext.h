@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOPLSQLTEXT_H
-#define TOPLSQLTEXT_H
+#pragma once
 
 #include "widgets/totoolwidget.h"
 //#include "editor/tosqltext.h"
@@ -53,6 +52,7 @@ class toTreeWidgetItem;
 class toPLSQLEditor;
 class toResultSchema;
 
+#if TORA3_MEMOEDITOR
 /*! \brief Advanced PL/SQL Editor. It's based on
 Debugger code. But it can compile PL/SQL unit in all cases.
 Even if is the user without debug grants/roles.

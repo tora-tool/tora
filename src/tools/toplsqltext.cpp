@@ -69,6 +69,7 @@
 #include "todescribe.h"
 #include "toresultview.h"
 
+#if TORA3_MEMOEDITOR
 
 class toPLSQLTool : public toTool
 {
@@ -731,3 +732,4 @@ void toPLSQL::checkCode(void)
     currentEditor()->resizeResults();
 } // checkCode
 
+#endif

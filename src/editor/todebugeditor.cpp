@@ -35,6 +35,8 @@
 #include "editor/todebugeditor.h"
 #include "editor/todebugtext.h"
 
+#if TORA3_MEMOEDITOR
+
 toDebugEditor::toDebugEditor(QWidget *parent, const char *name)
     : toBaseEditor(new toDebugText(NULL), parent)
 {
@@ -56,3 +58,6 @@ void toDebugEditor::setCurrentDebugLine(int current)
 {
     qobject_cast<toDebugText*>(m_editor)->setCurrentDebugLine(current);
 }
+
+
+#endif

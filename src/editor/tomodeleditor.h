@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOMODELEDITOR_H
-#define TOMODELEDITOR_H
+#pragma once
 
 #include "editor/tomarkededitor.h"
 #include "editor/tohighlightededitor.h"
@@ -49,7 +48,7 @@ class QToolBar;
 class toBaseEditor;
 class QAbstractItemModel;
 
-
+#if TORA3_MEMOEDITOR
 /**
  * A dialog for displaying and editing a row and column of a model
  */

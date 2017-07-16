@@ -332,7 +332,7 @@ void toResultTableData::changeFilter(bool checked)
 
     filter.AllTables->setChecked(AllFilter);
     filter.Order->setText(Order[FilterName]);
-    filter.Criteria->sciEditor()->setText(Criteria[FilterName]);
+    filter.Criteria->setText(Criteria[FilterName]);
 
     filter.Columns->changeObject(toCache::ObjectRef(Owner, Table, Owner));
 
@@ -341,7 +341,7 @@ void toResultTableData::changeFilter(bool checked)
         AllFilter = filter.AllTables->isChecked();
 
         FilterName = filterName();
-        Criteria[FilterName] = filter.Criteria->sciEditor()->text();
+        Criteria[FilterName] = filter.Criteria->text();
         Order[FilterName] = filter.Order->text();
 
         maybeSave();

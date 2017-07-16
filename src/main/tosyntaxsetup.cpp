@@ -71,10 +71,10 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, toWFlags fl)
             this, SLOT(openEditorShortcutsDialog()));
 
     // Crete/Adjust additional complex widgets
-    Analyzer = new toSyntaxAnalyzerNL(Example->editor());
-    Example->sciEditor()->setReadOnly(true);
+    Analyzer = new toSyntaxAnalyzerNL(Example);
+    Example->setReadOnly(true);
 
-    Example->sciEditor()->setText(QString::fromLatin1(
+    Example->setText(QString::fromLatin1(
                                   "PROMPT Create procedure\n"
                                   "create procedure CheckObvious as\n"
                                   "begin\n"
@@ -87,7 +87,7 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, toWFlags fl)
                                   " * multi line comment\n"
                                   " */\n"
                                   "end;"));
-    Example->sciEditor()->SendScintilla(QsciScintilla::SCI_SETCARETLINEVISIBLEALWAYS, true);
+    Example->SendScintilla(QsciScintilla::SCI_SETCARETLINEVISIBLEALWAYS, true);
 
     connect(CaretLineBool, SIGNAL(stateChanged(int)), this, SLOT(setCaretAlpha()));
     connect(CaretLineAlphaInt, SIGNAL(valueChanged(int)), this, SLOT(setCaretAlpha()));
@@ -110,9 +110,9 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, toWFlags fl)
     toSettingTab::loadSettings(this);
 
     if (SyntaxHighlightingInt->currentText() == "QsciSQL")
-        Example->editor()->setHighlighter(toSqlText::QsciSql);
+        Example->setHighlighter(toSqlText::QsciSql);
     else
-        Example->editor()->setHighlighter(toSqlText::Oracle);
+        Example->setHighlighter(toSqlText::Oracle);
 
     {
         QFont font(Utils::toStringToFont(toConfigurationNewSingle::Instance().option(Editor::ConfCodeFont).toString()));
@@ -173,9 +173,9 @@ void toSyntaxSetup::selectFont(void)
             toSyntaxAnalyzer::WordClassEnum key = (toSyntaxAnalyzer::WordClassEnum)WordClassEnum.value(idx);
             Styles[key].Font = font;
         }
-        Example->editor()->lexer()->setFont(font, -1); // -1 => all styles
-        Example->editor()->recolor(0, -1);
-        Example->editor()->update();
+        Example->lexer()->setFont(font, -1); // -1 => all styles
+        Example->recolor(0, -1);
+        Example->update();
     }
 }
 
@@ -211,12 +211,12 @@ void toSyntaxSetup::setCaretAlpha()
     // highlight caret line
     if (CaretLineBool->isChecked())
     {
-        Example->sciEditor()->setCaretLineVisible(true);
+        Example->setCaretLineVisible(true);
         // This is only required until transparency fixes in QScintilla go into stable release
         //QsciScintilla::SendScintilla(QsciScintilla::SCI_SETCARETLINEBACKALPHA, QsciScintilla::SC_ALPHA_NOALPHA);
-        Example->sciEditor()->SendScintilla(QsciScintilla::SCI_SETCARETLINEBACKALPHA, CaretLineAlphaInt->value());
+        Example->SendScintilla(QsciScintilla::SCI_SETCARETLINEBACKALPHA, CaretLineAlphaInt->value());
     } else {
-        Example->sciEditor()->setCaretLineVisible(false);
+        Example->setCaretLineVisible(false);
     }
     CaretLineAlphaInt->setEnabled(CaretLineBool->isChecked());
 }
@@ -285,9 +285,9 @@ void toSyntaxSetup::selectFGColor(void)
                 FGSample->setPalette(palette);
                 FGSample->update();
 
-                Example->editor()->lexer()->setColor(col, coleng);
-                Example->editor()->recolor(0, -1);
-                Example->editor()->update();
+                Example->lexer()->setColor(col, coleng);
+                Example->recolor(0, -1);
+                Example->update();
             }
         }
     }
@@ -315,9 +315,9 @@ void toSyntaxSetup::selectBGColor(void)
                 BGSample->setPalette(palette);
                 BGSample->update();
 
-                Example->editor()->lexer()->setPaper(col, coleng);
-                Example->editor()->recolor(0, -1);
-                Example->editor()->update();
+                Example->lexer()->setPaper(col, coleng);
+                Example->recolor(0, -1);
+                Example->update();
             }
         }
     }

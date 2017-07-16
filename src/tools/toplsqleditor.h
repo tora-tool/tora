@@ -32,9 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOPLSQLEDITOR_H
-#define TOPLSQLEDITOR_H
-
+#pragma once
 
 #include "core/totool.h"
 #include "editor/todebugeditor.h"
@@ -50,6 +48,7 @@ class toTreeWidget;
 class toPLSQL;
 class toPLSQLWidget;
 
+#if TORA3_MEMOEDITOR
 /*! \brief An editor widget for PL/SQL Editor.
 */
 class toPLSQLEditor : public toDebugEditor

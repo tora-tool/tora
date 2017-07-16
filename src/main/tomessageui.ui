@@ -15,7 +15,7 @@
   </property>
   <layout class="QGridLayout" >
    <item row="0" column="0" >
-    <widget class="toMarkedEditor" native="1" name="Message" >
+    <widget class="toScintilla" native="1" name="Message" >
      <property name="sizePolicy" >
       <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
        <horstretch>0</horstretch>
@@ -38,9 +38,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>toMarkedEditor</class>
+   <class>toScintilla</class>
    <extends>QWidget</extends>
-   <header>editor/tomarkededitor.h</header>
+   <header>editor/toscintilla.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

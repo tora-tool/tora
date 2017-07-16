@@ -55,6 +55,7 @@
 #include "icons/previous.xpm"
 #include "icons/rewind.xpm"
 
+#if TORA3_MEMOEDITOR
 void toMemoEditor::openFile(void)
 {
     Editor->editOpen();
@@ -558,3 +559,6 @@ bool toMemoEditor::eventFilter(QObject *obj, QEvent *event)
     }
     return false;
 }
+
+#endif
+

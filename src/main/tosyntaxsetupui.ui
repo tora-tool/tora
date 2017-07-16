@@ -564,7 +564,7 @@
         </widget>
        </item>
        <item>
-        <widget class="toDebugEditor" name="Example" native="true">
+        <widget class="toSqlText" name="Example" native="true">
          <property name="minimumSize">
           <size>
            <width>200</width>
@@ -581,9 +581,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>toDebugEditor</class>
+   <class>toSqlText</class>
    <extends>QWidget</extends>
-   <header>editor/todebugeditor.h</header>
+   <header>editor/tosqltext.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

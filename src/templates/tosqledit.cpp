@@ -47,6 +47,7 @@
 #include "tools/toworksheet.h"
 #include "widgets/totreewidget.h"
 #include "tools/toresultview.h"
+#include "editor/tosqltext.h"
 
 #include <QtCore/QString>
 #include <QtCore/QFileInfo>
@@ -682,8 +683,8 @@ void toSQLTemplateItem::collapse(void)
 
 QWidget *toSQLTemplateItem::selectedWidget(QWidget *parent)
 {
-    toHighlightedEditor *widget = new toHighlightedEditor(parent);
-    widget->sciEditor()->setReadOnly(true);
-    widget->sciEditor()->setText(allText(0));
+    toSqlText *widget = new toSqlText(parent);
+    widget->setReadOnly(true);
+    widget->setText(allText(0));
     return widget;
 }

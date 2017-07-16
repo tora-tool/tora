@@ -42,6 +42,7 @@ class QTreeView;
 class QModelIndex;
 
 class toHighlightedEditor;
+class toSqlText;
 class toResultTableView;
 class toCodeModel;
 class toResultCombo;
@@ -110,7 +111,7 @@ class toUnitTest : public toToolWidget
         toResultModel * m_model;
 
         //! SQL editor (worksheet) where is shown the test script.
-        toHighlightedEditor * editor;
+        toSqlText *editor;
         //! A "result table" for displaying all callable PL/SQL blocks
         QTreeView * codeList;
         toCodeModel * codeModel;

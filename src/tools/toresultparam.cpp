@@ -296,8 +296,10 @@ void toResultParam::generateFile(void)
             str += item->text(0) + " = '" + item->text(1) + "'\n";
         }
     }
+#if TORA3_MEMOEDITOR
     connect(new toMemoEditor(this, str, 0, 0), SIGNAL(changeData(int, int, const QString &)),
             this, SLOT(changedData(int, int, const QString &)));
+#endif
 }
 
 void toResultParam::applySession(void)

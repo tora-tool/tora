@@ -207,7 +207,7 @@ toOutput::toOutput(QWidget *main, toConnection &connection, bool enabled)
 
     Toolbar->addWidget(new Utils::toSpacer());
 
-    Output = new toMarkedEditor(this);
+    Output = new toScintilla(this);
     layout()->addWidget(Output);
 
     ToolMenu = NULL;
@@ -359,8 +359,8 @@ bool toOutput::enabled(void)
 
 void toOutput::insertLine(const QString &str)
 {
-    Output->sciEditor()->append(str);
-    Output->sciEditor()->setCursorPosition((*Output)->lines(), 0);
+    Output->append(str);
+    Output->setCursorPosition(Output->lines(), 0);
 }
 
 static toSQL SQLLog("toLogOutput:Poll",

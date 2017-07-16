@@ -65,11 +65,6 @@ toBaseEditor::toBaseEditor(toScintilla *editor, QWidget *parent)
     l->addWidget(m_editor);
     m_editor->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-    m_search = new toSearchReplace(this);
-    m_search->hide();
-//	m_editor->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::MinimumExpanding);
-    l->addWidget(m_search);
-
     setLayout(l);
 
     setEditFlags();
@@ -85,10 +80,10 @@ toBaseEditor::toBaseEditor(toScintilla *editor, QWidget *parent)
     connect(m_editor, SIGNAL(lostFocus()), this, SLOT(lostFocus()));
     connect(m_editor, SIGNAL(cursorPositionChanged(int, int)),
             this, SLOT(setCoordinates(int, int)));
-    connect(m_search, SIGNAL(searchNext(Search::SearchFlags)),
-            this, SLOT(handleSearching(Search::SearchFlags)));
+#if TORA3_MEMOEDITOR
     connect(m_search, SIGNAL(windowClosed()),
             this, SLOT(setEditorFocus()));
+#endif
     setFocusProxy(m_editor);
 }
 
@@ -204,18 +199,22 @@ bool toBaseEditor::editSave(bool askfile)
 
 bool toBaseEditor::searchNext()
 {
+#if TORA3_MEMOEDITOR
     if (!m_search->isVisible())
     {
         m_search->show();
         m_search->setReadOnly(m_editor->isReadOnly());
     }
+#endif
     return true;
 }
 
 void toBaseEditor::searchReplace()
 {
+#if TORA3_MEMOEDITOR
     m_search->setVisible(!m_search->isVisible());
     m_search->setReadOnly(m_editor->isReadOnly());
+#endif
 }
 
 void toBaseEditor::editReadAll()
@@ -311,12 +310,14 @@ void toBaseEditor::openFilename(const QString &file)
 
 void toBaseEditor::handleSearching(Search::SearchFlags flags)
 {
+#if TORA3_MEMOEDITOR
     qDebug() << "toBaseEditor::handleSearchin" << m_search->searchText() << m_search->replaceText() << flags;
     bool ret = m_editor->findText(m_search->searchText(),
                                   m_search->replaceText(),
                                   flags);
     if (!ret)
         qWarning() << "TODO/FIXME" << "toBaseEditor::handleSearching return value";
+#endif
 }
 
 void toBaseEditor::setCoordinates(int line, int column)

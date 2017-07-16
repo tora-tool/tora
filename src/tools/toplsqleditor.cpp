@@ -56,6 +56,8 @@
 #define PLSQL_STATIC "STATIC"
 #define PLSQL_RESULT ""
 
+#if TORA3_MEMOEDITOR
+
 #if TORA3_PARSING
 static struct TypeMapType
 {
@@ -913,3 +915,5 @@ bool toPLSQLEditor::editSave(bool askfile)
     }
     return false;
 } // editSave
+
+#endif

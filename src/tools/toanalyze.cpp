@@ -538,7 +538,9 @@ QStringList toAnalyze::getSQL(void)
 void toAnalyze::slotDisplaySQL(void)
 {
     QStringList sql = getSQL();
+#if TORA3_MEMOEDITOR
     new toMemoEditor(this, sql.join(";\n"), -1, -1, true);
+#endif
 }
 
 void toAnalyze::slotChangeOperation(int op)

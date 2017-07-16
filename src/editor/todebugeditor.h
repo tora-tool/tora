@@ -32,11 +32,11 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TODEBUGEDITOR_H
-#define TODEBUGEDITOR_H
+#pragma once
 
 #include "editor/tobaseeditor.h"
 
+#if TORA3_MEMOEDITOR
 class toDebugText;
 
 class toDebugEditor : public toBaseEditor

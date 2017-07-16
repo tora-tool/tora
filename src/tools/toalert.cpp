@@ -447,9 +447,11 @@ void toAlert::send(void)
 
 void toAlert::memo(void)
 {
+#if TORA3_MEMOEDITOR
     toMemoEditor *memo = new toMemoEditor(this, Message->text(), 0, 0);
     connect(memo, SIGNAL(changeData(int, int, const QString &)),
             this, SLOT(changeMessage(int, int, const QString &)));
+#endif
 }
 
 void toAlert::changeMessage(int, int, const QString &str)

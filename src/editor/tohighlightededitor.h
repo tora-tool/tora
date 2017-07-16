@@ -32,13 +32,13 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOHIGHLIGHTEDEDITOR_H
-#define TOHIGHLIGHTEDEDITOR_H
+#pragma once
 
 #include "editor/tobaseeditor.h"
 
 class toSqlText;
 
+#if TORA3_MEMOEDITOR
 class toHighlightedEditor : public toBaseEditor
 {
         Q_OBJECT;

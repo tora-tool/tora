@@ -35,9 +35,11 @@
 #include "editor/tomarkededitor.h"
 #include "editor/toscintilla.h"
 
+#if TORA3_MEMOEDITOR
 toMarkedEditor::toMarkedEditor(QWidget *parent, const char *name)
     : toBaseEditor(new toScintilla(NULL), parent)
 {
     if (name)
         setObjectName(name);
 }
+#endif

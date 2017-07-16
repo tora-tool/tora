@@ -1354,8 +1354,10 @@ void toSecurity::displaySQL(void)
     }
     if (res.isEmpty())
         Utils::toStatusMessage(tr("No changes made"));
+#if TORA3_MEMOEDITOR
     else
         new toMemoEditor(this, res, -1, -1, true);
+#endif
 }
 
 QList<QString> toSecurity::sql(void)

@@ -141,8 +141,6 @@ class toBaseEditor : public QWidget, public toEditWidget
         //! Watch for file (if any) changes from external apps
         QFileSystemWatcher * m_fsWatcher;
 
-        toSearchReplace *m_search;
-
         void fsWatcherClear();
 };
 

@@ -57,6 +57,7 @@
 #include "icons/previous.xpm"
 #include "icons/rewind.xpm"
 
+#if TORA3_MEMOEDITOR
 void toModelEditor::openFile()
 {
     Editor->editOpen();
@@ -381,3 +382,5 @@ void toModelEditor::lastColumn()
     changePosition(index);
     Label->setText("<B>" + Model->headerData(index.column(), Qt::Horizontal).toString() + "</B>");
 }
+
+#endif

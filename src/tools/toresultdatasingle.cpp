@@ -200,6 +200,7 @@ void toResultDataSingle::showMemo(int col)
     QModelIndex index = Model->index(Row, col);
     if (index.isValid())
     {
+#if TORA3_MEMOEDITOR
         toModelEditor *memo = new toModelEditor(
             this,
             Model,
@@ -208,5 +209,6 @@ void toResultDataSingle::showMemo(int col)
             true);
 
         memo->exec();
+#endif
     }
 }

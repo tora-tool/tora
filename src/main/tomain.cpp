@@ -517,7 +517,9 @@ void toMain::recentCallback(QAction *action)
 
 void toMain::statusCallback(QAction *action)
 {
+#if TORA3_MEMOEDITOR
     new toMemoEditor(this, action->toolTip());
+#endif
 }
 
 void toMain::viewCallback(QAction *action)

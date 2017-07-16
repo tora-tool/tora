@@ -35,6 +35,8 @@
 #include "editor/tosqltext.h"
 #include "editor/tohighlightededitor.h"
 
+#if TORA3_MEMOEDITOR
+
 toHighlightedEditor::toHighlightedEditor(QWidget *parent, const char *name)
     : toBaseEditor(new toSqlText(NULL), parent)
 {
@@ -46,3 +48,5 @@ toSqlText* toHighlightedEditor::editor()
 {
     return qobject_cast<toSqlText*>(m_editor);
 }
+
+#endif
