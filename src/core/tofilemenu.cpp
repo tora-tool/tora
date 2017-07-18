@@ -38,6 +38,7 @@
 #include "core/tomainwindow.h"
 #include "core/toglobalconfiguration.h"
 #include "core/toglobalevent.h"
+#include "core/toeditwidget.h"
 #include "ts_log/ts_log_utils.h"
 
 #include "icons/connect.xpm"
@@ -155,10 +156,18 @@ void toFileMenu::menuAboutToShow()
     stopAct->setDisabled(true);
     refreshAct ->setEnabled(hasconnection && toConfigurationNewSingle::Instance().option(ToConfiguration::Global::CacheDiskBool).toBool());
     //
-    openAct->setDisabled(true);
+    toEditWidget *editWidget = toEditWidget::findEdit(QApplication::focusWidget());
+    if (editWidget)
+    {
+        openAct->setEnabled(editWidget->flagSet().Open);
+        saveAct->setEnabled(editWidget->flagSet().Save);
+        saveAsAct->setEnabled(editWidget->flagSet().Save);
+    } else {
+        openAct->setDisabled(true);
+        saveAct->setDisabled(true);
+        saveAsAct->setDisabled(true);
+    }
     updateRecent();
-    saveAct->setDisabled(true);
-    saveAsAct->setDisabled(true);
     //
 #ifdef TORA3_SESSION
     openSessionAct->setDisabled(true);

@@ -569,17 +569,6 @@ void toMain::commandCallback(QAction *action)
 {
     QWidget *focus = qApp->focusWidget();
 
-//    if (focus)
-//    {
-//		QString name = focus->objectName();
-//        toEditWidget *edit = toEditWidget::findEdit(focus);
-//        if (edit && edit != Edit)
-//        	toEditMenuSingle::Instance().receivedFocus(edit);
-//        else if (focus->inherits("QLineEdit") || QString(focus->metaObject()->className()) == QString("QSpinBox"))
-//        	// TODO HUH? really?
-//        	toEditMenuSingle::Instance().receivedFocus(edit);
-//    }
-
     toEditWidget *edit = toEditWidget::findEdit(focus);
     if (edit)
     {
@@ -1239,12 +1228,6 @@ void toMain::receivedFocus(toEditWidget *widget)
         RowLabel->setText("?");
         ColumnLabel->setText("?");
     }
-
-    toEditWidget::FlagSetStruct FlagSet = widget->flagSet();
-    fileMenu.openAct->setEnabled(FlagSet.Open);
-    fileMenu.recentMenu->setEnabled(FlagSet.Open);
-    fileMenu.saveAct->setEnabled(FlagSet.Save);
-    fileMenu.saveAsAct->setEnabled(FlagSet.Save);
 }
 
 /** Handle events from toEditWidget subclasses */
@@ -1252,9 +1235,4 @@ void toMain::lostFocus(toEditWidget *widget)
 {
     RowLabel->setText(QString::null);
     ColumnLabel->setText(QString::null);
-
-    fileMenu.openAct->setEnabled(false);
-    fileMenu.recentMenu->setEnabled(false);
-    fileMenu.saveAct->setEnabled(false);
-    fileMenu.saveAsAct->setEnabled(false);
 }
