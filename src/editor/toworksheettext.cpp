@@ -39,6 +39,7 @@
 #include "core/toconnection.h"
 #include "core/toconnectiontraits.h"
 #include "core/tologger.h"
+#include "core/toglobalevent.h"
 #include "shortcuteditor/shortcutmodel.h"
 
 #include <QListWidget>

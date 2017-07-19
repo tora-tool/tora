@@ -41,7 +41,7 @@
 #include "core/toconfiguration.h"
 #include "core/toglobalconfiguration.h"
 #include "editor/tohighlightededitor.h"
-#include "tools/toworksheeteditor.h"
+#include "editor/toworksheettext.h"
 #include "core/tomainwindow.h"
 #include "core/tosql.h"
 #include "tools/toworksheet.h"
@@ -420,7 +420,7 @@ void toSQLEdit::commitChanges(bool changeSelected)
         Description->setText(tr("Undescribed"));
     }
     toSQL::updateSQL(name.toLatin1(),
-                     Worksheet->editor()->sciEditor()->text().toLocal8Bit().constData(),
+                     Worksheet->editor()->text().toLocal8Bit().constData(),
                      Description->text().toLocal8Bit().constData(),
                      version.toLocal8Bit().constData(),
                      provider.toLocal8Bit().constData());
@@ -432,7 +432,7 @@ void toSQLEdit::commitChanges(bool changeSelected)
 
     Name->setModified(false);
     Description->setModified(false);
-    Worksheet->editor()->sciEditor()->setModified(false);
+    Worksheet->editor()->setModified(false);
     LastVersion = Version->currentText();
     if (update)
         updateStatements(Name->text());
@@ -442,7 +442,7 @@ void toSQLEdit::commitChanges(bool changeSelected)
 bool toSQLEdit::checkStore(bool justVer)
 {
     if ((Name->isModified() ||
-            Worksheet->editor()->sciEditor()->isModified() ||
+            Worksheet->editor()->isModified() ||
             (!justVer && Version->currentText() != LastVersion) ||
             Description->isModified()) &&
             Version->currentText().length() > 0)
@@ -460,7 +460,7 @@ bool toSQLEdit::checkStore(bool justVer)
             case 1:
                 Name->setModified(false);
                 Description->setModified(false);
-                Worksheet->editor()->sciEditor()->setModified(false);
+                Worksheet->editor()->setModified(false);
                 LastVersion = Version->currentText();
                 return true;
             case 2:
@@ -472,7 +472,7 @@ bool toSQLEdit::checkStore(bool justVer)
 
 void toSQLEdit::changeVersion(const QString &ver)
 {
-    if (!Worksheet->editor()->sciEditor()->isModified() || checkStore(true))
+    if (!Worksheet->editor()->isModified() || checkStore(true))
     {
         selectionChanged(ver);
         if (Version->currentText() != ver)
@@ -537,7 +537,7 @@ void toSQLEdit::changeSQL(const QString &name, const QString &maxver)
         }
         if (j != ver.end())
         {
-            Worksheet->editor()->sciEditor()->setText(j->SQL);
+            Worksheet->editor()->setText(j->SQL);
             TrashButton->setEnabled(true);
             CommitButton->setEnabled(true);
             Version->setCurrentIndex(ind);
@@ -555,7 +555,7 @@ void toSQLEdit::changeSQL(const QString &name, const QString &maxver)
         LastVersion = QString::fromLatin1("Any:Any");
         Version->addItem(LastVersion);
     }
-    Worksheet->editor()->sciEditor()->setModified(false);
+    Worksheet->editor()->setModified(false);
 }
 
 void toSQLEdit::selectionChanged(const QString &maxver)

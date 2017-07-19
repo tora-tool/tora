@@ -32,13 +32,14 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOWORKSHEETEDITOR_H
-#define TOWORKSHEETEDITOR_H
+#pragma once
 
 #include "editor/tobaseeditor.h"
 
 class toWorksheet;
 class toSqlText;
+
+#if TORA3_TORA3_MEMOEDITOR
 
 class toWorksheetEditor : public toBaseEditor
 {

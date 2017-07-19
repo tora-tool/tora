@@ -74,7 +74,7 @@ public slots:
  * menus and print support. It is based on QsciScintilla which is API compatible
  * with QTextEdit class. toEditWidget is abstract class representing copy/paste interface.
  */
-class toScintilla : public QsciScintilla//, public toEditWidget
+class toScintilla : public QsciScintilla, public toEditWidget
 {
     Q_OBJECT;
     typedef QsciScintilla super;

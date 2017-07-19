@@ -70,6 +70,25 @@ class toWorksheetText : public toSqlText
         // Override QScintilla (display custom toComplPopup window)
         void autoCompleteFromAPIs() override;
 
+
+        /** Get filename of current file in editor.
+         * @return Filename of editor.
+         */
+        QString const& filename(void) const;
+
+        /** Open a file for editing.
+         * @param file File to open for editing.
+         */
+        void openFilename(const QString &file);
+
+        /** Set the current filename of the file in editor.
+         * @param str String containing filename.
+         */
+        void setFilename(const QString &str);
+
+        bool editOpen(const QString &suggestedFile = QString::null) override;
+        bool editSave(bool askfile) override;
+
     public slots:
         void setEditorType(int);
 

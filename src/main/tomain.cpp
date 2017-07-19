@@ -1223,7 +1223,7 @@ void toMain::displayMessage(void)
 /** Handle events from toEditWidget subclasses */
 void toMain::receivedFocus(toEditWidget *widget)
 {
-    if (/*toWorksheetEditor *sheet = */dynamic_cast<toWorksheetEditor *>(widget))
+    if (/*toWorksheetText *sheet = */dynamic_cast<toWorksheetText *>(widget))
     {
         RowLabel->setText("?");
         ColumnLabel->setText("?");
