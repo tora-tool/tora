@@ -43,7 +43,6 @@
 #include <QtCore/QFileInfo>
 #include <QtCore/QDir>
 
-#if TORA3_MEMOEDITOR
 toWorksheetEditor::toWorksheetEditor(toWorksheet *worksheet,
                                      QWidget *parent,
                                      const char *name)
@@ -128,5 +127,3 @@ void toWorksheetEditor::focusOutEvent(QFocusEvent *e)
     qDebug() << ">>> toWorksheetEditor::focusOutEvent" << this;
     super::focusOutEvent(e);
 }
-
-#endif

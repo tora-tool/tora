@@ -208,12 +208,9 @@ SET(TORA_MOC_CLASSES
   core/utils.h
   docklets/toviewconnections.h
   docklets/toviewdirectory.h
-  editor/tobaseeditor.h
   editor/tocomplpopup.h
-  editor/todebugeditor.h
   editor/todebugtext.h
   editor/todifftext.h
-  editor/tohighlightededitor.h
   editor/tomarkededitor.h
   editor/tomemoeditor.h
   editor/tomodeleditor.h
@@ -320,7 +317,6 @@ SET(TORA_MOC_CLASSES
   tools/tounittest.h
   tools/towaitevents.h
   tools/toworksheet.h
-  tools/toworksheeteditor.h
   tools/toworksheetstatistic.h
 
   ts_log/toostream.h
@@ -482,12 +478,9 @@ SET(TORA_SOURCES
   docklets/toviewconnections.cpp
   docklets/toviewdirectory.cpp
 
-  editor/tobaseeditor.cpp
   editor/tocomplpopup.cpp
-  editor/todebugeditor.cpp
   editor/todebugtext.cpp
   editor/todifftext.cpp
-  editor/tohighlightededitor.cpp
   editor/tomarkededitor.cpp
   editor/tomemoeditor.cpp
   editor/tomodeleditor.cpp
@@ -618,7 +611,6 @@ SET(TORA_SOURCES
   tools/tounittest.cpp
   tools/towaitevents.cpp
   tools/toworksheet.cpp
-  tools/toworksheeteditor.cpp
   tools/toworksheetstatistic.cpp
 
   widgets/ExtendedTabWidget.cpp

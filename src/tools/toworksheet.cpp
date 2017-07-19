@@ -61,7 +61,6 @@
 #ifdef TORA3_STAT
 #include "tools/toworksheetstatistic.h"
 #endif
-#include "tools/toworksheeteditor.h"
 #include "todescribe.h"
 #include "core/toeditmenu.h"
 

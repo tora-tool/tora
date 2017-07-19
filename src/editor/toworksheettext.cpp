@@ -33,7 +33,6 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "editor/toworksheettext.h"
-#include "tools/toworksheeteditor.h"
 #include "tools/toworksheet.h"
 #include "editor/tocomplpopup.h"
 #include "core/toconnection.h"

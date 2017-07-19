@@ -34,19 +34,26 @@
 
 #pragma once
 
-#include "editor/tobaseeditor.h"
 
+class toWorksheet;
 class toSqlText;
 
-#if TORA3_MEMOEDITOR
-class toHighlightedEditor : public toBaseEditor
+class toWorksheetEditor : public toBaseEditor
 {
         Q_OBJECT;
-
+        typedef toBaseEditor super;
     public:
-        toHighlightedEditor(QWidget *parent = 0, const char* name = 0);
+        toWorksheetEditor(toWorksheet *worksheet,
+                          QWidget *parent,
+                          const char *name = NULL);
 
         toSqlText* editor();
-};
 
-#endif
+        virtual bool editSave(bool askfile);
+        virtual bool editOpen(const QString &suggestedFile);
+    private:
+        virtual void focusInEvent(QFocusEvent *e);
+        virtual void focusOutEvent(QFocusEvent *e);
+
+        toWorksheet *Worksheet;
+};

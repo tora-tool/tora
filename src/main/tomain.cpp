@@ -45,7 +45,6 @@
 #include "editor/tomemoeditor.h"
 #include "widgets/toabout.h"
 #include "tools/toworksheet.h"
-#include "tools/toworksheeteditor.h"
 #include "tools/tobrowser.h"
 #include "core/toconfiguration.h"
 #include "core/toglobalevent.h"

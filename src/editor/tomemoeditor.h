@@ -35,7 +35,6 @@
 #pragma once
 
 #include "editor/tomarkededitor.h"
-#include "editor/tohighlightededitor.h"
 
 #include <QDialog>
 #include <QLabel>

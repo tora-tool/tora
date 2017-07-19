@@ -45,7 +45,6 @@
 #include "core/toglobalevent.h"
 #include "widgets/topushbutton.h"
 #include "editor/tosqltext.h"
-#include "editor/tohighlightededitor.h"
 #include "editor/todebugtext.h"
 
 #include <QtCore/QSettings>

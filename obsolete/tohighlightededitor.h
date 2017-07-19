@@ -36,30 +36,14 @@
 
 #include "editor/tobaseeditor.h"
 
-class toWorksheet;
 class toSqlText;
 
-#if TORA3_TORA3_MEMOEDITOR
-
-class toWorksheetEditor : public toBaseEditor
+class toHighlightedEditor : public toBaseEditor
 {
         Q_OBJECT;
-        typedef toBaseEditor super;
+
     public:
-        toWorksheetEditor(toWorksheet *worksheet,
-                          QWidget *parent,
-                          const char *name = NULL);
+        toHighlightedEditor(QWidget *parent = 0, const char* name = 0);
 
         toSqlText* editor();
-
-        virtual bool editSave(bool askfile);
-        virtual bool editOpen(const QString &suggestedFile);
-    private:
-        virtual void focusInEvent(QFocusEvent *e);
-        virtual void focusOutEvent(QFocusEvent *e);
-
-        toWorksheet *Worksheet;
 };
-
-
-#endif

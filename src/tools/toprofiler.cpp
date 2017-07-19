@@ -39,7 +39,6 @@
 #include "core/toconnection.h"
 #include "widgets/toresultitem.h"
 #include "core/tosql.h"
-#include "editor/tohighlightededitor.h"
 #include "editor/tosqltext.h"
 
 #include <QComboBox>

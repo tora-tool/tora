@@ -42,7 +42,6 @@
 #include "core/tochangeconnection.h"
 #include "core/tocodemodel.h"
 #include "core/toeventquery.h"
-#include "editor/tohighlightededitor.h"
 #include "editor/tosqltext.h"
 
 #include "icons/unittest.xpm"

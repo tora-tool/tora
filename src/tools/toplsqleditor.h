@@ -35,7 +35,6 @@
 #pragma once
 
 #include "core/totool.h"
-#include "editor/todebugeditor.h"
 //#include "tosqlparse.h"
 //#include "tools/toplsqleditor.h"
 

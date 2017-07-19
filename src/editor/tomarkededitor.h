@@ -34,7 +34,6 @@
 
 #pragma once
 
-#include "editor/tobaseeditor.h"
 #include "core/utils.h"
 
 #include <QtGui/QKeyEvent>
