@@ -46,7 +46,6 @@ class toProfilerSource;
 class toProfilerUnits;
 class toResultItem;
 class toResultLong;
-class toHighlightedEditor;
 class toSqlText;
 
 class toProfiler : public toToolWidget

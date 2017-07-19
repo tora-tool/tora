@@ -78,7 +78,7 @@ private:
     QTextBrowser *m_view;
     QString m_filename;
 
-    private slots:
+private slots:
     void setEditorFocus();
     void handleSearching(Search::SearchFlags flags);
 };

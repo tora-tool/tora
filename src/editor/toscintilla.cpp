@@ -41,6 +41,7 @@
 #include "core/toconf.h"
 #include "core/tocontextmenu.h"
 #include "core/toeditmenu.h"
+#include "ts_log/ts_log_utils.h"
 
 #include <QApplication>
 #include <QtGui/QClipboard>
@@ -102,6 +103,7 @@ toScintilla::toScintilla(QWidget *parent, const char *name)
     // end of search all occurrences
 
     connect(this, SIGNAL(linesChanged()), this, SLOT(slotLinesChanged()));
+    connect(this, SIGNAL(cursorPositionChanged(int, int)), this, SLOT(setCoordinates(int, int)));
 
     // sets default tab width
     super::setTabWidth(toConfigurationNewSingle::Instance().option(Editor::TabStopInt).toInt());
@@ -188,6 +190,10 @@ void toScintilla::slotLinesChanged()
     int x = QString::number(lines()).length() + 1;
     setMarginWidth(0, QString().fill('0', x));
 
+}
+void toScintilla::setCoordinates(int line, int column)
+{
+    toGlobalEventSingle::Instance().setCoordinates(line + 1, column + 1);
 }
 
 void toScintilla::setWordWrap(bool enable)
@@ -615,6 +621,94 @@ void toScintilla::populateContextMenu(QMenu *popup)
     }
 
     popup->addAction(editMenu.selectAllAct);
+}
+
+bool toScintilla::editOpen(const QString &file) { throw __QHERE__; };
+
+bool toScintilla::editSave(bool askfile) { throw __QHERE__; };
+
+void toScintilla::editUndo(void)
+{
+    undo();
+};
+
+void toScintilla::editRedo(void)
+{
+    redo();
+};
+
+void toScintilla::editCut(void)
+{
+    cut();
+};
+
+void toScintilla::editCopy(void)
+{
+    copy();
+}
+
+void toScintilla::editPaste(void)
+{
+    paste();
+}
+
+void toScintilla::editSelectAll(void)
+{
+    selectAll(true);
+}
+
+void toScintilla::editReadAll(void) { throw __QHERE__; };
+
+QString toScintilla::editText()
+{
+    return text();
+}
+
+bool toScintilla::searchNext()
+{
+    throw __QHERE__;
+#if TORA3_MEMOEDITOR
+    if (!m_search->isVisible())
+    {
+        m_search->show();
+        m_search->setReadOnly(m_editor->isReadOnly());
+    }
+#endif
+    return true;
+};
+
+void toScintilla::searchReplace()
+{
+    throw __QHERE__;
+#if TORA3_MEMOEDITOR
+    m_search->setVisible(!m_search->isVisible());
+    m_search->setReadOnly(m_editor->isReadOnly());
+#endif
+};
+
+toEditWidget::FlagSetStruct toScintilla::flagSet()
+{
+    toEditWidget::FlagSetStruct FlagSet;
+    if (isReadOnly())
+    {
+        FlagSet.Save = true;
+        FlagSet.Copy = hasSelectedText();
+        FlagSet.Paste = false;
+        FlagSet.Search = true;
+        FlagSet.SelectAll = true;
+    }
+    else
+    {
+        FlagSet.Open = true;
+        FlagSet.Save = true;
+        FlagSet.Undo = isUndoAvailable();
+        FlagSet.Redo = isRedoAvailable();
+        FlagSet.Cut  = hasSelectedText();
+        FlagSet.Copy = hasSelectedText();
+        FlagSet.Search = true;
+        FlagSet.SelectAll = true;
+    }
+    return FlagSet;
 }
 
 QString toScintilla::getSelectionAsHTML()

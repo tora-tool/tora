@@ -149,7 +149,7 @@ public:
     void enableToolTips() { m_showTooTips = true; }
     void disableToolTips() { m_showTooTips = false; }
 
-    public slots:
+public slots:
     void setWordWrap(bool);
 
     //! \reimp
@@ -157,6 +157,21 @@ public:
 
     //! \reimp
     void paste() override;
+
+    // toEditWidget API re-implementation (most of the methods are not implemented)
+    bool editOpen(const QString &file = QString::null) override;
+    bool editSave(bool askfile) override;
+    void editUndo(void) override;
+    void editRedo(void) override;
+    void editCut(void) override;
+    void editCopy(void) override;
+    void editPaste(void) override;
+    void editSelectAll(void) override;
+    void editReadAll(void) override;
+    QString editText() override;
+    bool searchNext() override;
+    void searchReplace() override;
+    FlagSetStruct flagSet() override;
 
 protected:
     struct ToolTipData
@@ -178,7 +193,7 @@ protected:
 
     virtual bool showToolTip(ToolTipData const& t);
 
-    // QsciScintilla API reimplementation
+    // QsciScintilla API re-implementation
 
     //! \reimp
     void mousePressEvent(QMouseEvent *e) override;
@@ -240,10 +255,13 @@ signals:
 
     static CharClassify m_charClasifier;
     QSciMessage m_message;
-private slots:
+protected slots:
 
     //! \brief Handle line numbers in the editor on text change
     void slotLinesChanged();
+
+    //! \brief Notify global event dispatcher
+    void setCoordinates(int, int);
 
 private:
     QPoint DragStart;

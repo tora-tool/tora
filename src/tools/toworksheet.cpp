@@ -437,7 +437,7 @@ void toWorksheet::setup(bool autoLoad)
     layout()->addWidget(EditSplitter);
 
     //Editor = new toWorksheetEditor(this, EditSplitter);
-	Editor = new toWorksheetText(EditSplitter);
+	Editor = new toWorksheetText(this, EditSplitter);
     // stop any running query when a file is loaded
     connect(Editor, SIGNAL(fileOpened()), this, SLOT(slotStop()));
     connect(Editor, SIGNAL(modificationChanged(bool)), this, SLOT(slotSetCaption()));

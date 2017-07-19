@@ -45,7 +45,7 @@
 
 class toExtract;
 class toListView;
-class toWorksheetText;
+class toSqlText;
 class toTreeWidget;
 class toTreeWidgetItem;
 class toTextView;
@@ -63,7 +63,7 @@ class toScript : public toToolWidget
 
         Ui::toScriptUI *ScriptUI;
         //! Additional widget/Tab widget. DDL scripts container.
-        toWorksheetText *WorksheetText;
+        toSqlText *WorksheetText;
         //! Result lists for its action
         toListView *DropList;
         toListView *CreateList;
