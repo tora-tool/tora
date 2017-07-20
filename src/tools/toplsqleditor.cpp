@@ -331,8 +331,7 @@ toPLSQLEditor::toPLSQLEditor(QWidget *parent)
 void toPLSQLEditor::clear(void)
 {
     setData(QString::null, QString::null, QString::null);
-    //TODO
-    //toHighlightedEditor::clear();
+    toDebugText::clear();
 }
 
 /* This function is called after compiling the code.
@@ -631,11 +630,6 @@ toPLSQLWidget::toPLSQLWidget(QWidget * parent)
     errorCount = warningCount = staticCount = 0;
     resizeResults();
 
-#if 0
-    m_contentSplitter = new QSplitter(Qt::Horizontal, this);
-    m_contentSplitter->insertWidget(0, m_contents);
-    m_contentSplitter->insertWidget(1, m_splitter);
-#endif
     if (layout() == 0)
         setLayout(new QVBoxLayout);
     layout()->addWidget(m_splitter);
@@ -654,7 +648,6 @@ toPLSQLWidget::toPLSQLWidget(QWidget * parent)
     QSettings s;
     s.beginGroup("toPLSQLEditor");
     m_splitter->restoreState(s.value("splitterWidget").toByteArray());
-    //m_contentSplitter->restoreState(s.value("contentSplitter").toByteArray());
     s.endGroup();
 }
 
@@ -664,7 +657,6 @@ toPLSQLWidget::~toPLSQLWidget()
     QSettings s;
     s.beginGroup("toPLSQLEditor");
     s.setValue("splitterWidget", m_splitter->saveState());
-    //s.setValue("contentSplitter", m_contentSplitter->saveState());
     s.endGroup();
 }
 
