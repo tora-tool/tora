@@ -63,6 +63,9 @@ protected:
     void showEvent(QShowEvent * e) override;
     void closeEvent(QCloseEvent *e) override;
 
+    bool eventFilter(QObject *target, QEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
+
 private:
     Search::SearchFlags sharedFlags();
 

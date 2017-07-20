@@ -33,7 +33,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "widgets/tosearchreplace.h"
-
+#include "widgets/tohelp.h"
 #include "core/utils.h"
 #include "core/tomainwindow.h"
 #include "core/toeditmenu.h"
@@ -43,7 +43,6 @@
 #include <QAction>
 #include <QTextEdit>
 #include <QLineEdit>
-#include "tohelp.h"
 
 toSearchReplace::toSearchReplace(QWidget *parent)
     : QWidget(parent)
@@ -65,6 +64,9 @@ toSearchReplace::toSearchReplace(QWidget *parent)
     connect(ReplaceAll, SIGNAL(clicked()), this, SLOT(act_replaceAll()));
     connect(SearchText, SIGNAL(editTextChanged(const QString &)),
             this, SLOT(act_searchChanged(const QString &)));
+
+    SearchText->installEventFilter(this);
+    ReplacementText->installEventFilter(this);
 }
 
 void toSearchReplace::displayHelp(void)
@@ -172,6 +174,31 @@ void toSearchReplace::closeEvent(QCloseEvent *e)
 {
     emit windowClosed();
     QWidget::closeEvent(e);
+}
+
+bool toSearchReplace::eventFilter(QObject *target, QEvent *event)
+{
+    if ((target == SearchText || target == ReplacementText) && event->type() == QEvent::KeyPress)
+    {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+        if (keyEvent->key() == Qt::Key_Escape)
+        {
+            parentWidget()->close(); // Close parent docklet window
+            return true;
+        }
+    }
+    return QWidget::eventFilter(target, event);
+}
+
+void toSearchReplace::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Escape)
+    {
+        event->accept();
+        parentWidget()->close(); // Close parent docklet window
+        return;
+    }
+    QWidget::keyPressEvent(event);
 }
 
 void toSearchReplace::act_searchChanged(const QString & text)
