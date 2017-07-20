@@ -36,7 +36,6 @@
 
 #include "core/utils.h"
 #include "core/tomainwindow.h"
-#include "editor/tomarkededitor.h"
 #include "core/toeditmenu.h"
 
 #include "icons/close.xpm"

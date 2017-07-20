@@ -56,9 +56,6 @@
 #define PLSQL_STATIC "STATIC"
 #define PLSQL_RESULT ""
 
-#if TORA3_MEMOEDITOR
-
-#if TORA3_PARSING
 static struct TypeMapType
 {
     const char *Type;
@@ -79,7 +76,6 @@ TypeMap[] = { { "FUNCTION", "Fc", ":/icons/function.png", true , true },    // M
     { "FOR", "Loop", NULL, false, false},
     { NULL, NULL, NULL, false, false}
 };
-#endif
 
 static toTreeWidgetItem *toLastItem(toTreeWidgetItem *parent)
 {
@@ -180,7 +176,7 @@ static bool FindKeyword(toSQLParse::statement &statements, bool onlyNames,
 */
 bool toPLSQLEditor::compile(CompilationType t)
 {
-    QString str = sciEditor()->text();
+    QString str = text();
     bool ret = true; // indicates if compilation action was successfull
     if (str.isEmpty())
         return true;
@@ -326,7 +322,7 @@ static toSQL SQLReadErrors9("toPLSQLEditor:ReadErrors",
 int toPLSQLEditor::ID = 0;
 
 toPLSQLEditor::toPLSQLEditor(QWidget *parent)
-    : toDebugEditor(parent, QString::number(++ID).toLatin1())
+    : toDebugText(parent, QString::number(++ID).toLatin1())
     , Editor(NULL)
 {
     parent_widget = (toPLSQLWidget*)parent;
@@ -445,8 +441,8 @@ bool toPLSQLEditor::readData(toConnection &conn/*, toTreeWidget *Stack*/)
             }
         }
         str += "\n/";
-        sciEditor()->setText(str);
-        sciEditor()->setModified(false);
+        setText(str);
+        setModified(false);
         setCurrentDebugLine(-1);
 
         emit contentChanged();
@@ -606,6 +602,7 @@ void toPLSQLEditor::setData(const QString &schema, const QString &type, const QS
 toPLSQLWidget::toPLSQLWidget(QWidget * parent)
     : QWidget(parent)
 {
+#if 0
     m_contents = new toTreeWidget(this);
     m_contents->addColumn(tr("Contents"));
     m_contents->setRootIsDecorated(true);
@@ -615,6 +612,7 @@ toPLSQLWidget::toPLSQLWidget(QWidget * parent)
     m_contents->setResizeMode(toTreeWidget::AllColumns);
     connect(m_contents, SIGNAL(selectionChanged(toTreeWidgetItem *)),
             this, SLOT(changeContent(toTreeWidgetItem *)));
+#endif
 
     m_editor = new toPLSQLEditor(this);
 
@@ -633,13 +631,14 @@ toPLSQLWidget::toPLSQLWidget(QWidget * parent)
     errorCount = warningCount = staticCount = 0;
     resizeResults();
 
+#if 0
     m_contentSplitter = new QSplitter(Qt::Horizontal, this);
     m_contentSplitter->insertWidget(0, m_contents);
     m_contentSplitter->insertWidget(1, m_splitter);
-
+#endif
     if (layout() == 0)
         setLayout(new QVBoxLayout);
-    layout()->addWidget(m_contentSplitter);
+    layout()->addWidget(m_splitter);
 
     connect(m_editor,
             SIGNAL(errorsChanged(const QString &, const QMultiMap<int, QString>&, const bool)),
@@ -655,7 +654,7 @@ toPLSQLWidget::toPLSQLWidget(QWidget * parent)
     QSettings s;
     s.beginGroup("toPLSQLEditor");
     m_splitter->restoreState(s.value("splitterWidget").toByteArray());
-    m_contentSplitter->restoreState(s.value("contentSplitter").toByteArray());
+    //m_contentSplitter->restoreState(s.value("contentSplitter").toByteArray());
     s.endGroup();
 }
 
@@ -665,7 +664,7 @@ toPLSQLWidget::~toPLSQLWidget()
     QSettings s;
     s.beginGroup("toPLSQLEditor");
     s.setValue("splitterWidget", m_splitter->saveState());
-    s.setValue("contentSplitter", m_contentSplitter->saveState());
+    //s.setValue("contentSplitter", m_contentSplitter->saveState());
     s.endGroup();
 }
 
@@ -813,7 +812,7 @@ void toPLSQLWidget::goToError(QTreeWidgetItem * current, QTreeWidgetItem *)
     // do not try to move cursor when "parent" item in result list is selected
     if (current != m_errItem && current != m_warnItem && current != m_staticItem)
     {
-        m_editor->sciEditor()->setCursorPosition(current->text(1).toInt() - 1, 0);
+        m_editor->setCursorPosition(current->text(1).toInt() - 1, 0);
         m_editor->setFocus(Qt::OtherFocusReason);
     }
 } // goToError
@@ -825,7 +824,7 @@ void toPLSQLWidget::changeContent(toTreeWidgetItem *ci)
     {
         while (ci->parent())
             ci = ci->parent();
-        m_editor->sciEditor()->setCursorPosition(item->Line, 0);
+        m_editor->setCursorPosition(item->Line, 0);
     }
     m_editor->setFocus(Qt::OtherFocusReason);
 #ifdef AUTOEXPAND
@@ -840,7 +839,7 @@ void toPLSQLWidget::changeContent(toTreeWidgetItem *ci)
 */
 bool toPLSQLEditor::editSave(bool askfile)
 {
-
+#if 0
     // Only packages should be handled differently, for all other types
     // call original version of save function
     // TODO: types as well?
@@ -882,21 +881,19 @@ bool toPLSQLEditor::editSave(bool askfile)
             // save specification first
             if (Type == "PACKAGE")
             {
-                if (!Utils::toWriteFile(fn, sciEditor()->text() + "\n" +
-                                        other_part->sciEditor()->text() + "\n"))
+                if (!Utils::toWriteFile(fn, text() + "\n" + other_part->text() + "\n"))
                     return false;
             }
             else
             {
-                if (!Utils::toWriteFile(fn, other_part->sciEditor()->text() + "\n" +
-                                        sciEditor()->text() + "\n"))
+                if (!Utils::toWriteFile(fn, other_part->text() + "\n" + text() + "\n"))
                     return false;
             }
             toGlobalEventSingle::Instance().addRecentFile(fn);
             toBaseEditor::setFilename(fn);
             other_part->setFilename(fn);
             m_editor->setModified(false);
-            other_part->sciEditor()->setModified(false);
+            other_part->setModified(false);
             emit fileSaved(fn);
             emit other_part->fileSaved(fn);
             return true;
@@ -913,7 +910,6 @@ bool toPLSQLEditor::editSave(bool askfile)
             //return toMarkedEditor::editSave(false);
         }
     }
+#endif
     return false;
 } // editSave
-
-#endif

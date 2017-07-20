@@ -38,35 +38,28 @@
 
 #include <QtGui/QKeyEvent>
 
-#if TORA3_MEMOEDITOR
-class toMarkedEditor : public toBaseEditor
-{
-        Q_OBJECT;
-    public:
-        toMarkedEditor(QWidget *parent = 0, const char* name = 0);
-};
-
 template <class SUPER, class DIALOG>
 class TMemoWithExec : public SUPER
 {
-        DIALOG *MemoEditor;
-        QKeySequence CtrlEnter;
-    public:
-        TMemoWithExec(DIALOG *parentEditor, const char *name = NULL)
-            : SUPER(parentEditor, name)
-            , MemoEditor(parentEditor)
-            , CtrlEnter(qApp->translate("toMemoEditor", "Ctrl+Return", "Memo Editor|Save changes"))
-        { }
-        virtual ~TMemoWithExec() {}
-        virtual void keyPressEvent(QKeyEvent *e)
+    DIALOG *MemoEditor;
+    QKeySequence CtrlEnter;
+public:
+    TMemoWithExec(DIALOG *parentEditor, const char *name = NULL)
+    : SUPER(parentEditor, name)
+    , MemoEditor(parentEditor)
+    , CtrlEnter(qApp->translate("toMemoEditor", "Ctrl+Return", "Memo Editor|Save changes"))
+    {}
+
+    virtual ~TMemoWithExec() {}
+
+    virtual void keyPressEvent(QKeyEvent *e)
+    {
+        if (Utils::toCheckKeyEvent(e, CtrlEnter))
         {
-            if (Utils::toCheckKeyEvent(e, CtrlEnter))
-            {
-                MemoEditor->store();
-                e->accept();
-            }
-            else
-                SUPER::keyPressEvent(e);
+            MemoEditor->store();
+            e->accept();
         }
+        else
+            SUPER::keyPressEvent(e);
+    }
 };
-#endif

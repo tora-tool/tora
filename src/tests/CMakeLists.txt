@@ -126,8 +126,7 @@ IF(TORA_DEBUG AND TEST_APP4)
 # test4
 QT5_WRAP_CPP(TEST4_MOC_SOURCES
   tests/test4window.h
-  docklets/tosearch.h
-  editor/tomarkededitor.h  
+  docklets/tosearch.h  
   editor/tomemoeditor.h
   editor/toscintilla.h
   editor/tosqltext.h
@@ -144,7 +143,6 @@ ADD_EXECUTABLE("test4"
   tests/test4.cpp
   tests/test4window.cpp
   docklets/tosearch.cpp
-  editor/tomarkededitor.cpp
   editor/tomemoeditor.cpp
   editor/toscintilla.cpp
   editor/tosqltext.cpp
@@ -184,7 +182,6 @@ IF(TORA_DEBUG AND TEST_APP5)
 # test5
 QT5_WRAP_CPP(TEST5_MOC_SOURCES
   tests/test5window.h
-  editor/tomarkededitor.h
   result/toresulttabledata.h
   tools/tobrowserbasewidget.h
   tools/todescribe.h
@@ -207,7 +204,6 @@ QT5_WRAP_CPP(TEST5_MOC_SOURCES
 ADD_EXECUTABLE("test5"
   tests/test5.cpp
   tests/test5window.cpp
-  editor/tomarkededitor.cpp
   result/toresulttabledata.cpp
   tools/tobrowserbasewidget.cpp
   tools/todescribe.cpp
@@ -324,8 +320,7 @@ ENDIF(TORA_DEBUG AND TEST_APP8)
 IF(TORA_DEBUG AND TEST_APP9)
 # test9
 QT5_WRAP_CPP(TEST9_MOC_SOURCES
-  tests/test9window.h
-  editor/tomarkededitor.h  
+  tests/test9window.h  
   editor/tomemoeditor.h
   editor/toscintilla.h
   editor/tosqltext.h
@@ -342,7 +337,6 @@ QT5_ADD_RESOURCES(TEST9_RC_SOURCES tests/test9.qrc)
 ADD_EXECUTABLE("test9"
   tests/test9.cpp
   tests/test9window.cpp
-  editor/tomarkededitor.cpp
   editor/tomemoeditor.cpp
   editor/toscintilla.cpp
   editor/tosqltext.cpp

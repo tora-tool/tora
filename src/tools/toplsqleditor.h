@@ -35,6 +35,7 @@
 #pragma once
 
 #include "core/totool.h"
+#include "editor/todebugtext.h"
 //#include "tosqlparse.h"
 //#include "tools/toplsqleditor.h"
 
@@ -47,10 +48,9 @@ class toTreeWidget;
 class toPLSQL;
 class toPLSQLWidget;
 
-#if TORA3_MEMOEDITOR
 /*! \brief An editor widget for PL/SQL Editor.
 */
-class toPLSQLEditor : public toDebugEditor
+class toPLSQLEditor : public toDebugText
 {
         Q_OBJECT
         QString Schema;
@@ -119,7 +119,6 @@ class toPLSQLEditor : public toDebugEditor
 
 };
 
-
 /*! \brief A main widget for PL/SQL Editor.
 It handles all Content and Messages cooperation with Editor.
 */
@@ -133,12 +132,12 @@ class toPLSQLWidget : public QWidget
         void resizeResults(void);
 
     private:
-        toTreeWidget * m_contents;
+        //toTreeWidget * m_contents;
         QTreeWidget * m_result;
         toPLSQLEditor * m_editor;
 
         QSplitter * m_splitter;
-        QSplitter * m_contentSplitter;
+        //QSplitter * m_contentSplitter;
 
         QTreeWidgetItem * m_errItem;    // main branch of errors
         QTreeWidgetItem * m_warnItem;   // main branch of warnings
@@ -157,7 +156,7 @@ class toPLSQLWidget : public QWidget
 //    void updateContent(toSQLParse::statement &statements,
 //                       toTreeWidgetItem *parent,
 //                       const QString &id = QString::null);
-        void updateContent(toPLSQLEditor *editor);
+        void updateContent(toPLSQLEditor* editor);
         // removes all errors, warnings and static check messages from result pane
         void cleanupResults(const QString & type = NULL);
         void setCount(const QString & type, const int count);
@@ -166,7 +165,7 @@ class toPLSQLWidget : public QWidget
         toPLSQLWidget(QWidget * parent = 0);
         ~toPLSQLWidget();
 
-        toPLSQLEditor * editor()
+		toPLSQLEditor* editor()
         {
             return m_editor;
         };
@@ -180,5 +179,3 @@ class toPLSQLWidget : public QWidget
         void changeContent(toTreeWidgetItem *);
 
 };
-
-#endif

@@ -78,7 +78,6 @@ class toScintilla : public QsciScintilla, public toEditWidget
 {
     Q_OBJECT;
     typedef QsciScintilla super;
-    friend class toBaseEditor;
 public:
     /** Create an editor.
      * @param parent Parent of this widget.

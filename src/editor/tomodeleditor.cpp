@@ -37,6 +37,7 @@
 #include "core/tomainwindow.h"
 #include "core/toqvalue.h"
 #include "editor/toscintilla.h"
+#include "editor/tosqltext.h"
 
 #include <QtGui/QKeyEvent>
 #include <QVBoxLayout>
@@ -57,7 +58,6 @@
 #include "icons/previous.xpm"
 #include "icons/rewind.xpm"
 
-#if TORA3_MEMOEDITOR
 void toModelEditor::openFile()
 {
     Editor->editOpen();
@@ -69,7 +69,7 @@ void toModelEditor::saveFile()
     if (data.type() == QVariant::UserType)
     {
         QString fn;
-        fn = Utils::toSaveFilename(Editor->filename(), QString::null, this);
+        fn = Utils::toSaveFilename(QString::null, QString::null, this);
         QFile file(fn);
         if (!file.open(QIODevice::WriteOnly))
         {
@@ -134,8 +134,8 @@ toModelEditor::toModelEditor(QWidget *parent,
     vbox->addWidget(Editor);
 
     Editable = Model->flags(Current) & Qt::ItemIsEditable;
-    Editor->sciEditor()->setReadOnly(!Editable);
-    Editor->sciEditor()->installEventFilter(this);
+    Editor->setReadOnly(!Editable);
+    Editor->installEventFilter(this);
     Editor->setFocus();
     Editor->setWordWrap(true);
 
@@ -200,14 +200,12 @@ toModelEditor::toModelEditor(QWidget *parent,
                                         tr("Word Wrap"), Toolbar);
     WordWrapAct->setCheckable(true);
     WordWrapAct->setChecked(true);
-    connect(WordWrapAct, SIGNAL(toggled(bool)),
-            Editor, SLOT(setWordWrap(bool)));
+    connect(WordWrapAct, SIGNAL(toggled(bool)), Editor, SLOT(setWordWrap(bool)));
     Toolbar->addAction(WordWrapAct);
 
     QAction * XMLWrapAct = new QAction(QIcon(":/icons/xmlwrap.png"), tr("XML Format"), Toolbar);
     XMLWrapAct->setCheckable(true);
-    connect(XMLWrapAct, SIGNAL(toggled(bool)),
-            Editor, SLOT(setXMLWrap(bool)));
+    connect(XMLWrapAct, SIGNAL(toggled(bool)), Editor, SLOT(setXMLWrap(bool)));
     Toolbar->addAction(XMLWrapAct);
 
     if (Editable)
@@ -245,7 +243,7 @@ toModelEditor::toModelEditor(QWidget *parent,
     NullCheck = new QCheckBox(tr("NULL"), Toolbar);
     Toolbar->addWidget(NullCheck);
     connect(NullCheck, SIGNAL(toggled(bool)), this, SLOT(setNull(bool)));
-    NullCheck->setEnabled(!Editor->sciEditor()->isReadOnly());
+    NullCheck->setEnabled(!Editor->isReadOnly());
     NullCheck->setFocusPolicy(Qt::StrongFocus);
 
     Label = new QLabel(Toolbar);
@@ -256,10 +254,7 @@ toModelEditor::toModelEditor(QWidget *parent,
 
     readSettings();
 
-    connect(this,
-            SIGNAL(finished(int)),
-            this,
-            SLOT(writeSettings()));
+    connect(this, SIGNAL(finished(int)), this, SLOT(writeSettings()));
 
     changePosition(Current);
     if (!modal)
@@ -268,7 +263,7 @@ toModelEditor::toModelEditor(QWidget *parent,
 
 bool toModelEditor::eventFilter(QObject *obj, QEvent *event)
 {
-    if (obj != Editor->sciEditor())
+    if (obj != Editor)
         return false;
     if(event->type() == QEvent::KeyPress)
     {
@@ -298,27 +293,27 @@ void toModelEditor::writeSettings() const
 
 void toModelEditor::setText(const QString &str)
 {
-    Editor->sciEditor()->setText(str);
+    Editor->setText(str);
     NullCheck->setChecked(str.isNull());
-    Editor->sciEditor()->setModified(false);
+    Editor->setModified(false);
 }
 
 void toModelEditor::setNull(bool nul)
 {
-    Editor->sciEditor()->setModified(true);
+    Editor->setModified(true);
     Editor->setDisabled(nul);
 }
 
 void toModelEditor::store()
 {
-    if (Editor->sciEditor()->isReadOnly())
+    if (Editor->isReadOnly())
         return;
-    if (Editor->sciEditor()->isModified())
+    if (Editor->isModified())
     {
         if (!Editor->isEnabled())
             Model->setData(Current, QVariant(QString::null));
         else
-            Model->setData(Current, Editor->sciEditor()->text());
+            Model->setData(Current, Editor->text());
     }
     accept();
 }
@@ -382,5 +377,3 @@ void toModelEditor::lastColumn()
     changePosition(index);
     Label->setText("<B>" + Model->headerData(index.column(), Qt::Horizontal).toString() + "</B>");
 }
-
-#endif

@@ -34,10 +34,6 @@
 
 #pragma once
 
-#if TORA3_MEMOEDITOR
-#include "editor/todebugeditor.h"
-#endif
-
 #include "editor/todebugtext.h"
 
 #include "core/toresult.h"

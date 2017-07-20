@@ -206,12 +206,14 @@ SET(TORA_MOC_CLASSES
   core/totool.h
   core/toupdater.h
   core/utils.h
+
   docklets/toviewconnections.h
   docklets/toviewdirectory.h
+  docklets/tocodeoutline.h
+
   editor/tocomplpopup.h
   editor/todebugtext.h
   editor/todifftext.h
-  editor/tomarkededitor.h
   editor/tomemoeditor.h
   editor/tomodeleditor.h
   editor/toscintilla.h
@@ -390,7 +392,6 @@ ENDIF (POPPLER_QT4_FOUND)
 
 IF (USE_EXPERIMENTAL)
   LIST(APPEND TORA_MOC_CLASSES tools/toscript.h)
-  LIST(APPEND TORA_MOC_CLASSES docklets/tocodeoutline.h)
   #IF(graphviz_FOUND)
   LIST(APPEND TORA_MOC_CLASSES docklets/toquerymodel.h)
   LIST(APPEND TORA_MOC_CLASSES tools/toer.h)
@@ -477,11 +478,11 @@ SET(TORA_SOURCES
 
   docklets/toviewconnections.cpp
   docklets/toviewdirectory.cpp
+  docklets/tocodeoutline.cpp
 
   editor/tocomplpopup.cpp
   editor/todebugtext.cpp
   editor/todifftext.cpp
-  editor/tomarkededitor.cpp
   editor/tomemoeditor.cpp
   editor/tomodeleditor.cpp
   editor/toscintilla.cpp
@@ -685,7 +686,6 @@ ENDIF(ORACLE_FOUND)
 
 IF (USE_EXPERIMENTAL)
   LIST (APPEND TORA_SOURCES tools/toscript.cpp)
-  LIST (APPEND TORA_SOURCES docklets/tocodeoutline.cpp)
   LIST (APPEND TORA_SOURCES docklets/toquerymodel.cpp docklets/toastwalk.cpp)
   LIST (APPEND TORA_SOURCES tools/toer.cpp)
   LIST (APPEND TORA_SOURCES tools/tosandboxtool.cpp)

@@ -218,10 +218,8 @@ void toRollbackDialog::displaySQL(void)
     }
     if (res.length() > 0)
     {
-#if TORA3_MEMOEDITOR
         toMemoEditor memo(this, res, -1, -1, true, true);
         memo.exec();
-#endif
     }
     else
         Utils::toStatusMessage(tr("No changes made"), false, false);

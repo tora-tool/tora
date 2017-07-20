@@ -68,8 +68,6 @@
 #include "todescribe.h"
 #include "toresultview.h"
 
-#if TORA3_MEMOEDITOR
-
 class toPLSQLTool : public toTool
 {
         std::map<toConnection *, QWidget *> Windows;
@@ -145,7 +143,7 @@ bool toPLSQL::viewSource(const QString &schema, const QString &name, const QStri
                 editor = te;
                 break;
             }
-            if (Editors->tabText(Editors->indexOf(te)) == tr("Unknown") && !te->editor()->sciEditor()->isModified())
+            if (Editors->tabText(Editors->indexOf(te)) == tr("Unknown") && !te->editor()->isModified())
                 editor = te;
         }
         if (!editor)
@@ -156,11 +154,11 @@ bool toPLSQL::viewSource(const QString &schema, const QString &name, const QStri
         }
         else
         {
-            editor->editor()->sciEditor()->getCursorPosition(&row, &col);
+            editor->editor()->getCursorPosition(&row, &col);
         }
         // set pointer to this PLSQLEditor to be used when saving packages/types
         editor->editor()->setEditor(this);
-        if (editor->editor()->sciEditor()->lines() <= 1)
+        if (editor->editor()->lines() <= 1)
         {
             editor->editor()->setData(schema, type, name);
             editor->editor()->readData(connection()/*, StackTrace*/);
@@ -174,7 +172,7 @@ bool toPLSQL::viewSource(const QString &schema, const QString &name, const QStri
 //                Editors->setTabIcon(Editors->indexOf(editor), QIcon());
         }
         Editors->setCurrentIndex(Editors->indexOf(editor));
-        editor->editor()->sciEditor()->setCursorPosition(row, col);
+        editor->editor()->setCursorPosition(row, col);
         if (setCurrent)
             editor->editor()->setCurrentDebugLine(line - 1);
         editor->setFocus();
@@ -606,7 +604,7 @@ void toPLSQL::describe()
     toCache::ObjectRef table;
     table.context = schema();
     toPLSQLEditor *marked = currentEditor()->editor();
-    marked->editor()->tableAtCursor(table);
+    marked->tableAtCursor(table);
     if (table.first.isEmpty())
         table.first = Schema->selected();
     toDescribe * d = new toDescribe(this);
@@ -617,10 +615,10 @@ void toPLSQL::describe()
    For example if specification of package A is given as parameter it should
    find toPLSQLText object containing body of the same package.
 */
-toPLSQLEditor * toPLSQL::getAnotherPart(QString &pSchema, QString &pObject, QString &pType)
+toPLSQLEditor* toPLSQL::getAnotherPart(QString &pSchema, QString &pObject, QString &pType)
 {
     QString other_part_type;
-    toPLSQLEditor * ret = NULL;
+	toPLSQLEditor *ret = NULL;
 
     if (pType == "PACKAGE")
         other_part_type = "PACKAGE BODY";
@@ -659,7 +657,7 @@ void toPLSQL::parseResults(const QString buf, QMultiMap<int, QString> &res)
 */
 void toPLSQL::checkCode(void)
 {
-    if (currentEditor()->editor()->sciEditor()->text().isEmpty())
+    if (currentEditor()->editor()->text().isEmpty())
     {
         // do nothing if code text is empty
         return;
@@ -668,7 +666,7 @@ void toPLSQL::checkCode(void)
     QTemporaryFile tf;
     if (tf.open())
     {
-        if (!Utils::toWriteFile(tf.fileName(), currentEditor()->editor()->sciEditor()->text()))
+        if (!Utils::toWriteFile(tf.fileName(), currentEditor()->editor()->text()))
         {
 #ifdef DEBUG
             TLOG(2, toDecorator, __HERE__) << "Unable to write file (" + tf.fileName() + ")";
@@ -730,5 +728,3 @@ void toPLSQL::checkCode(void)
     currentEditor()->applyResult("STATIC", Observations);
     currentEditor()->resizeResults();
 } // checkCode
-
-#endif

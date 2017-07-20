@@ -58,7 +58,6 @@ class toEditMenu;
 class toFileMenu;
 class toEditWidget;
 class toLineChart;
-class toMarkedEditor;
 class toMessage;
 class toTool;
 class toToolWidget;

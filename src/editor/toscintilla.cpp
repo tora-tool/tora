@@ -667,7 +667,7 @@ QString toScintilla::editText()
 bool toScintilla::searchNext()
 {
     throw __QHERE__;
-#if TORA3_MEMOEDITOR
+#if TORA3_SEARCH
     if (!m_search->isVisible())
     {
         m_search->show();
@@ -680,7 +680,7 @@ bool toScintilla::searchNext()
 void toScintilla::searchReplace()
 {
     throw __QHERE__;
-#if TORA3_MEMOEDITOR
+#if TORA3_SEARCH
     m_search->setVisible(!m_search->isVisible());
     m_search->setReadOnly(m_editor->isReadOnly());
 #endif

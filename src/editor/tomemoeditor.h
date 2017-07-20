@@ -45,18 +45,18 @@ class QLabel;
 class toTreeWidgetItem;
 class QToolBar;
 class toListView;
-class toBaseEditor;
+class toScintilla;
+class toSqlText;
 class toResultContentEditor;
 
-#if TORA3_MEMOEDITOR
 /** Displays an text in a widget which can optionally be modified and saved back.
  */
 class toMemoEditor : public QDialog
 {
         Q_OBJECT;
 
-        typedef TMemoWithExec<toMarkedEditor, toMemoEditor> toMemoText;
-        typedef TMemoWithExec<toHighlightedEditor, toMemoEditor> toMemoSQL;
+        typedef TMemoWithExec<toScintilla, toMemoEditor> toMemoText;
+        typedef TMemoWithExec<toSqlText, toMemoEditor> toMemoSQL;
 
     public:
         /** Create this editor. If row and col is specified, editing is posible.
@@ -103,7 +103,7 @@ class toMemoEditor : public QDialog
         {
             return Toolbar;
         }
-        toMarkedEditor *editor()
+        toScintilla *editor()
         {
             return Editor;
         }
@@ -150,7 +150,7 @@ class toMemoEditor : public QDialog
     private:
         /** Editor of widget
          */
-        toBaseEditor *Editor;
+        toScintilla *Editor;
         /** Row of this field
          */
         int Row;
@@ -163,5 +163,3 @@ class toMemoEditor : public QDialog
 
         toListView *listView(void);
 };
-
-#endif

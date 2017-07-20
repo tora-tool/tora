@@ -35,9 +35,7 @@
 #pragma once
 
 #include "widgets/totoolwidget.h"
-//#include "editor/tosqltext.h"
-//#include "tosqlparse.h"
-//#include "tools/toplsqltext.h"
+#include "editor/tosqltext.h"
 
 class QTreeView;
 class QTabWidget;
@@ -49,10 +47,10 @@ class QMenu;
 class toCodeModel;
 class toPLSQLWidget;
 class toTreeWidgetItem;
-class toPLSQLEditor;
 class toResultSchema;
+class toDebugText;
+class toPLSQLEditor;
 
-#if TORA3_MEMOEDITOR
 /*! \brief Advanced PL/SQL Editor. It's based on
 Debugger code. But it can compile PL/SQL unit in all cases.
 Even if is the user without debug grants/roles.
@@ -141,5 +139,3 @@ class toPLSQL : public toToolWidget
     private slots:
         void describe(void);
 };
-
-#endif

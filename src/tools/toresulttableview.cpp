@@ -519,10 +519,8 @@ void toResultTableView::slotMenuCallback(QAction *action)
     if (action == displayAct)
     {
         QVariant data = model()->data(index, Qt::EditRole);
-#if TORA3_MEMOEDITOR
         toModelEditor *ed = new toModelEditor(this, model(), index);
         ed->exec();
-#endif
     }
     else if (action == leftAct)
         Model->setAlignment(index.column(), Qt::AlignLeft);
@@ -594,10 +592,8 @@ void toResultTableView::slotHandleFirst(const toConnection::exception &res,
 
 void toResultTableView::slotHandleDoubleClick(const QModelIndex &index)
 {
-#if TORA3_MEMOEDITOR
     toModelEditor *ed = new toModelEditor(this, model(), index);
     ed->exec();
-#endif
 }
 
 

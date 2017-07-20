@@ -238,7 +238,6 @@ void toParamGet::showMemo(int row)
     QComboBox *obj = findChild<QComboBox *>(QString::number(row));
     if (obj)
     {
-#if TORA3_MEMOEDITOR
         toMemoEditor *memo = new toMemoEditor(this,
                 obj->currentText(),
                 row,
@@ -247,6 +246,5 @@ void toParamGet::showMemo(int row)
                 true);
         if (memo->exec())
             obj->setItemText(obj->currentIndex(), memo->text());
-#endif
     }
 }

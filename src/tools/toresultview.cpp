@@ -859,10 +859,8 @@ void toListView::displayMenu(const QPoint &pos)
 void toListView::displayMemo(void)
 {
     QString str = menuText();
-#if TORA3_MEMOEDITOR
     if (!str.isEmpty())
         new toMemoEditor(this, str, 0, MenuColumn);
-#endif
 }
 
 void toListView::menuCallback(QAction *action)
