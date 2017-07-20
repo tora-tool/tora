@@ -96,6 +96,9 @@ public:
     bool readErrors(toConnection &connection);
     bool compile(CompilationType t);
 
+    void setFilename(const QString &file);
+    QString const& filename(void) const;
+
 signals:
     void errorsChanged(const QString & type, const QMultiMap<int, QString> & values, const bool cleanup = false);
     void warningsChanged(const QMap<int, QString> values);
@@ -106,6 +109,8 @@ protected:
     QString Schema;
     QString Object;
     QString Type;
+
+    QString Filename;
 
     static int ID;
 

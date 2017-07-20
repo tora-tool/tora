@@ -293,6 +293,16 @@ bool toPLSQLEditor::compile(CompilationType t)
     return ret;
 }
 
+void toPLSQLEditor::setFilename(const QString &file)
+{
+    Filename = file;
+}
+
+QString const& toPLSQLEditor::filename(void) const
+{
+    return Filename;
+}
+
 static toSQL SQLReadSource("toPLSQLEditor:ReadSource",
                            "SELECT Text FROM SYS.All_Source\n"
                            " WHERE OWNER = :f1<char[101]>\n"
@@ -831,7 +841,6 @@ void toPLSQLWidget::changeContent(toTreeWidgetItem *ci)
 */
 bool toPLSQLEditor::editSave(bool askfile)
 {
-#if 0
     // Only packages should be handled differently, for all other types
     // call original version of save function
     // TODO: types as well?
@@ -882,12 +891,14 @@ bool toPLSQLEditor::editSave(bool askfile)
                     return false;
             }
             toGlobalEventSingle::Instance().addRecentFile(fn);
-            toBaseEditor::setFilename(fn);
+            setFilename(fn);
             other_part->setFilename(fn);
-            m_editor->setModified(false);
+            setModified(false);
             other_part->setModified(false);
+#if 0
             emit fileSaved(fn);
             emit other_part->fileSaved(fn);
+#endif
             return true;
         }
         else
@@ -895,13 +906,12 @@ bool toPLSQLEditor::editSave(bool askfile)
             // if something else (not .pls) was chosen - then default
             // functionality (save only current tab) must be performed
             // set chosen file
-            toBaseEditor::setFilename(fn);
+            setFilename(fn);
 
             //TODO
             // and call default save functionality without choosing a file again
             //return toMarkedEditor::editSave(false);
         }
     }
-#endif
     return false;
 } // editSave
