@@ -45,9 +45,7 @@
 #include <QtCore/QStringRef>
 #include <QtCore/QFile>
 
-#ifdef TORA_EXPERIMENTAL
 #include "core/tomemory.h"
-#endif
 
 toAbout::toAbout(QWidget* parent, const char* name, bool modal)
     : QDialog(parent)
@@ -127,14 +125,10 @@ toAbout::toAbout(QWidget* parent, const char* name, bool modal)
     }
 
     // Memory tab
-#ifdef TORA_EXPERIMENTAL
     {
         QString usage("Memory usage: %1 M");
         textBrowserMemory->setPlainText(usage.arg(QString::number((qulonglong)getCurrentRSS())));
     }
-#else
-#endif
-
 }
 
 toAbout::~toAbout()

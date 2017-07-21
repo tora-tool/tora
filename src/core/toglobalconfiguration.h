@@ -83,9 +83,7 @@ namespace ToConfiguration
                 , Translation           // #define CONF_LOCALE (Translation)
                 , ClipboardCHeadersBool // not displayed in the config gui (Copy format: include column headers)
                 , ClipboardRHeadersBool // not displayed in the config gui (Copy format: include row headers)
-#ifdef TORA_EXPERIMENTAL
                 , RamThresholdInt
-#endif
             };
             virtual QVariant defaultValue(int) const;
 
