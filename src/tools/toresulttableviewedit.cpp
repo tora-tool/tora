@@ -53,7 +53,6 @@
 toResultTableViewEdit::toResultTableViewEdit(QWidget *parent, const char *name)
     : toResultTableView(false, false, parent, name, true)
 {
-
     setSelectionBehavior(QAbstractItemView::SelectItems);
     setSelectionMode(QAbstractItemView::ContiguousSelection);
     viewport()->setAcceptDrops(true);
@@ -65,7 +64,6 @@ toResultTableViewEdit::toResultTableViewEdit(QWidget *parent, const char *name)
 toResultTableViewEdit::~toResultTableViewEdit()
 {
 }
-
 
 void toResultTableViewEdit::query(const QString &SQL, toQueryParams const& params)
 {
