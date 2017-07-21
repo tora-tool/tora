@@ -411,8 +411,10 @@ void toScintilla::keyPressEvent(QKeyEvent *e)
         return;
     } else if (Utils::toCheckKeyEvent(e, toEditMenuSingle::Instance().searchReplaceAct->shortcut())) {
         toSearchReplaceDockletSingle::Instance().activate();
+        e->accept();
+        return;
     }
-    QsciScintilla::keyPressEvent(e);
+    super::keyPressEvent(e);
 }
 
 void toScintilla::findPosition(int index, int &line, int &col)
