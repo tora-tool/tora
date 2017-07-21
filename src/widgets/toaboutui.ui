@@ -30,9 +30,7 @@
    <item row="0" column="0" colspan="4">
     <widget class="QTabWidget" name="aboutTabs">
      <property name="styleSheet">
-      <string notr="true">QTabWidget::pane { border: 0; }
-
-</string>
+      <string notr="true">QTabWidget::pane { border: 0; }</string>
      </property>
      <property name="currentIndex">
       <number>0</number>
@@ -145,8 +143,7 @@
        <item>
         <widget class="QPushButton" name="updateButton">
          <property name="toolTip">
-          <string>Check latest version
-</string>
+          <string>Check latest version</string>
          </property>
          <property name="whatsThis">
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Check latest version&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -158,11 +155,36 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tabNews">
+      <attribute name="title">
+       <string>News</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QTextBrowser" name="textBrowserNews"/>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="tabMemory">
       <attribute name="title">
        <string>Memory</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_5">
+      <layout class="QVBoxLayout" name="verticalLayout_6">
        <property name="spacing">
         <number>0</number>
        </property>
