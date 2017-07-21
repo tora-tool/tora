@@ -210,10 +210,6 @@ class toPieChart : public QWidget
     signals:
         void newValues(std::list<double> &values, std::list<QString> &labels);
     public slots:
-        /** Print the chart
-         */
-        void editPrint(void);
-
         /** Open in new window
          */
         void openCopy(void);

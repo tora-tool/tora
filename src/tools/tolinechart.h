@@ -360,10 +360,6 @@ class toLineChart : public QWidget
          */
         virtual void setup(void);
 
-        /** Print the chart.
-         */
-        virtual void editPrint(void);
-
         void openCopy(void)
         {
             openCopy(NULL);

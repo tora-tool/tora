@@ -33,7 +33,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "editor/toscintilla.h"
-#include "editor/toworksheettext.h"
+#include "core/toeditorconfiguration.h"
 #include "core/toconfiguration.h"
 #include "core/toglobalevent.h"
 #include "core/tologger.h"
@@ -41,10 +41,10 @@
 #include "core/toconf.h"
 #include "core/tocontextmenu.h"
 #include "core/toeditmenu.h"
+#include "ts_log/ts_log_utils.h"
 
 #include <QApplication>
 #include <QtGui/QClipboard>
-#include <QPrintDialog>
 #include <QtXml/QDomDocument>
 #include <QShortcut>
 #include <QtCore/QtDebug>
@@ -53,18 +53,8 @@
 #include <QtCore/QMimeData>
 #include <QToolTip>
 
-#include <Qsci/qsciprinter.h>
 #include <Qsci/qscilexersql.h>
 #include "core/tostyle.h"
-
-#include "icons/undo.xpm"
-#include "icons/redo.xpm"
-#include "icons/copy.xpm"
-#include "icons/cut.xpm"
-#include "icons/paste.xpm"
-
-
-#define ACCEL_KEY(k) "\t" + QString("Ctrl+" #k)
 
 void QSciMessage::notify()
 {
@@ -113,6 +103,7 @@ toScintilla::toScintilla(QWidget *parent, const char *name)
     // end of search all occurrences
 
     connect(this, SIGNAL(linesChanged()), this, SLOT(slotLinesChanged()));
+    connect(this, SIGNAL(cursorPositionChanged(int, int)), this, SLOT(setCoordinates(int, int)));
 
     // sets default tab width
     super::setTabWidth(toConfigurationNewSingle::Instance().option(Editor::TabStopInt).toInt());
@@ -200,6 +191,10 @@ void toScintilla::slotLinesChanged()
     setMarginWidth(0, QString().fill('0', x));
 
 }
+void toScintilla::setCoordinates(int line, int column)
+{
+    toGlobalEventSingle::Instance().setCoordinates(line + 1, column + 1);
+}
 
 void toScintilla::setWordWrap(bool enable)
 {
@@ -268,41 +263,6 @@ bool toScintilla::event(QEvent *event)
         }
     }
     return QsciScintilla::event(event);
-}
-
-void toScintilla::print(const QString  &fname)
-{
-    QsciPrinter printer;
-
-    QPrintDialog dialog(&printer, this);
-    dialog.setMinMax(1, 1000);
-    dialog.setFromTo(1, 1000);
-
-    if (!fname.isEmpty())
-    {
-        QFileInfo info(fname);
-        dialog.setWindowTitle(tr("Print %1").arg(info.fileName()));
-        printer.setOutputFileName(info.path() +
-                                  QString("/") +
-                                  info.baseName() +
-                                  ".pdf");
-    }
-    else
-        dialog.setWindowTitle(tr("Print Document"));
-
-    // printRange() not handling this and not sure what to do about it
-//     if(hasSelectedText())
-//         dialog.addEnabledOption(QAbstractPrintDialog::PrintSelection);
-
-    if (!dialog.exec())
-        return;
-
-    printer.setCreator(tr(TOAPPNAME));
-
-    // they show up in the print
-    setMarginLineNumbers(0, false);
-    printer.printRange(this);
-    setMarginLineNumbers(0, true);
 }
 
 void toScintilla::copy()
@@ -439,6 +399,8 @@ void toScintilla::mousePressEvent(QMouseEvent *e)
     QsciScintilla::mousePressEvent(e);
 }
 
+#include "docklets/tosearch.h"
+
 void toScintilla::keyPressEvent(QKeyEvent *e)
 {
     if (e->matches(QKeySequence::Copy))
@@ -447,6 +409,8 @@ void toScintilla::keyPressEvent(QKeyEvent *e)
         copy();
         e->accept();
         return;
+    } else if (Utils::toCheckKeyEvent(e, toEditMenuSingle::Instance().searchReplaceAct->shortcut())) {
+        toSearchReplaceDockletSingle::Instance().activate();
     }
     QsciScintilla::keyPressEvent(e);
 }
@@ -598,19 +562,18 @@ void toScintilla::setSelectionType(int aType)
 void toScintilla::focusInEvent (QFocusEvent *e)
 {
     TLOG(9, toDecorator, __HERE__) << this << std::endl;
-    QsciScintilla::focusInEvent(e);
+    super::focusInEvent(e);
     int curline, curcol;
     getCursorPosition (&curline, &curcol);
     toGlobalEventSingle::Instance().setCoordinates(curline + 1, curcol + 1);
-
-    emit gotFocus();
+    toEditWidget::gotFocus();
 }
 
 void toScintilla::focusOutEvent (QFocusEvent *e)
 {
     TLOG(9, toDecorator, __HERE__) << this << std::endl;
-    QsciScintilla::focusOutEvent(e);
-    emit lostFocus();
+    super::focusOutEvent(e);
+    toEditWidget::lostFocus();
 }
 
 void toScintilla::contextMenuEvent(QContextMenuEvent *e)
@@ -656,6 +619,77 @@ void toScintilla::populateContextMenu(QMenu *popup)
     }
 
     popup->addAction(editMenu.selectAllAct);
+}
+
+bool toScintilla::editOpen(const QString &file) { throw __QHERE__; };
+
+bool toScintilla::editSave(bool askfile) { throw __QHERE__; };
+
+void toScintilla::editUndo(void)
+{
+    undo();
+};
+
+void toScintilla::editRedo(void)
+{
+    redo();
+};
+
+void toScintilla::editCut(void)
+{
+    cut();
+};
+
+void toScintilla::editCopy(void)
+{
+    copy();
+}
+
+void toScintilla::editPaste(void)
+{
+    paste();
+}
+
+void toScintilla::editSelectAll(void)
+{
+    selectAll(true);
+}
+
+void toScintilla::editReadAll(void) { throw __QHERE__; };
+
+QString toScintilla::editText()
+{
+    return text();
+}
+
+toEditWidget::FlagSetStruct toScintilla::flagSet()
+{
+    toEditWidget::FlagSetStruct FlagSet;
+    if (isReadOnly())
+    {
+        FlagSet.Save = true;
+        FlagSet.Copy = hasSelectedText();
+        FlagSet.Paste = false;
+        FlagSet.Search = true;
+        FlagSet.SelectAll = true;
+    }
+    else
+    {
+        FlagSet.Open = true;
+        FlagSet.Save = true;
+        FlagSet.Undo = isUndoAvailable();
+        FlagSet.Redo = isRedoAvailable();
+        FlagSet.Cut  = hasSelectedText();
+        FlagSet.Copy = hasSelectedText();
+        FlagSet.Search = true;
+        FlagSet.SelectAll = true;
+    }
+    return FlagSet;
+}
+
+bool toScintilla::handleSearching(QString const& search, QString const& replace, Search::SearchFlags flags)
+{
+    return findText(search, replace, flags);
 }
 
 QString toScintilla::getSelectionAsHTML()

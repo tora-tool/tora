@@ -32,33 +32,46 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOWORKSHEETEDITOR_H
-#define TOWORKSHEETEDITOR_H
+#pragma once
 
-#include "editor/tobaseeditor.h"
+#include "loki/Singleton.h"
 
-class toWorksheet;
-class toSqlText;
+#include <QMenu>
 
-class toWorksheetEditor : public toBaseEditor
+class QAction;
+
+/** This singleton represents File menu in the main window widget
+ * as this must be accessed from various pieces it was moved into singleton
+ *
+ */
+class toFileMenu : public QMenu
 {
-        Q_OBJECT;
-        typedef toBaseEditor super;
-    public:
-        toWorksheetEditor(toWorksheet *worksheet,
-                          QWidget *parent,
-                          const char *name = NULL);
+    Q_OBJECT;
+public:
+    toFileMenu();
+    virtual ~toFileMenu();
 
-        toSqlText* editor();
+    void menuAboutToShow();
 
-        virtual bool editSave(bool askfile);
-        virtual bool editOpen(const QString &suggestedFile);
-    private:
-        virtual void focusInEvent(QFocusEvent *e);
-        virtual void focusOutEvent(QFocusEvent *e);
+    QAction *newConnAct, *closeConnAct;
+    QAction *commitAct, *rollbackAct, *currentAct, *stopAct, *refreshAct;
+    QAction *openAct, *saveAct;
+    QMenu   *recentMenu;
+    QAction *saveAsAct;
+#ifdef TORA3_SESSION
+    QAction *openSessionAct, *saveSessionAct;
+    QAction *restoreSessionAct , *closeSessionAct
+#endif
+    QAction *quitAct;
 
-        toWorksheet *Worksheet;
+private:
+    void updateRecent(void);
+
+private slots:
+    void slotAboutToShow();
+
+    /** Add recent file */
+    void addRecentFile(const QString &filename);
 };
 
-
-#endif
+typedef Loki::SingletonHolder<toFileMenu, Loki::CreateUsingNew, Loki::NoDestroy> toFileMenuSingle;

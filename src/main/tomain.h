@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOMAIN_H
-#define TOMAIN_H
+#pragma once
 
 #include "core/tora_export.h"
 #include "core/tomainwindow.h"
@@ -56,9 +55,9 @@ class toConnectionRegistry;
 class toDockbar;
 class toDocklet;
 class toEditMenu;
+class toFileMenu;
 class toEditWidget;
 class toLineChart;
-class toMarkedEditor;
 class toMessage;
 class toTool;
 class toToolWidget;
@@ -75,8 +74,6 @@ class toWorkSpace;
 class toMain : public toMainWindow
 {
         Q_OBJECT;
-
-        void updateRecent(void);
 
         /**
          * enable or disable buttons that need an active connection
@@ -165,9 +162,6 @@ class toMain : public toMainWindow
 
         void updateConnectionsMenu();
 
-        /** Used to enable/disable entries in the file menu */
-        void showFileMenu(void);
-
         /** Check if object caching is done. */
         void checkCaching(void);
 
@@ -204,16 +198,6 @@ class toMain : public toMainWindow
         /** Set if a connection needs to be committed. Also updates visual feedback in interface.
          */
         void setNeedCommit(toToolWidget *tool, bool needCommit = true);
-
-        /**
-         * Add a new connection. The connection itself must already be created.
-         * Returns the connection or it's duplicate already opened connection.
-         */
-        void addConnection(toConnection *conn);
-
-        /** Add recent file
-         */
-        void addRecentFile(const QString &filename);
 
         /**
          * Set coordinates in the statusbar.
@@ -306,10 +290,10 @@ class toMain : public toMainWindow
         QToolBar *editToolbar, *toolsToolbar, *connectionToolbar;
 
         /** Toolbars for minimizing docklets*/
-        toDockbar *leftDockbar, *rightDockbar;
+        toDockbar *leftDockbar, *rightDockbar, *bottomDockbar;
 
-        /** File menu, Recent files menu (child of fileMenu). */
-        QMenu *fileMenu, *recentMenu;
+        /** File menu, Recent files menu (child of fileMenu) - reference to a value held in singleton*/
+        toFileMenu &fileMenu;
 
         /** Edit menu - reference to a value held in singleton*/
         toEditMenu &editMenu;
@@ -327,9 +311,6 @@ class toMain : public toMainWindow
 
         toBackgroundLabel* BackgroundLabel;
 
-        QAction *newConnAct, *closeConn, *commitAct, *rollbackAct, *currentAct, *stopAct;
-        QAction *refreshAct, *openAct, *saveAct, *saveAsAct, *openSessionAct, *saveSessionAct;
-        QAction *restoreSessionAct , *closeSessionAct, *printAct, *quitAct;
         QAction *helpCurrentAct, *helpContentsAct, *aboutAct, *aboutQtAct;
         QAction *windowCloseAct, *windowCloseAllAct;
 
@@ -341,5 +322,3 @@ class toMain : public toMainWindow
         QTimer *reportTimer;
 #endif
 };
-
-#endif

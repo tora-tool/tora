@@ -77,7 +77,6 @@ QT5_WRAP_CPP(TEST3_MOC_SOURCES tests/test3window.h
 	tools/toresulttableviewedit.h
 	tools/toresultview.h
 	tools/toworksheet.h
-	tools/toworksheeteditor.h
 	)
 ADD_EXECUTABLE("test3" ${GUI_TYPE}
   tests/test3.cpp
@@ -98,7 +97,6 @@ ADD_EXECUTABLE("test3" ${GUI_TYPE}
   tools/toresulttableviewedit.cpp  
   tools/toresultview.cpp
   tools/toworksheet.cpp
-  tools/toworksheeteditor.cpp
   ${TEST3_MOC_SOURCES}
   ${PCH_SOURCE}  
   ${CORE_SOURCES}    
@@ -128,14 +126,12 @@ IF(TORA_DEBUG AND TEST_APP4)
 # test4
 QT5_WRAP_CPP(TEST4_MOC_SOURCES
   tests/test4window.h
-  editor/tobaseeditor.h
-  editor/tohighlightededitor.h
-  editor/tomarkededitor.h  
+  docklets/tosearch.h  
   editor/tomemoeditor.h
   editor/toscintilla.h
   editor/tosqltext.h
-  editor/tosyntaxanalyzernl.h
   editor/tosyntaxanalyzermysql.h
+  editor/tosyntaxanalyzernl.h
   editor/tosyntaxanalyzeroracle.h
   editor/tosyntaxanalyzerpostgresql.h
   tools/toresultstats.h
@@ -146,14 +142,12 @@ QT5_ADD_RESOURCES(TEST4_RC_SOURCES tests/test4.qrc)
 ADD_EXECUTABLE("test4"
   tests/test4.cpp
   tests/test4window.cpp
-  editor/tobaseeditor.cpp
-  editor/tohighlightededitor.cpp
-  editor/tomarkededitor.cpp
+  docklets/tosearch.cpp
   editor/tomemoeditor.cpp
   editor/toscintilla.cpp
   editor/tosqltext.cpp
-  editor/tosyntaxanalyzernl.cpp
   editor/tosyntaxanalyzermysql.cpp
+  editor/tosyntaxanalyzernl.cpp
   editor/tosyntaxanalyzeroracle.cpp
   editor/tosyntaxanalyzerpostgresql.cpp
   tools/toresultstats.cpp
@@ -188,7 +182,6 @@ IF(TORA_DEBUG AND TEST_APP5)
 # test5
 QT5_WRAP_CPP(TEST5_MOC_SOURCES
   tests/test5window.h
-  editor/tomarkededitor.h
   result/toresulttabledata.h
   tools/tobrowserbasewidget.h
   tools/todescribe.h
@@ -202,7 +195,6 @@ QT5_WRAP_CPP(TEST5_MOC_SOURCES
   tools/toplsqleditor.h
   tools/toplsqltext.h
   tools/toworksheet.h
-  tools/toworksheeteditor.h
   tools/toresultstats.h
   tools/toresultplan.h
   tools/tolinechart.h
@@ -212,7 +204,6 @@ QT5_WRAP_CPP(TEST5_MOC_SOURCES
 ADD_EXECUTABLE("test5"
   tests/test5.cpp
   tests/test5window.cpp
-  editor/tomarkededitor.cpp
   result/toresulttabledata.cpp
   tools/tobrowserbasewidget.cpp
   tools/todescribe.cpp
@@ -232,7 +223,6 @@ ADD_EXECUTABLE("test5"
   ${EDITOR_SOURCES}
   ${ORACLE_SOURCES}
   # worksheet tool deps
-  tools/toworksheeteditor.cpp
   tools/toresultstats.cpp
   tools/tolinechart.cpp
   tools/tolinechart.cpp
@@ -330,10 +320,7 @@ ENDIF(TORA_DEBUG AND TEST_APP8)
 IF(TORA_DEBUG AND TEST_APP9)
 # test9
 QT5_WRAP_CPP(TEST9_MOC_SOURCES
-  tests/test9window.h
-  editor/tobaseeditor.h
-  editor/tohighlightededitor.h
-  editor/tomarkededitor.h  
+  tests/test9window.h  
   editor/tomemoeditor.h
   editor/toscintilla.h
   editor/tosqltext.h
@@ -350,9 +337,6 @@ QT5_ADD_RESOURCES(TEST9_RC_SOURCES tests/test9.qrc)
 ADD_EXECUTABLE("test9"
   tests/test9.cpp
   tests/test9window.cpp
-  editor/tobaseeditor.cpp
-  editor/tohighlightededitor.cpp
-  editor/tomarkededitor.cpp
   editor/tomemoeditor.cpp
   editor/toscintilla.cpp
   editor/tosqltext.cpp

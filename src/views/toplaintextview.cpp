@@ -44,7 +44,7 @@
 using namespace Views;
 
 toPlainTextView::toPlainTextView(QWidget *parent /* = 0*/, const char *name /* = 0*/)
-    : QWidget(parent)
+    : super(parent)
     , toEditWidget()
     , m_model(NULL)
     , m_model_column(0)
@@ -60,20 +60,11 @@ toPlainTextView::toPlainTextView(QWidget *parent /* = 0*/, const char *name /* =
     m_view = new QPlainTextEdit(this);
     m_view->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-    m_search = new toSearchReplace(this);
-    m_search->hide();
-
     QVBoxLayout *l = new QVBoxLayout();
     l->setSpacing(0);
     l->setContentsMargins(0, 0, 0, 0);
     l->addWidget(m_view);
-    l->addWidget(m_search);
     setLayout(l);
-
-    connect(m_search, SIGNAL(searchNext(Search::SearchFlags)),
-            this, SLOT(handleSearching(Search::SearchFlags)));
-    connect(m_search, SIGNAL(windowClosed()),
-            this, SLOT(setEditorFocus()));
 }
 
 void toPlainTextView::setReadOnly(bool ro)
@@ -116,9 +107,16 @@ void toPlainTextView::editSelectAll(void)
     m_view->selectAll();
 }
 
-void toPlainTextView::focusInEvent (QFocusEvent *e)
+void toPlainTextView::focusInEvent(QFocusEvent *e)
 {
-    QWidget::focusInEvent(e);
+    super::focusInEvent(e);
+    toEditWidget::gotFocus();
+}
+
+void toPlainTextView::focusOutEvent(QFocusEvent *e)
+{
+    super::focusOutEvent(e);
+    toEditWidget::lostFocus();
 }
 
 void toPlainTextView::setFont(const QFont &f)
@@ -139,7 +137,6 @@ void toPlainTextView::setModel(QAbstractItemModel *model)
     connect(model, SIGNAL(rowsInserted(const QModelIndex &, int , int)), this, SLOT(rowsInserted(const QModelIndex &, int, int)));
     connect(model, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(rowsRemoved(const QModelIndex &, int, int)));
     setReadOnly(true);
-    m_search->setReadOnly(true);
 }
 
 void toPlainTextView::modelReset()
@@ -174,17 +171,7 @@ void toPlainTextView::rowsRemoved(const QModelIndex &parent, int first, int last
     }
 }
 
-bool toPlainTextView::searchNext()
-{
-    if (!m_search->isVisible())
-    {
-        m_search->show();
-        m_search->setReadOnly(true);
-    }
-    return true;
-}
-
-void toPlainTextView::handleSearching(Search::SearchFlags flags)
+bool toPlainTextView::handleSearching(QString const& search, QString const& replace, Search::SearchFlags flags)
 {
     QTextDocument::FindFlags f;
     if (flags & Search::WholeWords)
@@ -192,10 +179,5 @@ void toPlainTextView::handleSearching(Search::SearchFlags flags)
     if (flags & Search::CaseSensitive)
         f |= QTextDocument::FindCaseSensitively;
 
-    bool ret = m_view->find(m_search->searchText(), f);
-}
-
-void toPlainTextView::setEditorFocus()
-{
-    m_view->setFocus(Qt::OtherFocusReason);
+    return m_view->find(search, f);
 }

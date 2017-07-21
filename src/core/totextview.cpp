@@ -40,7 +40,7 @@
 #include "widgets/tosearchreplace.h"
 
 toTextView::toTextView(QWidget *parent /* = 0*/, const char *name /* = 0*/)
-    : QWidget(parent)
+    : super(parent)
     , toEditWidget()
 {
     if (name)
@@ -54,20 +54,11 @@ toTextView::toTextView(QWidget *parent /* = 0*/, const char *name /* = 0*/)
     m_view = new QTextBrowser(this);
     m_view->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-    m_search = new toSearchReplace(this);
-    m_search->SearchMode->hide();
-
     QVBoxLayout *l = new QVBoxLayout();
     l->setSpacing(0);
     l->setContentsMargins(0, 0, 0, 0);
     l->addWidget(m_view);
-    l->addWidget(m_search);
     setLayout(l);
-
-    connect(m_search, SIGNAL(searchNext(Search::SearchFlags)),
-            this, SLOT(handleSearching(Search::SearchFlags)));
-    connect(m_search, SIGNAL(windowClosed()),
-            this, SLOT(setEditorFocus()));
 }
 
 void toTextView::setFontFamily(const QString &fontFamily)
@@ -120,20 +111,17 @@ void toTextView::editSelectAll(void)
 
 void toTextView::focusInEvent (QFocusEvent *e)
 {
-    QWidget::focusInEvent(e);
+    super::focusInEvent(e);
+    toEditWidget::gotFocus();
 }
 
-bool toTextView::searchNext()
+void toTextView::focusOutEvent (QFocusEvent *e)
 {
-    if (!m_search->isVisible())
-    {
-        m_search->show();
-        m_search->setReadOnly(true);
-    }
-    return true;
+    super::focusInEvent(e);
+    toEditWidget::lostFocus();
 }
 
-void toTextView::handleSearching(Search::SearchFlags flags)
+bool toTextView::handleSearching(QString const& search, QString const& replace, Search::SearchFlags flags)
 {
     QTextDocument::FindFlags f;
     if (flags & Search::WholeWords)
@@ -141,10 +129,5 @@ void toTextView::handleSearching(Search::SearchFlags flags)
     if (flags & Search::CaseSensitive)
         f |= QTextDocument::FindCaseSensitively;
 
-    bool ret = m_view->find(m_search->searchText(), f);
-}
-
-void toTextView::setEditorFocus()
-{
-    m_view->setFocus(Qt::OtherFocusReason);
+    return m_view->find(search, f);
 }

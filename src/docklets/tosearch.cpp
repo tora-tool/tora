@@ -32,67 +32,52 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOCODEOUTLINE_H
-#define TOCODEOUTLINE_H
+#include "docklets/tosearch.h"
+#include "widgets/tosearchreplace.h"
 
-
-#include "core/todocklet.h"
-#include "core/toeditwidget.h"
-
-#include <QtCore/QModelIndex>
-
-class QTabWidget;
-class QListWidget;
-class QTimerEvent;
-
-class toCodeOutline : public toDocklet
+toSearchReplaceDocklet::toSearchReplaceDocklet(QWidget *parent, toWFlags flags)
+    : QDockWidget(tr("Search/Replace"), parent, flags)
 {
-        Q_OBJECT;
+    setObjectName("Search Docklet");
+    setAllowedAreas(Qt::BottomDockWidgetArea);
 
-        class editHandlerHolder
+    m_search = new toSearchReplace(this);
+    setWidget(m_search);
+
+    QWidgetList widgets = qApp->topLevelWidgets();
+    for (QWidgetList::iterator it = widgets.begin(); it != widgets.end(); it++)
+    {
+        QMainWindow *main = dynamic_cast<QMainWindow *>((*it));
+        if (main)
         {
-            public:
-                editHandlerHolder() : m_current(NULL) {};
-                virtual ~editHandlerHolder() {};
-                virtual void receivedFocus(toEditWidget *widget)
-                {
-                    m_current = widget;
-                }
-                virtual void lostFocus(toEditWidget *widget)
-                {
-                    m_current = NULL;
-                }
-                toEditWidget *m_current;
-        };
+            main->addDockWidget(Qt::BottomDockWidgetArea, this);
+            break;
+        }
+    }
+	hide();
+}
 
-    private:
-        QTabWidget *TabWidget;
-        QListWidget *procedures, *functions, *cursors, *types, *exceptions;
+void toSearchReplaceDocklet::focusInEvent(QFocusEvent *e)
+{
+    QDockWidget::focusInEvent(e);
+}
+void toSearchReplaceDocklet::focusOutEvent(QFocusEvent *e)
+{
+    QDockWidget::focusOutEvent(e);
+}
 
-        QString m_lastText;
-        editHandlerHolder *m_currentEditor;
-        int m_timerID;
+void toSearchReplaceDocklet::activate()
+{
+    m_search->activate();
+	show();
+}
 
-        void timerEvent(QTimerEvent *e);
-    public:
-        toCodeOutline(QWidget *parent = 0, toWFlags flags = 0);
+void toSearchReplaceDocklet::registerEdit(toEditWidget *w)
+{
+    m_search->registerEdit(w);
+}
 
-        /**
-         * Get the action icon name for this docklet
-         *
-         */
-        virtual QIcon icon() const;
-
-        /**
-         * Get the docklet's name
-         *
-         */
-        virtual QString name() const;
-
-
-    public slots:
-        void handleActivated(const QModelIndex &index);
-};
-
-
-#endif
+void toSearchReplaceDocklet::unregisterEdit(toEditWidget *w)
+{
+    m_search->unregisterEdit(w);
+}

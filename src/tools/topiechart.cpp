@@ -394,20 +394,6 @@ void toPieChart::paintEvent(QPaintEvent *)
     paintChart(&p, QRect(0, 0, width(), height()));
 }
 
-void toPieChart::editPrint(void)
-{
-    TOPrinter printer;
-    QPrintDialog dialog(&printer, this);
-    dialog.setMinMax(1, 1);
-    if (dialog.exec())
-    {
-        printer.setCreator(tr(TOAPPNAME));
-        QPainter painter(&printer);
-        QRect rect(printer.pageRect());
-        paintChart(&painter, rect);
-    }
-}
-
 toPieConnector::toPieConnector(toPieChart *pieChart, toLineChart *lineChart)
 {
     PieChart = pieChart;

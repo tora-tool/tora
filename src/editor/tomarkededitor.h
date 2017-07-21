@@ -32,43 +32,35 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOMARKEDEDITOR_H
-#define TOMARKEDEDITOR_H
+#pragma once
 
-#include "editor/tobaseeditor.h"
 #include "core/utils.h"
 
+#include <QtCore/QCoreApplication>
 #include <QtGui/QKeyEvent>
-
-class toMarkedEditor : public toBaseEditor
-{
-        Q_OBJECT;
-    public:
-        toMarkedEditor(QWidget *parent = 0, const char* name = 0);
-};
 
 template <class SUPER, class DIALOG>
 class TMemoWithExec : public SUPER
 {
-        DIALOG *MemoEditor;
-        QKeySequence CtrlEnter;
-    public:
-        TMemoWithExec(DIALOG *parentEditor, const char *name = NULL)
-            : SUPER(parentEditor, name)
-            , MemoEditor(parentEditor)
-            , CtrlEnter(qApp->translate("toMemoEditor", "Ctrl+Return", "Memo Editor|Save changes"))
-        { }
-        virtual ~TMemoWithExec() {}
-        virtual void keyPressEvent(QKeyEvent *e)
-        {
-            if (Utils::toCheckKeyEvent(e, CtrlEnter))
-            {
-                MemoEditor->store();
-                e->accept();
-            }
-            else
-                SUPER::keyPressEvent(e);
-        }
-};
+    DIALOG *MemoEditor;
+    QKeySequence CtrlEnter;
+public:
+    TMemoWithExec(DIALOG *parentEditor, const char *name = NULL)
+    : SUPER(parentEditor, name)
+    , MemoEditor(parentEditor)
+    , CtrlEnter(qApp->translate("toMemoEditor", "Ctrl+Return", "Memo Editor|Save changes"))
+    {}
 
-#endif
+    virtual ~TMemoWithExec() {}
+
+    virtual void keyPressEvent(QKeyEvent *e)
+    {
+        if (Utils::toCheckKeyEvent(e, CtrlEnter))
+        {
+            MemoEditor->store();
+            e->accept();
+        }
+        else
+            SUPER::keyPressEvent(e);
+    }
+};

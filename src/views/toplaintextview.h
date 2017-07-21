@@ -56,6 +56,7 @@ namespace Views
 class toPlainTextView : public QWidget, public toEditWidget
 {
     Q_OBJECT;
+    typedef QWidget super;
 public:
 
     toPlainTextView(QWidget *parent = 0, const char *name = 0);
@@ -68,7 +69,6 @@ public:
     void editSelectAll(void) override;
     bool editSave(bool) override;
     bool editOpen(const QString&) override { return false; }
-    void editPrint() override {}
     void editUndo() override {}
     void editRedo() override {}
     void editCut() override {}
@@ -76,27 +76,24 @@ public:
     void editReadAll() override {}
     QString editText() override;
 
-    bool searchNext() override;
-    void searchReplace() override {};
-
-    void focusInEvent (QFocusEvent *e) override;
+    bool handleSearching(QString const& search, QString const& replace, Search::SearchFlags flags) override;
 
     void setModel(QAbstractItemModel *model);
 
     void setFont(const QFont &);
     const QFont & font();
 
-protected slots:
-    void setEditorFocus();
-    void handleSearching(Search::SearchFlags flags);
+protected:
+    void focusInEvent (QFocusEvent *e) override;
+    void focusOutEvent (QFocusEvent *e) override;
 
+protected slots:
     // handle just some of model's signals
     void modelReset();
     void rowsInserted(const QModelIndex &parent, int first, int last);
     void rowsRemoved(const QModelIndex &parent, int first, int last);
 private:
     QPlainTextEdit *m_view;
-    toSearchReplace *m_search;
     QString m_filename;
     QAbstractItemModel *m_model;
     QSet<int> m_lines;

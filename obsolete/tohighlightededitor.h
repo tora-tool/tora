@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOHIGHLIGHTEDEDITOR_H
-#define TOHIGHLIGHTEDEDITOR_H
+#pragma once
 
 #include "editor/tobaseeditor.h"
 
@@ -48,5 +47,3 @@ class toHighlightedEditor : public toBaseEditor
 
         toSqlText* editor();
 };
-
-#endif

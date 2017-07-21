@@ -39,7 +39,6 @@
 #include "core/toconnection.h"
 #include "widgets/toresultitem.h"
 #include "core/tosql.h"
-#include "editor/tohighlightededitor.h"
 #include "editor/tosqltext.h"
 
 #include <QComboBox>
@@ -510,7 +509,7 @@ toProfiler::toProfiler(QWidget *parent, toConnection &connection)
     Tabs = new QTabWidget(this);
     layout()->addWidget(Tabs);
 
-    Script = new toHighlightedEditor(Tabs);
+    Script = new toSqlText(Tabs);
     Tabs->addTab(Script, tr("Script"));
 
     Result = new QSplitter(Tabs);
@@ -618,7 +617,7 @@ void toProfiler::execute(void)
         exc = toSQL::string(SQLStartProfiler, connection());
         for (int i = 0; i < Repeat->value(); i++)
         {
-            exc += Script->editor()->text();
+            exc += Script->text();
             exc += QString::fromLatin1("\n");
         }
         exc += toSQL::string(SQLStopProfiler, connection());

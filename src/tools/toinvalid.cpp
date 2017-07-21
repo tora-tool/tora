@@ -308,9 +308,8 @@ void toInvalid::changeSelection(void)
                 Errors[line] += (QString)errors.readValue();
                 firstErrorLine = (std::min)(firstErrorLine, line);
             }
-
-            Source->editor()->setErrors(Errors);
-            Source->editor()->gotoLine(firstErrorLine);
+            Source->setErrors(Errors);
+            Source->gotoLine(firstErrorLine);
         }
     }
     TOCATCH;

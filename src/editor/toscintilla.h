@@ -62,11 +62,11 @@ class QFileSystemWatcher;
  */
 class QSciMessage : public QObject
 {
-        Q_OBJECT;
-    public:
-        QString text;
-    public slots:
-        void notify();
+    Q_OBJECT;
+public:
+    QString text;
+public slots:
+    void notify();
 };
 
 /**
@@ -74,187 +74,196 @@ class QSciMessage : public QObject
  * menus and print support. It is based on QsciScintilla which is API compatible
  * with QTextEdit class. toEditWidget is abstract class representing copy/paste interface.
  */
-class toScintilla: public QsciScintilla //, public toEditWidget
+class toScintilla : public QsciScintilla, public toEditWidget
 {
-        Q_OBJECT;
-        typedef QsciScintilla super;
-        friend class toEditWidget;
-        friend class toBaseEditor;
-    public:
-        /** Create an editor.
-         * @param parent Parent of this widget.
-         * @param name Name of this widget.
-         */
-        toScintilla(QWidget *parent, const char *name = NULL);
+    Q_OBJECT;
+    typedef QsciScintilla super;
+public:
+    /** Create an editor.
+     * @param parent Parent of this widget.
+     * @param name Name of this widget.
+     */
+    toScintilla(QWidget *parent, const char *name = NULL);
 
-        virtual ~toScintilla();
+    virtual ~toScintilla();
 
-        long currentPosition() const;
+    long currentPosition() const;
 
-        /** Get word at position. This function is now public.
-         * re-implemented from QScintilla
-         */
-        QString wordAtPosition(int position, bool onlyWordCharacters = true) const;
+    /** Get word at position. This function is now public.
+     * re-implemented from QScintilla
+     */
+    QString wordAtPosition(int position, bool onlyWordCharacters = true) const;
 
-        /** Get word at line and index. This function is now public.
-         */
-        QString wordAtLineIndex(int line, int index) const;
+    /** Get word at line and index. This function is now public.
+     */
+    QString wordAtLineIndex(int line, int index) const;
 
-        QString convertTextS2Q(const char *s) const;
+    QString convertTextS2Q(const char *s) const;
 
-        int PrevWordStart(int pos);
-        int PrevWordEnd(int pos);
+    int PrevWordStart(int pos);
+    int PrevWordEnd(int pos);
 
-        int NextWordStart(int pos, int delta = 1);
-        int NextWordEnd(int pos, int delta = 1);
+    int NextWordStart(int pos, int delta = 1);
+    int NextWordEnd(int pos, int delta = 1);
 
 #if 0
 // TODO: this part is waiting for QScintilla backend feature (yet unimplemented).
-        /*! \brief Set the selection mode for editor.
+    /*! \brief Set the selection mode for editor.
         \param aType SC_SEL_STREAM = 0, SC_SEL_RECTANGLE = 1, SC_SEL_LINES = 2
-        */
-        void setSelectionType(int aType = SC_SEL_STREAM);
+     */
+    void setSelectionType(int aType = SC_SEL_STREAM);
 #endif
 
-        /** Find the line and column of an index into the string of the entire editor.
-         * @param index Index to get line and col from.
-         * @param line Will be filled out with the line.
-         * @param col Will be filled out with the col.
-         */
-        void findPosition(int index, int &line, int &col);
+    /** Find the line and column of an index into the string of the entire editor.
+     * @param index Index to get line and col from.
+     * @param line Will be filled out with the line.
+     * @param col Will be filled out with the col.
+     */
+    void findPosition(int index, int &line, int &col);
 
-        void gotoPosition(long pos);
+    void gotoPosition(long pos);
 
-        void gotoLine(int line);
+    void gotoLine(int line);
 
-        long positionAfter(long pos, int offset);
+    long positionAfter(long pos, int offset);
 
-        using QsciScintilla::setSelection;
+    using QsciScintilla::setSelection;
 
-        void setSelection(long posFrom, long posTo);
+    void setSelection(long posFrom, long posTo);
 
-        /** Insert text and optionally mark inserted text.
-         * @param str String to insert.
-         * @param mark True if mark inserted as selected.
-         */
-        void insertAndSelect(const QString &str, bool select = false);
+    /** Insert text and optionally mark inserted text.
+     * @param str String to insert.
+     * @param mark True if mark inserted as selected.
+     */
+    void insertAndSelect(const QString &str, bool select = false);
 
-        bool findText(const QString &searchText, const QString &replaceText, Search::SearchFlags flags);
-        void findStop();
+    bool findText(const QString &searchText, const QString &replaceText, Search::SearchFlags flags);
+    void findStop();
 
-        char getByteAt(int pos);
-        int getStyleAt(int pos);
-        int getLevelAt(int line);
-        wchar_t getWCharAt(int pos);
+    char getByteAt(int pos);
+    int getStyleAt(int pos);
+    int getLevelAt(int line);
+    wchar_t getWCharAt(int pos);
 
-        void enableToolTips() { m_showTooTips = true; }
-        void disableToolTips() { m_showTooTips = false; }
+    void enableToolTips() { m_showTooTips = true; }
+    void disableToolTips() { m_showTooTips = false; }
 
-    public slots:
-        void setWordWrap(bool);
+    // toEditWidget API re-implementation (most of the methods are not implemented)
+    bool editOpen(const QString &file = QString::null) override;
+    bool editSave(bool askfile) override;
+    void editUndo(void) override;
+    void editRedo(void) override;
+    void editCut(void) override;
+    void editCopy(void) override;
+    void editPaste(void) override;
+    void editSelectAll(void) override;
+    void editReadAll(void) override;
+    QString editText() override;
+    FlagSetStruct flagSet() override;
 
-        //! \reimp
-        void copy() override;
+    bool handleSearching(QString const& search, QString const& replace, Search::SearchFlags flags) override;
 
-        //! \reimp
-        void paste() override;
+public slots:
+    void setWordWrap(bool);
 
-    protected:
-        struct ToolTipData
-        {
-            QPoint position;     // Event position
-            QPoint globalPos;
-            long   textPosition; // Sci text position
-            long   wordStart;    // Sci word start position
-            long   wordEnd;      // Sci word end position
-            long   x_start;
-            long   y_start;
-            long   x_end;
-            int    line;         // Sci Line
-            int    height;
-            QRect  rect;
-        };
+    //! \reimp
+    void copy() override;
 
-        bool event(QEvent *event) override;
+    //! \reimp
+    void paste() override;
 
-        virtual bool showToolTip(ToolTipData const& t);
+protected:
+    struct ToolTipData
+    {
+        QPoint position;     // Event position
+        QPoint globalPos;
+        long   textPosition; // Sci text position
+        long   wordStart;    // Sci word start position
+        long   wordEnd;      // Sci word end position
+        long   x_start;
+        long   y_start;
+        long   x_end;
+        int    line;         // Sci Line
+        int    height;
+        QRect  rect;
+    };
 
-        void print(const QString &fname);
+    bool event(QEvent *event) override;
 
-        // QsciScintilla API reimplementation
+    virtual bool showToolTip(ToolTipData const& t);
 
-        //! \reimp
-        void mousePressEvent(QMouseEvent *e) override;
+    // QsciScintilla API re-implementation
 
-        //! \reimp
-        void keyPressEvent(QKeyEvent *e) override;
+    //! \reimp
+    void mousePressEvent(QMouseEvent *e) override;
 
-        //! \reimp
-        void focusInEvent(QFocusEvent *e) override;
+    //! \reimp
+    void keyPressEvent(QKeyEvent *e) override;
 
-        //! \reimp
-        void focusOutEvent(QFocusEvent *e) override;
+    //! \reimp
+    void focusInEvent(QFocusEvent *e) override;
 
-        //! \reimp
-        // to be overriden
-        // unless contextMenuPolicy is set to: Qt::CustomContextMenu, which is usual when toBaseEditor is used
-        void contextMenuEvent(QContextMenuEvent *) override;
+    //! \reimp
+    void focusOutEvent(QFocusEvent *e) override;
 
-        virtual void populateContextMenu(QMenu *);
+    //! \reimp
+    // to be overriden
+    // unless contextMenuPolicy is set to: Qt::CustomContextMenu, which is usual when toBaseEditor is used
+    void contextMenuEvent(QContextMenuEvent *) override;
 
-        // Copied from Scintilla CharClassify.h (does not support UTF8)
-        class CharClassify
-        {
-            public:
-                CharClassify();
+    virtual void populateContextMenu(QMenu *);
 
-                enum cc { ccSpace, ccNewLine, ccWord, ccPunctuation };
-                void SetDefaultCharClasses(bool includeWordClass);
-                void SetCharClasses(const unsigned char *chars, cc newCharClass);
-                int GetCharsOfClass(cc charClass, unsigned char *buffer);
-                cc GetClass(unsigned char ch) const
-                {
-                    return static_cast<cc>(charClass[ch]);
-                }
-                bool IsWord(unsigned char ch) const
-                {
-                    return static_cast<cc>(charClass[ch]) == ccWord;
-                }
-
-            private:
-                enum { maxChar=256 };
-                unsigned char charClass[maxChar];    // not type cc to save space
-        };
-
-    signals:
-
-        void gotFocus();
-        void lostFocus();
-
+    // Copied from Scintilla CharClassify.h (does not support UTF8)
+    class CharClassify
+    {
     public:
-        static CharClassify::cc CharClass(char);
+        CharClassify();
 
-    protected:
-        virtual void newLine(void);
-        void dropEvent(QDropEvent *) override;
-
-        QString getSelectionAsHTML();
-        QString getSelectionAsRTF();
-
-        static CharClassify m_charClasifier;
-        QSciMessage m_message;
-    private slots:
-
-        //! \brief Handle line numbers in the editor on text change
-        void slotLinesChanged();
+        enum cc { ccSpace, ccNewLine, ccWord, ccPunctuation };
+        void SetDefaultCharClasses(bool includeWordClass);
+        void SetCharClasses(const unsigned char *chars, cc newCharClass);
+        int GetCharsOfClass(cc charClass, unsigned char *buffer);
+        cc GetClass(unsigned char ch) const
+        {
+            return static_cast<cc>(charClass[ch]);
+        }
+        bool IsWord(unsigned char ch) const
+        {
+            return static_cast<cc>(charClass[ch]) == ccWord;
+        }
 
     private:
-        QPoint DragStart;
+        enum { maxChar=256 };
+        unsigned char charClass[maxChar];    // not type cc to save space
+    };
 
-        QString m_searchText;
-        Search::SearchFlags m_flags;
+public:
+    static CharClassify::cc CharClass(char);
 
-        //! Highlight all occurrences of m_searchText QScintilla indicator
-        const int m_searchIndicator;
-        bool m_showTooTips;
+    protected:
+    virtual void newLine(void);
+    void dropEvent(QDropEvent *) override;
+
+    QString getSelectionAsHTML();
+    QString getSelectionAsRTF();
+
+    static CharClassify m_charClasifier;
+    QSciMessage m_message;
+protected slots:
+
+    //! \brief Handle line numbers in the editor on text change
+    void slotLinesChanged();
+
+    //! \brief Notify global event dispatcher
+    void setCoordinates(int, int);
+
+private:
+    QPoint DragStart;
+
+    QString m_searchText;
+    Search::SearchFlags m_flags;
+
+    //! Highlight all occurrences of m_searchText QScintilla indicator
+    const int m_searchIndicator;
+    bool m_showTooTips;
 };

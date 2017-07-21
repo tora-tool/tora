@@ -32,12 +32,26 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "editor/tomarkededitor.h"
-#include "editor/toscintilla.h"
+#pragma once
 
-toMarkedEditor::toMarkedEditor(QWidget *parent, const char *name)
-    : toBaseEditor(new toScintilla(NULL), parent)
+#include "editor/tobaseeditor.h"
+
+#if TORA3_MEMOEDITOR
+class toDebugText;
+
+class toDebugEditor : public toBaseEditor
 {
-    if (name)
-        setObjectName(name);
-}
+        Q_OBJECT;
+
+    public:
+        toDebugEditor(QWidget *parent = 0, const char* name = 0);
+
+        toDebugText* editor();
+
+        void setErrors(const QMap<int, QString> &errors, bool errorsGiven = true);
+
+        void setCurrentDebugLine(int current);
+
+};
+
+#endif

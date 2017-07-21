@@ -32,26 +32,32 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TODEBUGEDITOR_H
-#define TODEBUGEDITOR_H
+#include "editor/todebugeditor.h"
+#include "editor/todebugtext.h"
 
-#include "editor/tobaseeditor.h"
+#if TORA3_MEMOEDITOR
 
-class toDebugText;
-
-class toDebugEditor : public toBaseEditor
+toDebugEditor::toDebugEditor(QWidget *parent, const char *name)
+    : toBaseEditor(new toDebugText(NULL), parent)
 {
-        Q_OBJECT;
+    if (name)
+        setObjectName(name);
+}
 
-    public:
-        toDebugEditor(QWidget *parent = 0, const char* name = 0);
+toDebugText* toDebugEditor::editor()
+{
+    return qobject_cast<toDebugText*>(m_editor);
+}
 
-        toDebugText* editor();
+void toDebugEditor::setErrors(const QMap<int, QString> &errors, bool errorsGiven)
+{
+    qobject_cast<toDebugText*>(m_editor)->setErrors(errors, errorsGiven);
+}
 
-        void setErrors(const QMap<int, QString> &errors, bool errorsGiven = true);
+void toDebugEditor::setCurrentDebugLine(int current)
+{
+    qobject_cast<toDebugText*>(m_editor)->setCurrentDebugLine(current);
+}
 
-        void setCurrentDebugLine(int current);
-
-};
 
 #endif

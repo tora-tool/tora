@@ -32,12 +32,9 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOOUTPUT_H
-#define TOOUTPUT_H
-
+#pragma once
 
 #include "widgets/totoolwidget.h"
-#include "editor/tomarkededitor.h"
 #include "core/tosql.h"
 #include "core/toconfenum.h"
 
@@ -50,74 +47,73 @@ class QComboBox;
 class toConnection;
 class toResultView;
 class toRefreshCombo;
+class toScintilla;
 
 namespace ToConfiguration
 {
-    class Output : public ConfigContext
+class Output : public ConfigContext
+{
+    Q_OBJECT;
+    Q_ENUMS(OptionTypeEnum);
+public:
+    Output() : ConfigContext("Output", ENUM_REF(Output,OptionTypeEnum)) {};
+    enum OptionTypeEnum
     {
-            Q_OBJECT;
-            Q_ENUMS(OptionTypeEnum);
-        public:
-            Output() : ConfigContext("Output", ENUM_REF(Output,OptionTypeEnum)) {};
-            enum OptionTypeEnum
-            {
-                PollingInterval = 12000 // #define CONF_POLLING
-                                  , SourceTypeInt         // #define CONF_LOG_TYPE
-                , LogUser               // #define CONF_LOG_USER
-            };
-            QVariant defaultValue(int option) const;
+        PollingInterval = 12000 // #define CONF_POLLING
+        , SourceTypeInt         // #define CONF_LOG_TYPE
+        , LogUser               // #define CONF_LOG_USER
     };
+    QVariant defaultValue(int option) const;
+};
 };
 
 class toOutput : public toToolWidget
 {
-        Q_OBJECT;
+    Q_OBJECT;
 
-    public:
-        toOutput(QWidget *parent, toConnection &connection, bool enabled = true);
+public:
+    toOutput(QWidget *parent, toConnection &connection, bool enabled = true);
 
-        virtual ~toOutput();
+    virtual ~toOutput();
 
-        bool enabled(void);
+    bool enabled(void);
 
-        void insertLine(const QString &str);
+    void insertLine(const QString &str);
 
-    public slots:
-        void clear(void);
-        virtual void refresh(void);
-        virtual void disable(bool);
-        virtual void slotWindowActivated(toToolWidget *widget);
-        void toggleMenu();
+public slots:
+    void clear(void);
+    virtual void refresh(void);
+    virtual void disable(bool);
+    virtual void slotWindowActivated(toToolWidget *widget);
+    void toggleMenu();
 
-    private:
-        QMenu        *ToolMenu;
-        toRefreshCombo *Refresh;
-        QAction      *refreshAct;
-        QAction      *enableAct;
-        QAction      *clearAct;
+private:
+    QMenu        *ToolMenu;
+    toRefreshCombo *Refresh;
+    QAction      *refreshAct;
+    QAction      *enableAct;
+    QAction      *clearAct;
 
-        void poll(void);
+    void poll(void);
 
-    protected:
-        toMarkedEditor *Output;
-        QToolBar     *Toolbar;
+protected:
+    toScintilla  *Output;
+    QToolBar     *Toolbar;
 
-        virtual void closeEvent(QCloseEvent *);
+    virtual void closeEvent(QCloseEvent *);
 };
 
 class toLogOutput : public toOutput
 {
-        Q_OBJECT;
+    Q_OBJECT;
 
-        QComboBox *Type;
-        toResultView *Log;
+    QComboBox *Type;
+    toResultView *Log;
 
-    public:
-        toLogOutput(QWidget *parent, toConnection &connection);
+public:
+    toLogOutput(QWidget *parent, toConnection &connection);
 
     public slots:
-        virtual void refresh(void);
-        void changeType(void);
+    virtual void refresh(void);
+    void changeType(void);
 };
-
-#endif

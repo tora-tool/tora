@@ -248,12 +248,12 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 	case Tokens::SQL92_RESERVED_UNION:
 		tokenTypeRef = S_UNION;
 		break;
-        case Tokens::SQL92_RESERVED_AND:
-                tokenTypeRef = S_COND_AND;
-                break;
-        case Tokens::SQL92_RESERVED_OR:
-                tokenTypeRef = S_COND_OR;
-                break;
+	case Tokens::SQL92_RESERVED_AND:
+	    tokenTypeRef = S_COND_AND;
+	    break;
+	case Tokens::SQL92_RESERVED_OR:
+	    tokenTypeRef = S_COND_OR;
+	    break;
 	case Tokens::PLSQL_RESERVED_MINUS:
 		tokenTypeRef = S_MINUS;
 		break;
@@ -482,11 +482,11 @@ void OracleDMLStatement::treeWalkAST(unique_ptr<Antlr3BackendImpl::OracleDML> &p
 				continue;
 			}
 
-			if ( tokenType == LexerTokens::SQL92_RESERVED_AND && root->getTokenType() == Token::S_COND_AND)
-			{
-			    treeWalkAST(psr, root, childNode);
-			    continue;
-			}
+			//if ( tokenType == LexerTokens::SQL92_RESERVED_AND && root->getTokenType() == Token::S_COND_AND)
+			//{
+			//    treeWalkAST(psr, root, childNode);
+			//    continue;
+			//}
 			if ( tokenType == LexerTokens::SQL92_RESERVED_OR && root->getTokenType() == Token::S_COND_OR)
 			{
 			    treeWalkAST(psr, root, childNode);

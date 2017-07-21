@@ -35,9 +35,9 @@
 #include "docklets/toviewdirectory.h"
 #include "tools/toworksheet.h"
 #include "core/tomainwindow.h"
-#include "tools/toworksheeteditor.h"
 #include "core/toconfiguration.h"
 #include "core/toglobalevent.h"
+#include "editor/toworksheettext.h"
 
 REGISTER_VIEW("Directory", toViewDirectory);
 

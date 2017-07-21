@@ -54,7 +54,7 @@ public:
 
 toBindVarsDocklet::toBindVarsDocklet(QWidget *parent,
                                    toWFlags flags)
-    : toDocklet(tr("Bind Values"), parent, flags)
+    : super(tr("Bind Values"), parent, flags)
     , toEditWidget()
     , editor(new PlainTextEdit(this))
 {
@@ -67,9 +67,6 @@ toBindVarsDocklet::toBindVarsDocklet(QWidget *parent,
     editor->setFont(fixed);
     editor->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-    m_search = new toSearchReplace(this);
-    m_search->hide();
-
     setFocusProxy(editor);
 
     QWidget *w = new QWidget(this);
@@ -77,7 +74,6 @@ toBindVarsDocklet::toBindVarsDocklet(QWidget *parent,
     l->setSpacing(0);
     l->setContentsMargins(0, 0, 0, 0);
     l->addWidget(editor);
-    l->addWidget(m_search);
     w->setLayout(l);
 
     setWidget(w);
@@ -86,11 +82,6 @@ toBindVarsDocklet::toBindVarsDocklet(QWidget *parent,
     FlagSet.Paste = true;
     FlagSet.Search = true;
     FlagSet.SelectAll = true;
-
-    connect(m_search, SIGNAL(searchNext(Search::SearchFlags)),
-            this, SLOT(handleSearching(Search::SearchFlags)));
-    connect(m_search, SIGNAL(windowClosed()),
-            this, SLOT(setEditorFocus()));
 }
 
 
@@ -107,12 +98,13 @@ QString toBindVarsDocklet::name() const
 
 void toBindVarsDocklet::focusInEvent (QFocusEvent *e)
 {
-    toDocklet::focusInEvent(e);
+    super::focusInEvent(e);
+    toEditWidget::gotFocus();
 }
 void toBindVarsDocklet::focusOutEvent (QFocusEvent *e)
 {
-    //toEditWidget::lostFocus();
-    toDocklet::focusOutEvent(e);
+    super::focusOutEvent(e);
+    toEditWidget::lostFocus();
 }
 
 void toBindVarsDocklet::editCopy()
@@ -130,23 +122,7 @@ void toBindVarsDocklet::editSelectAll()
     editor->selectAll();
 }
 
-bool toBindVarsDocklet::searchNext()
-{
-    if (!m_search->isVisible())
-    {
-        m_search->show();
-        m_search->setReadOnly(editor->isReadOnly());
-    }
-    return true;
-}
-
-void toBindVarsDocklet::searchReplace()
-{
-    m_search->setVisible(!m_search->isVisible());
-    m_search->setReadOnly(editor->isReadOnly());
-}
-
-void toBindVarsDocklet::handleSearching(Search::SearchFlags flags)
+bool toBindVarsDocklet::handleSearching(QString const& search, QString const& replace, Search::SearchFlags flags)
 {
     QTextDocument::FindFlags f;
     if (flags & Search::WholeWords)
@@ -154,14 +130,8 @@ void toBindVarsDocklet::handleSearching(Search::SearchFlags flags)
     if (flags & Search::CaseSensitive)
         f |= QTextDocument::FindCaseSensitively;
 
-    /*bool ret =*/ editor->find(m_search->searchText(), f);
+    return editor->find(search, f);
 }
-
-void toBindVarsDocklet::setEditorFocus()
-{
-    editor->setFocus(Qt::OtherFocusReason);
-}
-
 
 bool PlainTextEdit::canInsertFromMimeData(const QMimeData *source) const
 {

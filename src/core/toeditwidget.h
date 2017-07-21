@@ -32,8 +32,9 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOEDITWIDGET_H
-#define TOEDITWIDGET_H
+#pragma once
+
+#include "editor/toeditglobals.h"
 
 #include <QtCore/QString>
 
@@ -46,109 +47,95 @@ class QWidget;
  */
 class toEditWidget
 {
-    public:
+public:
 
-        struct FlagSetStruct
-        {
-            unsigned Open      : 1;
-            unsigned Save      : 1;
-            unsigned Print     : 1;
-            unsigned Undo      : 1;
-            unsigned Redo      : 1;
-            unsigned Cut       : 1;
-            unsigned Copy      : 1;
-            unsigned Paste     : 1;
-            unsigned Search    : 1;
-            unsigned SelectAll : 1;
-            unsigned SelectBlock : 1;
-            unsigned ReadAll   : 1;
-            FlagSetStruct()
-                : Open(false)
-                , Save(false)
-                , Print(false)
-                , Undo(false)
-                , Redo(false)
-                , Cut(false)
-                , Copy(false)
-                , Paste(false)
-                , Search(false)
-                , SelectAll(false)
-                , SelectBlock(false)
-                , ReadAll(false)
-            {}
-        };
+    struct FlagSetStruct
+    {
+        unsigned Open      : 1;
+        unsigned Save      : 1;
+        unsigned Undo      : 1;
+        unsigned Redo      : 1;
+        unsigned Cut       : 1;
+        unsigned Copy      : 1;
+        unsigned Paste     : 1;
+        unsigned Search    : 1;
+        unsigned SelectAll : 1;
+        unsigned SelectBlock : 1;
+        unsigned ReadAll   : 1;
+        FlagSetStruct()
+        : Open(false)
+        , Save(false)
+        , Undo(false)
+        , Redo(false)
+        , Cut(false)
+        , Copy(false)
+        , Paste(false)
+        , Search(false)
+        , SelectAll(false)
+        , SelectBlock(false)
+        , ReadAll(false)
+        {}
+    };
 
-        /** Empty constructor, all functions are disabled.
-         */
-        toEditWidget();
+    /** Empty constructor, all functions are disabled.
+     */
+    toEditWidget();
 
-        virtual ~toEditWidget();
+    virtual ~toEditWidget();
 
-        virtual FlagSetStruct flagSet();
+    virtual FlagSetStruct flagSet();
 
-        /** Perform an open on this widget. Default NOP.
-         * @param file The file to open, if not specified prompt for file.
-         */
-        virtual bool editOpen(const QString &file = QString::null) = 0;
+    /** Perform an open on this widget. Default NOP.
+     * @param file The file to open, if not specified prompt for file.
+     */
+    virtual bool editOpen(const QString &file = QString::null) = 0;
 
-        /** Perform a save on this widget. Default NOP.
-         * @param askfile Ask filename even if default filename is available.
-         */
-        virtual bool editSave(bool askfile) = 0;
+    /** Perform a save on this widget. Default NOP.
+     * @param askfile Ask filename even if default filename is available.
+     */
+    virtual bool editSave(bool askfile) = 0;
 
-        /** Print this widgets contents. Default NOP.
-         */
-        virtual void editPrint(void) = 0;
+    /** Perform undo. Default NOP.
+     */
+    virtual void editUndo(void) = 0;
 
-        /** Perform undo. Default NOP.
-         */
-        virtual void editUndo(void) = 0;
+    /** Perform redo. Default NOP.
+     */
+    virtual void editRedo(void) = 0;
 
-        /** Perform redo. Default NOP.
-         */
-        virtual void editRedo(void) = 0;
+    /** Perform cut. Default NOP.
+     */
+    virtual void editCut(void) = 0;
 
-        /** Perform cut. Default NOP.
-         */
-        virtual void editCut(void) = 0;
+    /** Perform copy. Default NOP.
+     */
+    virtual void editCopy(void) = 0;
 
-        /** Perform copy. Default NOP.
-         */
-        virtual void editCopy(void) = 0;
+    /** Perform paste. Default NOP.
+     */
+    virtual void editPaste(void) = 0;
 
-        /** Perform paste. Default NOP.
-         */
-        virtual void editPaste(void) = 0;
+    /** Select all contents. Default NOP.
+     */
+    virtual void editSelectAll(void) = 0;
 
-        /** Select all contents. Default NOP.
-         */
-        virtual void editSelectAll(void) = 0;
+    /** Read all available data. Default NOP.
+     */
+    virtual void editReadAll(void) = 0;
 
-        /** Read all available data. Default NOP.
-         */
-        virtual void editReadAll(void) = 0;
-
-        /*! \brief Return all current text
+    /*! \brief Return all current text
         This virtual function can be re-implemented subclasses(like toScintilla).
         So far it is used in toCodeOutline only.
-        */
-        virtual QString editText() = 0;
+     */
+    virtual QString editText() = 0;
 
-        /*! \brief Search for next occrence of text
-        This is pure virtual as it has to be implemented in all
-        separated children of toEditWidget.
-        */
-        virtual bool searchNext() = 0;
-        /*! \brief Replace current entry with new data
-        This is pure virtual as it has to be implemented in all
-        separated children of toEditWidget.
-        */
-        virtual void searchReplace() = 0;
+    virtual bool handleSearching(QString const& search, QString const& replace, Search::SearchFlags flags) = 0;
 
-        static toEditWidget* findEdit(QWidget *widget);
+    void gotFocus();
+    void lostFocus();
 
-    protected:
-        FlagSetStruct FlagSet;
+    static toEditWidget* findEdit(QWidget *widget);
+
+protected:
+    FlagSetStruct FlagSet;
 };
-
-#endif

@@ -43,7 +43,6 @@
 #include <QtCore/QFileInfo>
 #include <QtCore/QDir>
 
-
 toWorksheetEditor::toWorksheetEditor(toWorksheet *worksheet,
                                      QWidget *parent,
                                      const char *name)

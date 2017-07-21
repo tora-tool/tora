@@ -45,14 +45,14 @@
 using namespace ToConfiguration;
 
 toResultCode::toResultCode(bool prompt, QWidget *parent, const char *name)
-    : toDebugEditor(parent, name)
+    : toDebugText(parent, name)
     , Prompt(prompt)
     , m_heading(toConfigurationNewSingle::Instance().option(Database::IncludeHeaderBool).toBool())
     , m_offset(0)
 {}
 
 toResultCode::toResultCode(QWidget * parent)
-    : toDebugEditor(parent, "toResultExtract")
+    : toDebugText(parent, "toResultExtract")
     , Prompt(toConfigurationNewSingle::Instance().option(Database::IncludePromptBool).toBool())
     , m_heading(toConfigurationNewSingle::Instance().option(Database::IncludeHeaderBool).toBool())
     , m_offset(0)
@@ -161,14 +161,22 @@ void toResultCode::query(const QString &sql, toQueryParams const& param)
             if(m_offset >= lines.size())
                 m_offset = 0;
         }
+#if 0
         editor()->setText(text);
+#else
+        setText(text);
+#endif
     }
     TOCATCH
 }
 
 void toResultCode::clearData()
 {
+#if 0
     editor()->clear();
+#else
+    clear();
+#endif
 }
 
 bool toResultCode::canHandle(const toConnection &conn)

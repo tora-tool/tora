@@ -72,7 +72,6 @@ toResultTableView::toResultTableView(QWidget * parent)
     , Model(NULL)
 {
     toEditWidget::FlagSet.Save = true;
-    toEditWidget::FlagSet.Print = true;
     toEditWidget::FlagSet.Copy = true;
     toEditWidget::FlagSet.Search = true;
     toEditWidget::FlagSet.SelectAll = true;
@@ -93,7 +92,6 @@ toResultTableView::toResultTableView(bool readable,
     , Model(NULL)
 {
     toEditWidget::FlagSet.Save = true;
-    toEditWidget::FlagSet.Print = true;
     toEditWidget::FlagSet.Copy = true;
     toEditWidget::FlagSet.Search = true;
     toEditWidget::FlagSet.SelectAll = true;
@@ -461,6 +459,17 @@ void toResultTableView::slotApplyColumnRules()
         setColumnWidth(1, viewport()->width());
 }
 
+void toResultTableView::focusInEvent(QFocusEvent *e)
+{
+    super::focusInEvent(e);
+    toEditWidget::gotFocus();
+}
+
+void toResultTableView::focusOutEvent(QFocusEvent *e)
+{
+    super::focusOutEvent(e);
+    toEditWidget::lostFocus();
+}
 
 void toResultTableView::contextMenuEvent(QContextMenuEvent *e)
 {
@@ -728,12 +737,6 @@ bool toResultTableView::editSave(bool askfile)
     return false;
 }
 
-
-void toResultTableView::editPrint()
-{
-}
-
-
 void toResultTableView::editCopy()
 {
     QClipboard *clip = qApp->clipboard();
@@ -767,6 +770,11 @@ void toResultTableView::editSelectAll()
     selectAll();
 }
 
+bool toResultTableView::handleSearching(QString const& search, QString const& replace, Search::SearchFlags flags)
+{
+    #pragma message WARN("TODO: implement search in toResultTableView")
+    throw __QHERE__;
+}
 
 void toResultTableView::slotResizeColumnsToContents()
 {

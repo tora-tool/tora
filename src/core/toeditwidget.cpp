@@ -34,6 +34,7 @@
 
 #include "core/toeditwidget.h"
 #include "core/tomainwindow.h"
+#include "docklets/tosearch.h"
 
 #include <QWidget>
 
@@ -44,6 +45,7 @@ toEditWidget::toEditWidget()
 
 toEditWidget::~toEditWidget()
 {
+    toSearchReplaceDockletSingle::Instance().unregisterEdit(this);
 }
 
 toEditWidget::FlagSetStruct toEditWidget::flagSet()
@@ -61,4 +63,14 @@ toEditWidget *toEditWidget::findEdit(QWidget *widget)
         widget = widget->parentWidget();
     }
     return NULL;
+}
+
+void toEditWidget::gotFocus()
+{
+    toSearchReplaceDockletSingle::Instance().registerEdit(this);
+}
+
+void toEditWidget::lostFocus()
+{
+    //toSearchReplaceDockletSingle::Instance().unregisterEdit(this);
 }

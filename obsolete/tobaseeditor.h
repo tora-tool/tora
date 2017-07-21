@@ -62,7 +62,6 @@ class toBaseEditor : public QWidget, public toEditWidget
         void editCopy(void) override;
         void editPaste(void) override;
         void editSelectAll(void) override;
-        void editPrint(void) override;
         bool editOpen(const QString &suggestedFile = QString::null) override;
         bool editSave(bool askfile) override;
         bool searchNext() override;
@@ -141,8 +140,6 @@ class toBaseEditor : public QWidget, public toEditWidget
 
         //! Watch for file (if any) changes from external apps
         QFileSystemWatcher * m_fsWatcher;
-
-        toSearchReplace *m_search;
 
         void fsWatcherClear();
 };

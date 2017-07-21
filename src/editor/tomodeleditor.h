@@ -32,11 +32,9 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOMODELEDITOR_H
-#define TOMODELEDITOR_H
+#pragma once
 
 #include "editor/tomarkededitor.h"
-#include "editor/tohighlightededitor.h"
 #include "core/utils.h"
 
 #include <QDialog>
@@ -46,9 +44,9 @@
 
 class QCheckBox;
 class QToolBar;
-class toBaseEditor;
 class QAbstractItemModel;
-
+class toScintilla;
+class toSqlText;
 
 /**
  * A dialog for displaying and editing a row and column of a model
@@ -57,8 +55,8 @@ class toModelEditor : public QDialog
 {
         Q_OBJECT;
 
-        typedef TMemoWithExec<toMarkedEditor, toModelEditor> toModelText;
-        typedef TMemoWithExec<toHighlightedEditor, toModelEditor> toModelSQL;
+        typedef TMemoWithExec<toScintilla, toModelEditor> toModelText;
+        typedef TMemoWithExec<toSqlText, toModelEditor> toModelSQL;
 
     public:
         /**
@@ -93,7 +91,7 @@ class toModelEditor : public QDialog
         {
             return Toolbar;
         }
-        toMarkedEditor *editor()
+        toScintilla *editor()
         {
             return Editor;
         }
@@ -137,7 +135,7 @@ class toModelEditor : public QDialog
         QByteArray nextData() const;
     private:
         // Editor of widget
-        toBaseEditor *Editor;
+        toScintilla *Editor;
 
         QToolBar  *Toolbar;
         QLabel    *Label;
@@ -149,5 +147,3 @@ class toModelEditor : public QDialog
 
         mutable unsigned offset;
 };
-
-#endif

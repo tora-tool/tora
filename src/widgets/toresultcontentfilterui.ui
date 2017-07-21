@@ -56,7 +56,7 @@
     </widget>
    </item>
    <item row="1" column="0" colspan="2" >
-    <widget class="toHighlightedEditor" native="1" name="Criteria" >
+    <widget class="toSqlText" native="1" name="Criteria" >
      <property name="focusPolicy" >
       <enum>Qt::StrongFocus</enum>
      </property>
@@ -160,9 +160,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>toHighlightedEditor</class>
+   <class>toSqlText</class>
    <extends>QWidget</extends>
-   <header>editor/tohighlightededitor.h</header>
+   <header>editor/tosqltext.h</header>
   </customwidget>
   <customwidget>
    <class>toResultCols</class>

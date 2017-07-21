@@ -12,6 +12,8 @@
 #define __HERE1__(x)   STR(x)"\t" + __PRETTY_FUNCTION__
 #define STR(a) #a
 #else
+#include <string>
+#include <xstring>
 #define __QHERE__ QString::fromLatin1(__FILE__) + ":"__HERE1__(__LINE__)
 #define __HERE__  std::string(__FILE__) + ":"__HERE1__(__LINE__)
 #define __HERE1__(x)   STR(x)"\t" +  __FUNCSIG__

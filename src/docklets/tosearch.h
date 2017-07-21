@@ -32,27 +32,34 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "editor/todebugeditor.h"
-#include "editor/todebugtext.h"
+#pragma once
 
-toDebugEditor::toDebugEditor(QWidget *parent, const char *name)
-    : toBaseEditor(new toDebugText(NULL), parent)
-{
-    if (name)
-        setObjectName(name);
-}
+#include <QDockWidget>
 
-toDebugText* toDebugEditor::editor()
-{
-    return qobject_cast<toDebugText*>(m_editor);
-}
+#include "core/utils.h"
 
-void toDebugEditor::setErrors(const QMap<int, QString> &errors, bool errorsGiven)
-{
-    qobject_cast<toDebugText*>(m_editor)->setErrors(errors, errorsGiven);
-}
+class toSearchReplace;
+class toEditWidget;
 
-void toDebugEditor::setCurrentDebugLine(int current)
+class toSearchReplaceDocklet : public QDockWidget
 {
-    qobject_cast<toDebugText*>(m_editor)->setCurrentDebugLine(current);
-}
+    Q_OBJECT;
+
+public:
+    toSearchReplaceDocklet(QWidget *parent = 0, toWFlags flags = 0);
+
+    /** Re-implented from toEditWidget */
+    void focusInEvent (QFocusEvent*) override;
+    /** Re-implented from toEditWidget */
+    void focusOutEvent (QFocusEvent*) override;
+
+    void activate();
+    void registerEdit(toEditWidget*);
+    void unregisterEdit(toEditWidget*);
+private:
+    toSearchReplace *m_search;
+
+private slots:
+};
+
+class toSearchReplaceDockletSingle: public ::Loki::SingletonHolder<toSearchReplaceDocklet, Loki::CreateUsingNew, Loki::NoDestroy> {};

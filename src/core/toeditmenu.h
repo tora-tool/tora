@@ -32,48 +32,42 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOEDITMENU_H
-#define TOEDITMENU_H
+#pragma once
 
-#include "core/toeditwidget.h"
 #include "loki/Singleton.h"
 
 #include <QMenu>
 
 /** This singleton represents Edit menu in the main window widget
  * as this must be accessed from various pieces it was moved into singleton
- *
  */
 class toEditMenu : public QMenu
 {
-        Q_OBJECT;
-    public:
-        toEditMenu();
-        virtual ~toEditMenu();
+    Q_OBJECT;
+public:
+    toEditMenu();
+    virtual ~toEditMenu();
 
-        QAction *undoAct;
-        QAction *redoAct;
-        QAction *cutAct;
-        QAction *copyAct;
-        QAction *pasteAct;
-        QAction *searchReplaceAct;
-        QAction *searchNextAct;
-        QAction *selectAllAct;
+    QAction *undoAct;
+    QAction *redoAct;
+    QAction *cutAct;
+    QAction *copyAct;
+    QAction *pasteAct;
+    QAction *searchReplaceAct;
+    QAction *searchNextAct;
+    QAction *selectAllAct;
 #if 0 // TODO: this part is waiting for QScintilla backend feature (yet unimplemented).
-        QAction *selectBlockAct;
+    QAction *selectBlockAct;
 #endif
-        QAction *readAllAct;
-        QAction *prefsAct;
-        void menuAboutToShow();
-    private slots:
-        void clipBoardChanged();
-        void slotAboutToShow();
-    private:
-        void disableAll();
-        bool m_clipboardContent, m_pasteSupported;
+    QAction *readAllAct;
+    QAction *prefsAct;
+    void menuAboutToShow();
+private slots:
+    void clipBoardChanged();
+    void slotAboutToShow();
+private:
+    void disableAll();
+    bool m_clipboardContent, m_pasteSupported;
 };
+
 typedef Loki::SingletonHolder<toEditMenu, Loki::CreateUsingNew, Loki::NoDestroy> toEditMenuSingle;
-
-#endif
-
-

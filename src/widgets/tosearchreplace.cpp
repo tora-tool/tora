@@ -33,30 +33,24 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "widgets/tosearchreplace.h"
-
+#include "widgets/tohelp.h"
 #include "core/utils.h"
 #include "core/tomainwindow.h"
-#include "editor/tomarkededitor.h"
 #include "core/toeditmenu.h"
+#include "core/toeditwidget.h"
 
 #include "icons/close.xpm"
 
 #include <QAction>
 #include <QTextEdit>
 #include <QLineEdit>
-#include "tohelp.h"
 
 toSearchReplace::toSearchReplace(QWidget *parent)
     : QWidget(parent)
     , toHelpContext(QString::fromLatin1("searchreplace.html"))
+    , m_editWidget(NULL)
 {
     setupUi(this);
-    SearchNext->setIcon(QIcon(":/icons/find_next.png"));
-    SearchPrevious->setIcon(QIcon(":/icons/find_prev.png"));
-    Replace->setIcon(QIcon(":/icons/replace_next.png"));
-    ReplaceAll->setIcon(QIcon(":/icons/replace_all.png"));
-
-    hideButton->setIcon(QPixmap(const_cast<const char**>(close_xpm)));
 
     QAction *action = new QAction(this);
     action->setShortcut(QKeySequence::HelpContents);
@@ -70,9 +64,13 @@ toSearchReplace::toSearchReplace(QWidget *parent)
     connect(SearchPrevious, SIGNAL(clicked()), this, SLOT(act_searchPrevious()));
     connect(Replace, SIGNAL(clicked()), this, SLOT(act_replace()));
     connect(ReplaceAll, SIGNAL(clicked()), this, SLOT(act_replaceAll()));
-    connect(hideButton, SIGNAL(clicked()), this, SLOT(close()));
-    connect(SearchText, SIGNAL(editTextChanged(const QString &)),
-            this, SLOT(act_searchChanged(const QString &)));
+    connect(SearchText, SIGNAL(editTextChanged(const QString &)), this, SLOT(act_searchChanged(const QString &)));
+
+    connect(SearchText->lineEdit(), SIGNAL(returnPressed()), this, SLOT(act_searchNext()));
+    connect(ReplacementText->lineEdit(), SIGNAL(returnPressed()), this, SLOT(act_replace()));
+
+    SearchText->installEventFilter(this);
+    ReplacementText->installEventFilter(this);
 }
 
 void toSearchReplace::displayHelp(void)
@@ -97,6 +95,24 @@ void toSearchReplace::setReadOnly(bool ro)
     ReplaceAll->setEnabled(!ro);
 }
 
+void toSearchReplace::activate()
+{
+    SearchText->setFocus();
+    SearchText->lineEdit()->selectAll();
+    act_searchChanged(SearchText->currentText());
+}
+
+void toSearchReplace::registerEdit(toEditWidget *w)
+{
+    m_editWidget = w;
+}
+
+void toSearchReplace::unregisterEdit(toEditWidget *w)
+{
+    if (m_editWidget == w)
+        m_editWidget = NULL;
+}
+
 Search::SearchFlags toSearchReplace::sharedFlags()
 {
     Search::SearchFlags f;
@@ -117,10 +133,10 @@ void toSearchReplace::act_searchNext(void)
     if (t.length() > 0 && SearchText->findText(t) == -1)
         SearchText->addItem(t);
 
-    if (t.length())
+    if (t.length() && m_editWidget)
     {
         Search::SearchFlags f = Search::Search | Search::Forward | sharedFlags();
-        emit searchNext(f);
+        m_editWidget->handleSearching(searchText(), QString::null, f);
     }
 }
 
@@ -133,7 +149,7 @@ void toSearchReplace::act_searchPrevious(void)
     if (t.length())
     {
         Search::SearchFlags f = Search::Search | Search::Backward | sharedFlags();
-        emit searchNext(f);
+        m_editWidget->handleSearching(searchText(), QString::null, f);
     }
 }
 
@@ -146,7 +162,7 @@ void toSearchReplace::act_replace(void)
     if (SearchText->currentText().length())
     {
         Search::SearchFlags f = Search::Replace | Search::Forward | sharedFlags();
-        emit searchNext(f);
+        m_editWidget->handleSearching(searchText(), replaceText(), f);
     }
 }
 
@@ -159,22 +175,48 @@ void toSearchReplace::act_replaceAll(void)
     if (SearchText->currentText().length())
     {
         Search::SearchFlags f = Search::ReplaceAll | Search::Forward | sharedFlags();
-        emit searchNext(f);
+        m_editWidget->handleSearching(searchText(), replaceText(), f);
     }
 }
 
 void toSearchReplace::showEvent(QShowEvent * e)
 {
-    SearchText->setFocus();
-    SearchText->lineEdit()->selectAll();
-    act_searchChanged(SearchText->currentText());
     QWidget::showEvent(e);
 }
 
 void toSearchReplace::closeEvent(QCloseEvent *e)
 {
-    emit windowClosed();
+    #pragma message WARN("TODO: call toScintilla::findStop here - extend toEditWidget API")
     QWidget::closeEvent(e);
+}
+
+bool toSearchReplace::eventFilter(QObject *target, QEvent *event)
+{
+    if ((target == SearchText || target == ReplacementText) && event->type() == QEvent::KeyPress)
+    {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+        if (keyEvent->key() == Qt::Key_Escape)
+        {
+            parentWidget()->close(); // Close parent docklet window
+            if (QWidget *w = dynamic_cast<QWidget*>(m_editWidget))
+            {
+                w->setFocus();
+            }
+            return true;
+        }
+    }
+    return QWidget::eventFilter(target, event);
+}
+
+void toSearchReplace::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Escape)
+    {
+        event->accept();
+        parentWidget()->close(); // Close parent docklet window
+        return;
+    }
+    QWidget::keyPressEvent(event);
 }
 
 void toSearchReplace::act_searchChanged(const QString & text)

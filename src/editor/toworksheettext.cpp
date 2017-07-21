@@ -33,12 +33,12 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "editor/toworksheettext.h"
-#include "tools/toworksheeteditor.h"
 #include "tools/toworksheet.h"
 #include "editor/tocomplpopup.h"
 #include "core/toconnection.h"
 #include "core/toconnectiontraits.h"
 #include "core/tologger.h"
+#include "core/toglobalevent.h"
 #include "shortcuteditor/shortcutmodel.h"
 
 #include <QListWidget>
@@ -46,12 +46,14 @@
 
 using namespace ToConfiguration;
 
-toWorksheetText::toWorksheetText(QWidget *parent, const char *name)
+toWorksheetText::toWorksheetText(toWorksheet *worksheet, QWidget *parent, const char *name)
     : toSqlText(parent, name)
     , editorType(SciTe)
     , popup(new toComplPopup(this))
+    , m_worksteet(worksheet)
     , m_complAPI(NULL)
     , m_complTimer(new QTimer(this))
+    , m_fsWatcher(new QFileSystemWatcher(this))
     , m_bookmarkHandle(QsciScintilla::markerDefine(QsciScintilla::Background))
     , m_bookmarkMarginHandle(QsciScintilla::markerDefine(QsciScintilla::RightTriangle))
     , m_completeEnabled(toConfigurationNewSingle::Instance().option(Editor::CodeCompleteBool).toBool())
@@ -68,6 +70,7 @@ toWorksheetText::toWorksheetText(QWidget *parent, const char *name)
     setCaretAlpha();
     connect(&m_caretVisible, SIGNAL(valueChanged(QVariant const&)), this, SLOT(setCaretAlpha()));
     connect(&m_caretAlpha, SIGNAL(valueChanged(QVariant const&)), this, SLOT(setCaretAlpha()));
+    connect(m_fsWatcher, SIGNAL(fileChanged(const QString&)), this, SLOT(m_fsWatcher_fileChanged(const QString&)));
 
     // handle "max text width" mark
     if (toConfigurationNewSingle::Instance().option(Editor::UseMaxTextWidthMarkBool).toBool())
@@ -347,6 +350,85 @@ void toWorksheetText::completeWithText(QString const& text)
     SendScintilla(SCI_SETSELECTIONEND, pos, true);
 }
 
+QString const& toWorksheetText::filename(void) const
+{
+    return m_filename;
+}
+
+void toWorksheetText::setFilename(const QString &filename)
+{
+    m_filename = filename;
+}
+
+void toWorksheetText::openFilename(const QString &file)
+{
+    throw __QHERE__;
+}
+bool toWorksheetText::editOpen(const QString &suggestedFile)
+{
+    if (isModified())
+    {
+        int ret = TOMessageBox::information(this,
+                                            tr("Save changes?"),
+                                            tr("The editor has been changed, do you want to save them\n"
+                                               "before opening a new file?"),
+                                            tr("&Yes"), tr("&No"), tr("Cancel"), 0, 2);
+        if (ret == 2)
+            return false;
+        else if (ret == 0)
+            if (!editSave(false))
+                return false;
+    }
+
+    QString fname;
+    if (!suggestedFile.isEmpty())
+        fname = suggestedFile;
+    else
+        fname = Utils::toOpenFilename(QString::null, this);
+
+    if (!fname.isEmpty())
+    {
+        try
+        {
+            openFilename(fname);
+            emit fileOpened();
+            emit fileOpened(fname);
+            return true;
+        }
+        TOCATCH
+    }
+    return false;
+}
+
+bool toWorksheetText::editSave(bool askfile)
+{
+    fsWatcherClear();
+    bool ret = false;
+
+    QString fn;
+    QFileInfo file(filename());
+    if (!filename().isEmpty() && file.exists() && file.isWritable())
+        fn = file.absoluteFilePath();
+
+    if (!filename().isEmpty() && fn.isEmpty() && file.dir().exists())
+        fn = file.absoluteFilePath();
+
+    if (askfile || fn.isEmpty())
+        fn = Utils::toSaveFilename(fn, QString::null, this);
+
+    if (!fn.isEmpty() && Utils::toWriteFile(fn, text()))
+    {
+        toGlobalEventSingle::Instance().addRecentFile(fn);
+        setFilename(fn);
+        setModified(false);
+        emit fileSaved(fn);
+
+        m_fsWatcher->addPath(fn);
+        ret = true;
+    }
+    return ret;
+}
+
 void toWorksheetText::setEditorType(int)
 {
 
@@ -448,6 +530,33 @@ void toWorksheetText::focusOutEvent(QFocusEvent *e)
 {
     toEditorTypeButtonSingle::Instance().setDisabled(true);
     super::focusOutEvent(e);
+}
+
+void toWorksheetText::m_fsWatcher_fileChanged(const QString & filename)
+{
+    m_fsWatcher->blockSignals(true);
+    setFocus(Qt::OtherFocusReason);
+    if (QMessageBox::question(this, tr("External File Modification"),
+                              tr("File %1 was modified by an external application. Reload (your changes will be lost)?").arg(filename),
+                              QMessageBox::Yes, QMessageBox::No) == QMessageBox::No)
+    {
+        return;
+    }
+
+    try
+    {
+        openFilename(filename);
+    }
+    TOCATCH;
+
+    m_fsWatcher->blockSignals(false);
+}
+
+void toWorksheetText::fsWatcherClear()
+{
+    QStringList l(m_fsWatcher->files());
+    if (!l.empty())
+        m_fsWatcher->removePaths(l);
 }
 
 #ifdef TORA3_SESSION

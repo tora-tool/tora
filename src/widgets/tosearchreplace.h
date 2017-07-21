@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOSEARCHREPLACE_H
-#define TOSEARCHREPLACE_H
+#pragma once
 
 #include "ui_tosearchreplaceui.h"
 #include "editor/toeditglobals.h"
@@ -41,44 +40,44 @@
 
 #include <QWidget>
 
-class toListView;
-class toMarkedEditor;
-class toResultContentEditor;
-
+class toEditWidget;
 
 class toSearchReplace : public QWidget
     , public Ui::toSearchReplaceUI
     , public toHelpContext
 {
-        Q_OBJECT;
+    Q_OBJECT;
 
-    public:
-        toSearchReplace(QWidget *parent);
+public:
+    toSearchReplace(QWidget *parent);
 
-        QString searchText();
-        QString replaceText();
+    QString searchText();
+    QString replaceText();
 
-        void setReadOnly(bool ro);
+    void setReadOnly(bool ro);
 
+    void activate();
+    void registerEdit(toEditWidget*);
+    void unregisterEdit(toEditWidget*);
 
-    signals:
-        void searchNext(Search::SearchFlags flags);
-        void windowClosed();
+public slots:
+    void act_searchNext();
+    void act_replace();
 
-    protected:
-        void showEvent(QShowEvent * e) override;
-        void closeEvent(QCloseEvent *e) override;
+private slots:
+    void act_replaceAll();
+    void act_searchChanged(const QString & text);
+    void displayHelp();
+    void act_searchPrevious();
 
-    private:
-        Search::SearchFlags sharedFlags();
+protected:
+    void showEvent(QShowEvent * e) override;
+    void closeEvent(QCloseEvent *e) override;
 
-    private slots:
-        void act_replaceAll();
-        void act_replace();
-        void act_searchChanged(const QString & text);
-        void displayHelp();
-        void act_searchNext();
-        void act_searchPrevious();
+    bool eventFilter(QObject *target, QEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
+
+private:
+    Search::SearchFlags sharedFlags();
+    toEditWidget* m_editWidget;
 };
-
-#endif

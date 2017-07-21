@@ -772,20 +772,6 @@ void toLineChart::setup(void)
     }
 }
 
-void toLineChart::editPrint(void)
-{
-    TOPrinter printer;
-    QPrintDialog dialog(&printer, this);
-    dialog.setMinMax(1, 1);
-    if (dialog.exec())
-    {
-        printer.setCreator(tr(TOAPPNAME));
-        QPainter painter(&printer);
-        QRect rect(printer.pageRect());
-        paintChart(&painter, rect);
-    }
-}
-
 void toLineChart::clearZoom(void)
 {
     Zooming = false;

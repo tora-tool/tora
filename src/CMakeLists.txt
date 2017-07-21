@@ -190,6 +190,7 @@ SET(TORA_MOC_CLASSES
   core/toeventquery.h
   core/toeventqueryworker.h
   core/toextract.h
+  core/tofilemenu.h
   core/toglobalconfiguration.h
   core/toglobalevent.h
   core/tohelpcontext.h
@@ -205,15 +206,14 @@ SET(TORA_MOC_CLASSES
   core/totool.h
   core/toupdater.h
   core/utils.h
+
   docklets/toviewconnections.h
   docklets/toviewdirectory.h
-  editor/tobaseeditor.h
+  docklets/tocodeoutline.h
+
   editor/tocomplpopup.h
-  editor/todebugeditor.h
   editor/todebugtext.h
   editor/todifftext.h
-  editor/tohighlightededitor.h
-  editor/tomarkededitor.h
   editor/tomemoeditor.h
   editor/tomodeleditor.h
   editor/toscintilla.h
@@ -319,7 +319,6 @@ SET(TORA_MOC_CLASSES
   tools/tounittest.h
   tools/towaitevents.h
   tools/toworksheet.h
-  tools/toworksheeteditor.h
   tools/toworksheetstatistic.h
 
   ts_log/toostream.h
@@ -396,12 +395,11 @@ ENDIF (POPPLER_QT4_FOUND)
 
 IF (USE_EXPERIMENTAL)
   LIST(APPEND TORA_MOC_CLASSES tools/toscript.h)
-  LIST(APPEND TORA_MOC_CLASSES docklets/tocodeoutline.h)
-
   LIST(APPEND TORA_MOC_CLASSES tools/tosandboxtool.h)
 
   LIST(APPEND TORA_MOC_CLASSES docklets/tologging.h)
   LIST(APPEND TORA_MOC_CLASSES docklets/tobindvars.h)
+  LIST(APPEND TORA_MOC_CLASSES docklets/tosearch.h)
 ENDIF (USE_EXPERIMENTAL)
 
 ################################################################################
@@ -452,6 +450,7 @@ SET(TORA_SOURCES
   core/toeventquery.cpp
   core/toeventqueryworker.cpp
   core/toextract.cpp
+  core/tofilemenu.cpp
   core/toglobalconfiguration.cpp
   core/toglobalevent.cpp
   core/tohelpcontext.cpp
@@ -479,14 +478,11 @@ SET(TORA_SOURCES
 
   docklets/toviewconnections.cpp
   docklets/toviewdirectory.cpp
+  docklets/tocodeoutline.cpp
 
-  editor/tobaseeditor.cpp
   editor/tocomplpopup.cpp
-  editor/todebugeditor.cpp
   editor/todebugtext.cpp
   editor/todifftext.cpp
-  editor/tohighlightededitor.cpp
-  editor/tomarkededitor.cpp
   editor/tomemoeditor.cpp
   editor/tomodeleditor.cpp
   editor/toscintilla.cpp
@@ -616,7 +612,6 @@ SET(TORA_SOURCES
   tools/tounittest.cpp
   tools/towaitevents.cpp
   tools/toworksheet.cpp
-  tools/toworksheeteditor.cpp
   tools/toworksheetstatistic.cpp
 
   widgets/ExtendedTabWidget.cpp
@@ -695,9 +690,9 @@ ENDIF(ORACLE_FOUND)
 
 IF (USE_EXPERIMENTAL)
   LIST (APPEND TORA_SOURCES tools/toscript.cpp)
-  LIST (APPEND TORA_SOURCES docklets/tocodeoutline.cpp)
   LIST (APPEND TORA_SOURCES tools/tosandboxtool.cpp)
   LIST (APPEND TORA_SOURCES docklets/tologging.cpp)
+  LIST (APPEND TORA_SOURCES docklets/tosearch.cpp)
   LIST (APPEND TORA_SOURCES docklets/tobindvars.cpp)
   LIST (APPEND TORA_SOURCES core/tomemory.cpp)
 ENDIF (USE_EXPERIMENTAL)

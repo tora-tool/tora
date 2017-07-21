@@ -32,67 +32,28 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOCODEOUTLINE_H
-#define TOCODEOUTLINE_H
+#pragma once
 
 
-#include "core/todocklet.h"
-#include "core/toeditwidget.h"
+class toWorksheet;
+class toSqlText;
 
-#include <QtCore/QModelIndex>
-
-class QTabWidget;
-class QListWidget;
-class QTimerEvent;
-
-class toCodeOutline : public toDocklet
+class toWorksheetEditor : public toBaseEditor
 {
         Q_OBJECT;
-
-        class editHandlerHolder
-        {
-            public:
-                editHandlerHolder() : m_current(NULL) {};
-                virtual ~editHandlerHolder() {};
-                virtual void receivedFocus(toEditWidget *widget)
-                {
-                    m_current = widget;
-                }
-                virtual void lostFocus(toEditWidget *widget)
-                {
-                    m_current = NULL;
-                }
-                toEditWidget *m_current;
-        };
-
-    private:
-        QTabWidget *TabWidget;
-        QListWidget *procedures, *functions, *cursors, *types, *exceptions;
-
-        QString m_lastText;
-        editHandlerHolder *m_currentEditor;
-        int m_timerID;
-
-        void timerEvent(QTimerEvent *e);
+        typedef toBaseEditor super;
     public:
-        toCodeOutline(QWidget *parent = 0, toWFlags flags = 0);
+        toWorksheetEditor(toWorksheet *worksheet,
+                          QWidget *parent,
+                          const char *name = NULL);
 
-        /**
-         * Get the action icon name for this docklet
-         *
-         */
-        virtual QIcon icon() const;
+        toSqlText* editor();
 
-        /**
-         * Get the docklet's name
-         *
-         */
-        virtual QString name() const;
+        virtual bool editSave(bool askfile);
+        virtual bool editOpen(const QString &suggestedFile);
+    private:
+        virtual void focusInEvent(QFocusEvent *e);
+        virtual void focusOutEvent(QFocusEvent *e);
 
-
-    public slots:
-        void handleActivated(const QModelIndex &index);
+        toWorksheet *Worksheet;
 };
-
-
-#endif

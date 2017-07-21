@@ -32,69 +32,49 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOTEXTVIEW_H
-#define TOTEXTVIEW_H
+#pragma once
 
 #include "core/toeditwidget.h"
 #include "core/utils.h"
 #include "editor/toeditglobals.h"
 
 class QTextBrowser;
-class toSearchReplace;
-
 
 /** A tora editwidget version of the @ref QTextEdit widget.
+ *  Used as HTML browser
  */
-
 class toTextView : public QWidget, public toEditWidget
 {
-        Q_OBJECT;
-    public:
+    Q_OBJECT;
+    typedef QWidget super;
+public:
 
-        toTextView(QWidget *parent = 0, const char *name = 0);
+    toTextView(QWidget *parent = 0, const char *name = 0);
 
-        void setFontFamily(const QString &fontFamily);
-        void setReadOnly(bool ro);
-        void setText(const QString &t);
-        void setFilename(const QString &f);
+    void setFontFamily(const QString &fontFamily);
+    void setReadOnly(bool ro);
+    void setText(const QString &t);
+    void setFilename(const QString &f);
 
-        /** Reimplemented for internal reasons.
-         */
-        virtual void editCopy(void);
-        /** Reimplemented for internal reasons.
-         */
-        virtual void editSelectAll(void);
-        /** Reimplemented for internal reasons.
-         */
-        virtual bool editSave(bool);
-        /** Reimplemented for internal reasons.
-         */
-        virtual void focusInEvent (QFocusEvent *e);
+    /** toEditWidget api */
+    void editCopy(void) override;
+    void editSelectAll(void) override;
+    bool editSave(bool) override;
+    bool editOpen(const QString&) override { return false; }
+    void editUndo()    override {}
+    void editRedo()    override {}
+    void editCut()     override {}
+    void editPaste()   override {}
+    void editReadAll() override {}
+    QString editText() override;
 
-        virtual bool editOpen(const QString&)
-        {
-            return false;
-        }
-        virtual void editPrint() {}
-        virtual void editUndo() {}
-        virtual void editRedo() {}
-        virtual void editCut() {}
-        virtual void editPaste() {}
-        virtual void editReadAll() {}
-        virtual QString editText();
+    bool handleSearching(QString const& search, QString const& replace, Search::SearchFlags flags) override;
 
+protected:
+    void focusInEvent (QFocusEvent *e) override;
+    void focusOutEvent (QFocusEvent *e) override;
 
-        virtual bool searchNext();
-        virtual void searchReplace() {};
-
-    private:
-        QTextBrowser *m_view;
-        toSearchReplace *m_search;
-        QString m_filename;
-
-    private slots:
-        void setEditorFocus();
-        void handleSearching(Search::SearchFlags flags);
+private:
+    QTextBrowser *m_view;
+    QString m_filename;
 };
-
-#endif

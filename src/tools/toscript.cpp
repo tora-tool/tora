@@ -41,7 +41,7 @@
 #include "core/totextview.h"
 #include "core/toextract.h"
 #include "core/toconfiguration.h"
-#include "editor/toworksheettext.h"
+#include "editor/tosqltext.h"
 #include "tools/toscripttreeitem.h"
 #include "connection/tooracleconfiguration.h"
 
@@ -145,7 +145,7 @@ toScript::toScript(QWidget *parent, toConnection &connection)
     vbox->setSpacing(0);
     vbox->setContentsMargins(0, 0, 0, 0);
     box->setLayout(vbox);
-    WorksheetText = new toWorksheetText(box);
+    WorksheetText = new toSqlText(box);
     vbox->addWidget(WorksheetText);
     SearchList = new toListView(box);
     vbox->addWidget(SearchList);

@@ -32,12 +32,10 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOPLSQLEDITOR_H
-#define TOPLSQLEDITOR_H
-
+#pragma once
 
 #include "core/totool.h"
-#include "editor/todebugeditor.h"
+#include "editor/todebugtext.h"
 //#include "tosqlparse.h"
 //#include "tools/toplsqleditor.h"
 
@@ -52,135 +50,135 @@ class toPLSQLWidget;
 
 /*! \brief An editor widget for PL/SQL Editor.
 */
-class toPLSQLEditor : public toDebugEditor
+class toPLSQLEditor: public toDebugText
 {
-        Q_OBJECT
-        QString Schema;
-        QString Object;
-        QString Type;
+    Q_OBJECT
 
-        static int ID;
+public:
+    toPLSQLEditor(QWidget *parent = 0);
 
-        // Reimplement this in order to handle saving of
-        // package specification and body in one file
-        virtual bool editSave(bool askfile);
-        // Pointer to a parent PLSQLEditor tool.
-        // This is later used when saving one part of package (spec or body) to
-        // find another part and save it as well (if set like that in preferences).
-        toPLSQL *Editor;
+    void setEditor(toPLSQL * pEditor)
+    {
+        Editor = pEditor;
+    }
 
-        // Error raised when CALLING compilation (as opposed to errors found during compilation)
-        // Example: ORA-02303: cannot drop or replace a type with type or table dependents
-        QString compilation_error;
+    enum CompilationType
+    {
+        Production,
+        Warning
+    };
 
-    public:
-        toPLSQLEditor(QWidget *parent = 0);
-        toPLSQLWidget * parent_widget;
+    void setData(const QString &schema, const QString &type, const QString &data);
 
-        void setEditor(toPLSQL * pEditor)
-        {
-            Editor = pEditor;
-        }
+    const QString &schema(void) const
+    {
+        return Schema;
+    }
+    const QString &object(void) const
+    {
+        return Object;
+    }
+    void setType(const QString &type)
+    {
+        setData(Schema, type, Object);
+    }
+    void setSchema(const QString &schema)
+    {
+        setData(schema, Type, Object);
+    }
+    const QString &type(void) const
+    {
+        return Type;
+    }
+    void clear(void);
 
-        enum CompilationType {Production,
-                              Warning
-                             };
+    bool readData(toConnection &connection/*, toTreeWidget **/);
+    bool readErrors(toConnection &connection);
+    bool compile(CompilationType t);
 
-        void setData(const QString &schema, const QString &type, const QString &data);
+    void setFilename(const QString &file);
+    QString const& filename(void) const;
 
-        const QString &schema(void) const
-        {
-            return Schema;
-        }
-        const QString &object(void) const
-        {
-            return Object;
-        }
-        void setType(const QString &type)
-        {
-            setData(Schema, type, Object);
-        }
-        void setSchema(const QString &schema)
-        {
-            setData(schema, Type, Object);
-        }
-        const QString &type(void) const
-        {
-            return Type;
-        }
-        void clear(void);
+signals:
+    void errorsChanged(const QString & type, const QMultiMap<int, QString> & values, const bool cleanup = false);
+    void warningsChanged(const QMap<int, QString> values);
+    void contentChanged();
 
-        bool readData(toConnection &connection/*, toTreeWidget **/);
-        bool readErrors(toConnection &connection);
-        bool compile(CompilationType t);
+protected:
+    toPLSQLWidget * parent_widget;
+    QString Schema;
+    QString Object;
+    QString Type;
 
-    signals:
-        void errorsChanged(const QString & type, const QMultiMap<int, QString> & values, const bool cleanup = false);
-        void warningsChanged(const QMap<int, QString> values);
-        void contentChanged();
+    QString Filename;
 
+    static int ID;
+
+    // Re-implement this in order to handle saving of
+    // package specification and body in one file
+    bool editSave(bool askfile) override;
+
+    // Pointer to a parent PLSQLEditor tool.
+    // This is later used when saving one part of package (spec or body) to
+    // find another part and save it as well (if set like that in preferences).
+    toPLSQL *Editor;
+
+    // Error raised when CALLING compilation (as opposed to errors found during compilation)
+    // Example: ORA-02303: cannot drop or replace a type with type or table dependents
+    QString compilation_error;
 };
-
 
 /*! \brief A main widget for PL/SQL Editor.
 It handles all Content and Messages cooperation with Editor.
 */
 class toPLSQLWidget : public QWidget
 {
-        Q_OBJECT
+    Q_OBJECT
 
-    public slots:
-        void applyResult(const QString &, const QMultiMap<int, QString>&, const bool = false);
-        // expands or colapses results pane depending on number of errors, warnings etc.
-        void resizeResults(void);
+public:
+    toPLSQLWidget(QWidget * parent = 0);
+    ~toPLSQLWidget();
 
-    private:
-        toTreeWidget * m_contents;
-        QTreeWidget * m_result;
-        toPLSQLEditor * m_editor;
+    toPLSQLEditor* editor()
+    {
+        return m_editor;
+    };
 
-        QSplitter * m_splitter;
-        QSplitter * m_contentSplitter;
+public slots:
+    void applyResult(const QString &, const QMultiMap<int, QString>&, const bool = false);
+    // expands or colapses results pane depending on number of errors, warnings etc.
+    void resizeResults(void);
 
-        QTreeWidgetItem * m_errItem;    // main branch of errors
-        QTreeWidgetItem * m_warnItem;   // main branch of warnings
-        QTreeWidgetItem * m_staticItem; // main branch of static check observations
+private:
+    QTreeWidget * m_result;
+    toPLSQLEditor * m_editor;
 
-        // Count of errors, warnings and static check observations. Values are set after
-        // compilation in function readErrors and after static check execution.
-        // Count is used to auto-hide/display pane displaying list of errors, warnings etc.
-        // Placed here because values are used not only after compiling, but also after
-        // static code check and vice versa.
-        int errorCount, warningCount, staticCount;
+    QSplitter * m_splitter;
 
-// TODO parse
-//    void updateArguments(toSQLParse::statement &statements,
-//                         toTreeWidgetItem *parent);
-//    void updateContent(toSQLParse::statement &statements,
-//                       toTreeWidgetItem *parent,
-//                       const QString &id = QString::null);
-        void updateContent(toPLSQLEditor *editor);
-        // removes all errors, warnings and static check messages from result pane
-        void cleanupResults(const QString & type = NULL);
-        void setCount(const QString & type, const int count);
+    QTreeWidgetItem * m_errItem;    // main branch of errors
+    QTreeWidgetItem * m_warnItem;   // main branch of warnings
+    QTreeWidgetItem * m_staticItem; // main branch of static check observations
 
-    public:
-        toPLSQLWidget(QWidget * parent = 0);
-        ~toPLSQLWidget();
+    // Count of errors, warnings and static check observations. Values are set after
+    // compilation in function readErrors and after static check execution.
+    // Count is used to auto-hide/display pane displaying list of errors, warnings etc.
+    // Placed here because values are used not only after compiling, but also after
+    // static code check and vice versa.
+    int errorCount, warningCount, staticCount;
 
-        toPLSQLEditor * editor()
-        {
-            return m_editor;
-        };
+    // TODO parse
+    // void updateArguments(toSQLParse::statement &statements, toTreeWidgetItem *parent);
+    // void updateContent(toSQLParse::statement &statements, toTreeWidgetItem *parent, const QString &id = QString::null);
+    void updateContent(toPLSQLEditor* editor);
+    // removes all errors, warnings and static check messages from result pane
+    void cleanupResults(const QString & type = NULL);
+    void setCount(const QString & type, const int count);
 
-    private slots:
-        void goToError(QTreeWidgetItem *, QTreeWidgetItem *);
-        void updateContent()
-        {
-            updateContent(m_editor);
-        };
-        void changeContent(toTreeWidgetItem *);
-
+private slots:
+    void goToError(QTreeWidgetItem *, QTreeWidgetItem *);
+    void updateContent()
+    {
+        updateContent(m_editor);
+    };
+    void changeContent(toTreeWidgetItem *);
 };
-
-#endif

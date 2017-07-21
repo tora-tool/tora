@@ -57,6 +57,7 @@ class QLabel;
 class QSplitter;
 class QMdiSubWindow;
 
+class toWorksheetText;
 class toWorksheetEditor;
 class toHighlightedEditor;
 class toListView;
@@ -112,7 +113,7 @@ class toWorksheet : public toToolWidget, public toContextMenuHandler
 
         bool hasTransaction() const override;
 
-        toWorksheetEditor *editor(void);
+        toWorksheetText *editor(void);
 
         bool canHandle(const toConnection &) override;
 
@@ -238,7 +239,7 @@ class toWorksheet : public toToolWidget, public toContextMenuHandler
         void unlockConnection();
         bool checkUnlockConnection();
 
-        toWorksheetEditor *Editor;
+        toWorksheetText   *Editor;
         toTabWidget       *ResultTab;
         toResultTableView *Result;
         toResultPlanExplain *Plan;

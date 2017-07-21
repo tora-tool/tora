@@ -43,7 +43,7 @@ REGISTER_VIEW("Logging", toLoggingDocklet);
 
 toLoggingDocklet::toLoggingDocklet(QWidget *parent,
                                    toWFlags flags)
-    : toDocklet(tr("Logging"), parent, flags)
+    : super(tr("Logging"), parent, flags)
     , toEditWidget()
     , log(toLoggingWidgetSingle::Instance())
 {
@@ -57,9 +57,6 @@ toLoggingDocklet::toLoggingDocklet(QWidget *parent,
     log.setParent(this);
     log.setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-    m_search = new toSearchReplace(this);
-    m_search->hide();
-
     setFocusProxy(&log);
 
     QWidget *w = new QWidget(this);
@@ -67,11 +64,9 @@ toLoggingDocklet::toLoggingDocklet(QWidget *parent,
     l->setSpacing(0);
     l->setContentsMargins(0, 0, 0, 0);
     l->addWidget(&log);
-    l->addWidget(m_search);
     w->setLayout(l);
 
     setWidget(w);
-
 
 //    FlagSet.Save = true;
 //    FlagSet.Print = true;
@@ -79,12 +74,7 @@ toLoggingDocklet::toLoggingDocklet(QWidget *parent,
     FlagSet.Search = true;
     FlagSet.SelectAll = true;
 
-    connect(m_search, SIGNAL(searchNext(Search::SearchFlags)),
-            this, SLOT(handleSearching(Search::SearchFlags)));
-    connect(m_search, SIGNAL(windowClosed()),
-            this, SLOT(setEditorFocus()));
 }
-
 
 QIcon toLoggingDocklet::icon() const
 {
@@ -99,12 +89,13 @@ QString toLoggingDocklet::name() const
 
 void toLoggingDocklet::focusInEvent (QFocusEvent *e)
 {
-    toDocklet::focusInEvent(e);
+    super::focusInEvent(e);
+    toEditWidget::gotFocus();
 }
 void toLoggingDocklet::focusOutEvent (QFocusEvent *e)
 {
-    //toEditWidget::lostFocus();
-    toDocklet::focusOutEvent(e);
+    super::focusOutEvent(e);
+    toEditWidget::lostFocus();
 }
 
 void toLoggingDocklet::editCopy()
@@ -117,23 +108,7 @@ void toLoggingDocklet::editSelectAll()
     log.selectAll();
 }
 
-bool toLoggingDocklet::searchNext()
-{
-    if (!m_search->isVisible())
-    {
-        m_search->show();
-        m_search->setReadOnly(log.isReadOnly());
-    }
-    return true;
-}
-
-void toLoggingDocklet::searchReplace()
-{
-    m_search->setVisible(!m_search->isVisible());
-    m_search->setReadOnly(log.isReadOnly());
-}
-
-void toLoggingDocklet::handleSearching(Search::SearchFlags flags)
+bool toLoggingDocklet::handleSearching(QString const& search, QString const& replace, Search::SearchFlags flags)
 {
     QTextDocument::FindFlags f;
     if (flags & Search::WholeWords)
@@ -141,10 +116,5 @@ void toLoggingDocklet::handleSearching(Search::SearchFlags flags)
     if (flags & Search::CaseSensitive)
         f |= QTextDocument::FindCaseSensitively;
 
-    /*bool ret =*/ log.find(m_search->searchText(), f);
-}
-
-void toLoggingDocklet::setEditorFocus()
-{
-    log.setFocus(Qt::OtherFocusReason);
+    return log.find(search, f);
 }

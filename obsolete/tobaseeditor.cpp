@@ -65,11 +65,6 @@ toBaseEditor::toBaseEditor(toScintilla *editor, QWidget *parent)
     l->addWidget(m_editor);
     m_editor->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-    m_search = new toSearchReplace(this);
-    m_search->hide();
-//	m_editor->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::MinimumExpanding);
-    l->addWidget(m_search);
-
     setLayout(l);
 
     setEditFlags();
@@ -85,8 +80,6 @@ toBaseEditor::toBaseEditor(toScintilla *editor, QWidget *parent)
     connect(m_editor, SIGNAL(lostFocus()), this, SLOT(lostFocus()));
     connect(m_editor, SIGNAL(cursorPositionChanged(int, int)),
             this, SLOT(setCoordinates(int, int)));
-    connect(m_search, SIGNAL(searchNext(Search::SearchFlags)),
-            this, SLOT(handleSearching(Search::SearchFlags)));
     connect(m_search, SIGNAL(windowClosed()),
             this, SLOT(setEditorFocus()));
     setFocusProxy(m_editor);
@@ -134,11 +127,6 @@ void toBaseEditor::editPaste(void)
 void toBaseEditor::editSelectAll(void)
 {
     m_editor->selectAll(true);
-}
-
-void toBaseEditor::editPrint(void)
-{
-    m_editor->print(Filename);
 }
 
 bool toBaseEditor::editOpen(const QString &suggestedFile)
@@ -233,7 +221,6 @@ void toBaseEditor::setEditFlags()
     if (m_editor->isReadOnly())
     {
         FlagSet.Save = true;
-        FlagSet.Print = true;
         FlagSet.Copy = m_editor->hasSelectedText();
         FlagSet.Paste = false;
         FlagSet.Search = true;
@@ -243,7 +230,6 @@ void toBaseEditor::setEditFlags()
     {
         FlagSet.Open = true;
         FlagSet.Save = true;
-        FlagSet.Print = true;
         FlagSet.Undo = m_editor->isUndoAvailable();
         FlagSet.Redo = m_editor->isRedoAvailable();
         FlagSet.Cut = m_editor->hasSelectedText();

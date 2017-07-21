@@ -44,33 +44,20 @@ using namespace Views;
 
 toSqlTextView::toSqlTextView(QWidget *parent /* = 0*/, const char *name /* = 0*/)
     : QAbstractItemView(parent)
-    , toEditWidget()
     , m_model(NULL)
     , m_model_column(0)
 {
     if (name)
         setObjectName(name);
 
-    toEditWidget::FlagSet.Save = true;
-    toEditWidget::FlagSet.Paste = false;
-    toEditWidget::FlagSet.SelectAll = true;
-    toEditWidget::FlagSet.SelectBlock = false;
-
     m_view = new toSqlText(this);
     m_view->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-
-    m_search = new toSearchReplace(this);
-    m_search->hide();
 
     QVBoxLayout *l = new QVBoxLayout();
     l->setSpacing(0);
     l->setContentsMargins(0, 0, 0, 0);
     l->addWidget(m_view);
-    l->addWidget(m_search);
     setLayout(l);
-
-    connect(m_search, SIGNAL(searchNext(Search::SearchFlags)), this, SLOT(handleSearching(Search::SearchFlags)));
-    connect(m_search, SIGNAL(windowClosed()), this, SLOT(setEditorFocus()));
 }
 
 void toSqlTextView::setReadOnly(bool ro)
@@ -88,31 +75,6 @@ void toSqlTextView::setFilename(const QString &f)
     m_filename = f;
 }
 
-bool toSqlTextView::editSave(bool)
-{
-    QString fn = Utils::toSaveFilename(m_filename, QString::fromLatin1("*.sql"), this);
-    if (!fn.isEmpty())
-    {
-        return Utils::toWriteFile(fn, m_view->text());
-    }
-    return false;
-}
-
-QString toSqlTextView::editText()
-{
-    return m_view->text();
-}
-
-void toSqlTextView::editCopy(void)
-{
-    m_view->copy();
-}
-
-void toSqlTextView::editSelectAll(void)
-{
-    m_view->selectAll();
-}
-
 void toSqlTextView::focusInEvent (QFocusEvent *e)
 {
     QWidget::focusInEvent(e);
@@ -127,7 +89,6 @@ void toSqlTextView::setModel(QAbstractItemModel *model)
     connect(model, SIGNAL(rowsInserted(const QModelIndex &, int , int)), this, SLOT(rowsInserted(const QModelIndex &, int, int)));
     connect(model, SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(rowsRemoved(const QModelIndex &, int, int)));
     setReadOnly(true);
-    m_search->setReadOnly(true);
 }
 
 void toSqlTextView::setContextMenuPolicy(Qt::ContextMenuPolicy policy)
@@ -180,30 +141,4 @@ void toSqlTextView::rowsRemoved(const QModelIndex &parent, int first, int last)
     {
         m_lines.remove(row);
     }
-}
-
-bool toSqlTextView::searchNext()
-{
-    if (!m_search->isVisible())
-    {
-        m_search->show();
-        m_search->setReadOnly(true);
-    }
-    return true;
-}
-
-void toSqlTextView::handleSearching(Search::SearchFlags flags)
-{
-    QTextDocument::FindFlags f;
-    if (flags & Search::WholeWords)
-        f |= QTextDocument::FindWholeWords;
-    if (flags & Search::CaseSensitive)
-        f |= QTextDocument::FindCaseSensitively;
-
-    //bool ret = m_view->find(m_search->searchText(), f);
-}
-
-void toSqlTextView::setEditorFocus()
-{
-    m_view->setFocus(Qt::OtherFocusReason);
 }

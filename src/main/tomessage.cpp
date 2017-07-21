@@ -47,7 +47,7 @@ toMessage::toMessage(QWidget * parent, toWFlags f)
 {
     setupUi(this);
     setModal(false);
-    Message->sciEditor()->setReadOnly(true);
+    Message->setReadOnly(true);
     buttonBox->button(QDialogButtonBox::Close)->setFocus(Qt::OtherFocusReason);
 
     QSettings s;
@@ -55,7 +55,7 @@ toMessage::toMessage(QWidget * parent, toWFlags f)
     restoreGeometry(s.value("geometry", QByteArray()).toByteArray());
     s.endGroup();
 
-    Message->sciEditor()->installEventFilter(this);
+    Message->installEventFilter(this);
 
     connect(buttonBox->button(QDialogButtonBox::Close),
             SIGNAL(clicked()), this, SLOT(hide()));
@@ -68,12 +68,12 @@ void toMessage::appendText(const QString & text)
     if (!isVisible())
         show();
 
-    int firstLine = Message->sciEditor()->lines();
-    if (Message->sciEditor()->lines() != 1)
-        Message->sciEditor()->append("\n\n");
-    Message->sciEditor()->append(QDateTime::currentDateTime().toString(Qt::TextDate) + "\n");
-    Message->sciEditor()->append(text);
-    Message->sciEditor()->ensureLineVisible((std::min)(firstLine+10, Message->sciEditor()->lines()));
+    int firstLine = Message->lines();
+    if (Message->lines() != 1)
+        Message->append("\n\n");
+    Message->append(QDateTime::currentDateTime().toString(Qt::TextDate) + "\n");
+    Message->append(text);
+    Message->ensureLineVisible((std::min)(firstLine+10, Message->lines()));
 }
 
 void toMessage::hideEvent(QHideEvent * event)
@@ -87,7 +87,7 @@ void toMessage::hideEvent(QHideEvent * event)
 
 bool toMessage::eventFilter(QObject *obj, QEvent *event)
 {
-    if (obj != Message->sciEditor())
+    if (obj != Message)
         return false;
     if(event->type() == QEvent::KeyPress)
     {
@@ -99,7 +99,7 @@ bool toMessage::eventFilter(QObject *obj, QEvent *event)
         }
         if(keyEvent->key() == Qt::Key_X && (keyEvent->modifiers() & Qt::ControlModifier))
         {
-            Message->sciEditor()->clear();
+            Message->clear();
             return true;
         }
     }

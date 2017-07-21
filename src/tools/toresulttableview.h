@@ -62,7 +62,9 @@ class toSearchReplace;
 
 class toResultTableView : public QTableView, public toResult, public toEditWidget
 {
-        Q_OBJECT;
+    Q_OBJECT;
+    typedef QTableView super;
+
     public:
 
         typedef toTableViewIterator iterator;
@@ -186,11 +188,6 @@ class toResultTableView : public QTableView, public toResult, public toEditWidge
         bool editSave(bool askfile) override;
 
         /**
-         * Print this widgets contents.
-         */
-        void editPrint(void) override;
-
-        /**
          * Perform copy.
          */
         void editCopy(void) override;
@@ -207,9 +204,9 @@ class toResultTableView : public QTableView, public toResult, public toEditWidge
 	void editCut()  override {}
 	void editPaste() override {}
 	void editReadAll() override {}
-	bool searchNext() override { return false; };
-        void searchReplace() override {};
 	QString editText() override { return ""; }
+
+	bool handleSearching(QString const& search, QString const& replace, Search::SearchFlags flags) override;
 
         /** Fill in result from the cache rather than executing actual query on database.
          */
@@ -297,6 +294,12 @@ class toResultTableView : public QTableView, public toResult, public toEditWidge
         virtual void slotApplyColumnRules(void);
 
     protected:
+        //! \reimp
+        void focusInEvent(QFocusEvent *e) override;
+
+        //! \reimp
+        void focusOutEvent(QFocusEvent *e) override;
+
         void contextMenuEvent(QContextMenuEvent *e) override;
 
         /*! \brief Common setup function called from constructors

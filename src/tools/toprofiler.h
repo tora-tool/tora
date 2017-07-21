@@ -46,7 +46,7 @@ class toProfilerSource;
 class toProfilerUnits;
 class toResultItem;
 class toResultLong;
-class toHighlightedEditor;
+class toSqlText;
 
 class toProfiler : public toToolWidget
 {
@@ -65,7 +65,7 @@ class toProfiler : public toToolWidget
         toResultItem *Info;
         toProfilerUnits *Units;
         toProfilerSource *Lines;
-        toHighlightedEditor *Script;
+        toSqlText *Script;
     public:
         toProfiler(QWidget *parent, toConnection &connection);
     public slots:
