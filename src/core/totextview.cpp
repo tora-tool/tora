@@ -34,8 +34,8 @@
 
 #include "core/totextview.h"
 #include "core/toeditmenu.h"
-#include "docklets/tosearch.h"
 #include "core/utils.h"
+#include "widgets/tosearch.h"
 #include <QtGui/QFocusEvent>
 #include <QtGui/QTextDocument>
 #include <QTextBrowser>

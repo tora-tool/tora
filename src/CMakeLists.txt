@@ -211,6 +211,9 @@ SET(TORA_MOC_CLASSES
   docklets/toviewdirectory.h
   docklets/tocodeoutline.h
 
+  docklets/toquerymodel.h
+  tools/toer.h
+
   editor/tocomplpopup.h
   editor/todebugtext.h
   editor/todifftext.h
@@ -348,6 +351,7 @@ SET(TORA_MOC_CLASSES
   widgets/toresultmodel.h
   widgets/toresultmodeledit.h
   widgets/toresultschema.h
+  widgets/tosearch.h
   widgets/tosearchreplace.h
   widgets/tosplash.h
   widgets/totabledetailview.h
@@ -357,9 +361,6 @@ SET(TORA_MOC_CLASSES
   widgets/totreewidget.h
   widgets/toworkingwidget.h
   widgets/toworkspace.h
-
-  docklets/toquerymodel.h
-  tools/toer.h
 
   #obsolete core/todatatype.h
   #obsolete core/torunnable.h
@@ -399,7 +400,6 @@ IF (USE_EXPERIMENTAL)
 
   LIST(APPEND TORA_MOC_CLASSES docklets/tologging.h)
   LIST(APPEND TORA_MOC_CLASSES docklets/tobindvars.h)
-  LIST(APPEND TORA_MOC_CLASSES docklets/tosearch.h)
 ENDIF (USE_EXPERIMENTAL)
 
 ################################################################################
@@ -463,6 +463,7 @@ SET(TORA_SOURCES
   core/tolistviewformattertext.cpp
   core/tolistviewformatterxlsx.cpp
   core/tomainwindow.cpp
+  core/tomemory.cpp
   core/toquery.cpp
   core/toqvalue.cpp
   core/toresult.cpp
@@ -633,6 +634,7 @@ SET(TORA_SOURCES
   widgets/toresultmodel.cpp
   widgets/toresultmodeledit.cpp
   widgets/toresultschema.cpp
+  widgets/tosearch.cpp
   widgets/tosearchreplace.cpp
   widgets/tosplash.cpp
   widgets/totabledetailview.cpp
@@ -650,6 +652,7 @@ SET(TORA_SOURCES
 
   docklets/toquerymodel.cpp
   docklets/toastwalk.cpp
+
   tools/toer.cpp
 
   #core/toconfiguration.cpp
@@ -692,9 +695,7 @@ IF (USE_EXPERIMENTAL)
   LIST (APPEND TORA_SOURCES tools/toscript.cpp)
   LIST (APPEND TORA_SOURCES tools/tosandboxtool.cpp)
   LIST (APPEND TORA_SOURCES docklets/tologging.cpp)
-  LIST (APPEND TORA_SOURCES docklets/tosearch.cpp)
   LIST (APPEND TORA_SOURCES docklets/tobindvars.cpp)
-  LIST (APPEND TORA_SOURCES core/tomemory.cpp)
 ENDIF (USE_EXPERIMENTAL)
 
 IF(POPPLER_QT4_FOUND)

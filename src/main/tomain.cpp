@@ -55,7 +55,7 @@
 #include "ts_log/toostream.h"
 #include "editor/tosqltext.h"
 #include "editor/toworksheettext.h"
-#include "docklets/tosearch.h"
+#include "widgets/tosearch.h"
 
 #include "icons/tora.xpm"
 #include "icons/up.xpm"

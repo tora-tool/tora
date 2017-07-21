@@ -41,6 +41,8 @@
 #include "core/toconf.h"
 #include "core/tocontextmenu.h"
 #include "core/toeditmenu.h"
+#include "widgets/tosearch.h"
+
 #include "ts_log/ts_log_utils.h"
 
 #include <QApplication>
@@ -398,8 +400,6 @@ void toScintilla::mousePressEvent(QMouseEvent *e)
 
     QsciScintilla::mousePressEvent(e);
 }
-
-#include "docklets/tosearch.h"
 
 void toScintilla::keyPressEvent(QKeyEvent *e)
 {

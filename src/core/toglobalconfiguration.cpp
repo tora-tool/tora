@@ -43,9 +43,7 @@
 #include "core/toconf.h"
 #include "core/utils.h"
 
-#ifdef TORA_EXPERIMENTAL
 #include "core/tomemory.h"
-#endif
 
 QVariant ToConfiguration::Global::defaultValue(int option) const
 {
