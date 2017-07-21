@@ -60,7 +60,7 @@ int main(int argc, char **argv)
 {
     int p = 0;
 
-    toConfigurationNew::setQSettingsEnv();
+    toConfiguration::setQSettingsEnv();
 
     QApplication app(argc, argv);
 

@@ -56,6 +56,7 @@
 #include <QApplication>
 #include <QtGui/QClipboard>
 #include <QtCore/QMimeData>
+#include <QtCore/QFileInfo>
 
 toFileMenu::toFileMenu()
     : QMenu(tr("&File"), NULL)

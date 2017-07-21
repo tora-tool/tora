@@ -83,7 +83,7 @@ int main(int argc, char **argv)
      */
     QCoreApplication::setAttribute(Qt::AA_X11InitThreads); //  or just XInitThreads();
     QNetworkProxyFactory::setUseSystemConfiguration(true);
-    toConfigurationNew::setQSettingsEnv();
+    toConfiguration::setQSettingsEnv();
 
     /*! \warning: Keep the code before QApplication init as small
         as possible. There could be serious display issues when

@@ -38,13 +38,12 @@
 
 class toAbout : public QDialog, public Ui::toAboutUI
 {
-        Q_OBJECT
+    Q_OBJECT
 
-    public:
+public:
+    toAbout(QWidget* parent = 0, const char* name = 0, bool modal = false);
+    virtual ~toAbout();
 
-        toAbout(QWidget* parent = 0, const char* name = 0, bool modal = false);
-        virtual ~toAbout();
-
-    protected slots:
-		void updateVersionTab(QString);
+protected slots:
+    void updateVersionTab(QString);
 };
