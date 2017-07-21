@@ -40,7 +40,7 @@ class toSearchReplace;
 
 #include "core/toeditwidget.h"
 
-#include <QWidget>
+#include <QPlainTextEdit>
 #include <QtCore/QSet>
 
 #include "core/utils.h"
@@ -53,15 +53,14 @@ namespace Views
 
 /** A tora plaintext version of the @ref QPlainTextEdit widget.
  */
-class toPlainTextView : public QWidget, public toEditWidget
+class toPlainTextView : public QPlainTextEdit, public toEditWidget
 {
     Q_OBJECT;
-    typedef QWidget super;
-public:
+    typedef QPlainTextEdit super;
 
+public:
     toPlainTextView(QWidget *parent = 0, const char *name = 0);
 
-    void setReadOnly(bool ro);
     void setText(const QString &t);
     void setFilename(const QString &f);
 
@@ -80,9 +79,6 @@ public:
 
     void setModel(QAbstractItemModel *model);
 
-    void setFont(const QFont &);
-    const QFont & font();
-
 protected:
     void focusInEvent (QFocusEvent *e) override;
     void focusOutEvent (QFocusEvent *e) override;
@@ -92,8 +88,8 @@ protected slots:
     void modelReset();
     void rowsInserted(const QModelIndex &parent, int first, int last);
     void rowsRemoved(const QModelIndex &parent, int first, int last);
+
 private:
-    QPlainTextEdit *m_view;
     QString m_filename;
     QAbstractItemModel *m_model;
     QSet<int> m_lines;

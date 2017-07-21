@@ -41,8 +41,7 @@
 
 REGISTER_VIEW("Logging", toLoggingDocklet);
 
-toLoggingDocklet::toLoggingDocklet(QWidget *parent,
-                                   toWFlags flags)
+toLoggingDocklet::toLoggingDocklet(QWidget *parent, toWFlags flags)
     : super(tr("Logging"), parent, flags)
     , toEditWidget()
     , log(toLoggingWidgetSingle::Instance())
@@ -50,10 +49,6 @@ toLoggingDocklet::toLoggingDocklet(QWidget *parent,
     toEditWidget::FlagSet.Copy = true;
     setObjectName("Logging Docklet");
 
-//    if( (log = toMainWidget()->getLoggingWidget()) == NULL)
-//        log = new QPlainTextEdit("NO LOGGING...", this);
-//    else
-//        log->setParent(this);
     log.setParent(this);
     log.setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
@@ -69,7 +64,6 @@ toLoggingDocklet::toLoggingDocklet(QWidget *parent,
     setWidget(w);
 
 //    FlagSet.Save = true;
-//    FlagSet.Print = true;
     FlagSet.Copy = true;
     FlagSet.Search = true;
     FlagSet.SelectAll = true;

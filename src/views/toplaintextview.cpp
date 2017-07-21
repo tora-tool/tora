@@ -56,25 +56,11 @@ toPlainTextView::toPlainTextView(QWidget *parent /* = 0*/, const char *name /* =
     toEditWidget::FlagSet.Paste = false;
     toEditWidget::FlagSet.SelectAll = true;
     toEditWidget::FlagSet.SelectBlock = false;
-
-    m_view = new QPlainTextEdit(this);
-    m_view->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-
-    QVBoxLayout *l = new QVBoxLayout();
-    l->setSpacing(0);
-    l->setContentsMargins(0, 0, 0, 0);
-    l->addWidget(m_view);
-    setLayout(l);
-}
-
-void toPlainTextView::setReadOnly(bool ro)
-{
-    m_view->setReadOnly(ro);
 }
 
 void toPlainTextView::setText(const QString &t)
 {
-    m_view->setPlainText(t);
+    setPlainText(t);
 }
 
 void toPlainTextView::setFilename(const QString &f)
@@ -87,24 +73,24 @@ bool toPlainTextView::editSave(bool)
     QString fn = Utils::toSaveFilename(m_filename, QString::fromLatin1("*.txt"), this);
     if (!fn.isEmpty())
     {
-        return Utils::toWriteFile(fn, m_view->toPlainText());
+        return Utils::toWriteFile(fn, toPlainText());
     }
     return false;
 }
 
 QString toPlainTextView::editText()
 {
-    return m_view->toPlainText();
+    return toPlainText();
 }
 
 void toPlainTextView::editCopy(void)
 {
-    m_view->copy();
+    copy();
 }
 
 void toPlainTextView::editSelectAll(void)
 {
-    m_view->selectAll();
+    selectAll();
 }
 
 void toPlainTextView::focusInEvent(QFocusEvent *e)
@@ -117,16 +103,6 @@ void toPlainTextView::focusOutEvent(QFocusEvent *e)
 {
     super::focusOutEvent(e);
     toEditWidget::lostFocus();
-}
-
-void toPlainTextView::setFont(const QFont &f)
-{
-    m_view->setFont(f);
-}
-
-const QFont& toPlainTextView::font()
-{
-    return m_view->font();
 }
 
 void toPlainTextView::setModel(QAbstractItemModel *model)
@@ -142,11 +118,11 @@ void toPlainTextView::setModel(QAbstractItemModel *model)
 void toPlainTextView::modelReset()
 {
     m_lines.clear();
-    m_view->clear();
+    clear();
     for(int row = 0; row < m_model->rowCount(); row++)
     {
         QModelIndex index = m_model->index(row, m_model_column);
-        m_view->appendPlainText(m_model->data(index).toString());
+        appendPlainText(m_model->data(index).toString());
     }
 }
 
@@ -158,7 +134,7 @@ void toPlainTextView::rowsInserted(const QModelIndex &parent, int first, int las
         {
             m_lines.insert(row);
             QModelIndex index = m_model->index(row, m_model_column);
-            m_view->appendPlainText(m_model->data(index).toString());
+            appendPlainText(m_model->data(index).toString());
         }
     }
 }
@@ -179,5 +155,5 @@ bool toPlainTextView::handleSearching(QString const& search, QString const& repl
     if (flags & Search::CaseSensitive)
         f |= QTextDocument::FindCaseSensitively;
 
-    return m_view->find(search, f);
+    return find(search, f);
 }
