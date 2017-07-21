@@ -410,8 +410,7 @@ void toScintilla::keyPressEvent(QKeyEvent *e)
         e->accept();
         return;
     } else if (Utils::toCheckKeyEvent(e, toEditMenuSingle::Instance().searchReplaceAct->shortcut())) {
-        toSearchReplaceDockletSingle::Instance().show();
-        //toSearchReplaceDockletSingle::Instance().activate(this);
+        toSearchReplaceDockletSingle::Instance().activate();
     }
     QsciScintilla::keyPressEvent(e);
 }
@@ -563,19 +562,18 @@ void toScintilla::setSelectionType(int aType)
 void toScintilla::focusInEvent (QFocusEvent *e)
 {
     TLOG(9, toDecorator, __HERE__) << this << std::endl;
-    QsciScintilla::focusInEvent(e);
+    super::focusInEvent(e);
     int curline, curcol;
     getCursorPosition (&curline, &curcol);
     toGlobalEventSingle::Instance().setCoordinates(curline + 1, curcol + 1);
-
-    emit gotFocus();
+    toEditWidget::gotFocus();
 }
 
 void toScintilla::focusOutEvent (QFocusEvent *e)
 {
     TLOG(9, toDecorator, __HERE__) << this << std::endl;
-    QsciScintilla::focusOutEvent(e);
-    emit lostFocus();
+    super::focusOutEvent(e);
+    toEditWidget::lostFocus();
 }
 
 void toScintilla::contextMenuEvent(QContextMenuEvent *e)
@@ -664,28 +662,6 @@ QString toScintilla::editText()
     return text();
 }
 
-bool toScintilla::searchNext()
-{
-    throw __QHERE__;
-#if TORA3_SEARCH
-    if (!m_search->isVisible())
-    {
-        m_search->show();
-        m_search->setReadOnly(m_editor->isReadOnly());
-    }
-#endif
-    return true;
-};
-
-void toScintilla::searchReplace()
-{
-    throw __QHERE__;
-#if TORA3_SEARCH
-    m_search->setVisible(!m_search->isVisible());
-    m_search->setReadOnly(m_editor->isReadOnly());
-#endif
-};
-
 toEditWidget::FlagSetStruct toScintilla::flagSet()
 {
     toEditWidget::FlagSetStruct FlagSet;
@@ -709,6 +685,11 @@ toEditWidget::FlagSetStruct toScintilla::flagSet()
         FlagSet.SelectAll = true;
     }
     return FlagSet;
+}
+
+bool toScintilla::handleSearching(QString const& search, QString const& replace, Search::SearchFlags flags)
+{
+    return findText(search, replace, flags);
 }
 
 QString toScintilla::getSelectionAsHTML()

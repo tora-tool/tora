@@ -53,7 +53,9 @@ public:
     /** Re-implented from toEditWidget */
     void focusOutEvent (QFocusEvent*) override;
 
-    void activate(toEditWidget*);
+    void activate();
+    void registerEdit(toEditWidget*);
+    void unregisterEdit(toEditWidget*);
 private:
     toSearchReplace *m_search;
 

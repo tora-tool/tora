@@ -40,7 +40,7 @@
 #include "widgets/tosearchreplace.h"
 
 toTextView::toTextView(QWidget *parent /* = 0*/, const char *name /* = 0*/)
-    : QWidget(parent)
+    : super(parent)
     , toEditWidget()
 {
     if (name)
@@ -111,23 +111,17 @@ void toTextView::editSelectAll(void)
 
 void toTextView::focusInEvent (QFocusEvent *e)
 {
-    QWidget::focusInEvent(e);
+    super::focusInEvent(e);
+    toEditWidget::gotFocus();
 }
 
-bool toTextView::searchNext()
+void toTextView::focusOutEvent (QFocusEvent *e)
 {
-    throw QString("TODO toTextView::searchNext");
-#if 0
-    if (!m_search->isVisible())
-    {
-        m_search->show();
-        m_search->setReadOnly(true);
-    }
-#endif
-    return true;
+    super::focusInEvent(e);
+    toEditWidget::lostFocus();
 }
 
-void toTextView::handleSearching(Search::SearchFlags flags)
+bool toTextView::handleSearching(QString const& search, QString const& replace, Search::SearchFlags flags)
 {
     QTextDocument::FindFlags f;
     if (flags & Search::WholeWords)
@@ -135,13 +129,5 @@ void toTextView::handleSearching(Search::SearchFlags flags)
     if (flags & Search::CaseSensitive)
         f |= QTextDocument::FindCaseSensitively;
 
-    throw QString("TODO toTextView::handleSearching");
-#if 0
-    bool ret = m_view->find(m_search->searchText(), f);
-#endif
-}
-
-void toTextView::setEditorFocus()
-{
-    m_view->setFocus(Qt::OtherFocusReason);
+    return m_view->find(search, f);
 }

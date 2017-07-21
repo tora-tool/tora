@@ -40,8 +40,6 @@
 #include "core/toeditwidget.h"
 
 #include <QtCore/QModelIndex>
-//class toToolWidget;
-//class toConnectionModel;
 
 class QTabWidget;
 class QListWidget;

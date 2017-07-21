@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TO_EDIT_GLOBALS_H
-#define TO_EDIT_GLOBALS_H
+#pragma once
 
 #include <QtCore/qglobal.h>
 
@@ -68,6 +67,3 @@ namespace Search
     Q_DECLARE_OPERATORS_FOR_FLAGS(SearchFlags);
 
 }; // namespace Search
-
-#endif
-

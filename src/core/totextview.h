@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOTEXTVIEW_H
-#define TOTEXTVIEW_H
+#pragma once
 
 #include "core/toeditwidget.h"
 #include "core/utils.h"
@@ -47,6 +46,7 @@ class QTextBrowser;
 class toTextView : public QWidget, public toEditWidget
 {
     Q_OBJECT;
+    typedef QWidget super;
 public:
 
     toTextView(QWidget *parent = 0, const char *name = 0);
@@ -68,19 +68,13 @@ public:
     void editReadAll() override {}
     QString editText() override;
 
-    bool searchNext();
-    void searchReplace() {};
+    bool handleSearching(QString const& search, QString const& replace, Search::SearchFlags flags) override;
 
 protected:
     void focusInEvent (QFocusEvent *e) override;
+    void focusOutEvent (QFocusEvent *e) override;
 
 private:
     QTextBrowser *m_view;
     QString m_filename;
-
-private slots:
-    void setEditorFocus();
-    void handleSearching(Search::SearchFlags flags);
 };
-
-#endif

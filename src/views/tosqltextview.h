@@ -53,7 +53,7 @@ namespace Views
 
 /** A tora "Highlighted sql source" version of the @ref QPlainTextEdit widget.
  */
-class toSqlTextView : public QAbstractItemView, public toEditWidget
+class toSqlTextView : public QAbstractItemView
 {
     Q_OBJECT;
 public:
@@ -63,20 +63,6 @@ public:
     void setReadOnly(bool ro);
     void setText(const QString &t);
     void setFilename(const QString &f);
-
-    void editCopy(void) override;
-    void editSelectAll(void) override;
-    bool editSave(bool) override;
-    bool editOpen(const QString&) override { return false; }
-    void editUndo() override {}
-    void editRedo() override {}
-    void editCut() override {}
-    void editPaste() override {}
-    void editReadAll() override {}
-    QString editText() override;
-
-    bool searchNext() override;
-    void searchReplace() override {};
 
     void setSqlColumn(unsigned column) { m_model_column = column; };
 
@@ -99,9 +85,6 @@ protected:
     void focusInEvent (QFocusEvent *e) override;
 
 protected slots:
-    void setEditorFocus();
-    void handleSearching(Search::SearchFlags flags);
-
     // handle just some of model's signals
     void modelReset();
     void rowsInserted(const QModelIndex &parent, int first, int last);

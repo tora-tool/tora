@@ -56,6 +56,7 @@ namespace Views
 class toPlainTextView : public QWidget, public toEditWidget
 {
     Q_OBJECT;
+    typedef QWidget super;
 public:
 
     toPlainTextView(QWidget *parent = 0, const char *name = 0);
@@ -75,20 +76,18 @@ public:
     void editReadAll() override {}
     QString editText() override;
 
-    bool searchNext() override;
-    void searchReplace() override {};
-
-    void focusInEvent (QFocusEvent *e) override;
+    bool handleSearching(QString const& search, QString const& replace, Search::SearchFlags flags) override;
 
     void setModel(QAbstractItemModel *model);
 
     void setFont(const QFont &);
     const QFont & font();
 
-protected slots:
-    void setEditorFocus();
-    void handleSearching(Search::SearchFlags flags);
+protected:
+    void focusInEvent (QFocusEvent *e) override;
+    void focusOutEvent (QFocusEvent *e) override;
 
+protected slots:
     // handle just some of model's signals
     void modelReset();
     void rowsInserted(const QModelIndex &parent, int first, int last);

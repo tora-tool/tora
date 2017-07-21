@@ -44,17 +44,11 @@ using namespace Views;
 
 toSqlTextView::toSqlTextView(QWidget *parent /* = 0*/, const char *name /* = 0*/)
     : QAbstractItemView(parent)
-    , toEditWidget()
     , m_model(NULL)
     , m_model_column(0)
 {
     if (name)
         setObjectName(name);
-
-    toEditWidget::FlagSet.Save = true;
-    toEditWidget::FlagSet.Paste = false;
-    toEditWidget::FlagSet.SelectAll = true;
-    toEditWidget::FlagSet.SelectBlock = false;
 
     m_view = new toSqlText(this);
     m_view->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
@@ -79,31 +73,6 @@ void toSqlTextView::setText(const QString &t)
 void toSqlTextView::setFilename(const QString &f)
 {
     m_filename = f;
-}
-
-bool toSqlTextView::editSave(bool)
-{
-    QString fn = Utils::toSaveFilename(m_filename, QString::fromLatin1("*.sql"), this);
-    if (!fn.isEmpty())
-    {
-        return Utils::toWriteFile(fn, m_view->text());
-    }
-    return false;
-}
-
-QString toSqlTextView::editText()
-{
-    return m_view->text();
-}
-
-void toSqlTextView::editCopy(void)
-{
-    m_view->copy();
-}
-
-void toSqlTextView::editSelectAll(void)
-{
-    m_view->selectAll();
 }
 
 void toSqlTextView::focusInEvent (QFocusEvent *e)
@@ -172,33 +141,4 @@ void toSqlTextView::rowsRemoved(const QModelIndex &parent, int first, int last)
     {
         m_lines.remove(row);
     }
-}
-
-bool toSqlTextView::searchNext()
-{
-    throw QString("TODO toSqlTextView::searchNext");
-#if 0
-    if (!m_search->isVisible())
-    {
-        m_search->show();
-        m_search->setReadOnly(true);
-    }
-#endif
-    return true;
-}
-
-void toSqlTextView::handleSearching(Search::SearchFlags flags)
-{
-    QTextDocument::FindFlags f;
-    if (flags & Search::WholeWords)
-        f |= QTextDocument::FindWholeWords;
-    if (flags & Search::CaseSensitive)
-        f |= QTextDocument::FindCaseSensitively;
-
-    //bool ret = m_view->find(m_search->searchText(), f);
-}
-
-void toSqlTextView::setEditorFocus()
-{
-    m_view->setFocus(Qt::OtherFocusReason);
 }

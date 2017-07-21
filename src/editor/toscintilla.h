@@ -148,15 +148,6 @@ public:
     void enableToolTips() { m_showTooTips = true; }
     void disableToolTips() { m_showTooTips = false; }
 
-public slots:
-    void setWordWrap(bool);
-
-    //! \reimp
-    void copy() override;
-
-    //! \reimp
-    void paste() override;
-
     // toEditWidget API re-implementation (most of the methods are not implemented)
     bool editOpen(const QString &file = QString::null) override;
     bool editSave(bool askfile) override;
@@ -168,9 +159,18 @@ public slots:
     void editSelectAll(void) override;
     void editReadAll(void) override;
     QString editText() override;
-    bool searchNext() override;
-    void searchReplace() override;
     FlagSetStruct flagSet() override;
+
+    bool handleSearching(QString const& search, QString const& replace, Search::SearchFlags flags) override;
+
+public slots:
+    void setWordWrap(bool);
+
+    //! \reimp
+    void copy() override;
+
+    //! \reimp
+    void paste() override;
 
 protected:
     struct ToolTipData
@@ -237,12 +237,7 @@ protected:
         unsigned char charClass[maxChar];    // not type cc to save space
     };
 
-signals:
-
-    void gotFocus();
-    void lostFocus();
-
-    public:
+public:
     static CharClassify::cc CharClass(char);
 
     protected:

@@ -37,6 +37,7 @@
 #include "core/utils.h"
 #include "core/tomainwindow.h"
 #include "core/toeditmenu.h"
+#include "core/toeditwidget.h"
 
 #include "icons/close.xpm"
 
@@ -47,6 +48,7 @@
 toSearchReplace::toSearchReplace(QWidget *parent)
     : QWidget(parent)
     , toHelpContext(QString::fromLatin1("searchreplace.html"))
+    , m_editWidget(NULL)
 {
     setupUi(this);
 
@@ -62,8 +64,10 @@ toSearchReplace::toSearchReplace(QWidget *parent)
     connect(SearchPrevious, SIGNAL(clicked()), this, SLOT(act_searchPrevious()));
     connect(Replace, SIGNAL(clicked()), this, SLOT(act_replace()));
     connect(ReplaceAll, SIGNAL(clicked()), this, SLOT(act_replaceAll()));
-    connect(SearchText, SIGNAL(editTextChanged(const QString &)),
-            this, SLOT(act_searchChanged(const QString &)));
+    connect(SearchText, SIGNAL(editTextChanged(const QString &)), this, SLOT(act_searchChanged(const QString &)));
+
+    connect(SearchText->lineEdit(), SIGNAL(returnPressed()), this, SLOT(act_searchNext()));
+    connect(ReplacementText->lineEdit(), SIGNAL(returnPressed()), this, SLOT(act_replace()));
 
     SearchText->installEventFilter(this);
     ReplacementText->installEventFilter(this);
@@ -98,6 +102,17 @@ void toSearchReplace::activate()
     act_searchChanged(SearchText->currentText());
 }
 
+void toSearchReplace::registerEdit(toEditWidget *w)
+{
+    m_editWidget = w;
+}
+
+void toSearchReplace::unregisterEdit(toEditWidget *w)
+{
+    if (m_editWidget == w)
+        m_editWidget = NULL;
+}
+
 Search::SearchFlags toSearchReplace::sharedFlags()
 {
     Search::SearchFlags f;
@@ -118,10 +133,10 @@ void toSearchReplace::act_searchNext(void)
     if (t.length() > 0 && SearchText->findText(t) == -1)
         SearchText->addItem(t);
 
-    if (t.length())
+    if (t.length() && m_editWidget)
     {
         Search::SearchFlags f = Search::Search | Search::Forward | sharedFlags();
-        emit searchNext(f);
+        m_editWidget->handleSearching(searchText(), QString::null, f);
     }
 }
 
@@ -134,7 +149,7 @@ void toSearchReplace::act_searchPrevious(void)
     if (t.length())
     {
         Search::SearchFlags f = Search::Search | Search::Backward | sharedFlags();
-        emit searchNext(f);
+        m_editWidget->handleSearching(searchText(), QString::null, f);
     }
 }
 
@@ -147,7 +162,7 @@ void toSearchReplace::act_replace(void)
     if (SearchText->currentText().length())
     {
         Search::SearchFlags f = Search::Replace | Search::Forward | sharedFlags();
-        emit searchNext(f);
+        m_editWidget->handleSearching(searchText(), replaceText(), f);
     }
 }
 
@@ -160,19 +175,18 @@ void toSearchReplace::act_replaceAll(void)
     if (SearchText->currentText().length())
     {
         Search::SearchFlags f = Search::ReplaceAll | Search::Forward | sharedFlags();
-        emit searchNext(f);
+        m_editWidget->handleSearching(searchText(), replaceText(), f);
     }
 }
 
 void toSearchReplace::showEvent(QShowEvent * e)
 {
-    activate();
     QWidget::showEvent(e);
 }
 
 void toSearchReplace::closeEvent(QCloseEvent *e)
 {
-    emit windowClosed();
+    #pragma message WARN("TODO: call toScintilla::findStop here - extend toEditWidget API")
     QWidget::closeEvent(e);
 }
 
@@ -184,6 +198,10 @@ bool toSearchReplace::eventFilter(QObject *target, QEvent *event)
         if (keyEvent->key() == Qt::Key_Escape)
         {
             parentWidget()->close(); // Close parent docklet window
+            if (QWidget *w = dynamic_cast<QWidget*>(m_editWidget))
+            {
+                w->setFocus();
+            }
             return true;
         }
     }

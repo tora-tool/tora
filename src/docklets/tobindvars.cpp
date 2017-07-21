@@ -54,7 +54,7 @@ public:
 
 toBindVarsDocklet::toBindVarsDocklet(QWidget *parent,
                                    toWFlags flags)
-    : toDocklet(tr("Bind Values"), parent, flags)
+    : super(tr("Bind Values"), parent, flags)
     , toEditWidget()
     , editor(new PlainTextEdit(this))
 {
@@ -98,12 +98,13 @@ QString toBindVarsDocklet::name() const
 
 void toBindVarsDocklet::focusInEvent (QFocusEvent *e)
 {
-    toDocklet::focusInEvent(e);
+    super::focusInEvent(e);
+    toEditWidget::gotFocus();
 }
 void toBindVarsDocklet::focusOutEvent (QFocusEvent *e)
 {
-    //toEditWidget::lostFocus();
-    toDocklet::focusOutEvent(e);
+    super::focusOutEvent(e);
+    toEditWidget::lostFocus();
 }
 
 void toBindVarsDocklet::editCopy()
@@ -121,29 +122,7 @@ void toBindVarsDocklet::editSelectAll()
     editor->selectAll();
 }
 
-bool toBindVarsDocklet::searchNext()
-{
-    throw QString("TODO toBindVarsDocklet::searchNext");
-#if 0
-    if (!m_search->isVisible())
-    {
-        m_search->show();
-        m_search->setReadOnly(editor->isReadOnly());
-    }
-#endif
-    return true;
-}
-
-void toBindVarsDocklet::searchReplace()
-{
-    throw QString("TODO toBindVarsDocklet::searchReplace");
-#if 0
-    m_search->setVisible(!m_search->isVisible());
-    m_search->setReadOnly(editor->isReadOnly());
-#endif
-}
-
-void toBindVarsDocklet::handleSearching(Search::SearchFlags flags)
+bool toBindVarsDocklet::handleSearching(QString const& search, QString const& replace, Search::SearchFlags flags)
 {
     QTextDocument::FindFlags f;
     if (flags & Search::WholeWords)
@@ -151,17 +130,8 @@ void toBindVarsDocklet::handleSearching(Search::SearchFlags flags)
     if (flags & Search::CaseSensitive)
         f |= QTextDocument::FindCaseSensitively;
 
-    throw QString("TODO toBindVarsDocklet::handleSearching");
-#if 0
-    /*bool ret =*/ editor->find(m_search->searchText(), f);
-#endif
+    return editor->find(search, f);
 }
-
-void toBindVarsDocklet::setEditorFocus()
-{
-    editor->setFocus(Qt::OtherFocusReason);
-}
-
 
 bool PlainTextEdit::canInsertFromMimeData(const QMimeData *source) const
 {

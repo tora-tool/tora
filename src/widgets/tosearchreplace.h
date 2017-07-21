@@ -40,6 +40,8 @@
 
 #include <QWidget>
 
+class toEditWidget;
+
 class toSearchReplace : public QWidget
     , public Ui::toSearchReplaceUI
     , public toHelpContext
@@ -55,9 +57,18 @@ public:
     void setReadOnly(bool ro);
 
     void activate();
-signals:
-    void searchNext(Search::SearchFlags flags);
-    void windowClosed();
+    void registerEdit(toEditWidget*);
+    void unregisterEdit(toEditWidget*);
+
+public slots:
+    void act_searchNext();
+    void act_replace();
+
+private slots:
+    void act_replaceAll();
+    void act_searchChanged(const QString & text);
+    void displayHelp();
+    void act_searchPrevious();
 
 protected:
     void showEvent(QShowEvent * e) override;
@@ -68,12 +79,5 @@ protected:
 
 private:
     Search::SearchFlags sharedFlags();
-
-private slots:
-    void act_replaceAll();
-    void act_replace();
-    void act_searchChanged(const QString & text);
-    void displayHelp();
-    void act_searchNext();
-    void act_searchPrevious();
+    toEditWidget* m_editWidget;
 };

@@ -55,6 +55,7 @@
 #include "ts_log/toostream.h"
 #include "editor/tosqltext.h"
 #include "editor/toworksheettext.h"
+#include "docklets/tosearch.h"
 
 #include "icons/tora.xpm"
 #include "icons/up.xpm"
@@ -607,11 +608,13 @@ void toMain::commandCallback(QAction *action)
             edit->editReadAll();
         else if (action == editMenu.searchReplaceAct)
         {
-            edit->searchReplace();
+            toSearchReplaceDockletSingle::Instance().activate();
         }
         else if (action == editMenu.searchNextAct)
         {
+#if TORA3_SEARCH
             edit->searchNext();
+#endif
         }
         else if (action == fileMenu.saveAsAct)
             edit->editSave(true);

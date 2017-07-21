@@ -54,18 +54,30 @@ toSearchReplaceDocklet::toSearchReplaceDocklet(QWidget *parent, toWFlags flags)
             break;
         }
     }
+	hide();
 }
 
-void toSearchReplaceDocklet::focusInEvent (QFocusEvent *e)
+void toSearchReplaceDocklet::focusInEvent(QFocusEvent *e)
 {
     QDockWidget::focusInEvent(e);
 }
-void toSearchReplaceDocklet::focusOutEvent (QFocusEvent *e)
+void toSearchReplaceDocklet::focusOutEvent(QFocusEvent *e)
 {
     QDockWidget::focusOutEvent(e);
 }
 
-void toSearchReplaceDocklet::activate (toEditWidget*)
+void toSearchReplaceDocklet::activate()
 {
-	m_search->activate();
+    m_search->activate();
+	show();
+}
+
+void toSearchReplaceDocklet::registerEdit(toEditWidget *w)
+{
+    m_search->registerEdit(w);
+}
+
+void toSearchReplaceDocklet::unregisterEdit(toEditWidget *w)
+{
+    m_search->unregisterEdit(w);
 }

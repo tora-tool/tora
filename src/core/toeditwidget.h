@@ -34,6 +34,8 @@
 
 #pragma once
 
+#include "editor/toeditglobals.h"
+
 #include <QtCore/QString>
 
 class QWidget;
@@ -127,16 +129,10 @@ public:
      */
     virtual QString editText() = 0;
 
-    /*! \brief Search for next occurrence of text
-        This is pure virtual as it has to be implemented in all
-        separated children of toEditWidget.
-     */
-    virtual bool searchNext() = 0;
-    /*! \brief Replace current entry with new data
-        This is pure virtual as it has to be implemented in all
-        separated children of toEditWidget.
-     */
-    virtual void searchReplace() = 0;
+    virtual bool handleSearching(QString const& search, QString const& replace, Search::SearchFlags flags) = 0;
+
+    void gotFocus();
+    void lostFocus();
 
     static toEditWidget* findEdit(QWidget *widget);
 

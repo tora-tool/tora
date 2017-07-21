@@ -736,56 +736,6 @@ toTreeWidgetItem *toListView::printPage(TOPrinter *printer, QPainter *painter, t
 }
 #endif
 
-void toListView::editPrint(void)
-{
-#if 0
-    TOPrinter printer;
-
-    std::map<int, int> PageColumns;
-    std::map<int, toTreeWidgetItem *> PageItems;
-
-    int column = 0;
-    int tree = rootIsDecorated() ? treeStepSize() : 0;
-    int page = 1;
-    PageColumns[1] = 0;
-    toTreeWidgetItem *item = PageItems[1] = firstChild();
-
-    printer.setCreator(tr(TOAPPNAME));
-    QPainter painter(&printer);
-
-    while ((item = printPage(&printer, &painter, item, column, tree, page++, false)))
-    {
-        PageColumns[page] = column;
-        PageItems[page] = item;
-    }
-
-    printer.setMinMax(1, page - 1);
-    printer.setFromTo(1, page - 1);
-    if (printer.setup())
-    {
-        QList<int> pages;
-        for (int i = printer.fromPage(); i <= printer.toPage() || (printer.toPage() == 0 && i < page); i++)
-            pages += i;
-
-        for (QList<int>::iterator pageit = pages.begin(); pageit != pages.end(); pageit++)
-        {
-            page = *pageit;
-            item = PageItems[page];
-            column = PageColumns[page];
-
-            printPage(&printer, &painter, item, column, tree, page, true);
-            printer.newPage();
-            painter.resetXForm();
-            qApp->processEvents();
-            QString str = tr("Printing page %1").arg(page);
-            toStatusMessage(str, false, false);
-        }
-        painter.end();
-        toStatusMessage(tr("Done printing"), false, false);
-    }
-#endif
-}
-
 void toListView::setDisplayMenu(QMenu *m)
 {
     if (Menu)
@@ -927,7 +877,14 @@ QString toListView::menuText(void)
 
 void toListView::focusInEvent(QFocusEvent *e)
 {
-    toTreeWidget::focusInEvent(e);
+    super::focusInEvent(e);
+    toEditWidget::gotFocus();
+}
+
+void toListView::focusOutEvent(QFocusEvent *e)
+{
+    super::focusOutEvent(e);
+    toEditWidget::lostFocus();
 }
 
 #ifdef TORA3_GRAPH
@@ -1011,6 +968,12 @@ bool toListView::editSave(bool)
     }
     TOCATCH
     return false;
+}
+
+bool toListView::handleSearching(QString const& search, QString const& replace, Search::SearchFlags flags)
+{
+    #pragma message WARN("TODO: implement search in toListView")
+    throw __QHERE__;
 }
 
 void toListView::addMenues(QMenu *) {}

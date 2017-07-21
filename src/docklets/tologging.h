@@ -49,7 +49,7 @@ class toToolWidget;
 class toLoggingDocklet : public toDocklet , public toEditWidget
 {
     Q_OBJECT;
-
+    typedef toDocklet super;
 public:
     toLoggingDocklet(QWidget *parent = 0, toWFlags flags = 0);
 
@@ -75,10 +75,7 @@ public:
     void editReadAll()   override {};
     QString editText()   override { return ""; };
 
-    /** Re-implented from toEditWidget */
-    bool searchNext() override;
-    /** Re-implented from toEditWidget */
-    void searchReplace() override;
+    bool handleSearching(QString const& search, QString const& replace, Search::SearchFlags flags);
 
 protected:
     /** Re-implented from toEditWidget */
@@ -88,9 +85,5 @@ protected:
 
 private:
     QPlainTextEdit &log;
-
-private slots:
-    void handleSearching(Search::SearchFlags flags);
-    void setEditorFocus();
 };
 

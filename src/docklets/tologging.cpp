@@ -43,7 +43,7 @@ REGISTER_VIEW("Logging", toLoggingDocklet);
 
 toLoggingDocklet::toLoggingDocklet(QWidget *parent,
                                    toWFlags flags)
-    : toDocklet(tr("Logging"), parent, flags)
+    : super(tr("Logging"), parent, flags)
     , toEditWidget()
     , log(toLoggingWidgetSingle::Instance())
 {
@@ -76,7 +76,6 @@ toLoggingDocklet::toLoggingDocklet(QWidget *parent,
 
 }
 
-
 QIcon toLoggingDocklet::icon() const
 {
     return style()->standardIcon(QStyle::SP_ComputerIcon);
@@ -90,12 +89,13 @@ QString toLoggingDocklet::name() const
 
 void toLoggingDocklet::focusInEvent (QFocusEvent *e)
 {
-    toDocklet::focusInEvent(e);
+    super::focusInEvent(e);
+    toEditWidget::gotFocus();
 }
 void toLoggingDocklet::focusOutEvent (QFocusEvent *e)
 {
-    //toEditWidget::lostFocus();
-    toDocklet::focusOutEvent(e);
+    super::focusOutEvent(e);
+    toEditWidget::lostFocus();
 }
 
 void toLoggingDocklet::editCopy()
@@ -108,29 +108,7 @@ void toLoggingDocklet::editSelectAll()
     log.selectAll();
 }
 
-bool toLoggingDocklet::searchNext()
-{
-    throw QString("TODO toLoggingDocklet::searchNext");
-#if 0
-    if (!m_search->isVisible())
-    {
-        m_search->show();
-        m_search->setReadOnly(log.isReadOnly());
-    }
-#endif
-    return true;
-}
-
-void toLoggingDocklet::searchReplace()
-{
-    throw QString("TODO toLoggingDocklet::searchReplace");
-#if 0
-    m_search->setVisible(!m_search->isVisible());
-    m_search->setReadOnly(log.isReadOnly());
-#endif
-}
-
-void toLoggingDocklet::handleSearching(Search::SearchFlags flags)
+bool toLoggingDocklet::handleSearching(QString const& search, QString const& replace, Search::SearchFlags flags)
 {
     QTextDocument::FindFlags f;
     if (flags & Search::WholeWords)
@@ -138,13 +116,5 @@ void toLoggingDocklet::handleSearching(Search::SearchFlags flags)
     if (flags & Search::CaseSensitive)
         f |= QTextDocument::FindCaseSensitively;
 
-    throw QString("TODO toTextView::handleSearching");
-#if 0
-    /*bool ret =*/ log.find(m_search->searchText(), f);
-#endif
-}
-
-void toLoggingDocklet::setEditorFocus()
-{
-    log.setFocus(Qt::OtherFocusReason);
+    return log.find(search, f);
 }

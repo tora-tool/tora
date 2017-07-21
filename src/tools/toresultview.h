@@ -492,199 +492,149 @@ class toResultViewMLCheck : public toResultViewCheck
  */
 class toListView : public toTreeWidget, public toEditWidget
 {
-        Q_OBJECT;
+    Q_OBJECT;
+    typedef toTreeWidget super;
 
-        /**
-         * Name of this list, used primarily when printing. Also used to
-         * be able to edit
-         *
-         * SQL displayed in @ref toResultView.
-         */
-        QString Name;
-        /** Used to display tip on fields.
-         */
-        toListTip *AllTip;
-        /** Item selected when popup menu displayed.
-         */
-        toTreeWidgetItem *MenuItem;
-        /** Column of item selected when popup menu displayed.
-         */
-        int MenuColumn;
-        /** Last move, used to determine if drag has started.
-         */
-        QPoint LastMove;
+    /**
+     * Name of this list, used primarily when printing. Also used to
+     * be able to edit
+     *
+     * SQL displayed in @ref toResultView.
+     */
+    QString Name;
+    /** Used to display tip on fields.
+     */
+    toListTip *AllTip;
+    /** Item selected when popup menu displayed.
+     */
+    toTreeWidgetItem *MenuItem;
+    /** Column of item selected when popup menu displayed.
+     */
+    int MenuColumn;
+    /** Last move, used to determine if drag has started.
+     */
+    QPoint LastMove;
 
-        /** Reimplemented for internal reasons.
-         */
-        virtual void contentsMouseDoubleClickEvent(QMouseEvent *e);
-        /** Reimplemented for internal reasons.
-         */
-        virtual void contentsMousePressEvent(QMouseEvent *e);
-        /** Reimplemented for internal reasons.
-         */
-        virtual void contentsMouseReleaseEvent(QMouseEvent *e);
-        /** Reimplemented for internal reasons.
-         */
-        virtual void contentsMouseMoveEvent(QMouseEvent *e);
+    /** Reimplemented for internal reasons.
+     */
+    virtual void contentsMouseDoubleClickEvent(QMouseEvent *e);
+    /** Reimplemented for internal reasons.
+     */
+    virtual void contentsMousePressEvent(QMouseEvent *e);
+    /** Reimplemented for internal reasons.
+     */
+    virtual void contentsMouseReleaseEvent(QMouseEvent *e);
+    /** Reimplemented for internal reasons.
+     */
+    virtual void contentsMouseMoveEvent(QMouseEvent *e);
 
-#if 0
-        /** Used to print one page of the list.
-         * @param printer Printer to print to.
-         * @param painter Painter to print page to.
-         * @param top Item at top of page.
-         * @param column Column to start printing at. Will be changed to where you are when done.
-         * @param level The indentation level of the top item.
-         * @param pageNo Page number.
-         * @param paint If just testing to determine how many pages are needed set this to false.
-         * @return The next item to print to (Pass as top to this function).
-         */
-        virtual toTreeWidgetItem *printPage(
-            TOPrinter *printer,
-            QPainter *painter,
-            toTreeWidgetItem *top,
-            int &column,
-            int &level,
-            int pageNo,
-            bool paint = true);
-#endif
+    QString owner;
+    QString objectName;
 
-        QString owner;
-        QString objectName;
+protected:
+    /**
+     * context menu items. may be null
+     */
+    QMenu   *Menu;
+    QAction *displayAct;
+    QAction *leftAct;
+    QAction *rightAct;
+    QAction *centerAct;
+    QAction *copyAct;
+    QAction *copyFormatAct;
+    ///QAction *copyTransAct;
+    QAction *selectAllAct;
+    QAction *exportAct;
+    QAction *editAct;
 
-    protected:
-        /**
-         * context menu items. may be null
-         */
-        QMenu   *Menu;
-        QAction *displayAct;
-        QAction *leftAct;
-        QAction *rightAct;
-        QAction *centerAct;
-        QAction *copyAct;
-        QAction *copyFormatAct;
-        ///QAction *copyTransAct;
-        QAction *selectAllAct;
-        QAction *exportAct;
-        QAction *editAct;
+public:
 
-    public:
+    /** Create new list view.
+     * @param parent Parent of list.
+     * @param name Name of list.
+     * @param f Widget flags.
+     */
+    toListView(QWidget *parent, const char *name = NULL, toWFlags f = 0);
+    virtual ~toListView();
 
-        /** Create new list view.
-         * @param parent Parent of list.
-         * @param name Name of list.
-         * @param f Widget flags.
-         */
-        toListView(QWidget *parent, const char *name = NULL, toWFlags f = 0);
-        virtual ~toListView();
+    /** Get SQL name of list.
+     */
+    virtual QString sqlName(void)
+    {
+        return Name;
+    }
+    /** Set SQL name of list.
+     */
+    virtual void setSQLName(const QString &name)
+    {
+        Name = name;
+    }
 
-        /** Get SQL name of list.
-         */
-        virtual QString sqlName(void)
-        {
-            return Name;
-        }
-        /** Set SQL name of list.
-         */
-        virtual void setSQLName(const QString &name)
-        {
-            Name = name;
-        }
-
-        /** Set owner
-         * introduced to get type information for fields
-         */
-        virtual void setOwner(QString const & tOwner)
-        {
-            owner = tOwner;
-        }
+    /** Set owner
+     * introduced to get type information for fields
+     */
+    virtual void setOwner(QString const & tOwner)
+    {
+        owner = tOwner;
+    }
 
 
-        /** Set object name
-         * introduced to get type information for fields
-         */
-        virtual void setObjectName(QString const & tObjectName)
-        {
-            objectName = tObjectName;
-        }
+    /** Set object name
+     * introduced to get type information for fields
+     */
+    virtual void setObjectName(QString const & tObjectName)
+    {
+        objectName = tObjectName;
+    }
 
-        /** Get owner
-         * introduced to get type information for fields
-         */
-        virtual QString getOwner()
-        {
-            return owner;
-        }
-
-
-        /** Get object name
-         * introduced to get type information for fields
-         */
-        virtual QString getObjectName()
-        {
-            return objectName;
-        }
-
-        /** Get the whole text for the item and column selected when menu
-         * was poped up.
-         */
-        QString menuText(void);
-
-        /** Print this list
-         */
-        virtual void editPrint(void);
-
-        virtual bool editOpen(const QString&)
-        {
-            return false;
-        }
-        virtual void editUndo() {}
-        virtual void editRedo() {}
-        virtual void editCut() {}
-        virtual void editCopy() {}
-        virtual void editPaste() {}
-        virtual QString editText()
-        {
-            return "";
-        }
-        virtual void editReadAll() {}
+    /** Get owner
+     * introduced to get type information for fields
+     */
+    virtual QString getOwner()
+    {
+        return owner;
+    }
 
 
-        /** Reimplemented for internal reasons.
-         */
-        virtual void focusInEvent(QFocusEvent *e);
-        /** The string to be displayed in the middle of the footer when printing.
-         * @return String to be placed in middle.
-         */
-        virtual QString middleString()
-        {
-            return QString::null;
-        }
-        /** Adds option to add menues to the popup menu before it is displayed.
-         * @param menu Menu to add entries to.
-         */
-        virtual void addMenues(QMenu *menu);
-        /** Export list as a string.
-         */
-        virtual QString exportAsText(toExportSettings settings);
-        /** Export list as file.
-         */
-        virtual bool editSave(bool ask);
+    /** Get object name
+     * introduced to get type information for fields
+     */
+    virtual QString getObjectName()
+    {
+        return objectName;
+    }
 
-        /** Select all contents.
-         */
-        virtual void editSelectAll(void)
-        {
-            selectAll();
-        }
+    /** Get the whole text for the item and column selected when menu
+     * was poped up.
+     */
+    QString menuText(void);
 
-        /** Search for next entry
-         * @return True if found, should select the found text.
-         */
-        virtual bool searchNext()
-        {
-            return false;
-        };
-        virtual void searchReplace() {};
+    bool editOpen(const QString&) override { return false; };
+    bool editSave(bool)  override;
+    void editUndo()      override {};
+    void editRedo()      override {};
+    void editCut()       override {};
+    void editCopy()      override {};
+    void editPaste()     override {};
+    void editSelectAll() override { selectAll(); }
+    void editReadAll()   override {};
+    QString editText()   override { return ""; };
+
+    bool handleSearching(QString const& search, QString const& replace, Search::SearchFlags flags) override;
+
+    /** Reimplemented for internal reasons.
+     */
+    void focusInEvent(QFocusEvent *e) override;
+
+    void focusOutEvent(QFocusEvent *e) override;
+
+    /** Adds option to add menues to the popup menu before it is displayed.
+     * @param menu Menu to add entries to.
+     */
+    virtual void addMenues(QMenu *menu);
+    /** Export list as a string.
+     */
+    virtual QString exportAsText(toExportSettings settings);
 
 #ifdef TORA3_SESSION
         /** Export data to a map.
@@ -703,33 +653,33 @@ class toListView : public toTreeWidget, public toEditWidget
          */
         virtual toListView *copyTransposed(void);
 #endif
-    signals:
-        /** Called before the menu is displayed so that you can add items
-         * to it before it is shown.
-         *
-         * @param menu Pointer to the menu about to be shown.
-         */
-        void displayMenu(QMenu *menu);
-    public slots:
-        /** set the popup menu --> see displayMenu()
-         * @param item Item to display.
-         */
-        virtual void setDisplayMenu(QMenu *item);
-        /** Display the menu at the given point and column.
-         * @param item Item to display.
-         * @param pnt Point to display menu at.
-         * @param col Column to display menu for.
-         */
-        virtual void displayMenu(const QPoint &);
-        /** Display memo of selected menu column
-         */
-        virtual void displayMemo(void);
-    protected slots:
-        /** Callback when menu is selected. If you override this make sure you
-         * call the parents function when you have parsed your entries.
-         * @param id ID of the menu item selected.
-         */
-        virtual void menuCallback(QAction *);
+signals:
+    /** Called before the menu is displayed so that you can add items
+     * to it before it is shown.
+     *
+     * @param menu Pointer to the menu about to be shown.
+     */
+    void displayMenu(QMenu *menu);
+public slots:
+    /** set the popup menu --> see displayMenu()
+     * @param item Item to display.
+     */
+    virtual void setDisplayMenu(QMenu *item);
+    /** Display the menu at the given point and column.
+     * @param item Item to display.
+     * @param pnt Point to display menu at.
+     * @param col Column to display menu for.
+     */
+    virtual void displayMenu(const QPoint &);
+    /** Display memo of selected menu column
+     */
+    virtual void displayMemo(void);
+protected slots:
+    /** Callback when menu is selected. If you override this make sure you
+     * call the parents function when you have parsed your entries.
+     * @param id ID of the menu item selected.
+     */
+    virtual void menuCallback(QAction *);
 };
 
 /**
@@ -928,13 +878,6 @@ class toResultView : public toListView, public toResult
 
         // Why are these needed? - See C++ lang ref Section 10.2/2. local method decl for query shadows those from toResult
 
-        /** Reimplemented for internal reasons.
-         */
-        virtual void editPrint(void)
-        {
-            editReadAll();
-            toListView::editPrint();
-        }
         /** Reimplemented for internal reasons.
          */
         virtual QString middleString();
