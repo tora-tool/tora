@@ -36,6 +36,7 @@
 
 #include "core/utils.h"
 
+#include <QtCore/QCoreApplication>
 #include <QtGui/QKeyEvent>
 
 template <class SUPER, class DIALOG>
