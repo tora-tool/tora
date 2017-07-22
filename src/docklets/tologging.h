@@ -75,7 +75,7 @@ public:
     void editReadAll()   override {};
     QString editText()   override { return ""; };
 
-    bool handleSearching(QString const& search, QString const& replace, Search::SearchFlags flags);
+    bool handleSearching(QString const& search, QString const& replace, Search::SearchFlags flags) override;
 
 protected:
     /** Re-implented from toEditWidget */

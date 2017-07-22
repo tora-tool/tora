@@ -266,8 +266,8 @@ namespace SQLParser
                 , _mChildren(other._mChildren)
                 , _mSpacesPrev(other._mSpacesPrev)
                 , _mSpacesPost(other._mSpacesPost)
-                , _mDepth(other._mDepth)
                 , _mMetadata(other._mMetadata)
+                , _mDepth(other._mDepth)
             {
                 //size_t me = this->size();
                 //size_t oth = other.size();

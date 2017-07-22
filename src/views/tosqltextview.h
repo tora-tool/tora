@@ -87,7 +87,7 @@ protected:
 protected slots:
     // handle just some of model's signals
     void modelReset();
-    void rowsInserted(const QModelIndex &parent, int first, int last);
+    void rowsInserted(const QModelIndex &parent, int first, int last) override;
     void rowsRemoved(const QModelIndex &parent, int first, int last);
 private:
     toSqlText *m_view;
