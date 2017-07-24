@@ -101,16 +101,17 @@ namespace SQLLexer
             inline Token& operator=(const Token& other);
             inline operator const Position&() const;
 
-#ifdef TORA_EXPERIMENTAL
-            QString _mOrigTypeText;
-#endif
-
         protected:
             Position _mPosition;
             unsigned _mLength, _mOrigType;
             BlockContextEnum _mBlockContext;
             QString  _mText;
             TokenType _mTokenType;
+
+        public:
+#ifdef TORA_EXPERIMENTAL
+            QString _mOrigTypeText;
+#endif
     };
 
     class Lexer

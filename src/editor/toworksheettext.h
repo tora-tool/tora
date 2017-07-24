@@ -67,7 +67,7 @@ class toWorksheetText : public toSqlText
 
         virtual ~toWorksheetText();
 
-        virtual void setHighlighter(toSqlText::HighlighterTypeEnum);
+	void setHighlighter(toSqlText::HighlighterTypeEnum) override;
 
         // Override QScintilla (display custom toComplPopup window)
         void autoCompleteFromAPIs() override;

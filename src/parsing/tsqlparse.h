@@ -1,10 +1,12 @@
 #pragma once
 
+#if _MSC_VER
 #pragma warning(push)
 // some warnings still occur at this level
 // if necessary, disable specific warnings not covered by previous pragma
 #pragma warning(disable:4800)
 #pragma warning(disable:4251)
+#endif
 
 #include "loki/Factory_alt.h"
 #include "core/tora_export.h"
@@ -437,7 +439,7 @@ namespace SQLParser
                 return _mSpacesPost;
             }
 
-            inline QMap<QString, QVariant>& metadata() { return _mMetadata; }
+	    inline QMap<QString, QVariant>& metadata() const { return _mMetadata; }
 
             //inline Translation& aliasTranslation() { return _mAliasTranslation; };
             //inline Translation const& aliasTranslation() const { return _mAliasTranslation; };
@@ -460,7 +462,7 @@ namespace SQLParser
             // TODO use only one of them
             QList<QPointer<Token> > _mChildren;
             QList<QPointer<Token> > _mSpacesPrev, _mSpacesPost;
-            QMap<QString, QVariant> _mMetadata;
+            mutable QMap<QString, QVariant> _mMetadata;
             unsigned _mDepth;
     };
 
@@ -869,5 +871,7 @@ namespace SQLParser
 typedef TORA_EXPORT Util::GenericFactory<SQLParser::Statement, LOKI_TYPELIST_2(const QString &, const QString&)> StatementFactTwoParm;
 class TORA_EXPORT StatementFactTwoParmSing: public ::Loki::SingletonHolder<StatementFactTwoParm> {};
 
+#if _MSC_VER
 // restore warning level
 #pragma warning(pop)
+#endif
