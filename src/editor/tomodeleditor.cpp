@@ -45,6 +45,7 @@
 #include <QtCore/QSettings>
 #include <QtCore/QAbstractItemModel>
 #include <QCheckBox>
+#include <QAction>
 
 #include "icons/commit.xpm"
 #include "icons/copy.xpm"

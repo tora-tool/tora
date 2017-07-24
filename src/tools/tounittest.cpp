@@ -51,6 +51,8 @@
 #include <QSplitter>
 #include <QToolBar>
 #include <QTreeView>
+#include <QLayout>
+
 #include "toresulttableview.h"
 
 // helper definitons for SQLPackageParams and SQLUnitParams columns

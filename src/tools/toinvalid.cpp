@@ -44,11 +44,13 @@
 #include "core/toconnectionsub.h"
 #include "core/toconnectionsubloan.h"
 
+#include <QtCore/QCoreApplication>
 #include <QtCore/QList>
 #include <QtCore/QDebug>
 #include <QToolBar>
 #include <QToolButton>
 #include <QSplitter>
+#include <QLayout>
 #include <QtGui/QPixmap>
 #include <QProgressDialog>
 

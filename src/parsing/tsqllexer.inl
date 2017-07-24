@@ -83,8 +83,8 @@ namespace SQLLexer
 		, _mBlockContext(other._mBlockContext)
 		, _mTokenType(other._mTokenType)
 #ifdef TORA_EXPERIMENTAL
-        , _mOrigTypeText(other._mOrigTypeText)
-#endif		
+		, _mOrigTypeText(other._mOrigTypeText)
+#endif
 	{
 	};
 

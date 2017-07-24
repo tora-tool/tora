@@ -3,6 +3,7 @@
 #include "core/utils.h"
 
 #include <QApplication>
+#include <QtCore/QMetaEnum>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkProxyFactory>
 

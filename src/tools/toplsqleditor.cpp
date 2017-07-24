@@ -50,6 +50,7 @@
 #include <QtCore/QDir>
 #include <QApplication>
 #include <QSplitter>
+#include <QVBoxLayout>
 
 #define PLSQL_ERROR "ERROR"
 #define PLSQL_WARNING "WARNING"
@@ -341,7 +342,7 @@ toPLSQLEditor::toPLSQLEditor(QWidget *parent)
 void toPLSQLEditor::clear(void)
 {
     setData(QString::null, QString::null, QString::null);
-    toDebugText::clear();
+    super::clear();
 }
 
 /* This function is called after compiling the code.
