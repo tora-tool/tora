@@ -81,9 +81,12 @@ int main(int argc, char **argv)
 		unique_ptr<SQLParser::Statement> parser = StatementFactTwoParmSing::Instance().create("OracleDML", qsql, "");
 		parser->dumpTree();
 		
-		// cout << "================================================================================" << endl;
+		cout << "================================================================================" << endl;
 		string deserialized(qPrintable(parser->root()->toStringRecursive(true)));
 		toASTWalker(*parser, token_print);
+
+		cout << "================================================================================" << endl;
+		cout << parser->dot;
 	}
 	catch (const ParseException &pe)
 	{

@@ -844,6 +844,7 @@ namespace SQLParser
                     Token* m_token;
             }; // class token_const_iterator_to_root
 
+            QString dot;
         protected:
             QString _mStatement, _mname;
             QMap<Position, Position*> _mPosition2pToken;

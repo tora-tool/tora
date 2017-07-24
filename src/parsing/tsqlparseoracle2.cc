@@ -269,8 +269,8 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 	
 class OracleDMLStatement: public Statement
 {
-	using TokenStream = Antlr3BackendImpl::OracleSQLParserTraits::TokenStreamType;
-	using Traits = Antlr3BackendImpl::OracleSQLParserTraits;
+    using TokenStream = Antlr3BackendImpl::OracleSQLParserTraits::TokenStreamType;
+    using Traits = Antlr3BackendImpl::OracleSQLParserTraits;
 public:
     OracleDMLStatement(const QString &statement, const QString &name);
     virtual ~OracleDMLStatement() {};
@@ -355,6 +355,9 @@ void OracleDMLStatement::parse()
 		// TODO throw reasonable exception HERE
 		throw ParseException();
 	}
+	Antlr3BackendImpl::OracleSQLParserTraits::TreeAdaptorType adaptor;
+	this->dot = QString::fromStdString(adaptor.makeDot(langAST.tree));
+
 	_mState = P_PARSER;
 	
 	_mAST = new TokenSubquery( NULL
