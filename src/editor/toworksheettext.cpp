@@ -43,6 +43,7 @@
 
 #include <QtCore/QFileSystemWatcher>
 #include <QListWidget>
+#include <QDir>
 
 #include "core/toeditorconfiguration.h"
 
