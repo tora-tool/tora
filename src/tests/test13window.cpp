@@ -32,36 +32,38 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-
 #include "tests/test13window.h"
-#include "core/utils.h"
-#include "core/toconfiguration.h"
+#include "editor/tosqltext.h"
 
-#include <QApplication>
+#include <QStatusBar>
+#include <QScrollArea>
+#include <QSplitter>
+#include <QToolBar>
 
-int main(int argc, char **argv)
+Test13Window::Test13Window(const QString &sql)
+    : Ui::Test13Window()
 {
-  using namespace Utils;
-    toConfiguration::setQSettingsEnv();
+    Ui::Test13Window::setupUi(this);
 
-    QApplication app(argc, argv);
-    QStringList args = app.arguments();
+    sqlText->setText(sql);
 
-    QString sql;
-    if (args.count() >= 2 && QFile::exists(args[1]))
-    {
-        sql = Utils::toReadFile(args[1]);
-    }
-    else
-    {
-        QFile complexSql(":/condition02.sql");
-        bool r = complexSql.open(QIODevice::ReadOnly | QIODevice::Text);
-        QByteArray bytes = complexSql.readAll();
-        sql = QString(bytes);
-    }
+    connect(actionOpen, SIGNAL(triggered()), this, SLOT(load()));
+    connect(actionQuit, SIGNAL(triggered()), this, SLOT(close()));
 
-    new Test13Window(sql);
-    int ret = qApp->exec();
-    return ret;
+    QMainWindow::show();
 }
 
+void Test13Window::load()
+{
+    QString fn = Utils::toOpenFilename("*.sql", this);
+    if (!fn.isEmpty())
+    {
+        QString data = Utils::toReadFile(fn);
+        sqlText->setText(data);
+    }
+}
+
+void Test13Window::closeEvent(QCloseEvent *event)
+{
+    QMainWindow::closeEvent(event);
+}

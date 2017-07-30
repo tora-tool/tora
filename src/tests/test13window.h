@@ -32,36 +32,29 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
+#pragma once
 
-#include "tests/test13window.h"
-#include "core/utils.h"
-#include "core/toconfiguration.h"
+#include "ui_test13ui.h"
 
-#include <QApplication>
+#include <QtCore/QObject>
+#include <QMainWindow>
 
-int main(int argc, char **argv)
+class toSqlText;
+
+class Test13Window : public QMainWindow, Ui::Test13Window
 {
-  using namespace Utils;
-    toConfiguration::setQSettingsEnv();
+    Q_OBJECT;
 
-    QApplication app(argc, argv);
-    QStringList args = app.arguments();
+public:
+    Test13Window(const QString &sql);
+    virtual ~Test13Window() {};
 
-    QString sql;
-    if (args.count() >= 2 && QFile::exists(args[1]))
-    {
-        sql = Utils::toReadFile(args[1]);
-    }
-    else
-    {
-        QFile complexSql(":/condition02.sql");
-        bool r = complexSql.open(QIODevice::ReadOnly | QIODevice::Text);
-        QByteArray bytes = complexSql.readAll();
-        sql = QString(bytes);
-    }
+public slots:
+    void load();
 
-    new Test13Window(sql);
-    int ret = qApp->exec();
-    return ret;
-}
+protected:
+    virtual void closeEvent(QCloseEvent *event);
 
+private:
+
+};

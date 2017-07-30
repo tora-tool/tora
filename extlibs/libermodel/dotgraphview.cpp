@@ -180,6 +180,99 @@ DotGraphView::DotGraphView(QActionGroup* actions, QWidget* parent) :
 #endif
 }
 
+DotGraphView::DotGraphView(QWidget* parent) :
+    QGraphicsView(parent),
+    m_labelViews(),
+    m_popup(0),
+    m_zoom(1),
+    m_isMoving(false),
+    m_exporter(),
+    m_zoomPosition(DEFAULT_ZOOMPOS),
+    m_lastAutoPosition(KGraphViewerInterface::TopLeft),
+    m_graph(0),
+    ///m_printCommand(0),
+    m_actions(0),
+    m_detailLevel(DEFAULT_DETAILLEVEL),
+    m_defaultNewElement(0),
+    ///m_defaultNewElementPixmap(KGlobal::dirs()->findResource("data","kgraphviewerpart/pics/kgraphviewer-newnode.png")),
+    m_editingMode(None),
+    m_newEdgeSource(0),
+    m_newEdgeDraft(0),
+    m_readWrite(false),
+    m_leavedTimer(std::numeric_limits<int>::max()),
+    m_highlighting(false)
+#ifdef GV_LIB
+    m_loadThread(),
+    m_layoutThread()
+#endif
+{
+  ///kDebug() << "New node pic=" << KGlobal::dirs()->findResource("data","kgraphviewerpart/pics/kgraphviewer-newnode.png");
+  m_canvas = 0;
+  m_xMargin = m_yMargin = 0;
+  m_birdEyeView = new PannerView(this);
+  m_cvZoom = 1;
+
+  setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+  setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+
+  m_birdEyeView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  m_birdEyeView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  m_birdEyeView->raise();
+  m_birdEyeView->hide();
+
+  setFocusPolicy(Qt::StrongFocus);
+  setBackgroundRole(QPalette::Window);
+//   viewport()->setMouseTracking(true);
+
+  connect(m_birdEyeView, SIGNAL(zoomRectMovedTo(QPointF)),
+          this, SLOT(zoomRectMovedTo(QPointF)));
+  connect(m_birdEyeView, SIGNAL(zoomRectMoveFinished()),
+          this, SLOT(zoomRectMoveFinished()));
+
+  setWhatsThis(
+    "<h1>GraphViz dot format graph visualization</h1>"
+    "<p>If the graph is larger than the widget area, an overview "
+        "panner is shown in one edge. Choose through the context menu "
+        "if the optimal position of this overview should be automatically "
+        "computed or put it where you want.</p>"
+    "<h2>How to work with it ?</h2>"
+    "<ul>"
+        "<li>To move the graph, you can:"
+            "  <ul>"
+                "    <li>click & drag it</li>"
+                "    <li>use the elevators</li>"
+                "    <li>press the arrows keys</li>"
+                "    <li>click somewhere in the panner view</li>"
+                "    <li>use the mouse wheel (up and down with no modifier, left and right with the <Alt> key pressed)</li>"
+                    "    <li>or click & drag the panner view</li>"
+                    "  </ul>"
+                "</li>"
+            "<li>To zoom, you can either use the zoom in and zoom out toolbar buttons, or click on the <Shift> key while rolling your mouse wheel.</li>"
+                "<li>Try the contextual menu (usually by right-clicking) to discover other "
+                    "possibilities.</li>"
+                "<li>Try the <tt>Print preview</tt> or the <tt>Page setup</tt> buttons to explore the printing options.</li>"
+                "</ul>"
+            );
+
+  readViewConfig();
+
+  QMatrix m;
+  m.scale(m_zoom,m_zoom);
+  setMatrix(m);
+  setupPopup();
+  setInteractive(true);
+  setDragMode(NoDrag);
+  setRenderHint(QPainter::Antialiasing);
+
+  connect(this, SIGNAL(removeEdge(const QString&)), m_graph, SLOT(removeEdge(const QString&)));
+  connect(this, SIGNAL(removeNodeNamed(const QString&)), m_graph, SLOT(removeNodeNamed(const QString&)));
+  connect(this, SIGNAL(removeElement(const QString&)), m_graph, SLOT(removeElement(const QString&)));
+#ifdef GV_LIB
+  connect(&m_loadThread, SIGNAL(finished()), this, SLOT(slotAGraphReadFinished()));
+  connect(&m_layoutThread, SIGNAL(finished()), this, SLOT(slotAGraphLayoutFinished()));
+#endif
+}
+
 DotGraphView::~DotGraphView()
 {
   saveViewConfig();

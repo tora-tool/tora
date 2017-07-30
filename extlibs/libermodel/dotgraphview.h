@@ -80,6 +80,7 @@ public:
   enum ScrollDirection { Here, Left, Right, Top, Bottom };
   
   explicit DotGraphView(QActionGroup* actions, QWidget* parent=0);
+  explicit DotGraphView(QWidget* parent=0);
   virtual ~DotGraphView();
 
   bool loadDot(const QString& dotFileName);

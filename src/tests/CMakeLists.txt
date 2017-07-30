@@ -126,7 +126,6 @@ IF(TORA_DEBUG AND TEST_APP4)
 # test4
 QT5_WRAP_CPP(TEST4_MOC_SOURCES
   tests/test4window.h
-  docklets/tosearch.h  
   editor/tomemoeditor.h
   editor/toscintilla.h
   editor/tosqltext.h
@@ -142,7 +141,6 @@ QT5_ADD_RESOURCES(TEST4_RC_SOURCES tests/test4.qrc)
 ADD_EXECUTABLE("test4"
   tests/test4.cpp
   tests/test4window.cpp
-  docklets/tosearch.cpp
   editor/tomemoeditor.cpp
   editor/toscintilla.cpp
   editor/tosqltext.cpp
@@ -463,13 +461,19 @@ ENDIF(TORA_DEBUG AND TEST_APP12)
 
 IF(TORA_DEBUG AND TEST_APP13)
 # test13
+QT5_ADD_RESOURCES(TEST13_RC_SOURCES tests/test13.qrc)
+QT5_WRAP_UI(TEST13_UI_SOURCES tests/test13ui.ui)
 QT5_WRAP_CPP(TEST13_MOC_SOURCES
-  docklets/tosearch.h
+  widgets/tosearch.h
+  tests/test13window.h  
   )
 ADD_EXECUTABLE("test13"
   tests/test13.cpp
-  docklets/tosearch.cpp
+  tests/test13window.cpp
+  widgets/tosearch.cpp
   ${TEST13_MOC_SOURCES}
+  ${TEST13_UI_SOURCES}
+  ${TEST13_RC_SOURCES}
   ${PCH_SOURCE}
   ${CORE_SOURCES}  
   ${WIDGETS_SOURCES}
@@ -487,6 +491,7 @@ TARGET_LINK_LIBRARIES("test13"
 	${TORA_LOKI_LIB}
 	${TORA_QSCINTILLA_LIB}
 	${QSCINTILLA_LIBRARIES}
+	ermodel
 )
 IF(PCH_DEFINED)
   ADD_PRECOMPILED_HEADER("test13" ${PCH_HEADER} FORCEINCLUDE)
