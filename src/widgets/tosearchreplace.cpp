@@ -44,6 +44,7 @@
 #include <QAction>
 #include <QTextEdit>
 #include <QLineEdit>
+#include <QKeyEvent>
 
 toSearchReplace::toSearchReplace(QWidget *parent)
     : QWidget(parent)

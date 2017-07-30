@@ -191,8 +191,8 @@ public:
 protected:
 	TreeTypePtr	dupTreeImpl( const TreeType* root, TreeType* parent);
 
-	void defineDotNodes(TreeTypePtr t, const StringType& dotSpec);
-	void defineDotEdges(TreeTypePtr t, const StringType& dotSpec);
+	void defineDotNodes(TreeTypePtr &t, StringType& dotSpec);
+	void defineDotEdges(TreeTypePtr &t, StringType& dotSpec);
 };
 
 //If someone can override the CommonTreeAdaptor at the compile time, that will be 

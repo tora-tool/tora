@@ -63,7 +63,7 @@ QVariant ToConfiguration::Editor::defaultValue(int option) const
         case KeywordUpperBool:
             return QVariant((bool) false);
         case ObjectNamesUpperBool:
-            return QVariant((bool) false);
+            return QVariant((bool) true);
         case CodeCompleteBool:
             return QVariant((bool) true);
         case CompleteSortBool:

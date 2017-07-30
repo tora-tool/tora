@@ -34,6 +34,8 @@
 
 #pragma once
 
+#include <QTextBrowser>
+
 #include "core/toeditwidget.h"
 #include "core/utils.h"
 #include "editor/toeditglobals.h"
@@ -43,17 +45,14 @@ class QTextBrowser;
 /** A tora editwidget version of the @ref QTextEdit widget.
  *  Used as HTML browser
  */
-class toTextView : public QWidget, public toEditWidget
+class toTextView : public QTextBrowser, public toEditWidget
 {
     Q_OBJECT;
-    typedef QWidget super;
+    typedef QTextBrowser super;
 public:
 
     toTextView(QWidget *parent = 0, const char *name = 0);
 
-    void setFontFamily(const QString &fontFamily);
-    void setReadOnly(bool ro);
-    void setText(const QString &t);
     void setFilename(const QString &f);
 
     /** toEditWidget api */
@@ -71,10 +70,11 @@ public:
     bool handleSearching(QString const& search, QString const& replace, Search::SearchFlags flags) override;
 
 protected:
+    void keyPressEvent(QKeyEvent *e) override;
+
     void focusInEvent (QFocusEvent *e) override;
     void focusOutEvent (QFocusEvent *e) override;
 
 private:
-    QTextBrowser *m_view;
     QString m_filename;
 };

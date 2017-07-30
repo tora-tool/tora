@@ -101,6 +101,10 @@ QString toOracleTraits::unQuote(QString const &name) const
         return name;
     if (name.at(0).toLatin1() == '\"' && name.at(name.length() - 1).toLatin1() == '\"')
         return name.left(name.length() - 1).right(name.length() - 2);
+    if (name.toLower() != name && name.toUpper() != name) // if name is mixed case
+        return name;
+    if (name.contains(' '))
+        return name;
     return name.toUpper();
 }
 

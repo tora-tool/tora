@@ -53,7 +53,7 @@ namespace ToConfiguration
 class QMetaEnum;
 class toConfigOptionObserver;
 
-class TORA_EXPORT toConfigurationNew: public QObject
+class TORA_EXPORT toConfiguration: public QObject
 {
     Q_OBJECT;
     friend class ::ToConfiguration::ConfigContext;
@@ -62,8 +62,8 @@ public:
     class OptionNotFound : public std::exception
     {};
 
-    toConfigurationNew(QObject *parent = 0);
-    virtual ~toConfigurationNew();
+    toConfiguration(QObject *parent = 0);
+    virtual ~toConfiguration();
 
     QVariant option(int option);
     QVariant option(QString const& option);
@@ -115,26 +115,26 @@ private:
 };
 
 template<> TORA_EXPORT
-void toConfigurationNew::setOption <QVariant>(int option, QVariant const&);
+void toConfiguration::setOption <QVariant>(int option, QVariant const&);
 
 template<> TORA_EXPORT
-void toConfigurationNew::setOption <QString>(int option, QString const&);
+void toConfiguration::setOption <QString>(int option, QString const&);
 
 template<> TORA_EXPORT
-void toConfigurationNew::setOption <int>(int option, int const&);
+void toConfiguration::setOption <int>(int option, int const&);
 
 template<> TORA_EXPORT
-void toConfigurationNew::setOption <bool>(int option, bool const&);
+void toConfiguration::setOption <bool>(int option, bool const&);
 
 template<> TORA_EXPORT
-void toConfigurationNew::setOption <QDate>(int option, QDate const&);
+void toConfiguration::setOption <QDate>(int option, QDate const&);
 
-class TORA_EXPORT toConfigurationNewSingle: public ::Loki::SingletonHolder<toConfigurationNew> {};
+class TORA_EXPORT toConfigurationNewSingle: public ::Loki::SingletonHolder<toConfiguration> {};
 
 class toConfigOptionObserver : public QObject
 {
     Q_OBJECT;
-    friend class toConfigurationNew;
+    friend class toConfiguration;
 public:
     toConfigOptionObserver(int option)
         : m_option(option)

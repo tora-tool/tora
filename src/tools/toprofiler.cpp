@@ -42,6 +42,7 @@
 #include "editor/tosqltext.h"
 
 #include <QComboBox>
+#include <QLabel>
 #include <QtGui/QPixmap>
 #include <QVBoxLayout>
 #include <QSpinBox>
@@ -469,8 +470,7 @@ toProfiler::toProfiler(QWidget *parent, toConnection &connection)
 
     toolbar->addSeparator();
 
-    toolbar->addWidget(
-        new QLabel(tr("Repeat run") + " ", toolbar));
+    toolbar->addWidget(new QLabel(tr("Repeat run") + " ", toolbar));
 
     Repeat = new QSpinBox(toolbar);
     Repeat->setValue(5);

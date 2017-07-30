@@ -32,7 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "docklets/tosearch.h"
+#include "widgets/tosearch.h"
 #include "widgets/tosearchreplace.h"
 
 toSearchReplaceDocklet::toSearchReplaceDocklet(QWidget *parent, toWFlags flags)

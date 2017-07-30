@@ -211,6 +211,9 @@ SET(TORA_MOC_CLASSES
   docklets/toviewdirectory.h
   docklets/tocodeoutline.h
 
+  docklets/toquerymodel.h
+  tools/toer.h
+
   editor/tocomplpopup.h
   editor/todebugtext.h
   editor/todifftext.h
@@ -348,6 +351,7 @@ SET(TORA_MOC_CLASSES
   widgets/toresultmodel.h
   widgets/toresultmodeledit.h
   widgets/toresultschema.h
+  widgets/tosearch.h
   widgets/tosearchreplace.h
   widgets/tosplash.h
   widgets/totabledetailview.h
@@ -357,7 +361,7 @@ SET(TORA_MOC_CLASSES
   widgets/totreewidget.h
   widgets/toworkingwidget.h
   widgets/toworkspace.h
-  
+
   #obsolete core/todatatype.h
   #obsolete core/torunnable.h
   #obsolete core/totaskrunner.h
@@ -392,14 +396,10 @@ ENDIF (POPPLER_QT4_FOUND)
 
 IF (USE_EXPERIMENTAL)
   LIST(APPEND TORA_MOC_CLASSES tools/toscript.h)
-  #IF(graphviz_FOUND)
-  LIST(APPEND TORA_MOC_CLASSES docklets/toquerymodel.h)
-  LIST(APPEND TORA_MOC_CLASSES tools/toer.h)
   LIST(APPEND TORA_MOC_CLASSES tools/tosandboxtool.h)
-  #ENDIF(graphviz_FOUND)
+
   LIST(APPEND TORA_MOC_CLASSES docklets/tologging.h)
   LIST(APPEND TORA_MOC_CLASSES docklets/tobindvars.h)
-  LIST(APPEND TORA_MOC_CLASSES docklets/tosearch.h)
 ENDIF (USE_EXPERIMENTAL)
 
 ################################################################################
@@ -463,6 +463,7 @@ SET(TORA_SOURCES
   core/tolistviewformattertext.cpp
   core/tolistviewformatterxlsx.cpp
   core/tomainwindow.cpp
+  core/tomemory.cpp
   core/toquery.cpp
   core/toqvalue.cpp
   core/toresult.cpp
@@ -633,6 +634,7 @@ SET(TORA_SOURCES
   widgets/toresultmodel.cpp
   widgets/toresultmodeledit.cpp
   widgets/toresultschema.cpp
+  widgets/tosearch.cpp
   widgets/tosearchreplace.cpp
   widgets/tosplash.cpp
   widgets/totabledetailview.cpp
@@ -647,6 +649,11 @@ SET(TORA_SOURCES
   views/tosqltextview.cpp
   views/totableview.cpp
   views/totreeview.cpp
+
+  docklets/toquerymodel.cpp
+  docklets/toastwalk.cpp
+
+  tools/toer.cpp
 
   #core/toconfiguration.cpp
   #core/toconfigurationpriv.cpp
@@ -686,13 +693,9 @@ ENDIF(ORACLE_FOUND)
 
 IF (USE_EXPERIMENTAL)
   LIST (APPEND TORA_SOURCES tools/toscript.cpp)
-  LIST (APPEND TORA_SOURCES docklets/toquerymodel.cpp docklets/toastwalk.cpp)
-  LIST (APPEND TORA_SOURCES tools/toer.cpp)
   LIST (APPEND TORA_SOURCES tools/tosandboxtool.cpp)
   LIST (APPEND TORA_SOURCES docklets/tologging.cpp)
-  LIST (APPEND TORA_SOURCES docklets/tosearch.cpp)
   LIST (APPEND TORA_SOURCES docklets/tobindvars.cpp)
-  LIST (APPEND TORA_SOURCES core/tomemory.cpp)
 ENDIF (USE_EXPERIMENTAL)
 
 IF(POPPLER_QT4_FOUND)
@@ -822,7 +825,9 @@ ADD_EXECUTABLE(${EXE_NAME} ${GUI_TYPE}
   )
 TARGET_LINK_LIBRARIES(${EXE_NAME} ${TORA_LIBS})
 SET_TARGET_PROPERTIES(${EXE_NAME} PROPERTIES ENABLE_EXPORTS ON)
-ADD_DEPENDENCIES(${EXE_NAME} revisiontag) # explicitly say that the executable depends on the svnheader
+IF(HAVE_GIT_VERSION)
+  ADD_DEPENDENCIES(${EXE_NAME} revisiontag) # explicitly say that the executable depends on the gitversion
+ENDIF()
 IF(PCH_DEFINED)
   # NOTE: this macro calls SET_SOURCE_FILES_PROPERTIES macro which set props for source within ALL tagets
   ADD_PRECOMPILED_HEADER(${EXE_NAME} ${PCH_HEADER} FORCEINCLUDE)

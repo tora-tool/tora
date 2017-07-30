@@ -55,7 +55,7 @@
 #include "ts_log/toostream.h"
 #include "editor/tosqltext.h"
 #include "editor/toworksheettext.h"
-#include "docklets/tosearch.h"
+#include "widgets/tosearch.h"
 
 #include "icons/tora.xpm"
 #include "icons/up.xpm"
@@ -73,8 +73,8 @@ toMain::toMain()
     : toMainWindow()
     , Workspace(toWorkSpaceSingle::Instance())
     , Connections(toConnectionRegistrySing::Instance())
-    , editMenu(toEditMenuSingle::Instance())
     , fileMenu(toFileMenuSingle::Instance())
+    , editMenu(toEditMenuSingle::Instance())      
     , Poll()
     , BackgroundLabel(new toBackgroundLabel(statusBar()))
     , loggingWidget(toLoggingWidgetSingle::Instance())

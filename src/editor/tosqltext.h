@@ -146,10 +146,10 @@ class toSqlText : public toScintilla
 
         toSyntaxAnalyzer* analyzer();
 
-        void indentPriv(SQLParser::Token const*, QList<SQLParser::Token>&);
+        void indentPriv(SQLParser::Token const*, QList<SQLParser::Token const*>&);
 
     private slots:
-        void indent();
+        void indentCurrentSql();
         void setHighlighter(int);
         void process();
         void processed();

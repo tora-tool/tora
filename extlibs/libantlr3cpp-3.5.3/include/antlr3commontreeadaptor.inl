@@ -407,8 +407,8 @@ typename CommonTreeAdaptor<ImplTraits>::StringType	CommonTreeAdaptor<ImplTraits>
 template<class ImplTraits>
 typename CommonTreeAdaptor<ImplTraits>::TreeTypePtr&	    CommonTreeAdaptor<ImplTraits>::getChild( TreeTypePtr& t, ANTLR_UINT32 i)
 {
-	if ( t==NULL )
-		return NULL;
+	//if ( t==NULL )
+	//	return NULL;
 	return t->getChild(i);
 }
 
@@ -543,11 +543,11 @@ typename CommonTreeAdaptor<ImplTraits>::StringType	 CommonTreeAdaptor<ImplTraits
 	{
 		// No tree, so create a blank spec
 		//
-		dotSpec->append("n0[label=\"EMPTY TREE\"]\n");
+		dotSpec.append("n0[label=\"EMPTY TREE\"]\n");
 		return dotSpec;
 	}
 
-    sprintf(buff, "\tn%p[label=\"", theTree);
+    sprintf(buff, "\tn%p[label=\"", theTree.get());
 	dotSpec.append(buff);
     text = this->getText(theTree);
     for (std::size_t j = 0; j < text.size(); j++)
@@ -571,7 +571,7 @@ typename CommonTreeAdaptor<ImplTraits>::StringType	 CommonTreeAdaptor<ImplTraits
                     break;
             }
     }
-	dotSpec->append("\"]\n");
+	dotSpec.append("\"]\n");
 
 	// First produce the node defintions
 	//
@@ -623,13 +623,12 @@ CommonTreeAdaptor<ImplTraits>::~CommonTreeAdaptor()
 }
 
 template<class ImplTraits>
-void CommonTreeAdaptor<ImplTraits>::defineDotNodes(TreeTypePtr t, const StringType& dotSpec)
+void CommonTreeAdaptor<ImplTraits>::defineDotNodes(TreeTypePtr &t, StringType& dotSpec)
 {
 	// How many nodes are we talking about?
 	//
 	int	nCount;
 	int i;
-	TreeTypePtr child;
 	char	buff[64];
 	StringType	text;
 	int	j;
@@ -654,33 +653,33 @@ void CommonTreeAdaptor<ImplTraits>::defineDotNodes(TreeTypePtr t, const StringTy
 
 		// Pick up a pointer for the child
 		//
-		child = this->getChild(t, i);
+		TreeTypePtr &child = this->getChild(t, i);
 
 		// Name the node
 		//
-		sprintf(buff, "\tn%p[label=\"", child);
-		dotSpec->append(buff);
+		sprintf(buff, "\tn%p[label=\"", child.get());
+		dotSpec.append(StringType(buff));
 		text = this->getText(child);
 		for (j = 0; j < text.size(); j++)
 		{
-            switch(text[j])
-            {
-                case '"':
-                    dotSpec.append("\\\"");
-                    break;
+			switch (text[j])
+			{
+			case '"':
+				dotSpec.append("\\\"");
+				break;
 
-                case '\n':
-                    dotSpec.append("\\n");
-                    break;
+			case '\n':
+				dotSpec.append("\\n");
+				break;
 
-                case '\r':
-                    dotSpec.append("\\r");
-                    break;
+			case '\r':
+				dotSpec.append("\\r");
+				break;
 
-                default:
-                    dotSpec += text[j];
-                    break;
-            }
+			default:
+				dotSpec += text[j];
+				break;
+			}
 		}
 		dotSpec.append("\"]\n");
 
@@ -695,7 +694,7 @@ void CommonTreeAdaptor<ImplTraits>::defineDotNodes(TreeTypePtr t, const StringTy
 }
 
 template<class ImplTraits>
-void CommonTreeAdaptor<ImplTraits>::defineDotEdges(TreeTypePtr t, const StringType& dotSpec)
+void CommonTreeAdaptor<ImplTraits>::defineDotEdges(TreeTypePtr &t, StringType& dotSpec)
 {
 	// How many nodes are we talking about?
 	//
@@ -724,69 +723,68 @@ void CommonTreeAdaptor<ImplTraits>::defineDotEdges(TreeTypePtr t, const StringTy
 	//
 	for	(int i=0; i<nCount; i++)
 	{
-		TreeTypePtr child;
 		char	buff[128];
         StringType text;
 
 		// Next child
 		//
-		child	= this->getChild(t, i);
+		TreeTypePtr &child	= this->getChild(t, i);
 
 		// Create the edge relation
 		//
-		sprintf(buff, "\t\tn%p -> n%p\t\t// ",  t, child);
+		sprintf(buff, "\t\tn%p -> n%p\t\t// ",  t.get(), child.get());
         
 		dotSpec.append(buff);
 
 		// Document the relationship
 		//
-        text = this->getText(t);
+		text = this->getText(t);
 		for (std::size_t j = 0; j < text.size(); j++)
-        {
-                switch(text[j])
-                {
-                    case '"':
-                        dotSpec.append("\\\"");
-                        break;
+		{
+			switch (text[j])
+			{
+			case '"':
+				dotSpec.append("\\\"");
+				break;
 
-                    case '\n':
-                        dotSpec.append("\\n");
-                        break;
+			case '\n':
+				dotSpec.append("\\n");
+				break;
 
-                    case '\r':
-                        dotSpec.append("\\r");
-                        break;
+			case '\r':
+				dotSpec.append("\\r");
+				break;
 
-                    default:
-                        dotSpec += text[j];
-                        break;
-                }
-        }
+			default:
+				dotSpec += text[j];
+				break;
+			}
+		}
 
-        dotSpec.append(" -> ");
+		dotSpec.append(" -> ");
 
-        text = this->getText(child);
-        for (std::size_t j = 0; j < text.size(); j++)
-        {
-                switch(text[j])
-                {
-                    case '"':
-                        dotSpec.append("\\\"");
-                        break;
+		text = this->getText(child);
+		for (std::size_t j = 0; j < text.size(); j++)
+		{
+			switch (text[j])
+			{
+			case '"':
+				dotSpec.append("\\\"");
+				break;
 
-                    case '\n':
-                        dotSpec.append("\\n");
-                        break;
+			case '\n':
+				dotSpec.append("\\n");
+				break;
 
-                    case '\r':
-                        dotSpec.append("\\r");
-                        break;
+			case '\r':
+				dotSpec.append("\\r");
+				break;
 
-                    default:
-                        dotSpec += text[j];
-                        break;
-                }
-        }
+			default:
+				dotSpec += text[j];
+				break;
+			}
+		}
 		dotSpec.append("\n");
         
 		// Define edges for this child

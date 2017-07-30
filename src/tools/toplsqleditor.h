@@ -53,6 +53,7 @@ class toPLSQLWidget;
 class toPLSQLEditor: public toDebugText
 {
     Q_OBJECT
+    typedef toDebugText super;
 
 public:
     toPLSQLEditor(QWidget *parent = 0);
@@ -90,7 +91,7 @@ public:
     {
         return Type;
     }
-    void clear(void);
+    void clear(void) override;
 
     bool readData(toConnection &connection/*, toTreeWidget **/);
     bool readErrors(toConnection &connection);

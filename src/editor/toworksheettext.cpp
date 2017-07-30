@@ -41,7 +41,10 @@
 #include "core/toglobalevent.h"
 #include "shortcuteditor/shortcutmodel.h"
 
+#include <QtCore/QFileSystemWatcher>
 #include <QListWidget>
+#include <QDir>
+
 #include "core/toeditorconfiguration.h"
 
 using namespace ToConfiguration;

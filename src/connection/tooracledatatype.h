@@ -55,11 +55,11 @@ class toOracleClob: public toQValue::complexType
             , _toolTipData()
         {};
         /* virtual */
-        bool isBinary() const
+        bool isBinary() const override
         {
             return false;
         }
-        /* virtual */ bool isLarge() const
+        /* virtual */ bool isLarge() const override
         {
             return true;
         }
@@ -120,11 +120,11 @@ class toOracleBlob: public toQValue::complexType
             , _toolTipData()
         {};
 
-        bool isBinary() const
+        bool isBinary() const override
         {
             return true;
         }
-        bool isLarge() const
+        bool isLarge() const override
         {
             return true;
         }
@@ -133,7 +133,7 @@ class toOracleBlob: public toQValue::complexType
 
         QString editData() const throw() override;
 
-        QString userData() const throw();
+        QString userData() const throw() override;
 
         QString const& tooltipData() const throw() override
         {

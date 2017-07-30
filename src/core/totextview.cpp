@@ -33,11 +33,13 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "core/totextview.h"
+#include "core/toeditmenu.h"
 #include "core/utils.h"
+#include "widgets/tosearch.h"
 #include <QtGui/QFocusEvent>
 #include <QtGui/QTextDocument>
 #include <QTextBrowser>
-#include "widgets/tosearchreplace.h"
+
 
 toTextView::toTextView(QWidget *parent /* = 0*/, const char *name /* = 0*/)
     : super(parent)
@@ -50,30 +52,6 @@ toTextView::toTextView(QWidget *parent /* = 0*/, const char *name /* = 0*/)
     toEditWidget::FlagSet.Paste = true;
     toEditWidget::FlagSet.SelectAll = true;
     toEditWidget::FlagSet.SelectBlock = true;
-
-    m_view = new QTextBrowser(this);
-    m_view->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-
-    QVBoxLayout *l = new QVBoxLayout();
-    l->setSpacing(0);
-    l->setContentsMargins(0, 0, 0, 0);
-    l->addWidget(m_view);
-    setLayout(l);
-}
-
-void toTextView::setFontFamily(const QString &fontFamily)
-{
-    m_view->setFontFamily(fontFamily);
-}
-
-void toTextView::setReadOnly(bool ro)
-{
-    m_view->setReadOnly(ro);
-}
-
-void toTextView::setText(const QString &t)
-{
-    m_view->setText(t);
 }
 
 void toTextView::setFilename(const QString &f)
@@ -87,26 +65,26 @@ bool toTextView::editSave(bool)
     if (!fn.isEmpty())
     {
         if (fn.contains(".HTML", Qt::CaseInsensitive) || fn.contains(".HTM", Qt::CaseInsensitive))
-            return Utils::toWriteFile(fn, m_view->toHtml());
+            return Utils::toWriteFile(fn, toHtml());
         else
-            return Utils::toWriteFile(fn, m_view->toPlainText());
+            return Utils::toWriteFile(fn, toPlainText());
     }
     return false;
 }
 
 QString toTextView::editText()
 {
-    return m_view->toPlainText();
+    return toPlainText();
 }
 
 void toTextView::editCopy(void)
 {
-    m_view->copy();
+    copy();
 }
 
 void toTextView::editSelectAll(void)
 {
-    m_view->selectAll();
+    selectAll();
 }
 
 void toTextView::focusInEvent (QFocusEvent *e)
@@ -129,5 +107,15 @@ bool toTextView::handleSearching(QString const& search, QString const& replace, 
     if (flags & Search::CaseSensitive)
         f |= QTextDocument::FindCaseSensitively;
 
-    return m_view->find(search, f);
+    return find(search, f);
+}
+
+void toTextView::keyPressEvent(QKeyEvent *e)
+{
+    if (Utils::toCheckKeyEvent(e, toEditMenuSingle::Instance().searchReplaceAct->shortcut())) {
+        toSearchReplaceDockletSingle::Instance().activate();
+        e->accept();
+        return;
+    }
+    super::keyPressEvent(e);
 }

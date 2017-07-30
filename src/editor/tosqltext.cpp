@@ -54,6 +54,7 @@
 #include <QToolTip>
 #endif
 
+#include <QMenu>
 #include <QListWidget>
 #include <QVBoxLayout>
 #include <QApplication>
@@ -71,7 +72,7 @@ toSqlText::toSqlText(QWidget *parent, const char *name)
     , m_analyzerNL(NULL)
     , m_analyzerOracle(NULL)
     , m_analyzerMySQL(NULL)
-	, m_analyzerPostgreSQL(NULL)
+    , m_analyzerPostgreSQL(NULL)
     , m_parserTimer(new QTimer(this))
     , m_parserThread(new QThread(this))
     , m_haveFocus(true)
@@ -116,7 +117,7 @@ toSqlText::toSqlText(QWidget *parent, const char *name)
 
     m_indent->setCheckable(true);
     m_indent->setShortcut(Qt::CTRL + Qt::ALT + Qt::Key_Backslash);
-    connect(m_indent, SIGNAL(triggered()), this, SLOT(indent()));
+    connect(m_indent, SIGNAL(triggered()), this, SLOT(indentCurrentSql()));
 
     m_wrap->setCheckable(true);
     connect(m_wrap, SIGNAL(toggled(bool)), this, SLOT(setWordWrap(bool)));
@@ -187,7 +188,7 @@ void toSqlText::keyPressEvent(QKeyEvent * e)
     // check if QKeyEvent matched QKeySequence and then call indent method directly
     if (Utils::toCheckKeyEvent(e, m_indent->shortcut()))
     {
-        indent();
+        indentCurrentSql();
         e->accept();
         return;
     }
@@ -304,7 +305,7 @@ void toSqlText::setHighlighter(HighlighterTypeEnum h)
     //update(); gets called by setFont
 }
 
-void toSqlText::indent() // slot
+void toSqlText::indentCurrentSql() // slot
 {
     Utils::toBusy busy;
     using namespace SQLParser;
@@ -318,21 +319,21 @@ void toSqlText::indent() // slot
 
         Token const* root = ast->root();
 
-		TLOG(8, toNoDecorator, __HERE__) << root->toLispStringRecursive() << std::endl;
+        TLOG(8, toNoDecorator, __HERE__) << root->toLispStringRecursive() << std::endl;
 
-        QList<SQLParser::Token> list;
+        QList<SQLParser::Token const*> list;
         indentPriv(root, list);
 
         QString str;
-        foreach(Token t, list)
+        foreach(Token const *t, list)
         {
-			int d1 = t.depth();
-			int d2 = t.metadata().value("INDENT_DEPTH").toInt();
-			QString s = t.toString();
-			TLOG(8, toNoDecorator, __HERE__) << d1 << "\t" << d2 << "\t" << s << std::endl;
-			str.append(QString(d2, ' '));
-			str.append(s);
-			str.append("\n");
+            int d1 = t->depth();
+            int d2 = t->metadata().value("INDENT_DEPTH").toInt();
+            QString s = t->toString();
+            TLOG(8, toNoDecorator, __HERE__) << d1 << "\t" << d2 << "\t" << s << std::endl;
+            str.append(QString(d2, ' '));
+            str.append(s);
+            str.append("\n");
         }
 
         beginUndoAction();
@@ -345,7 +346,7 @@ void toSqlText::indent() // slot
     }
 }
 
-void toSqlText::indentPriv(SQLParser::Token const*root, QList<SQLParser::Token> &list)
+void toSqlText::indentPriv(SQLParser::Token const* root, QList<SQLParser::Token const*> &list)
 {
     using namespace SQLParser;
     QRegExp white("^[ \\n\\r\\t]*$");
@@ -356,29 +357,29 @@ void toSqlText::indentPriv(SQLParser::Token const*root, QList<SQLParser::Token> 
     {
         if (!white.exactMatch(t->toString()))
             depth++;
-		t = t->parent();
+        t = t->parent();
     }
 
-    QList<SQLParser::Token> me, pre, post;
-    foreach(QPointer<Token> t, root->prevTokens())
+    QList<SQLParser::Token const*> me, pre, post;
+    foreach(Token const *t, root->prevTokens())
     {
         if (!white.exactMatch(t->toString()))
         {
-            Token tok = Token(*t); tok.metadata().insert("INDENT_DEPTH", depth);
-            me.append(tok);
+	    t->metadata().insert("INDENT_DEPTH", depth);
+	    me.append(t);
         }
     }
     if (!white.exactMatch(root->toString()))
     {
-        Token tok = Token(*root); tok.metadata().insert("INDENT_DEPTH", depth);
-        me.append(tok);
+        root->metadata().insert("INDENT_DEPTH", depth);
+        me.append(root);
     }
-    foreach(QPointer<Token> t, root->postTokens())
+    foreach(Token const* t, root->postTokens())
     {
         if (!white.exactMatch(t->toString()))
         {
-            Token tok = Token(*t); tok.metadata().insert("INDENT_DEPTH", depth);
-            me.append(tok);
+            t->metadata().insert("INDENT_DEPTH", depth);
+            me.append(t);
         }
     }
 
@@ -629,11 +630,11 @@ bool toSqlText::showToolTip(toSqlText::ToolTipData const& t)
 
     do
     {
-		if (i->getPosition().getLinePos() > offset)
-			break;
-		toolTipText  = i->getText();
-        toolTipText += i->getPosition().toString();
-        toolTipText += '(' + i->getTokenTypeName() + '/' + i->_mOrigTypeText + ')';
+	if (i->getPosition().getLinePos() > offset)
+	    break;
+	toolTipText  = i->getText();
+	toolTipText += i->getPosition().toString();
+	toolTipText += '(' + i->getTokenTypeName() + '/' + i->_mOrigTypeText + ')';
         i++;
     }
     while(i != lexer->end());

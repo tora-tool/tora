@@ -42,8 +42,6 @@ class QWidget;
 
 /** This is an abstract base class for any widget (Not included in object) that wants to
  * access copy, cut, paste, open, save commands of the user interface.
- *
- * TODO COPY enable/disable still does not work
  */
 class toEditWidget
 {

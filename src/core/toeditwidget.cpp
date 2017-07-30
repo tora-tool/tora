@@ -34,7 +34,7 @@
 
 #include "core/toeditwidget.h"
 #include "core/tomainwindow.h"
-#include "docklets/tosearch.h"
+#include "widgets/tosearch.h"
 
 #include <QWidget>
 

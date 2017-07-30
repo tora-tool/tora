@@ -37,6 +37,7 @@
 #include <QDockWidget>
 
 #include "core/utils.h"
+#include "loki/Singleton.h"
 
 class toSearchReplace;
 class toEditWidget;
