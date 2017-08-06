@@ -126,7 +126,7 @@ IF(TORA_DEBUG AND TEST_APP4)
 # test4
 QT5_WRAP_CPP(TEST4_MOC_SOURCES
   tests/test4window.h
-  docklets/tosearch.h  
+  widgets/tosearch.h
   editor/tomemoeditor.h
   editor/toscintilla.h
   editor/tosqltext.h
@@ -142,7 +142,7 @@ QT5_ADD_RESOURCES(TEST4_RC_SOURCES tests/test4.qrc)
 ADD_EXECUTABLE("test4"
   tests/test4.cpp
   tests/test4window.cpp
-  docklets/tosearch.cpp
+  widgets/tosearch.cpp
   editor/tomemoeditor.cpp
   editor/toscintilla.cpp
   editor/tosqltext.cpp
