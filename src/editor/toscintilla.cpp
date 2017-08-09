@@ -675,7 +675,6 @@ QString toScintilla::editText()
 
 toEditWidget::FlagSetStruct toScintilla::flagSet()
 {
-    toEditWidget::FlagSetStruct FlagSet;
     if (isReadOnly())
     {
         FlagSet.Save = true;
