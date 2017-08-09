@@ -47,7 +47,7 @@
 
 #include "core/tomemory.h"
 
-toAbout::toAbout(QWidget* parent, const char* name, bool modal)
+toAbout::toAbout(QWidget* parent, const char* name, bool modal, unsigned tab)
     : QDialog(parent)
 {
     if (name)
@@ -129,6 +129,8 @@ toAbout::toAbout(QWidget* parent, const char* name, bool modal)
         QString usage("Memory usage: %1 M");
         textBrowserMemory->setPlainText(usage.arg(QString::number((qulonglong)getCurrentRSS())));
     }
+
+    aboutTabs->setCurrentIndex(tab);
 }
 
 toAbout::~toAbout()

@@ -52,6 +52,7 @@
 #include "core/utils.h"
 #include "core/tologger.h"
 #include "core/toconf.h"
+#include "core/toupdater.h"
 #include "ts_log/toostream.h"
 #include "editor/tosqltext.h"
 #include "editor/toworksheettext.h"
@@ -205,6 +206,8 @@ void toMain::createActions()
     // ---------------------------------------- windows menu
     windowCloseAct = new QAction(tr("C&lose"), this);
     windowCloseAllAct = new QAction(tr("Close &All"), this);
+
+    toUpdaterSingle::Instance().check(/*force=>*/false);
 }
 
 
@@ -959,6 +962,11 @@ void toMain::slotActiveToolChaged(toToolWidget *tool)
     // TODO: implement non-blocking version of hasTransaction
     //setNeedCommit(tool, tool ? tool->hasTransaction() : false);
     lastToolWidget = tool;
+}
+
+void toMain::newVersionAvalable()
+{
+
 }
 
 #ifdef QT_DEBUG
