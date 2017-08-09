@@ -567,9 +567,11 @@ void toMain::commandCallback(QAction *action)
 {
     QWidget *focus = qApp->focusWidget();
 
+    toEditWidget::FlagSetStruct editFlags;
     toEditWidget *edit = toEditWidget::findEdit(focus);
     if (edit)
     {
+        editFlags = edit->flagSet();
         if (action == editMenu.redoAct)
             edit->editRedo();
         else if (action == editMenu.undoAct)
@@ -616,15 +618,15 @@ void toMain::commandCallback(QAction *action)
             edit->searchNext();
 #endif
         }
-        else if (action == fileMenu.saveAsAct)
+        else if (action == fileMenu.saveAsAct && editFlags.Save)
             edit->editSave(true);
-        else if (action == fileMenu.saveAct)
+        else if (action == fileMenu.saveAct && editFlags.Save)
             edit->editSave(false);
     } // if edit
 
     if (action == fileMenu.openAct && !this->Connections.isEmpty())
     {
-        if (edit)
+        if (edit && editFlags.Open)
             edit->editOpen();
         else
             this->editOpenFile(QString::null);

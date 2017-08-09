@@ -62,6 +62,8 @@ toWorksheetText::toWorksheetText(toWorksheet *worksheet, QWidget *parent, const 
     , m_completeEnabled(toConfigurationNewSingle::Instance().option(Editor::CodeCompleteBool).toBool())
     , m_completeDelayed((toConfigurationNewSingle::Instance().option(Editor::CodeCompleteDelayInt).toInt() > 0))
 {
+    FlagSet.Open = true;
+
     if (m_completeEnabled && !m_completeDelayed)
     {
         QsciScintilla::setAutoCompletionThreshold(1); // start when a single leading word's char is typed

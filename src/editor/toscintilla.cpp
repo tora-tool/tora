@@ -625,7 +625,16 @@ void toScintilla::populateContextMenu(QMenu *popup)
 
 bool toScintilla::editOpen(const QString &file) { throw __QHERE__; };
 
-bool toScintilla::editSave(bool askfile) { throw __QHERE__; };
+bool toScintilla::editSave(bool askfile)
+{
+    QString fn = Utils::toSaveFilename(QString::null, QString::null, this);
+    if (!fn.isEmpty() && Utils::toWriteFile(fn, text()))
+    {
+        setModified(false);
+        return true;
+    }
+    return false;
+};
 
 void toScintilla::editUndo(void)
 {
@@ -677,12 +686,12 @@ toEditWidget::FlagSetStruct toScintilla::flagSet()
     }
     else
     {
-        FlagSet.Open = true;
         FlagSet.Save = true;
         FlagSet.Undo = isUndoAvailable();
         FlagSet.Redo = isRedoAvailable();
         FlagSet.Cut  = hasSelectedText();
         FlagSet.Copy = hasSelectedText();
+        FlagSet.Paste = true;
         FlagSet.Search = true;
         FlagSet.SelectAll = true;
     }
