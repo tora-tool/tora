@@ -337,11 +337,29 @@ static toSQL SQLTableInfoSapDB("toBrowser:TableInformation",
                                "",
                                "",
                                "SapDB");
+
+static toSQL SQLTableStatist__("toBrowser:TableStatstics",
+                               "select rowcnt, avgrln ,samplesize, analyzetime, to_char(savtime) as savtime \n"
+                               "from ( \n"
+                               "SELECT rowcnt, avgrln ,samplesize, analyzetime, to_char(savtime) as savtime, owner, object_name as table_name \n"
+                               "FROM sys.WRI$_OPTSTAT_TAB_HISTORY, dba_objects ob \n"
+                               "WHERE object_type in ('TABLE') \n"
+                               "and object_id=obj# \n"
+                               "UNION all             \n"
+                               "select NUM_ROWS, AVG_ROW_LEN ,SAMPLE_SIZE, LAST_ANALYZED, 'CURRENT' as savtime, owner, table_name from all_all_tables \n"
+                               ") \n"
+                               "WHERE 1=1 \n"
+                               "and owner=:f1<char[101]> \n"
+                               "and table_name=:f2<char[101]> \n"
+                               "order by savtime asc \n",
+                               "Table Statistics",
+                               "1001");
+
 static toSQL SQLTableStatistic("toBrowser:TableStatstics",
                                "SELECT description \"Description\", value(char_value,numeric_value) \"Value\" \n"
                                " FROM tablestatistics \n"
                                " WHERE owner = upper(:f1<char[101]>) and tablename = :f2<char[101]>",
-                               "Table Statistics",
+                               "",
                                "",
                                "SapDB");
 static toSQL SQLTablePartition("toBrowser:TablePartitions",
@@ -508,7 +526,7 @@ void toBrowserTableWidget::changeConnection()
 
     addTab(resultInfo, "Information");
 
-    if (c.providerIs("SapDB"))
+    if (c.providerIs("SapDB") || c.providerIs("Oracle"))
         addTab(statisticsView, "Statistics");
     else
         statisticsView->hide();
