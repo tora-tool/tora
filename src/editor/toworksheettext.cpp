@@ -412,7 +412,7 @@ bool toWorksheetText::editOpen(const QString &suggestedFile)
         try
         {
             if (ret == 2)
-                toWorksheet::fileWorksheet(fname);
+                toGlobalEventSingle::Instance().editOpenFile(fname);
             else
             {
                 openFilename(fname);

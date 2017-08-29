@@ -40,8 +40,10 @@
 #include <QtGui/QStandardItemModel>
 
 #include "widgets/totabledetailview.h"
-#include "widgets/toplaintextview.h"
-#include "widgets/tosqltextview.h"
+#include "views/toplaintextview.h"
+#include "views/tosqltextview.h"
+
+using namespace Views;
 
 int main(int argc, char **argv)
 {
