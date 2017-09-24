@@ -65,6 +65,8 @@ public:
 private slots:
     void clipBoardChanged();
     void slotAboutToShow();
+
+    void commandCallback(QAction *action);
 private:
     void disableAll();
     bool m_clipboardContent, m_pasteSupported;

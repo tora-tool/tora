@@ -228,10 +228,6 @@ void toMain::createMenus()
             SLOT(recentCallback(QAction *)));
 
     menuBar()->addMenu(&editMenu);
-    connect(&editMenu,
-            SIGNAL(triggered(QAction *)),
-            this,
-            SLOT(commandCallback(QAction *)));
 
     // Use only when there are any docklets registered
     if (toDocklet::docklets().count())
@@ -572,60 +568,6 @@ void toMain::commandCallback(QAction *action)
 
     toEditWidget::FlagSetStruct editFlags;
     toEditWidget *edit = toEditWidget::findEdit(focus);
-    if (edit)
-    {
-        editFlags = edit->flagSet();
-        if (action == editMenu.redoAct)
-            edit->editRedo();
-        else if (action == editMenu.undoAct)
-            edit->editUndo();
-        else if (action == editMenu.copyAct)
-            edit->editCopy();
-        else if (action == editMenu.pasteAct)
-            edit->editPaste();
-        else if (action == editMenu.cutAct)
-            edit->editCut();
-        else if (action == editMenu.selectAllAct)
-            edit->editSelectAll();
-#if 0
-// TODO: this part is waiting for QScintilla backend feature (yet unimplemented).
-        else if (action == selectBlockAct)
-        {
-            // OK, this looks ugly but it's pretty functional.
-            // Here I need to setup chosen selection type for
-            // all QScintilla based editors.
-            int selectionType = action->isChecked()
-                                ? QsciScintillaBase::SC_SEL_RECTANGLE
-                                : QsciScintillaBase::SC_SEL_STREAM;
-            foreach (QWidget * i, QApplication::allWidgets())
-            {
-                toScintilla * w = qobject_cast<toScintilla*>(i);
-                if (w)
-                {
-                    w->setSelectionType(selectionType);
-                    TLOG(2, toDecorator, __HERE__) << "setting" << w << selectionType;
-                }
-            }
-            SelectionLabel->setText(action->isChecked() ? "Sel: Block" : "Sel: Normal");
-        }
-#endif
-        else if (action == editMenu.readAllAct)
-            edit->editReadAll();
-        else if (action == editMenu.searchReplaceAct)
-        {
-            toSearchReplaceDockletSingle::Instance().activate();
-        }
-        else if (action == editMenu.searchNextAct)
-        {
-#if TORA3_SEARCH
-            edit->searchNext();
-#endif
-        }
-        else if (action == fileMenu.saveAsAct && editFlags.Save)
-            edit->editSave(true);
-        else if (action == fileMenu.saveAct && editFlags.Save)
-            edit->editSave(false);
-    } // if edit
 
     if (action == fileMenu.openAct && !this->Connections.isEmpty())
     {
@@ -1003,21 +945,6 @@ void toMain::exportData(std::map<QString, QString> &data, const QString &prefix)
     try
     {
 
-#if 0
-// No need to do it. We are storing it in QSettings now
-//         if (isMaximized())
-//             data[prefix + ":State"] = QString::fromLatin1("Maximized");
-//         else if (isMinimized())
-//             data[prefix + ":State"] = QString::fromLatin1("Minimized");
-//         else
-//         {
-//             QRect rect = geometry();
-//             data[prefix + ":X"] = QString::number(rect.x());
-//             data[prefix + ":Y"] = QString::number(rect.y());
-//             data[prefix + ":Width"] = QString::number(rect.width());
-//             data[prefix + ":Height"] = QString::number(rect.height());
-//         }
-#endif
         int id = 1;
         std::map<toConnection *, int> connMap;
         {

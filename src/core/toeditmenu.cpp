@@ -35,6 +35,7 @@
 #include "core/toeditmenu.h"
 #include "core/toeditwidget.h"
 #include "ts_log/ts_log_utils.h"
+#include "widgets/tosearch.h"
 
 #include "icons/undo.xpm"
 #include "icons/redo.xpm"
@@ -120,6 +121,11 @@ toEditMenu::toEditMenu()
     addAction(prefsAct);
 
     disableAll();
+
+    connect(this,
+            SIGNAL(triggered(QAction *)),
+            this,
+            SLOT(commandCallback(QAction *)));
 }
 
 void toEditMenu::disableAll()
@@ -135,6 +141,62 @@ void toEditMenu::disableAll()
     selectAllAct->setEnabled(false);
     readAllAct->setEnabled(false);
     m_pasteSupported = false;
+}
+
+void toEditMenu::commandCallback(QAction *action)
+{
+    QWidget *focus = qApp->focusWidget();
+
+    toEditWidget *edit = toEditWidget::findEdit(focus);
+    if (!edit)
+        return;
+
+    if (action == redoAct)
+        edit->editRedo();
+    else if (action == undoAct)
+        edit->editUndo();
+    else if (action == copyAct)
+        edit->editCopy();
+    else if (action == pasteAct)
+        edit->editPaste();
+    else if (action == cutAct)
+        edit->editCut();
+    else if (action == selectAllAct)
+        edit->editSelectAll();
+#if 0
+// TODO: this part is waiting for QScintilla backend feature (yet unimplemented).
+    else if (action == selectBlockAct)
+    {
+        // OK, this looks ugly but it's pretty functional.
+        // Here I need to setup chosen selection type for
+        // all QScintilla based editors.
+        int selectionType = action->isChecked()
+                                        ? QsciScintillaBase::SC_SEL_RECTANGLE
+                                                : QsciScintillaBase::SC_SEL_STREAM;
+        foreach (QWidget * i, QApplication::allWidgets())
+        {
+            toScintilla * w = qobject_cast<toScintilla*>(i);
+            if (w)
+            {
+                w->setSelectionType(selectionType);
+                TLOG(2, toDecorator, __HERE__) << "setting" << w << selectionType;
+            }
+        }
+        SelectionLabel->setText(action->isChecked() ? "Sel: Block" : "Sel: Normal");
+    }
+#endif
+    else if (action == readAllAct)
+        edit->editReadAll();
+    else if (action == searchReplaceAct)
+    {
+        toSearchReplaceDockletSingle::Instance().activate();
+    }
+    else if (action == searchNextAct)
+    {
+#if TORA3_SEARCH
+        edit->searchNext();
+#endif
+    }
 }
 
 toEditMenu::~toEditMenu()
