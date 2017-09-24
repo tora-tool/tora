@@ -153,8 +153,6 @@ int main(int argc, char **argv)
             toSplash splash(NULL);
             splash.show();
 
-            toUpdaterSingle::Instance().check(/*force=>*/false);
-
             QList<QString> plugins;
 #ifdef Q_OS_WIN
             bool success = false;
@@ -342,7 +340,7 @@ int main(int argc, char **argv)
 
         if (toConfigurationNewSingle::Instance().option(ToConfiguration::Main::LastVersion).toString() != TORAVERSION)
         {
-            toAbout about(NULL, "About " TOAPPNAME, true);
+            toAbout about(NULL, "About " TOAPPNAME, true, 4);
             if (!about.exec())
                 exit (2);
             toConfigurationNewSingle::Instance().setOption(ToConfiguration::Main::LastVersion, QString(TORAVERSION));

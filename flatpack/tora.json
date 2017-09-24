@@ -1,0 +1,19 @@
+{
+    "id": "org.tora.tora",
+    "branch": "master",
+    "runtime": "org.kde.Platform",
+    "runtime-version": "5.9",
+    "sdk": "org.kde.Sdk",
+    "command": "tora",
+    "finish-args": ["--share=ipc", "--socket=x11", "--socket=wayland", "--env=QT_QPA_PLATFORM=flatpak" ],    
+    "modules": [
+        "boost.json",
+        {
+	    "config-opts": ["-DWANT_INTERNAL_QSCINTILLA=ON", "-DWANT_INTERNAL_LOKI=ON"],
+            "name": "tora",
+            "buildsystem": "cmake-ninja",
+            "builddir": true,
+            "sources": [ { "type": "git", "url": "https://github.com/tora-tool/tora.git" } ]
+        }
+    ]
+}

@@ -62,6 +62,8 @@ toWorksheetText::toWorksheetText(toWorksheet *worksheet, QWidget *parent, const 
     , m_completeEnabled(toConfigurationNewSingle::Instance().option(Editor::CodeCompleteBool).toBool())
     , m_completeDelayed((toConfigurationNewSingle::Instance().option(Editor::CodeCompleteDelayInt).toInt() > 0))
 {
+    FlagSet.Open = true;
+
     if (m_completeEnabled && !m_completeDelayed)
     {
         QsciScintilla::setAutoCompletionThreshold(1); // start when a single leading word's char is typed
@@ -365,18 +367,34 @@ void toWorksheetText::setFilename(const QString &filename)
 
 void toWorksheetText::openFilename(const QString &file)
 {
-    throw __QHERE__;
+#pragma message WARN("TODO/FIXME: clear markers!")
+    fsWatcherClear();
+
+    QString data = Utils::toReadFile(file);
+    setText(data);
+    setFilename(file);
+    setModified(false);
+    toGlobalEventSingle::Instance().addRecentFile(file);
+
+    m_fsWatcher->addPath(file);
+
+    Utils::toStatusMessage(tr("File opened successfully"), false, false);
 }
+
 bool toWorksheetText::editOpen(const QString &suggestedFile)
 {
+    int ret = 1;
     if (isModified())
     {
-        int ret = TOMessageBox::information(this,
+        // grab focus so user can see file and decide to save
+        setFocus(Qt::OtherFocusReason);
+
+        ret = TOMessageBox::information(this,
                                             tr("Save changes?"),
                                             tr("The editor has been changed, do you want to save them\n"
                                                "before opening a new file?"),
-                                            tr("&Yes"), tr("&No"), tr("Cancel"), 0, 2);
-        if (ret == 2)
+                                            tr("&Save"), tr("&Discard"), tr("New worksheet"), 0);
+        if (ret < 2)
             return false;
         else if (ret == 0)
             if (!editSave(false))
@@ -393,9 +411,14 @@ bool toWorksheetText::editOpen(const QString &suggestedFile)
     {
         try
         {
-            openFilename(fname);
-            emit fileOpened();
-            emit fileOpened(fname);
+            if (ret == 2)
+                toGlobalEventSingle::Instance().editOpenFile(fname);
+            else
+            {
+                openFilename(fname);
+                emit fileOpened();
+                emit fileOpened(fname);
+            }
             return true;
         }
         TOCATCH

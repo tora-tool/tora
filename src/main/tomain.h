@@ -252,6 +252,8 @@ class toMain : public toMainWindow
 
         void slotActiveToolChaged(toToolWidget*);
 
+        void newVersionAvalable();
+
 #ifdef QT_DEBUG
         // This function should diagnose focus "stealing"
         void reportFocus();

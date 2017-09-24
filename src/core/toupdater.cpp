@@ -36,6 +36,7 @@
 #include "core/utils.h"
 #include "core/toconfiguration.h"
 #include "core/toglobalconfiguration.h"
+#include "core/toraversion.h"
 
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
@@ -49,9 +50,9 @@
 #include <QtCore/QDate>
 
 toUpdater::toUpdater()
-	: QObject()
+    : QObject()
     , m_updated(false)
-	, m_mode(true)
+    , m_mode(true)
 {
 	m_qnam = createQNAM();
 	m_originalUrl = "http://sourceforge.net/projects/tora/files/tora/LastVersion.txt/download";
@@ -87,8 +88,9 @@ void toUpdater::check(bool force)
 		return;
 
 	m_mode = force;
-	m_version = QString("toUpdater::doRequest doing request to ").arg(m_originalUrl.toString());
-
+#if QT_DEBUG && 0
+	m_version = QString("toUpdater::doRequest doing request to %1").arg(m_originalUrl.toString());
+#endif
 	/* Let's just create network request for this predefined URL... */
 	QNetworkRequest request;
 	request.setUrl(m_originalUrl);
@@ -103,6 +105,7 @@ void toUpdater::check(bool force)
 
 void toUpdater::replyFinished(QNetworkReply* reply)
 {
+        Utils::toBusy busy;
 	reply->ignoreSslErrors();
 	if (reply->error() != QNetworkReply::NoError)
 	{
@@ -142,8 +145,22 @@ void toUpdater::replyFinished(QNetworkReply* reply)
 		 * We weren't redirected anymore
 		 * so we arrived to the final destination...
 		 */
-		QString text = QString("QNAMRedirect::replyFinished: Arrived to %1\n%2\n").arg(reply->url().toString()).arg(QString(body));
+		QString text = QString("QNAMRedirect::replyFinished: Arrived to %1\n").arg(reply->url().toString());
+#if QT_DEBUG && 0
 		m_version.append(text);
+#endif
+		QString version(body);
+		QRegExp gitversionRegexp("GITVERSION\\s*\"([-a-z0-9.]+)\"");
+		int pos = gitversionRegexp.indexIn(body);
+		if (pos > -1) {
+		    QString gitversion = gitversionRegexp.cap(1);
+		    if (gitversion == TORAVERSION)
+		        m_version.append(QString("LastVersion version: %1\n\n").arg(gitversion));
+		    else
+		        m_version.append(QString("New version available: %1\n\n").arg(gitversion));
+		}
+		m_version.append(version);
+
 		/* ...so this can be cleared. */
 		m_urlRedirectedTo.clear();
 		m_updated = true;
@@ -167,7 +184,9 @@ void toUpdater::replyFinished(QNetworkReply* reply)
 	if(!m_urlRedirectedTo.isEmpty())
 	{
 		QString text = QString("QNAMRedirect::replyFinished: Redirected to %1\n").arg(m_urlRedirectedTo.toString());
+#if QT_DEBUG && 0
 		m_version.append(text);
+#endif
 
 		/* We'll do another request to the redirection url. */
 		QNetworkRequest request;

@@ -43,6 +43,8 @@
 #include "views/toplaintextview.h"
 #include "views/tosqltextview.h"
 
+using namespace Views;
+
 int main(int argc, char **argv)
 {
     using namespace Views;

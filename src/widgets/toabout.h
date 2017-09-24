@@ -41,7 +41,7 @@ class toAbout : public QDialog, public Ui::toAboutUI
     Q_OBJECT
 
 public:
-    toAbout(QWidget* parent = 0, const char* name = 0, bool modal = false);
+    toAbout(QWidget* parent = 0, const char* name = 0, bool modal = false, unsigned tab = 0);
     virtual ~toAbout();
 
 protected slots:

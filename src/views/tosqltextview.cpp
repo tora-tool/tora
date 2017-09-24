@@ -53,11 +53,17 @@ toSqlTextView::toSqlTextView(QWidget *parent /* = 0*/, const char *name /* = 0*/
     m_view = new toSqlText(this);
     m_view->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
+    setContentsMargins(0, 0, 0, 0);
+
+    QWidget *w = new QWidget(this);
+    w->setContentsMargins(0, 0, 0, 0);
     QVBoxLayout *l = new QVBoxLayout();
     l->setSpacing(0);
     l->setContentsMargins(0, 0, 0, 0);
     l->addWidget(m_view);
-    setLayout(l);
+    w->setLayout(l);
+
+    setViewport(w);
 }
 
 void toSqlTextView::setReadOnly(bool ro)

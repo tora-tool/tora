@@ -126,6 +126,7 @@ IF(TORA_DEBUG AND TEST_APP4)
 # test4
 QT5_WRAP_CPP(TEST4_MOC_SOURCES
   tests/test4window.h
+  widgets/tosearch.h
   editor/tomemoeditor.h
   editor/toscintilla.h
   editor/tosqltext.h
@@ -141,6 +142,7 @@ QT5_ADD_RESOURCES(TEST4_RC_SOURCES tests/test4.qrc)
 ADD_EXECUTABLE("test4"
   tests/test4.cpp
   tests/test4window.cpp
+  widgets/tosearch.cpp
   editor/tomemoeditor.cpp
   editor/toscintilla.cpp
   editor/tosqltext.cpp
@@ -373,19 +375,13 @@ ENDIF(TORA_DEBUG AND TEST_APP9)
 
 IF(TORA_DEBUG AND TEST_APP10)
 # test10
-##QT5_WRAP_CPP(TEST10_MOC_SOURCES tests/test10window.h )
-##QT5_WRAP_UI(TEST10_UI_SOURCES tests/test10ui.ui)
-##QT5_ADD_RESOURCES(TEST10_RC_SOURCES tests/test10.qrc)
 ADD_EXECUTABLE("test10"
   tests/test10.cpp
-  widgets/totabledetailview.cpp
-##  ${TEST10_MOC_SOURCES}
-##  ${TEST10_UI_SOURCES}
-##  ${TEST10_RC_SOURCES}
   ${PCH_SOURCE}
   ${CORE_SOURCES}
   ${PARSING_SOURCES}
   ${WIDGETS_SOURCES}
+  ${VIEWS_SOURCES}
   ${EDITOR_SOURCES}
   ${LOGGING_SOURCES}
 )

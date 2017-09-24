@@ -64,3 +64,10 @@ gitrevision.bat
 **/*.p12
 **/*.rej
 **/*.orig
+
+########################################
+#             cmake                    #
+########################################
+# build directory naming convention
+build/
+LastVersion.txt

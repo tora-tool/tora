@@ -53,6 +53,9 @@ toTableDetailView::toTableDetailView (QWidget* parent)
 
 QRect toTableDetailView::visualRect( const QModelIndex &index ) const
 {
+  if (selectionModel() == NULL)
+    return QRect();
+
   if( selectionModel()->selection().indexes().count() != 1 )
     return QRect();
 
@@ -86,6 +89,9 @@ bool toTableDetailView::isIndexHidden( const QModelIndex &index ) const
 
 QModelIndex toTableDetailView::indexAt( const QPoint &point ) const
 {
+  if (selectionModel() == NULL)
+    return QModelIndex();
+
   if( selectionModel()->selection().indexes().count() != 1 )
     return QModelIndex();
 
