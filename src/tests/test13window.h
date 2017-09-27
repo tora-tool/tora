@@ -35,13 +35,15 @@
 #pragma once
 
 #include "ui_test13ui.h"
+#include "core/tocontextmenu.h"
 
 #include <QtCore/QObject>
 #include <QMainWindow>
 
 class toSqlText;
+class QAction;
 
-class Test13Window : public QMainWindow, Ui::Test13Window
+class Test13Window : public QMainWindow, Ui::Test13Window, public toContextMenuHandler
 {
     Q_OBJECT;
 
@@ -51,10 +53,12 @@ public:
 
 public slots:
     void load();
+    void parse();
 
 protected:
     virtual void closeEvent(QCloseEvent *event);
 
+    void handle(QObject *,QMenu *) override;
 private:
-
+    QAction *parseAct;
 };

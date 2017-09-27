@@ -42,6 +42,7 @@
 
 Test13Window::Test13Window(const QString &sql)
     : Ui::Test13Window()
+    , toContextMenuHandler()
 {
     Ui::Test13Window::setupUi(this);
 
@@ -51,6 +52,11 @@ Test13Window::Test13Window(const QString &sql)
     connect(actionQuit, SIGNAL(triggered()), this, SLOT(close()));
 
     QMainWindow::show();
+
+    parseAct = new QAction(tr("Parse"), this);
+    parseAct->setShortcut(Qt::CTRL + Qt::Key_K);
+    connect(parseAct, SIGNAL(triggered()), this, SLOT(parse(void)));
+
 }
 
 void Test13Window::load()
@@ -63,7 +69,23 @@ void Test13Window::load()
     }
 }
 
+void Test13Window::parse()
+{
+}
+
 void Test13Window::closeEvent(QCloseEvent *event)
 {
     QMainWindow::closeEvent(event);
+}
+
+void Test13Window::handle(QObject* obj, QMenu* menu)
+{
+    QString name = obj->objectName();
+
+    if (toSqlText* t = dynamic_cast<toSqlText*>(obj))
+    {
+        Q_UNUSED(t);
+        menu->addSeparator();
+        menu->addAction(parseAct);
+    }
 }
