@@ -736,9 +736,15 @@ namespace SQLParser
                     token_const_iterator() : m_token(0), m_stack(), m_lastIndex(0)
                     {};
 
-                    explicit token_const_iterator(Token* p) : m_token(p), m_stack(), m_lastIndex(0)
+                    explicit token_const_iterator(Token* t) : m_token(t), m_stack(), m_lastIndex(0)
                     {
-                        m_stack.push_back(p);
+                        Token *p = t->parent();
+                        m_stack.push_front(t);
+                        while (p)
+                        {
+                            m_stack.push_front(p);
+                            p = p->parent();
+                        }
                     };
 
                     token_const_iterator(token_const_iterator const& other)
