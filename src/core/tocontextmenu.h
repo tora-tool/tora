@@ -53,6 +53,7 @@ class QObject;
  */
 
 /** Abstract interface for widget capable of context menu handling */
+/** NOTE: !!! subclass as public !!! */
 class TORA_EXPORT toContextMenuHandler
 {
 public:
