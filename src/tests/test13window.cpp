@@ -34,6 +34,8 @@
 
 #include "tests/test13window.h"
 #include "editor/tosqltext.h"
+#include "core/tologger.h"
+#include "docklets/toastwalk.h"
 
 #include <QStatusBar>
 #include <QScrollArea>
@@ -46,7 +48,7 @@ Test13Window::Test13Window(const QString &sql)
 {
     Ui::Test13Window::setupUi(this);
 
-    sqlText->setText(sql);
+    Ui::Test13Window::sqlText->setText(sql);
 
     connect(actionOpen, SIGNAL(triggered()), this, SLOT(load()));
     connect(actionQuit, SIGNAL(triggered()), this, SLOT(close()));
@@ -56,7 +58,6 @@ Test13Window::Test13Window(const QString &sql)
     parseAct = new QAction(tr("Parse"), this);
     parseAct->setShortcut(Qt::CTRL + Qt::Key_K);
     connect(parseAct, SIGNAL(triggered()), this, SLOT(parse(void)));
-
 }
 
 void Test13Window::load()
@@ -65,12 +66,39 @@ void Test13Window::load()
     if (!fn.isEmpty())
     {
         QString data = Utils::toReadFile(fn);
-        sqlText->setText(data);
+        Ui::Test13Window::sqlText->setText(data);
     }
 }
 
 void Test13Window::parse()
 {
+    QString lastText = Ui::Test13Window::sqlText->text();
+
+    if (lastText.isEmpty())
+        return;
+
+    try
+    {
+        std::unique_ptr <SQLParser::Statement> stat = StatementFactTwoParmSing::Instance().create("OracleDML", lastText, "");
+        TLOG(0, toDecorator, __HERE__)
+        << "Parsing ok:" << std::endl
+        << stat->root()->toStringRecursive().toStdString() << std::endl;
+
+        Ui::Test13Window::queryView->initEmpty();
+        //m_widget->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+        //setFocusProxy(m_widget); // TODO ?? What is this??
+        //setWidget(m_widget); // TODO ?? What is this??
+        toASTWalk(stat.get(), Ui::Test13Window::queryView->graph());
+
+    }
+    catch ( SQLParser::ParseException const &e)
+    {
+
+    }
+    catch (...)
+    {
+
+    }
 }
 
 void Test13Window::closeEvent(QCloseEvent *event)

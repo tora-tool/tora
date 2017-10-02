@@ -36,6 +36,10 @@
 #include "tests/test13window.h"
 #include "core/utils.h"
 #include "core/toconfiguration.h"
+#include "core/toglobalconfiguration.h"
+#include "core/toconfiguration.h"
+
+#include "dotgraph.h"
 
 #include <QApplication>
 
@@ -43,6 +47,8 @@ int main(int argc, char **argv)
 {
   using namespace Utils;
     toConfiguration::setQSettingsEnv();
+
+    DotGraph::setLayoutCommandPath(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::GraphvizHomeDirectory).toString());
 
     QApplication app(argc, argv);
     QStringList args = app.arguments();
@@ -54,7 +60,7 @@ int main(int argc, char **argv)
     }
     else
     {
-        QFile complexSql(":/condition02.sql");
+        QFile complexSql(":/test13.sql");
         bool r = complexSql.open(QIODevice::ReadOnly | QIODevice::Text);
         QByteArray bytes = complexSql.readAll();
         sql = QString(bytes);

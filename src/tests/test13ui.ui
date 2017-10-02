@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1225</width>
-    <height>839</height>
+    <width>1001</width>
+    <height>819</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="minimumSize">
     <size>
      <width>0</width>
-     <height>798</height>
+     <height>600</height>
     </size>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout">
@@ -39,7 +39,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -47,7 +47,7 @@
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <widget class="QGraphicsView" name="graphicsView"/>
+         <widget class="DotGraphView" name="antlrView"/>
         </item>
        </layout>
       </widget>
@@ -57,7 +57,7 @@
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
-         <widget class="QGraphicsView" name="graphicsView_2"/>
+         <widget class="DotGraphView" name="queryView"/>
         </item>
        </layout>
       </widget>
@@ -87,7 +87,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1225</width>
+     <width>1001</width>
      <height>21</height>
     </rect>
    </property>
@@ -123,6 +123,11 @@
    <extends>QFrame</extends>
    <header>editor/tosqltext.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>DotGraphView</class>
+   <extends>QGraphicsView</extends>
+   <header>dotgraphview.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

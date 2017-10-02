@@ -3,5 +3,6 @@
 <qresource>
   <file>complex05.sql</file>
   <file>condition02.sql</file>
+  <file>test13.sql</file>
 </qresource>
 </RCC>

@@ -185,16 +185,28 @@ void toASTWalk(SQLParser::Statement *source, DotGraph *target)
 								SQLParser::Statement::token_const_iterator ch0(subnode->child(0));
 								while (ch0->depth() > subnode->depth())
 								{
+									auto t1 = ch0->getTokenATypeName();
+									auto ti = ch0->getTokenType();
+									auto ts = ch0->getTokenTypeString();
+									auto td = ch0->depth();
+									auto s1 = ch0->toLispStringRecursive();
+
+									//if (ch0 == subnode->child(1))
+									//	ch1 = ch0;
+									TLOG(8, toNoDecorator, __HERE__) << "CH0:(" << ch0.depth() << '/' << subnode->depth() << ')' << ch0->toString() << ' ' << subnode->toString() << std::endl;
+
 									if (ch0->getTokenType() == SQLParser::Token::S_IDENTIFIER)
 									{
 										firstTable = &(*ch0);
-										break;
+										//break;
 									}
 									ch0++;
 								}
 								SQLParser::Statement::token_const_iterator ch1(subnode->child(1));
-								while (ch1->depth() > subnode->depth())
+								while (ch1 != source->end())
 								{
+									TLOG(8, toNoDecorator, __HERE__) << "CH1:(" << ch1.depth() << '/' << subnode->depth() << ')' << ch1->toString() << ' ' << subnode->toString() << std::endl;
+
 									if (ch1->getTokenType() == SQLParser::Token::S_IDENTIFIER)
 									{
 										secondTable = &(*ch1);

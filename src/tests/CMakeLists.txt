@@ -467,6 +467,7 @@ ADD_EXECUTABLE("test13"
   tests/test13.cpp
   tests/test13window.cpp
   widgets/tosearch.cpp
+  docklets/toastwalk.cpp
   ${TEST13_MOC_SOURCES}
   ${TEST13_UI_SOURCES}
   ${TEST13_RC_SOURCES}
