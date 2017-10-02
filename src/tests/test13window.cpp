@@ -80,7 +80,7 @@ void Test13Window::parse()
     try
     {
         std::unique_ptr <SQLParser::Statement> stat = StatementFactTwoParmSing::Instance().create("OracleDML", lastText, "");
-        TLOG(0, toDecorator, __HERE__)
+        TLOG(8, toDecorator, __HERE__)
         << "Parsing ok:" << std::endl
         << stat->root()->toStringRecursive().toStdString() << std::endl;
 

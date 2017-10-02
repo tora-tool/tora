@@ -245,6 +245,15 @@ namespace SQLParser
         return token_const_iterator(_mEnd);
     };
 
+    Statement::token_const_iterator Statement::subtree_end(Token const*root) const
+    {
+        Token const*t = root;
+        while (!t->isLeaf())
+        {
+            t = t->child( t->childCount() - 1 );
+        }
+        return token_const_iterator(t);
+    };
 
     void Statement::token_const_iterator_to_root::increment()
     {

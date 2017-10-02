@@ -35,6 +35,7 @@ void toASTWalk(SQLParser::Statement *source, DotGraph *target)
     SQLParser::Statement::token_const_iterator node;
     for (node = source->begin(); node != source->end(); ++node)
     {
+        QString nn = node->toLispStringRecursive();
         switch (node->getTokenType())
         {
             case SQLParser::Token::S_SUBQUERY_FACTORED:
@@ -150,8 +151,10 @@ void toASTWalk(SQLParser::Statement *source, DotGraph *target)
             case SQLParser::Token::L_JOINING_CLAUSE:
                 {
                     SQLParser::Statement::token_const_iterator subnode(node);
+                    SQLParser::Statement::token_const_iterator node_end(source->subtree_end(&(*node)));
                     subnode++;
-
+                    if (subnode == node_end)
+                        break;
                     SQLParser::Token const* firstTable = NULL;
                     SQLParser::Token const* secondTable = NULL;
 
@@ -159,14 +162,14 @@ void toASTWalk(SQLParser::Statement *source, DotGraph *target)
                     bool isJoinUSING = false;
 
                     TLOG(8, toNoDecorator, __HERE__) << "JC:(" << node.depth() << ')' << std::endl
-                                                     << node->toStringRecursive().toStdString() << std::endl;
-					TLOG(8, toNoDecorator, __HERE__) << "JC:(" << node.depth() << ')' << std::endl
-						<< node->toLispStringRecursive().toStdString() << std::endl;
-					std::string ns = node->toLispStringRecursive().toStdString();
-                    while (subnode.depth() > node.depth())
+                            << node->toStringRecursive().toStdString() << std::endl;
+                    TLOG(8, toNoDecorator, __HERE__) << "JC:(" << node.depth() << ')' << std::endl
+                            << node->toLispStringRecursive().toStdString() << std::endl;
+                    std::string ns = node->toLispStringRecursive().toStdString();
+                    do
                     {
                         TLOG(8,toNoDecorator,__HERE__) << "JC:(" << subnode.depth() << ')' << subnode->toString() << std::endl;
-						QString sn = subnode->toString();
+                        QString sn = subnode->toLispStringRecursive();
                         switch (subnode->getTokenType())
                         {
                             case SQLParser::Token::L_RESERVED:
@@ -177,117 +180,113 @@ void toASTWalk(SQLParser::Statement *source, DotGraph *target)
                                 break;
                             case SQLParser::Token::S_OPERATOR_BINARY:
                                 if (subnode->childCount() != 2) 
-									// assuming condition "T1.C1" "=" "T2.C2";
-									// ((= [OPERATOR_BINARY]
-									// ((ANY_ELEMENT[IDENTIFIER]((task[UNASSIGNED]))((id[UNASSIGNED]))))
-									//	((ANY_ELEMENT[IDENTIFIER]((filter[UNASSIGNED]))((task_id[UNASSIGNED])))))))))))
+                                    // assuming condition "T1.C1" "=" "T2.C2";
+                                    // ((= [OPERATOR_BINARY]
+                                    // ((ANY_ELEMENT[IDENTIFIER]((task[UNASSIGNED]))((id[UNASSIGNED]))))
+                                    //	((ANY_ELEMENT[IDENTIFIER]((filter[UNASSIGNED]))((task_id[UNASSIGNED])))))))))))
                                     break;
-								SQLParser::Statement::token_const_iterator ch0(subnode->child(0));
-								while (ch0->depth() > subnode->depth())
-								{
-									auto t1 = ch0->getTokenATypeName();
-									auto ti = ch0->getTokenType();
-									auto ts = ch0->getTokenTypeString();
-									auto td = ch0->depth();
-									auto s1 = ch0->toLispStringRecursive();
+                                SQLParser::Statement::token_const_iterator ch0(subnode->child(0));
+                                SQLParser::Statement::token_const_iterator ch0_end(source->subtree_end(subnode->child(0)));
+                                if (ch0 != ch0_end)
+                                    do {
+                                        TLOG(8, toNoDecorator, __HERE__) << "CH0:(" << ch0.depth() << '/' << subnode->depth() << ')' << ch0->toString() << ' ' << subnode->toString() << std::endl;
 
-									//if (ch0 == subnode->child(1))
-									//	ch1 = ch0;
-									TLOG(8, toNoDecorator, __HERE__) << "CH0:(" << ch0.depth() << '/' << subnode->depth() << ')' << ch0->toString() << ' ' << subnode->toString() << std::endl;
+                                        if (ch0->getTokenType() == SQLParser::Token::S_IDENTIFIER)
+                                        {
+                                            firstTable = &(*ch0);
+                                            break;
+                                        }
+                                        ch0++;
+                                    } while (ch0 != source->subtree_end(subnode->child(0)));
 
-									if (ch0->getTokenType() == SQLParser::Token::S_IDENTIFIER)
-									{
-										firstTable = &(*ch0);
-										//break;
-									}
-									ch0++;
-								}
-								SQLParser::Statement::token_const_iterator ch1(subnode->child(1));
-								while (ch1 != source->end())
-								{
-									TLOG(8, toNoDecorator, __HERE__) << "CH1:(" << ch1.depth() << '/' << subnode->depth() << ')' << ch1->toString() << ' ' << subnode->toString() << std::endl;
+                                SQLParser::Statement::token_const_iterator ch1(subnode->child(1));
+                                SQLParser::Statement::token_const_iterator ch1_end(source->subtree_end(subnode->child(1)));
+                                if (ch1 != ch1_end)
+                                    do {
+                                        TLOG(8, toNoDecorator, __HERE__) << "CH1:(" << ch1.depth() << '/' << subnode->depth() << ')' << ch1->toString() << ' ' << subnode->toString() << std::endl;
 
-									if (ch1->getTokenType() == SQLParser::Token::S_IDENTIFIER)
-									{
-										secondTable = &(*ch1);
-										break;
-									}
-									ch1++;
-								}
+                                        if (ch1->getTokenType() == SQLParser::Token::S_IDENTIFIER)
+                                        {
+                                            secondTable = &(*ch1);
+                                            break;
+                                        }
+                                        ch1++;
+                                    } while (ch1 != source->subtree_end(subnode->child(1)));
 
-                                //TLOG(8, toNoDecorator, __HERE__) << "!?" << firstTable->toStringRecursive(false) << "->" << secondTable->toStringRecursive(false) << std::endl;
                                 break;
                         }
                         subnode++;
-                    } // while
+                    } while (subnode != node_end);
 
-                    if (isJoinON &&
-                            firstTable && firstTable->childCount() == 2 &&
-                            secondTable && secondTable->childCount() == 2
-                       )
-                    {
-                        SQLParser::Token const *t1 = source->translateAlias(firstTable->child(0)->toStringRecursive(false).toUpper(), &*node);
-                        if ( t1)
-                            firstTable = t1;
-                        else
-                            firstTable = source->getTableRef(firstTable->child(0)->toStringRecursive(false).toUpper(), &*node);
+                    if (isJoinON == false ||
+                        firstTable == NULL ||  firstTable->childCount() != 2 ||
+                        secondTable == NULL || secondTable->childCount() != 2 )
+                        break;
 
-                        SQLParser::Token const *t2 = source->translateAlias(secondTable->child(0)->toStringRecursive(false).toUpper(), &*node);
-                        if ( t2)
-                            secondTable = t2;
-                        else
-                            secondTable = source->getTableRef(secondTable->child(0)->toStringRecursive(false).toUpper(), &*node);
+                    SQLParser::Token const *t1 = source->translateAlias(firstTable->child(0)->toStringRecursive(false).toUpper(), &*node);
+                    if ( t1)
+                        firstTable = t1;
+                    else
+                        firstTable = source->getTableRef(firstTable->child(0)->toStringRecursive(false).toUpper(), &*node);
 
-                        QString e1, e2;
+                    SQLParser::Token const *t2 = source->translateAlias(secondTable->child(0)->toStringRecursive(false).toUpper(), &*node);
+                    if ( t2)
+                        secondTable = t2;
+                    else
+                        secondTable = source->getTableRef(secondTable->child(0)->toStringRecursive(false).toUpper(), &*node);
 
-                        if (firstTable && (
-                                    firstTable->getTokenType() == SQLParser::Token::S_SUBQUERY_NESTED ||
-                                    firstTable->getTokenType() == SQLParser::Token::S_SUBQUERY_FACTORED))
+                    QString e1, e2;
+
+                    if (firstTable && (
+                                       firstTable->getTokenType() == SQLParser::Token::S_SUBQUERY_NESTED ||
+                                       firstTable->getTokenType() == SQLParser::Token::S_SUBQUERY_FACTORED))
                         {
                             if (!static_cast<SQLParser::TokenSubquery const*>(firstTable)->nodeID().isEmpty())
                                 e1 = static_cast<SQLParser::TokenSubquery const*>(firstTable)->nodeID();
                         }
 
-                        if (firstTable && firstTable->getTokenType() == SQLParser::Token::S_TABLE_REF)
+                    if (firstTable && firstTable->getTokenType() == SQLParser::Token::S_TABLE_REF)
                         {
                             e1 = static_cast<SQLParser::TokenTable const*>(firstTable)->nodeID();
                         }
 
-                        if (secondTable && (
-                                    secondTable->getTokenType() == SQLParser::Token::S_SUBQUERY_NESTED ||
-                                    secondTable->getTokenType() == SQLParser::Token::S_SUBQUERY_FACTORED))
+                    if (secondTable && (
+                                        secondTable->getTokenType() == SQLParser::Token::S_SUBQUERY_NESTED ||
+                                        secondTable->getTokenType() == SQLParser::Token::S_SUBQUERY_FACTORED))
                         {
                             if (!static_cast<SQLParser::TokenSubquery const*>(secondTable)->nodeID().isEmpty())
                                 e2 = static_cast<SQLParser::TokenSubquery const*>(secondTable)->nodeID();
                         }
 
-                        if (secondTable && secondTable->getTokenType() == SQLParser::Token::S_TABLE_REF)
+                    if (secondTable && secondTable->getTokenType() == SQLParser::Token::S_TABLE_REF)
                         {
                             e2 = static_cast<SQLParser::TokenTable const*>(secondTable)->nodeID();
                         }
 
-                        QMap<QString, QString> ea; // edge attributes
-                        if (!e1.isEmpty() && !e2.isEmpty()) // TODO this is wrong
+                    QMap<QString, QString> ea; // edge attributes
+                    if (!e1.isEmpty() && !e2.isEmpty()) // TODO this is wrong
                         {
                             target->addNewEdge(
-                                e1,
-                                e2,
-                                ea);
+                                               e1,
+                                               e2,
+                                               ea);
                             TLOG(8, toNoDecorator, __HERE__) << "!!" << e1.toStdString() << "->" << e2.toStdString() << std::endl;
                         }
-                        else
+                    else
                         {
                             ////TLOG(8,toNoDecorator,__HERE__) << "??" << firstTable->toStringRecursive(false) << "->" << secondTable->toStringRecursive(false) << std::endl;
                         }
-                    }
-                    break;
                 }
+                break;
             case SQLParser::Token::S_WHERE:
                 {
                     SQLParser::Statement::token_const_iterator subnode(node);
+                    SQLParser::Statement::token_const_iterator node_end(source->subtree_end(&(*node)));
                     subnode++;
+                    if (subnode == node_end)
+                        break;
 
-                    while (subnode.depth() > node.depth())
+                    do
                     {
                         switch (subnode->getTokenType())
                         {
@@ -299,50 +298,79 @@ void toASTWalk(SQLParser::Statement *source, DotGraph *target)
                                     SQLParser::Token const* firstTable = NULL;
                                     SQLParser::Token const* secondTable = NULL;
 
-                                    if (subnode->childCount() != 3) // assuming condition "T1.C1" "=" "T2.C2";
+                                    if (subnode->childCount() != 2) // assuming condition "T1.C1" "=" "T2.C2";
                                         break;
-                                    if (subnode->child(0)->getTokenType() == SQLParser::Token::S_IDENTIFIER &&
-                                            subnode->child(2)->getTokenType() == SQLParser::Token::S_IDENTIFIER)
-                                    {
-                                        firstTable = subnode->child(0);
-                                        secondTable = subnode->child(2);
-                                        TLOG(8, toNoDecorator, __HERE__) << "!?" << firstTable->toStringRecursive(false) << "->" << secondTable->toStringRecursive(false) << std::endl;
-                                    }
 
-                                    SQLParser::Token const *t1 = firstTable ? source->translateAlias(firstTable->child(0)->toStringRecursive(false).toUpper(), &*node) : NULL;
-                                    SQLParser::Token const *t2 = secondTable ? source->translateAlias(secondTable->child(0)->toStringRecursive(false).toUpper(), &*node) : NULL;
+                                    SQLParser::Statement::token_const_iterator ch0(subnode->child(0));
+                                    SQLParser::Statement::token_const_iterator ch0_end(source->subtree_end(subnode->child(0)));
+                                    if (ch0 != ch0_end)
+                                        do {
+                                            TLOG(8, toNoDecorator, __HERE__) << "CH0:(" << ch0.depth() << '/' << subnode->depth() << ')' << ch0->toString() << ' ' << subnode->toString() << std::endl;
+
+                                            if (ch0->getTokenType() == SQLParser::Token::S_IDENTIFIER)
+                                            {
+                                                firstTable = &(*ch0);
+                                                break;
+                                            }
+                                            ch0++;
+                                        } while (ch0 != source->subtree_end(subnode->child(0)));
+
+                                    SQLParser::Statement::token_const_iterator ch1(subnode->child(1));
+                                    SQLParser::Statement::token_const_iterator ch1_end(source->subtree_end(subnode->child(1)));
+                                    if (ch1 != ch1_end)
+                                        do {
+                                            TLOG(8, toNoDecorator, __HERE__) << "CH1:(" << ch1.depth() << '/' << subnode->depth() << ')' << ch1->toString() << ' ' << subnode->toString() << std::endl;
+
+                                            if (ch1->getTokenType() == SQLParser::Token::S_IDENTIFIER)
+                                            {
+                                                secondTable = &(*ch1);
+                                                break;
+                                            }
+                                            ch1++;
+                                        } while (ch1 != source->subtree_end(subnode->child(1)));
+
+                                    if (firstTable == NULL ||  firstTable->childCount() != 2 ||
+                                        secondTable == NULL || secondTable->childCount() != 2 )
+                                        break;
+
+                                    SQLParser::Token const *t1 = source->translateAlias(firstTable->child(0)->toStringRecursive(false).toUpper(), &*node);
+                                    if ( t1)
+                                        firstTable = t1;
+                                    else
+                                        firstTable = source->getTableRef(firstTable->child(0)->toStringRecursive(false).toUpper(), &*node);
+
+                                    SQLParser::Token const *t2 = source->translateAlias(secondTable->child(0)->toStringRecursive(false).toUpper(), &*node);
+                                    if ( t2)
+                                        secondTable = t2;
+                                    else
+                                        secondTable = source->getTableRef(secondTable->child(0)->toStringRecursive(false).toUpper(), &*node);
+                                    
                                     QString e1, e2;
 
-                                    if ( t1 && (
-                                                t1->getTokenType() == SQLParser::Token::S_SUBQUERY_NESTED ||
-                                                t1->getTokenType() == SQLParser::Token::S_SUBQUERY_FACTORED))
+                                    if ( firstTable && (
+                                                firstTable->getTokenType() == SQLParser::Token::S_SUBQUERY_NESTED ||
+                                                firstTable->getTokenType() == SQLParser::Token::S_SUBQUERY_FACTORED))
                                     {
-                                        if (!static_cast<SQLParser::TokenSubquery const*>(t1)->nodeID().isEmpty())
-                                            e1 = static_cast<SQLParser::TokenSubquery const*>(t1)->nodeID();
+                                        if (!static_cast<SQLParser::TokenSubquery const*>(firstTable)->nodeID().isEmpty())
+                                            e1 = static_cast<SQLParser::TokenSubquery const*>(firstTable)->nodeID();
                                     }
 
-                                    if (t1 && t1->getTokenType() == SQLParser::Token::S_TABLE_REF)
+                                    if (firstTable && firstTable->getTokenType() == SQLParser::Token::S_TABLE_REF)
                                     {
-                                        // e1 = QString("ROOT") + GLUE + t1->child(0)->toString();
-                                        // if(t1->childCount() >= 3)
-                                        //  e1 += GLUE + t1->child(2)->toString();
-                                        e1 = static_cast<SQLParser::TokenTable const*>(t1)->nodeID();
+                                        e1 = static_cast<SQLParser::TokenTable const*>(firstTable)->nodeID();
+                                    }
+                                    
+                                    if (secondTable && (
+                                                secondTable->getTokenType() == SQLParser::Token::S_SUBQUERY_NESTED ||
+                                                secondTable->getTokenType() == SQLParser::Token::S_SUBQUERY_FACTORED))
+                                    {
+                                        if (!static_cast<SQLParser::TokenSubquery const*>(secondTable)->nodeID().isEmpty())
+                                            e2 = static_cast<SQLParser::TokenSubquery const*>(secondTable)->nodeID();
                                     }
 
-                                    if (t2 && (
-                                                t2->getTokenType() == SQLParser::Token::S_SUBQUERY_NESTED ||
-                                                t2->getTokenType() == SQLParser::Token::S_SUBQUERY_FACTORED))
+                                    if (secondTable && secondTable->getTokenType() == SQLParser::Token::S_TABLE_REF)
                                     {
-                                        if (!static_cast<SQLParser::TokenSubquery const*>(t2)->nodeID().isEmpty())
-                                            e2 = static_cast<SQLParser::TokenSubquery const*>(t2)->nodeID();
-                                    }
-
-                                    if (t2 && t2->getTokenType() == SQLParser::Token::S_TABLE_REF)
-                                    {
-                                        // e2 = QString("ROOT") + GLUE + t2->child(0)->toString();
-                                        // if(t2->childCount() >= 3)
-                                        //  e2 += GLUE + t2->child(2)->toString();
-                                        e2 = static_cast<SQLParser::TokenTable const*>(t2)->nodeID();
+                                        e2 = static_cast<SQLParser::TokenTable const*>(secondTable)->nodeID();
                                     }
 
                                     QMap<QString, QString> ea; // edge attreibutes
@@ -363,7 +391,7 @@ void toASTWalk(SQLParser::Statement *source, DotGraph *target)
                                 } // case S_OPERATOR_BINARY
                         } // switch getTokenType
                         subnode++;
-                    } // while(subnode.depth() > node.depth())
+                    } while (subnode != node_end);
                 } // case S_WHERE
         } // switch getTokenType
     } // for each node

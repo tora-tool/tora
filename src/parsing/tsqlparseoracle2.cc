@@ -84,7 +84,22 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 		}
 		break;
 	case Tokens::EQUALS_OP:
+	case Tokens::NOT_EQUAL_OP:
+	case Tokens::GREATER_THAN_OP:
+	case Tokens::GREATER_THAN_OR_EQUALS_OP:
+	case Tokens::LESS_THAN_OP:
+	case Tokens::LESS_THAN_OR_EQUALS_OP:
+	//case Tokens::SQL92_RESERVED_LIKE:
+	case Tokens::LIKEC_VK:
+	case Tokens::LIKE2_VK:
+	case Tokens::LIKE4_VK:
+	case Tokens::NOT_LIKE:
+	case Tokens::NOT_IN:
 	    tokenTypeRef = S_OPERATOR_BINARY;
+	    break;
+	case Tokens::T_WHERE:
+	case Tokens::SQL92_RESERVED_WHERE:
+	    tokenTypeRef = S_WHERE;
 	    break;
 	case Tokens::SQL92_RESERVED_ALL:
 	case Tokens::SQL92_RESERVED_ALTER:
@@ -151,7 +166,6 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 	case Tokens::SQL92_RESERVED_VALUES:
 	case Tokens::SQL92_RESERVED_VIEW:
 	case Tokens::SQL92_RESERVED_WHEN:
-	case Tokens::SQL92_RESERVED_WHERE:
 	case Tokens::SQL92_RESERVED_WITH:
 	case Tokens::T_FROM:
 	case Tokens::T_RESERVED:

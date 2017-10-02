@@ -736,9 +736,9 @@ namespace SQLParser
                     token_const_iterator() : m_token(0), m_stack(), m_lastIndex(0)
                     {};
 
-                    explicit token_const_iterator(Token* t) : m_token(t), m_stack(), m_lastIndex(0)
+                    explicit token_const_iterator(Token const* t) : m_token(t), m_stack(), m_lastIndex(0)
                     {
-                        Token *p = t->parent();
+                        Token const*p = t->parent();
                         m_stack.push_front(t);
                         while (p)
                         {
@@ -781,6 +781,8 @@ namespace SQLParser
             token_const_iterator begin() const;
 
             token_const_iterator end() const;
+
+            token_const_iterator subtree_end(Token const*) const;
 
             class token_const_iterator_to_root : public boost::iterator_facade
                 <
