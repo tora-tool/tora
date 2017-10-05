@@ -63,7 +63,7 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 	case Tokens::T_SELECT:
 		switch(parent->getTokenType())
 		{
-#if 0
+#if 1
 		case S_WITH:
 			tokenTypeRef = S_SUBQUERY_FACTORED;
 			break;
@@ -83,6 +83,9 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 			tokenTypeRef = X_FAILURE;
 		}
 		break;
+        case Tokens::NESTED_SUBQUERY:
+            tokenTypeRef = S_SUBQUERY_NESTED;
+            break;
 	case Tokens::EQUALS_OP:
 	case Tokens::NOT_EQUAL_OP:
 	case Tokens::GREATER_THAN_OP:
@@ -668,7 +671,7 @@ void OracleDMLStatement::disambiguate()
         */
         case Token::L_SUBQUERY_ALIAS:
         {
-            //loop over rigth brothers until you find S_SUBQUERY_FACTORED
+            //loop over right brothers until you find S_SUBQUERY_FACTORED
             QList<QPointer<Token> > const& brothers = node.parent()->getChildren();
             for( int j = node.row() + 1 ; j < node.parent()->childCount() ; ++j)
             {
