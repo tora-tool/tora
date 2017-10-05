@@ -65,7 +65,8 @@ CanvasNode::CanvasNode(DotGraphView* v,
   QString tipStr;
   QString id = s->id();
   QString label = s->label();
-  tipStr = QString("id='%1'\nlabel='%2'").arg(id).arg(label);
+  QString comment = s->attributes().value("comment");
+  tipStr = QString("id='%1'\nlabel='%2'\nc='%3'").arg(id).arg(label).arg(comment);
 //   kDebug() << "CanvasEllipseNode setToolTip " << tipStr;
   setToolTip(tipStr);
 }
