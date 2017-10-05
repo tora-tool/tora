@@ -95,7 +95,7 @@ void toASTWalk(SQLParser::Statement *source, DotGraph *target)
                         ta["name"] = tt->toStringRecursive(false);
                         ta["label"] = tt->toStringRecursive(false);
                         ta["fontsize"] = "10";
-                        ta["comment"] = tt->toStringRecursive(false);
+                        ta["comment"] = tt->toStringRecursive(false) + '/' + tt->getValidPosition().toString();
                         ta["id"] = clusterName + GLUE + tableName;
                         if (tt->nodeAlias() != NULL)
                             ta["tooltip"] = tt->nodeAlias()->toString();
@@ -138,7 +138,7 @@ void toASTWalk(SQLParser::Statement *source, DotGraph *target)
                         ta["name"] = tt->toStringRecursive(false);
                         ta["label"] = tt->toStringRecursive(false);
                         ta["fontsize"] = "10";
-                        ta["comment"] = tt->toStringRecursive(false);
+                        ta["comment"] = tt->toStringRecursive(false) + '/' + tt->getValidPosition().toString();
                         ta["id"] = QString("ROOT") + GLUE + tableName;
                         if (tt->nodeAlias() != NULL)
                             ta["tooltip"] = tt->nodeAlias()->toString();
