@@ -84,6 +84,8 @@ void Test13Window::parse()
         << "Parsing ok:" << std::endl
         << stat->root()->toStringRecursive().toStdString() << std::endl;
 
+        TLOG(8, toDecorator, __HERE__) << stat->root()->toLispStringRecursive() << std::endl;
+
         Ui::Test13Window::queryView->initEmpty();
         //m_widget->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
         //setFocusProxy(m_widget); // TODO ?? What is this??

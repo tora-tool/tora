@@ -723,19 +723,19 @@ void OracleDMLStatement::scanTree(ObjectCache* o, QString const& cs)
 {
     for(SQLParser::Statement::token_const_iterator i = begin(); i != end(); ++i)
     {
-        Token const& token = *i;
+        QString contextTokenTypeStr;
         if( i->getTokenType() == Token::S_IDENTIFIER )
         {
-            QString stopToken;
+            Token const* contextToken;
             bool insideColumnList = false;
 
             // Do not resolve identifiers under S_COLUMN_LIST
             for(token_iterator_to_root k(i->parent()); k->parent(); ++k)
             {
-                stopToken = k->toString();
+                contextTokenTypeStr = k->getTokenTypeString();
                 if( k->getTokenType() == Token::S_COLUMN_LIST)
                 {
-                    TLOG(0, toNoDecorator, __HERE__) << " Dont Resolve identifier: " << i->toStringRecursive(false).toStdString() << "\t under: " <<  stopToken.toStdString() << std::endl;
+                    TLOG(8, toNoDecorator, __HERE__) << " Dont Resolve identifier: " << i->toStringRecursive(false).toStdString() << "\t under: " <<  contextTokenTypeStr << std::endl;
                     insideColumnList = true;
                     break;
                 }
@@ -753,7 +753,7 @@ void OracleDMLStatement::scanTree(ObjectCache* o, QString const& cs)
                 continue;
 
             TokenIdentifier const& id = static_cast<TokenIdentifier const&>(*i);
-            TLOG(8, toNoDecorator, __HERE__) << "Resolve identifier: " << id.toStringRecursive(true).toStdString() << "\t under: " <<  stopToken.toStdString() << std::endl;
+            TLOG(8, toNoDecorator, __HERE__) << "Resolve identifier: " << id.toStringRecursive(true).toStdString() << "\t under: " <<  contextTokenTypeStr << std::endl;
 
             QString schemaName, tableName, columnName;
 
