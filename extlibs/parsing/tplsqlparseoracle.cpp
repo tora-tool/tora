@@ -92,7 +92,7 @@ private:
     /* Recursive walk through ANTLR3_BASE_TREE */
     void treeWalk(pOraclePLSQLParser psr, QPointer<Token> root,  ANTLR3_BASE_TREE *tree, ANTLR3_UINT32 &lastindex);
     /* Walk through Token tree and look for table names, table aliases, ... */
-    virtual void scanTree(ObjectCache* o, QString const& cs);
+    virtual void scanTree();
     void findDeclarations();
     pANTLR3_VECTOR lexerTokenVector;
 };
@@ -295,7 +295,7 @@ void OraclePLSQLStatement::treeWalk(pOraclePLSQLParser psr, QPointer<Token> root
 };
 
 /* virtual */
-void OraclePLSQLStatement::scanTree(ObjectCache *, QString const& cs) {};
+void OraclePLSQLStatement::scanTree() {};
 
 void OraclePLSQLStatement::findDeclarations()
 {

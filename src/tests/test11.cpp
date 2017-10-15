@@ -318,13 +318,12 @@ int main(int argc, char **argv)
         cout << deserialized;
         cout << "================================================================================" << endl;
 
-        SQLParser::ObjectCache *o = new SQLParser::ObjectCache();
-        parser->scanTree(o, QString("SERVICEDESK"));
+        parser->scanTree();
 
         DotGraph::setLayoutCommandPath(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::GraphvizHomeDirectory).toString());
         toASTWalkFilter(*parser, root);
         toASTWalkFilter(*parser, subquery_factored);
-        //toASTWalkFilter(*parser, table_ref);
+        toASTWalkFilter(*parser, table_ref);
         toASTWalkFilter(*parser, binary_operator);
 
         QString str = exporter.writeDot(&target, QString(argv[1]) + ".dot");

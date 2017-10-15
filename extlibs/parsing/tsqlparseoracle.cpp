@@ -170,7 +170,7 @@ private:
 
 public:
     /* Walk through Token tree and look for table names, table aliases, ... and try to resolve them using cached database catalogue*/
-    virtual void scanTree(ObjectCache *, QString const&);
+    virtual void scanTree();
 
 private:
     void addTranslation(QString const& alias, Token const *tableOrSubquery, Token const *context);
@@ -567,7 +567,7 @@ void OracleSQLStatement::disambiguate()
 };
 
 /* walk through statement tree and detect identifiers, tables, table aliases */
-void OracleSQLStatement::scanTree(ObjectCache* o, QString const& cs)
+void OracleSQLStatement::scanTree()
 {
     for(SQLParser::Statement::token_const_iterator i = begin(); i != end(); ++i)
     {

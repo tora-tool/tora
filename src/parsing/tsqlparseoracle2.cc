@@ -306,7 +306,7 @@ private:
 
 public:
     /* Walk through Token tree and look for table names, table aliases, ... and try to resolve them using cached database catalog*/
-    void scanTree(ObjectCache *, QString const&) override;
+    void scanTree() override;
 
 private:
     void addTranslation(QString const& alias, Token const *tableOrSubquery, Token const *context);
@@ -582,7 +582,7 @@ void OracleDMLStatement::disambiguate()
         }
         case Token::S_IDENTIFIER:
         {
-            i--; // At this moment iterator's stack points onto node beeing replaced.
+            i--; // At this moment iterator's stack points onto node being replaced.
             Token *parent = node.parent();
             Token *me = const_cast<Token*>(&node);
             TokenIdentifier *newToken = new TokenIdentifier(node);
@@ -671,27 +671,20 @@ void OracleDMLStatement::disambiguate()
         */
         case Token::L_SUBQUERY_ALIAS:
         {
-            //loop over right brothers until you find S_SUBQUERY_FACTORED
-            QList<QPointer<Token> > const& brothers = node.parent()->getChildren();
-            for( int j = node.row() + 1 ; j < node.parent()->childCount() ; ++j)
+            //assume right brother is RESERVED/select
+            // (FACTORING/FACTORING[SUBQUERY_FACTORED]((s1/ID[SUBQUERY_ALIAS]))((select/SQL92_RESERVED_SELECT[RESERVED]((*/ASTERISK[UNASSIGNED]))((from/SQL92_RESERVED_FROM[RESERVED]((TABLE_REF_ELEMENT/TABLE_REF_ELEM...
+            Token *parent  = node.parent();
+            Token *brother = node.parent()->getChildren().at(node.row()+1);
+            std::cout << node.toString().toLatin1().constData() << "=>" << brother->toStringRecursive().toStdString() << std::endl;
+
+            if (TokenSubquery *p = dynamic_cast<TokenSubquery*>(parent))
             {
-                Token *brother = brothers.at(j);
-
-                if( brother->getTokenType() == Token::S_SUBQUERY_FACTORED)
-                {
-                    std::cout << node.toString().toLatin1().constData() << "=>" << brother->toStringRecursive().toStdString() << std::endl;
-
-                    //_mDeclarations.insertMulti(node.toString(), brother.data());
-
-                    static_cast<TokenSubquery*>(brother)->setNodeAlias(&node);
-                    addTranslation(node.toString(), brother, node.parent());
-
-                    std::cout << "Subquery alias found:" << node.toString().toStdString() << "->" << brother->toString().toStdString() << std::endl;
-                    break;
-                }
+                p->setNodeAlias(&node);
             }
-            //if( node.getTokenUsageType() == Token::Declaration )
-            //  _mAliasesSet.insert( node.toString().toUpper());
+
+            addTranslation(node.toString(), brother, parent->parent());
+
+            std::cout << "Subquery alias found:" << node.toString().toStdString() << "->" << brother->toString().toStdString() << std::endl;
             break;
         }
         /* A table reference was found. Traverse to ROOT, try to find a SUBQUERies ROOT
@@ -719,7 +712,7 @@ void OracleDMLStatement::disambiguate()
 };
 
 /* walk through statement tree and detect identifiers, tables, table aliases */
-void OracleDMLStatement::scanTree(ObjectCache* o, QString const& cs)
+void OracleDMLStatement::scanTree()
 {
     for(SQLParser::Statement::token_const_iterator i = begin(); i != end(); ++i)
     {

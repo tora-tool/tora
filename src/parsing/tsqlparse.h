@@ -678,7 +678,7 @@ namespace SQLParser
             /* Call this method after the instance is created.
                 It will use ObjectCache to disambiguate column names.
             */
-            virtual void scanTree(ObjectCache *, QString const&) = 0;
+            virtual void scanTree() = 0;
 
             virtual ~Statement() {};
 

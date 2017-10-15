@@ -20,7 +20,9 @@ std::function<bool(Statement &source, DotGraph &target, Token & n)> root = [&](S
     if (node.getTokenType() != Token::X_ROOT)
         return false;
 
-    SQLParser::TokenSubquery * snode = static_cast<SQLParser::TokenSubquery*>(&node);
+    SQLParser::TokenSubquery *snode = static_cast<SQLParser::TokenSubquery*>(&node);
+    snode->setNodeID("ROOT");
+#if 0
     QList<SQLParser::Token*> tables = snode->nodeTables().values();
     foreach(SQLParser::Token * table, tables)
     {
@@ -59,6 +61,7 @@ std::function<bool(Statement &source, DotGraph &target, Token & n)> root = [&](S
         target.addNewNode(ta);
         TLOG(8, toNoDecorator, __HERE__) << "new node:" << ta["id"] << " under X_ROOT" << std::endl;
     }
+#endif
     return true;
 };
 
@@ -98,13 +101,27 @@ std::function<bool(Statement &source, DotGraph &target, Token &n)> table_ref = [
         return false;
 
     Token const* context(nullptr);
+	QString clusterName;
     for(SQLParser::Statement::token_const_iterator_to_root k(&node); &*k; ++k)
     {
-        if (k->getTokenType() == SQLParser::Token::S_SUBQUERY_FACTORED
-                || k->getTokenType() == SQLParser::Token::S_SUBQUERY_NESTED
-                || k->getTokenType() == SQLParser::Token::X_ROOT)
+        if (k->getTokenType() == SQLParser::Token::S_SUBQUERY_FACTORED)
         {
             context = &(*k);
+            clusterName = static_cast<SQLParser::TokenSubquery const*>(context)->nodeID();
+            break;
+        }
+
+        if (k->getTokenType() == SQLParser::Token::S_SUBQUERY_NESTED)
+        {
+            context = &(*k);
+            clusterName = static_cast<SQLParser::TokenSubquery const*>(context)->nodeID();
+            break;
+        }
+
+        if (k->getTokenType() == SQLParser::Token::X_ROOT)
+        {
+            context = &(*k);
+			clusterName = "ROOT";
             break;
         }
     }
@@ -133,8 +150,6 @@ std::function<bool(Statement &source, DotGraph &target, Token &n)> table_ref = [
         tableName = tableName + QString("_1");
     }
 
-    QString clusterName = "ROOT"; //static_cast<SQLParser::TokenTable const*>(context)->nodeID();
-
     QMap<QString, QString> ta; // table attributes
     ta["name"]     = tt->toStringRecursive(false);
     ta["label"]    = tt->toStringRecursive(false);
@@ -144,7 +159,10 @@ std::function<bool(Statement &source, DotGraph &target, Token &n)> table_ref = [
     if (tt->nodeAlias() != nullptr)
         ta["tooltip"] = tt->nodeAlias()->toString();
     tt->setNodeID(ta["id"]);
-    target.addNewNodeToSubgraph(ta, clusterName);
+	if (context->getTokenType() == SQLParser::Token::X_ROOT)
+		target.addNewNode(ta);
+	else
+		target.addNewNodeToSubgraph(ta, clusterName);
     TLOG(8, toNoDecorator, __HERE__) << "new node:" << ta["id"] << " in subgraph: " << clusterName << std::endl;
 
     return true;
@@ -253,9 +271,11 @@ void toASTWalk(SQLParser::Statement *source, DotGraph *target)
     emptyAliasCnt = 0;
     tableNameEnumerator.clear();
 
+    source->scanTree();
+
     toASTWalkFilter(*source, *target, root);
     toASTWalkFilter(*source, *target, subquery_factored);
-    //toASTWalkFilter(*source, *target, table_ref);
+    toASTWalkFilter(*source, *target, table_ref);
     toASTWalkFilter(*source, *target, binary_operator);
 
     target->update();
