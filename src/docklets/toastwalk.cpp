@@ -151,18 +151,18 @@ std::function<bool(Statement &source, DotGraph &target, Token &n)> table_ref = [
     }
 
     QMap<QString, QString> ta; // table attributes
-    ta["name"]     = tt->toStringRecursive(false);
-    ta["label"]    = tt->toStringRecursive(false);
+    ta["name"]     = tt->tableName();
+    ta["label"]    = tt->tableName();
     ta["fontsize"] = "10";
-    ta["comment"]  = tt->toStringRecursive(false);
+    ta["comment"]  = tt->getValidPosition().toString();
     ta["id"]       = clusterName + GLUE + tableName;
     if (tt->nodeAlias() != nullptr)
         ta["tooltip"] = tt->nodeAlias()->toString();
     tt->setNodeID(ta["id"]);
-	if (context->getTokenType() == SQLParser::Token::X_ROOT)
-		target.addNewNode(ta);
-	else
-		target.addNewNodeToSubgraph(ta, clusterName);
+    if (context->getTokenType() == SQLParser::Token::X_ROOT)
+        target.addNewNode(ta);
+    else
+        target.addNewNodeToSubgraph(ta, clusterName);
     TLOG(8, toNoDecorator, __HERE__) << "new node:" << ta["id"] << " in subgraph: " << clusterName << std::endl;
 
     return true;
@@ -272,6 +272,9 @@ void toASTWalk(SQLParser::Statement *source, DotGraph *target)
     tableNameEnumerator.clear();
 
     source->scanTree();
+
+    // If true, allow edges between clusters. (See lhead and ltail)
+    target->attributes().insert("compound", "true");
 
     toASTWalkFilter(*source, *target, root);
     toASTWalkFilter(*source, *target, subquery_factored);
