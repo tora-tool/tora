@@ -522,7 +522,6 @@ namespace SQLParser
             };
 
             QString tableName () const;
-            QString columnName () const;
 
             inline Token const* nodeAlias() const
             {

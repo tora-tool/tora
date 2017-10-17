@@ -278,6 +278,29 @@ namespace SQLParser
     };
 };
 
+QString SQLParser::TokenTable::tableName() const
+{
+    Token const *rightest = this;
+    while (!rightest->isLeaf())
+    {
+        rightest = rightest->child( rightest->childCount() - 1 );
+    }
+    QStringList tokens;
+
+    SQLParser::Statement::token_const_iterator root(this);
+    SQLParser::Statement::token_const_iterator root_end(rightest);
+    if (root != root_end)
+        do {
+            root++;
+            QString txt = root->toString();
+            if (!txt.isEmpty())
+                tokens.append(txt);
+        } while (root != root_end);
+    if (tokens.empty())
+        return QString();
+    return tokens.last();
+}
+
 #ifdef DEBUG
 #include <iostream>
 #include <ostream>
