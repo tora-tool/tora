@@ -152,18 +152,32 @@ void GraphEdge::updateWithEdge(edge_t* edge)
 
 QTextStream& operator<<(QTextStream& s, const GraphEdge& e)
 {
+  QString additionalAttrs;
   QString srcLabel = QString("\"%1\"").arg(e.fromNode()->id());
-  if (dynamic_cast<const GraphSubgraph*>(e.fromNode()))
+  if (const GraphSubgraph *sg = dynamic_cast<const GraphSubgraph*>(e.fromNode()))
   {
-    srcLabel = QString("subgraph ") + srcLabel;
+      // No way to create arrow from subraph directly
+      // Draw arrow to it's first node, and use ltail to hide part of the edge
+      // ltail/lhead work only when compound=true is set on graph level
+      if (!sg->content().empty())
+      {
+          additionalAttrs += QString("ltail=\"%1\",").arg(e.fromNode()->id());
+          srcLabel = QString("\"%1\"").arg(sg->content().first()->id());
+      }
   }
   QString tgtLabel = QString("\"%1\"").arg(e.toNode()->id());
-  if (dynamic_cast<const GraphSubgraph*>(e.toNode()))
+  if (const GraphSubgraph *sg = dynamic_cast<const GraphSubgraph*>(e.toNode()))
   {
-    tgtLabel = QString("subgraph ") + tgtLabel;
+      // No way to create arrow to subraph directly
+      // Draw arrow to it's first node, and use lhead to hide part of the edge
+      if (!sg->content().empty())
+      {
+          additionalAttrs += QString("lhead=\"%1\",").arg(e.toNode()->id());
+          tgtLabel = QString("\"%1\"").arg(sg->content().first()->id());
+      }
   }
   s << srcLabel << " -> " << tgtLabel << "  ["
-    << dynamic_cast<const GraphElement&>(e) << "];" << endl;
+    << dynamic_cast<const GraphElement&>(e) << additionalAttrs << "];" << endl;
 
   return s;
 }
