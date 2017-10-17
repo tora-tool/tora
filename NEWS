@@ -1,5 +1,8 @@
+3.2.70:
+2017-10-17: Query graph fixes
+
 3.2.44:
-2018-08-29: toBrowser, show stats history
+2017-08-29: toBrowser, show stats history
 2017-08-09: toAbout fixes, repoert new version 
 2017-08-09: Context menu fixes - Open, Save, Paste
 
