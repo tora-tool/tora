@@ -37,6 +37,8 @@
 #include "ts_log/ts_log_utils.h"
 #include "widgets/tosearch.h"
 
+#include "main/topreferences.h"
+
 #include "icons/undo.xpm"
 #include "icons/redo.xpm"
 #include "icons/cut.xpm"
@@ -146,6 +148,12 @@ void toEditMenu::disableAll()
 void toEditMenu::commandCallback(QAction *action)
 {
     QWidget *focus = qApp->focusWidget();
+
+    if (action == prefsAct)
+    {
+        toPreferences::displayPreferences(this);
+        return;
+    }
 
     toEditWidget *edit = toEditWidget::findEdit(focus);
     if (!edit)

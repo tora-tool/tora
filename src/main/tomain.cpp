@@ -67,8 +67,6 @@
 #include "widgets/tohelp.h"
 #include "tomessage.h"
 #include "tonewconnection.h"
-#include "topreferences.h"
-
 
 toMain::toMain()
     : toMainWindow()
@@ -638,11 +636,6 @@ void toMain::commandCallback(QAction *action)
     }
     else if (action == aboutQtAct)
         QApplication::aboutQt();
-    else if (action == editMenu.prefsAct)
-    {
-        toPreferences::displayPreferences(this);
-        //handleToolsDisplay();
-    }
 #ifdef TORA3_SESSION
     else if (action == openSessionAct)
         loadSession();
