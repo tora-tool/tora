@@ -65,6 +65,7 @@ namespace ResultPlan
         PlanTextMVC(QWidget *parent) : _s(parent)
         {};
         virtual ~PlanTextMVC() {};
+        void observeDone() override;
     };
 }
 

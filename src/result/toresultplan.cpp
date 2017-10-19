@@ -49,6 +49,12 @@ static toSQL SQLDisplayCursor("toResultPlan:DisplayCursor",
                               "Get the contents of SQL plan from using DBMS_XPLAN.DISPLAY_CURSOR",
         "1000");
 
+void ResultPlan::PlanTextMVC::observeDone()
+{
+    view()->moveCursor(QTextCursor::Start);
+    view()->ensureCursorVisible();
+}
+
 toResultPlanNew::toResultPlanNew(QWidget *parent, const char *name)
     : QWidget(parent)
 {
