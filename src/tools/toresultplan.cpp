@@ -77,13 +77,14 @@ static toSQL SQLViewVSQLPlan("toResultPlan:ViewVSQLPlan",
                              "1000");
 
 static toSQL SQLViewPlan("toResultPlan:ViewPlan",
-                         "SELECT ID,NVL(Parent_ID,0),Operation, Options, Object_Name, Optimizer,cost,\n"
-                         "  io_cost,Bytes,Cardinality,partition_start,partition_stop,\n"
-                         "  temp_space,time,access_predicates,filter_predicates\n"
-                         "FROM %1                          \n"
-                         "WHERE Statement_ID = '%2'        \n"
-                         "START WITH id = 0                \n"
-                         "CONNECT BY PRIOR id = parent_id  \n",
+                         "SELECT ID,NVL(Parent_ID,0),Operation, Options, Object_Name \n"
+                         " ,Optimizer,cost \n"
+                         " ,io_cost,Bytes,Cardinality,partition_start,partition_stop \n"
+                         " ,temp_space,time,access_predicates,filter_predicates \n"
+                         "FROM (select * from %1 WHERE Statement_ID = '%2') \n"
+                         "START WITH id = 0 \n"
+                         "CONNECT BY PRIOR id = parent_id \n"
+                         "ORDER by id \n",
                          "Get the contents of a plan table. Observe the %1 and %2 which must be present. Must return same columns",
                          "1000");
 
@@ -468,7 +469,7 @@ toResultPlanAbstr::toResultPlanAbstr(QWidget *parent)
 
 void toResultPlanAbstr::queryCursorPlan(toQueryParams const& params)
 {
-	// Prepare the query
+    // Prepare the query
     toConnection &c = toConnection::currentConnection(this);
     toEventQuery *Query = new toEventQuery(this
     		, c
@@ -554,7 +555,7 @@ void toResultPlanAbstr::queryPlanTable(toQueryParams const& params)
 	}
 
 	if (conn.providerIs("Oracle"))
-    {
+	{
 		{
 			QSharedPointer<toConnectionSubLoan> c(new toConnectionSubLoan(conn));
 			this->LockedConnection = c;
@@ -564,10 +565,10 @@ void toResultPlanAbstr::queryPlanTable(toQueryParams const& params)
 
     	QString planTable = ToConfiguration::Oracle::planTable(conn.user());
 
-    	QString explain = QString::fromLatin1("EXPLAIN PLAN SET STATEMENT_ID = '%1' INTO %2 FOR %3").
-    			arg(planId).
-				arg(planTable).
-				arg(params.first());
+    	QString explain = QString::fromLatin1("EXPLAIN PLAN SET STATEMENT_ID = '%1' INTO %2 FOR %3")
+    	.arg(planId)
+    	.arg(planTable)
+    	.arg(params.first());
 
     	explainQuery = new toEventQuery(this, LockedConnection, explain, toQueryParams(), toEventQuery::READ_ALL);
         connect(explainQuery, SIGNAL(done(toEventQuery*, unsigned long)), this, SLOT(explainDone(toEventQuery*)));
@@ -589,14 +590,12 @@ void toResultPlanAbstr::explainDone(toEventQuery*q)
     if (conn.providerIs("Oracle"))
     {
     	toEventQuery *Query = new toEventQuery(this
-    			, LockedConnection
-				, toSQL::string(SQLViewPlan, conn)
-    	// Since EXPLAIN PLAN is always to conn.user() plan_table
-    	// and current_schema can be different
-    	.arg(ToConfiguration::Oracle::planTable(conn.user()))
-		.arg(planId)
-		, toQueryParams()
-		, toEventQuery::READ_ALL);
+    	                                       , LockedConnection
+    	                                       // Since EXPLAIN PLAN is always to conn.user() plan_table
+    	                                       // and current_schema can be different
+    	                                       , toSQL::string(SQLViewPlan, conn).arg(ToConfiguration::Oracle::planTable(conn.user())).arg(planId)
+    	                                       , toQueryParams()
+    	                                       , toEventQuery::READ_ALL);
 
     	model = new toResultPlanModel(Query, this);
     	connect(model, SIGNAL(queryDone(toEventQuery*)), this, SLOT(queryDone(toEventQuery*)));
@@ -644,7 +643,8 @@ void toResultPlanAbstr::slotErrorHanler(toEventQuery*, toConnection::exception  
         else
             Utils::toStatusMessage(str);
     }
-    TOCATCH
+	TOCATCH
+	Explaining = false;
 }
 
 void toResultPlanAbstr::queryXPlan(toQueryParams const& params)
@@ -668,8 +668,8 @@ bool toResultPlanAbstr::canHandle(const toConnection &conn)
 
 void toResultPlanModel::slotPoll(toEventQuery*Query)
 {
-	if (this->Query != Query)
-		return;
+    if (this->Query != Query)
+        return;
 
     try
     {
@@ -732,7 +732,8 @@ void toResultPlanModel::slotPoll(toEventQuery*Query)
 			<< filterpred
 			<< tempspace
 			<< startpartition
-			<< endpartition;
+			<< endpartition
+				;
 
             if (stack.empty()) // Root item
             {
@@ -748,7 +749,7 @@ void toResultPlanModel::slotPoll(toEventQuery*Query)
             	stack.last()->appendChild(itemNew = new toPlanTreeItem(id, columnData, stack.last()));
             }
             // set new stack top
-			stack.append(itemNew);
+            stack.append(itemNew);
 
         }
     }
