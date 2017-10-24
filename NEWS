@@ -1,3 +1,6 @@
+3.2.76:
+2017-10-24: Fix explain plan for
+
 3.2.73:
 2017-10-19: Fix display preferences
 2017-10-19: Fix Scroll top explain plan when fetched
