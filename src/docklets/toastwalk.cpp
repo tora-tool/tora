@@ -13,7 +13,7 @@ using namespace std;
 unsigned emptyAliasCnt = 0;
 QMap<QString, int> tableNameEnumerator;
 
-void toASTWalkFilter(Statement &source, DotGraph &target, const std::function<bool(Statement &source, DotGraph &target, Token & n)>& filter);
+static void toASTWalkFilter(Statement &source, DotGraph &target, const std::function<bool(Statement &source, DotGraph &target, Token & n)>& filter);
 
 std::function<bool(Statement &source, DotGraph &target, Token & n)> root = [&](Statement &source, DotGraph &target, Token &node)
 {
@@ -284,7 +284,7 @@ void toASTWalk(SQLParser::Statement *source, DotGraph *target)
     target->update();
 }
 
-void toASTWalkFilter(Statement &source, DotGraph &target, const std::function<bool(Statement &source, DotGraph &target, Token & n)>& filter)
+static void toASTWalkFilter(Statement &source, DotGraph &target, const std::function<bool(Statement &source, DotGraph &target, Token & n)>& filter)
 {
         SQLParser::Statement::token_const_iterator node;
         for (node = source.begin(); node != source.end(); ++node)

@@ -47,6 +47,8 @@
 #include "result/toresultplan.h"
 #include "result/toresultsql.h"
 
+#include "views/toplantablesview.h"
+
 static toSQL SQLParsingSchema(
     "toSGAStatement:ParsingSchema",
     "SELECT username\n"
@@ -98,7 +100,7 @@ toSGAStatement::toSGAStatement(QWidget *parent, const char* name)
         addTab(Plan, tr("Execution plan"));
 
         PlanNew = new toResultPlanNew(this, name);
-        addTab(PlanNew, tr("Execution plan New"));
+        addTab(PlanNew, tr("Execution plan Text"));
 
         Resources = new toResultResources(this);
         addTab(Resources, tr("Information"));
@@ -109,6 +111,10 @@ toSGAStatement::toSGAStatement(QWidget *parent, const char* name)
         PlanHistory->setSQL(SQLPlanHistory);
         PlanHistory->setReadAll(true);
         addTab(PlanHistory, tr("Plan History"));
+
+        SQLTables = new toPlanTablesView(this);
+        SQLTables->setObjectName("toSQLTablesView");
+        addTab(SQLTables->view(), tr("Tables"));
     }
     else
         QTabWidget::tabBar()->hide();
@@ -129,13 +135,15 @@ void toSGAStatement::changeTab(int index)
         if (CurrentTab == SQLText->view())
             SQLText->refreshWithParams(toQueryParams() << Address);
         else if (CurrentTab == Plan)
-            Plan->queryCursorPlan(toQueryParams() << Address << Cursor);
+            Plan->queryCursorPlan(toQueryParams() << Address << ChildNumber);
         else if (CurrentTab == PlanNew)
-            PlanNew->refreshWithParams(toQueryParams() << Address << Cursor);
+            PlanNew->refreshWithParams(toQueryParams() << Address << ChildNumber);
         else if (CurrentTab == Resources)
             Resources->refreshWithParams(toQueryParams() << Address);
         else if (CurrentTab == PlanHistory)
             PlanHistory->refreshWithParams(toQueryParams() << Address);
+        else if (CurrentTab == SQLTables->view())
+            SQLTables->refreshWithParams(toQueryParams() << Address << ChildNumber);
     }
     TOCATCH;
 }
@@ -144,6 +152,6 @@ void toSGAStatement::changeAddress(toQueryParams const& sqlid)
 {
     Q_ASSERT_X( sqlid.size() == 2, qPrintable(__QHERE__), "Expecting sql_id + child_id");
     Address = sqlid[0];
-    Cursor  = sqlid[1];
+    ChildNumber  = sqlid[1];
     changeTab(QTabWidget::indexOf(CurrentTab));
 }

@@ -328,6 +328,7 @@ SET(TORA_MOC_CLASSES
 
   views/tocomboview.h
   views/toplaintextview.h
+  views/toplantablesview.h
   views/tosqltextview.h
   views/totableview.h
   views/totreeview.h
@@ -646,6 +647,7 @@ SET(TORA_SOURCES
   widgets/toworkspace.cpp
 
   views/toplaintextview.cpp
+  views/toplantablesview.cpp
   views/tosqltextview.cpp
   views/totableview.cpp
   views/totreeview.cpp
