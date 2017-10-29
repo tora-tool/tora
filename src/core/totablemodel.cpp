@@ -32,24 +32,28 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "result/totreemodel.h"
+#include "core/totablemodel.h"
 
 #include "core/toconfiguration.h"
 #include "core/todatabaseconfig.h"
 #include "core/toqvalue.h"
-#include "ts_log/ts_log_utils.h"
+//#include "ts_log/ts_log_utils.h"
 
-toTreeModelPriv::toTreeModelPriv(QObject *parent)
-    : super(parent)
+#include <QtCore/QMimeData>
+
+toTableModelPriv::toTableModelPriv(QObject *parent)
+    : QAbstractTableModel(parent)
+    , SortedOnColumn(-1)
+    , SortOrder(Qt::AscendingOrder)
 {
 }
 
-toTreeModelPriv::~toTreeModelPriv()
+toTableModelPriv::~toTableModelPriv()
 {
-    cleanup();
+    clearAll();
 }
 
-int toTreeModelPriv::rowCount(QModelIndex const& parent) const
+int toTableModelPriv::rowCount(QModelIndex const& parent) const
 {
     if (parent.isValid())
         return 0;
@@ -61,7 +65,7 @@ int toTreeModelPriv::rowCount(QModelIndex const& parent) const
  * Returns the data stored under the given role for the item
  * referred to by the index.
  */
-QVariant toTreeModelPriv::data(QModelIndex const& index, int role) const
+QVariant toTableModelPriv::data(QModelIndex const& index, int role) const
 {
     if (!index.isValid())
         return QVariant();
@@ -69,6 +73,8 @@ QVariant toTreeModelPriv::data(QModelIndex const& index, int role) const
     if (index.row() >= Rows.size()) //
         return QVariant();
 
+    int r = index.row();
+    int c = index.column();
     toQValue const &data = Rows.at(index.row()).at(index.column());
 
     switch (role)
@@ -119,16 +125,16 @@ QVariant toTreeModelPriv::data(QModelIndex const& index, int role) const
     return QVariant();
 }
 
-bool toTreeModelPriv::setData( QModelIndex const& index,
-                               QVariant const& value,
-                               int role)
+bool toTableModelPriv::setData( QModelIndex const& index,
+                                QVariant const& value,
+                                int role)
 {
     throw QString("Not implemented yet: bool toTableModel::setData(...)");
 }
 
-QVariant toTreeModelPriv::headerData(int section,
-                                     Qt::Orientation orientation,
-                                     int role) const
+QVariant toTableModelPriv::headerData(int section,
+                                      Qt::Orientation orientation,
+                                      int role) const
 {
     /*if (role != Qt::DisplayRole)
         return QVariant();*/
@@ -175,10 +181,10 @@ QVariant toTreeModelPriv::headerData(int section,
     return QVariant();
 }
 
-bool toTreeModelPriv::setHeaderData(int section,
-                                    Qt::Orientation orientation,
-                                    QVariant const& value,
-                                    int role)
+bool toTableModelPriv::setHeaderData(int section,
+                                     Qt::Orientation orientation,
+                                     QVariant const& value,
+                                     int role)
 {
     if (role != Qt::DisplayRole)
         return false;
@@ -190,13 +196,13 @@ bool toTreeModelPriv::setHeaderData(int section,
     return true;
 }
 
-int toTreeModelPriv::columnCount(const QModelIndex &parent) const
+int toTableModelPriv::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return Headers.size();
 }
 
-bool toTreeModelPriv::canFetchMore(const QModelIndex &parent) const
+bool toTableModelPriv::canFetchMore(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
 
@@ -220,7 +226,7 @@ bool toTreeModelPriv::canFetchMore(const QModelIndex &parent) const
     return false;
 }
 
-void toTreeModelPriv::fetchMore(const QModelIndex &parent)
+void toTableModelPriv::fetchMore(const QModelIndex &parent)
 {
     Q_UNUSED(parent);
 
@@ -233,9 +239,9 @@ void toTreeModelPriv::fetchMore(const QModelIndex &parent)
 //    slotReadData();
 }
 
-Qt::ItemFlags toTreeModelPriv::flags(QModelIndex const& index) const
+Qt::ItemFlags toTableModelPriv::flags(QModelIndex const& index) const
 {
-    Qt::ItemFlags defaultFlags = super::flags(index);
+    Qt::ItemFlags defaultFlags = QAbstractTableModel::flags(index);
     Qt::ItemFlags fl = Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled;
 
     if (index.column() == 0)
@@ -271,22 +277,136 @@ Qt::ItemFlags toTreeModelPriv::flags(QModelIndex const& index) const
     return fl;
 }
 
-void toTreeModelPriv::cleanup()
+void toTableModelPriv::sort(int column, Qt::SortOrder order)
 {
+    if (column > Headers.size() - 1)
+        return;
 
+    // Do nothing if data was already sorted in the requested way
+    if (SortedOnColumn == column && SortOrder == order)
+        return;
+
+    Rows = mergesort(Rows, column, order);
+    SortedOnColumn = column;
+    SortOrder = order;
+    emit dataChanged(index(0, 0), index(rowCount(), columnCount()));
 }
 
-void toTreeModelPriv::beginInsertRows(const QModelIndex &parent, int first, int last)
+QStringList toTableModelPriv::mimeTypes() const
+{
+    QStringList types;
+    types << "text/plain";
+    types << "application/vnd.tomodel.list";
+    return types;
+}
+
+QMimeData* toTableModelPriv::mimeData(const QModelIndexList &indexes) const
+{
+    QMimeData   *mimeData = new QMimeData();
+    QByteArray   encodedData;
+    QDataStream  stream(&encodedData, QIODevice::WriteOnly);
+    QByteArray   stringData;
+    QDataStream  ss(&stringData, QIODevice::WriteOnly);
+
+    int         valid = 0;
+    QModelIndex validIndex;
+    QString     text;
+
+    // qt sends list by column (all indexes from column 1, then column
+    // column2). Need to figure out the number of columns and
+    // rows. It'd be awesome if we could get the selection but there's
+    // no good way to do that from the model.
+    int rows       = 0;
+    int columns    = 0;
+    int currentRow = -1;
+    int currentCol = -1;
+
+    foreach (QModelIndex index, indexes)
+    {
+        if (index.isValid())
+        {
+            if (index.row() > currentRow)
+            {
+                currentRow = index.row();
+                rows++;
+            }
+
+            if (currentCol != index.column())
+            {
+                currentCol = index.column();
+                columns++;
+            }
+
+            valid++;
+            validIndex = index;
+            text = data(index, Qt::DisplayRole).toString();
+            ss << text;
+        }
+    }
+
+    if (valid < 1)
+        return 0;
+
+    if (valid == 1)
+    {
+        mimeData->setText(text);
+
+        // set row and column in data so we can try to preserve the
+        // columns, if needed
+
+        QByteArray sourceData;
+        QDataStream sourceStream(&sourceData, QIODevice::WriteOnly);
+        sourceStream << validIndex.row();
+        sourceStream << validIndex.column();
+        mimeData->setData("application/vnd.int.list", sourceData);
+    }
+    else
+    {
+        // serialize selection shape
+        stream << rows;
+        stream << columns;
+        mimeData->setData("application/vnd.tomodel.list", encodedData + stringData);
+    }
+
+    return mimeData;
+}
+
+bool toTableModelPriv::dropMimeData(const QMimeData *data,
+                                    Qt::DropAction action,
+                                    int row,
+                                    int column,
+                                    const QModelIndex &parent)
+{
+    throw QString("Not implemented yet: bool toTableModel::dropMimeData(...)");
+}
+
+Qt::DropActions toTableModelPriv::supportedDropActions() const
+{
+// TODO
+//    if(Editable)
+//        return Qt::CopyAction | Qt::MoveAction;
+    return Qt::IgnoreAction;
+}
+
+void toTableModelPriv::clearAll()
+{
+    super::beginResetModel();
+    Headers.clear();
+    Rows.clear();
+    super::endResetModel();
+}
+
+void toTableModelPriv::beginInsertRows(const QModelIndex &parent, int first, int last)
 {
     super::beginInsertRows(parent, first, last);
 }
 
-void toTreeModelPriv::endInsertRows()
+void toTableModelPriv::endInsertRows()
 {
     super::endInsertRows();
 }
 
-void toTreeModelPriv::appendRow(toQueryAbstr::Row const& r)
+void toTableModelPriv::appendRow(toQueryAbstr::Row const& r)
 {
     int oldRowCount = rowCount();
 
@@ -296,7 +416,7 @@ void toTreeModelPriv::appendRow(toQueryAbstr::Row const& r)
         emit firstResultReceived();
 }
 
-void toTreeModelPriv::appendRows(toQueryAbstr::RowList const& r)
+void toTableModelPriv::appendRows(toQueryAbstr::RowList const& r)
 {
     int oldRowCount = rowCount();
 
@@ -308,7 +428,7 @@ void toTreeModelPriv::appendRows(toQueryAbstr::RowList const& r)
         emit firstResultReceived();
 }
 
-void toTreeModelPriv::setHeaders(toQueryAbstr::HeaderList const& h)
+void toTableModelPriv::setHeaders(toQueryAbstr::HeaderList const& h)
 {
     if (!Headers.empty())
     {
@@ -322,4 +442,46 @@ void toTreeModelPriv::setHeaders(toQueryAbstr::HeaderList const& h)
     emit headersReceived();
 }
 
+toQueryAbstr::RowList toTableModelPriv::mergesort(toQueryAbstr::RowList &rows,
+        int column,
+        Qt::SortOrder order)
+{
+    if (rows.size() <= 1)
+        return rows;
+
+    toQueryAbstr::RowList left, right;
+
+    int middle = (int) (rows.size() / 2);
+    left = rows.mid(0, middle);
+    right = rows.mid(middle);
+
+    left = mergesort(left, column, order);
+    right = mergesort(right, column, order);
+
+    return merge(left, right, column, order);
+}
+
+
+toQueryAbstr::RowList toTableModelPriv::merge(toQueryAbstr::RowList &left,
+        toQueryAbstr::RowList &right,
+        int column,
+        Qt::SortOrder order)
+{
+    toQueryAbstr::RowList result;
+
+    while (left.size() > 0 && right.size() > 0)
+    {
+        if ((order == Qt::AscendingOrder && left.at(0).at(column) <= right.at(0).at(column)) ||
+                (order == Qt::DescendingOrder && left.at(0).at(column) >= right.at(0).at(column)))
+            result.append(left.takeAt(0));
+        else
+            result.append(right.takeAt(0));
+    }
+
+    if (left.size() > 0)
+        result << left;
+    if (right.size() > 0)
+        result << right;
+    return result;
+}
 

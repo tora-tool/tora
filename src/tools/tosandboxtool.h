@@ -9,8 +9,8 @@
 #include "views/totableview.h"
 #include "views/tocomboview.h"
 #include "views/totreeview.h"
-#include "result/totablemodel.h"
-#include "result/totreemodel.h"
+#include "core/totablemodel.h"
+#include "core/totreemodel.h"
 
 #include <QTreeView>
 

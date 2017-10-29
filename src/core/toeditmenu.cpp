@@ -34,6 +34,7 @@
 
 #include "core/toeditmenu.h"
 #include "core/toeditwidget.h"
+#include "core/toglobalevent.h"
 #include "ts_log/ts_log_utils.h"
 #include "widgets/tosearch.h"
 
@@ -151,7 +152,7 @@ void toEditMenu::commandCallback(QAction *action)
 
     if (action == prefsAct)
     {
-        toPreferences::displayPreferences(this);
+        toGlobalEventSingle::Instance().openPreferences();
         return;
     }
 

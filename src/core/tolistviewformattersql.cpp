@@ -43,9 +43,8 @@
 #include "core/toconfiguration.h"
 #include "core/tolistviewformatterfactory.h"
 #include "core/tolistviewformatteridentifier.h"
+#include "core/toeditorconfiguration.h"
 #include "core/utils.h"
-#include "editor/toworksheettext.h"
-#include "connection/tooracleconfiguration.h"
 #include "widgets/toresultmodel.h"
 
 namespace

@@ -202,8 +202,10 @@ SET(TORA_MOC_CLASSES
   core/tosettingtab.h
   core/tostyle.h
   core/tosyntaxanalyzer.h
+  core/totablemodel.h
   core/totextview.h
   core/totool.h
+  core/totreemodel.h
   core/toupdater.h
   core/utils.h
 
@@ -247,8 +249,6 @@ SET(TORA_MOC_CLASSES
   result/toresultsql.h
   result/toresulttabledata.h
   result/toresultwaitchains.h
-  result/totablemodel.h
-  result/totreemodel.h
 
   shortcuteditor/shortcuteditordialog.h
   shortcuteditor/shortcutmodel.h
@@ -472,8 +472,10 @@ SET(TORA_SOURCES
   core/tosql.cpp
   core/tostyle.cpp
   core/tosyntaxanalyzer.cpp
+  core/totablemodel.cpp
   core/totextview.cpp
   core/totool.cpp
+  core/totreemodel.cpp
   core/toupdater.cpp
   core/utils.cpp
   core/utils_part.cpp
@@ -537,8 +539,6 @@ SET(TORA_SOURCES
   result/toresultsql.cpp
   result/toresulttabledata.cpp
   result/toresultwaitchains.cpp
-  result/totablemodel.cpp
-  result/totreemodel.cpp
   
   shortcuteditor/shortcuteditordialog.cpp
   shortcuteditor/shortcutmodel.cpp
@@ -874,6 +874,14 @@ IF (TORA_DEBUG AND USE_EXPERIMENTAL AND QT5_BUILD)
     FILE(GLOB VIEWS_OBJECT_HEADERS "views/*.h")
     QT5_WRAP_CPP(VIEWS_OBJECT_MOC_SOURCES ${VIEWS_OBJECT_HEADERS})
     SET(VIEWS_SOURCES ${VIEWS_OBJECT_SOURCES} ${VIEWS_OBJECT_MOC_SOURCES})
+
+    # RESULT SOURCES
+    FILE(GLOB RESULT_OBJECT_SOURCES "result/*.cpp")
+    FILE(GLOB RESULT_OBJECT_HEADERS "result/*.h")
+    QT5_WRAP_CPP(RESULT_OBJECT_MOC_SOURCES ${RESULT_OBJECT_HEADERS})
+    FILE(GLOB RESULT_OBJECT_UI "result/*.ui")
+    QT5_WRAP_UI(RESULT_OBJECT_UI_SRC ${RESULT_OBJECT_UI})
+    SET(RESULT_SOURCES ${RESULT_OBJECT_SOURCES} ${RESULT_OBJECT_MOC_SOURCES} ${RESULT_OBJECT_UI_SRC})
 
     # EDITOR sources
     FILE(GLOB EDITOR_OBJECT_SOURCES "editor/*.cpp")

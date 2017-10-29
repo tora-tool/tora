@@ -42,7 +42,7 @@
 #include "core/utils.h"
 
 #include "result/toproviderobserver.h"
-#include "result/totablemodel.h"
+#include "core/totablemodel.h"
 #include "widgets/toworkingwidget.h"
 
 #include <QtCore/QObject>

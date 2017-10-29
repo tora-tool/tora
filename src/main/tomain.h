@@ -185,6 +185,9 @@ class toMain : public toMainWindow
         /** Open a file in sql worksheet */
         void editOpenFile(const QString &file);
 
+        /** Receive signal from toEditMenu */
+        void openPreferences();
+
         /**
          * Return the toDockbar that manages the docklet. If none
          * currently manages the docklet, returns what will if the docklet

@@ -36,7 +36,7 @@
 #define __TOPROVIDEROBSERVER_H__
 
 #include "core/toeventquery.h"
-#include "result/totablemodel.h"
+#include "core/totablemodel.h"
 
 #include <QtCore/QObject>
 

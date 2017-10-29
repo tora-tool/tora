@@ -57,6 +57,11 @@ void toGlobalEvent::addRecentFile(const QString &filename)
     emit s_addRecentFile(filename);
 }
 
+void toGlobalEvent::openPreferences()
+{
+    emit s_openPreferences();
+}
+
 void toGlobalEvent::addCustomMenu(QMenu *menu)
 {
     emit s_addCustomMenu(menu);

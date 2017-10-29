@@ -33,6 +33,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "main/tomain.h"
+#include "main/topreferences.h"
 #include "widgets/tobackgroundlabel.h"
 #include "core/toeditmenu.h"
 #include "core/tofilemenu.h"
@@ -140,6 +141,8 @@ toMain::toMain()
             this, SLOT(showMessageImpl(QString, bool, bool)), Qt::QueuedConnection);
     connect(&toGlobalEventSingle::Instance(), SIGNAL(s_editOpenFile(QString const&)),
             this, SLOT(editOpenFile(QString const&)));
+    connect(&toGlobalEventSingle::Instance(), SIGNAL(s_openPreferences()),
+            this, SLOT(openPreferences()));
     connect(&toWorkSpaceSingle::Instance(), SIGNAL(activeToolChaged(toToolWidget*)),
             this, SLOT(slotActiveToolChaged(toToolWidget*)));
 
@@ -855,6 +858,10 @@ void toMain::editOpenFile(const QString &file)
     sheet->setFocus();
 }
 
+void toMain::openPreferences()
+{
+    toPreferences::displayPreferences(this);
+}
 
 toDockbar* toMain::dockbar(toDocklet *let)
 {

@@ -74,6 +74,11 @@ public:
     void addRecentFile(const QString &filename);
 
     /**
+     * open Preferences window. toPrefereces depends on various classes, therefore it is in main/topreferences.cpp
+     */
+    void openPreferences();
+
+    /**
      * allow tools to add custom menus (ie. File, Edit, Sql Editor)
      * without giving away public access to menubars.
      */
@@ -128,6 +133,7 @@ signals:
     void s_checkCaching(void);
     void s_editOpenFile(const QString &filename);
     void s_addRecentFile(const QString &filename);
+    void s_openPreferences();
     void s_addCustomMenu(QMenu *menu);
     void s_toolWidgetAdded(toToolWidget *tool);
     void s_toolWidgetRemoved(toToolWidget *tool);

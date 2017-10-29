@@ -45,7 +45,7 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QProgressBar>
-#include "toparamget.h"
+#include "tools/toparamget.h"
 
 toResultDataSingle::toResultDataSingle(QWidget *parent)
     : QWidget(parent)
