@@ -68,6 +68,7 @@ toQueryModel::toQueryModel(QWidget *parent, toWFlags flags)
         m_widget = new DotGraphView( NULL /*actionCollection()*/, this);
         m_widget->initEmpty();
         m_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        connect(m_widget, SIGNAL(selected(const QMap<QString,QString>&)), this, SLOT(elementSelected(const QMap<QString,QString>&)));
         // connect( m_widget, SIGNAL( graphLoaded() ),
         //   this, SIGNAL( graphLoaded() ) );
         // connect( m_widget, SIGNAL( newEdgeAdded(const QString&, const QString&) ),
@@ -207,7 +208,7 @@ void toQueryModel::timerEvent(QTimerEvent *e)
         //setFocusProxy(m_widget); // TODO ?? What is this??
         //setWidget(m_widget); // TODO ?? What is this??
         toASTWalk(stat.get(), m_widget->graph());
-
+        m_widget->prepareSelectSinlgeElement();
     }
     catch ( SQLParser::ParseException const &e)
     {
@@ -255,3 +256,31 @@ void toQueryModel::describeSlot(void)
 
     m_widget->graph()->update();
 }
+
+void toQueryModel::elementSelected(const QMap<QString,QString>&element)
+{
+    // TODO if m_currentEditor already closed, this will SEGFAULT
+    if (!m_currentEditor)
+        return;
+
+    if (toWorksheetText *t = dynamic_cast<toWorksheetText*>(m_currentEditor))
+    {
+        if (!element.contains("comment"))
+            return;
+
+        QString comment = element["comment"];
+
+        QRegExp commentRegexp("\\[([0-9]+),([0-9]+)\\]");
+        int pos = commentRegexp.indexIn(comment);
+        if (pos > -1) {
+            QString lineStr = commentRegexp.cap(1);
+            QString linePos = commentRegexp.cap(2);
+
+            int position = t->positionFromLineIndex(lineStr.toInt() - 1, linePos.toInt());
+            t->gotoPosition(position);
+            t->setFocus();
+            t->ensureLineVisible(lineStr.toInt() - 1);
+        }
+    }
+}
+

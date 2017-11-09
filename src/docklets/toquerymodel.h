@@ -70,6 +70,9 @@ class toQueryModel : public toDocklet
         virtual void timerEvent(QTimerEvent *e);
     public slots:
         void describeSlot(void);
+
+    protected slots:
+        void elementSelected(const QMap<QString,QString>&element);
 };
 
 
