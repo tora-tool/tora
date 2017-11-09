@@ -52,7 +52,7 @@ Test13Window::Test13Window(const QString &sql)
 
     connect(actionOpen, SIGNAL(triggered()), this, SLOT(load()));
     connect(actionQuit, SIGNAL(triggered()), this, SLOT(close()));
-
+    connect(Ui::Test13Window::queryView, SIGNAL(selected(const QMap<QString,QString>&)), this, SLOT(elementSelected(const QMap<QString,QString>&)));
     QMainWindow::show();
 
     parseAct = new QAction(tr("Parse"), this);
@@ -91,7 +91,7 @@ void Test13Window::parse()
         //setFocusProxy(m_widget); // TODO ?? What is this??
         //setWidget(m_widget); // TODO ?? What is this??
         toASTWalk(stat.get(), Ui::Test13Window::queryView->graph());
-
+        Ui::Test13Window::queryView->prepareSelectSinlgeElement();
     }
     catch ( SQLParser::ParseException const &e)
     {
@@ -100,6 +100,26 @@ void Test13Window::parse()
     catch (...)
     {
 
+    }
+}
+
+void Test13Window::elementSelected(const QMap<QString,QString>&element)
+{
+    if (element.contains("comment"))
+    {
+        QString comment = element["comment"];
+
+        QRegExp commentRegexp("\\[([0-9]+),([0-9]+)\\]");
+        int pos = commentRegexp.indexIn(comment);
+        if (pos > -1) {
+            QString lineStr = commentRegexp.cap(1);
+            QString linePos =  commentRegexp.cap(2);
+
+            int position = Ui::Test13Window::sqlText->positionFromLineIndex(lineStr.toInt() - 1, linePos.toInt());
+            Ui::Test13Window::sqlText->gotoPosition(position);
+            Ui::Test13Window::sqlText->setFocus();
+            Ui::Test13Window::sqlText->ensureLineVisible(lineStr.toInt() - 1);
+        }
     }
 }
 

@@ -1030,6 +1030,7 @@ void DotGraphView::mousePressEvent(QMouseEvent* e)
 		  //QMessageBox::information(NULL, tr("Selected table:"), id);
 		  if (!id.isEmpty())
 			  emit selected(id);
+		  emit selected(cei->element()->attributes());
 	  }
   }
   else

@@ -54,6 +54,7 @@ public:
 public slots:
     void load();
     void parse();
+    void elementSelected(const QMap<QString,QString>&);
 
 protected:
     virtual void closeEvent(QCloseEvent *event);

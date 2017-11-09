@@ -182,7 +182,8 @@ Q_SIGNALS:
   void hoverEnter(const QString&);
   void hoverLeave(const QString&);
   void selected(const QString&);
-  
+  void selected(const QMap<QString,QString>&);
+
 public Q_SLOTS:
   void zoomIn();
   void zoomOut();  
