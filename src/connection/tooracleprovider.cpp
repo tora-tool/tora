@@ -234,7 +234,7 @@ QList<QString> toOracleProvider::databases(const QString &host, const QString &u
     else if ( getenv("ORACLE_HOME"))
     {
         str = getenv("ORACLE_HOME");
-        str + "/network/admin/tnsnames.ora";
+        str += "/network/admin/tnsnames.ora";
     }
     else
     {
@@ -302,7 +302,7 @@ QList<QString> toOracleProvider::databases(const QString &host, const QString &u
                         TLOG(0, toDecorator, __HERE__) << "Garbage TNS database name skipped: " << line << std::endl;
                     else if (ret.contains(line))
                         TLOG(0, toDecorator, __HERE__) << "Duplicate TNS database name skipped: " << line << std::endl;
-                    else if (begname >= 0 && !host.isEmpty())
+                    else if (begname >= 0 && host.isEmpty()) // host IS empty if provider is ORACLETNS_
                         ret.insert(ret.end(), line);
                 }
             }
@@ -316,6 +316,8 @@ QList<QString> toOracleProvider::databases(const QString &host, const QString &u
             else if (tns_file[pos] == ')')
             {
                 // We left a subparameter of tns record
+                /* 
+                //Don't understand this code - we parse tnsnames.ora, we connect via tnsnames, what's the point to have DB SIDs in list?
                 if (parambeg >= 0 && host.isEmpty())
                 {
                     // If the database has no name but has some SID, we use its SID instead:
@@ -324,6 +326,7 @@ QList<QString> toOracleProvider::databases(const QString &host, const QString &u
                     if (tmp.toLower().startsWith(QString::fromLatin1("sid=")))
                         ret.insert(ret.end(), tmp.mid(4));
                 }
+                */
                 begname = -1;
                 parambeg = -1;
                 param--;
