@@ -138,6 +138,10 @@ toFileMenu::toFileMenu()
     updateRecent();
 
     connect(&toGlobalEventSingle::Instance(), SIGNAL(s_addRecentFile(QString const&)), this, SLOT(addRecentFile(QString const&)));
+    connect(this,
+            SIGNAL(triggered(QAction *)),
+            this,
+            SLOT(commandCallback(QAction *)));
 }
 
 toFileMenu::~toFileMenu()
@@ -178,6 +182,22 @@ void toFileMenu::menuAboutToShow()
 #endif
     //
     quitAct->setEnabled(true);
+}
+
+void toFileMenu::commandCallback(QAction *action)
+{
+    QWidget *focus = qApp->focusWidget();
+
+    toEditWidget::FlagSetStruct editFlags;
+    toEditWidget *edit = toEditWidget::findEdit(focus);
+    if (edit)
+    {
+        editFlags = edit->flagSet();
+        if (action == saveAsAct && editFlags.Save)
+                 edit->editSave(true);
+        else if (action == saveAct && editFlags.Save)
+                 edit->editSave(false);
+    }
 }
 
 void toFileMenu::slotAboutToShow()

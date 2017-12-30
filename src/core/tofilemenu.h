@@ -64,6 +64,9 @@ public:
 #endif
     QAction *quitAct;
 
+private slots:
+    void commandCallback(QAction *action);
+
 private:
     void updateRecent(void);
 
