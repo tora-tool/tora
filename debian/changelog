@@ -1,3 +1,9 @@
+tora (3.2.83-0ubuntu1) UNRELEASED; urgency=medium
+
+  * New version
+
+ -- Ivan Brezina <ivan@haf>  Wed, 10 Jan 2017 19:27:36 +0200
+
 tora (3.0.85-0ubuntu1) UNRELEASED; urgency=medium
 
   * Fix SEGFAULTs
