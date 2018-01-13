@@ -107,7 +107,7 @@ export CXXFLAGS="$RPM_OPT_FLAGS"
 	%{_internal_loki} \
 	%{_qt5_build}  \
 	%{_build_type} \
-	-DUSE_PCH=ON   \
+	-DUSE_PCH=OFF  \
         -DCMAKE_INSTALL_PREFIX:PATH=%{_prefix} \
         .
 
