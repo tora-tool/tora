@@ -41,7 +41,6 @@ License:                GPL
 BuildRoot:              %{_tmppath}/tora-root
 BuildRequires: postgresql-devel
 #BuildRequires: oracle-instantclient11.2-devel
-BuildRequires: perl
 BuildRequires: cmake >= 2.8.11
 BuildRequires: gcc-c++
 #Requires:      oracle-instantclient11.2-basic
