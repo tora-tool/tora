@@ -682,7 +682,7 @@ void OracleDMLStatement::disambiguate()
                 p->setNodeAlias(&node);
             }
 
-            addTranslation(node.toString(), brother, parent->parent());
+            addTranslation(node.toString(), parent, parent->parent());
 
             std::cout << "Subquery alias found:" << node.toString().toStdString() << "->" << brother->toString().toStdString() << std::endl;
             break;

@@ -156,6 +156,7 @@ namespace SQLParser
                 if ( s.aliasTranslation().contains(alias.toUpper()))
                 {
                     Token const* a1 = s.aliasTranslation().value(alias.toUpper());
+					//TADY NEFUNGUJE DETEKCE SUBQUERY FACTORED, a1 ukazuje na syna "SELECT reserved word"
                     if ( a1->getTokenType() == Token::S_TABLE_REF && a1->childCount() == 1 ) // In fact S_TABLE_REF can be alias for S_SUBQUERY_FACTORED
                     {
                         Token const* a2 = translateAlias( a1->toStringRecursive(false), &*k);

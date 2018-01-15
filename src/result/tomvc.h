@@ -462,7 +462,7 @@ void TOMVC< _T, _VP, _DP>::setSQL(const toSQL &sql)
     {
         TLOG(8, toDecorator, __HERE__) << e << std::endl;
         m_SQL.clear();
-        throw (e);
+        widget()->setEnabled(false);
     }
 }
 

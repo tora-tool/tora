@@ -85,10 +85,14 @@ std::function<bool(Statement &source, DotGraph &target, Token & n)> subquery_fac
     {
         clusterName = QString("cluster_") + snode->nodeAlias()->toString();
         sg["label"] = snode->nodeAlias()->toString();
+        sg["name"]  = snode->nodeAlias()->toString();
+        sg["comment"] = snode->getValidPosition().toString();
+        sg["toolt5ip"] = snode->nodeAlias()->toString();
     }
     clusterName.replace('.', GLUE);
     clusterName.replace(':', GLUE);
     sg["id"] = clusterName;
+    sg["fontsize"] = "10";
     snode->setNodeID(sg["id"]);
     target.addNewSubgraph(sg);
 
@@ -173,7 +177,7 @@ std::function<bool(Statement &source, DotGraph &target, Token &n)> binary_operat
     if (node.getTokenType() != Token::S_OPERATOR_BINARY)
         return false;
 
-    if (node.childCount() != 2)
+    if (node.childCount() < 2)
         // assuming condition "T1.C1" "=" "T2.C2";
         // ((= [OPERATOR_BINARY]
         // ((ANY_ELEMENT[IDENTIFIER]((task[UNASSIGNED]))((id[UNASSIGNED]))))
