@@ -288,7 +288,7 @@ SET(TORA_MOC_CLASSES
   tools/toresultbar.h
   tools/toresultcode.h
   tools/toresultcols.h
-  tools/toresultdatasingle.h
+  result/toresultdatasingle.h
   tools/toresultdepend.h
   tools/toresultdrawing.h
   tools/toresultextent.h
@@ -579,7 +579,7 @@ SET(TORA_SOURCES
   tools/toresultbar.cpp
   tools/toresultcode.cpp
   tools/toresultcols.cpp
-  tools/toresultdatasingle.cpp
+  result/toresultdatasingle.cpp
   tools/toresultdepend.cpp
   tools/toresultdrawing.cpp
   tools/toresultextent.cpp
@@ -890,6 +890,14 @@ IF (TORA_DEBUG AND USE_EXPERIMENTAL AND QT5_BUILD)
     FILE(GLOB EDITOR_OBJECT_HEADERS "editor/*.h")
     QT5_WRAP_CPP(EDITOR_OBJECT_MOC_SOURCES ${EDITOR_OBJECT_HEADERS})
     SET(EDITOR_SOURCES ${EDITOR_OBJECT_SOURCES} ${EDITOR_OBJECT_UI_SRC} ${EDITOR_OBJECT_MOC_SOURCES})
+
+    # TOOLS sources
+    FILE(GLOB TOOLS_OBJECT_SOURCES "tools/*.cpp")
+    FILE(GLOB TOOLS_OBJECT_UI "tools/*.ui")
+    QT5_WRAP_UI(TOOLS_OBJECT_UI_SRC ${TOOLS_OBJECT_UI})
+    FILE(GLOB TOOLS_OBJECT_HEADERS "tools/*.h")
+    QT5_WRAP_CPP(TOOLS_OBJECT_MOC_SOURCES ${TOOLS_OBJECT_HEADERS})
+    SET(TOOLS_SOURCES ${TOOLS_OBJECT_SOURCES} ${TOOLS_OBJECT_UI_SRC} ${TOOLS_OBJECT_MOC_SOURCES})
 
     # CONNECTION sources
     FILE(GLOB ORACLE_OBJECT_SOURCES "connection/tooraclefind.cpp" "connection/tooracleconfiguration.cpp" "main/tooraclesetting.cpp")

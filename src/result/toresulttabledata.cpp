@@ -47,7 +47,7 @@
 #include <QMessageBox>
 #include <QtGui/QCloseEvent>
 
-#include "tools/toresultdatasingle.h"
+#include "result/toresultdatasingle.h"
 #include "tools/toresulttableviewedit.h"
 #include "icons/refresh.xpm"
 #include "icons/addrecord.xpm"

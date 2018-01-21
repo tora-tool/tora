@@ -32,7 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "tools/toresultdatasingle.h"
+#include "result/toresultdatasingle.h"
 
 #include "core/utils.h"
 #include "editor/tomodeleditor.h"

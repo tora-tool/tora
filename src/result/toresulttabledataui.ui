@@ -71,7 +71,7 @@
   <customwidget>
    <class>toResultDataSingle</class>
    <extends>QWidget</extends>
-   <header>tools/toresultdatasingle.h</header>
+   <header>result/toresultdatasingle.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -70,7 +70,7 @@ QT5_WRAP_CPP(TEST3_MOC_SOURCES tests/test3window.h
 	tools/toparamget.h
 	tools/toresultbar.h
 	tools/toresultcols.h
-	tools/toresultdatasingle.h	
+	result/toresultdatasingle.h
 	tools/toresultplan.h
 	tools/toresultstats.h
 	tools/toresulttableview.h
@@ -90,7 +90,7 @@ ADD_EXECUTABLE("test03" ${GUI_TYPE}
   tools/toparamget.cpp
   tools/toresultbar.cpp
   tools/toresultcols.cpp
-  tools/toresultdatasingle.cpp  
+  result/toresultdatasingle.cpp
   tools/toresultplan.cpp
   tools/toresultstats.cpp
   tools/toresulttableview.cpp
@@ -188,7 +188,7 @@ QT5_WRAP_CPP(TEST5_MOC_SOURCES
   tools/toparamget.h
   tools/toresultview.h
   tools/toresultcols.h
-  tools/toresultdatasingle.h
+  result/toresultdatasingle.h
   tools/toresulttableview.h
   tools/toresulttableviewedit.h
   # tools
@@ -210,7 +210,7 @@ ADD_EXECUTABLE("test05"
   tools/toparamget.cpp
   tools/toresultcols.cpp
   tools/toresultview.cpp
-  tools/toresultdatasingle.cpp
+  result/toresultdatasingle.cpp
   tools/toresulttableview.cpp
   tools/toresulttableviewedit.cpp
   tools/toresultplan.cpp
@@ -385,6 +385,8 @@ ADD_EXECUTABLE("test10"
   ${RESULT_SOURCES}
   ${EDITOR_SOURCES}
   ${LOGGING_SOURCES}
+  ${TOOLS_SOURCES}
+  ${ORACLE_SOURCES}
 )
 TARGET_LINK_LIBRARIES("test10"
 	Qt5::Core
@@ -396,6 +398,7 @@ TARGET_LINK_LIBRARIES("test10"
 	${TORA_QSCINTILLA_LIB}
 	${QSCINTILLA_LIBRARIES}	
 	${TORA_LOKI_LIB}
+	ermodel
 )
 IF(PCH_DEFINED)
   ADD_PRECOMPILED_HEADER("test10" ${PCH_HEADER} FORCEINCLUDE)
