@@ -206,7 +206,12 @@ SET(QT_USE_QTWEBKIT TRUE)
 IF(QT5_BUILD)
 
   set (QT_FOUND true)
-  set(CMAKE_PREFIX_PATH "$ENV{QTDIR}\\") # multiple paths do not work
+
+  set( QT5_ROOT_PATH CACHE PATH "Qt5 root directory (i.e. where the 'bin' folder lies)" )
+  if ( QT5_ROOT_PATH )
+	list( APPEND CMAKE_PREFIX_PATH ${QT5_ROOT_PATH} )
+  endif()
+
   find_package(Qt5Core REQUIRED)
   find_package(Qt5Gui REQUIRED)
   find_package(Qt5Network REQUIRED)
