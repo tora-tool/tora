@@ -46,6 +46,7 @@
 
 #include <QSplitter>
 #include <QToolBar>
+#include <QButtonGroup>
 
 #include "icons/addrole.xpm"
 #include "icons/adduser.xpm"

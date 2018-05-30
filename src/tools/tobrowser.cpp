@@ -65,6 +65,7 @@
 #include <QInputDialog>
 #include <QSplitter>
 #include <QToolBar>
+#include <QButtonGroup>
 
 #include "icons/addindex.xpm"
 #include "icons/addtable.xpm"
