@@ -54,6 +54,7 @@ toSyntaxAnalyzer::statementList toSyntaxAnalyzerNL::getStatements(QString const&
 {
     QRegExp NL("\\r?\\n"); // TODO mac?, static variable can be used in both threads(can not be static)
     QRegExp WS("^\\s*$");
+    QRegExp SEMI("^.*;\\s*(--\\s*)?$");
 
     toSyntaxAnalyzer::statementList retval;
 
@@ -79,6 +80,15 @@ toSyntaxAnalyzer::statementList toSyntaxAnalyzerNL::getStatements(QString const&
             lineEnd = lineNumber;
         }
 
+        if(SEMI.exactMatch(line))
+        {
+            if ( lineStart && lineEnd )
+            {
+                retval << statement(lineStart-1, lineEnd-1);
+                lineStart = 0;
+            }
+        }
+
         lineNumber++;
     }
 
@@ -100,6 +110,7 @@ toSyntaxAnalyzer::statement toSyntaxAnalyzerNL::getStatementAt(unsigned line, un
 
     static QRegExp NL("\\r?\\n"); // TODO mac?
     static QRegExp WS("^\\s*$");
+	static QRegExp SEMI("^.*;\\s*(--\\s*)?$");
 
     toSyntaxAnalyzer::statement retval;
 
@@ -128,6 +139,17 @@ toSyntaxAnalyzer::statement toSyntaxAnalyzerNL::getStatementAt(unsigned line, un
             if ( lineStart == 0)
                 lineStart = lineNumber;
             lineEnd = lineNumber;
+        }
+
+        if (SEMI.exactMatch(lineStr))
+        {
+            if (lineStart && lineEnd)
+            {
+                retval = statement(lineStart - 1, lineEnd - 1);
+                lineStart = 0; // reset marker to initial value
+            }
+            if (lineNumber >= line && retval.lineTo + 1 >= line) // off-by-one offset retval.lineTo+1 >= line
+                return retval;
         }
 
         lineNumber++;
