@@ -914,7 +914,7 @@ void toWorksheet::commitChanges()
 void toWorksheet::rollbackChanges()
 {
     Q_ASSERT_X(LockedConnection, qPrintable(__QHERE__), "No connection for rollback");
-    (*LockedConnection)->commit();
+    (*LockedConnection)->rollback();
     if (!lockConnectionActClicked)
         unlockConnection();
     else
