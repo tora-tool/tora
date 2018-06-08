@@ -37,6 +37,7 @@ OPTION(TEST_APP10 "toCodeView" ON)
 OPTION(TEST_APP11 "simple parrser" ON)
 OPTION(TEST_APP12 "simple parrser" ON)
 OPTION(TEST_APP13 "parrser/indenter" ON)
+OPTION(TEST_APP14 "xdot viewver" ON)
 
 #Set our CMake minimum version
 #Require 2.4.2 for Qt finding
