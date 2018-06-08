@@ -84,6 +84,8 @@ public:
   virtual ~DotGraphView();
 
   bool loadDot(const QString& dotFileName);
+  bool loadXDotText(const QString& text);
+
 #if GV_LIB
   bool loadLibrary(const QString& dotFileName);
   bool loadLibrary(graph_t* graph, const QString& layoutCommand = "dot");

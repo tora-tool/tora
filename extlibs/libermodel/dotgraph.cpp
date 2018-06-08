@@ -236,6 +236,12 @@ void DotGraph::slotDotRunningDone(int exitCode, QProcess::ExitStatus exitStatus)
   QByteArray result = getDotResult(exitCode, exitStatus);
   result.replace("\\\n","");
 
+  loadXDotText(QString(result));
+}
+
+void DotGraph::loadXDotText(QString const&text)
+{
+    QByteArray result(text.toLocal8Bit());
   ///kDebug() << "string content is:" << endl << result << endl << "=====================" << result.size();
   std::string s =  result.data();
 //   std::cerr << "stdstring content is:" << std::endl << s << std::endl << "===================== " << s.size() << std::endl;

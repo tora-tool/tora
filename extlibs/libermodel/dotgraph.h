@@ -120,6 +120,8 @@ public:
   static void setLayoutCommandPath(QString const&p);
   static bool hasValidPath();
 
+  void loadXDotText(QString const&t);
+
 public Q_SLOTS:
   void removeNodeNamed(const QString& nodeName);
   void removeNodeFromSubgraph(const QString& nodeName, const QString& subgraphName);

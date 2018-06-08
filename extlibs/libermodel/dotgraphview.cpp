@@ -397,6 +397,70 @@ bool DotGraphView::loadDot(const QString& dotFileName)
   return true;
 }
 
+bool DotGraphView::loadXDotText(const QString& text)
+{
+  ///kDebug() << "'" << dotFileName << "'";
+  m_birdEyeView->setScene(0);
+
+  if (m_canvas)
+  {
+    m_canvas->deleteLater();
+    m_canvas = 0;
+  }
+
+  QString layoutCommand = (m_graph!=0?m_graph->layoutCommand():"");
+  if (m_graph != 0)
+    delete m_graph;
+  m_graph = new DotGraph(layoutCommand,"???");
+  connect(m_graph,SIGNAL(readyToDisplay()),this,SLOT(displayGraph()));
+  connect(this, SIGNAL(removeEdge(const QString&)), m_graph, SLOT(removeEdge(const QString&)));
+  connect(this, SIGNAL(removeNodeNamed(const QString&)), m_graph, SLOT(removeNodeNamed(const QString&)));
+  connect(this, SIGNAL(removeElement(const QString&)), m_graph, SLOT(removeElement(const QString&)));
+
+  if (m_readWrite)
+  {
+    m_graph->setReadWrite();
+  }
+  if (layoutCommand.isEmpty())
+  {
+    layoutCommand = m_graph->chooseLayoutProgramForFile(m_graph->dotFileName());
+  }
+  m_graph->layoutCommand(layoutCommand);
+
+//   kDebug() << "Parsing " << m_graph->dotFileName() << " with " << m_graph->layoutCommand();
+  m_xMargin = 50;
+  m_yMargin = 50;
+
+  QGraphicsScene* newCanvas = new QGraphicsScene();
+  ///kDebug() << "Created canvas " << newCanvas;
+
+  m_birdEyeView->setScene(newCanvas);
+//   std::cerr << "After m_birdEyeView set canvas" << std::endl;
+
+  setScene(newCanvas);
+  connect(newCanvas,SIGNAL(selectionChanged ()),this,SLOT(slotSelectionChanged()));
+  m_canvas = newCanvas;
+
+  QGraphicsSimpleTextItem* loadingLabel = newCanvas->addSimpleText(QString("graph %1 is getting loaded...").arg("???"));
+  loadingLabel->setZValue(100);
+  centerOn(loadingLabel);
+
+  m_cvZoom = 0;
+
+#if 0
+  if (!m_graph->parseDot(m_graph->dotFileName()))
+  {
+    ///kError() << "NOT successfully parsed!" << endl;
+    loadingLabel->setText(QString("error parsing file %1").arg("???"));
+    return false;
+  }
+#endif
+  m_graph->loadXDotText(text);
+  //displayGraph();
+
+  return true;
+}
+
 #ifdef GV_LIB
 bool DotGraphView::loadLibrary(const QString& dotFileName)
 {
