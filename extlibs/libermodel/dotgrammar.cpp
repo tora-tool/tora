@@ -222,8 +222,11 @@ void pushAttrList(char const* /*first*/, char const* /*last*/)
   if (phelper)
   {
     phelper->graphAttributesStack.push_back(phelper->graphAttributes);
+    phelper->graphAttributes.clear();
     phelper->nodesAttributesStack.push_back(phelper->nodesAttributes);
+    phelper->nodesAttributes.clear();
     phelper->edgesAttributesStack.push_back(phelper->edgesAttributes);
+    phelper->edgesAttributes.clear();
   }
 }
 
@@ -408,6 +411,16 @@ bool parse_integers(char const* str, std::vector<int>& v)
   return parse(str,
                (
                  int_p[push_back_a(v)] >> *(',' >> int_p[push_back_a(v)])
+               )
+               ,
+               +space_p).full;
+}
+
+bool parse_reals(char const* str, std::vector<double>& v)
+{
+  return parse(str,
+               (
+                 real_p[push_back_a(v)] >> *(',' >> real_p[push_back_a(v)])
                )
                ,
                +space_p).full;

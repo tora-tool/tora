@@ -76,6 +76,7 @@ void finalactions(char const* first, char const* last);
 bool parse_point(char const* str, QPoint& p);
 bool parse_real(char const* str, double& d);
 bool parse_integers(char const* str, std::vector<int>& v);
+bool parse_reals(char const* str, std::vector<double>& v);
 bool parse_spline(char const* str, QVector< QPair< float, float > >& points);
 void init_op();
 void valid_op(char const* first, char const* last);
