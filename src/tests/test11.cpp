@@ -137,6 +137,7 @@ std::function<bool(Statement &source, Token & n)> subquery_factored = [&](Statem
     clusterName.replace('.', GLUE);
     clusterName.replace(':', GLUE);
     sg["id"] = clusterName;
+    sg["comment"] = snode->getValidPosition().toString();
     snode->setNodeID(sg["id"]);
     target.addNewSubgraph(sg);
 
@@ -190,7 +191,7 @@ std::function<bool(Statement &source, Token & n)> table_ref = [&](Statement &sou
     ta["name"]     = tt->toStringRecursive(false);
     ta["label"]    = tt->toStringRecursive(false);
     ta["fontsize"] = "10";
-    ta["comment"]  = tt->toStringRecursive(false);
+    ta["comment"]  = tt->toStringRecursive(false) + '/' + tt->getValidPosition().toString();
     ta["id"]       = clusterName + GLUE + tableName;
     if (tt->nodeAlias() != nullptr)
         ta["tooltip"] = tt->nodeAlias()->toString();

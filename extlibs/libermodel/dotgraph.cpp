@@ -896,6 +896,7 @@ void DotGraph::addNewNodeToSubgraph(QMap<QString,QString> attribs, QString subgr
   ///kDebug() << attribs << "to" << subgraph;
   GraphNode* newNode = new GraphNode();
   newNode->attributes() = attribs;
+  auto a = subgraphs()[subgraph];
   subgraphs()[subgraph]->content().push_back(newNode);
 
   ///kDebug() << "node added as" << newNode->id() << "in" << subgraph;
