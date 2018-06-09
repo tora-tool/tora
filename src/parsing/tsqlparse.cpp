@@ -186,7 +186,22 @@ namespace SQLParser
                     if ( t2)
                         return t2;
                     if ( t1)
+                    {
+                        // self join with inner alias
+                        // join pckmov
+                        //  on (pckwrk.cmbcod = pckmov.cmbcod)
+                        //  where  not exists(select :q5 from pckmov pm3
+                        //                    where pm3.cmbcod = pckmov.cmbcod
+                        //                    and   pm3.seqnum > pckmov.seqnum )
+                        if (TokenTable const* tt = dynamic_cast<TokenTable const*>(t1))
+                        {
+                            if (tt->nodeAlias() && tt->nodeAlias()->toString().toUpper() != tableName.toUpper()) // table has alias, different from tableName
+                            {
+                                continue;
+                            }
+                        }
                         return t1;
+                    }
                 }
             }
         }

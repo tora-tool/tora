@@ -144,6 +144,37 @@ std::function<bool(Statement &source, Token & n)> subquery_factored = [&](Statem
     return true;
 };
 
+std::function<bool(Statement &source, Token & n)> subquery_nested = [&](Statement &source, Token & node)
+{
+    if (node.getTokenType() != Token::S_SUBQUERY_NESTED)
+        return false;
+
+    SQLParser::TokenSubquery const* snode = static_cast<SQLParser::TokenSubquery const*>(&node);
+    QList<SQLParser::Token*> tables = snode->nodeTables().values();
+    QString clusterName;
+
+    QMap<QString, QString> sg;
+    if ( snode->nodeAlias() == nullptr)
+    {
+        emptyAliasCnt++;
+        clusterName = QString("cluster_") + QString::number(emptyAliasCnt);
+    }
+    else
+    {
+        clusterName = QString("cluster_") + snode->nodeAlias()->toString();
+        sg["label"] = snode->nodeAlias()->toString();
+    }
+    clusterName.replace('.', GLUE);
+    clusterName.replace(':', GLUE);
+    sg["id"] = clusterName;
+    sg["comment"] = snode->getValidPosition().toString();
+    snode->setNodeID(sg["id"]);
+    target.addNewSubgraph(sg);
+
+    return true;
+};
+
+// add tables, but only into subquery clusters
 std::function<bool(Statement &source, Token & n)> table_ref = [&](Statement &source, Token & node)
 {
     if ( node.getTokenType() != SQLParser::Token::S_TABLE_REF)
@@ -161,6 +192,8 @@ std::function<bool(Statement &source, Token & n)> table_ref = [&](Statement &sou
         }
     }
     if (context == nullptr)
+        return false;
+    if (context->getTokenType() == SQLParser::Token::X_ROOT) // Do not add tables under X_ROOT, it is done in root lambda
         return false;
 
     // In fact S_TABLE_REF can be alias for S_SUBQUERY_FACTORED
@@ -185,7 +218,14 @@ std::function<bool(Statement &source, Token & n)> table_ref = [&](Statement &sou
         tableName = tableName + QString("_1");
     }
 
-    QString clusterName = "ROOT"; //static_cast<SQLParser::TokenTable const*>(context)->nodeID();
+    auto tokenSubQuery = dynamic_cast<SQLParser::TokenSubquery const*>(context);
+	if (!tokenSubQuery)
+	{
+		TLOG(8, toNoDecorator, __HERE__) << "failure: failed to resolve subquery for: " << tt->toStringRecursive(false) << '/' + tt->getValidPosition().toString() << std::endl;
+		return false;
+	}
+
+    QString clusterName = tokenSubQuery->nodeID();
 
     QMap<QString, QString> ta; // table attributes
     ta["name"]     = tt->toStringRecursive(false);
@@ -324,6 +364,7 @@ int main(int argc, char **argv)
         DotGraph::setLayoutCommandPath(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::GraphvizHomeDirectory).toString());
         toASTWalkFilter(*parser, root);
         toASTWalkFilter(*parser, subquery_factored);
+        toASTWalkFilter(*parser, subquery_nested);
         toASTWalkFilter(*parser, table_ref);
         toASTWalkFilter(*parser, binary_operator);
 

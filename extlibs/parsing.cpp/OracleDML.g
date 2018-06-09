@@ -1071,10 +1071,13 @@ vector_expr
     ;
 
 quantified_expression
-    :    ( some_key^ | exists_key^ | all_key^ | any_key^ )
-         ( (LEFT_PAREN (select_key|with_key)) => LEFT_PAREN subquery RIGHT_PAREN
+@init    {    int mode = 0;    }
+    :    ( some_key | exists_key | all_key | any_key )
+         ( (LEFT_PAREN (select_key|with_key)) => LEFT_PAREN subquery RIGHT_PAREN { mode = 1; }
            | LEFT_PAREN expression_wrapper RIGHT_PAREN
          )
+         -> { mode = 1 }? ^(NESTED_EXPR some_key? exists_key? all_key? any_key? ^(NESTED_SUBQUERY LEFT_PAREN subquery RIGHT_PAREN))
+         ->               ^(NESTED_EXPR some_key? exists_key? all_key? any_key?                   LEFT_PAREN expression_wrapper RIGHT_PAREN)
     ;
 
 standard_function
