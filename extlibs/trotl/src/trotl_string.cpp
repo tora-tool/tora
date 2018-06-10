@@ -96,12 +96,12 @@ BindParChar::BindParChar(unsigned int pos, SqlStatement &stmt, BindVarDecl &decl
 
 BindParRaw::BindParRaw(unsigned int pos, SqlStatement &stmt, DescribeColumn* ct) : BindPar(pos, stmt, ct)
 {
-	// amount of bytes =  (string length +1 ) * (array length)
-	valuep = (void**) calloc(_cnt, ct->_data_size + 1);
+	// amount of bytes =  (string length) * (array length)
+	valuep = (void**) calloc(_cnt, ct->_data_size);
 	alenp = (ub2*) calloc(_cnt, sizeof(ub4));
 
 	dty = SQLT_BIN;
-	value_sz = ct->_data_size + 1;
+	value_sz = ct->_data_size;
 	_type_name = ct->typeName();
 }
 
