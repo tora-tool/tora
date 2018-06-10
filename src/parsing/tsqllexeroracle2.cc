@@ -473,6 +473,11 @@ Lexer::token_const_iterator OracleGuiLexer::findEndToken( Lexer::token_const_ite
 			j = j.consumeWS();
 			currText = j->getText().toUpper();
 		}
+		if (currText == "EDITIONABLE")
+		{
+		    j = j.consumeWS();
+		    currText = j->getText().toUpper();
+		}
 		// TODO handle CREATE [TRIGGER|TYPE|TYPE BODY] here
 		if (currText == "PACKAGE" || currText == "PROCEDURE" || currText == "FUNCTION")
 			i = findEndTokenPL(start);
