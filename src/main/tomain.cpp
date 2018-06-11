@@ -344,6 +344,14 @@ void toMain::createStatusbar()
 {
     statusBar()->showMessage(QString::null);
 
+    MemoryLabel = new QLabel(statusBar());
+    statusBar()->addPermanentWidget(MemoryLabel);
+    MemoryLabel->setMinimumWidth(60);
+
+    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(updateMemory()));
+    timer->start(1000);
+
 #if 0
 // TODO: this part is waiting for QScintilla backend feature (yet unimplemented).
     SelectionLabel = new QLabel(statusBar());
@@ -909,6 +917,13 @@ void toMain::slotActiveToolChaged(toToolWidget *tool)
 void toMain::newVersionAvalable()
 {
 
+}
+
+#include "core/tomemory.h"
+void toMain::updateMemory()
+{
+    QString usage("Memory: %1 M ");
+    MemoryLabel->setText(usage.arg(QString::number((qulonglong)getCurrentRSS())));
 }
 
 #ifdef QT_DEBUG

@@ -257,6 +257,8 @@ class toMain : public toMainWindow
 
         void newVersionAvalable();
 
+        void updateMemory();
+
 #ifdef QT_DEBUG
         // This function should diagnose focus "stealing"
         void reportFocus();
@@ -307,7 +309,7 @@ class toMain : public toMainWindow
         QMenu *viewMenu, *toolsMenu, *windowsMenu, *connectionsMenu, *helpMenu, *statusMenu;
 
         /** Current column/row label - diplayed in bottom right,  updated by worksheet widget*/
-        QLabel *ColumnLabel, *RowLabel;
+        QLabel *ColumnLabel, *RowLabel, *MemoryLabel;
 
         //! \brief Display current type of text edit selection (normal/block)
         QLabel * SelectionLabel;
