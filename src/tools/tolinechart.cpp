@@ -42,9 +42,7 @@
 #include "core/toconf.h"
 
 #include <QtGui/QPainter>
-#include <QPrinter>
 #include <QScrollBar>
-#include <QPrintDialog>
 
 #include "core/toeditorconfiguration.h"
 #include "icons/print.xpm"

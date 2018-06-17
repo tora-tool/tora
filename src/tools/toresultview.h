@@ -51,7 +51,6 @@
 #include <algorithm>
 
 class toTreeWidgetItem;
-class TOPrinter;
 class toListTip;
 class toQuery;
 class toResultCols;

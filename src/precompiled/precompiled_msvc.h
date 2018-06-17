@@ -40,8 +40,6 @@
 #include <QMouseEvent>
 #include <QPaintEvent>
 #include <QPlainTextEdit>
-#include <QPrintDialog>
-#include <QPrinter>
 #include <QProgressBar>
 #include <QProgressDialog>
 #include <QPushButton>

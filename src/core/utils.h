@@ -61,7 +61,6 @@
 #define TO_ESCAPE(string) Qt::escape(string)
 #endif
 
-#define TOPrinter QPrinter
 #define TOFileDialog QFileDialog
 #define TOMessageBox QMessageBox
 #define TODock QWidget

@@ -51,8 +51,6 @@
 #include <QtGui/QPixmap>
 #include <QtGui/QMouseEvent>
 #include <QMenu>
-#include <QPrinter>
-#include <QPrintDialog>
 
 #include "core/toeditorconfiguration.h"
 #include "tools/tolinechart.h"
