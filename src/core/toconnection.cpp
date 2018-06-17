@@ -205,11 +205,7 @@ toConnection::~toConnection()
     Utils::toBusy busy;
     Abort = true;
 
-#if QT_VERSION < 0x050000
-    Q_ASSERT_X( (int)LoanCnt == 0 , qPrintable(__QHERE__), "toConnection deleted while BG query is running");
-#else
     Q_ASSERT_X( LoanCnt.loadAcquire() == 0 , qPrintable(__QHERE__), "toConnection deleted while BG query is running");
-#endif
 
     if(pCache)
     {
@@ -245,11 +241,7 @@ void toConnection::commit(toConnectionSub *sub)
 void toConnection::commit(void)
 {
     QMutexLocker clock(&ConnectionLock);
-#if QT_VERSION < 0x050000
-    if ((int)LoanCnt)
-#else
     if (LoanCnt.loadAcquire())
-#endif
         throw qApp->translate("toConnection::commit", "Couldn't commit, while connection is active");
 
     Q_FOREACH(toConnectionSub *conn, Connections)
@@ -452,11 +444,7 @@ toConnectionSub* toConnection::borrowSub()
         Connections.remove(retval);
         LentConnections.insert(retval);
         LoanCnt.fetchAndAddAcquire(1);
-#if QT_VERSION < 0x050000
-        Q_ASSERT_X((int)LoanCnt == LentConnections.size(), qPrintable(__QHERE__), "Invalid number of lent toConnectionSub(s)");
-#else
         Q_ASSERT_X(LoanCnt.loadAcquire() == LentConnections.size(), qPrintable(__QHERE__), "Invalid number of lent toConnectionSub(s)");
-#endif
         return retval;
     }
     else
@@ -464,11 +452,7 @@ toConnectionSub* toConnection::borrowSub()
         toConnectionSub* retval = addConnection();
         LoanCnt.fetchAndAddAcquire(1);
         LentConnections.insert(retval);
-#if QT_VERSION < 0x050000
-        Q_ASSERT_X((int)LoanCnt == LentConnections.size(), qPrintable(__QHERE__), "Invalid number of lent toConnectionSub(s)");
-#else
         Q_ASSERT_X(LoanCnt.loadAcquire() == LentConnections.size(), qPrintable(__QHERE__), "Invalid number of lent toConnectionSub(s)");
-#endif
         return retval;
     }
 }
@@ -498,11 +482,7 @@ void toConnection::putBackSub(toConnectionSub *conn)
         Connections.insert(conn);
     bool removed = LentConnections.remove(conn);
     Q_ASSERT_X(removed, qPrintable(__QHERE__), "Lent connection not found");
-#if QT_VERSION < 0x050000
-    Q_ASSERT_X((int)LoanCnt == LentConnections.size(), qPrintable(__QHERE__), "Invalid number of lent toConnectionSub(s)");
-#else
     Q_ASSERT_X(LoanCnt.loadAcquire() == LentConnections.size(), qPrintable(__QHERE__), "Invalid number of lent toConnectionSub(s)");
-#endif
 }
 
 void toConnection::allExecute(QString const& sql)

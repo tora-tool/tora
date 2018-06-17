@@ -44,12 +44,7 @@ toRefreshCombo::toRefreshCombo(QWidget *parent, const QString& def)
 
 void toRefreshCombo::setRefreshInterval(QString const& interval)
 {
-#if QT_VERSION < 0x050000
-	int index = findText(interval);
-	setCurrentIndex(index);
-#else
 	setCurrentText(interval);
-#endif	
 }
 
 

@@ -19,7 +19,6 @@ OPTION(ENABLE_ORACLE "Enable/Disable Oracle support at all. Including detection"
 OPTION(ENABLE_PGSQL "Enable/Disable PostgreSQL support. Including detection" ON)
 OPTION(ENABLE_DB2 "Enable/Disable DB2 support. Including detection" OFF)
 OPTION(ENABLE_TERADATA "Enable/Disable Teradata support." OFF)
-OPTION(QT5_BUILD "Use Qt5" ON)
 OPTION(WANT_RPM "Enable additional RPM related stuff. Additional make package_rpm target" OFF)
 OPTION(USE_PCH "Use percompiled headers" OFF)
 OPTION(USE_EXPERIMENTAL "Use experimental code" OFF)
@@ -204,56 +203,48 @@ SET(QT_USE_QTNETWORK TRUE)
 SET(QT_USE_QTXML TRUE)
 SET(QT_USE_QTWEBKIT TRUE)
 #SET(CMAKE_AUTOMOC ON)
-IF(QT5_BUILD)
 
-  set (QT_FOUND true)
+set (QT_FOUND true)
 
-  set( QT5_ROOT_PATH CACHE PATH "Qt5 root directory (i.e. where the 'bin' folder lies)" )
-  if ( QT5_ROOT_PATH )
-	list( APPEND CMAKE_PREFIX_PATH ${QT5_ROOT_PATH} )
-  endif()
+set( QT5_ROOT_PATH CACHE PATH "Qt5 root directory (i.e. where the 'bin' folder lies)" )
+if ( QT5_ROOT_PATH )
+  list( APPEND CMAKE_PREFIX_PATH ${QT5_ROOT_PATH} )
+endif()
 
-  find_package(Qt5Core REQUIRED)
-  find_package(Qt5Gui REQUIRED)
-  find_package(Qt5Network REQUIRED)
-  find_package(Qt5PrintSupport REQUIRED)
-  find_package(Qt5Sql REQUIRED)
-  find_package(Qt5Widgets REQUIRED)
-  find_package(Qt5Xml REQUIRED)
-  find_package(Qt5LinguistTools)
-  IF(APPLE)
-    find_package(Qt5MacExtras REQUIRED)
-  ENDIF()
-  set(QT_INCLUDES
-    ${Qt5Core_INCLUDE_DIRS}
-    ${Qt5Gui_INCLUDE_DIRS}
-    ${Qt5Network_INCLUDE_DIRS}
-    ${Qt5PrintSupport_INCLUDE_DIRS}
-    ${Qt5Sql_INCLUDE_DIRS}
-    ${Qt5Widgets_INCLUDE_DIRS}
-    ${Qt5Xml_INCLUDE_DIRS}
-  )
-  IF(APPLE)    
-    LIST(APPEND QT_INCLUDES ${Qt5MacExtras_INCLUDE_DIRS})
-  ENDIF()
-  include_directories(${QT_INCLUDES})
-  # SET(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} ${Qt5Core_EXECUTABLE_COMPILE_FLAGS}")
-  # SET(CMAKE_C_FLAGS           "${CMAKE_C_FLAGS}   ${Qt5Core_EXECUTABLE_COMPILE_FLAGS}")
-  # STRING(TOUPPER "CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}" _flags_var_name)
-  # SET(${_flags_var_name}      "${${_flags_var_name}} ${Qt5Core_EXECUTABLE_COMPILE_FLAGS}")
-  # SET("CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}" _flags_var_name)
-  # # prevent error "You must build your code with position independent code if Qt was built with..
-  if (Qt5_POSITION_INDEPENDENT_CODE)
-    SET(CMAKE_POSITION_INDEPENDENT_CODE ON)
-  endif()
-ELSE()
-  SET (QT_MIN_VERSION "4.8.0")
-  SET (QT_USE_QTSQL TRUE)
-  SET (QT_USE_QTNETWORK TRUE)
-  SET (QT_USE_QTXML TRUE)
-  FIND_PACKAGE(Qt4 REQUIRED)
-  INCLUDE( ${QT_USE_FILE} )
+find_package(Qt5Core REQUIRED)
+find_package(Qt5Gui REQUIRED)
+find_package(Qt5Network REQUIRED)
+find_package(Qt5PrintSupport REQUIRED)
+find_package(Qt5Sql REQUIRED)
+find_package(Qt5Widgets REQUIRED)
+find_package(Qt5Xml REQUIRED)
+find_package(Qt5LinguistTools)
+IF(APPLE)
+  find_package(Qt5MacExtras REQUIRED)
 ENDIF()
+set(QT_INCLUDES
+  ${Qt5Core_INCLUDE_DIRS}
+  ${Qt5Gui_INCLUDE_DIRS}
+  ${Qt5Network_INCLUDE_DIRS}
+  ${Qt5PrintSupport_INCLUDE_DIRS}
+  ${Qt5Sql_INCLUDE_DIRS}
+  ${Qt5Widgets_INCLUDE_DIRS}
+  ${Qt5Xml_INCLUDE_DIRS}
+)
+IF(APPLE)
+  LIST(APPEND QT_INCLUDES ${Qt5MacExtras_INCLUDE_DIRS})
+ENDIF()
+include_directories(${QT_INCLUDES})
+# SET(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} ${Qt5Core_EXECUTABLE_COMPILE_FLAGS}")
+# SET(CMAKE_C_FLAGS           "${CMAKE_C_FLAGS}   ${Qt5Core_EXECUTABLE_COMPILE_FLAGS}")
+# STRING(TOUPPER "CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}" _flags_var_name)
+# SET(${_flags_var_name}      "${${_flags_var_name}} ${Qt5Core_EXECUTABLE_COMPILE_FLAGS}")
+# SET("CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}" _flags_var_name)
+# # prevent error "You must build your code with position independent code if Qt was built with..
+if (Qt5_POSITION_INDEPENDENT_CODE)
+  SET(CMAKE_POSITION_INDEPENDENT_CODE ON)
+endif()
+
 IF (QT_FOUND)
   MESSAGE("Qt Found OK")
   #Add our Qt definitions

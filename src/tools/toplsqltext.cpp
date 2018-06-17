@@ -244,11 +244,9 @@ toPLSQL::toPLSQL(QWidget *main, toConnection &connection)
     splitter->addWidget(Objects);
 
     Editors = new QTabWidget(this);
-#if QT_VERSION >= 0x040500
     Editors->setTabsClosable(true);
     connect(Editors, SIGNAL(tabCloseRequested(int)),
             this, SLOT(closeEditor(int)));
-#endif
     splitter->addWidget(Editors);
     Editors->setTabPosition(QTabWidget::North);
 

@@ -55,21 +55,13 @@
 #include <dlfcn.h>
 #endif
 
-#if QT_VERSION >= 0x050000
 #define TO_ESCAPE(string) string.toHtmlEscaped()
-#else
-#define TO_ESCAPE(string) Qt::escape(string)
-#endif
 
 #define TOFileDialog QFileDialog
 #define TOMessageBox QMessageBox
 #define TODock QWidget
 
-#if QT_VERSION >= 0x050000
 typedef Qt::WindowFlags toWFlags;
-#else
-typedef Qt::WFlags toWFlags;
-#endif
 
 class QComboBox;
 class toConnection;

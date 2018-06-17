@@ -10,11 +10,7 @@ for which a new license (GPL+exception) is in place.
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QtCore/QTextStream>
-#if QT_VERSION >= 0x040300
 #include <QtCore/QXmlStreamReader>
-#else
-#warning "QXmlStreamReader is disabled. Qt 4.3.x required."
-#endif
 
 ShortcutEditorDialog::ShortcutEditorDialog(QWidget * parent)
     : QDialog(parent)
@@ -81,7 +77,6 @@ void ShortcutEditorDialog::acceptDialog()
 
 void ShortcutEditorDialog::exportButton_clicked()
 {
-#if QT_VERSION >= 0x040300
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save Shortcuts"),
                        QDir::currentPath(), tr("Sqliteman Shortcuts XML (*.xml);;All Files (*)"));
     if (fileName.isEmpty())
@@ -110,12 +105,10 @@ void ShortcutEditorDialog::exportButton_clicked()
     xml.writeEndDocument();
 
     file.close();
-#endif
 }
 
 void ShortcutEditorDialog::importButton_clicked()
 {
-#if QT_VERSION >= 0x040300
     QString fileName = QFileDialog::getOpenFileName(this, tr("Load Shortcuts"),
                        QDir::currentPath(), tr("Sqliteman Shortcuts XML (*.xml);;All Files (*)"));
     if (fileName.isEmpty())
@@ -151,5 +144,4 @@ void ShortcutEditorDialog::importButton_clicked()
     }
 
     file.close();
-#endif
 }
