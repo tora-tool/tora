@@ -43,6 +43,7 @@
 #include "core/toconnectiontraits.h"
 #include "core/toconnectionsub.h"
 #include "core/toconnectionsubloan.h"
+#include "core/toglobalevent.h"
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QList>
@@ -232,6 +233,10 @@ void toInvalid::recompileSelected(void)
             {
                 conn.execute(sql.mid(0, l + 1));
             }
+        }
+        catch (toConnection::exception const& e)
+        {
+            toGlobalEventSingle::Instance().showMessage(e, false, true);
         }
         catch (...)
         {
