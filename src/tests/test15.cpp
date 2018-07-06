@@ -48,6 +48,7 @@
 #include <iostream>
 #include "core/utils.h"
 #include "core/tologger.h"
+#include "parsing/toindent.h"
 
 void indentPriv(SQLParser::Token const* root, QList<SQLParser::Token const*> &list);
 
@@ -67,100 +68,7 @@ int main(int argc, char **argv)
     try
     {
         QString input = Utils::toReadFile(filename);
-        std::unique_ptr <Statement> ast = StatementFactTwoParmSing::Instance().create("OracleDML", input, filename);
-        Token const* root = ast->root();
-
-        TLOG(8, toNoDecorator, __HERE__) << root->toLispStringRecursive() << std::endl;
-
-        QList<SQLParser::Token const*> list;
-        indentPriv(root, list);
-
-        QString str;
-        int lastLine = 0;
-        QString lastWord;
-        bool firstWord = true;
-        foreach(Token const *t, list)
-        {
-            int d1 = t->depth();
-            int d2 = t->metadata().value("INDENT_DEPTH").toInt();
-            int line = t->getPosition().getLine();
-            bool v = t->getValidPosition().isValid();
-            SQLParser::Token::TokenType tt = t->getTokenType();
-            QString s = t->toString();
-            if (tt==SQLParser::Token::TokenType::X_COMMENT)
-            {
-                s.remove(QRegExp("[\\n\\r]"));
-            }
-            TLOG(8, toNoDecorator, __HERE__) << d1 << "\t" << d2 << "\t" << line << "\t" << tt << "\t" << s << std::endl;
-            if (!firstWord)
-            {
-                str.append(' ');
-            }
-
-            if(line > lastLine)
-            {
-                str.append("\n");               // prepend newline if needed
-                str.append(QString(d2, ' '));   // indent line by tokens depth
-            }
-            str.append(s);
-
-            firstWord = false;
-            lastWord = s;
-            lastLine = line;
-        }
-
-        TLOG(8, toNoDecorator, __HERE__) << "-------------------------------------------------------------------------------------------------------------" << std::endl;
-		TLOG(8, toNoDecorator, __HERE__) << input << std::endl;
-		TLOG(8, toNoDecorator, __HERE__) << "-------------------------------------------------------------------------------------------------------------" << std::endl;
-        TLOG(8, toNoDecorator, __HERE__) << str << std::endl;
-        TLOG(8, toNoDecorator, __HERE__) << "-------------------------------------------------------------------------------------------------------------" << std::endl;
-
-        QSet<SQLLexer::Token::TokenType> IGNORED = QSet<SQLLexer::Token::TokenType>()
-                        << SQLLexer::Token::X_EOF
-                        << SQLLexer::Token::X_EOL
-                        << SQLLexer::Token::X_FAILURE
-                        << SQLLexer::Token::X_ONE_LINE
-                        << SQLLexer::Token::X_WHITE
-                        << SQLLexer::Token::X_COMMENT
-                        << SQLLexer::Token::X_COMMENT_ML
-                        << SQLLexer::Token::X_COMMENT_ML_END;
-
-        std::unique_ptr <SQLLexer::Lexer> lexerIn  = LexerFactTwoParmSing::Instance().create("OracleGuiLexer", input, "");
-        SQLLexer::Lexer::token_const_iterator i = lexerIn->begin();
-        QList<SQLLexer::Token::TokenType> ilist;
-        while ( i != lexerIn->end())
-        {
-            SQLLexer::Token::TokenType tt = i->getTokenType();
-            if(!IGNORED.contains(tt))
-            {
-                std::cout << '\'' << qPrintable(i->getText()) << '\'' << "\t" << tt << std::endl;
-                ilist.append(tt);
-            }
-            i++;
-        }
-
-        std::unique_ptr <SQLLexer::Lexer> lexerOut = LexerFactTwoParmSing::Instance().create("OracleGuiLexer", str, "");
-        SQLLexer::Lexer::token_const_iterator j = lexerOut->begin();
-        QList<SQLLexer::Token::TokenType> slist;
-        while ( j != lexerOut->end())
-        {
-            SQLLexer::Token::TokenType tt = j->getTokenType();
-            if(!IGNORED.contains(tt))
-            {
-                std::cout << '\'' << qPrintable(j->getText()) << '\'' << "\t" << tt << std::endl;
-                slist.append(tt);
-            }
-            j++;
-        }
-
-        if (ilist == slist)
-        {
-            TLOG(8, toNoDecorator, __HERE__) << "OK" << std::endl;
-        } else {
-            TLOG(8, toNoDecorator, __HERE__) << "NOT OK" << std::endl;
-            return 1;
-        }
-
+        QString output = toIndent::indent(input);
     }
     catch (const ParseException &e)
     {
@@ -171,57 +79,4 @@ int main(int argc, char **argv)
         std::cerr << "Unhandled exception: "<< std::endl << std::endl << qPrintable(str) << std::endl;
     }
     return 0;
-}
-
-void indentPriv(SQLParser::Token const* root, QList<SQLParser::Token const*> &list)
-{
-    using namespace SQLParser;
-    QRegExp white("^[ \\n\\r\\t]*$");
-
-    Token const*t = root;
-    unsigned depth = 0;
-    while(t->parent())
-    {
-        if (!white.exactMatch(t->toString()))
-            depth++;
-        t = t->parent();
-    }
-
-    QList<SQLParser::Token const*> me, pre, post;
-    foreach(Token const *t, root->prevTokens())
-    {
-        if (!white.exactMatch(t->toString()))
-        {
-        t->metadata().insert("INDENT_DEPTH", depth);
-        me.append(t);
-        }
-    }
-    if (!white.exactMatch(root->toString()))
-    {
-        root->metadata().insert("INDENT_DEPTH", depth);
-        me.append(root);
-    }
-    foreach(Token const* t, root->postTokens())
-    {
-        if (!white.exactMatch(t->toString()))
-        {
-            t->metadata().insert("INDENT_DEPTH", depth);
-            me.append(t);
-        }
-    }
-
-    foreach(QPointer<Token> child, root->getChildren())
-    {
-        Position child_position = child->getValidPosition();
-
-        if(child_position < root->getPosition())
-        {
-            indentPriv(child, pre);
-        } else {
-            indentPriv(child, post);
-        }
-    }
-    list.append(pre);
-    list.append(me);
-    list.append(post);
 }

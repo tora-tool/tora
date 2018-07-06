@@ -46,6 +46,7 @@
 #include "core/tosyntaxanalyzer.h"
 
 #include "parsing/tsqlparse.h"
+#include "parsing/toindent.h"
 
 #include "icons/indent.xpm"
 
@@ -315,35 +316,16 @@ void toSqlText::indentCurrentSql() // slot
     analyzer()->sanitizeStatement(stat);
     try
     {
+        QString newSQL = toIndent::indent(stat.sql);
         std::unique_ptr <Statement> ast = StatementFactTwoParmSing::Instance().create("OracleDML", stat.sql, "");
-
-        Token const* root = ast->root();
-
-        TLOG(8, toNoDecorator, __HERE__) << root->toLispStringRecursive() << std::endl;
-
-        QList<SQLParser::Token const*> list;
-        indentPriv(root, list);
-
-        QString str;
-        foreach(Token const *t, list)
-        {
-            int d1 = t->depth();
-            int d2 = t->metadata().value("INDENT_DEPTH").toInt();
-            QString s = t->toString();
-            TLOG(8, toNoDecorator, __HERE__) << d1 << "\t" << d2 << "\t" << s << std::endl;
-            str.append(QString(d2, ' '));
-            str.append(s);
-            str.append("\n");
-        }
 
         beginUndoAction();
         setSelection(stat.posFrom, stat.posTo);
         removeSelectedText();
-        insert(str);
+        insert(newSQL);
         endUndoAction();
-    } catch (...) {
-
     }
+    TOCATCH
 }
 
 void toSqlText::indentPriv(SQLParser::Token const* root, QList<SQLParser::Token const*> &list)

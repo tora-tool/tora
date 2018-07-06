@@ -236,6 +236,7 @@ SET(TORA_MOC_CLASSES
   main/topreferences.h
   main/tosyntaxsetup.h
 
+  parsing/toindent.h
   parsing/tolexermysql.h
   parsing/tolexeroracle.h
   parsing/tolexeroracleapis.h
@@ -508,6 +509,7 @@ SET(TORA_SOURCES
   migratetool/squirrelsql.cpp
   migratetool/tora3.cpp
 
+  parsing/toindent.cpp
   parsing/MySQLGuiLexer.cc
   parsing/MySQLLexer.cc
   parsing/OracleDML.cc
