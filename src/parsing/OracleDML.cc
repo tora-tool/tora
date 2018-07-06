@@ -30525,11 +30525,11 @@ OracleDML::order_by_elements()
                 ANTLR_UINT32 alt128=2;
                 {
                     ANTLR_UINT32 LA128_0 = this->LA(1);
-                    if ( (LA128_0 == REGULAR_ID) && ((((toUpper(LT(1)->getText()) == "range"))||((toUpper(LT(1)->getText()) == "ROWS"))||((toUpper(LT(1)->getText()) == "LOG"))||((toUpper(LT(1)->getText()) == "NULLS")))))
+                    if ( (LA128_0 == REGULAR_ID) && ((((toUpper(LT(1)->getText()) == "RANGE"))||((toUpper(LT(1)->getText()) == "ROWS"))||((toUpper(LT(1)->getText()) == "LOG"))||((toUpper(LT(1)->getText()) == "NULLS")))))
                     {
                         {
                             ANTLR_UINT32 LA128_1 = this->LA(2);
-                            if ( (LA128_1 == REGULAR_ID) && ((((toUpper(LT(1)->getText()) == "range"))||((toUpper(LT(1)->getText()) == "ROWS"))||((toUpper(LT(1)->getText()) == "LOG"))||((toUpper(LT(1)->getText()) == "NULLS")))))
+                            if ( (LA128_1 == REGULAR_ID) && ((((toUpper(LT(1)->getText()) == "RANGE"))||((toUpper(LT(1)->getText()) == "ROWS"))||((toUpper(LT(1)->getText()) == "LOG"))||((toUpper(LT(1)->getText()) == "NULLS")))))
                             {
                                 {
                                     ANTLR_UINT32 LA128_3 = this->LA(3);
@@ -53394,7 +53394,7 @@ OracleDML::quantified_expression()
 
             root_0 = std::move(get_psrstate()->get_treeAdaptor()->nilNode());
             // 1079:10: -> { mode = 1 }? ^( NESTED_EXPR ( some_key )? ( exists_key )? ( all_key )? ( any_key )? ^( NESTED_SUBQUERY LEFT_PAREN subquery RIGHT_PAREN ) )
-            if ( mode = 1 ) {
+            if ( mode == 1 ) {
             	// OracleDML.g:1079:27: ^( NESTED_EXPR ( some_key )? ( exists_key )? ( all_key )? ( any_key )? ^( NESTED_SUBQUERY LEFT_PAREN subquery RIGHT_PAREN ) )
             	{
             	ImplTraits::TreeTypePtr root_1 = get_psrstate()->get_treeAdaptor()->nilNode();
@@ -60137,7 +60137,7 @@ OracleDML::over_clause()
             	            ANTLR_UINT32 alt330=2;
             	            {
             	                ANTLR_UINT32 LA330_0 = this->LA(1);
-            	                if ( (LA330_0 == REGULAR_ID) && ((((toUpper(LT(1)->getText()) == "range"))||((toUpper(LT(1)->getText()) == "ROWS")))))
+            	                if ( (LA330_0 == REGULAR_ID) && ((((toUpper(LT(1)->getText()) == "RANGE"))||((toUpper(LT(1)->getText()) == "ROWS")))))
             	                {
             	                    alt330=1;
             	                }
@@ -60575,7 +60575,7 @@ OracleDML::windowing_type()
 
             {
                 ANTLR_UINT32 LA333_0 = this->LA(1);
-                if ( (LA333_0 == REGULAR_ID) && ((((toUpper(LT(1)->getText()) == "range"))||((toUpper(LT(1)->getText()) == "ROWS")))))
+                if ( (LA333_0 == REGULAR_ID) && ((((toUpper(LT(1)->getText()) == "RANGE"))||((toUpper(LT(1)->getText()) == "ROWS")))))
                 {
                     {
                         ANTLR_UINT32 LA333_1 = this->LA(2);
@@ -60583,7 +60583,7 @@ OracleDML::windowing_type()
                         {
                             alt333=1;
                         }
-                        else if ( ((toUpper(LT(1)->getText()) == "range")))
+                        else if ( ((toUpper(LT(1)->getText()) == "RANGE")))
                         {
                             alt333=2;
                         }

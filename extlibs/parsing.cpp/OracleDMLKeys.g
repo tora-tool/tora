@@ -860,7 +860,7 @@ binary_float_key
     ;
 
 range_key
-    :    {toUpper(LT(1)->getText()) == "range"}?=> REGULAR_ID -> RANGE_VK[$REGULAR_ID]
+    :    {toUpper(LT(1)->getText()) == "RANGE"}?=> REGULAR_ID -> RANGE_VK[$REGULAR_ID]
     ;
 
 nclob_key

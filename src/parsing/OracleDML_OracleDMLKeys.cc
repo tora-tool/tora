@@ -14177,7 +14177,7 @@ OracleDML_OracleDMLKeys::range_key()
         // OracleDMLKeys.g:863:5: ({...}? => REGULAR_ID -> RANGE_VK[$REGULAR_ID] )
         // OracleDMLKeys.g:863:10: {...}? => REGULAR_ID
         {
-            if ( !((toUpper(LT(1)->getText()) == "range")) )
+            if ( !((toUpper(LT(1)->getText()) == "RANGE")) )
             {
                 if (this->get_backtracking()>0)
                 {
