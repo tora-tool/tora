@@ -48,6 +48,7 @@ namespace SQLParser
         , "IDENTIFIER"
         , "TABLE_REF"
         , "OPERATOR_BINARY"
+        , "GROUP"
     };
 
     QMap<QPair<QString, QString>, ObjectCache::TableInfo>::const_iterator ObjectCache::getTable(QString const& currentSchema, QString const& schema, QString const& table) const

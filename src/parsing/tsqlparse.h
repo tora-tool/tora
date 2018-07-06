@@ -157,6 +157,13 @@ namespace SQLParser
 				return !(*this < other);
 			};
 
+			inline Position& operator=(const Position& other)
+			{
+			    _mLine = other._mLine;
+			    _mLinePos = other._mLinePos;
+			    return *this;
+			}
+
         private:
             unsigned _mLine, _mLinePos;
     };
@@ -238,7 +245,8 @@ namespace SQLParser
                 S_COND_OR,
                 S_IDENTIFIER,
                 S_TABLE_REF,
-                S_OPERATOR_BINARY
+                S_OPERATOR_BINARY,
+                S_GROUP
             };
 
             enum UsageType
@@ -454,8 +462,8 @@ namespace SQLParser
 
             const static char* TokenType2Text[];
             Token* _mParent;
-            const Position _mPosition;
-            const QString _mStr;
+            /*const*/ Position _mPosition;
+            /*const*/ QString _mStr;
             const TokenType _mTokenType;
             const UsageType _mUsageType;
             QString _mTokenATypeName; //ANTLR token type - for debugging purposes only

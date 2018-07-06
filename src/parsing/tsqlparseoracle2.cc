@@ -104,6 +104,16 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 	case Tokens::SQL92_RESERVED_WHERE:
 	    tokenTypeRef = S_WHERE;
 	    break;
+	case Tokens::GROUP_BY_CLAUSE:
+	    // explanation: GROUP_BY_CLAUSE can have 2 different roots "GROUP BY .. HAVING .." or "HAVING .. GROUP BY .." or just pure "HAVING"
+	    // GROUP_BY_CLAUSE is constructed as:
+	    // ^(GROUP_BY_CLAUSE[$group_key.start] ^(group_key ^(GROUP_BY_ELEMENT group_by_elements)*) having_clause?)
+	    // -- this avoids double reference to group_key
+	    tokenTypeRef = S_GROUP;
+	    Token::_mPosition = Position(0, 0);
+	    Token::_mStr = QString::null;
+	    Token::_mTokenATypeName = (const char *)Antlr3BackendImpl::OracleDML::getTokenNames()[Tokens::GROUP_BY_CLAUSE];
+	    break;
 	case Tokens::SQL92_RESERVED_ALL:
 	case Tokens::SQL92_RESERVED_ALTER:
 	//case Tokens::SQL92_RESERVED_AND:
