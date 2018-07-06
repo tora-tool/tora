@@ -43,6 +43,7 @@
 #include "core/toconfiguration.h"
 #include "ts_log/ts_log_utils.h"
 
+#include <QAction>
 #include <QMessageBox>
 #include <QtCore/QSettings>
 
