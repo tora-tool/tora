@@ -32,9 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef __TOSYNTAXSETUP_H__
-#define __TOSYNTAXSETUP_H__
-
+#pragma once
 
 #include "ui_tosyntaxsetupui.h"
 #include "core/tosettingtab.h"
@@ -90,5 +88,3 @@ class toSyntaxSetup
         int wordClass() const;         // returns enum toSyntaxAnalyzer::wordClass
         void checkFixedWidth(const QFont &fnt);
 };
-
-#endif

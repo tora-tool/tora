@@ -72,10 +72,22 @@ namespace ToConfiguration
                 , Extensions            // #define CONF_EXTENSIONS
                 // 2nd tab
                 , EditStyleMap          // #define CONF_EDIT_STYLE
+                // 3rd tab Indent
+                , IndentWidthtInt = 3500
+                , IndentDepthInt
+                , ReUseNewlinesBool
+                , BreakSelectBool
+                , BreakFromBool
+                , BreakWhereBool
+                , BreakGroupBool
+                , BreakOrderBool
+                , BreakModelBool
+                , BreakPivotBool
             };
             virtual QVariant defaultValue(int option) const;
 
             virtual void saveUserType(QSettings &s, QVariant &val, int key) const;
             virtual void loadUserType(QSettings &s, QVariant &val, int key) const;
     };
+
 }

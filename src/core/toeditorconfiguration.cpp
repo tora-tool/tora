@@ -116,6 +116,7 @@ QVariant ToConfiguration::Editor::defaultValue(int option) const
             return QVariant(QString(""));
         case Extensions:
             return QVariant(QString("SQL (*.sql *.pkg *.pkb), Text (*.txt), All (*)"));
+        // 2nd tab
         case EditStyleMap:
             {
                 static toStylesMap retval;
@@ -138,6 +139,18 @@ QVariant ToConfiguration::Editor::defaultValue(int option) const
                 delete l;
                 return QVariant::fromValue(retval);
             }
+        // 3rd tab
+        case IndentWidthtInt: return QVariant((int) 120);
+        case IndentDepthInt:  return QVariant((int) 3);
+        case ReUseNewlinesBool: return QVariant((bool) true);
+        case BreakSelectBool: return QVariant((bool) true);
+        case BreakFromBool:   return QVariant((bool) true);
+        case BreakWhereBool:  return QVariant((bool) true);
+        case BreakGroupBool:  return QVariant((bool) true);
+        case BreakOrderBool:  return QVariant((bool) true);
+        case BreakModelBool:  return QVariant((bool) true);
+        case BreakPivotBool:  return QVariant((bool) true);
+
         default:
             Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Editor un-registered enum value: %1").arg(option)));
             return QVariant();

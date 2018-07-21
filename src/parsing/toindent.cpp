@@ -4,10 +4,28 @@
 #include "parsing/tsqllexer.h"
 #include "core/utils.h"
 #include "core/tologger.h"
+#include "core/toconfiguration.h"
+#include "core/toeditorconfiguration.h"
 
 using namespace SQLParser;
+using namespace ToConfiguration;
 
 void indentPriv(SQLParser::Token const* root, QList<SQLParser::Token const*> &list);
+
+class LineBuffer : public QList<Token const*>
+{
+    LineBuffer() : linePos(0) {};
+
+    void append(unsigned spaces)
+    {
+        for(unsigned i = 0; i = spaces; i++)
+        {
+            append(NULL);
+        }
+    }
+public:
+    unsigned linePos;
+};
 
 QString toIndent::indent(QString const&input)
 {
@@ -25,28 +43,48 @@ QString toIndent::indent(QString const&input)
         int lastLine = 1;
         QString lastWord;
         bool firstWord = true;
+
+        QList<Token const *> lineBuf;
+        unsigned linePos = 0;
+
+        TLOG(8, toNoDecorator, __HERE__) << "DEPTH" << "\t" << "IDEPTH" << "\t" << "LINE" << "\t" << "TYPE" << "\t" << "TOKEN" << std::endl;
         foreach(Token const *t, list)
         {
             int d1 = t->depth();
-            int d2 = t->metadata().value("INDENT_DEPTH").toInt();
+            int depth = t->metadata().value("INDENT_DEPTH").toInt();
             int line = t->getPosition().getLine();
             bool v = t->getValidPosition().isValid();
             SQLParser::Token::TokenType tt = t->getTokenType();
             QString s = t->toString();
-            if (tt==SQLParser::Token::TokenType::X_COMMENT)
-            {
-                s.remove(QRegExp("[\\n\\r]"));
-            }
-            TLOG(8, toNoDecorator, __HERE__) << d1 << "\t" << d2 << "\t" << line << "\t" << tt << "\t" << s << std::endl;
-            if (!firstWord)
+
+            // remove trailing new line from single line comment
+            //            if (tt==SQLParser::Token::TokenType::X_COMMENT)
+            //            {
+            //                s.remove(QRegExp("[\\n\\r]"));
+            //            }
+
+            TLOG(8, toNoDecorator, __HERE__) << d1 << "\t" << depth << "\t" << line << "\t" << tt << "\t" << s << std::endl;
+
+            if (!firstWord // prepend space before every word except the first one
+                    && !(s == "." || lastWord == ".") // no space around dots
+                    && !(s == ",")                    // no space before comma
+                    )
             {
                 retval.append(' ');
+                lineBuf.append(NULL); linePos++;
             }
 
             if(line > lastLine)
             {
-                retval.append("\n");               // prepend newline if needed
-                retval.append(QString(d2, ' '));   // indent line by tokens depth
+                if (toConfigurationNewSingle::Instance().option(Editor::ReUseNewlinesBool).toBool())
+                {
+                    retval.append("\n");               // prepend newline if needed
+                    retval.append(QString(depth * toConfigurationNewSingle::Instance().option(Editor::IndentDepthInt).toInt()
+                                          , ' '));   // indent line by tokens depth
+                } else {
+                    retval.append(" ");
+                    lineBuf.append(NULL); linePos++;
+                }
             }
             retval.append(s);
 
