@@ -406,7 +406,6 @@ void OracleDMLStatement::parse()
 	            return a->getPosition() < b->getPosition();
 	      });
 
-
 	QList<Token*>::iterator i = _mLeaves.begin(), j = _mLeaves.begin(); j++;
 	unsigned lastIndex = 0;
 	Token *t1, *t2, *t3; // t1 left leaf, t2 right leaf, t3 chosen leaf
