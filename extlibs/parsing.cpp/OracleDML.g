@@ -430,12 +430,12 @@ having_clause
 
 model_clause
     :    model_key cell_reference_options* return_rows_clause? reference_model* main_model
-        -> ^(model_key main_model cell_reference_options* return_rows_clause? reference_model*)
+        -> ^(model_key cell_reference_options* return_rows_clause? reference_model* main_model)
     ;
 
 cell_reference_options
     :    (ignore_key^|keep_key^) nav_key
-    |    unique_key^ (dimension_key|single_key reference_key!) 
+    |    unique_key^ (dimension_key|single_key reference_key)
     ;
 
 return_rows_clause
@@ -450,13 +450,13 @@ reference_model
 
 main_model
     :    (main_key main_model_name)? model_column_clauses cell_reference_options* model_rules_clause
-        -> ^(MAIN_MODEL main_model_name? model_column_clauses model_rules_clause cell_reference_options*)
+        -> ^(MAIN_MODEL main_model_name? model_column_clauses cell_reference_options* model_rules_clause)
     ;
 
 model_column_clauses
     :    model_column_partition_part?
         dimension_key by_key model_column_list measures_key model_column_list
-        -> ^(MODEL_COLUMN ^(dimension_key model_column_list) ^(measures_key model_column_list) model_column_partition_part?)
+        -> ^(MODEL_COLUMN model_column_partition_part? ^(dimension_key model_column_list) ^(measures_key model_column_list))
     ;
 
 model_column_partition_part
@@ -470,12 +470,12 @@ model_column_list
 
 model_column
     :    expression column_alias?
-        -> ^(MODEL_COLUMN column_alias? ^(EXPR expression))
+        -> ^(MODEL_COLUMN ^(EXPR expression) column_alias?)
     ;
 
 model_rules_clause
     :    model_rules_part? LEFT_PAREN (model_rules_element (COMMA model_rules_element)*)? RIGHT_PAREN
-        -> ^(MODEL_RULES model_rules_element* model_rules_part?)
+        -> ^(MODEL_RULES model_rules_part? model_rules_element*)
     ;
 
 model_rules_part
