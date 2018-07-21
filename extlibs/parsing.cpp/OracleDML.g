@@ -305,7 +305,7 @@ pivot_clause
 
 pivot_element
     :    aggregate_function_name LEFT_PAREN expression RIGHT_PAREN column_alias?
-        -> ^(PIVOT_ELEMENT column_alias? ^(EXPR ^(ROUTINE_CALL aggregate_function_name ^(ARGUMENTS ^(ARGUMENT ^(EXPR expression))))))
+        -> ^(PIVOT_ELEMENT ^(EXPR ^(ROUTINE_CALL aggregate_function_name ^(ARGUMENTS ^(ARGUMENT ^(EXPR expression))))) column_alias?)
     ;
 
 pivot_for_clause
@@ -332,7 +332,7 @@ pivot_in_clause
 
 pivot_in_clause_element
     :    pivot_in_clause_elements column_alias?
-        -> ^(PIVOT_IN_ELEMENT column_alias? pivot_in_clause_elements)
+        -> ^(PIVOT_IN_ELEMENT pivot_in_clause_elements column_alias?)
     ;
 
 pivot_in_clause_elements
@@ -624,17 +624,24 @@ merge_statement
     :    merge_key into_key tableview_name table_alias?
         using_key selected_tableview on_key LEFT_PAREN condition RIGHT_PAREN
         (
-            (when_key matched_key) => merge_update_clause merge_insert_clause?
+            (when_key matched_key) => merge_update_insert_seq
         |
-            (when_key not_key matched_key) => merge_insert_clause merge_update_clause?
+            (when_key not_key matched_key) => merge_insert_update_seq
         )?
         error_logging_clause?
         -> ^(merge_key tableview_name table_alias? ^(using_key selected_tableview ^(LOGIC_EXPR condition))
-            merge_update_clause? merge_insert_clause?
+            merge_update_insert_seq? merge_insert_update_seq?
             error_logging_clause?)
     ;
 
 // $<Merge - Specific Clauses
+merge_update_insert_seq
+    : merge_update_clause merge_insert_clause?
+    ;
+
+merge_insert_update_seq
+    : merge_insert_clause merge_update_clause?
+    ;
 
 merge_update_clause
     :    when_key matched_key then_key update_key set_key 
