@@ -251,14 +251,14 @@ table_ref_aux
     ;
 
 join_clause
-    :    query_partition_clause?
+    :   qpc1=query_partition_clause?
         (cross_key|natural_key)? (inner_key|outer_join_type)? join_key
         table_ref_aux
-        query_partition_clause?
+        qpc2=query_partition_clause?
     (    join_on_part
     |    join_using_part
     )*
-        -> ^(JOIN_DEF[$join_key.start] cross_key? natural_key? inner_key? outer_join_type? table_ref_aux query_partition_clause* join_on_part* join_using_part*)
+        -> ^(JOIN_DEF[$join_key.start] $qpc1? cross_key? natural_key? inner_key? outer_join_type? table_ref_aux $qpc2? join_on_part* join_using_part*)
     ;
 
 join_on_part
@@ -375,9 +375,9 @@ unpivot_in_elements
 
 hierarchical_query_clause
     :    connect_key by_key nocycle_key? condition start_part?
-        -> ^(HIERARCHICAL start_part? ^(connect_key nocycle_key? ^(LOGIC_EXPR condition)))
+        -> ^(HIERARCHICAL ^(connect_key nocycle_key? ^(LOGIC_EXPR condition)) start_part?)
     |    start_part connect_key by_key nocycle_key? condition
-        -> ^(HIERARCHICAL start_part ^(connect_key nocycle_key? ^(LOGIC_EXPR condition)))
+        -> ^(HIERARCHICAL start_part  ^(connect_key nocycle_key? ^(LOGIC_EXPR condition)))
     ;
 
 start_part
@@ -586,7 +586,7 @@ multi_table_insert
     |    conditional_insert_clause
     )
         select_statement
-        -> ^(MULTI_TABLE_MODE select_statement multi_table_element* conditional_insert_clause?)
+        -> ^(MULTI_TABLE_MODE multi_table_element* conditional_insert_clause? select_statement)
     ;
 
 multi_table_element
@@ -629,8 +629,9 @@ merge_statement
             (when_key not_key matched_key) => merge_insert_clause merge_update_clause?
         )?
         error_logging_clause?
-        -> ^(merge_key table_alias? tableview_name ^(using_key selected_tableview ^(LOGIC_EXPR condition))
-                 merge_update_clause? merge_insert_clause? error_logging_clause?)
+        -> ^(merge_key tableview_name table_alias? ^(using_key selected_tableview ^(LOGIC_EXPR condition))
+            merge_update_clause? merge_insert_clause?
+            error_logging_clause?)
     ;
 
 // $<Merge - Specific Clauses
@@ -639,7 +640,7 @@ merge_update_clause
     :    when_key matched_key then_key update_key set_key 
         merge_element (COMMA merge_element)*
         where_clause? merge_update_delete_part?
-        ->^(MERGE_UPDATE merge_element+ where_clause? merge_update_delete_part?)
+        ->^(MERGE_UPDATE[$when_key.start] matched_key then_key update_key set_key merge_element+ where_clause? merge_update_delete_part?)
     ;
 
 merge_element
@@ -655,12 +656,12 @@ merge_insert_clause
     :    when_key not_key matched_key then_key insert_key 
         (LEFT_PAREN column_name (COMMA column_name)* RIGHT_PAREN)?
         values_key expression_list where_clause?
-        -> ^(MERGE_INSERT ^(COLUMNS column_name*) expression_list where_clause?) 
+        -> ^(MERGE_INSERT[$when_key.start] not_key matched_key then_key insert_key ^(COLUMNS column_name*) values_key expression_list where_clause?) 
     ;
 
 selected_tableview
     :    ( tableview_name | LEFT_PAREN select_statement RIGHT_PAREN) table_alias?
-        -> ^(SELECTED_TABLEVIEW table_alias? tableview_name? select_statement?)
+        -> ^(SELECTED_TABLEVIEW tableview_name? select_statement? table_alias?)
     ;
 
 // $>
@@ -927,10 +928,10 @@ datetime_expression
     ;
 
 interval_expression
-    :    day_key    (LEFT_PAREN cn1=concatenation_wrapper RIGHT_PAREN)? to_key second_key (LEFT_PAREN cn2=concatenation_wrapper RIGHT_PAREN)?
-        -> ^(day_key second_key $cn1? $cn2?)
+    :    day_key  (LEFT_PAREN cn1=concatenation_wrapper RIGHT_PAREN)? to_key second_key (LEFT_PAREN cn2=concatenation_wrapper RIGHT_PAREN)?
+        -> ^(day_key $cn1? to_key second_key $cn2?)
     |    year_key (LEFT_PAREN concatenation_wrapper RIGHT_PAREN)? to_key month_key
-        -> ^(year_key month_key concatenation_wrapper)
+        -> ^(year_key to_key month_key concatenation_wrapper)
     ;
 
 model_expression
@@ -1011,11 +1012,11 @@ scope    {
 // $<CASE - Specific Clauses
 
 simple_case_statement
-    :    label_name? ck1=case_key atom
+    :   ({!$case_statement::isStatement}? label_name?) ck1=case_key atom
         simple_case_when_part+ 
         case_else_part?
-        end_key case_key? label_name?
-        -> ^(SIMPLE_CASE[$ck1.start] label_name* ^(EXPR atom) simple_case_when_part+ case_else_part?)  
+        end_key ({!$case_statement::isStatement}? case_key label_name? | )
+        -> ^(SIMPLE_CASE[$ck1.start] label_name* ^(EXPR atom) simple_case_when_part+ case_else_part? end_key)
     ;
 
 simple_case_when_part
@@ -1023,11 +1024,11 @@ simple_case_when_part
     ;
 
 searched_case_statement
-    :    label_name? ck1=case_key
+    :   ({!$case_statement::isStatement}? label_name?) ck1=case_key
         searched_case_when_part+
         case_else_part?
-        end_key case_key? label_name?
-        -> ^(SEARCHED_CASE[$ck1.start] label_name* searched_case_when_part+ case_else_part?) 
+        end_key ({!$case_statement::isStatement}? case_key label_name? | )
+        -> ^(SEARCHED_CASE[$ck1.start] label_name* searched_case_when_part+ case_else_part? end_key)
     ;
 
 searched_case_when_part
