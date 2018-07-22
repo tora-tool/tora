@@ -315,7 +315,7 @@ namespace SQLParser
                 return root->getPosition();
             }
 
-            const QString& toString() const
+            virtual const QString& toString() const
             {
                 static const QString Empty;
                 if (getPosition().getLine() == 0)
