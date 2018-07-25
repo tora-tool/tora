@@ -104,7 +104,7 @@ TSLOG_TYPELIST_6(dashDecorator<4>,
 // toNoDecorator header:
 // " "
 typedef Tdecorator <
-TSLOG_TYPELIST_1(charDecorator < ' ' >
+TSLOG_TYPELIST_1(noDecorator
                 ) > toNoDecorator;
 
 // timed decorator, display delta time since last time TLOG was called (should be thread afinite)

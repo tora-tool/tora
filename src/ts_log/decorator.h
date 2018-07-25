@@ -184,6 +184,16 @@ class dashDecorator : public decoratorInterface
         {};
 };
 
+class noDecorator : public decoratorInterface
+{
+    public:
+        static inline void decorate(std::ostream &s)
+        {};
+
+        static inline void decorate(std::ostream &s, const std::string & here)
+        {};
+};
+
 template<const char *c>
 class wordDecorator : public decoratorInterface
 {
