@@ -69,9 +69,14 @@ public:
         {
             if (SpaceToken const* t = dynamic_cast<SpaceToken const*>(*it))
                 continue;
+            if ((*it)->metadata().contains("LINEBREAK"))
+            {
+                minDepthToken = *it;
+                break;
+            }
             if (minDepthToken == NULL)
                 minDepthToken = *it;
-            else if ((*it)->metadata().value("INDENT_DEPTH").toInt() <= minDepthToken->metadata().value("INDENT_DEPTH").toInt())
+            else if ((*it)->metadata().value("INDENT_DEPTH").toInt() < minDepthToken->metadata().value("INDENT_DEPTH").toInt())
                 minDepthToken = *it;
         }
 
@@ -91,11 +96,57 @@ public:
     {
         QString retval;
         QList<Token const*>::ConstIterator it = constBegin();
-        for (; it != constEnd(); ++it)
+
+        Token const *prevToken = NULL;
+
+        if (it != constEnd()) // process the 1st word in the list
         {
-			Token const *t = *it;
+            Token const *t = *it;
+            if (t->metadata().contains("LINEBREAK"))
+            {
+                retval.append("\n");
+                int depth = t->metadata().value("INDENT_DEPTH").toInt();
+                int indent = toConfigurationNewSingle::Instance().option(Editor::IndentDepthInt).toInt();
+                retval.append(QString(depth * indent, ' '));
+            }
             retval.append(t->toString());
+            prevToken = *it;
+            it++;
         }
+
+        for (; it != constEnd(); ++it) // process the rest
+        {
+            Token const *token = *it;
+            // Case when token was labeled as NEWLINE
+            if (token->metadata().contains("LINEBREAK"))
+            {
+                retval.append("\n");
+                int depth = token->metadata().value("INDENT_DEPTH").toInt();
+                int indent = toConfigurationNewSingle::Instance().option(Editor::IndentDepthInt).toInt();
+                retval.append(QString(depth * indent, ' '));
+            // regular token
+            } else {
+				QString w = token->toString();
+                if (prevToken->metadata().contains("KEYWORD"))
+                    goto APPEND_SPACE;
+                if (token->metadata().contains("KEYWORD"))
+                    goto APPEND_SPACE;
+                if (prevToken->metadata().contains("GLUE") && token->metadata().contains("GLUE"))
+                    goto APPEND_WORD;
+                if (prevToken->metadata().contains("NO_SPACE_AFTER"))
+                    goto APPEND_WORD;
+                if (token->metadata().contains("NO_SPACE_BEFORE"))
+                    goto APPEND_WORD;
+
+APPEND_SPACE:
+                    retval.append(QString(' ')); // prepend space
+            }
+
+APPEND_WORD:
+            retval.append(token->toString());
+            prevToken = token;
+        }
+
         return retval;
     }
 public:
@@ -122,62 +173,90 @@ QString toIndent::indent(QString const&input)
         bool firstWord = true;
 
         LineBuffer lineBuf;
-        unsigned linePos = 0;
 
-        TLOG(8, toNoDecorator, __HERE__) << "DEPTH" << "\t" << "IDEPTH" << "\t" << "LINE" << "\t" << "TYPE" << "\t" << "TOKEN" << std::endl;
+        QSet<QString> KEYWORDS = QSet<QString>()
+                                << "SELECT"
+                                << "FROM"
+                                << "JOIN"
+                                << "ON"
+                                << "WHERE"
+                                << "AND"
+                                << "OR"
+                                << "BETWEEN"
+                                << "GROUP"
+                                << "BY"
+                                << "HAVING"
+                                << "MODEL"
+                                << "PIVOT"
+                                << "XML";
+
+        TLOG(8, toNoDecorator, __HERE__) << "IDEPTH" << "\t" << "LINE" << "\t" << "TYPE" << "\t" << "TOKEN" << std::endl;
         foreach(Token const *t, list)
         {
-            int d1 = t->depth();
             int depth = t->metadata().value("INDENT_DEPTH").toInt();
             int line = t->getPosition().getLine();
             SQLParser::Token::TokenType tt = t->getTokenType();
             QString word = t->toString();
 
             // remove trailing new line from single line comment
-            //            if (tt == SQLParser::Token::TokenType::X_COMMENT)
-            //            {
-            //                word.remove(QRegExp("[\\n\\r]"));
-            //            }
-
-            TLOG(8, toNoDecorator, __HERE__) << d1 << "\t" << depth << "\t" << line << "\t" << tt << "\t" << word << std::endl;
-
-            if (!firstWord // prepend space before every word except the first one
-                    && !(word == "." || lastWord == ".") // no space around dots
-                    && !(word == ",")                    // no space before comma
-                    )
+            if (tt == SQLParser::Token::TokenType::X_COMMENT) // comment or white char
             {
-                //retval.append(" ");
-                lineBuf.append(new SpaceToken(&owner));
+                if (tt == SQLParser::Token::TokenType::X_COMMENT)
+                {
+                    word.remove(QRegExp("[\\n\\r]*$"));
+                }
+            }
+
+            TLOG(8, toNoDecorator, __HERE__) << depth << "\t" << line << "\t" << tt << "\t" << word << std::endl;
+
+            if (word == ".")
+            {
+                t->metadata().insert("NO_SPACE_BEFORE", 1);
+                t->metadata().insert("NO_SPACE_AFTER", 1);
+            }
+
+            if (word == ",")
+            {
+                t->metadata().insert("NO_SPACE_BEFORE", 1);
+            }
+
+            if (word == "(")
+            {
+                t->metadata().insert("NO_SPACE_BEFORE", 1);
+                t->metadata().insert("GLUE", 1);
+            }
+
+            if (word == "+")
+            {
+                t->metadata().insert("GLUE", 1);
+            }
+
+            if (word == ")")
+            {
+                t->metadata().insert("GLUE", 1);
+            }
+
+            if (KEYWORDS.contains(word.toUpper()))
+            {
+                t->metadata().insert("KEYWORD", 1);
             }
 
             if(line > lastLine)
             {
                 if (toConfigurationNewSingle::Instance().option(Editor::ReUseNewlinesBool).toBool())
                 {
-                    //retval.append("\n");               // prepend newline if needed
-                    //retval.append(QString(depth * toConfigurationNewSingle::Instance().option(Editor::IndentDepthInt).toInt()
-                    //                      , ' '));   // indent line by tokens depth
-                    lineBuf.append(new SpaceToken(&owner, depth * toConfigurationNewSingle::Instance().option(Editor::IndentDepthInt).toInt()));
-                    linePos = depth * toConfigurationNewSingle::Instance().option(Editor::IndentDepthInt).toInt();
-                } else {
-                    //retval.append(" ");
-                    linePos++;
-                    lineBuf.append(new SpaceToken(&owner));
+                    t->metadata().insert("LINEBREAK", 1);
                 }
             }
-            //retval.append(word);
+
             lineBuf.append(t);
 
-            int w = toConfigurationNewSingle::Instance().option(Editor::IndentWidthtInt).toInt();
-            if (lineBuf.lineLenght() > toConfigurationNewSingle::Instance().option(Editor::IndentWidthtInt).toInt())
-            {
-                LineBuffer oldLine = lineBuf.split();
-                retval2.append(oldLine.toString());
-                retval2.append("\n");
-            }
+//            if (lineBuf.lineLenght() > toConfigurationNewSingle::Instance().option(Editor::IndentWidthtInt).toInt())
+//            {
+//                LineBuffer oldLine = lineBuf.split();
+//                retval2.append(oldLine.toString());
+//            }
 
-            firstWord = false;
-            lastWord = word;
             lastLine = line;
         }
         retval2.append(lineBuf.toString());
@@ -228,13 +307,13 @@ QString toIndent::indent(QString const&input)
                 j++;
             }
 
-            //if (ilist == slist)
+            if (ilist == slist)
             {
                 TLOG(8, toNoDecorator, __HERE__) << "OK" << std::endl;
                 return retval2;
-//            } else {
-//                TLOG(8, toNoDecorator, __HERE__) << "NOT OK" << std::endl;
-//                throw QString::fromLocal8Bit("Indent failed");
+            } else {
+                TLOG(8, toNoDecorator, __HERE__) << "NOT OK" << std::endl;
+                throw QString::fromLocal8Bit("Indent failed");
             }
         }
 
