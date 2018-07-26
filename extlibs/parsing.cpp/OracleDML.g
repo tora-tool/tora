@@ -238,16 +238,53 @@ table_ref
         -> ^(TABLE_REF[ToraType(T_TABLE_REF)] table_ref_aux join_clause* pivot_clause? unpivot_clause?)
     ;
 
+// table_ref_aux
+//     :
+//     (    (LEFT_PAREN (select_key|with_key)) => dml_table_expression_clause (pivot_clause|unpivot_clause)?
+//     |    (LEFT_PAREN) => LEFT_PAREN table_ref subquery_operation_part* RIGHT_PAREN (pivot_clause|unpivot_clause)?
+//     |    (only_key LEFT_PAREN) => only_key LEFT_PAREN dml_table_expression_clause RIGHT_PAREN
+//     |    dml_table_expression_clause (pivot_clause|unpivot_clause)?
+//     )
+//         flashback_query_clause*
+//         ({isTableAlias(LT(1), LT(2))}? table_alias)?
+//         -> ^(TABLE_REF_ELEMENT dml_table_expression_clause? table_ref? subquery_operation_part* only_key? pivot_clause? unpivot_clause? flashback_query_clause* table_alias?)
+//     ;
+
 table_ref_aux
     :
-    (    (LEFT_PAREN (select_key|with_key)) => dml_table_expression_clause (pivot_clause|unpivot_clause)?
-    |    (LEFT_PAREN) => LEFT_PAREN table_ref subquery_operation_part* RIGHT_PAREN (pivot_clause|unpivot_clause)?
-    |    (only_key LEFT_PAREN) => only_key LEFT_PAREN dml_table_expression_clause RIGHT_PAREN
-    |    dml_table_expression_clause (pivot_clause|unpivot_clause)?
+    (    (LEFT_PAREN (select_key|with_key)) => table_ref_aux_ver1
+    |    (LEFT_PAREN) => table_ref_aux_ver2
+    |    (only_key LEFT_PAREN) => table_ref_aux_ver3
+    |    table_ref_aux_ver4
     )
-        flashback_query_clause*
-        ({isTableAlias(LT(1), LT(2))}? table_alias)?
-        -> ^(TABLE_REF_ELEMENT dml_table_expression_clause? table_ref? subquery_operation_part* only_key? pivot_clause? unpivot_clause? flashback_query_clause* table_alias?)
+    ;
+
+table_ref_aux_ver1
+    :
+        (LEFT_PAREN (select_key|with_key)) => dml_table_expression_clause
+        (pivot_clause|unpivot_clause)? flashback_query_clause* ({isTableAlias(LT(1), LT(2))}? table_alias)?
+        -> ^(TABLE_REF_ELEMENT dml_table_expression_clause pivot_clause? unpivot_clause? flashback_query_clause* table_alias?)
+    ;
+
+table_ref_aux_ver2
+    :
+        (LEFT_PAREN) => LEFT_PAREN table_ref subquery_operation_part* RIGHT_PAREN
+        (pivot_clause|unpivot_clause)? flashback_query_clause* ({isTableAlias(LT(1), LT(2))}? table_alias)?
+        -> ^(TABLE_REF_ELEMENT ^(TABLE_REF_ELEMENT[$LEFT_PAREN] table_ref subquery_operation_part* RIGHT_PAREN) pivot_clause? unpivot_clause? flashback_query_clause* table_alias?)
+    ;
+
+table_ref_aux_ver3
+    :
+        (only_key LEFT_PAREN) => only_key LEFT_PAREN dml_table_expression_clause RIGHT_PAREN
+        flashback_query_clause* ({isTableAlias(LT(1), LT(2))}? table_alias)?
+        -> ^(TABLE_REF_ELEMENT[$only_key.start] ^(TABLE_REF_ELEMENT[$LEFT_PAREN] dml_table_expression_clause RIGHT_PAREN) flashback_query_clause* table_alias?)
+    ;
+
+table_ref_aux_ver4
+    :
+        dml_table_expression_clause (pivot_clause|unpivot_clause)?
+        flashback_query_clause* ({isTableAlias(LT(1), LT(2))}? table_alias)?
+        -> ^(TABLE_REF_ELEMENT dml_table_expression_clause pivot_clause? unpivot_clause? flashback_query_clause* table_alias?)
     ;
 
 join_clause
@@ -258,7 +295,9 @@ join_clause
     (    join_on_part
     |    join_using_part
     )*
-        -> ^(JOIN_DEF[$join_key.start] $qpc1? cross_key? natural_key? inner_key? outer_join_type? table_ref_aux $qpc2? join_on_part* join_using_part*)
+        -> ^(JOIN_DEF[$join_key.start] $qpc1?
+            //cross_key? natural_key? inner_key? outer_join_type?
+            table_ref_aux $qpc2? join_on_part* join_using_part*)
     ;
 
 join_on_part
@@ -735,7 +774,7 @@ error_logging_reject_part
 dml_table_expression_clause
     :    table_collection_expression -> ^(TABLE_EXPRESSION ^(COLLECTION_MODE table_collection_expression))
     |    LEFT_PAREN select_statement subquery_restriction_clause? RIGHT_PAREN
-         -> ^(TABLE_EXPRESSION ^(NESTED_SUBQUERY LEFT_PAREN ^(SELECT_MODE select_statement subquery_restriction_clause?) RIGHT_PAREN))
+         -> ^(TABLE_EXPRESSION ^(NESTED_SUBQUERY[$LEFT_PAREN] ^(SELECT_MODE select_statement subquery_restriction_clause?) RIGHT_PAREN))
     |    tableview_name sample_clause? -> ^(TABLE_EXPRESSION ^(DIRECT_MODE tableview_name sample_clause?))
     ;
 
@@ -764,7 +803,7 @@ sample_clause
 
 seed_part
     :    seed_key LEFT_PAREN expression RIGHT_PAREN
-        -> ^(seed_key ^(EXPR expression))
+        -> ^(seed_key LEFT_PAREN ^(EXPR expression) RIGHT_PAREN)
     ;
 
 // $>
@@ -776,7 +815,7 @@ cursor_expression
 
 expression_list
     :    LEFT_PAREN expression? (COMMA expression)* RIGHT_PAREN
-        -> ^(EXPR_LIST ^(EXPR expression)*)
+        -> ^(EXPR_LIST[$LEFT_PAREN] ^(EXPR expression)* RIGHT_PAREN)
     ;
 
 condition
@@ -892,9 +931,9 @@ like_escape_part
 in_elements
 @init    {    int mode = 0;    }
     :    (LEFT_PAREN+ (select_key|with_key)) =>  LEFT_PAREN subquery RIGHT_PAREN
-         -> ^(NESTED_SUBQUERY LEFT_PAREN subquery RIGHT_PAREN)
+         -> ^(NESTED_SUBQUERY[$LEFT_PAREN] subquery RIGHT_PAREN)
     |    LEFT_PAREN concatenation_wrapper (COMMA concatenation_wrapper)* RIGHT_PAREN
-         -> ^(EXPR_LIST concatenation_wrapper+)
+         -> ^(EXPR_LIST[$LEFT_PAREN] concatenation_wrapper+ RIGHT_PAREN)
     |    constant
          -> ^(EXPR_LIST constant)
     |    bind_variable
