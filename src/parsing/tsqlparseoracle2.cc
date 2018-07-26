@@ -289,6 +289,9 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 		break;
 	case Tokens::EOF_TOKEN:
 		tokenTypeRef = X_EOF;
+		// WO: EOF Token allways has charPositionInLine == 0, this guarantees EOF Token is always the last one
+		_mPosition = Position(getPosition().getLine()+1, 0);
+		//_mPosition._mLine++;
 		break;
 	} // switch(tokentype)
 	
@@ -436,7 +439,9 @@ CHECK:
 		}
 		else if (t1->getPosition() < spacerPosition && spacerPosition < t2->getPosition())
 		{
-			t3 = t1->depth() > t2->depth() ? t1 : t2;
+		    QString l = t1->toString();
+		    QString r = t2->toString();
+		    t3 = t1->depth() < t2->depth() ? t1 : t2;
 		}
 		else if (spacerPosition == t2->getPosition())
 		{
@@ -446,9 +451,14 @@ CHECK:
 		{
 			do
 			{
-				i++; j++;
-				t1 = *i;
-				t2 = j == _mLeaves.end() ? NULL : *j;
+			    QString l = (*i)->toString();
+			    QString r = (*j)->toString();
+			    i++;
+			    j++;
+			    l = (*i)->toString();
+			    r = (*j)->toString();
+			    t1 = *i;
+			    t2 = j == _mLeaves.end() ? NULL : *j;
 			} while (t2 && t2->getPosition() < spacerPosition);
 			if (t2 == NULL)
 			    t3 = t1;
