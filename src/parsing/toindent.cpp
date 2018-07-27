@@ -12,30 +12,6 @@ using namespace ToConfiguration;
 
 void indentPriv(SQLParser::Token const* root, QList<SQLParser::Token const*> &list);
 
-class SpaceToken : public Token
-{
-    //Q_OBJECT;
-public:
-    SpaceToken(QObject *owner)
-        : Token(NULL, Position(0,0), " ")
-    {
-        QObject::setParent(owner);
-    };
-
-    SpaceToken(QObject *owner, unsigned length)
-        : Token(NULL, Position(0,0), QString(length, ' '))
-    {
-        QObject::setParent(owner);
-    };
-
-    const QString& toString() const override
-    {
-        return _mStr;
-    }
-
-    virtual ~SpaceToken(){};
-};
-
 class LineBuffer : public QList<Token const*>
 {
 public:
@@ -62,22 +38,33 @@ public:
         linePos -= token->toString().length();
 
         // iterate over all buffer and find a token having lowest indent depth
-        Token const* minDepthToken = NULL;
+        // When tokens have depth like:
+        // 1 1 2 3 4 1 1 5
+        //           ^--- this one is chosen
+        Token const *minDepthToken(NULL), *lastDepthToken(NULL);
 
         QList<Token const*>::ConstIterator it = constBegin();
         for(; it != constEnd(); ++it )
         {
-            if (SpaceToken const* t = dynamic_cast<SpaceToken const*>(*it))
-                continue;
             if ((*it)->metadata().contains("LINEBREAK"))
             {
+                lastDepthToken = *it;
                 minDepthToken = *it;
                 break;
             }
+
+            if (!(*it)->metadata().contains("SUBTREE_START"))
+            {
+                lastDepthToken = *it;
+                continue;
+            }
+
             if (minDepthToken == NULL)
+                lastDepthToken = minDepthToken = *it;
+            else if ((*it)->metadata().value("INDENT_DEPTH").toInt() <= minDepthToken->metadata().value("INDENT_DEPTH").toInt()
+                    && (*it)->metadata().value("INDENT_DEPTH").toInt() < lastDepthToken->metadata().value("INDENT_DEPTH").toInt())
                 minDepthToken = *it;
-            else if ((*it)->metadata().value("INDENT_DEPTH").toInt() < minDepthToken->metadata().value("INDENT_DEPTH").toInt())
-                minDepthToken = *it;
+            lastDepthToken = *it;
         }
 
         if (!minDepthToken)
@@ -89,6 +76,7 @@ public:
             retval.append(token);
             linePos -= token->toString().length();
         }
+
         return retval;
     }
 
@@ -124,6 +112,12 @@ public:
                 int depth = token->metadata().value("INDENT_DEPTH").toInt();
                 int indent = toConfigurationNewSingle::Instance().option(Editor::IndentDepthInt).toInt();
                 retval.append(QString(depth * indent, ' '));
+//            } else if(token->metadata().contains("SUBTREE_START")
+//                    && token->metadata().value("SUBTREE_LENGTH").toInt() > 100) {
+//                retval.append("\n");
+//                int depth = token->metadata().value("INDENT_DEPTH").toInt();
+//                int indent = toConfigurationNewSingle::Instance().option(Editor::IndentDepthInt).toInt();
+//                retval.append(QString(depth * indent, ' '));
             // regular token
             } else {
 				QString w = token->toString();
@@ -147,6 +141,7 @@ APPEND_WORD:
             prevToken = token;
         }
 
+        retval.append('\n');
         return retval;
     }
 public:
@@ -174,23 +169,35 @@ QString toIndent::indent(QString const&input)
 
         LineBuffer lineBuf;
 
-        QSet<QString> KEYWORDS = QSet<QString>()
+        QSet<QString> KEYWORDS = QSet<QString>() // keywords - should have spaces around them
+                                << "WITH"
+                                << "AS"
                                 << "SELECT"
                                 << "FROM"
                                 << "JOIN"
+                                << "CROSS"
+                                << "NATURAL"
+                                << "INNER"
+                                << "OUTER"
+                                << "LEFT"
+                                << "RIGHT"
+                                << "PARTITION"
                                 << "ON"
+                                << "USING"
                                 << "WHERE"
                                 << "AND"
                                 << "OR"
                                 << "BETWEEN"
+                                << "IN"
                                 << "GROUP"
                                 << "BY"
                                 << "HAVING"
                                 << "MODEL"
                                 << "PIVOT"
-                                << "XML";
+                                << "XML"
+                                << "FOR";
 
-        TLOG(8, toNoDecorator, __HERE__) << "IDEPTH" << "\t" << "LINE" << "\t" << "TYPE" << "\t" << "TOKEN" << std::endl;
+        TLOG(8, toNoDecorator, __HERE__) << "IDEPTH" << "\t" << "LINE" << "\t" << "TYPE" << "\t" << "SLEN"<< "\t" << "TOKEN" << std::endl;
         foreach(Token const *t, list)
         {
             int depth = t->metadata().value("INDENT_DEPTH").toInt();
@@ -207,7 +214,18 @@ QString toIndent::indent(QString const&input)
                 }
             }
 
-            TLOG(8, toNoDecorator, __HERE__) << depth << "\t" << line << "\t" << tt << "\t" << word << std::endl;
+            int slen = 0;
+            if (t->metadata().contains("SUBTREE_LENGTH_TOKENS"))
+                slen = t->metadata().value("SUBTREE_LENGTH_TOKENS").toInt();
+            QString marker;
+            if (t->metadata().contains("LEFT_SPACER"))
+                marker = "<";
+            if (t->metadata().contains("RIGHT_SPACER"))
+                marker = ">";
+            if (t->metadata().contains("SUBTREE_START"))
+                marker.append('*');
+
+            TLOG(8, toNoDecorator, __HERE__) << depth << "\t" << line << "\t" << tt << "\t" << slen << "\t" << marker << word << std::endl;
 
             if (word == ".")
             {
@@ -245,17 +263,17 @@ QString toIndent::indent(QString const&input)
             {
                 if (toConfigurationNewSingle::Instance().option(Editor::ReUseNewlinesBool).toBool())
                 {
-                    t->metadata().insert("LINEBREAK", 1);
+                    t->metadata().insert("LINEBREAK", true);
                 }
             }
 
             lineBuf.append(t);
 
-//            if (lineBuf.lineLenght() > toConfigurationNewSingle::Instance().option(Editor::IndentWidthtInt).toInt())
-//            {
-//                LineBuffer oldLine = lineBuf.split();
-//                retval2.append(oldLine.toString());
-//            }
+            if (lineBuf.lineLenght() > toConfigurationNewSingle::Instance().option(Editor::IndentWidthtInt).toInt())
+            {
+                LineBuffer oldLine = lineBuf.split();
+                retval2.append(oldLine.toString());
+            }
 
             lastLine = line;
         }
@@ -336,29 +354,34 @@ void indentPriv(SQLParser::Token const* root, QList<SQLParser::Token const*> &li
     using namespace SQLParser;
     QRegExp white("^[ \\n\\r\\t]*$");
 
-    Token const*t = root;
-    unsigned depth = 0;
-    while(t->parent())
+    Token const*t = root; // this sub-tree root
+    unsigned indentDepth = 0;
+    while(t->parent())    // iterate to real root, compute indent depth, ignore nodes having no text
     {
         if (!white.exactMatch(t->toString()))
-            depth++;
+            indentDepth++; // increase indentDepth every time parent token in non-empty
         t = t->parent();
     }
+    indentDepth--; // indentDepth for root select token should be 0;
 
     QList<SQLParser::Token const*> me, pre, post;
-    foreach(Token const *t, root->prevTokens())
+    int preStrLen(0), meStrLen(0), postStrLen(0);
+    foreach(Token const *t, root->prevTokens()) // set INDENT_DEPTH for all
     {
         if (white.exactMatch(t->toString()))
             continue;
 
-        t->metadata().insert("INDENT_DEPTH", depth);
+        t->metadata().insert("INDENT_DEPTH", indentDepth);
+        t->metadata().insert("LEFT_SPACER", true);
         me.append(t);
+        preStrLen += t->toString().length() + 1;
     }
 
     if (!white.exactMatch(root->toString()))
     {
-        root->metadata().insert("INDENT_DEPTH", depth);
+        root->metadata().insert("INDENT_DEPTH", indentDepth);
         me.append(root);
+        meStrLen += root->toString().length() + 1;
     }
 
     foreach(Token const* t, root->postTokens())
@@ -366,22 +389,54 @@ void indentPriv(SQLParser::Token const* root, QList<SQLParser::Token const*> &li
         if (white.exactMatch(t->toString()))
             continue;
 
-        t->metadata().insert("INDENT_DEPTH", depth);
+        t->metadata().insert("INDENT_DEPTH", indentDepth);
+        t->metadata().insert("RIGHT_SPACER", true);
         me.append(t);
+        postStrLen += t->toString().length() + 1;
     }
 
+    // iterate over all children get their leaves lists
+    int leftSonsLegth(0), rightSonsLenght(0); // total length of leaves on each side (in chars)
     foreach(QPointer<Token> child, root->getChildren())
     {
         Position child_position = child->getValidPosition();
 
         if(child_position < root->getPosition())
         {
-            indentPriv(child, pre);
+            QList<SQLParser::Token const*> tempPre;
+            indentPriv(child, tempPre);
+
+            if (!tempPre.isEmpty())
+                leftSonsLegth += tempPre.first()->metadata().value("SUBTREE_LENGTH").toInt();
+
+            pre.append(tempPre);
         } else {
-            indentPriv(child, post);
+            QList<SQLParser::Token const*> tempPost;
+            indentPriv(child, tempPost);
+
+            if (!tempPost.isEmpty())
+                rightSonsLenght += tempPost.first()->metadata().value("SUBTREE_LENGTH").toInt();
+
+            post.append(tempPost);
         }
     }
-    list.append(pre);
-    list.append(me);
-    list.append(post);
+
+    // this variable thisSubTree contains sorted is of all leaves in this sub-bree
+    QList<SQLParser::Token const*> thisSubTree;
+    thisSubTree.append(pre);
+    thisSubTree.append(me);
+    thisSubTree.append(post);
+
+    if (!thisSubTree.isEmpty()) // might be empty in case of EOF token
+    {
+        // mark leftest and rightest leaves
+        thisSubTree.first()->metadata().insert("SUBTREE_START", true); // mark 1st node
+        thisSubTree.last()->metadata().insert("SUBTREE_END", true); // mark last node
+
+        // the first (the leftest) token in subtree also contains information about this subree length (in chars)
+        thisSubTree.first()->metadata().insert("SUBTREE_LENGTH_CHARS", leftSonsLegth + preStrLen + meStrLen + postStrLen + rightSonsLenght);
+        thisSubTree.first()->metadata().insert("SUBTREE_LENGTH_TOKENS", thisSubTree.length());
+    }
+
+    list.append(thisSubTree);
 }
