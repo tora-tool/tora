@@ -316,7 +316,8 @@ void toSqlText::indentCurrentSql() // slot
     analyzer()->sanitizeStatement(stat);
     try
     {
-        QString newSQL = toIndent::indent(stat.sql);
+		toIndent indentInst;
+        QString newSQL = indentInst.indent(stat.sql);
         std::unique_ptr <Statement> ast = StatementFactTwoParmSing::Instance().create("OracleDML", stat.sql, "");
 
         beginUndoAction();
@@ -327,7 +328,7 @@ void toSqlText::indentCurrentSql() // slot
     }
     TOCATCH
 }
-
+#if 0
 void toSqlText::indentPriv(SQLParser::Token const* root, QList<SQLParser::Token const*> &list)
 {
     using namespace SQLParser;
@@ -380,7 +381,7 @@ void toSqlText::indentPriv(SQLParser::Token const* root, QList<SQLParser::Token 
     list.append(me);
     list.append(post);
 }
-
+#endif
 void toSqlText::setHighlighter(int h) // slot
 {
     QWidget *focus = qApp->focusWidget();

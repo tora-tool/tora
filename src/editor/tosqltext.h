@@ -145,9 +145,9 @@ class toSqlText : public toScintilla
         void tableAtCursor(Word &schema, Word &table);
 
         toSyntaxAnalyzer* analyzer();
-
+#if 0
         void indentPriv(SQLParser::Token const*, QList<SQLParser::Token const*>&);
-
+#endif
     private slots:
         void indentCurrentSql();
         void setHighlighter(int);
