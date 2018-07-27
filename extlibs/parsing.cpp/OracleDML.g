@@ -827,9 +827,16 @@ condition_wrapper
         -> ^(LOGIC_EXPR expression)
     ;
 
+logical_or_expression_seq
+	:    (or_key^ logical_and_expression)
+    ;
+
 expression
-    :    (cursor_key LEFT_PAREN (select_key|with_key)) => cursor_expression
-    |    logical_and_expression ( or_key^ logical_and_expression )*
+@init    {    int mode = 0;    }
+    :    (cursor_key LEFT_PAREN (select_key|with_key)) => cursor_expression -> cursor_expression
+    |    logical_and_expression ( logical_or_expression_seq {mode = 1; } )*
+        -> { mode == 1 }? ^(DISJUNCTION logical_and_expression logical_or_expression_seq*)
+        -> logical_and_expression
     ;
 
 expression_wrapper
