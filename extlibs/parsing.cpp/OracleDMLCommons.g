@@ -308,10 +308,10 @@ char_set_name
 // NOTE: In reality this applies to aggregate functions only
 keep_clause
     :   keep_key^
-        LEFT_PAREN!
+        LEFT_PAREN
             dense_rank_key (first_key|last_key)
              order_by_clause
-        RIGHT_PAREN! over_clause?
+        RIGHT_PAREN over_clause?
     ;
 
 function_argument
@@ -319,7 +319,7 @@ function_argument
             argument? (COMMA argument )* 
         RIGHT_PAREN
         keep_clause?
-        -> ^(ARGUMENTS argument* keep_clause?)
+        -> ^(ARGUMENTS[$LEFT_PAREN] argument* RIGHT_PAREN keep_clause?)
     ;
 
 function_argument_analytic
@@ -328,7 +328,7 @@ function_argument_analytic
             (COMMA argument respect_or_ignore_nulls? )*
          RIGHT_PAREN
          keep_clause?
-         -> ^(ARGUMENTS argument* keep_clause?)
+         -> ^(ARGUMENTS[$LEFT_PAREN] argument* RIGHT_PAREN keep_clause?)
     ;
 
 function_argument_modeling
@@ -341,7 +341,7 @@ function_argument_modeling
                 )
          RIGHT_PAREN
          keep_clause?
-         -> ^(ARGUMENTS column_name keep_clause?)
+         -> ^(ARGUMENTS[$LEFT_PAREN] column_name RIGHT_PAREN keep_clause?)
     ;
 
 respect_or_ignore_nulls
@@ -374,7 +374,7 @@ datatype
 
 precision_part
     :    LEFT_PAREN numeric (COMMA numeric)? (char_key | byte_key)? RIGHT_PAREN
-        -> ^(PRECISION numeric+ char_key? byte_key?)
+        -> ^(PRECISION[$LEFT_PAREN] numeric+ char_key? byte_key? RIGHT_PAREN)
     ;
 
 native_datatype_element

@@ -166,7 +166,7 @@ factoring_element
     :    query_name (LEFT_PAREN column_name (COMMA column_name)* RIGHT_PAREN)? as_key LEFT_PAREN subquery order_by_clause? RIGHT_PAREN
          search_clause?
          cycle_clause?
-        -> ^(FACTORING query_name subquery search_clause? cycle_clause?)
+        -> ^(FACTORING query_name column_name* subquery search_clause? cycle_clause?)
     ;
 
 search_clause
@@ -191,7 +191,7 @@ subquery_operation_part
 
 subquery_basic_elements
     :    query_block
-    |    LEFT_PAREN subquery RIGHT_PAREN
+    |    LEFT_PAREN^ subquery RIGHT_PAREN
     ;
 
 query_block
@@ -324,7 +324,7 @@ query_partition_clause
     |    (LEFT_PAREN)=> expression_list
     |    expression (COMMA expression)*
     )
-        -> ^(partition_key subquery? expression_list? (EXPR expression)*)
+        -> ^(partition_key LEFT_PAREN? subquery? expression_list? (EXPR expression)* RIGHT_PAREN?)
     ;
 
 flashback_query_clause
@@ -339,12 +339,12 @@ pivot_clause
             pivot_for_clause
             pivot_in_clause  
         RIGHT_PAREN
-        -> ^(pivot_key xml_key? pivot_element+ pivot_for_clause pivot_in_clause)
+        -> ^(pivot_key xml_key? LEFT_PAREN pivot_element+ pivot_for_clause pivot_in_clause RIGHT_PAREN)
     ;
 
 pivot_element
     :    aggregate_function_name LEFT_PAREN expression RIGHT_PAREN column_alias?
-        -> ^(PIVOT_ELEMENT ^(EXPR ^(ROUTINE_CALL aggregate_function_name ^(ARGUMENTS ^(ARGUMENT ^(EXPR expression))))) column_alias?)
+        -> ^(PIVOT_ELEMENT ^(EXPR ^(ROUTINE_CALL aggregate_function_name ^(ARGUMENTS[$LEFT_PAREN] ^(ARGUMENT ^(EXPR expression)) RIGHT_PAREN))) column_alias?)
     ;
 
 pivot_for_clause
@@ -352,7 +352,7 @@ pivot_for_clause
     (    column_name
     |    LEFT_PAREN column_name (COMMA column_name)* RIGHT_PAREN
     )
-        -> ^(for_key column_name+)
+        -> ^(for_key LEFT_PAREN column_name+ RIGHT_PAREN)
     ;
 
 pivot_in_clause
