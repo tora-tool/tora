@@ -838,13 +838,13 @@ expression_wrapper
     ;
 
 logical_and_expression_seq
-    :    (and_key negated_expression)+
+    :    (and_key^ negated_expression)
     ;
 
 logical_and_expression
 @init    {    int mode = 0;    }
-    :    negated_expression (logical_and_expression_seq {mode = 1;} )?
-         -> { mode == 1 }? ^(CONJUNCTION negated_expression logical_and_expression_seq?)
+    :    negated_expression (logical_and_expression_seq {mode = 1;} )*
+         -> { mode == 1 }? ^(CONJUNCTION negated_expression logical_and_expression_seq*)
          -> negated_expression
     ;
 
