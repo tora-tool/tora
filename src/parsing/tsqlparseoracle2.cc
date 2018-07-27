@@ -451,12 +451,12 @@ CHECK:
 		{
 			do
 			{
-			    QString l = (*i)->toString();
-			    QString r = (*j)->toString();
+			    //QString l = (*i)->toString();
+			    //QString r = (*j)->toString();
 			    i++;
 			    j++;
-			    l = (*i)->toString();
-			    r = (*j)->toString();
+			    //l = (*i)->toString();
+			    //r = (*j)->toString();
 			    t1 = *i;
 			    t2 = j == _mLeaves.end() ? NULL : *j;
 			} while (t2 && t2->getPosition() < spacerPosition);
