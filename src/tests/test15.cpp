@@ -50,14 +50,12 @@
 #include "core/tologger.h"
 #include "parsing/toindent.h"
 
-void indentPriv(SQLParser::Token const* root, QList<SQLParser::Token const*> &list);
-
 int main(int argc, char **argv)
 {
     using namespace SQLParser;
 
     QString filename;
-    if ( argc == 2)
+    if (argc == 2)
     {
         filename = QString::fromLatin1(argv[1]);
     } else {
@@ -73,10 +71,12 @@ int main(int argc, char **argv)
     catch (const ParseException &e)
     {
         std::cerr << "ParseException: "<< std::endl << std::endl;
+        return 1;
     }
     catch (const QString &str)
     {
         std::cerr << "Unhandled exception: "<< std::endl << std::endl << qPrintable(str) << std::endl;
+        return 1;
     }
     return 0;
 }
