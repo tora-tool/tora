@@ -466,6 +466,10 @@ CHECK:
 			    goto CHECK;
 		}
 
+		// This "spacerToken" is any token in on hidden channel, or a token which is not present in AST tree
+		// These may include, WHITESPACE, COMMENT, (, ) , . some additional keywords like "cross", "outer", "left"
+		//  but also an identifier/REGULAR_ID but this shold NOT happen
+		ANTLR_UINT32 type = spacerToken.getType();
 		Token *spacerTokenNew = new Token(t3
 			, spacerPosition
 			, spacerToken.getText().c_str()

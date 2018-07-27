@@ -44,6 +44,7 @@
 #include "core/tosyntaxanalyzer.h"
 #include "editor/tosyntaxanalyzernl.h"
 #include "editor/tosyntaxanalyzeroracle.h"
+#include "parsing/toindent.h"
 #include "core/toeditorconfiguration.h"
 
 #include <QFontDialog>
@@ -138,6 +139,65 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, toWFlags fl)
         ListFontName = Utils::toFontToString(font);
         ResultExampleFont->setFont(font);
     }
+
+    // 3rd TAB Indent
+    toIndent indentInst;
+    if (SyntaxHighlightingInt->currentText() == "QsciSQL")
+        IndentExample->setHighlighter(toSqlText::QsciSql);
+    else
+        IndentExample->setHighlighter(toSqlText::Oracle);
+    QFile f(":/editor/complex.sql");
+    f.open(QFile::ReadOnly);
+    QString SqlExample = QString::fromUtf8(f.readAll());
+    IndentExample->setText(indentInst.indent(SqlExample));
+
+    connect(IndentLineWidthInt, SIGNAL(valueChanged(int)), this, SLOT(setIndentLineWidth(int)));
+    connect(IndentWidthInt, SIGNAL(valueChanged(int)), this, SLOT(setIndentWidth(int)));
+    connect(ReUseNewlinesBool, SIGNAL(stateChanged(int)), this, SLOT(setReUseNewlines(int)));
+    //    connect(BreakSelectBool,
+    //    connect(BreakFromBool,
+    //    connect(BreakWhereBoo,
+    //    connect(BreakGroupBool,
+    //    connect(BreakOrderBool,
+    //    connect(BreakModelBool,
+    //    connect(BreakPivotBool,
+    //    connect(WidthModeBool,
+}
+
+void toSyntaxSetup::setIndentLineWidth(int i)
+{
+    Utils::toBusy busy;
+    indentParams.insert("IndentLineWidthInt", i);
+    toIndent indentInst(indentParams);
+    QString oldSQL = IndentExample->text();
+    QString newSQL = indentInst.indent(oldSQL);
+    IndentExample->beginUndoAction();
+    IndentExample->setText(newSQL);
+    IndentExample->endUndoAction();
+}
+
+void toSyntaxSetup::setIndentWidth(int i)
+{
+    Utils::toBusy busy;
+    indentParams.insert("IndentWidthInt", i);
+    toIndent indentInst(indentParams);
+    QString oldSQL = IndentExample->text();
+    QString newSQL = indentInst.indent(oldSQL);
+    IndentExample->beginUndoAction();
+    IndentExample->setText(newSQL);
+    IndentExample->endUndoAction();
+}
+
+void toSyntaxSetup::setReUseNewlines(int i)
+{
+    Utils::toBusy busy;
+    indentParams.insert("ReUseNewlinesBool", i != 0);
+    toIndent indentInst(indentParams);
+    QString oldSQL = IndentExample->text();
+    QString newSQL = indentInst.indent(oldSQL);
+    IndentExample->beginUndoAction();
+    IndentExample->setText(newSQL);
+    IndentExample->endUndoAction();
 }
 
 void toSyntaxSetup::checkFixedWidth(const QFont &fnt)

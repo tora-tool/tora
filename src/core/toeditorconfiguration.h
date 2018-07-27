@@ -73,16 +73,18 @@ namespace ToConfiguration
                 // 2nd tab
                 , EditStyleMap          // #define CONF_EDIT_STYLE
                 // 3rd tab Indent
-                , IndentWidthtInt = 3500
-                , IndentDepthInt
+                , IndentLineWidthInt = 3500
+                , IndentWidthInt
                 , ReUseNewlinesBool
-                , BreakSelectBool
-                , BreakFromBool
-                , BreakWhereBool
-                , BreakGroupBool
-                , BreakOrderBool
-                , BreakModelBool
-                , BreakPivotBool
+                , BreakOnSelectBool
+                , BreakOnFromBool
+                , BreakOnWhereBool
+                , BreakOnGroupBool
+                , BreakOnOrderBool
+                , BreakOnModelBool
+                , BreakOnPivotBool
+                , BreakOnLimitBool
+                , WidthModeBool
             };
             virtual QVariant defaultValue(int option) const;
 

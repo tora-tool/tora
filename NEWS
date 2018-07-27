@@ -1,3 +1,6 @@
+3.2.132:
+2018-07-28: SQL Indentation
+
 3.2.98:
 2018-06-09: Qt version 5.11, Query model fixes, Gitub bug fixed #93, Rollback/Commit button fixes
 

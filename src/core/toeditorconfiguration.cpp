@@ -140,17 +140,18 @@ QVariant ToConfiguration::Editor::defaultValue(int option) const
                 return QVariant::fromValue(retval);
             }
         // 3rd tab
-        case IndentWidthtInt: return QVariant((int) 120);
-        case IndentDepthInt:  return QVariant((int) 3);
+        case IndentLineWidthInt: return QVariant((int) 160);
+        case IndentWidthInt:  return QVariant((int) 3);
         case ReUseNewlinesBool: return QVariant((bool) true);
-        case BreakSelectBool: return QVariant((bool) true);
-        case BreakFromBool:   return QVariant((bool) true);
-        case BreakWhereBool:  return QVariant((bool) true);
-        case BreakGroupBool:  return QVariant((bool) true);
-        case BreakOrderBool:  return QVariant((bool) true);
-        case BreakModelBool:  return QVariant((bool) true);
-        case BreakPivotBool:  return QVariant((bool) true);
-
+        case BreakOnSelectBool: return QVariant((bool) true);
+        case BreakOnFromBool:   return QVariant((bool) true);
+        case BreakOnWhereBool:  return QVariant((bool) true);
+        case BreakOnGroupBool:  return QVariant((bool) true);
+        case BreakOnOrderBool:  return QVariant((bool) true);
+        case BreakOnModelBool:  return QVariant((bool) true);
+        case BreakOnPivotBool:  return QVariant((bool) true);
+        case BreakOnLimitBool:  return QVariant((bool) true);
+        case WidthModeBool:  return QVariant((bool) true);
         default:
             Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Editor un-registered enum value: %1").arg(option)));
             return QVariant();

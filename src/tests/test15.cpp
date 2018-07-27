@@ -65,8 +65,9 @@ int main(int argc, char **argv)
     QApplication app(argc, argv);
     try
     {
+		toIndent indentInst;
         QString input = Utils::toReadFile(filename);
-        QString output = toIndent::indent(input);
+        QString output = indentInst.indent(input);
     }
     catch (const ParseException &e)
     {
