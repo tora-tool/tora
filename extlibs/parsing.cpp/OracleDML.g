@@ -195,25 +195,36 @@ subquery_basic_elements
     ;
 
 query_block
-@init    {    int mode = 0;    }
-    :    select_key
-        ((distinct_key|unique_key|all_key)=> (distinct_key|unique_key|all_key))?
-        (ASTERISK {mode = 1;}| selected_element (COMMA selected_element)*)
+    :   select_key
+        selected_list
         into_clause?
         from_clause 
         where_clause? 
         hierarchical_query_clause? 
         group_by_clause?
         model_clause?
-        -> {mode == 1}? ^(select_key distinct_key? unique_key? all_key? ASTERISK
-                into_clause? from_clause where_clause? hierarchical_query_clause? group_by_clause? model_clause?)
-        -> ^(select_key distinct_key? unique_key? all_key? ^(SELECT_LIST selected_element+)
-                into_clause? from_clause where_clause? hierarchical_query_clause? group_by_clause? model_clause?)
+        -> ^(select_key selected_list into_clause? from_clause where_clause? hierarchical_query_clause? group_by_clause? model_clause?)
+    ;
+
+selected_list
+@init    { int mode = 0; }
+    :
+        ((distinct_key|unique_key|all_key)=> (distinct_key|unique_key|all_key))?
+        ( ASTERISK {mode = 1;}
+        | selected_element selected_element_seq*
+        )
+        -> { mode == 1}? ^(SELECT_LIST distinct_key? unique_key? all_key? ASTERISK)
+        -> ^(SELECT_LIST distinct_key? unique_key? all_key? selected_element selected_element_seq*)
     ;
 
 selected_element
     :    select_list_elements column_alias?
         -> ^(SELECT_ITEM select_list_elements column_alias?)
+    ;
+
+selected_element_seq
+    :    COMMA select_list_elements column_alias?
+        -> ^(SELECT_ITEM[$COMMA] select_list_elements column_alias?)
     ;
 
 from_clause
@@ -226,7 +237,7 @@ select_list_elements
     ;
 
 table_ref_list
-    :    table_ref (COMMA! table_ref)*
+    :    table_ref (COMMA table_ref)*
     ;
 
 // NOTE to PIVOT clause
@@ -306,7 +317,7 @@ join_on_part
     ;
 
 join_using_part
-    :    using_key^ LEFT_PAREN column_name (COMMA! column_name)* RIGHT_PAREN
+    :    using_key^ LEFT_PAREN column_name (COMMA^ column_name)* RIGHT_PAREN
     ;
 
 outer_join_type
