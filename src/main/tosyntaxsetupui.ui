@@ -671,7 +671,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="BreakSelectBool">
+           <widget class="QCheckBox" name="BreakOnSelectBool">
             <property name="text">
              <string>SELECT</string>
             </property>
@@ -681,7 +681,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="BreakFromBool">
+           <widget class="QCheckBox" name="BreakOnFromBool">
             <property name="text">
              <string>FROM</string>
             </property>
@@ -691,7 +691,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="BreakWhereBool">
+           <widget class="QCheckBox" name="BreakOnWhereBool">
             <property name="text">
              <string>WHERE</string>
             </property>
@@ -701,7 +701,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="BreakGroupBool">
+           <widget class="QCheckBox" name="BreakOnGroupBool">
             <property name="text">
              <string>GROUP BY / HAVING</string>
             </property>
@@ -711,7 +711,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="BreakOrderBool">
+           <widget class="QCheckBox" name="BreakOnOrderBool">
             <property name="text">
              <string>ORDER BY</string>
             </property>
@@ -721,7 +721,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="BreakModelBool">
+           <widget class="QCheckBox" name="BreakOnModelBool">
             <property name="text">
              <string>MODEL</string>
             </property>
@@ -731,7 +731,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="BreakPivotBool">
+           <widget class="QCheckBox" name="BreakOnPivotBool">
             <property name="text">
              <string>PIVOT</string>
             </property>

@@ -98,9 +98,69 @@ QSet<QString> toIndent::KEYWORDS = QSet<QString>() // keywords - should have spa
 
 static void indentPriv(SQLParser::Token const* root, QList<SQLParser::Token const*> &list);
 
+void toIndent::tagToken(Token const*token)
+{
+    static QRegExp TRAILING_NEWLINE("^.*[\\n\\r]+$");
+
+    int depth = token->metadata().value("INDENT_DEPTH").toInt();
+    int line = token->getPosition().getLine();
+    SQLParser::Token::TokenType tt = token->getTokenType();
+    QString word = token->toString();
+
+    // mark token / trailing newline from single line comment in toString
+    if (tt == SQLParser::Token::TokenType::X_COMMENT) // comment or white char
+    {
+        if (TRAILING_NEWLINE.exactMatch(word))
+        {
+            token->metadata().insert("TRAILING_NEWLINE", 1);
+            //token->metadata().insert("LINEBREAK", 1);
+        }
+    }
+
+    if (KEYWORDS.contains(word.toUpper()))
+    {
+        token->metadata().insert("KEYWORD", 1); // KEYWORDS should always be surrounded by spaces
+    }
+
+    if (word == ".")
+    {
+        token->metadata().insert("NO_SPACE_BEFORE", 1);
+        token->metadata().insert("NO_SPACE_AFTER", 1);
+    }
+
+    if (word == ",")
+    {
+        token->metadata().insert("NO_SPACE_BEFORE", 1);
+    }
+
+    if (word == "(")
+    {
+        token->metadata().insert("NO_SPACE_BEFORE", 1);
+        token->metadata().insert("GLUE", 1); // there should not be space between two tokens habinv GLUE prop. set
+    }
+
+    if (word == "+")
+    {
+        token->metadata().insert("GLUE", 1);
+    }
+
+    if (word == ")")
+    {
+        token->metadata().insert("GLUE", 1);
+    }
+
+    if (BreakOnSelectBool  && word.toUpper() == "SELECT") token->metadata().insert("LINEBREAK", 1);
+    if (BreakOnFromBool    && word.toUpper() == "FROM")   token->metadata().insert("LINEBREAK", 1);
+    if (BreakOnWhereBool   && word.toUpper() == "WHERE")  token->metadata().insert("LINEBREAK", 1);
+    if (BreakOnGroupBool   && word.toUpper() == "GROUP")  token->metadata().insert("LINEBREAK", 1);
+    if (BreakOnOrderBool   && word.toUpper() == "ORDER")  token->metadata().insert("LINEBREAK", 1);
+    if (BreakOnModelBool   && word.toUpper() == "MODEL")  token->metadata().insert("LINEBREAK", 1);
+    if (BreakOnPivotBool   && word.toUpper() == "PIVOT")  token->metadata().insert("LINEBREAK", 1);
+    if (BreakOnLimitBool   && word.toUpper() == "LIMIT")  token->metadata().insert("LINEBREAK", 1);
+}
+
 QString toIndent::indent(QString const&input)
 {
-    static QRegExp TRAILING_NEWLINE("^.*[\\n\\r]*$");
     QString retval;
     try
     {
@@ -126,47 +186,7 @@ QString toIndent::indent(QString const&input)
             SQLParser::Token::TokenType tt = token->getTokenType();
             QString word = token->toString();
 
-            // mark token / trailing newline from single line comment in toString
-            if (tt == SQLParser::Token::TokenType::X_COMMENT) // comment or white char
-            {
-                if (TRAILING_NEWLINE.exactMatch(word))
-                {
-                    token->metadata().insert("TRAILING_NEWLINE", 1);
-                    //token->metadata().insert("LINEBREAK", 1);
-                }
-            }
-
-            if (KEYWORDS.contains(word.toUpper()))
-            {
-                token->metadata().insert("KEYWORD", 1); // KEYWORDS should always be surrounded by spaces
-            }
-
-            if (word == ".")
-            {
-                token->metadata().insert("NO_SPACE_BEFORE", 1);
-                token->metadata().insert("NO_SPACE_AFTER", 1);
-            }
-
-            if (word == ",")
-            {
-                token->metadata().insert("NO_SPACE_BEFORE", 1);
-            }
-
-            if (word == "(")
-            {
-                token->metadata().insert("NO_SPACE_BEFORE", 1);
-                token->metadata().insert("GLUE", 1); // there should not be space between two tokens habinv GLUE prop. set
-            }
-
-            if (word == "+")
-            {
-                token->metadata().insert("GLUE", 1);
-            }
-
-            if (word == ")")
-            {
-                token->metadata().insert("GLUE", 1);
-            }
+            tagToken(token); // tag token using TRAILING_NEWLINE, LINEBREAK, NO_SPACE_BEFORE, NO_SPACE_AFTER, ...
 
             { // some tracing output
                 int slen = 0;
@@ -199,7 +219,7 @@ QString toIndent::indent(QString const&input)
                 retval.append('\n');
             }
             // This token is on a new line - we do NOT reuse NEWLINES - but previous token was a single line comment
-            else if (line > lastLine &&  !ReUseNewlinesBool && lineBuf.last()->metadata().contains("TRAILING_NEWLINE")) {
+            else if (line > lastLine &&  !ReUseNewlinesBool && !lineBuf.isEmpty() && lineBuf.last()->metadata().contains("TRAILING_NEWLINE")) {
                 token->metadata().insert("LINEBREAK", true); // mark this token as LINEBREAK
                 lineBuf.append(token);
 
@@ -227,6 +247,7 @@ QString toIndent::indent(QString const&input)
         }
 
         // append the last remaining part(last line)
+		if (!lineBuf.isEmpty())
         {
             int depth = lineBuf.front()->metadata().value("INDENT_DEPTH").toInt();
             retval.append(QString(depth * IndentWidthInt + adjustment, ' '));
@@ -316,10 +337,20 @@ LineBuffer LineBuffer::split()
 {
     LineBuffer retval;
 
-    // append first word into retval
-    Token const* token = takeFirst();
-    retval.append(token);
-    linePos -= token->toString().length();
+    Token const* lastDepthToken;
+    // append first word(s) into retval (all having the same depth)
+    // consume all tokens having the same depth
+    do
+    {
+        lastDepthToken = takeFirst();
+		QString w = lastDepthToken->toString();
+        retval.append(lastDepthToken);
+        linePos -= lastDepthToken->toString().length();
+
+        if (!empty() && first()->metadata().contains("LINEBREAK")) // break on linebreak
+            break;
+    }
+    while (!empty() && first()->metadata().value("INDENT_DEPTH") == retval.last()->metadata().value("INDENT_DEPTH"));
 
     // width mode: (narrow mode not yet implemented)
     // iterate over all buffer and find a token having lowest indent depth
@@ -329,8 +360,12 @@ LineBuffer LineBuffer::split()
     // resulting into:
     // 1 3 2 1 1 2 3 4
     // 1 1 5
-    Token const *minDepthToken(NULL), *lastDepthToken(NULL);
+	//
+	//
+	// 4 4 4 5 6 7 8 8 6 7 8
+	//       ^--- this one is chosen
 
+    Token const *minDepthToken(NULL);
     QList<Token const*>::ConstIterator it = constBegin();
     for(; it != constEnd(); ++it )
     {
@@ -365,6 +400,7 @@ LineBuffer LineBuffer::split()
         linePos -= token->toString().length();
     }
 
+    QString txt = retval.toString();
     return retval;
 }
 

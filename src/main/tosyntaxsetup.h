@@ -37,12 +37,13 @@
 #include "ui_tosyntaxsetupui.h"
 #include "core/tosettingtab.h"
 #include "core/utils.h"
+#include "parsing/toindent.h"
+#include "core/tostyle.h"
+#include "core/toeditorconfiguration.h"
 
 #include <QtCore/QString>
 #include <QtCore/QVariant>
 #include <QtCore/QMetaEnum>
-#include "core/tostyle.h"
-#include "core/toeditorconfiguration.h"
 
 class QListWidgetItem;
 class toSyntaxAnalyzer;
@@ -85,12 +86,10 @@ class toSyntaxSetup
 
         void setCaretAlpha();
 
-        void setIndentLineWidth(int);
-        void setIndentWidth(int);
-        void setReUseNewlines(int);
-
+        void reIndent();
     private:
         QMap<QString, QVariant> indentParams;
+        toIndent indentInst;
 
         int wordClass() const;         // returns enum toSyntaxAnalyzer::wordClass
         void checkFixedWidth(const QFont &fnt);

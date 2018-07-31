@@ -60,6 +60,7 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, toWFlags fl)
     , Current(NULL)
     , WordClassEnum(ENUM_REF(toSyntaxAnalyzer,WordClassEnum))
     , Styles(toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::EditStyleMap).value<toStylesMap>())
+    , indentInst(indentParams)
 {
     using namespace ToConfiguration;
 
@@ -141,7 +142,6 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, toWFlags fl)
     }
 
     // 3rd TAB Indent
-    toIndent indentInst;
     if (SyntaxHighlightingInt->currentText() == "QsciSQL")
         IndentExample->setHighlighter(toSqlText::QsciSql);
     else
@@ -151,53 +151,19 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, toWFlags fl)
     QString SqlExample = QString::fromUtf8(f.readAll());
     IndentExample->setText(indentInst.indent(SqlExample));
 
-    connect(IndentLineWidthInt, SIGNAL(valueChanged(int)), this, SLOT(setIndentLineWidth(int)));
-    connect(IndentWidthInt, SIGNAL(valueChanged(int)), this, SLOT(setIndentWidth(int)));
-    connect(ReUseNewlinesBool, SIGNAL(stateChanged(int)), this, SLOT(setReUseNewlines(int)));
-    //    connect(BreakSelectBool,
-    //    connect(BreakFromBool,
-    //    connect(BreakWhereBoo,
-    //    connect(BreakGroupBool,
-    //    connect(BreakOrderBool,
-    //    connect(BreakModelBool,
-    //    connect(BreakPivotBool,
-    //    connect(WidthModeBool,
-}
+    connect(IndentLineWidthInt, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),  [=](int newValue) { indentInst.setProperty("IndentLineWidthInt", QVariant((int)newValue)); reIndent(); });
+    connect(IndentWidthInt,     static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),  [=](int newValue) { indentInst.setProperty("IndentWidthInt",     QVariant((int)newValue)); reIndent(); });
+    connect(ReUseNewlinesBool,  &QCheckBox::stateChanged, [=](int newValue) { indentInst.setProperty("ReUseNewlinesBool", QVariant((bool)newValue)); reIndent(); });
 
-void toSyntaxSetup::setIndentLineWidth(int i)
-{
-    Utils::toBusy busy;
-    indentParams.insert("IndentLineWidthInt", i);
-    toIndent indentInst(indentParams);
-    QString oldSQL = IndentExample->text();
-    QString newSQL = indentInst.indent(oldSQL);
-    IndentExample->beginUndoAction();
-    IndentExample->setText(newSQL);
-    IndentExample->endUndoAction();
-}
-
-void toSyntaxSetup::setIndentWidth(int i)
-{
-    Utils::toBusy busy;
-    indentParams.insert("IndentWidthInt", i);
-    toIndent indentInst(indentParams);
-    QString oldSQL = IndentExample->text();
-    QString newSQL = indentInst.indent(oldSQL);
-    IndentExample->beginUndoAction();
-    IndentExample->setText(newSQL);
-    IndentExample->endUndoAction();
-}
-
-void toSyntaxSetup::setReUseNewlines(int i)
-{
-    Utils::toBusy busy;
-    indentParams.insert("ReUseNewlinesBool", i != 0);
-    toIndent indentInst(indentParams);
-    QString oldSQL = IndentExample->text();
-    QString newSQL = indentInst.indent(oldSQL);
-    IndentExample->beginUndoAction();
-    IndentExample->setText(newSQL);
-    IndentExample->endUndoAction();
+    connect(BreakOnSelectBool,  &QCheckBox::stateChanged, [=](int newValue) { indentInst.setProperty("BreakOnSelectBool", QVariant((bool)newValue)); reIndent(); });
+    connect(BreakOnFromBool,    &QCheckBox::stateChanged, [=](int newValue) { indentInst.setProperty("BreakOnFromBool",   QVariant((bool)newValue)); reIndent(); });
+    connect(BreakOnWhereBool,   &QCheckBox::stateChanged, [=](int newValue) { indentInst.setProperty("BreakOnWhereBool",  QVariant((bool)newValue)); reIndent(); });
+    connect(BreakOnGroupBool,   &QCheckBox::stateChanged, [=](int newValue) { indentInst.setProperty("BreakOnGroupBool",  QVariant((bool)newValue)); reIndent(); });
+    connect(BreakOnOrderBool,   &QCheckBox::stateChanged, [=](int newValue) { indentInst.setProperty("BreakOnOrderBool",  QVariant((bool)newValue)); reIndent(); });
+    connect(BreakOnModelBool,   &QCheckBox::stateChanged, [=](int newValue) { indentInst.setProperty("BreakOnModelBool",  QVariant((bool)newValue)); reIndent(); });
+    connect(BreakOnPivotBool,   &QCheckBox::stateChanged, [=](int newValue) { indentInst.setProperty("BreakOnPivotBool",  QVariant((bool)newValue)); reIndent(); });
+    //connect(BreakOnLimitBool,  &QCheckBox::stateChanged, [=](int newValue) { indentInst.setProperty("BreakOnLimitBool", QVariant((bool)newValue)); reIndent(); });
+    connect(WidthModeBool,     &QCheckBox::stateChanged, [=](int newValue) { indentInst.setProperty("WidthModeBool",     QVariant((bool)newValue));  reIndent(); });
 }
 
 void toSyntaxSetup::checkFixedWidth(const QFont &fnt)
@@ -394,4 +360,14 @@ void toSyntaxSetup::saveSetting(void)
     // for ShortcutModel see ShortcutModel::saveValues
 
     toConfigurationNewSingle::Instance().setOption(ToConfiguration::Editor::EditStyleMap, QVariant::fromValue(Styles));
+}
+
+void toSyntaxSetup::reIndent()
+{
+	Utils::toBusy busy;
+	QString oldSQL = IndentExample->text();
+	QString newSQL = indentInst.indent(oldSQL);
+	IndentExample->beginUndoAction();
+	IndentExample->setText(newSQL);
+	IndentExample->endUndoAction();
 }

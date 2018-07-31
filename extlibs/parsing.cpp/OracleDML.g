@@ -237,7 +237,13 @@ select_list_elements
     ;
 
 table_ref_list
-    :    table_ref (COMMA table_ref)*
+    :    table_ref table_ref_list_seq*
+        -> ^(TABLE_REF_ELEMENT table_ref table_ref_list_seq*)
+    ;
+
+table_ref_list_seq
+    :    COMMA table_ref
+        -> ^(TABLE_REF_ELEMENT[$COMMA] table_ref)
     ;
 
 // NOTE to PIVOT clause
