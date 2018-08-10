@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOCACHE_NEW_H
-#define TOCACHE_NEW_H
+#pragma once
 
 #include "core/tora_export.h"
 
@@ -99,7 +98,7 @@ class toCacheWorker: public QObject
         }
 
     public slots:
-        virtual void process(void);
+        void process(void);
 
     private:
         toConnection &m_parentConnection;
@@ -446,7 +445,7 @@ class TORA_EXPORT toCache : public QObject
         */
         mutable QReadWriteLock cacheLock;
 
-        /** Instance of this lock is held while the backgound thread runs
+        /** Instance of this lock is held while the background thread runs
          */
         QMutex backgroundThreadLock;
 
@@ -454,10 +453,6 @@ class TORA_EXPORT toCache : public QObject
         *  This name is used as a filename to store cache content between TOra runs.
         */
         QString ConnectionDescription;
-
-        /** Multiple connections can point onto same toCache instance, the last connection should delete me.
-        */
-        QAtomicInt refCount;
 
         QThread *m_threadWorker;
         toCacheWorker *m_cacheWorker;
@@ -571,6 +566,3 @@ class toCacheEntryUser: public toCache::CacheEntry
         toCacheEntryUser(const QString& user);
     private:
 };
-
-
-#endif

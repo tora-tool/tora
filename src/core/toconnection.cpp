@@ -124,37 +124,6 @@ toConnection::toConnection(const toConnectionOptions &opts)
     }
 }
 
-toConnection::toConnection(const toConnection &other)
-    : Abort(other.Abort)
-    , Provider(other.Provider)
-    , User(other.User)
-    , Password(other.Password)
-    , Host(other.Host)
-    , Database(other.Database)
-    , Schema(other.Schema)
-    , Version(other.Version)
-    , Color(other.Color)
-    , Options(other.Options)
-    , pConnectionImpl(NULL)
-    , pTrait(other.pTrait)
-    , ConnectionOptions(other.ConnectionOptions)
-    , pCache(NULL)
-    , LoanCnt(0)
-{
-    //tool Connection = toConnectionProvider::connection(Provider, this);
-    //ConnectionPool = new toConnectionPool(this);
-
-    //PoolPtr sub(ConnectionPool);
-    //Version = Connection->version(*sub);
-
-    setDefaultSchema(other.Schema);
-
-    {
-        QWriteLocker lock(&pCache->cacheLock);
-        pCache->refCount.fetchAndAddAcquire(1);
-    }
-}
-
 toConnectionSub* toConnection::addConnection()
 {
     Utils::toBusy busy;
@@ -205,21 +174,16 @@ toConnection::~toConnection()
     Utils::toBusy busy;
     Abort = true;
 
-    Q_ASSERT_X( LoanCnt.loadAcquire() == 0 , qPrintable(__QHERE__), "toConnection deleted while BG query is running");
-
     if(pCache)
     {
-    	unsigned cacheNewRefCnt;
-    	{
-    		QWriteLocker clock(&getCache().cacheLock);
-    		cacheNewRefCnt = getCache().refCount.deref();
-    	}
-    	if (cacheNewRefCnt == 0)
-    	{
-    		getCache().writeDiskCache();
-    		delete this->pCache;
-    	}
+        bool running = pCache->cacheRefreshRunning();
+
+        pCache->writeDiskCache();
+        delete pCache;
     }
+
+    Q_ASSERT_X( LoanCnt.loadAcquire() == 0 , qPrintable(__QHERE__), "toConnection deleted while BG query is running");
+
     {
         closeWidgets();
 

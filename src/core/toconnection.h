@@ -51,6 +51,8 @@
 #include <QtCore/QVariant>
 #include <QtCore/QMutex>
 
+#include <atomic>
+
 class QWidget;
 class QAction;
 class QMenu;
@@ -101,10 +103,10 @@ class toConnection : public QObject
         toConnection(const toConnectionOptions &opts);
 
         /** Create a copy of a connection. Will not cache objects, so objects will never be available
-         *  in a subconnection.
+         *  in a subconnection (not needed anymore)
          * @param conn Connection to copy.
          */
-        explicit toConnection(const toConnection &conn);
+        toConnection(const toConnection &conn) = delete;
 
         /** Destroy connection.
          */
@@ -344,7 +346,7 @@ class toConnection : public QObject
         };
 
     protected:
-        bool Abort;
+        std::atomic<bool> Abort;
         mutable QMutex ConnectionLock;
 
     private slots:

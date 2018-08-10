@@ -135,7 +135,6 @@ toCache::toCache(toConnection &parentConnection, QString const &description)
     , databasesRead(false)
     , parentConn(parentConnection)
     , ConnectionDescription(description)
-    , refCount(1) // we assume that we were created from 1st toConnection
     , m_threadWorker(new QThread(this))
     , m_cacheWorker(new toCacheWorker(parentConn))
     , m_trie(new QmlJS::PersistentTrie::Trie())
@@ -150,6 +149,8 @@ toCache::~toCache()
     QMutexLocker bLock(&backgroundThreadLock); // wait till the background thread finishes
     QWriteLocker lock(&cacheLock);
     clearCache();
+    m_threadWorker->exit(0);
+    m_threadWorker->wait();
 }
 
 // Static methods
