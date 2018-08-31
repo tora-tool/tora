@@ -45,6 +45,8 @@
 #include "core/toqvalue.h"
 #include "core/toquery.h"
 
+#include <QtGui/QIntValidator>
+
 toOracleSetting::toOracleSetting(QWidget *parent)
     : QWidget(parent)
     , toSettingTab("database.html#oracle")
