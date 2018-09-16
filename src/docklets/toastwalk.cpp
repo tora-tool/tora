@@ -48,9 +48,14 @@ std::function<bool(Statement &source, DotGraph &target, Token & n)> root = [&](S
             tableName = tableName + '_' + '1';
         }
 
+        QString label = tt->tableName();
+        if (tt->nodeAlias())
+            label += " " + tt->nodeAlias()->toString();
+
         ta["name"] = tt->toStringRecursive(false);
-        ta["label"] = tt->toStringRecursive(false);
-        ta["fontsize"] = "10";
+        ta["label"] = label;
+        ta["fontsize"] = "12";
+		ta["fontname"] = "arial";
         ta["comment"] = tt->getValidPosition().toString();
         ta["id"] = QString("ROOT") + GLUE + tableName;
         if (tt->nodeAlias() != nullptr)
@@ -89,7 +94,8 @@ std::function<bool(Statement &source, DotGraph &target, Token & n)> subquery = [
     clusterName.replace('.', GLUE);
     clusterName.replace(':', GLUE);
     sg["id"] = clusterName;
-    sg["fontsize"] = "10";
+    sg["fontsize"] = "12";
+	sg["fontname"] = "arial";
     snode->setNodeID(sg["id"]);
     target.addNewSubgraph(sg);
 
@@ -148,11 +154,15 @@ std::function<bool(Statement &source, DotGraph &target, Token &n)> table_ref = [
     }
 
     QString clusterName = tokenSubQuery->nodeID();
+    QString label = tt->tableName();
+    if (tt->nodeAlias())
+        label += " " + tt->nodeAlias()->toString();
 
     QMap<QString, QString> ta; // table attributes
     ta["name"]     = tt->toStringRecursive(false);
-    ta["label"]    = tt->toStringRecursive(false);
-    ta["fontsize"] = "10";
+    ta["label"]    = label;
+    ta["fontsize"] = "12";
+    ta["fontname"] = "arial";
     ta["comment"]  = tt->getValidPosition().toString();
     ta["id"]       = clusterName + GLUE + tableName;
     if (tt->nodeAlias() != nullptr)

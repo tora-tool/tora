@@ -51,7 +51,7 @@ public:
 
     void append(Token const* token); // append token into this buffer/queue list
     unsigned lineLenght(); // return the length on all tokens in this list (including estimated number of spaces)
-    LineBuffer split();    // split this buffer, i.e. perform a line-break
+    LineBuffer split(toIndent::Mode = toIndent::WidthMode);    // split this buffer, i.e. perform a line-break
     QString toString();
 protected:
     QString formatToken(Token const *token);
@@ -368,7 +368,7 @@ unsigned LineBuffer::lineLenght()
     return linePos;
 }
 
-LineBuffer LineBuffer::split()
+LineBuffer LineBuffer::split(toIndent::Mode mode)
 {
     LineBuffer retval;
 

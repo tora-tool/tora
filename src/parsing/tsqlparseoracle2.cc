@@ -143,7 +143,7 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 	case Tokens::SQL92_RESERVED_FALSE:
 	case Tokens::SQL92_RESERVED_FETCH:
 	case Tokens::SQL92_RESERVED_FOR:
-	case Tokens::SQL92_RESERVED_FROM:
+	//case Tokens::SQL92_RESERVED_FROM:
 	case Tokens::SQL92_RESERVED_GOTO:
 	case Tokens::SQL92_RESERVED_GRANT:
 	case Tokens::SQL92_RESERVED_GROUP:
@@ -180,10 +180,13 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 	case Tokens::SQL92_RESERVED_VIEW:
 	case Tokens::SQL92_RESERVED_WHEN:
 	case Tokens::SQL92_RESERVED_WITH:
-	case Tokens::T_FROM:
 	case Tokens::T_RESERVED:
 		tokenTypeRef = L_RESERVED;
 		break;
+    case Tokens::T_FROM:
+	case Tokens::SQL92_RESERVED_FROM:
+	    tokenTypeRef = S_FROM;
+	    break;
 	case Tokens::TABLEVIEW_NAME:
 		tokenTypeRef = S_TABLE_REF;
 		break;

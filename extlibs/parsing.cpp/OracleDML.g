@@ -238,7 +238,7 @@ select_list_elements
 
 table_ref_list
     :    table_ref table_ref_list_seq*
-        -> ^(TABLE_REF_ELEMENT table_ref table_ref_list_seq*)
+    //    -> ^(TABLE_REF_SEQ table_ref table_ref_list_seq*)
     ;
 
 table_ref_list_seq
@@ -972,9 +972,15 @@ between_elements
     ;
 
 concatenation
-    :    additive_expression (concatenation_op^ additive_expression)*
+@init    { int mode = 0; }
+    :    additive_expression (concatenation_seq { mode = 1; } )*
+        -> { mode == 1 }? ^(CONCATENATION_OP additive_expression concatenation_seq*)
+        -> additive_expression
     ;
 
+concatenation_seq
+    :    (concatenation_op^ additive_expression)
+    ;
 concatenation_wrapper
     :    concatenation
         -> ^(EXPR concatenation)

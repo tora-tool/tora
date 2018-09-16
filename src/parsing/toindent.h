@@ -61,6 +61,12 @@ class toIndent : public QObject
     Q_PROPERTY(bool WidthModeBool     MEMBER WidthModeBool)
 
 public:
+    enum Mode {
+        LineBreaksOnly,
+        WidthMode,
+        NarrowMode
+    };
+
     // default constructor user in worksheet
     toIndent(int adjustment = 0);
 

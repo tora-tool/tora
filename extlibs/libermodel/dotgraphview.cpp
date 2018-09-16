@@ -169,7 +169,7 @@ DotGraphView::DotGraphView(QActionGroup* actions, QWidget* parent) :
   setupPopup();
   setInteractive(true);
   setDragMode(NoDrag);
-  setRenderHint(QPainter::Antialiasing);
+  setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing | QPainter::SmoothPixmapTransform);
 
   connect(this, SIGNAL(removeEdge(const QString&)), m_graph, SLOT(removeEdge(const QString&)));
   connect(this, SIGNAL(removeNodeNamed(const QString&)), m_graph, SLOT(removeNodeNamed(const QString&)));

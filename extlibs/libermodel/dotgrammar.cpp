@@ -481,6 +481,23 @@ void valid_op(char const* first, char const* last)
   renderop.str = "";
 }
 
+/*
+The value of these attributes consists of the concatenation of some(multi - )set of the following 13 rendering or attribute operations. (The number is parentheses gives the xdot version when the operation was added to the format.If no version number is given, the operation was in the original specification.)
+E x0 y0 w h 	Filled ellipse((x - x0) / w)2 + ((y - y0) / h)2 = 1
+e x0 y0 w h 	Unfilled ellipse((x - x0) / w)2 + ((y - y0) / h)2 = 1
+P n x1 y1 ... xn yn 	Filled polygon using the given n points
+p n x1 y1 ... xn yn 	Unfilled polygon using the given n points
+L n x1 y1 ... xn yn 	Polyline using the given n points
+B n x1 y1 ... xn yn 	B - spline using the given n control points
+b n x1 y1 ... xn yn 	Filled B - spline using the given n control points(1.1)
+T x y j w n - b1b2...bn 	Text drawn using the baseline point(x, y).The text consists of the n bytes following '-'.The text should be left - aligned(centered, right - aligned) on the point if j is - 1 (0, 1), respectively.The value w gives the width of the text as computed by the library.
+t f 	Set font characteristics.The integer f is the OR of BOLD = 1, ITALIC = 2, UNDERLINE = 4, SUPERSCRIPT = 8, SUBSCRIPT = 16, (1.5) STRIKE - THROUGH = 32 (1.6), and OVERLINE = 64 (1.7).
+C n - b1b2...bn 	Set fill color.The color value consists of the n bytes following '-'. (1.1)
+c n - b1b2...bn 	Set pen color.The color value consists of the n bytes following '-'. (1.1)
+F s n - b1b2...bn 	Set font.The font size is s points.The font name consists of the n bytes following '-'. (1.1)
+S n - b1b2...bn 	Set style attribute.The style value consists of the n bytes following '-'.The syntax of the value is the same as specified for a styleItem in style. (1.1)
+I x y w h n - b1b2...bn 	Externally - specified image drawn in the box with lower left corner(x, y) and upper right corner(x + w, y + h).The name of the image consists of the n bytes following '-'.This is usually a bitmap image.Note that the image size, even when converted from pixels to points, might be different from the required size(w, h).It is assumed the renderer will perform the necessary scaling. (1.2)
+*/
 bool parse_renderop(const std::string& str, DotRenderOpVec& arenderopvec)
 {
 //   kDebug() << QString::fromUtf8(str.c_str()) << str.size();
