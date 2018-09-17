@@ -176,7 +176,8 @@ std::function<bool(Statement &source, DotGraph &target, Token &n)> table_ref = [
 
 std::function<bool(Statement &source, DotGraph &target, Token &n)> binary_operator = [&](Statement &source, DotGraph &target, Token &node)
 {
-    if (node.getTokenType() != Token::S_OPERATOR_BINARY)
+    if (node.getTokenType() != Token::S_OPERATOR_BINARY
+            && node.getTokenType() != Token::S_COND_IN)
         return false;
 
     if (node.childCount() != 2)
@@ -200,6 +201,7 @@ std::function<bool(Statement &source, DotGraph &target, Token &n)> binary_operat
                 firstTable = &(*ch0);
                 break;
             }
+
             ch0++;
         } while (ch0 != source.subtree_end(node.child(0)));
     if (firstTable == NULL)
@@ -212,6 +214,11 @@ std::function<bool(Statement &source, DotGraph &target, Token &n)> binary_operat
             TLOG(8, toNoDecorator, __HERE__) << "CH1:(" << ch1.depth() << '/' << node.depth() << ')' << ch1->toString() << ' ' << node.toString() << std::endl;
 
             if (ch1->getTokenType() == SQLParser::Token::S_IDENTIFIER)
+            {
+                secondTable = &(*ch1);
+                break;
+            }
+            if (node.getTokenType() != Token::S_SUBQUERY_FACTORED)
             {
                 secondTable = &(*ch1);
                 break;
@@ -230,7 +237,7 @@ std::function<bool(Statement &source, DotGraph &target, Token &n)> binary_operat
     SQLParser::Token const *t2 = source.translateAlias(secondTable->child(0)->toStringRecursive(false).toUpper(), &node);
     if ( t2)
         secondTable = t2;
-    else
+    else if (secondTable->getTokenType() == SQLParser::Token::S_IDENTIFIER)
         secondTable = source.getTableRef(secondTable->child(0)->toStringRecursive(false).toUpper(), &node);
 
     QString e1, e2;

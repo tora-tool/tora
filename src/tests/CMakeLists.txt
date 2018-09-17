@@ -410,6 +410,7 @@ IF(TORA_DEBUG AND TEST_APP11)
 # test11
 ADD_EXECUTABLE("test11"
   tests/test11.cpp
+  docklets/toastwalk.cpp
   ${PCH_SOURCE}
   ${CORE_SOURCES}
   ${WIDGETS_SOURCES}

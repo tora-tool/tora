@@ -243,6 +243,7 @@ namespace SQLParser
                 S_WHERE,
                 S_COND_AND,
                 S_COND_OR,
+                S_COND_IN,
                 S_IDENTIFIER,
                 S_TABLE_REF,
                 S_OPERATOR_BINARY,

@@ -148,7 +148,7 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 	case Tokens::SQL92_RESERVED_GRANT:
 	case Tokens::SQL92_RESERVED_GROUP:
 	case Tokens::SQL92_RESERVED_HAVING:
-	case Tokens::SQL92_RESERVED_IN:
+	//case Tokens::SQL92_RESERVED_IN:
 	case Tokens::SQL92_RESERVED_INSERT:
 	//case Tokens::SQL92_RESERVED_INTERSECT:
 	case Tokens::SQL92_RESERVED_INTO:
@@ -283,6 +283,9 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 	    break;
 	case Tokens::SQL92_RESERVED_OR:
 	    tokenTypeRef = S_COND_OR;
+	    break;
+	case Tokens::SQL92_RESERVED_IN:
+	    tokenTypeRef = S_COND_IN;
 	    break;
 	case Tokens::PLSQL_RESERVED_MINUS:
 		tokenTypeRef = S_MINUS;
