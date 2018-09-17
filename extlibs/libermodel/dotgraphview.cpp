@@ -1537,22 +1537,22 @@ void DotGraphView::setupPopup()
                         
   ///m_popup->insertSeparator();
   
-  ///QActionMenu* file_exportMenu = new QActionMenu("Export Graph", this);
+  ///QAction* file_exportMenu = new QAction("Export Graph", this);
   ///actionCollection()->addAction("file_export",file_exportMenu);
-  ///file_exportMenu->setToolTip("Allows the graph to be exported in another format.");  
+  ///file_exportMenu->setToolTip("Allows the graph to be exported in another format.");
   ///file_exportMenu->setWhatsThis(
   ///"Use the Export Graph menu to export the graph in another format. "
-  ///"There is currently only one export format supported: as a PNG image.");  
+  ///"There is currently only one export format supported: as a PNG image.");
   
 
   ///m_popup->addAction(file_exportMenu);
-  ///QAction* exportToImageAction = new QAction("As Image..."),this);
-  ///exportToImageAction->setWhatsThis("Export the graph to an image file (currently PNG only.)");
+  QAction* exportToImageAction = new QAction("Export As Image",this);
+  exportToImageAction->setWhatsThis("Export the graph to an image file (currently PNG only.)");
   ///actionCollection()->addAction("export_image", exportToImageAction);
-  ///connect(exportToImageAction,SIGNAL(triggered(bool)), this, SLOT(slotExportImage()));
+  connect(exportToImageAction,SIGNAL(triggered(bool)), this, SLOT(slotExportImage()));
   
   ///file_exportMenu->addAction(exportToImageAction);
-
+  m_popup->addAction(exportToImageAction);
   
   ///m_popup->insertSeparator();
 
@@ -1643,6 +1643,7 @@ void DotGraphView::exportToImage()
   
   if (!fn.isEmpty()) 
   {
+    m_canvas->setSceneRect(m_canvas->sceneRect().marginsAdded(QMargins(10,10,10,10))); // 10 pix border
     QPixmap pix(m_canvas->sceneRect().size().toSize());
     QPainter p(&pix);
     m_canvas->render( &p );
