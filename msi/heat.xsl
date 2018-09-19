@@ -14,6 +14,6 @@
   <xsl:output method="xml" indent="yes" />
 
   <!-- exclude all non-.dll non-.exe files -->
-  <xsl:template match='wix:Wix/wix:Fragment/wix:ComponentGroup/wix:Component[not(contains(@Id,".dll")) and not(contains(@Id,".exe"))]'/>
+  <!-- <xsl:template match='wix:Wix/wix:Fragment/wix:ComponentGroup/wix:Component[not(contains(@Id,".dll")) and not(contains(@Id,".exe"))]'/> -->
 
 </xsl:stylesheet>
