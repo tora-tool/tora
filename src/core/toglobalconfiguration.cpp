@@ -78,10 +78,14 @@ QVariant ToConfiguration::Global::defaultValue(int option) const
             }
         case OracleHomeDirectory:
             {
+#if 0
+                // Do not use ENV. ORACLE_HOME as default value (let toOracleFinder to use it)
+                // if used ORACLE_HOME is set while loading oci.dll, then Configurations default value equals to current value, thus it is deleted from registry
                 QString OH(qgetenv("ORACLE_HOME"));
                 QFileInfo OHInfo(OH);
                 if (OHInfo.isDir() && OHInfo.exists())
                     return QVariant(OHInfo.absoluteFilePath());
+#endif
                 return QVariant(QString(""));
             }
         case MysqlHomeDirectory:
