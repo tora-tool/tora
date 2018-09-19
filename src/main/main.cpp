@@ -304,7 +304,7 @@ int main(int argc, char **argv)
                 }
                 TOCATCH;
             }
-            // Load all remaning providers
+            // Load all remaining providers
             Q_FOREACH(toConnectionProviderFinder::ConnectionProvirerParams provider, allProviders)
             {
                 QString providerName = provider.value("PROVIDER").toString();

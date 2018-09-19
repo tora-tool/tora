@@ -267,7 +267,7 @@
         <file>widgets/LICENSE.KGraphViewer.txt</file>
         <file>widgets/LICENSE.ExtendedTabs.txt</file>
         <file>widgets/LICENSE.dtl.txt</file>
-
+        <file>widgets/LICENSE.GraphViz.txt</file>
 	<file>editor/complex.sql</file>
 
         <file>../NEWS</file>

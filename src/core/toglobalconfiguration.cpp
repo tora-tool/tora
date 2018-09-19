@@ -93,14 +93,28 @@ QVariant ToConfiguration::Global::defaultValue(int option) const
         case PgsqlHomeDirectory:
             return QVariant(QString(""));
         case GraphvizHomeDirectory:
-            {
-                QString defaultGvHome;
+		{
+			QString defaultGvHome;
+			{
 #if defined(Q_OS_WIN32)
-                defaultGvHome = "C:/Program Files/Graphviz 2.28/bin";
+				QFileInfo GvDir("C:/Program Files/Graphviz 2.38/bin");
 #elif defined(Q_OS_WIN64)
-                defaultGvHome = "C:/Program Files(x86)/Graphviz 2.28/bin";
+				QFileInfo GvDir("C:/Program Files(x86)/Graphviz 2.38/bin");
 #else
-                defaultGvHome = "/usr/bin";
+				QFileInfo GvDir("/usr/bin");
+#endif
+				if (GvDir.isDir() && GvDir.exists())
+					defaultGvHome = GvDir.absoluteFilePath();
+			}
+
+#if defined(Q_OS_WIN32)
+			{
+				// Check whether dot was embedded inside .msi
+				QFileInfo GvToraDir(QCoreApplication::applicationDirPath() + QDir::separator() + "Graphviz2.38" + QDir::separator() + "bin");
+				QString p = GvToraDir.absoluteFilePath();
+				if (defaultGvHome.isEmpty() && GvToraDir.isDir() && GvToraDir.exists())
+					defaultGvHome = GvToraDir.absoluteFilePath();
+			}
 #endif
                 return QVariant(defaultGvHome);
             }

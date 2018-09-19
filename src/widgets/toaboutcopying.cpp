@@ -79,4 +79,18 @@ toAboutCopying::toAboutCopying(QWidget* parent, const char* name)
         QString LicenseText = QString::fromUtf8(f.readAll());
         textDTL->setPlainText(LicenseText);
     }
+    {
+        // Check whether dot was embedded inside .msi
+        QFileInfo GvToraDir(QCoreApplication::applicationDirPath() + QDir::separator() + "Graphviz2.38" + QDir::separator() + "bin");
+        QString p = GvToraDir.absoluteFilePath();
+        if (GvToraDir.isDir() && GvToraDir.exists())
+        {
+            QFile f(":/widgets/LICENSE.GraphViz.txt");
+            f.open(QFile::ReadOnly);
+            QString LicenseText = QString::fromUtf8(f.readAll());
+            textGraphViz->setPlainText(LicenseText);
+        } else {
+            tabWidget->removePage(6); // No page after this one
+        }
+    }
 }
