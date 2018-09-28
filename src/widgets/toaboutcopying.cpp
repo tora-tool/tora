@@ -35,6 +35,8 @@
 #include "widgets/toaboutcopying.h"
 
 #include <QtCore/QFile>
+#include <QtCore/QFileInfo>
+#include <QtCore/QDir>
 
 toAboutCopying::toAboutCopying(QWidget* parent, const char* name)
     : QWidget(parent)
