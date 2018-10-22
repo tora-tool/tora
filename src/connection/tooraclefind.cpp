@@ -94,10 +94,10 @@ class toOracleInstantFinder : public  toConnectionProviderFinder
         void loadLib(ConnectionProvirerParams const&);
 
     private:
-        static QSet<QString> const m_paths;
+        static QSet<QString> m_paths;
 };
 
-QSet<QString> const toOracleInstantFinder::m_paths = QSet<QString>()
+QSet<QString> toOracleInstantFinder::m_paths = QSet<QString>()
 #if defined(Q_OS_LINUX)
         << QString::fromLatin1("/usr/lib/oracle/11.2/client64/lib")
         << QString::fromLatin1("/usr/lib/oracle/11.2/client/lib")
@@ -245,6 +245,14 @@ QList<toConnectionProviderFinder::ConnectionProvirerParams>  toOracleInstantFind
         }
     }
 
+#if defined(Q_OS_WIN32)
+    //
+    {
+        QFileInfo ToraDir(QCoreApplication::applicationDirPath() + QDir::separator() + "instantclient*");
+        m_paths.insert(ToraDir.absoluteFilePath());
+    }
+#endif
+
     // populate the list of the possible oracle homes
     foreach( QString p, m_paths)
     {
@@ -253,13 +261,12 @@ QList<toConnectionProviderFinder::ConnectionProvirerParams>  toOracleInstantFind
         if ( p.contains("*"))
         {
             /** chdir into parent dir */
-            QString sParentPath = p.left( p.lastIndexOf(QDir::separator()));
-            QDir dParentPath(sParentPath);
+            QFileInfo i(p);
+            QDir dParentPath(i.dir());
             if ( !dParentPath.exists())
                 continue;
 
-            QStringList filter = QStringList() << p.mid( p.lastIndexOf(QDir::separator()) + 1);
-            QStringList sSubdirPaths = dParentPath.entryList( filter);
+            QStringList sSubdirPaths = dParentPath.entryList( QStringList() << i.fileName());
             foreach( QString s, sSubdirPaths)
             {
                 QDir dSubDirPath(dParentPath);
