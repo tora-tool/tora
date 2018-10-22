@@ -757,20 +757,31 @@ bool toWorksheet::checkSave()
                 // Editor->filename is empty => show filesave dialog
                 if (Editor->filename().isEmpty())
                 {
+                    // Ask user for desired filename
                     Editor->setFilename(Utils::toSaveFilename(Editor->filename(),
                                         QString::null,
                                         this));
+                    // Try to save the workseet text into file
+                    if (Utils::toWriteFile(Editor->filename(), Editor->text()))
+                    {
+                        Editor->setModified(false);
+                        toGlobalEventSingle::Instance().addRecentFile(Editor->filename());
+                        return true;
+                    }
+
                     // if Editor's filename is still empty => file save dialog failed
                     if (Editor->filename().isEmpty())
                     {
                         return false;
                     }
-                    else
+
+                    // Try to save the workseet text into file
+                    if (Utils::toWriteFile(Editor->filename(), Editor->text()))
                     {
                         Editor->setModified(false);
                         return true;
                     }
-                    // Editor->filename if not empty => try to save it
+                    return false;
                 }
                 else
                 {
