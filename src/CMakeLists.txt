@@ -102,7 +102,6 @@ SET(TORA_UI_SRC
   tools/todescribeui.ui
   tools/todroptablespaceui.ui
   tools/tolinechartsetupui.ui
-  tools/tooutputsettingui.ui
   tools/toparamgetui.ui
   tools/torollbackdialogui.ui
   tools/torollbacksettingui.ui
@@ -280,7 +279,6 @@ SET(TORA_MOC_CLASSES
   tools/tofilesize.h
   tools/toinvalid.h
   tools/tolinechart.h
-  tools/tooutput.h
   tools/toparamget.h
   tools/topiechart.h
   tools/toplsqleditor.h
@@ -363,6 +361,7 @@ SET(TORA_MOC_CLASSES
   widgets/totreewidget.h
   widgets/toworkingwidget.h
   widgets/toworkspace.h
+  widgets/tooutput.h
 
   #obsolete core/todatatype.h
   #obsolete core/torunnable.h
@@ -572,7 +571,6 @@ SET(TORA_SOURCES
   tools/tofilesize.cpp
   tools/toinvalid.cpp
   tools/tolinechart.cpp
-  tools/tooutput.cpp
   tools/toparamget.cpp
   tools/topiechart.cpp
   tools/toplsqleditor.cpp
@@ -647,6 +645,7 @@ SET(TORA_SOURCES
   widgets/totreewidget.cpp
   widgets/toworkingwidget.cpp
   widgets/toworkspace.cpp
+  widgets/tooutput.cpp
 
   views/toplaintextview.cpp
   views/toplantablesview.cpp

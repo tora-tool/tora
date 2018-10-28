@@ -102,8 +102,10 @@ void toEventQueryWorker::toQueryPriv::init()
         // Try to switch the current NLS_SETTINGS (not implemented yet)
         if ( m_ConnectionSubLoan->isInitialized() == false)
         {
-            Q_FOREACH(QString sql, m_ConnectionSubLoan.ParentConnection.initStrings())
+            Q_FOREACH(QString sql, m_ConnectionSubLoan.initStrings())
             {
+                if (sql.isEmpty())
+                    continue;
                 m_Query = m_ConnectionSubLoan->createQuery(this);
                 m_ConnectionSubLoan->setQuery(this);
                 m_Query->execute(sql);

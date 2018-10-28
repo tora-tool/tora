@@ -56,6 +56,8 @@
 #include "widgets/totabwidget.h"
 #include "widgets/totreewidget.h"
 #include "widgets/torefreshcombo.h"
+#include "widgets/tooutput.h"
+
 #include "editor/toworksheettext.h"
 //obsolete #include "core/tovisualize.h"
 #ifdef TORA3_STAT
@@ -101,6 +103,7 @@
 #include "icons/toworksheet.xpm"
 #include "icons/up.xpm"
 #include "icons/down.xpm"
+#include "icons/tooutput.xpm"
 
 namespace ToConfiguration
 {
@@ -308,6 +311,14 @@ void toWorksheet::createActions()
     lockConnectionAct->setCheckable(true);
     connect(lockConnectionAct, SIGNAL(toggled(bool)), this, SLOT(slotLockConnection(bool)));
 
+    outputAct = new QAction(QPixmap(const_cast<const char**>(tooutput_xpm)),
+                                    tr("Enable output"),
+                                    this);
+    outputAct->setShortcut(Qt::Key_F4);
+    outputAct->setCheckable(true);
+
+    connect(outputAct, SIGNAL(toggled(bool)), this, SLOT(slotEnableOutput(bool)));
+
     eraseAct = new QAction(QPixmap(const_cast<const char**>(eraselog_xpm)),
                            tr("Clear execution log"),
                            this);
@@ -348,6 +359,9 @@ void toWorksheet::setup(bool autoLoad)
     workToolbar->addAction(lockConnectionAct);
 
     workToolbar->addSeparator();
+    workToolbar->addAction(outputAct);
+
+    workToolbar->addSeparator();
     workToolbar->addAction(refreshAct);
 
     workToolbar->addSeparator();
@@ -364,10 +378,6 @@ void toWorksheet::setup(bool autoLoad)
                                       workToolbar));
     Refresh = new toRefreshCombo(workToolbar);
     workToolbar->addWidget(Refresh);
-    connect(Refresh,
-            SIGNAL(activated(const QString &)),
-            this,
-            SLOT(slotChangeRefresh(const QString &)));
     Refresh->setEnabled(false);
     Refresh->setFocusPolicy(Qt::NoFocus);
 
@@ -560,6 +570,9 @@ void toWorksheet::setup(bool autoLoad)
     Logging->setSelectionMode(toTreeWidget::Single);
     connect(Logging, SIGNAL(selectionChanged(toTreeWidgetItem *)), this, SLOT(slotExecuteLog()));
     LastLogItem = NULL;
+
+    Output = new toOutputWidget(this);
+    ResultTab->addTab(Output, tr("Output"));
 
     connect(ResultTab, SIGNAL(currentChanged(int)),
             this, SLOT(slotChangeResult(int)));
@@ -1625,12 +1638,12 @@ void toWorksheet::slotEnableStatistic(bool ena)
         Statistics->clear();
         if (toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::TimedStatsBool).toBool())
         {
-            connection().setInit("STATISTICS", QString::fromLatin1(ENABLETIMED));
+            ///connection().setInit("STATISTICS", QString::fromLatin1(ENABLETIMED));
         }
     }
     else
     {
-        connection().setInit("STATISTICS", QString::fromLatin1(DISABLETIMED));
+        ///connection().setInit("STATISTICS", QString::fromLatin1(DISABLETIMED));
         Result->setStatistics(NULL);
         ResultTab->setTabEnabled(ResultTab->indexOf(StatTab), false);
         statisticAct->setChecked(false);
@@ -2116,10 +2129,23 @@ void toWorksheet::slotChangeConnection(void)
 void toWorksheet::slotLockConnection(bool enabled)
 {
     if (enabled)
+    {
         lockConnection();
-    else
+    } else {
         unlockConnection();
+    }
     lockConnectionActClicked = enabled;
+}
+
+void toWorksheet::slotEnableOutput(bool enabled)
+{
+    if(enabled)
+    {   // DDBMS_OUTPUT works with locked connection only
+        lockConnectionAct->setChecked(true); // this emits signal to slotLockConnection see @ref unlockConnection for opposite action
+
+        Output->setConnection(LockedConnection);
+    }
+    Output->setEnabled(enabled);
 }
 
 void toWorksheet::slotRefreshModel(class toResultModel *model)
@@ -2162,13 +2188,19 @@ void toWorksheet::lockConnection()
 
 void toWorksheet::unlockConnection()
 {
+    // If User refused to unlock
     if (!checkUnlockConnection())
     {
         bool oldVal = lockConnectionAct->blockSignals(true);
         lockConnectionAct->setChecked(true);
         lockConnectionAct->blockSignals(oldVal);
+
+
         return;
     }
+
+    // Release connection from child toOutputWidget 1st
+    outputAct->setChecked(false);
 
     this->LockedConnection.clear();
     lockConnectionActClicked = false;

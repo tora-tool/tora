@@ -74,6 +74,7 @@ class toTabWidget;
 class toTreeWidgetItem;
 class toEditableMenu;
 class toRefreshCombo;
+class toOutputWidget;
 
 namespace ToConfiguration
 {
@@ -188,6 +189,7 @@ class toWorksheet : public toToolWidget, public toContextMenuHandler
         void slotRefreshSetup(void);
         void slotStop(void);
         void slotLockConnection(bool);
+        void slotEnableOutput(bool);
         void slotRefreshModel(toResultModel*);
 
     protected:
@@ -252,6 +254,7 @@ class toWorksheet : public toToolWidget, public toContextMenuHandler
         toResultBar       *IOChart;
 #endif
         toListView        *Logging;
+        toOutputWidget    *Output;
 
         //! Re-set EditSplitter sizes with settings.
         QList<int>        EditSplitterSizes;
@@ -282,7 +285,7 @@ class toWorksheet : public toToolWidget, public toContextMenuHandler
 
         QMenu *ToolMenu;
 
-        QAction *parseAct, *lockConnectionAct, *executeAct, *executeStepAct,
+        QAction *parseAct, *lockConnectionAct, *outputAct, *executeAct, *executeStepAct,
                 *executeAllAct,
                 *refreshAct, *describeAct, *describeActNew, *explainAct, *stopAct, *eraseAct,
                 *statisticAct, *previousAct, *nextAct, *saveLastAct;

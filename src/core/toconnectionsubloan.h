@@ -5,6 +5,7 @@
 class toConnection;
 class toConnectionSub;
 class toEventQuery;
+class toSQL;
 
 class toConnectionSubLoan
 {
@@ -47,6 +48,19 @@ class toConnectionSubLoan
         }
 
         void execute(QString const& SQL);
+        void execute(toSQL const& SQL);
+
+        /**
+         * Add a statement to be run uppon making new connections.
+         * @param sql Statement to run.
+         */
+        void setInit(const QString &key, const QString &sql);
+
+        /** Remove a statement that was added using @ref addInit. */
+        void delInit(const QString &key);
+
+        /** Get a list of the current init strings. */
+        QList<QString> initStrings() const;
 
         toConnection const& ParentConnection;
         //InitModeEnum InitMode;
@@ -57,6 +71,8 @@ class toConnectionSubLoan
         {
             Q_ASSERT_X(ConnectionSub != NULL, qPrintable(__QHERE__), "Invalid use of toConnectionSubLoan");
         }
+
+        QMap<QString, QString> InitStrings; // Key, SQL
 
         toConnectionSubLoan(toConnectionSubLoan const& other); // do not clone me
     protected:

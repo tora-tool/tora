@@ -182,6 +182,8 @@ QVariant ToConfiguration::Global::defaultValue(int option) const
             return QVariant((bool)false);
         case RamThresholdInt:
             return QVariant((int)getTotalSystemMemory()*2/3);
+        case OutputPollingInterval:
+            return QVariant(QString("10 seconds"));
         default:
             Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Global un-registered enum value: %1").arg(option)));
             return QVariant();

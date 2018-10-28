@@ -84,6 +84,7 @@ namespace ToConfiguration
                 , ClipboardCHeadersBool // not displayed in the config gui (Copy format: include column headers)
                 , ClipboardRHeadersBool // not displayed in the config gui (Copy format: include row headers)
                 , RamThresholdInt
+                , OutputPollingInterval // toOutput refres combo
             };
             virtual QVariant defaultValue(int) const;
 

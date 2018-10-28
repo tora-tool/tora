@@ -372,21 +372,6 @@ void toConnection::setDefaultSchema(QString const & schema)
     Schema = schema;
 }
 
-void toConnection::setInit(const QString &key, const QString &sql)
-{
-    InitStrings.insert(key, sql);
-}
-
-void toConnection::delInit(const QString &key)
-{
-    InitStrings.remove(key);
-}
-
-QList<QString> toConnection::initStrings() const
-{
-    return InitStrings.values();
-}
-
 toConnection& toConnection::currentConnection(QObject *cur)
 {
     while (cur)

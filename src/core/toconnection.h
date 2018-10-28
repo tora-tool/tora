@@ -182,9 +182,6 @@ class toConnection : public QObject
          */
         QString description(bool version = true) const;
 
-        /** Get a list of the current init strings. */
-        QList<QString> initStrings() const;
-
         /** Get a list of currently running SQLs */
         QList<QString> running(void) const;
 
@@ -266,15 +263,6 @@ class toConnection : public QObject
         void delWidget(QWidget *widget);
 
         void connectionsMenu(QMenu*);
-
-        /**
-         * Add a statement to be run uppon making new connections.
-         * @param sql Statement to run.
-         */
-        void setInit(const QString &key, const QString &sql);
-
-        /** Remove a statement that was added using @ref addInit. */
-        void delInit(const QString &key);
 
         /** Try to stop all running queries. */
         void cancelAll(void);
@@ -387,7 +375,6 @@ class toConnection : public QObject
         QString Version;
         QString Color;
         QSet<QWidget*> Widgets;
-        QMap<QString, QString> InitStrings; // Key, SQL
         QSet<QString> Options;
         QSet<toConnectionSub*> Connections, LentConnections;
         connectionImpl *pConnectionImpl;
