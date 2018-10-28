@@ -13,7 +13,9 @@ public:
 	QTimer* timer();
 
 	int refreshTime() const;
-	static int refreshParse();
+
+private slots:
+        void slotRefreshUpdate();
 private:
 	QTimer *m_timer;
 };
