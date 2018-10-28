@@ -40,11 +40,19 @@ toRefreshCombo::toRefreshCombo(QWidget *parent, const QString& def)
 		setCurrentIndex(7);
 	else
 		setCurrentIndex(0);
+
+	slotRefreshUpdate();
+
+	connect(this,
+	        SIGNAL(activated(const QString &)),
+	        this,
+	        SLOT(slotRefreshUpdate()));
 }
 
 void toRefreshCombo::setRefreshInterval(QString const& interval)
 {
 	setCurrentText(interval);
+	slotRefreshUpdate();
 }
 
 
@@ -53,31 +61,31 @@ QTimer* toRefreshCombo::timer()
 	return m_timer;
 }
 
-int toRefreshCombo::refreshParse()
+void toRefreshCombo::slotRefreshUpdate()
 {
-#if 0
     QString t = currentText();
     if (t.isEmpty())
+    {
         t = toConfigurationNewSingle::Instance().option(ToConfiguration::Global::RefreshInterval).toString();
+    }
 
     if (t == tr("toRefreshCreate", "None") || t == "None")
-        timer->stop();
+        m_timer->stop();
     else if (t == tr("toRefreshCreate", "2 seconds") || t == "2 seconds")
-        timer->start(2 * 1000);
+        m_timer->start(2 * 1000);
     else if (t == tr("toRefreshCreate", "5 seconds") || t == "5 seconds")
-        timer->start(5 * 1000);
+        m_timer->start(5 * 1000);
     else if (t == tr("toRefreshCreate", "10 seconds") || t == "10 seconds")
-        timer->start(10 * 1000);
+        m_timer->start(10 * 1000);
     else if (t == tr("toRefreshCreate", "30 seconds") || t == "30 seconds")
-        timer->start(30 * 1000);
+        m_timer->start(30 * 1000);
     else if (t == tr("toRefreshCreate", "1 min") || t == "1 min")
-        timer->start(60 * 1000);
+        m_timer->start(60 * 1000);
     else if (t == tr("toRefreshCreate", "5 min") || t == "5 min")
-        timer->start(300 * 1000);
+        m_timer->start(300 * 1000);
     else if (t == tr("toRefreshCreate", "10 min") || t == "10 min")
-        timer->start(600 * 1000);
+        m_timer->start(600 * 1000);
     else
         throw qApp->translate("toRefreshParse", "Unknown timer value");
-#endif
-    return 0;
+    return;
 }
