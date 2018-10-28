@@ -1249,8 +1249,17 @@ void toWorksheet::query(toSyntaxAnalyzer::statement const& statement, execTypeEn
                 this->m_lastQuery = statement;
 
                 // unhide the results pane if there's something to show
-                if (m_lastQuery.statementType == toSyntaxAnalyzer::SELECT || (ResultTab && ResultTab->currentIndex() != 0))
+                if (m_lastQuery.statementType == toSyntaxAnalyzer::SELECT)
+                {
+                    ResultTab->setCurrentWidget(Result);
                     slotUnhideResults();
+                }
+
+                if (m_lastQuery.statementType == toSyntaxAnalyzer::PLSQL && outputAct->isChecked())
+                {
+                    ResultTab->setCurrentWidget(Output);
+                    slotUnhideResults();
+                }
 
                 toQueryParams param;
                 if (m_lastQuery.statementType == toSyntaxAnalyzer::SELECT || m_lastQuery.statementType == toSyntaxAnalyzer::DML)
@@ -1271,9 +1280,13 @@ void toWorksheet::query(toSyntaxAnalyzer::statement const& statement, execTypeEn
                 Started->setToolTip(tr("Duration while query has been running\n\n") + statement.sql);
                 stopAct->setEnabled(true);
                 Result->setNumberColumn(toConfigurationNewSingle::Instance().option(ToConfiguration::Worksheet::DisplayNumberColumnBool).toBool());
+
+#if 0
+                // Do not understand context if this issue
                 // it fixes crash running statements from Schema Browser - PV
                 if (ResultTab)
                     ResultTab->setCurrentIndex(0);
+#endif
 
                 try
                 {
