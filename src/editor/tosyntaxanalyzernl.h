@@ -44,14 +44,20 @@ class toSyntaxAnalyzerNL : public toSyntaxAnalyzer
         toSyntaxAnalyzerNL(toSqlText *parent);
         virtual ~toSyntaxAnalyzerNL();
 
-        virtual statementList getStatements(QString const& text);
-        virtual statement getStatementAt(unsigned line, unsigned linePos);
-        virtual QsciLexer* createLexer(QObject *parent);
-        virtual void sanitizeStatement(statement&);
+        virtual statementList getStatements(QString const& text) override;
+        virtual statement getStatementAt(unsigned line, unsigned linePos) override;
+        virtual QsciLexer* createLexer(QObject *parent) override;
+        virtual void sanitizeStatement(statement&) override;
 
         static QSet<QString> SELECT_INTRODUCERS;
         static QSet<QString> DML_INTRODUCERS;
         static QSet<QString> DDL_INTRODUCERS;
         static QSet<QString> PLSQL_INTRODUCERS;
         static QSet<QString> SQLPLUS_INTRODUCERS;
+    protected:
+        statementList getStatements(QString const& text, int lineLimit);
+
+        QString firstEditorWord(int posFrom, int posTo);
+        QString lastEditorWord(int posFrom, int posTo, int &lastPos); // return last work and also its position
+        static statementClassEnum statementClass(QString const&);
 };

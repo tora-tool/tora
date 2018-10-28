@@ -50,7 +50,30 @@ toSyntaxAnalyzerNL::toSyntaxAnalyzerNL(toSqlText *parent)
 toSyntaxAnalyzerNL::~toSyntaxAnalyzerNL()
 {}
 
+
 toSyntaxAnalyzer::statementList toSyntaxAnalyzerNL::getStatements(QString const& text)
+{
+    return getStatements(text, 0); // 0 => no line limit, return all statements
+}
+
+toSyntaxAnalyzer::statement toSyntaxAnalyzerNL::getStatementAt(unsigned line, unsigned linePos)
+{
+    // This code assumes that text starts with 1st line
+    // Also QScintilla markers start from 1st line
+    // But internally QScintilla enumerates from zero
+
+    toSqlText *editor = qobject_cast<toSqlText *>(parent());
+    QString text(editor->text());
+
+    toSyntaxAnalyzer::statementList statements = getStatements(text, line);
+
+    if (!statements.isEmpty() && statements.last().lineFrom <= line && statements.last().lineTo >= line)
+        return statements.last();
+
+    return toSyntaxAnalyzer::statement();
+}
+
+toSyntaxAnalyzer::statementList toSyntaxAnalyzerNL::getStatements(QString const& text, int lineLimit)
 {
     QRegExp NL("\\r?\\n"); // TODO mac?, static variable can be used in both threads(can not be static)
     QRegExp WS("^\\s*$");
@@ -61,6 +84,7 @@ toSyntaxAnalyzer::statementList toSyntaxAnalyzerNL::getStatements(QString const&
     QStringList lines = text.split(NL);
     unsigned lineStart = 0, lineEnd = 0;
     unsigned lineNumber = 1;
+    bool splitOnSemi = false;
     foreach(QString const &line, lines)
     {
         if ( WS.exactMatch(line))
@@ -70,17 +94,51 @@ toSyntaxAnalyzer::statementList toSyntaxAnalyzerNL::getStatements(QString const&
             {
                 retval << statement(lineStart-1, lineEnd-1); // QScintilla lines start from 0th although reported as 1st
                 lineStart = 0; // reset marker to initial value
+                splitOnSemi = false; // reset this flag
             }
         }
         else
         {
             // Non-Empty line found
             if ( lineStart == 0)
+            {
+                // try to deduce statement type
+                QStringList words = line.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+                foreach(QString const &word, words)
+                {
+                    switch (statementClass(word))
+                    {
+                        case SELECT:
+                        case DML:
+                            splitOnSemi = true;
+                            goto LINE_CLASIFIED;
+                        case DDL:   // CREATE
+                        case PLSQL: // DECLATE/BEGIN/CALL
+                        case OTHER: // ALTER SESSION ..., ANALYZE, SET ROLE, EXPLAIN (never returned from statementClass)
+                            splitOnSemi = false;
+                            goto LINE_CLASIFIED;
+                        case SQLPLUS:
+                            splitOnSemi = false;
+                            // TODO this is commented out as wo do not support sqlplus commands yet
+                            // retval << statement(lineNumber, lineNumber);
+                            // lineStart = 0;
+                            goto LINE_IGNORED;
+                        case UNKNOWN:
+                        case COMMENT:
+                            goto LINE_IGNORED;
+                        default:
+                            continue;
+                    }
+                    break; // iterate only once unless "continue" is called
+                }
+LINE_CLASIFIED:
                 lineStart = lineNumber;
+            }
+LINE_IGNORED:
             lineEnd = lineNumber;
         }
 
-        if(SEMI.exactMatch(line))
+        if(splitOnSemi && SEMI.exactMatch(line))
         {
             if ( lineStart && lineEnd )
             {
@@ -90,75 +148,16 @@ toSyntaxAnalyzer::statementList toSyntaxAnalyzerNL::getStatements(QString const&
         }
 
         lineNumber++;
+
+        // if lineLimit is defined and last detected statement if beyond this limit, return what we have
+        if (lineLimit && !retval.isEmpty() && retval.last().lineTo >= lineLimit)
+            return retval;
     }
 
     // Handle the last line (if non-empty)
     if ( lineStart && lineEnd )
     {
         retval << statement(lineStart-1, lineEnd-1);
-    }
-
-    return retval;
-}
-
-toSyntaxAnalyzer::statement toSyntaxAnalyzerNL::getStatementAt(unsigned line, unsigned linePos)
-{
-    // This code assumes that text starts with 1st line
-    // Also QScintilla markers start from 1st line
-    // But internally QScintilla enumerates from zero
-    line++;
-
-    static QRegExp NL("\\r?\\n"); // TODO mac?
-    static QRegExp WS("^\\s*$");
-	static QRegExp SEMI("^.*;\\s*(--\\s*)?$");
-
-    toSyntaxAnalyzer::statement retval;
-
-    toSqlText *editor = qobject_cast<toSqlText *>(parent());
-    QString text(editor->text());
-
-    QStringList lines = text.split(NL);
-    unsigned lineStart = 0, lineEnd = 0;
-    unsigned lineNumber = 1;
-    foreach(QString const &lineStr, lines)
-    {
-        if ( WS.exactMatch(lineStr))
-        {
-            // Empty line found
-            if ( lineStart && lineEnd )
-            {
-                retval = statement(lineStart-1, lineEnd-1);
-                lineStart = 0; // reset marker to initial value
-            }
-            if (lineNumber > line && retval.lineTo+1 >= line) // off-by-one offset retval.lineTo+1 >= line
-                return retval;
-        }
-        else
-        {
-            // Non-Empty line found
-            if ( lineStart == 0)
-                lineStart = lineNumber;
-            lineEnd = lineNumber;
-        }
-
-        if (SEMI.exactMatch(lineStr))
-        {
-            if (lineStart && lineEnd)
-            {
-                retval = statement(lineStart - 1, lineEnd - 1);
-                lineStart = 0; // reset marker to initial value
-            }
-            if (lineNumber >= line && retval.lineTo + 1 >= line) // off-by-one offset retval.lineTo+1 >= line
-                return retval;
-        }
-
-        lineNumber++;
-    }
-
-    // Handle the last line (if non-empty)
-    if ( lineStart && lineEnd )
-    {
-        retval = statement(lineStart-1, lineEnd-1);
     }
 
     return retval;
@@ -184,9 +183,38 @@ void toSyntaxAnalyzerNL::sanitizeStatement(statement &stat)
     editor->SendScintilla(QsciScintilla::SCI_GETTEXTRANGE, stat.posFrom, stat.posTo, buf);
     qDebug() << buf;
 
+    stat.firstWord = firstEditorWord(stat.posFrom, stat.posTo);
+    qDebug() << stat.firstWord << "..." << lastWord;
+
+    stat.statementType = statementClass(stat.firstWord);
+
+    qDebug() << "- 1 -------------";
+
+    lastWord = lastEditorWord(stat.posFrom, stat.posTo, lastPos); // lastPos is "out" variable
+
+    qDebug() << "- 2 -------------";
+
+    // omit the trailing semicolon (PLSQL block)
+    // TODO: this fails for CREATE TRIGGER or CREATE TYPE BODY (these statements end with: "END object_name? ;"
+    if ( stat.statementType != PLSQL && lastWord.endsWith(";")) // "select * from (select * from dual);" the last word is ");"
+        stat.posTo = editor->SendScintilla(QsciScintilla::SCI_POSITIONBEFORE, lastPos);
+    else if (lastWord == "/")
+        stat.posTo = editor->SendScintilla(QsciScintilla::SCI_POSITIONBEFORE, lastPos);
+
+    editor->SendScintilla(QsciScintilla::SCI_GETTEXTRANGE, stat.posFrom, stat.posTo, buf);
+    stat.sql = editor->convertTextS2Q(buf);
+    delete []buf;
+}
+
+QString toSyntaxAnalyzerNL::firstEditorWord(int posFrom, int posTo)
+{
+    toSqlText *editor = qobject_cast<toSqlText *>(parent());
+    char *buf = new char[posTo - posFrom + 1];
+    QString retval;
+
     // iterate QScintilla word-by-word and query it's style (forward)
     // stop at the 1st interesting word, like SELECT, CREATE, ... to detect statement type
-    for (int pos = stat.posFrom; pos < stat.posTo; )
+    for (int pos = posFrom; pos < posTo; )
     {
         long end_pos = editor->SendScintilla(QsciScintilla::SCI_WORDENDPOSITION, pos, (long)false);
 
@@ -210,16 +238,22 @@ void toSyntaxAnalyzerNL::sanitizeStatement(statement &stat)
         }
 
         editor->SendScintilla(QsciScintilla::SCI_GETTEXTRANGE, pos, end_pos, buf);
-        stat.firstWord = editor->convertTextS2Q(buf);
-        wordStyle = style;
+        retval = editor->convertTextS2Q(buf);
         break;
     }
+    delete []buf;
+    return retval;
+}
 
-    qDebug() << "- 1 -------------";
+QString toSyntaxAnalyzerNL::lastEditorWord(int posFrom, int posTo, int &lastPos)
+{
+    toSqlText *editor = qobject_cast<toSqlText *>(parent());
+    char *buf = new char[posTo - posFrom + 1];
+    QString retval;
 
     // iterate QScintilla word-by-word and query it's style (backwards)
     // stop at the last interesting word, to exclude ';' or '/'
-    for (int pos = stat.posTo; pos > stat.posFrom; )
+    for (int pos = posTo; pos > posFrom; )
     {
         long start_pos = editor->SendScintilla(QsciScintilla::SCI_WORDSTARTPOSITION, pos, (long)false);
 
@@ -245,41 +279,39 @@ void toSyntaxAnalyzerNL::sanitizeStatement(statement &stat)
         }
 
         editor->SendScintilla(QsciScintilla::SCI_GETTEXTRANGE, start_pos, pos, buf);
-        lastWord = editor->convertTextS2Q(buf);
+        retval = editor->convertTextS2Q(buf);
         lastPos = pos;
         break;
     }
 
-    qDebug() << "- 2 -------------";
-    qDebug() << stat.firstWord << "..." << lastWord;
-
-    if (SELECT_INTRODUCERS.contains(stat.firstWord.toUpper()))
-        stat.statementType = SELECT;
-    else if (DML_INTRODUCERS.contains(stat.firstWord.toUpper()))
-        stat.statementType = DML;
-    else if ( DDL_INTRODUCERS.contains(stat.firstWord.toUpper()))
-        stat.statementType = DDL;
-    else if ( PLSQL_INTRODUCERS.contains(stat.firstWord.toUpper()))
-        stat.statementType = PLSQL;
-    else if ( SQLPLUS_INTRODUCERS.contains(stat.firstWord.toUpper()))
-        stat.statementType = SQLPLUS;
-
-    // omit the trailing semicolon (PLSQL block)
-    // TODO: this fails for CREATE TRIGGER or CREATE TYPE BODY (these statements end with: "END object_name? ;"
-    if ( stat.statementType != PLSQL && lastWord.endsWith(";")) // "select * from (select * from dual);" the last word is ");"
-        stat.posTo = editor->SendScintilla(QsciScintilla::SCI_POSITIONBEFORE, lastPos);
-    else if (lastWord == "/")
-        stat.posTo = editor->SendScintilla(QsciScintilla::SCI_POSITIONBEFORE, lastPos);
-
-    editor->SendScintilla(QsciScintilla::SCI_GETTEXTRANGE, stat.posFrom, stat.posTo, buf);
-    stat.sql = editor->convertTextS2Q(buf);
     delete []buf;
+    return retval;
+}
+
+toSyntaxAnalyzerNL::statementClassEnum toSyntaxAnalyzerNL::statementClass(QString const& firstWord)
+{
+    if (SELECT_INTRODUCERS.contains(firstWord.toUpper()))
+        return SELECT;
+    else if (DML_INTRODUCERS.contains(firstWord.toUpper()))
+        return DML;
+    else if ( DDL_INTRODUCERS.contains(firstWord.toUpper()))
+        return DDL;
+    else if ( PLSQL_INTRODUCERS.contains(firstWord.toUpper()))
+        return PLSQL;
+    else if ( SQLPLUS_INTRODUCERS.contains(firstWord.toUpper()))
+        return SQLPLUS;
+    else  if (firstWord.startsWith("--"))
+        return COMMENT;
+    else  if (firstWord.startsWith("/*"))
+        return COMMENT;
+    return UNKNOWN;
 }
 
 QSet<QString> toSyntaxAnalyzerNL:: SELECT_INTRODUCERS = QSet<QString>()
         << "SELECT"
         << "WITH"
-		<< "SHOW"; // MySQL
+        << "("     // "(select * from dual)"
+        << "SHOW"; // MySQL
 
 QSet<QString> toSyntaxAnalyzerNL:: DML_INTRODUCERS = QSet<QString>()
         //<< "SELECT"
@@ -287,8 +319,7 @@ QSet<QString> toSyntaxAnalyzerNL:: DML_INTRODUCERS = QSet<QString>()
         << "INSERT"
         << "UPDATE"
         << "DELETE"
-        << "MERGE"
-        << "(";   // "(select * from dual)"
+        << "MERGE";
 
 QSet<QString> toSyntaxAnalyzerNL::DDL_INTRODUCERS = QSet<QString>()  // see Oracle SQL reference (CREATE ... statement)
         << "CREATE"

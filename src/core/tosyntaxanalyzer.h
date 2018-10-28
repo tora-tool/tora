@@ -66,7 +66,8 @@ class toSyntaxAnalyzer : public QObject
             DDL,        // CREATE
             PLSQL,      // DECLARE/BEGIN ...
             OTHER,      // ALTER SESSION ..., ANALYZE, SET ROLE, EXPLAIN
-            SQLPLUS		// sqlplus command
+            SQLPLUS,		// sqlplus command
+            COMMENT     // not a statement Class(type) but special type of firstWord
         };
 
         //! This enum defines the meanings of the different styles used by the
