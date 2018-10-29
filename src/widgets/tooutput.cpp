@@ -35,6 +35,8 @@
 #include <QtGui/QKeySequence>
 #include <QtWidgets/QAction>
 #include <QtWidgets/QBoxLayout>
+#include <QtWidgets/QToolBar>
+#include <QtWidgets/QLabel>
 
 #include "core/toglobalconfiguration.h"
 #include "core/utils.h"
