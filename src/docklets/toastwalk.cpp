@@ -15,7 +15,7 @@ QMap<QString, int> tableNameEnumerator;
 
 static void toASTWalkFilter(Statement &source, DotGraph &target, const std::function<bool(Statement &source, DotGraph &target, Token & n)>& filter);
 
-std::function<bool(Statement &source, DotGraph &target, Token & n)> root = [&](Statement &source, DotGraph &target, Token &node)
+std::function<bool(Statement &source, DotGraph &target, Token & n)> root = [](Statement &source, DotGraph &target, Token &node)
 {
     if (node.getTokenType() != Token::X_ROOT)
         return false;
@@ -67,7 +67,7 @@ std::function<bool(Statement &source, DotGraph &target, Token & n)> root = [&](S
     return true;
 };
 
-std::function<bool(Statement &source, DotGraph &target, Token & n)> subquery = [&](Statement &source, DotGraph &target, Token & node)
+std::function<bool(Statement &source, DotGraph &target, Token & n)> subquery = [](Statement &source, DotGraph &target, Token & node)
 {
     if (node.getTokenType() != Token::S_SUBQUERY_FACTORED
             && node.getTokenType() != Token::S_SUBQUERY_NESTED)
@@ -103,7 +103,7 @@ std::function<bool(Statement &source, DotGraph &target, Token & n)> subquery = [
 };
 
 // add tables, but only into subquery clusters
-std::function<bool(Statement &source, DotGraph &target, Token &n)> table_ref = [&](Statement &source, DotGraph &target, Token &node)
+std::function<bool(Statement &source, DotGraph &target, Token &n)> table_ref = [](Statement &source, DotGraph &target, Token &node)
 {
     if ( node.getTokenType() != SQLParser::Token::S_TABLE_REF)
         return false;
@@ -174,7 +174,7 @@ std::function<bool(Statement &source, DotGraph &target, Token &n)> table_ref = [
     return true;
 };
 
-std::function<bool(Statement &source, DotGraph &target, Token &n)> binary_operator = [&](Statement &source, DotGraph &target, Token &node)
+std::function<bool(Statement &source, DotGraph &target, Token &n)> binary_operator = [](Statement &source, DotGraph &target, Token &node)
 {
     if (node.getTokenType() != Token::S_OPERATOR_BINARY
             && node.getTokenType() != Token::S_COND_IN)
