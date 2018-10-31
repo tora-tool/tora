@@ -314,7 +314,6 @@ void toWorksheet::createActions()
     outputAct = new QAction(QPixmap(const_cast<const char**>(tooutput_xpm)),
                                     tr("Enable output"),
                                     this);
-    outputAct->setShortcut(Qt::Key_F4);
     outputAct->setCheckable(true);
 
     connect(outputAct, SIGNAL(toggled(bool)), this, SLOT(slotEnableOutput(bool)));
