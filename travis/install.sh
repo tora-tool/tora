@@ -6,7 +6,7 @@ if [ "$QTTYPE" = "5" ]; then
 	#sudo apt-get install -y qt54tools
 	sudo apt-get install -y qt510-meta-full
 	source /opt/qt510/bin/qt510-env.sh
-	export QMAKE=/usr/lib/x86_64-linux-gnu/qt5/bin/qmake
+	#export QMAKE=/usr/lib/x86_64-linux-gnu/qt5/bin/qmake
 	export QTDIR=/opt/qt510
 	export PATH=${QTDIR}/bin:${PATH}
 fi
