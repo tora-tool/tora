@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash -x
 
 g++ --version
 
@@ -8,7 +8,6 @@ if [ "$QTTYPE" = "5" ]; then
     mkdir /tmp/qt5
     cd /tmp/qt5
     source /opt/qt510/bin/qt510-env.sh
-    #cmake --trace --trace-expand --debug-output $tora \
     cmake $tora \	  
 	  -DQT5_BUILD=true \
 	  -DBOOST_ROOT=/usr/include \
