@@ -1,5 +1,7 @@
 #!/bin/bash -x
 
+set -x
+
 g++ --version
 
 tora=/home/travis/build/tora-tool/tora
@@ -8,7 +10,7 @@ if [ "$QTTYPE" = "5" ]; then
     mkdir /tmp/qt5
     cd /tmp/qt5
     source /opt/qt510/bin/qt510-env.sh
-    cmake $tora \	  
+    cmake $tora \
 	  -DQT5_BUILD=true \
 	  -DBOOST_ROOT=/usr/include \
 	  -DWANT_INTERNAL_QSCINTILLA=true \
