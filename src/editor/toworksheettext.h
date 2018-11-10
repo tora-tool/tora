@@ -37,9 +37,11 @@
 #include "core/toconfiguration.h"
 #include "core/toeditorconfiguration.h"
 #include "editor/tosqltext.h"
+#include "core/utils.h"
 
 class toComplPopup;
 class toWorksheet;
+class toWorksheetTextWorker;
 class QFileSystemWatcher;
 
 class toWorksheetText : public toSqlText
@@ -177,6 +179,51 @@ class toWorksheetText : public toSqlText
 
         OptionObserver<ToConfiguration::Editor::CaretLineBool> m_caretVisible;
         OptionObserver<ToConfiguration::Editor::CaretLineAlphaInt> m_caretAlpha;
+
+    // Communication with background thread, copied from toSqlText
+   signals:
+       void statementParsingRequested(QString);
+   private slots:
+       void statementProcess();
+       void statementProcessed(toDictionary);
+    protected:
+        // toWorksheetTextWorker related variables
+        void scheduleParsing() override;
+        void unScheduleParsing() override;
+        QString m_lastSQL;
+        QTimer *m_parserTimer;
+        QThread *m_parserThread;
+        toWorksheetTextWorker *m_worker;
+        toDictionary m_lastTranslations;
+        // commented out, inherited from toSqlText
+        //bool m_haveFocus; // this flag handles situation when bg thread response is received after focus was lost
+
+};
+
+/* Utility class for @ref toCustomLexer
+ * Instance of this class "lives" within background thread
+ * and dispatches signals from/to the main thread
+ *
+ * NOTE: this class could by nested, but QT does not support it
+ */
+class toWorksheetTextWorker: public QObject
+{
+        Q_OBJECT;
+        friend class toWorksheetText;
+    signals:
+        void finished();
+        void processed(toDictionary);
+        void error(QString err);
+
+    public:
+        toWorksheetTextWorker(QObject *parent = 0);
+        ~toWorksheetTextWorker();
+
+    public slots:
+        void process(QString);
+
+    protected:
+        toSyntaxAnalyzer::statementList statements;
 };
 
 /**

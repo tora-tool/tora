@@ -145,6 +145,8 @@ class toSqlText : public toScintilla
         void tableAtCursor(Word &schema, Word &table);
 
         toSyntaxAnalyzer* analyzer();
+
+        toSyntaxAnalyzer::statement currentStatement() const;
 #if 0
         void indentPriv(SQLParser::Token const*, QList<SQLParser::Token const*>&);
 #endif
@@ -173,8 +175,8 @@ class toSqlText : public toScintilla
 
         void populateContextMenu(QMenu *) override;
 
-        void scheduleParsing();
-        void unScheduleParsing();
+        virtual void scheduleParsing();
+        virtual void unScheduleParsing();
 #ifdef TORA_EXPERIMENTAL
         bool showToolTip(ToolTipData const& t) override;
 #endif
@@ -185,12 +187,14 @@ class toSqlText : public toScintilla
         QMap<int,QString> styleNames;
         QFont mono; // line numbers font
 
-        // toHighlightedTextWorker related variables
+        // toSqlTextWorker related variables
         QTimer *m_parserTimer;
         QThread *m_parserThread;
         toSqlTextWorker *m_worker;
-        bool m_haveFocus; // this flag handles situation when bg thread response is rececived after focus was lost
+    protected:
+        bool m_haveFocus; // this flag handles situation when bg thread response is received after focus was lost
 
+    private:
         QAction *m_wrap, *m_indent;
 };
 

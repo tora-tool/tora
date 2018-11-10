@@ -358,6 +358,7 @@ int main(int argc, char **argv)
         qRegisterMetaType<toQColumnDescriptionList>("toQColumnDescriptionList&");
         qRegisterMetaType<ValuesList>("ValuesList&");
         qRegisterMetaType<toConnection::exception>("toConnection::exception");
+        qRegisterMetaType<toDictionary>("toDictionary");
 
         new toMain;
 

@@ -180,7 +180,7 @@ void toQueryModel::timerEvent(QTimerEvent *e)
         QWidget *widget = t->parentWidget()->parentWidget();
         toWorksheet *w = dynamic_cast<toWorksheet*>(widget);
         if (w)
-            newText = w->currentStatement().sql;
+            newText = w->editor()->currentStatement().sql;
     }
     else
     {

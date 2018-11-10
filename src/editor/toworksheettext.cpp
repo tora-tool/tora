@@ -39,6 +39,9 @@
 #include "core/toconnectiontraits.h"
 #include "core/tologger.h"
 #include "core/toglobalevent.h"
+
+#include "parsing/tsqlparse.h"
+
 #include "shortcuteditor/shortcutmodel.h"
 
 #include <QtCore/QFileSystemWatcher>
@@ -48,6 +51,8 @@
 #include "core/toeditorconfiguration.h"
 
 using namespace ToConfiguration;
+using namespace SQLParser;
+using namespace std;
 
 toWorksheetText::toWorksheetText(toWorksheet *worksheet, QWidget *parent, const char *name)
     : toSqlText(parent, name)
@@ -61,6 +66,8 @@ toWorksheetText::toWorksheetText(toWorksheet *worksheet, QWidget *parent, const 
     , m_bookmarkMarginHandle(QsciScintilla::markerDefine(QsciScintilla::RightTriangle))
     , m_completeEnabled(toConfigurationNewSingle::Instance().option(Editor::CodeCompleteBool).toBool())
     , m_completeDelayed((toConfigurationNewSingle::Instance().option(Editor::CodeCompleteDelayInt).toInt() > 0))
+    , m_parserTimer(new QTimer(this))
+    , m_parserThread(new QThread(this))
 {
     FlagSet.Open = true;
 
@@ -105,10 +112,27 @@ toWorksheetText::toWorksheetText(toWorksheet *worksheet, QWidget *parent, const 
             SIGNAL(itemActivated(QListWidgetItem*)),
             this,
             SLOT(completeFromAPI(QListWidgetItem*)));
+
+    m_parserTimer->setInterval(5000);   // every 5s
+    m_parserTimer->setSingleShot(true); // repeat only if bg thread responded
+    m_parserThread->setObjectName("toWorksheetText ParserThread");
+    m_worker = new toWorksheetTextWorker(NULL);
+    m_worker->moveToThread(m_parserThread);
+    connect(m_parserTimer, SIGNAL(timeout()), this, SLOT(statementProcess()));
+    connect(this, SIGNAL(statementParsingRequested(QString)),  m_worker, SLOT(process(QString)));
+    connect(m_worker, SIGNAL(processed(toDictionary)), this, SLOT(statementProcessed(toDictionary)));
+    connect(m_worker, SIGNAL(finished()),  m_parserThread, SLOT(quit()));
+    connect(m_worker, SIGNAL(finished()),  m_worker, SLOT(deleteLater()));
+    connect(m_parserThread, SIGNAL(finished()),  m_parserThread, SLOT(deleteLater()));
+    m_parserThread->start();
+    scheduleParsing();
 }
 
 toWorksheetText::~toWorksheetText()
 {
+    m_parserThread->quit();
+    m_parserThread->wait();
+    delete m_parserThread;
 }
 
 void toWorksheetText::setHighlighter(toSqlText::HighlighterTypeEnum e)
@@ -160,6 +184,13 @@ void toWorksheetText::keyPressEvent(QKeyEvent * e)
         e->accept();
         return;
     }
+#if 0
+    else if (m_completeEnabled && e->key() == Qt::Key_Period)
+    {
+        toSqlText::Word schemaWord, tableWord;
+        tableAtCursor(schemaWord, tableWord);
+    }
+#endif
     super::keyPressEvent(e);
 }
 
@@ -609,6 +640,94 @@ void toWorksheetText::importData(std::map<QString, QString> &data, const QString
         setModified(false);
 }
 #endif
+
+void toWorksheetText::scheduleParsing()
+{
+    if (m_haveFocus && !m_parserTimer->isActive())
+        m_parserTimer->start();
+}
+
+void toWorksheetText::unScheduleParsing()
+{
+    if (m_parserTimer->isActive())
+        m_parserTimer->stop();
+}
+
+void toWorksheetText::statementProcess()
+{
+    QString sql = currentStatement().sql;
+    if (sql != m_lastSQL)
+    {
+        emit statementParsingRequested(sql);
+        m_lastSQL = sql;
+    }
+}
+
+void toWorksheetText::statementProcessed(toDictionary dict)
+{
+    if (!dict.isEmpty())
+        m_lastTranslations = dict;
+    scheduleParsing();
+}
+
+toWorksheetTextWorker::toWorksheetTextWorker(QObject *parent)
+    : QObject(parent)
+{
+
+}
+
+toWorksheetTextWorker::~toWorksheetTextWorker()
+{
+}
+
+static void toASTWalkFilter(Statement &source, const std::function<void(Statement &source, Token const &n)>& visitor)
+{
+    SQLParser::Statement::token_const_iterator node;
+    for (node = source.begin(); node != source.end(); ++node)
+    {
+        visitor(source, *node);
+    }
+}
+
+void toWorksheetTextWorker::process(QString text)
+{
+    toDictionary translationMap;
+    try
+    {
+        std::unique_ptr <SQLParser::Statement> stat = StatementFactTwoParmSing::Instance().create("OracleDML", text, "");
+		stat->scanTree();
+
+        TLOG(5, toDecorator, __HERE__)
+        << "Parsing ok:" << std::endl
+        << stat->root()->toStringRecursive().toStdString() << std::endl;
+
+
+
+        std::function<void(Statement &source, Token const& n)> table_ref = [&](Statement &source, Token const&node)
+        {
+            if (node.getTokenType() != Token::L_TABLEALIAS)
+                return;
+
+            Token const *translation = source.translateAlias(node.toString(), &node);
+            if (TokenTable const *tokenTable = dynamic_cast<TokenTable const*>(translation))
+            {
+                TLOG(5, toNoDecorator, __HERE__) << tokenTable->tableName() << std::endl;
+                translationMap.insert(node.toString().toUpper(), tokenTable->tableName().toUpper());
+            }
+        };
+
+        toASTWalkFilter(*stat, table_ref);
+    }
+    catch ( SQLParser::ParseException const &e)
+    {
+        TLOG(5, toDecorator, __HERE__) << "Exc:" << e.what() << std::endl;
+    }
+    catch (...)
+    {
+        TLOG(5, toDecorator, __HERE__) << "Exc:"  << std::endl;
+    }
+    emit processed(translationMap);
+}
 
 toEditorTypeButton::toEditorTypeButton(QWidget *parent, const char *name)
     : toToggleButton(ENUM_REF(toWorksheetText, EditorTypeEnum), parent, name)
