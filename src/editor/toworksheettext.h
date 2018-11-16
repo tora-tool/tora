@@ -99,17 +99,23 @@ class toWorksheetText : public toSqlText
         void gotoPrevBookmark();
         void gotoNextBookmark();
 
-
-        // Insert chosen text
-        void completeFromAPI(QListWidgetItem * item);
-
+#if 0
         void positionChanged(int row, int col);
-
+#endif
     protected slots:
         void setCaretAlpha();
 
         //! \brief Handle file external changes (3rd party modifications)
         void m_fsWatcher_fileChanged(const QString & filename);
+
+        //
+        void slotCompletiotionTimout();
+
+        // Insert chosen text
+        void slotCompleteFromPopup(QListWidgetItem * item);
+
+        void statementProcess();
+        void statementProcessed(toDictionary);
 
     signals:
         // emitted when a new file is opened
@@ -117,10 +123,14 @@ class toWorksheetText : public toSqlText
         void fileOpened(QString file);
         void fileSaved(QString file);
 
+        // Communication with background thread, copied from toSqlText
+        void statementParsingRequested(QString);
+
     protected:
         /*! \brief Override QScintilla event handler to display code completion popup */
         void keyPressEvent(QKeyEvent * e) override;
 
+#if 0
         /*! \brief Guess what should be used for code completion
         in this time.
         When SQL parser can decide the editor is in FOO.bar state
@@ -130,8 +140,15 @@ class toWorksheetText : public toSqlText
         \param partial a QString reference with starting char sequence
         */
         QStringList getCompletionList(QString &partial);
+#endif
 
+        void autoCompleteTableName(QString const& context, toSqlText::Word const &secondWord);
+        void autoCompleteColumnName(QString const& context, toSqlText::Word const &secondWord);
         void completeWithText(QString const&);
+        void displayCompletePopup(QStringList const& compleList);
+
+        void scheduleParsing() override;
+        void unScheduleParsing() override;
 
         void focusInEvent(QFocusEvent *e) override;
         void focusOutEvent(QFocusEvent *e) override;
@@ -151,14 +168,14 @@ class toWorksheetText : public toSqlText
         virtual void importData(std::map<QString, QString> &data, const QString &prefix);
 #endif
 
-    private:
+    protected:
         EditorTypeEnum editorType;
         toComplPopup* popup;
 
-    protected:
-        toWorksheet *m_worksteet; // parent Workseet tool
         QsciAbstractAPIs* m_complAPI;
         QTimer* m_complTimer;
+        long m_complPosition;
+        int m_complLine, m_complLinePos;
 
         QString m_filename;
 
@@ -168,10 +185,13 @@ class toWorksheetText : public toSqlText
         //! \brief A handler for current line highlighting - margin
         // FIXME: disabled due repainting issues
         // int m_currentLineMarginHandle;
-        //! \brief A handler for bookrmarks - line highlighted
+
+        //! \brief A handler for bookmarks - line highlighted
         int m_bookmarkHandle;
-        //! \brief A handler for bookrmarks - margin
+
+        //! \brief A handler for bookmarks - margin
         int m_bookmarkMarginHandle;
+
         //! \brief Bookrmarks handler list used for navigation (next/prev)
         QList<int> m_bookmarks;
 
@@ -180,16 +200,7 @@ class toWorksheetText : public toSqlText
         OptionObserver<ToConfiguration::Editor::CaretLineBool> m_caretVisible;
         OptionObserver<ToConfiguration::Editor::CaretLineAlphaInt> m_caretAlpha;
 
-    // Communication with background thread, copied from toSqlText
-   signals:
-       void statementParsingRequested(QString);
-   private slots:
-       void statementProcess();
-       void statementProcessed(toDictionary);
-    protected:
         // toWorksheetTextWorker related variables
-        void scheduleParsing() override;
-        void unScheduleParsing() override;
         QString m_lastSQL;
         QTimer *m_parserTimer;
         QThread *m_parserThread;
