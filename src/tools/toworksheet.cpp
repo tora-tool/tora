@@ -1370,17 +1370,6 @@ void toWorksheet::saveHistory(void)
 #endif
 }
 
-toSyntaxAnalyzer::statement toWorksheet::currentStatement() const
-{
-    int cpos, cline;
-    Editor->getCursorPosition(&cline, &cpos);
-    toSyntaxAnalyzer *analyzer = Editor->analyzer();
-    toSyntaxAnalyzer::statement stat = analyzer->getStatementAt(cline, cpos);
-    analyzer->sanitizeStatement(stat);
-
-    return stat;
-}
-
 QString toWorksheet::duration(int dur, bool hundreds)
 {
     char buf[100];
@@ -1476,7 +1465,7 @@ void toWorksheet::slotExecute()
         querySelection(Normal);
         return;
     }
-    toSyntaxAnalyzer::statement stat = currentStatement();
+    toSyntaxAnalyzer::statement stat = Editor->currentStatement();
     query(stat, Normal);
 }
 
@@ -1487,13 +1476,13 @@ void toWorksheet::slotExplainPlan()
         querySelection(OnlyPlan);
         return ;
     }
-    toSyntaxAnalyzer::statement stat = currentStatement();
+    toSyntaxAnalyzer::statement stat = Editor->currentStatement();
     query(stat, OnlyPlan);
 }
 
 void toWorksheet::slotExecuteStep()
 {
-    toSyntaxAnalyzer::statement stat = currentStatement();
+    toSyntaxAnalyzer::statement stat = Editor->currentStatement();
     query(stat, Normal);
 }
 
@@ -1553,7 +1542,7 @@ void toWorksheet::slotExecuteAll()
 void toWorksheet::slotParse()
 {
     Utils::toBusy busy;
-    toSyntaxAnalyzer::statement stat = currentStatement();
+    toSyntaxAnalyzer::statement stat = Editor->currentStatement();
     toSyntaxAnalyzer *analyzer = Editor->analyzer();
     analyzer->sanitizeStatement(stat);
 
@@ -1688,7 +1677,7 @@ void toWorksheet::slotDescribe(void)
 
 void toWorksheet::slotDescribeNew(void)
 {
-    toSyntaxAnalyzer::statement stat = currentStatement();
+    toSyntaxAnalyzer::statement stat = Editor->currentStatement();
     TOMessageBox::information(this, Utils::toSQLToSql_Id(stat.sql), stat.sql);
 
     TLOG(1, toDecorator, __HERE__) << "sql_id lf: " << Utils::toSQLToSql_Id(stat.sql) << std::endl;
@@ -1698,7 +1687,7 @@ void toWorksheet::slotDescribeNew(void)
     QString buffer;
     QString firstWord, currentWord;
     QString txt = Editor->text();
-    toSyntaxAnalyzer::statement currentStat = currentStatement();
+    toSyntaxAnalyzer::statement currentStat = Editor->currentStatement();
     Editor->getCursorPosition(&line, &col);
     TLOG(1, toDecorator, __HERE__) << "describe: "
                                    << '[' << line << ',' << col << ']'

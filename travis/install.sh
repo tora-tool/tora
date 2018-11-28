@@ -1,16 +1,18 @@
 #! /bin/bash
 
-if [ "$QTTYPE" = "4" ]; then
-	sudo apt-get install -y libqt4-webkit libqtwebkit-dev qt4-qmake qt4-dev-tools libqt4-dev libqscintilla2-dev
-fi
-
 if [ "$QTTYPE" = "5" ]; then
-	#sudo apt-get install -y qt5-qmake qtbase5-dev qtdeclarative5-dev libqt5webkit5-dev libsqlite3-dev
-	sudo apt-get install -y qt5-default qttools5-dev-tools
-	sudo apt-get install -y qt54tools
-	export QMAKE=/usr/lib/x86_64-linux-gnu/qt5/bin/qmake
-	#export QTDIR=/opt/qt54
-	export PATH=${QTDIR}/bin:${PATH}
+    #sudo apt-get install -y qt5-qmake qtbase5-dev qtdeclarative5-dev libqt5webkit5-dev libsqlite3-dev
+    #sudo apt-get install -y qt5-default qttools5-dev-tools
+    #sudo apt-get install -y qt54tools
+    #sudo apt-get install -y qt510-meta-full
+    sudo apt-get install -y qt510base \
+	 qt510tools \
+	 qt510x11extras \
+	 qt510svg
+    source /opt/qt510/bin/qt510-env.sh
+    #export QMAKE=/usr/lib/x86_64-linux-gnu/qt5/bin/qmake
+    #export QTDIR=/opt/qt510
+    export PATH=${QTDIR}/bin:${PATH}
 fi
 
 sudo apt-get purge libboost*1.46*

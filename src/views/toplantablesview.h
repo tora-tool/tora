@@ -52,6 +52,7 @@ namespace PlanTables
         static const bool AlternatingRowColorsEnabled = true;
         static const int  ShowRowNumber = NoRowNumber;
         static const int  ColumnResize = RowColumResize;
+        static const int  SelectionMode = QAbstractItemView::ExtendedSelection;
 
         typedef Views::toTreeView View;
 

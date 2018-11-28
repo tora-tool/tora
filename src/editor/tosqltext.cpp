@@ -97,7 +97,7 @@ toSqlText::toSqlText(QWidget *parent, const char *name)
 
     m_parserTimer->setInterval(5000);   // every 5s
     m_parserTimer->setSingleShot(true); // repeat only if bg thread responded
-    m_parserThread->setObjectName("ParserThread");
+    m_parserThread->setObjectName("toSqlText ParserThread");
     m_worker = new toSqlTextWorker(NULL);
     m_worker->moveToThread(m_parserThread);
     connect(m_parserTimer, SIGNAL(timeout()), this, SLOT(process()));
@@ -547,6 +547,16 @@ toSyntaxAnalyzer* toSqlText::analyzer()
     return m_currentAnalyzer;
 }
 
+toSyntaxAnalyzer::statement toSqlText::currentStatement() const
+{
+    int cpos, cline;
+    getCursorPosition(&cline, &cpos);
+    toSyntaxAnalyzer::statement stat = m_currentAnalyzer->getStatementAt(cline, cpos);
+    m_currentAnalyzer->sanitizeStatement(stat);
+
+    return stat;
+}
+
 void toSqlText::focusInEvent(QFocusEvent *e)
 {
 #ifdef QT_DEBUG
@@ -665,7 +675,6 @@ void toSqlText::processed()
         setMarginText(lastLine++, QString(), Default);
     }
 
-    //emit parsingFinished();
     scheduleParsing();
 }
 

@@ -1,4 +1,3 @@
-
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
@@ -39,6 +38,9 @@
 #include "core/toconnectiontraits.h"
 #include "core/tologger.h"
 #include "core/toglobalevent.h"
+
+#include "parsing/tsqlparse.h"
+
 #include "shortcuteditor/shortcutmodel.h"
 
 #include <QtCore/QFileSystemWatcher>
@@ -48,12 +50,13 @@
 #include "core/toeditorconfiguration.h"
 
 using namespace ToConfiguration;
+using namespace SQLParser;
+using namespace std;
 
 toWorksheetText::toWorksheetText(toWorksheet *worksheet, QWidget *parent, const char *name)
     : toSqlText(parent, name)
     , editorType(SciTe)
     , popup(new toComplPopup(this))
-    , m_worksteet(worksheet)
     , m_complAPI(NULL)
     , m_complTimer(new QTimer(this))
     , m_fsWatcher(new QFileSystemWatcher(this))
@@ -61,6 +64,8 @@ toWorksheetText::toWorksheetText(toWorksheet *worksheet, QWidget *parent, const 
     , m_bookmarkMarginHandle(QsciScintilla::markerDefine(QsciScintilla::RightTriangle))
     , m_completeEnabled(toConfigurationNewSingle::Instance().option(Editor::CodeCompleteBool).toBool())
     , m_completeDelayed((toConfigurationNewSingle::Instance().option(Editor::CodeCompleteDelayInt).toInt() > 0))
+    , m_parserTimer(new QTimer(this))
+    , m_parserThread(new QThread(this))
 {
     FlagSet.Open = true;
 
@@ -89,7 +94,7 @@ toWorksheetText::toWorksheetText(toWorksheet *worksheet, QWidget *parent, const 
 
 
     //connect (this, SIGNAL(cursorPositionChanged(int, int)), this, SLOT(positionChanged(int, int)));
-    connect( m_complTimer, SIGNAL(timeout()), this, SLOT(autoCompleteFromAPIs()) );
+    connect( m_complTimer, SIGNAL(timeout()), this, SLOT(slotCompletiotionTimout()) );
 
     connect(&toEditorTypeButtonSingle::Instance(),
             SIGNAL(toggled(int)),
@@ -100,15 +105,32 @@ toWorksheetText::toWorksheetText(toWorksheet *worksheet, QWidget *parent, const 
     connect(popup->list(),
             SIGNAL(itemClicked(QListWidgetItem*)),
             this,
-            SLOT(completeFromAPI(QListWidgetItem*)));
+            SLOT(slotCompleteFromPopup(QListWidgetItem*)));
     connect(popup->list(),
             SIGNAL(itemActivated(QListWidgetItem*)),
             this,
-            SLOT(completeFromAPI(QListWidgetItem*)));
+            SLOT(slotCompleteFromPopup(QListWidgetItem*)));
+
+    m_parserTimer->setInterval(5000);   // every 5s
+    m_parserTimer->setSingleShot(true); // repeat only if bg thread responded
+    m_parserThread->setObjectName("toWorksheetText ParserThread");
+    m_worker = new toWorksheetTextWorker(NULL);
+    m_worker->moveToThread(m_parserThread);
+    connect(m_parserTimer, SIGNAL(timeout()), this, SLOT(statementProcess()));
+    connect(this, SIGNAL(statementParsingRequested(QString)),  m_worker, SLOT(process(QString)));
+    connect(m_worker, SIGNAL(processed(toDictionary)), this, SLOT(statementProcessed(toDictionary)));
+    connect(m_worker, SIGNAL(finished()),  m_parserThread, SLOT(quit()));
+    connect(m_worker, SIGNAL(finished()),  m_worker, SLOT(deleteLater()));
+    connect(m_parserThread, SIGNAL(finished()),  m_parserThread, SLOT(deleteLater()));
+    m_parserThread->start();
+    scheduleParsing();
 }
 
 toWorksheetText::~toWorksheetText()
 {
+    m_parserThread->quit();
+    m_parserThread->wait();
+    delete m_parserThread;
 }
 
 void toWorksheetText::setHighlighter(toSqlText::HighlighterTypeEnum e)
@@ -156,13 +178,28 @@ void toWorksheetText::keyPressEvent(QKeyEvent * e)
     }
     else if (m_completeEnabled && e->modifiers() == Qt::ControlModifier && e->key() == Qt::Key_T)
     {
-        autoCompleteFromAPIs();
+        toSqlText::Word firstWord, secondWord;
+        tableAtCursor(firstWord, secondWord);
+
+        QString context = firstWord.text();
+        if (context.isEmpty())
+            context = toToolWidget::currentSchema(this);
+
+        autoCompleteTableName(context, secondWord);
         e->accept();
         return;
+    }
+    else if (m_completeEnabled && e->key() == Qt::Key_Period)
+    {
+        // Dot was pressed start completion timer, save current position
+        m_complTimer->start(toConfigurationNewSingle::Instance().option(Editor::CodeCompleteDelayInt).toInt());
+        m_complPosition = currentPosition();
+        getCursorPosition(&m_complLine, &m_complLinePos);
     }
     super::keyPressEvent(e);
 }
 
+#if 0
 void toWorksheetText::positionChanged(int row, int col)
 {
     using namespace ToConfiguration;
@@ -222,6 +259,7 @@ void toWorksheetText::positionChanged(int row, int col)
 no_complete:
     m_complTimer->stop();
 }
+#endif
 
 void toWorksheetText::setCaretAlpha()
 {
@@ -236,6 +274,7 @@ void toWorksheetText::setCaretAlpha()
         QsciScintilla::setCaretLineVisible(false);
     }
 }
+
 // the QScintilla way of autocomletition
 #if 0
 void toWorksheetText::autoCompleteFromAPIs()
@@ -248,85 +287,158 @@ void toWorksheetText::autoCompleteFromAPIs()
 }
 #endif
 
+void toWorksheetText::slotCompletiotionTimout()
+{
+    TLOG(0, toTimeStart, __HERE__) << "Start" << std::endl;
+    m_complTimer->stop(); // it's a must to prevent infinite reopening
+
+    // Check whether our cursor position is close to period, which started this timer
+    int curline, curcol;
+    getCursorPosition (&curline, &curcol);
+
+    if (curline != m_complLine)
+        return;
+    if (curcol - m_complLinePos >= 3)
+        return;
+    if (curcol < m_complLinePos)
+        return;
+
+    autoCompleteFromAPIs();
+}
+
 // the Tora way of autocomletition
 void toWorksheetText::autoCompleteFromAPIs()
 {
-    m_complTimer->stop(); // it's a must to prevent infinite reopening
-
+    TLOG(0, toTimeDelta, __HERE__) << "Start"  << std::endl;
     Utils::toBusy busy;
     toConnection &connection = toConnection::currentConnection(this);
 
-    TLOG(0, toTimeStart, __HERE__) << "Start" << std::endl;
+    TLOG(0, toTimeDelta, __HERE__) << "Step" << std::endl;
     int position = currentPosition();
-    toSqlText::Word schemaWord, tableWord;
-    tableAtCursor(schemaWord, tableWord);
+    toSqlText::Word firstWord, secondWord;
+    tableAtCursor(firstWord, secondWord);
 
-    QString schema = connection.getTraits().unQuote(schemaWord.text());          // possibly unquote schema name
-    QString table = tableWord.start() > position ? QString() : tableWord.text(); // possible tableAtCursor matched some distant work (behind spaces)
+    QString worksheetSchema = toToolWidget::currentSchema(this);
 
-    TLOG(0, toTimeDelta, __HERE__) << "Table at indexb: " << '"' << schemaWord.text() << '"' << ':' << '"' << tableWord.text() << '"' << std::endl;
+    TLOG(0, toTimeDelta, __HERE__) << "Table at index: " << '"' << firstWord.text() << '"' << ':' << '"' << secondWord.text() << '"' << std::endl;
 
-    if (!schemaWord.text().isEmpty())
-        setSelection(schemaWord.start(), position);
-    else if (!tableWord.text().isEmpty())
-        setSelection(tableWord.start(), position);
-    else
-        return;
+    // Disambiguate the 1st word, schema/table/alias
+    if (!firstWord.text().isEmpty())
+    {
+        // firstWord is schema name, complete secondWord as table
+        QStringList ul = connection.getCache().userList(toCache::OWNERS);
+        if (ul.contains(firstWord.text().toUpper()))
+        {
+            autoCompleteTableName(firstWord.text().toUpper(), secondWord);
+            return;
+        }
 
-    QStringList compleList;
-    if (schema.isEmpty())
-    	compleList = connection.getCache().completeEntry(toToolWidget::currentSchema(this), table);
-    else
-    	compleList = connection.getCache().completeEntry(schema, table);
+        // firstWord is table alias, complete secondWord as column
+        if (m_lastTranslations.contains(firstWord.text().toUpper()))
+        {
+            TLOG(0, toTimeDelta, __HERE__) << "Step a" << std::endl;
+            autoCompleteColumnName(m_lastTranslations.value(firstWord.text().toUpper()), secondWord);
+            return;
+        }
 
-    TLOG(0, toTimeDelta, __HERE__) << "Complete entry" << std::endl;
+        // firstWord might be a table name, complete secondWord as column
+        toCache::ObjectRef table;
+        table.context = worksheetSchema;
+        table.second = QString::null;
+        table.first  = secondWord.text().toUpper();
+        toCache::CacheEntry const* e =  connection.getCache().findEntry(table);
+        if (e)
+        {
+            TLOG(0, toTimeDelta, __HERE__) << "Step b" << std::endl;
+            autoCompleteColumnName(firstWord.text().toUpper(), secondWord);
+            return;
+        }
+    }
+}
+
+void toWorksheetText::autoCompleteTableName(QString const& context, toSqlText::Word const &secondWord)
+{
+    TLOG(0, toNoDecorator, __HERE__) << "autoCompleteTableName Start" << std::endl;
+
+    toConnection &connection = toConnection::currentConnection(this);
+    QStringList compleList = connection.getCache().completeEntry(context, secondWord.text().toUpper());
 
     if (compleList.size() <= 100) // Do not waste CPU on sorting huge completition list TODO: limit the amount of returned entries
-    	compleList.sort();
-    TLOG(0, toTimeDelta, __HERE__) << "Sort" << std::endl;
+        compleList.sort();
 
+    int position = currentPosition();
     if (compleList.isEmpty())
     {
-    	this->SendScintilla(SCI_SETEMPTYSELECTION, position);
+        this->SendScintilla(SCI_SETEMPTYSELECTION, position);
         return;
     }
 
-    if (compleList.count() == 1 /*&& compleList.first() == partial*/)
+    if (!secondWord.text().isEmpty())
+        setSelection(secondWord.start(), position);
+
+    if (compleList.count() == 1)
     {
         completeWithText(compleList.first());
     }
     else
     {
-        long position, posx, posy;
-        int curCol, curRow;
-        this->getCursorPosition(&curRow, &curCol);
-        position = this->SendScintilla(SCI_GETCURRENTPOS);
-        posx = this->SendScintilla(SCI_POINTXFROMPOSITION, 0, position);
-        posy = this->SendScintilla(SCI_POINTYFROMPOSITION, 0, position) +
-               this->SendScintilla(SCI_TEXTHEIGHT, curRow);
-        QPoint p(posx, posy);
-        p = mapToGlobal(p);
-        popup->move(p);
-        QListWidget *list = popup->list();
-        list->clear();
-        list->addItems(compleList);
-
-        // if there's no current selection, select the first
-        // item. that way arrow keys work as intended.
-        QList<QListWidgetItem *> selected = list->selectedItems();
-        if (selected.size() < 1 && list->count() > 0)
-        {
-            list->item(0)->setSelected(true);
-            list->setCurrentItem(list->item(0));
-        }
-
-        popup->show();
-        popup->setFocus();
-        TLOG(0, toTimeTotal, __HERE__) << "End" << std::endl;
+        displayCompletePopup(compleList);
     }
 }
 
-void toWorksheetText::completeFromAPI(QListWidgetItem* item)
+void toWorksheetText::autoCompleteColumnName(QString const& context, toSqlText::Word const &secondWord)
+{
+    TLOG(0, toTimeDelta, __HERE__) << "autoCompleteColumnName Start" << std::endl;
+    toConnection &connection = toConnection::currentConnection(this);
+
+    toCache::ObjectRef table;
+    table.context = toToolWidget::currentSchema(this);
+    table.first  = QString::null;
+    table.second = context; // context is the table name
+
+    QStringList compleList;
+
+    toCache::CacheEntry const *e = connection.getCache().findEntry(table);
+    if (e)
+    {
+        TLOG(0, toTimeDelta, __HERE__) << "autoCompleteColumnName Step a" << std::endl;
+        // TODO this is sync db request evaluated in the main (UI) thread - no async approach yet
+        connection.getCache().describeEntry(e);
+        toQAdditionalDescriptions d  = e->description;
+        toQColumnDescriptionList dl = d.value("COLUMNLIST").value<toQColumnDescriptionList>();
+
+        foreach(toCache::ColumnDescription cd, dl)
+        {
+            TLOG(0, toNoDecorator, __HERE__) << cd.Name << std::endl;
+            if (cd.Name.startsWith(secondWord.text().toUpper()))
+                compleList.append(cd.Name);
+        }
+        TLOG(0, toTimeDelta, __HERE__) << "autoCompleteColumnName Step b" << std::endl;
+    }
+    compleList.sort();
+
+    int position = currentPosition();
+    if (compleList.isEmpty())
+    {
+        this->SendScintilla(SCI_SETEMPTYSELECTION, position);
+        return;
+    }
+
+    if (!secondWord.text().isEmpty())
+        setSelection(secondWord.start(), position);
+
+    if (compleList.count() == 1)
+    {
+        completeWithText(compleList.first());
+    }
+    else
+    {
+        TLOG(0, toTimeDelta, __HERE__) << "autoCompleteColumnName Step c" << std::endl;
+        displayCompletePopup(compleList);
+    }
+}
+
+void toWorksheetText::slotCompleteFromPopup(QListWidgetItem* item)
 {
     if (item)
     {
@@ -353,6 +465,36 @@ void toWorksheetText::completeWithText(QString const& text)
     pos = SendScintilla(SCI_GETCURRENTPOS);
     SendScintilla(SCI_SETSELECTIONSTART, pos, true);
     SendScintilla(SCI_SETSELECTIONEND, pos, true);
+}
+
+void toWorksheetText::displayCompletePopup(QStringList const& compleList)
+{
+    long position, posx, posy;
+    int curCol, curRow;
+    this->getCursorPosition(&curRow, &curCol);
+    position = this->SendScintilla(SCI_GETCURRENTPOS);
+    posx = this->SendScintilla(SCI_POINTXFROMPOSITION, 0, position);
+    posy = this->SendScintilla(SCI_POINTYFROMPOSITION, 0, position) +
+            this->SendScintilla(SCI_TEXTHEIGHT, curRow);
+    QPoint p(posx, posy);
+    p = mapToGlobal(p);
+    popup->move(p);
+    QListWidget *list = popup->list();
+    list->clear();
+    list->addItems(compleList);
+
+    // if there's no current selection, select the first
+    // item. that way arrow keys work as intended.
+    QList<QListWidgetItem *> selected = list->selectedItems();
+    if (selected.size() < 1 && list->count() > 0)
+    {
+        list->item(0)->setSelected(true);
+        list->setCurrentItem(list->item(0));
+    }
+
+    TLOG(0, toTimeTotal, __HERE__) << "End" << std::endl;
+    popup->show();
+    popup->setFocus();
 }
 
 QString const& toWorksheetText::filename(void) const
@@ -515,6 +657,7 @@ void toWorksheetText::gotoNextBookmark()
         setCursorPosition(newline, 0);
 }
 
+#if 0
 QStringList toWorksheetText::getCompletionList(QString &partial)
 {
     TLOG(0, toTimeStart, __HERE__) << "Start" << std::endl;
@@ -544,6 +687,7 @@ QStringList toWorksheetText::getCompletionList(QString &partial)
     TLOG(0, toTimeTotal, __HERE__) << "End" << std::endl;
     return retval2;
 }
+#endif
 
 void toWorksheetText::focusInEvent(QFocusEvent *e)
 {
@@ -609,6 +753,92 @@ void toWorksheetText::importData(std::map<QString, QString> &data, const QString
         setModified(false);
 }
 #endif
+
+void toWorksheetText::scheduleParsing()
+{
+    if (m_haveFocus && !m_parserTimer->isActive())
+        m_parserTimer->start();
+}
+
+void toWorksheetText::unScheduleParsing()
+{
+    if (m_parserTimer->isActive())
+        m_parserTimer->stop();
+}
+
+void toWorksheetText::statementProcess()
+{
+    QString sql = currentStatement().sql;
+    if (sql != m_lastSQL)
+    {
+        emit statementParsingRequested(sql);
+        m_lastSQL = sql;
+    }
+}
+
+void toWorksheetText::statementProcessed(toDictionary dict)
+{
+    if (!dict.isEmpty())
+        m_lastTranslations = dict;
+    scheduleParsing();
+}
+
+toWorksheetTextWorker::toWorksheetTextWorker(QObject *parent)
+    : QObject(parent)
+{
+
+}
+
+toWorksheetTextWorker::~toWorksheetTextWorker()
+{
+}
+
+static void toASTWalkFilter(Statement &source, const std::function<void(Statement &source, Token const &n)>& visitor)
+{
+    SQLParser::Statement::token_const_iterator node;
+    for (node = source.begin(); node != source.end(); ++node)
+    {
+        visitor(source, *node);
+    }
+}
+
+void toWorksheetTextWorker::process(QString text)
+{
+    toDictionary translationMap;
+    try
+    {
+        std::unique_ptr <SQLParser::Statement> stat = StatementFactTwoParmSing::Instance().create("OracleDML", text, "");
+		stat->scanTree();
+
+        TLOG(5, toDecorator, __HERE__)
+        << "Parsing ok:" << std::endl
+        << stat->root()->toStringRecursive().toStdString() << std::endl;
+
+        std::function<void(Statement &source, Token const& n)> table_ref = [&](Statement &source, Token const&node)
+        {
+            if (node.getTokenType() != Token::L_TABLEALIAS)
+                return;
+
+            Token const *translation = source.translateAlias(node.toString(), &node);
+            if (TokenTable const *tokenTable = dynamic_cast<TokenTable const*>(translation))
+            {
+                TLOG(5, toNoDecorator, __HERE__) << tokenTable->tableName() << std::endl;
+                translationMap.insert(node.toString().toUpper(), tokenTable->tableName().toUpper());
+            }
+        };
+
+        toASTWalkFilter(*stat, table_ref);
+    }
+    catch ( SQLParser::ParseException const &e)
+    {
+        TLOG(5, toDecorator, __HERE__) << "Exc:" << e.what() << std::endl;
+    }
+    catch (...)
+    {
+        TLOG(5, toDecorator, __HERE__) << "Exc:"  << std::endl;
+    }
+    emit processed(translationMap);
+}
 
 toEditorTypeButton::toEditorTypeButton(QWidget *parent, const char *name)
     : toToggleButton(ENUM_REF(toWorksheetText, EditorTypeEnum), parent, name)

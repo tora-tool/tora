@@ -128,7 +128,6 @@ class toWorksheet : public toToolWidget, public toContextMenuHandler
         virtual void commitChanges();
         virtual void rollbackChanges();
 
-        toSyntaxAnalyzer::statement currentStatement() const;
         QString schema() const override;
 
         enum execTypeEnum

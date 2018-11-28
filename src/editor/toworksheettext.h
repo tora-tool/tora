@@ -37,9 +37,11 @@
 #include "core/toconfiguration.h"
 #include "core/toeditorconfiguration.h"
 #include "editor/tosqltext.h"
+#include "core/utils.h"
 
 class toComplPopup;
 class toWorksheet;
+class toWorksheetTextWorker;
 class QFileSystemWatcher;
 
 class toWorksheetText : public toSqlText
@@ -97,17 +99,23 @@ class toWorksheetText : public toSqlText
         void gotoPrevBookmark();
         void gotoNextBookmark();
 
-
-        // Insert chosen text
-        void completeFromAPI(QListWidgetItem * item);
-
+#if 0
         void positionChanged(int row, int col);
-
+#endif
     protected slots:
         void setCaretAlpha();
 
         //! \brief Handle file external changes (3rd party modifications)
         void m_fsWatcher_fileChanged(const QString & filename);
+
+        //
+        void slotCompletiotionTimout();
+
+        // Insert chosen text
+        void slotCompleteFromPopup(QListWidgetItem * item);
+
+        void statementProcess();
+        void statementProcessed(toDictionary);
 
     signals:
         // emitted when a new file is opened
@@ -115,10 +123,14 @@ class toWorksheetText : public toSqlText
         void fileOpened(QString file);
         void fileSaved(QString file);
 
+        // Communication with background thread, copied from toSqlText
+        void statementParsingRequested(QString);
+
     protected:
         /*! \brief Override QScintilla event handler to display code completion popup */
         void keyPressEvent(QKeyEvent * e) override;
 
+#if 0
         /*! \brief Guess what should be used for code completion
         in this time.
         When SQL parser can decide the editor is in FOO.bar state
@@ -128,8 +140,15 @@ class toWorksheetText : public toSqlText
         \param partial a QString reference with starting char sequence
         */
         QStringList getCompletionList(QString &partial);
+#endif
 
+        void autoCompleteTableName(QString const& context, toSqlText::Word const &secondWord);
+        void autoCompleteColumnName(QString const& context, toSqlText::Word const &secondWord);
         void completeWithText(QString const&);
+        void displayCompletePopup(QStringList const& compleList);
+
+        void scheduleParsing() override;
+        void unScheduleParsing() override;
 
         void focusInEvent(QFocusEvent *e) override;
         void focusOutEvent(QFocusEvent *e) override;
@@ -149,14 +168,14 @@ class toWorksheetText : public toSqlText
         virtual void importData(std::map<QString, QString> &data, const QString &prefix);
 #endif
 
-    private:
+    protected:
         EditorTypeEnum editorType;
         toComplPopup* popup;
 
-    protected:
-        toWorksheet *m_worksteet; // parent Workseet tool
         QsciAbstractAPIs* m_complAPI;
         QTimer* m_complTimer;
+        long m_complPosition;
+        int m_complLine, m_complLinePos;
 
         QString m_filename;
 
@@ -166,10 +185,13 @@ class toWorksheetText : public toSqlText
         //! \brief A handler for current line highlighting - margin
         // FIXME: disabled due repainting issues
         // int m_currentLineMarginHandle;
-        //! \brief A handler for bookrmarks - line highlighted
+
+        //! \brief A handler for bookmarks - line highlighted
         int m_bookmarkHandle;
-        //! \brief A handler for bookrmarks - margin
+
+        //! \brief A handler for bookmarks - margin
         int m_bookmarkMarginHandle;
+
         //! \brief Bookrmarks handler list used for navigation (next/prev)
         QList<int> m_bookmarks;
 
@@ -177,6 +199,42 @@ class toWorksheetText : public toSqlText
 
         OptionObserver<ToConfiguration::Editor::CaretLineBool> m_caretVisible;
         OptionObserver<ToConfiguration::Editor::CaretLineAlphaInt> m_caretAlpha;
+
+        // toWorksheetTextWorker related variables
+        QString m_lastSQL;
+        QTimer *m_parserTimer;
+        QThread *m_parserThread;
+        toWorksheetTextWorker *m_worker;
+        toDictionary m_lastTranslations;
+        // commented out, inherited from toSqlText
+        //bool m_haveFocus; // this flag handles situation when bg thread response is received after focus was lost
+
+};
+
+/* Utility class for @ref toCustomLexer
+ * Instance of this class "lives" within background thread
+ * and dispatches signals from/to the main thread
+ *
+ * NOTE: this class could by nested, but QT does not support it
+ */
+class toWorksheetTextWorker: public QObject
+{
+        Q_OBJECT;
+        friend class toWorksheetText;
+    signals:
+        void finished();
+        void processed(toDictionary);
+        void error(QString err);
+
+    public:
+        toWorksheetTextWorker(QObject *parent = 0);
+        ~toWorksheetTextWorker();
+
+    public slots:
+        void process(QString);
+
+    protected:
+        toSyntaxAnalyzer::statementList statements;
 };
 
 /**

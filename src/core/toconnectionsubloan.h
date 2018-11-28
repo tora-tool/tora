@@ -2,6 +2,9 @@
 
 #include "core/tologger.h"
 
+#include <QtCore/QMap>
+#include <QtCore/QString>
+
 class toConnection;
 class toConnectionSub;
 class toEventQuery;

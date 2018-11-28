@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef UTILS_H
-#define UTILS_H
+#pragma once
 
 #include "core/tora_export.h"
 
@@ -42,6 +41,7 @@
 #include <QtCore/QThread>
 #include <QtCore/QFile>
 #include <QtCore/QFileInfo>
+#include <QtCore/QMap>
 #include <QMessageBox>
 #include <QMainWindow>
 
@@ -481,4 +481,6 @@ namespace Utils
     }
 }
 
-#endif
+typedef QMap<QString, QString> toDictionary;
+Q_DECLARE_METATYPE(toDictionary);
+
