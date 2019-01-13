@@ -74,8 +74,8 @@ static toSQL SQLBackendSql(
 static toSQL SQLPlanHistory("toSGATrace:PlanHistory",
 		"select ss.snap_id, ss.instance_number node, begin_interval_time, sql_id, plan_hash_value,     \n"
 		" nvl(executions_delta,0) execs,                                                               \n"
-		" (elapsed_time_delta/decode(nvl(executions_delta,0),0,1,executions_delta))/1000000 avg_etime, \n"
-		" (buffer_gets_delta/decode(nvl(buffer_gets_delta,0),0,1,executions_delta)) avg_lio            \n"
+		" round((elapsed_time_delta/decode(nvl(executions_delta,0),0,1,executions_delta))/1000000, 2) avg_etime, \n"
+		" round((buffer_gets_delta/decode(nvl(buffer_gets_delta,0),0,1,executions_delta)), 2) avg_lio  \n"
 		" from DBA_HIST_SQLSTAT S, DBA_HIST_SNAPSHOT SS                                                \n"
 		" where sql_id = :sql_id<char[100],in>                                                         \n"
 		" and ss.snap_id = S.snap_id                                                                   \n"
