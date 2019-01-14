@@ -122,9 +122,13 @@ class oracleQuery : public queryImpl
             for (; it != col.end(); ++it)
             {
                 toCache::ColumnDescription desc;
-                desc.AlignRight = false;
                 desc.Name = QString::fromUtf8( (*it)->_name.c_str() );
                 desc.Datatype = QString::fromUtf8( (*it)->typeName().c_str() );
+
+                if (desc.Datatype == "NUMBER")
+                    desc.AlignRight = true;
+                else
+                    desc.AlignRight = false;
 
                 //datatypearg1 = description[i].char_size;
                 desc.Datatype.sprintf(desc.Datatype.toUtf8().constData(), datatypearg1, datatypearg2);
