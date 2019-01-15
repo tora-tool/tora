@@ -758,12 +758,14 @@ void toWorksheetText::scheduleParsing()
 {
     if (m_haveFocus && !m_parserTimer->isActive())
         m_parserTimer->start();
+    super::scheduleParsing();
 }
 
 void toWorksheetText::unScheduleParsing()
 {
     if (m_parserTimer->isActive())
         m_parserTimer->stop();
+    super::unScheduleParsing();
 }
 
 void toWorksheetText::statementProcess()

@@ -39,7 +39,7 @@ ANTLR_INLINE void BitsetList<ImplTraits>::set_length( ANTLR_UINT32 length )
 }
 
 template <class ImplTraits>
-typename BitsetList<ImplTraits>::BitsetType* BitsetList<ImplTraits>::bitsetLoad()
+typename BitsetList<ImplTraits>::BitsetType* BitsetList<ImplTraits>::bitsetLoad() const
 {
 	// Allocate memory for the bitset structure itself
 	// the input parameter is the bit number (0 based)

@@ -112,7 +112,7 @@ public:
 	/// added to the set.
 	/// 
 	///
-	BitsetType* bitsetLoad();
+	BitsetType* bitsetLoad() const;
 
 	BitsetType* bitsetCopy();
 

@@ -298,11 +298,11 @@ void ANTLR_Exception<ImplTraits, Ex, StreamType>::displayRecognitionError( ANTLR
 		break;
 	case MISMATCHED_SET_EXCEPTION:
 		{
-			ANTLR_UINT32	  count;
-			ANTLR_UINT32	  bit;
-			ANTLR_UINT32	  size;
-			ANTLR_UINT32	  numbits;
-			BitsetType*	  errBits;
+            // What tokens could we have accepted at this point in the
+            // parse?
+			ANTLR_UINT32 count = 0;
+			ANTLR_UINT32 size = 0;
+			ANTLR_UINT32 numbits = 0;
 
 			// This means we were able to deal with one of a set of
 			// possible tokens at this point, but we did not see any
@@ -310,16 +310,17 @@ void ANTLR_Exception<ImplTraits, Ex, StreamType>::displayRecognitionError( ANTLR
 			//
 			str_stream << " : unexpected input...\n  expected one of : ";
 
-			// What tokens could we have accepted at this point in the
-			// parse?
-			//
-			count   = 0;
-			errBits = BaseType::m_expectingSet->bitsetLoad();
-			numbits = errBits->numBits();
-			size    = errBits->size();
+			if (BaseType::m_expectingSet)
+			{
+			    BitsetType *errBits = BaseType::m_expectingSet->bitsetLoad();
+			    numbits = errBits->numBits();
+			    size    = errBits->size();
+			    delete errBits;
+			}
 
 			if  (size > 0)
 			{
+	            ANTLR_UINT32      bit;
 				// However many tokens we could have dealt with here, it is usually
 				// not useful to print ALL of the set here. I arbitrarily chose 8
 				// here, but you should do whatever makes sense for you of course.
@@ -343,7 +344,6 @@ void ANTLR_Exception<ImplTraits, Ex, StreamType>::displayRecognitionError( ANTLR
 				str_stream << "Actually dude, we didn't seem to be expecting anything here, or at least\n";
 				str_stream << "I could not work out what I was expecting, like so many of us these days!\n";
 			}
-			delete errBits;
 		}
 		break;
 	case EARLY_EXIT_EXCEPTION:

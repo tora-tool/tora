@@ -789,7 +789,7 @@ namespace Utils
             QString errmsg((char*)lpMsgBuf);
             LocalFree(lpMsgBuf);
             QDir::setCurrent(oldDir);
-            throw errmsg;
+            throw errmsg.append("\nLoading: %1").arg(libpath);
         }
 #endif
         QDir::setCurrent(oldDir);
