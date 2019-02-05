@@ -646,6 +646,23 @@ void OracleDMLStatement::disambiguate()
             for( int j = node.row() - 1 ; j >= 0; --j)
             {
                 Token *brother = brothers.at(j);
+
+                // brother is some meaningless token, iterete over it's leff sons utill somethin usefull is found
+                if (brother->getTokenType() == Token::X_UNASSIGNED && !brother->getChildren().empty())
+                {
+                    auto ch = brother->getChildren().at(0);
+                    do
+                    {
+                        if (ch->getTokenType() != Token::X_UNASSIGNED)
+                        {
+                            brother = ch;
+                            break;
+                        }
+                        ch = ch->getChildren().at(0);
+                    }
+                    while (!ch->getChildren().empty());
+                }
+
                 if( brother->getTokenType() == Token::S_SUBQUERY_NESTED)
                 {
                     std::cout << node.toString().toStdString() << "=>" << brother->toStringRecursive().toStdString() << std::endl;
