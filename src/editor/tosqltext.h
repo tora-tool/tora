@@ -34,7 +34,7 @@
 
 #pragma once
 
-#include "editor/toscintilla.h"
+#include "widgets/toscintilla.h"
 #include "widgets/topushbutton.h"
 #include "core/tocache.h"
 #include "loki/Singleton.h"

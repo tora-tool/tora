@@ -40,7 +40,7 @@
   <customwidget>
    <class>toScintilla</class>
    <extends>QWidget</extends>
-   <header>editor/toscintilla.h</header>
+   <header>widgets/toscintilla.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

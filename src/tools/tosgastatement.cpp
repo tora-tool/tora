@@ -40,7 +40,7 @@
 #include "core/tosql.h"
 #include "core/toconfiguration.h"
 #include "core/utils.h"
-#include "editor/toscintilla.h"
+#include "widgets/toscintilla.h"
 #include "tools/toresultplan.h"
 #include "tools/toresulttableview.h"
 

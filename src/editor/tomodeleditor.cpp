@@ -36,7 +36,7 @@
 #include "core/toglobalevent.h"
 #include "core/tomainwindow.h"
 #include "core/toqvalue.h"
-#include "editor/toscintilla.h"
+#include "widgets/toscintilla.h"
 #include "editor/tosqltext.h"
 
 #include <QtGui/QKeyEvent>

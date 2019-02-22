@@ -43,7 +43,7 @@
 #include "widgets/totreewidget.h"
 #include "core/tosql.h"
 #include "core/toglobalevent.h"
-#include "editor/toscintilla.h"
+#include "widgets/toscintilla.h"
 
 #include <QtCore/QSettings>
 #include <QtCore/QFileInfo>

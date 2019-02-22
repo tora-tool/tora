@@ -128,7 +128,7 @@ QT5_WRAP_CPP(TEST4_MOC_SOURCES
   tests/test4window.h
   widgets/tosearch.h
   editor/tomemoeditor.h
-  editor/toscintilla.h
+  widgets/toscintilla.h
   editor/tosqltext.h
   editor/tosyntaxanalyzermysql.h
   editor/tosyntaxanalyzernl.h
@@ -144,7 +144,7 @@ ADD_EXECUTABLE("test04"
   tests/test4window.cpp
   widgets/tosearch.cpp
   editor/tomemoeditor.cpp
-  editor/toscintilla.cpp
+  widgets/toscintilla.cpp
   editor/tosqltext.cpp
   editor/tosyntaxanalyzermysql.cpp
   editor/tosyntaxanalyzernl.cpp
@@ -322,7 +322,7 @@ IF(TORA_DEBUG AND TEST_APP09)
 QT5_WRAP_CPP(TEST9_MOC_SOURCES
   tests/test9window.h  
   editor/tomemoeditor.h
-  editor/toscintilla.h
+  widgets/toscintilla.h
   editor/tosqltext.h
   editor/todifftext.h  
   editor/tosyntaxanalyzernl.h
@@ -338,7 +338,7 @@ ADD_EXECUTABLE("test09"
   tests/test9.cpp
   tests/test9window.cpp
   editor/tomemoeditor.cpp
-  editor/toscintilla.cpp
+  widgets/toscintilla.cpp
   editor/tosqltext.cpp
   editor/todifftext.cpp
   editor/tosyntaxanalyzernl.cpp

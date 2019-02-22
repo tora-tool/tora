@@ -32,7 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "views/totableview.h"
+#include "widgets/totableview.h"
 
 using namespace Views;
 

@@ -32,7 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "editor/toscintilla.h"
+#include "widgets/toscintilla.h"
 #include "core/toeditorconfiguration.h"
 #include "core/toconfiguration.h"
 #include "core/toglobalevent.h"

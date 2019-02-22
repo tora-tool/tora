@@ -38,7 +38,7 @@
 #include "core/toconnectionsub.h"
 #include "widgets/toresultmodeledit.h"
 #include "core/toconnectiontraits.h"
-#include "editor/toscintilla.h"
+#include "widgets/toscintilla.h"
 #include "ui_toresultcontentfilterui.h"
 
 #include <QToolBar>

@@ -38,7 +38,7 @@
 #include "core/tologger.h"
 #include "core/toconfiguration.h"
 #include "core/toconnection.h"
-#include "editor/toscintilla.h"
+#include "widgets/toscintilla.h"
 #include "core/toeventquery.h"
 #include "core/totool.h"
 #include "tools/toresultview.h"

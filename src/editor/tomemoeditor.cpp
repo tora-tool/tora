@@ -34,7 +34,7 @@
 
 #include "editor/tomemoeditor.h"
 #include "core/utils.h"
-#include "editor/toscintilla.h"
+#include "widgets/toscintilla.h"
 #include "editor/tosqltext.h"
 #include "tools/toresultview.h"
 

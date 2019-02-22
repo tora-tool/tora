@@ -6,9 +6,9 @@
 #include "core/toeventquery.h"
 
 #include "result/tomvc.h"
-#include "views/totableview.h"
+#include "widgets/totableview.h"
 #include "views/tocomboview.h"
-#include "views/totreeview.h"
+#include "widgets/totreeview.h"
 #include "core/totablemodel.h"
 #include "core/totreemodel.h"
 

@@ -34,7 +34,7 @@
 
 #include "main/tomessage.h"
 
-#include "editor/toscintilla.h"
+#include "widgets/toscintilla.h"
 
 #include <QPushButton>
 #include <QtCore/QDateTime>

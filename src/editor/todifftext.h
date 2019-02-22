@@ -34,7 +34,7 @@
 
 #pragma once
 
-#include "editor/toscintilla.h"
+#include "widgets/toscintilla.h"
 
 #include <QtCore/QString>
 

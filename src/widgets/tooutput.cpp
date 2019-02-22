@@ -49,7 +49,7 @@
 #include "widgets/tooutput.h"
 #include "widgets/torefreshcombo.h"
 
-#include "editor/toscintilla.h"
+#include "widgets/toscintilla.h"
 
 #include "icons/eraselog.xpm"
 #include "icons/refresh.xpm"

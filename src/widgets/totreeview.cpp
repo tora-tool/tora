@@ -32,7 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "views/totreeview.h"
+#include "widgets/totreeview.h"
 
 using namespace Views;
 

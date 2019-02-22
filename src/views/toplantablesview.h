@@ -35,8 +35,8 @@
 #pragma once
 
 #include "result/tomvc.h"
-#include "views/totableview.h"
-#include "views/totreeview.h"
+#include "widgets/totableview.h"
+#include "widgets/totreeview.h"
 
 class toEventQuery;
 
