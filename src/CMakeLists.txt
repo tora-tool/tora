@@ -220,7 +220,7 @@ SET(TORA_MOC_CLASSES
   editor/todifftext.h
   editor/tomemoeditor.h
   editor/tomodeleditor.h
-  editor/toscintilla.h
+  widgets/toscintilla.h
   editor/tosqltext.h
   editor/tosyntaxanalyzermysql.h
   editor/tosyntaxanalyzernl.h
@@ -329,8 +329,8 @@ SET(TORA_MOC_CLASSES
   views/toplaintextview.h
   views/toplantablesview.h
   views/tosqltextview.h
-  views/totableview.h
-  views/totreeview.h
+  widgets/totableview.h
+  widgets/totreeview.h
 
   widgets/ExtendedTabWidget.h
   widgets/toabout.h
@@ -489,7 +489,7 @@ SET(TORA_SOURCES
   editor/todifftext.cpp
   editor/tomemoeditor.cpp
   editor/tomodeleditor.cpp
-  editor/toscintilla.cpp
+  widgets/toscintilla.cpp
   editor/tosqltext.cpp
   editor/tosyntaxanalyzermysql.cpp
   editor/tosyntaxanalyzernl.cpp
@@ -650,8 +650,8 @@ SET(TORA_SOURCES
   views/toplaintextview.cpp
   views/toplantablesview.cpp
   views/tosqltextview.cpp
-  views/totableview.cpp
-  views/totreeview.cpp
+  widgets/totableview.cpp
+  widgets/totreeview.cpp
 
   docklets/toquerymodel.cpp
   docklets/toastwalk.cpp
@@ -833,7 +833,7 @@ ENDIF()
 #                                   Tests                                      #
 ################################################################################
 
-IF (TORA_DEBUG AND USE_EXPERIMENTAL AND QT5_BUILD)
+IF (TORA_DEBUG AND USE_EXPERIMENTAL)
     # CORE sources
     FILE(GLOB CORE_OBJECT_SOURCES "core/*.cpp")
     FILE(GLOB CORE_OBJECT_HEADERS "core/*.h")
@@ -927,11 +927,9 @@ IF(ORACLE_FOUND)
   IF(APPLE AND TORA_DEBUG)
     SET(STACK_LIB "stack_lib")
   ENDIF()
-  IF(QT5_BUILD)      
-    TARGET_LINK_LIBRARIES(${PROVIDER_ORACLE} ${ORACLE_LIBRARIES} Qt5::Core Qt5::Widgets ${TORA_LIB} ${TROTL_LIB_FLAGS} "trotl" ${STACK_LIB})
-  ELSE()
-    TARGET_LINK_LIBRARIES(${PROVIDER_ORACLE} ${ORACLE_LIBRARIES} ${QT_LIBRARIES} ${TORA_LIB} ${TROTL_LIB_FLAGS} "trotl" ${STACK_LIB})
-  ENDIF()
+
+  TARGET_LINK_LIBRARIES(${PROVIDER_ORACLE} ${ORACLE_LIBRARIES} Qt5::Core Qt5::Widgets ${TORA_LIB} ${TROTL_LIB_FLAGS} "trotl" ${STACK_LIB})
+
   IF(DEFINED TORA_LIB)
     ADD_DEPENDENCIES(${PROVIDER_ORACLE} ${TORA_LIB})
   ELSE()
