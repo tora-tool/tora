@@ -66,13 +66,13 @@ class toTableModelPriv : public QAbstractTableModel
          * Tip: When implementing a table based model, rowCount()
          * should return 0 when the parent is valid.
          */
-        virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
+        int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
         /**
          * Returns the data stored under the given role for the item
          * referred to by the index.
          */
-        virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+        QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
         /**
          * Sets the role data for the item at index to value. Returns true
@@ -87,7 +87,7 @@ class toTableModelPriv : public QAbstractTableModel
          * reimplementing this function.
          *
          */
-        virtual bool setData(const QModelIndex &, const QVariant &, int role = Qt::EditRole);
+        bool setData(const QModelIndex &, const QVariant &, int role = Qt::EditRole) override;
 
         /**
          * Returns the data for the given role and section in the header
@@ -203,6 +203,8 @@ class toTableModelPriv : public QAbstractTableModel
         void appendRows(const toQueryAbstr::RowList &);
         void appendRow(const toQueryAbstr::Row &);
         void setHeaders(const toQueryAbstr::HeaderList &);
+        toQueryAbstr::HeaderList & headers(void) { return Headers; }
+        toQueryAbstr::HeaderList const& headers(void) const { return Headers; }
 
     protected:
         void clearAll();
