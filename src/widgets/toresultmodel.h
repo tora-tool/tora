@@ -121,7 +121,7 @@ class toResultModel : public QAbstractTableModel
                             int role = Qt::DisplayRole) const;
 
         /*! Update the header.name attribute for the horizontal header.
-        This method changes data wchich are taken from DB (but it doesn't
+        This method changes data which are taken from DB (but it doesn't
         change it in the DB) so use it only if you know what are you doing.
         It's allowed for Horizontal orientation and DisplayRole only. Else
         it returns always false and it does not do anything.
@@ -129,7 +129,7 @@ class toResultModel : public QAbstractTableModel
         bool setHeaderData(int section,
                            Qt::Orientation orientation,
                            const QVariant & value,
-                           int role = Qt::EditRole);
+                           int role = Qt::EditRole) override;
 
         /**
          * Returns the number of columns for the children of the given
@@ -200,10 +200,8 @@ class toResultModel : public QAbstractTableModel
         /**
          * Return the headers used for this query
          */
-        const HeaderList& headers(void) const
-        {
-            return Headers;
-        }
+        HeaderList & headers(void) { return Headers; }
+        HeaderList const& headers(void) const { return Headers; }
 
         /**
          * Returns a list of MIME types that can be used to describe a
