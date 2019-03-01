@@ -243,7 +243,7 @@ SET(TORA_MOC_CLASSES
   parsing/toscilexersql.h
   parsing/tsqllexer.h
 
-  result/toproviderobserver.h
+  core/toproviderobserver.h
   result/toresultlock.h
   result/toresultplan.h
   result/toresultsql.h
@@ -534,7 +534,7 @@ SET(TORA_SOURCES
   parsing/tsqlparse.cpp
   parsing/tsqlparseoracle2.cc
 
-  result/toproviderobserver.cpp
+  core/toproviderobserver.cpp
   result/toresultlock.cpp
   result/toresultplan.cpp
   result/toresultsql.cpp
