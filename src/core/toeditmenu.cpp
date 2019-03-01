@@ -217,7 +217,8 @@ void toEditMenu::clipBoardChanged()
 {
     QClipboard const *clipBoard = QApplication::clipboard();
     QMimeData const *mimeData = clipBoard->mimeData();
-    m_clipboardContent = mimeData->hasText() && !clipBoard->text().isEmpty();
+    m_clipboardContent = mimeData->hasText();
+    m_clipboardContent = m_clipboardContent && !clipBoard->text().isEmpty();
 
     // NOTE: lauzy workaround for Ubuntu - Signal QMenu::aboutToShow is not triggered when using globalmenu
     //slotAboutToShow();
