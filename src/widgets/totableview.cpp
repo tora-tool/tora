@@ -71,7 +71,7 @@ int toTableView::sizeHintForRow(int row) const
 int toTableView::sizeHintForColumn(int col) const
 {
     int s = super::sizeHintForColumn(col);
-    if (s > 200) s = 200; // TODO: This should probably be moved to configuration file
+    //if (s > 200) s = 200; // TODO: This should probably be moved to configuration file
     return s;
 }
 
