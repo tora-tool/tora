@@ -172,6 +172,7 @@ void toEventQueryWorker::init()
         emit started();
         toQColumnDescriptionList desc = Query.describe();
         ColumnCount = Query.columns();
+        //QThread::sleep(5); // to simulate slow query
         emit headers(desc, ColumnCount);
 
         if (Query.eof())
@@ -233,7 +234,10 @@ void toEventQueryWorker::slotRead()
         }
 
         if (values.size() > 0)
+        {
+            //QThread::sleep(5); // to simulate slow query
             emit data(values);    // must not access after this line
+        }
 
         if (Query.eof())
         {

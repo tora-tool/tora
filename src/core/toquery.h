@@ -61,7 +61,7 @@ class toQueryAbstr : public QObject
         struct HeaderDesc
         {
             QString           name;        /* column name */
-            QString           name_orig;   /* if this starts with space column if hidden */          
+            QString           name_orig;   /* if this starts with space column if hidden */
             QString           datatype;    /* data type */
             bool              hidden;
         };
