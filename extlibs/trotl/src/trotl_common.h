@@ -134,9 +134,9 @@ typename ::Loki::TypeTraits<T>::ParameterType min
 //{
 //	return (a < b) ? a : b;
 //};
-#ifndef min
-#define min(a, b) ( (a < b) ? a : b )
-#endif
+//#ifndef min
+//#define min(a, b) ( (a < b) ? a : b )
+//#endif
 #endif
 
 };

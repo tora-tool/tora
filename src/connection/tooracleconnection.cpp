@@ -356,7 +356,7 @@ QString toOracleConnectionSub::version()
 toQueryParams toOracleConnectionSub::sessionId()
 {
     toQueryParams retval;
-    return retval << _login->sid() << _login->serial();
+    return retval << (long long)_login->sid() << (long long)_login->serial();
 }
 
 bool toOracleConnectionSub::hasTransaction()

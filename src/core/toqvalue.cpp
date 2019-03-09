@@ -51,10 +51,10 @@ toQValue::toQValue(int i)
     Value = i;
 }
 
-toQValue::toQValue(unsigned int i)
-{
-    Value = i;
-}
+//toQValue::toQValue(unsigned int i)
+//{
+//    Value = i;
+//}
 
 toQValue::toQValue(double i)
 {
@@ -66,10 +66,10 @@ toQValue::toQValue(qlonglong d)
     Value = d;
 }
 
-toQValue::toQValue(qulonglong d)
-{
-    Value = d;
-}
+//toQValue::toQValue(qulonglong d)
+//{
+//    Value = d;
+//}
 toQValue::toQValue(toRowDesc d)
 {
     Value.setValue(d);

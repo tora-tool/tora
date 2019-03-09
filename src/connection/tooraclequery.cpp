@@ -1,4 +1,3 @@
-
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
@@ -33,6 +32,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "connection/tooraclequery.h"
+#include <limits>
 
 oracleQuery::oracleQuery(toQueryAbstr *query, toOracleConnectionSub *) : queryImpl(query)
 {
@@ -294,6 +294,23 @@ oracleQuery::trotlQuery::trotlQuery(::trotl::OciConnection &conn,
             // _in_cnt == 0
        )
         execute_internal(::trotl::g_OCIPL_BULK_ROWS, OCI_DEFAULT);
+
+    sword res;
+    int _MIN_INT = std::numeric_limits<int>::min();
+    res = OCINumberFromInt(_errh, &_MIN_INT, sizeof(_MIN_INT), OCI_NUMBER_SIGNED, &MIN_INT);
+    oci_check_error(__HERE__, _errh, res);
+
+    long long _MIN_LLONG = std::numeric_limits<long long>::min();
+    res = OCINumberFromInt(_errh, &_MIN_LLONG, sizeof(_MIN_LLONG), OCI_NUMBER_SIGNED, &MIN_LLONG);
+    oci_check_error(__HERE__, _errh, res);
+
+    int _MAX_INT = std::numeric_limits<int>::max();
+    res = OCINumberFromInt(_errh, &_MAX_INT, sizeof(_MAX_INT), OCI_NUMBER_SIGNED, &MAX_INT);
+    oci_check_error(__HERE__, _errh, res);
+
+    long long _MAX_LLONG = std::numeric_limits<long long>::max();
+    res = OCINumberFromInt(_errh, &MAX_LLONG, sizeof(_MAX_LLONG), OCI_NUMBER_SIGNED, &MAX_LLONG);
+    oci_check_error(__HERE__, _errh, res);
 };
 
 void oracleQuery::trotlQuery::readValue(toQValue &value)
@@ -317,12 +334,45 @@ void oracleQuery::trotlQuery::readValue(toQValue &value)
                 {
                     OCINumber* vnu = (OCINumber*) & ((char*)BP.valuep)[_last_buff_row * BP.value_sz ];
                     sword res;
+
                     boolean isint;
                     res = OCINumberIsInt(_errh, vnu, &isint);
                     oci_check_error(__HERE__, _errh, res);
-                    try
+
+                    sword sign;
+                    res = OCINumberSign(_errh, vnu, &sign);
+                    oci_check_error(__HERE__, _errh, res);
+
+                    if (isint)
                     {
-                        if (isint)
+                        sword gt, lt;
+
+                        res = OCINumberCmp(_errh, vnu, &MIN_INT, &gt);
+                        oci_check_error(__HERE__, _errh, res);
+
+                        res = OCINumberCmp(_errh, &MAX_INT, vnu, &lt);
+                        oci_check_error(__HERE__, _errh, res);
+
+                        if (gt > 0 && lt > 0)
+                        {
+                            int i;
+                            res = OCINumberToInt(_errh,
+                                                 vnu,
+                                                 sizeof(int),
+                                                 OCI_NUMBER_SIGNED,
+                                                 &i);
+                            oci_check_error(__HERE__, _errh, res);
+                            value = toQValue(i);
+                            break;
+                        }
+
+                        res = OCINumberCmp(_errh, vnu, &MIN_LLONG, &gt);
+                        oci_check_error(__HERE__, _errh, res);
+
+                        res = OCINumberCmp(_errh, &MAX_LLONG, vnu, &lt);
+                        oci_check_error(__HERE__, _errh, res);
+
+                        if (gt > 0 && lt > 0)
                         {
                             long long i;
                             res = OCINumberToInt(_errh,
@@ -332,21 +382,9 @@ void oracleQuery::trotlQuery::readValue(toQValue &value)
                                                  &i);
                             oci_check_error(__HERE__, _errh, res);
                             value = toQValue(i);
-                            //TLOG(4, toDecorator, __HERE__) << "Just read: '" << i << '\'' << std::endl;
-                        }
-                        else
-                        {
-                            double d;
-                            sword res = OCINumberToReal(_errh,
-                                                        vnu,
-                                                        sizeof(double),
-                                                        &d);
-                            oci_check_error(__HERE__, _errh, res);
-                            value = toQValue(d);
-                            //TLOG(4, toDecorator, __HERE__) << "Just read: '" << d << '\'' << std::endl;
+                            break;
                         }
                     }
-                    catch (const ::trotl::OciException &e)
                     {
                         text str_buf[65];
                         ub4 str_len = sizeof(str_buf) / sizeof(*str_buf);

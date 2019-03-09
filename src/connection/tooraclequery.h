@@ -62,6 +62,12 @@ class oracleQuery : public queryImpl
                 trotlQuery(::trotl::OciConnection &conn, const ::trotl::tstring &stmt, ub4 lang = OCI_NTV_SYNTAX, int bulk_rows =::trotl::g_OCIPL_BULK_ROWS);
 
                 void readValue(toQValue &value);
+
+            private:
+                OCINumber MIN_INT;
+                OCINumber MIN_LLONG;
+                OCINumber MAX_INT;
+                OCINumber MAX_LLONG;
         };
         trotlQuery * Query;
 

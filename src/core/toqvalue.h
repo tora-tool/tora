@@ -98,7 +98,7 @@ class TORA_EXPORT toQValue
         /** Create unsigned integer value.
          * @param i Value.
          */
-        toQValue(unsigned int i);
+        //toQValue(unsigned int i);
         /** Create string value.
          * @param str Value.
          */
@@ -114,7 +114,7 @@ class TORA_EXPORT toQValue
         /** Create qulonglong value.
          * @param d Value.
          */
-        toQValue(qulonglong d);
+        //toQValue(qulonglong d);
         /** Create row
          * @param
          */
