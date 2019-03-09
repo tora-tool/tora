@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOSESSION_H
-#define TOSESSION_H
+#pragma once
 
 #include "widgets/totoolwidget.h"
 #include "ui_tosessionsetupui.h"
@@ -101,11 +100,59 @@ namespace ToConfiguration
     };
 };
 
+#include "result/tomvc.h"
+#include "widgets/totableview.h"
+#include "widgets/totreeview.h"
+
+namespace Sessions
+{
+    struct Traits : public MVCTraits
+    {
+        static const bool AlternatingRowColorsEnabled = true;
+        static const int  ShowRowNumber = NoRowNumber;
+        //static const int  ColumnResize = RowColumResize;
+
+        typedef Views::toTableView View;
+    };
+
+    class MVC
+            : public TOMVC
+              <
+              ::Sessions::Traits,
+              Views::DefaultTableViewPolicy,
+              ::DefaultDataProviderPolicy
+              >
+    {
+        Q_OBJECT;
+    public:
+        typedef TOMVC<
+                ::Sessions::Traits,
+                 Views::DefaultTableViewPolicy,
+                ::DefaultDataProviderPolicy
+                  > _s;
+        MVC(QWidget *parent) : _s(parent)
+        {};
+        virtual ~MVC() {};
+    };
+}
+
+/**
+ * A result table displaying information about sessions
+ */
+class toResultSessions: public Sessions::MVC
+{
+    Q_OBJECT;
+
+public:
+    toResultSessions(QWidget *parent, const char *name = NULL);
+};
+
 class toSession : public toToolWidget
 {
         Q_OBJECT;
 
-        toResultTableView *Sessions;
+        //toResultTableView *Sessions;
+        toResultSessions  *Sessions;
         QTabWidget        *ResultTab;
 
         QWidget *CurrentTab;
@@ -144,8 +191,7 @@ class toSession : public toToolWidget
         QString Session;
         QString Serial;
 
-        void updateSchemas(void);
-        void enableStatistics(bool enable);
+        //void updateSchemas(void);
 
         friend class toSessionSetting;
     public:
@@ -156,6 +202,8 @@ class toSession : public toToolWidget
 
         static QString sessionKillProcOracle(ToConfiguration::Session::KillSessionModeEnum, const QMap<QString,QString> params);
     public slots:
+        void enableStatistics(bool enable);
+
         void slotChangeTab(int);
         void slotChangeItem();
         void slotChangeCursor();
@@ -229,5 +277,3 @@ class toSessionSetting
 
     private:
 };
-
-#endif

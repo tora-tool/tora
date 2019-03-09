@@ -322,7 +322,7 @@ void TOMVC< _T, _VP, _DP>::observeHeaders(const toQueryAbstr::HeaderList &header
         struct toQueryAbstr::HeaderDesc d;
 
         d.name = QString("#");
-        //d.name_orig = QString("#"); TODO
+        d.name_orig = QString("#");
         d.datatype = QString("RowNumber");
         h.prepend(d);
     }

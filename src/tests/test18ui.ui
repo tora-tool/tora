@@ -2,6 +2,14 @@
 <ui version="4.0">
  <class>Test18Window</class>
  <widget class="QMainWindow" name="Test18Window">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>493</width>
+    <height>621</height>
+   </rect>
+  </property>
   <property name="windowTitle">
    <string>Test14 Window</string>
   </property>
@@ -12,14 +20,13 @@
      <height>600</height>
     </size>
    </property>
-   <layout class="QHBoxLayout" name="horizontalLayout"/>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>277</width>
+     <width>493</width>
      <height>21</height>
     </rect>
    </property>

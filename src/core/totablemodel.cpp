@@ -42,7 +42,7 @@
 #include <QtCore/QMimeData>
 
 toTableModelPriv::toTableModelPriv(QObject *parent)
-    : QAbstractTableModel(parent)
+    : super(parent)
     , SortedOnColumn(-1)
     , SortOrder(Qt::AscendingOrder)
 {
@@ -55,10 +55,13 @@ toTableModelPriv::~toTableModelPriv()
 
 int toTableModelPriv::rowCount(QModelIndex const& parent) const
 {
-    if (parent.isValid())
-        return 0;
-
-    return Rows.size();
+	if (parent.isValid())
+	{
+		throw QString("Invalid index");
+		return 0;
+	}
+    int r = Rows.size();
+    return r;
 }
 
 /**
@@ -68,10 +71,16 @@ int toTableModelPriv::rowCount(QModelIndex const& parent) const
 QVariant toTableModelPriv::data(QModelIndex const& index, int role) const
 {
     if (!index.isValid())
+    {
+        goto INVALID;
         return QVariant();
+    }
 
     if (index.row() >= Rows.size()) //
+    {
+        goto INVALID;
         return QVariant();
+    }
 
     int r = index.row();
     int c = index.column();
@@ -122,6 +131,9 @@ QVariant toTableModelPriv::data(QModelIndex const& index, int role) const
         default:
             return QVariant();
     }
+
+INVALID:
+    throw QString("Invalid index row: %1").arg(index.row());
     return QVariant();
 }
 
@@ -193,6 +205,7 @@ bool toTableModelPriv::setHeaderData(int section,
         return false;
 
     Headers[section].name = value.toString();
+    Headers[section].name_orig = value.toString();
     return true;
 }
 
@@ -241,7 +254,7 @@ void toTableModelPriv::fetchMore(const QModelIndex &parent)
 
 Qt::ItemFlags toTableModelPriv::flags(QModelIndex const& index) const
 {
-    Qt::ItemFlags defaultFlags = QAbstractTableModel::flags(index);
+    Qt::ItemFlags defaultFlags = super::flags(index);
     Qt::ItemFlags fl = Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled;
 
     if (index.column() == 0)

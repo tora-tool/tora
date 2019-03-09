@@ -59,16 +59,19 @@ Test18Window::Test18Window()
 //        model->setItem(r, c, item);
 //      }
 
-    model = new toTableModelPriv(this);
-    for( int r=0; r<15; r++ )
-    {
-        QList<toQValue> row;
-        for( int c=0; c<6; c++)
-        {
-            row.append(toQValue::fromVariant(QVariant(QString("Custom[%0, %1]").arg(r).arg(c))));
-        }
-        model->appendRow(row);
-    }
+//    model = new toTableModelPriv(this);
+//    for( int r=0; r<15; r++ )
+//    {
+//        QList<toQValue> row;
+//        for( int c=0; c<6; c++)
+//        {
+//            row.append(toQValue::fromVariant(QVariant(QString("Custom[%0, %1]").arg(r).arg(c))));
+//        }
+//        model->appendRow(row);
+//    }
+//
+    toResultXSessions *s = new toResultXSessions(this);
+    model = s;
 
     toQueryAbstr::HeaderList headers;
     for( int c=0; c<6; c++)
@@ -81,10 +84,12 @@ Test18Window::Test18Window()
     int r = model->rowCount();
     int c = model->columnCount();
 
-    auto view = new Views::toTableView(this);
-    QMainWindow::setCentralWidget(view);
-    view->setModel(model);
-    model->index(0, 0, QModelIndex());
+//    auto view = new Views::toTableView(this);
+//    view->setModel(model);
+//    model->index(0, 0, QModelIndex());
+
+    //QMainWindow::setCentralWidget(view);
+    QMainWindow::setCentralWidget(s->view());
 
     timer = new QTimer(this);
     timer->setInterval(5000);
@@ -102,7 +107,7 @@ void Test18Window::timerEvent()
         QList<toQValue> row;
         for( int c=0; c<6; c++)
         {
-            row.append(toQValue::fromVariant(QVariant(QString("Custom[%0, %1]").arg(r).arg(c))));
+            row.append(toQValue::fromVariant(QVariant(QString("Custom[%0, %1]").arg(r + model->rowCount()).arg(c))));
         }
         rowlist.append(row);
     }
