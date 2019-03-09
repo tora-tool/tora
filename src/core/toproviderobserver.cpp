@@ -32,7 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include "result/toproviderobserver.h"
+#include "core/toproviderobserver.h"
 #include "core/utils.h"
 
 toEventQueryObserverObject::toEventQueryObserverObject(Observer &o, QObject *parent)
