@@ -41,7 +41,7 @@
 #include "core/toeventquery.h"
 #include "core/utils.h"
 
-#include "result/toproviderobserver.h"
+#include "core/toproviderobserver.h"
 #include "core/totablemodel.h"
 #include "widgets/toworkingwidget.h"
 
@@ -322,6 +322,7 @@ void TOMVC< _T, _VP, _DP>::observeHeaders(const toQueryAbstr::HeaderList &header
         struct toQueryAbstr::HeaderDesc d;
 
         d.name = QString("#");
+        //d.name_orig = QString("#"); TODO
         d.datatype = QString("RowNumber");
         h.prepend(d);
     }
@@ -390,7 +391,8 @@ void TOMVC< _T, _VP, _DP>::observeData(QObject *q)
         int columns = query->columnCount();
         //toQueryAbstr::RowList rows;
         int oldRowCount = Model::rowCount();
-        Model::beginInsertRows(QModelIndex(), oldRowCount, oldRowCount + 49 /*rows.size() - 1*/);
+        unsigned int rows = query->rowsAvaiable();
+        Model::beginInsertRows(QModelIndex(), oldRowCount, oldRowCount + rows - 1);
         while (query->hasMore())
         {
             toQueryAbstr::Row row;

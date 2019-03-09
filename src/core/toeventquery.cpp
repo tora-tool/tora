@@ -179,6 +179,14 @@ unsigned long toEventQuery::rowsProcessed(void) const
     return Processed;
 }
 
+unsigned int toEventQuery::rowsAvaiable() const
+{
+    if (ColumnCount == 0)
+        return 0;
+
+    return Values.size() / ColumnCount;
+}
+
 /* Call stask for this function:
  * Async thread toEventQueryWorker emits signal data()
  * the rest is processed in the main thread
@@ -255,7 +263,7 @@ void toEventQuery::slotStarted()
 // warning: values is a reference only bg thread's stack
 void toEventQuery::slotData(const ValuesList &values)
 {
-    //TLOG(7, toDecorator, __HERE__) << "toEventQuery slot data" << std::endl;
+    TLOG(7, toDecorator, __HERE__) << "toEventQuery slot data" << std::endl;
     Values << values;
 
     if (Mode == READ_ALL)
@@ -265,17 +273,6 @@ void toEventQuery::slotData(const ValuesList &values)
     // from QTime - once per second
     emit dataAvailable(this);
     emit dataAvailable(this, Values);
-
-    try
-    {
-//stat        if(Statistics)
-//stat            Statistics->refreshStats(false);
-    }
-    catch (...)
-    {
-        TLOG(7, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
-        // ignored
-    }
 }
 
 void toEventQuery::slotDesc(toQColumnDescriptionList &desc, int columns)

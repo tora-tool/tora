@@ -166,6 +166,11 @@ class toEventQuery : public QObject
         unsigned long rowsProcessed(void) const;
 
         /**
+         * number of rows fetched in one bulk operation
+         */
+        unsigned int rowsAvaiable() const;
+
+        /**
          * Read the next value from the query.
          * @return The next available value.
          */
