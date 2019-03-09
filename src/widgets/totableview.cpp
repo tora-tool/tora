@@ -40,29 +40,24 @@ toTableView::toTableView(QWidget *parent)
     : QTableView(parent)
     , m_columnsResized(false)
 {
-
 }
 
 int toTableView::sizeHintForRow(int row) const
 {
-    int s;
-
-    s = super::sizeHintForRow(row);
-    if (s > 60) s = 60; // TODO: This should probably be moved to configuration file
+    int s = super::sizeHintForRow(row);
+    //if (s > 60) s = 60; // TODO: This should probably be moved to configuration file
     return s;
 }
 
 int toTableView::sizeHintForColumn(int col) const
 {
-    int s;
-
-    s = super::sizeHintForColumn(col);
-    if (s > 200) s = 200; // TODO: This should probably be moved to configuration file
+    int s = super::sizeHintForColumn(col);
+    //if (s > 200) s = 200; // TODO: This should probably be moved to configuration file
     return s;
 }
 
 void toTableView::slotApplyColumnRules()
 {
-    if (!m_columnsResized)
-        super::resizeColumnsToContents();
+    //if (!m_columnsResized)
+    //super::resizeColumnsToContents();
 }
