@@ -63,11 +63,29 @@ class toQueryAbstr : public QObject
         {
             QString           name;        /* column name */
             QString           datatype;    /* data type */
+            bool              hidden;
         };
 
         typedef QList<toQValue> Row;
         typedef QList<Row> RowList;
-        typedef QList<HeaderDesc> HeaderList;
+        struct HeaderList: public QList<HeaderDesc>
+        {
+            // return column index from header name
+            int indexOf(QString const& name) const
+            {
+                for (int i = 0; i < size(); i++)
+                {
+                    if (this->at(i).name_orig == name)
+                        return i;
+                }
+                for (int i = 0; i < size(); i++)
+                {
+                    if (this->at(i).name_orig.contains(name))
+                        return i;
+                }
+                return -1;
+            }
+        };
 
         /** Create a normal query.
          * @param conn Connection to create query on.

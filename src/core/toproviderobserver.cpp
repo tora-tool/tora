@@ -78,7 +78,7 @@ void toEventQueryObserverObject::eqDescriptionAvailable(toEventQuery *query, con
         d.name = (*i).Name;
 	//d.name_orig = (*i).Name;
         d.datatype = (*i).Datatype;
-
+        d.hidden = false;
         headers << d;
     }
 

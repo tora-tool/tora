@@ -193,6 +193,8 @@ bool toTableModelPriv::setHeaderData(int section,
         return false;
 
     Headers[section].name = value.toString();
+    Headers[section].name_orig = value.toString();
+    Headers[section].hidden = false;
     return true;
 }
 

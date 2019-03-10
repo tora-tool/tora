@@ -86,6 +86,7 @@ struct MVCTraits
     static const int  ColumnResize = NoColumnResize;
     static const bool ShowWorkingWidget = true;
     static const bool WorkingWidgetInteractive = true;
+    static const bool SortingEnabled = true;
 };
 
 class toResult2
@@ -324,6 +325,7 @@ void TOMVC< _T, _VP, _DP>::observeHeaders(const toQueryAbstr::HeaderList &header
         d.name = QString("#");
         //d.name_orig = QString("#"); TODO
         d.datatype = QString("RowNumber");
+        d.hidden = false;
         h.prepend(d);
     }
     Model::setHeaders(h);
