@@ -51,7 +51,7 @@ toTableView::toTableView(QWidget *parent)
 int toTableView::sizeHintForRow(int row) const
 {
     int s = super::sizeHintForRow(row);
-    //if (s > 60) s = 60; // TODO: This should probably be moved to configuration file
+    if (s > 60) s = 60; // TODO: This should probably be moved to configuration file
     return s;
 }
 
@@ -62,7 +62,7 @@ int toTableView::sizeHintForRow(int row) const
 int toTableView::sizeHintForColumn(int col) const
 {
     int s = super::sizeHintForColumn(col);
-    //if (s > 200) s = 200; // TODO: This should probably be moved to configuration file
+    if (s > 200) s = 200; // TODO: This should probably be moved to configuration file
     return s;
 }
 
@@ -100,5 +100,5 @@ void toTableView::applyColumnRules()
     }
 
     //if (!m_columnsResized)
-    //super::resizeColumnsToContents();
+    super::resizeColumnsToContents();
 }
