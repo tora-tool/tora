@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOQUERY_H
-#define TOQUERY_H
+#pragma once
 
 #include "core/tora_export.h"
 #include "core/tocache.h"
@@ -62,6 +61,7 @@ class toQueryAbstr : public QObject
         struct HeaderDesc
         {
             QString           name;        /* column name */
+            QString           name_orig;   /* if this starts with space column if hidden */          
             QString           datatype;    /* data type */
             bool              hidden;
         };
@@ -228,5 +228,4 @@ private:
     void *operator new[](size_t);
 };
 
-#endif
-
+Q_DECLARE_METATYPE(toQueryAbstr::HeaderDesc);

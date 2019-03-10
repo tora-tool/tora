@@ -130,9 +130,6 @@ QVariant toTreeModelPriv::headerData(int section,
                                      Qt::Orientation orientation,
                                      int role) const
 {
-    /*if (role != Qt::DisplayRole)
-        return QVariant();*/
-
     if (orientation == Qt::Horizontal)
     {
         if (Headers.empty())
@@ -141,10 +138,12 @@ QVariant toTreeModelPriv::headerData(int section,
         if (section >= Headers.size())
             return QVariant();
 
-        if (role == Qt::DisplayRole)
-            return Headers[section].name;
-        else
-            return QVariant();
+        switch(role)
+        {
+            case Qt::DisplayRole: return Headers[section].name;
+            case Qt::UserRole:    return QVariant::fromValue(Headers[section]);
+            default:              return QVariant();
+        }
     }
 
     if (orientation == Qt::Vertical)
