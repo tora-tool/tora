@@ -38,46 +38,48 @@
 
 #include <QTableView>
 
+class QAbstractItemModel;
+
 namespace Views
 {
 
 class toTableView : public QTableView
 {
-        Q_OBJECT;
-        typedef QTableView super;
-    public:
-        explicit toTableView(QWidget *parent = 0);
+    Q_OBJECT;
+    typedef QTableView super;
+public:
+    explicit toTableView(QWidget *parent = 0);
 
-    public slots:
-        virtual void slotApplyColumnRules();
+public slots:
+    virtual void applyColumnRules();
 
-        /** Controls height of all table views in TOra. Will use standart Qt function to
-           calculate a row height and will control that it is not larger than a predefined
-           size. Note: this height is only used in QTableView when resizeRowsToContents
-           is called. */
-        virtual int sizeHintForRow(int row) const;
+    /** Controls height of all table views in TOra. Will use standart Qt function to
+        calculate a row height and will control that it is not larger than a predefined
+        size. Note: this height is only used in QTableView when resizeRowsToContents
+        is called. */
+    int sizeHintForRow(int row) const override;
 
-        /* Controls width of all table views in TOra. Will use standart Qt function to
-           calculate a columns width and will control that it is not larger than a predefined
-           size. Note: this height is only used in QTableView when resizeColumnsToContents
-           is called. Column width is also adjusted when calculating width of column headers! */
-        virtual int sizeHintForColumn(int row) const;
+    /* Controls width of all table views in TOra. Will use standart Qt function to
+       calculate a columns width and will control that it is not larger than a predefined
+       size. Note: this height is only used in QTableView when resizeColumnsToContents
+       is called. Column width is also adjusted when calculating width of column headers! */
+    int sizeHintForColumn(int row) const override;
 
+    void setModel(QAbstractItemModel *model) override;
 
-    protected:
-
-    private:
-        bool m_columnsResized;
+protected:
+    void columnWasResized();
+    bool m_columnsResized;
 };
 
 template<typename _T>
 class DefaultTableViewPolicy
 {
-    private:
-        typedef _T Traits;
-        typedef typename Traits::View View;
-    public:
-        void setup(View* pView);
+private:
+    typedef _T Traits;
+    typedef typename Traits::View View;
+public:
+    void setup(View* pView);
 };
 
 template<typename Traits>
@@ -93,6 +95,7 @@ void DefaultTableViewPolicy<Traits>::setup(View* pView)
     if ( Traits::ShowRowNumber != Traits::BuiltInRowNumber )
         pView->verticalHeader()->hide();
     pView->verticalHeader()->setDefaultSectionSize(QFontMetrics(QFont()).height() + 4);
+    pView->setWordWrap(false);
 
     switch (Traits::ColumnResize)
     {

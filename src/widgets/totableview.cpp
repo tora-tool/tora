@@ -33,6 +33,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "widgets/totableview.h"
+#include "core/toquery.h"
 
 using namespace Views;
 
@@ -40,29 +41,64 @@ toTableView::toTableView(QWidget *parent)
     : QTableView(parent)
     , m_columnsResized(false)
 {
-
+    connect(horizontalHeader(), &QHeaderView::sectionResized, this, [this](int, int, int){ columnWasResized(); });
 }
 
+/* Controls height of all table views in TOra. Will use standard Qt function to
+   calculate a row height and will control that it is not larger than a predefined
+   size. Note: this height is only used in QTableView when resizeRowsToContents
+   is called. */
 int toTableView::sizeHintForRow(int row) const
 {
-    int s;
-
-    s = super::sizeHintForRow(row);
+    int s = super::sizeHintForRow(row);
     if (s > 60) s = 60; // TODO: This should probably be moved to configuration file
     return s;
 }
 
+/* Controls width of all table views in TOra. Will use standard Qt function to
+   calculate a columns width and will control that it is not larger than a predefined
+   size. Note: this height is only used in QTableView when resizeColumnsToContents
+   is called. Column width is also adjusted when calculating width of column headers! */
 int toTableView::sizeHintForColumn(int col) const
 {
-    int s;
-
-    s = super::sizeHintForColumn(col);
+    int s = super::sizeHintForColumn(col);
     if (s > 200) s = 200; // TODO: This should probably be moved to configuration file
     return s;
 }
 
-void toTableView::slotApplyColumnRules()
+// After data model is set we need to connect to it's signal dataChanged. This signal
+// will be emitted after sorting on column and we need to resize Row's again then
+// because height of rows do not "move" together with their rows when sorting.
+void toTableView::setModel(QAbstractItemModel *model)
 {
-    if (!m_columnsResized)
-        super::resizeColumnsToContents();
+    super::setModel(model);
+    connect(model, &QAbstractItemModel::dataChanged, this, [this](const QModelIndex &TL, const QModelIndex &BR){ resizeRowsToContents(); });
+}
+
+void toTableView::columnWasResized()
+{
+    super::resizeRowsToContents();
+}
+
+void toTableView::applyColumnRules()
+{
+    int VisibleColumns(0);
+
+    // loop through columns and hide anything starting with a ' '
+    for (int col = 1; col < model()->columnCount(); col++)
+    {
+        if (model()->headerData(
+                    col,
+                    Qt::Horizontal,
+                    Qt::UserRole).value<toQueryAbstr::HeaderDesc>().hidden)
+        {
+            hideColumn(col);
+        } else {
+            VisibleColumns++;
+            showColumn(col);
+        }
+    }
+
+    //if (!m_columnsResized)
+    super::resizeColumnsToContents();
 }
