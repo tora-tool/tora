@@ -88,6 +88,7 @@ void DefaultTableViewPolicy<Traits>::setup(View* pView)
     pView->setSelectionMode( (QAbstractItemView::SelectionMode) Traits::SelectionMode);
     pView->setAlternatingRowColors( Traits::AlternatingRowColorsEnabled);
     pView->setContextMenuPolicy( (Qt::ContextMenuPolicy) Traits::ContextMenuPolicy);
+    pView->setSortingEnabled(Traits::SortingEnabled);
 
     if ( Traits::ShowRowNumber != Traits::BuiltInRowNumber )
         pView->verticalHeader()->hide();

@@ -87,6 +87,7 @@ void DefaultTreeViewPolicy<Traits>::setup(View* pView)
     pView->setSelectionMode( (QAbstractItemView::SelectionMode) Traits::SelectionMode);
     pView->setAlternatingRowColors( Traits::AlternatingRowColorsEnabled);
     pView->setContextMenuPolicy( (Qt::ContextMenuPolicy) Traits::ContextMenuPolicy);
+    pView->setSortingEnabled(Traits::SortingEnabled);
 
     switch (Traits::ColumnResize)
     {
