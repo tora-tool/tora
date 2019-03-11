@@ -111,6 +111,7 @@ namespace Sessions
         static const bool AlternatingRowColorsEnabled = true;
         static const int  ShowRowNumber = NoRowNumber;
         //static const int  ColumnResize = RowColumResize;
+        static const int  ContextMenuPolicy = Qt::DefaultContextMenu; // the widget's QWidget::contextMenuEvent() handler is called
 
         typedef Views::toTableView View;
     };
