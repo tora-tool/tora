@@ -34,12 +34,17 @@
 
 #include "widgets/totableview.h"
 #include "core/toquery.h"
+#include "core/tocontextmenu.h"
+#include "core/tolistviewformatter.h"
+#include "core/tolistviewformatteridentifier.h"
+
+#include <QHeaderView>
+#include <QContextMenuEvent>
 
 using namespace Views;
 
 toTableView::toTableView(QWidget *parent)
     : QTableView(parent)
-    , m_columnsResized(false)
 {
     connect(horizontalHeader(), &QHeaderView::sectionResized, this, [this](int, int, int){ columnWasResized(); });
 }
@@ -73,6 +78,39 @@ void toTableView::setModel(QAbstractItemModel *model)
 {
     super::setModel(model);
     connect(model, &QAbstractItemModel::dataChanged, this, [this](const QModelIndex &TL, const QModelIndex &BR){ resizeRowsToContents(); });
+}
+
+void toTableView::contextMenuEvent(QContextMenuEvent *e)
+{
+    // create menu
+    QMenu *popup = new QMenu(this);
+
+    // Handle parent widget's context menu fields
+    toContextMenuHandler::traverse(this, popup);
+
+    populateContextMenu(popup);
+    contextMenuIndex =  indexAt(e->pos());
+    // Display and "run" the menu
+    e->accept();
+    popup->exec(e->globalPos());
+    delete popup;
+}
+
+void toTableView::populateContextMenu(QMenu *menu)
+{
+    QAction *copyAct = menu->addAction(tr("&Copy"));
+    copyAct->setEnabled(contextMenuIndex.isValid());
+    connect(copyAct, &QAction::triggered, this, [this](bool){ editCopy(); });
+}
+
+void toTableView::editCopy()
+{
+    if(contextMenuIndex.isValid())
+    {
+        QClipboard *clip = qApp->clipboard();
+        QVariant data = model()->data(contextMenuIndex, Qt::EditRole);
+        clip->setText(data.toString());
+    }
 }
 
 void toTableView::columnWasResized()

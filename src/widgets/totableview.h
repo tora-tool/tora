@@ -40,6 +40,7 @@
 #include <QFont>
 
 class QAbstractItemModel;
+class QContextMenuEvent;
 
 namespace Views
 {
@@ -69,8 +70,24 @@ public slots:
     void setModel(QAbstractItemModel *model) override;
 
 protected:
+    /* Unless contextMenuPolicy is set to: Qt::CustomContextMenu, which is usual when toBaseEditor is used, this is called to populate menu
+     *  calls to static toContextMenuHandler::traverse(this, popup);
+     *  to traverse QWidget hierarchy and populate context menu from parent QWidgets
+     */
+    void contextMenuEvent(QContextMenuEvent *) override;
+
+    /* Populate ContextMenu for this Widget
+     *  override this if needed to extend ContextMenu
+     */
+    virtual void populateContextMenu(QMenu *);
+
+    // Handle copy operator, TODO subclasses toEditWidget
+    void editCopy();
+
     void columnWasResized();
-    bool m_columnsResized;
+
+private:
+    QModelIndex contextMenuIndex;
 };
 
 template<typename _T>
