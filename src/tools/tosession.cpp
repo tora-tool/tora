@@ -451,11 +451,15 @@ static toSQL SQLSessionsMySQL(
 toResultSessions::toResultSessions(QWidget *parent, const char *name)
     : Sessions::MVC(parent)
 {
-    //setSQLName(QString::fromLatin1("toResultWaitChains:Chains"));
+}
+
+void toResultSessions::observeDone()
+{
+    emit queryDone();
 }
 
 toSession::toSession(QWidget *main, toConnection &connection)
-    : toToolWidget(SessionTool,
+    : super(SessionTool,
                    "session.html",
                    main,
                    connection,
@@ -518,7 +522,7 @@ toSession::toSession(QWidget *main, toConnection &connection)
 
     Refresh = new toRefreshCombo(toolbar);
     connect(Refresh, SIGNAL(activated(const QString &)), this, SLOT(slotChangeRefresh(const QString &)));
-    connect(Refresh->timer(), SIGNAL(timeout(void)), this, SLOT(slotRefreshTabs(void)));
+    connect(Refresh->timer(), &QTimer::timeout, this, [this]{ slotRefreshTabs(); });
     toolbar->addWidget(Refresh);
 
     toolbar->addSeparator();
@@ -544,7 +548,7 @@ toSession::toSession(QWidget *main, toConnection &connection)
 
     toolbar->addWidget(new Utils::toSpacer());
 
-    Total = new QLabel("Sessions: ", toolbar);
+    Total = new QLabel("");
     Total->setAlignment(Qt::AlignRight | Qt::AlignVCenter/* | Qt::ExpandTabs*/);
     toolbar->addWidget(Total);
 
@@ -572,7 +576,7 @@ toSession::toSession(QWidget *main, toConnection &connection)
 //    Sessions->setReadAll(true);
 //    Sessions->view()->setFilter(SessionFilter);
 
-    connect(Sessions, SIGNAL(slotDone()), this, SLOT(slotDone()));
+    connect(Sessions, &toResultSessions::queryDone, this, [this]{ slotDone(); });
 
     ResultTab = new QTabWidget(splitter);
 
@@ -662,21 +666,12 @@ toSession::toSession(QWidget *main, toConnection &connection)
         LockedObjects->setSQL(SQLLockedObject);
     }
 
-    connect(Sessions,
-            SIGNAL(selectionChanged()),
-            this,
-            SLOT(slotChangeItem()));
-
-    connect(ResultTab,
-            SIGNAL(currentChanged(int)),
-            this,
-            SLOT(slotChangeTab(int)));
+    connect(Sessions->view()->selectionModel(), &QItemSelectionModel::currentChanged, this, [this](const QModelIndex &cur, const QModelIndex &old) { slotChangeItem(cur, old); });
+    connect(ResultTab, SIGNAL(currentChanged(int)), this, SLOT(slotChangeTab(int)));
 
     CurrentTab = CurrentStatement;
 
     ToolMenu = NULL;
-    // connect(toMainWidget()->workspace(), SIGNAL(subWindowActivated(QMdiSubWindow *)),
-    //         this, SLOT(slotWindowActivated(QMdiSubWindow *)));
     slotRefresh();
 
     QList<int> list;
@@ -912,23 +907,23 @@ void toSession::enableStatistics(bool enable)
 //    }
 //    Sessions->model()->setHeaderData()
 
-	toQueryAbstr::HeaderList &headers = Sessions->headers();
-	for(auto& h : headers)
-	{
-	    if (h.name_orig != "Action")
-	        continue;
+    toQueryAbstr::HeaderList &headers = Sessions->headers();
+    for(auto& h : headers)
+    {
+        if (h.name_orig != "Action")
+            continue;
 
-	    if (h.name.startsWith(' '))
-	    {
+        if (h.name.startsWith(' '))
+        {
             h.name = h.name.remove(0, 1);
-	    } else {
-	        h.name = QString(" ").append(h.name);
-	    }
-	}
-    //Sessions->slotApplyColumnRules(); TODO
-	int h1 = Sessions->view()->height();
-	int h2 = Sessions->view()->viewport()->height();
-	int h3 = Sessions->rowCount();
+        } else {
+            h.name = QString(" ").append(h.name);
+        }
+    }
+    Sessions->view()->applyColumnRules(); //TODO
+    int h1 = Sessions->view()->height();
+    int h2 = Sessions->view()->viewport()->height();
+    int h3 = Sessions->rowCount();
 }
 
 void toSession::slotChangeTab(int index)
@@ -943,8 +938,10 @@ void toSession::slotChangeTab(int index)
         if (!item.isValid())
             return;
 
-        QString connectionId = Sessions->data(item.siblingAtColumn(1)).toString(); // Qt 5.11
-        QString serial       = Sessions->data(item.siblingAtColumn(2)).toString(); // Qt 5.11
+        int idx1 = Sessions->headers().indexOf("Id");
+        int idx2 = Sessions->headers().indexOf("Serial#");
+        QString connectionId = Sessions->data(item.siblingAtColumn(idx1)).toString(); // Qt 5.11
+        QString serial       = Sessions->data(item.siblingAtColumn(idx2)).toString(); // Qt 5.11
 
         if (CurrentTab == StatisticSplitter)
         {
@@ -991,21 +988,21 @@ void toSession::slotChangeTab(int index)
         }
         else if (CurrentTab == CurrentStatement)
         {
-// TODO
-#if 0
-        	QString sql_id = Sessions->data(item.row(), " SQL_ID").toString();
-        	QString cursor = Sessions->data(item.row(), " SQL_CHILD_NUMBER").toString();
-        	CurrentStatement->changeAddress(toQueryParams() << sql_id << cursor);
-#endif
+// TODO (PostgreSQL, MySQL)
+            int idx1 = Sessions->headers().indexOf(" SQL_ID");
+            int idx2 = Sessions->headers().indexOf(" SQL_CHILD_NUMBER");
+            QString sql_id = Sessions->data(item.siblingAtColumn(idx1)).toString();
+            QString cursor = Sessions->data(item.siblingAtColumn(idx2)).toString();
+            CurrentStatement->changeAddress(toQueryParams() << sql_id << cursor);
         }
         else if (CurrentTab == PreviousStatement)
         {
-// TODO
-#if 0
-        	QString sql_id = Sessions->data(item.row(), " PREV_SQL_ID").toString();
-        	QString cursor = Sessions->data(item.row(), " PREV_CHILD_NUMBER").toString();
-        	CurrentStatement->changeAddress(toQueryParams() << sql_id << cursor);
-#endif
+// TODO (PostgreSQL, MySQL)
+            int idx1 = Sessions->headers().indexOf(" PREV_SQL_ID");
+            int idx2 = Sessions->headers().indexOf(" PREV_CHILD_NUMBER");
+            QString sql_id = Sessions->data(item.siblingAtColumn(idx1)).toString();
+            QString cursor = Sessions->data(item.siblingAtColumn(idx2)).toString();
+            CurrentStatement->changeAddress(toQueryParams() << sql_id << cursor);
         }
         else if (CurrentTab == AccessedObjects)
         {
@@ -1073,13 +1070,12 @@ void toSession::slotDisconnectSession()
 #endif
 }
 
-void toSession::slotChangeItem()
+void toSession::slotChangeItem(const QModelIndex &current, const QModelIndex &previous)
 {
-    QModelIndex selected = Sessions->view()->currentIndex();
-    if (!selected.isValid())
+    if (!current.isValid())
         return;
 
-    QString item = Sessions->data(selected.siblingAtColumn(1)).toString();
+    QString item = Sessions->data(current.siblingAtColumn(1)).toString();
     if (LastSession != item)
     {
         if (!item.isEmpty())
@@ -1104,7 +1100,7 @@ void toSession::slotChangeItem()
 
 void toSession::slotRefreshTabs(void)
 {
-    slotChangeItem();
+    slotChangeItem(Sessions->view()->currentIndex(), QModelIndex());
 }
 
 

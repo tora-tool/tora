@@ -145,10 +145,15 @@ class toResultSessions: public Sessions::MVC
 
 public:
     toResultSessions(QWidget *parent, const char *name = NULL);
+signals:
+    void queryDone();
+protected:
+    void observeDone() override;
 };
 
 class toSession : public toToolWidget
 {
+        typedef toToolWidget super;
         Q_OBJECT;
 
         //toResultTableView *Sessions;
@@ -205,7 +210,7 @@ class toSession : public toToolWidget
         void enableStatistics(bool enable);
 
         void slotChangeTab(int);
-        void slotChangeItem();
+        void slotChangeItem(const QModelIndex &current, const QModelIndex &previous);
         void slotChangeCursor();
         void slotRefresh(void);
         void slotRefreshTabs(void);
