@@ -37,6 +37,7 @@
 #include "ts_log/ts_log_utils.h"
 
 #include <QTableView>
+#include <QFont>
 
 class QAbstractItemModel;
 
@@ -94,8 +95,39 @@ void DefaultTableViewPolicy<Traits>::setup(View* pView)
 
     if ( Traits::ShowRowNumber != Traits::BuiltInRowNumber )
         pView->verticalHeader()->hide();
-    pView->verticalHeader()->setDefaultSectionSize(QFontMetrics(QFont()).height() + 4);
     pView->setWordWrap(false);
+
+    //QFont smallest = QFontDatabase::systemFont(QFontDatabase::SmallestReadableFont);
+    QFont font;
+    //QFont font("Segoe UI");        // Should be default ClearCase font in Windows
+    //QFont font("MS Shell Dlg 2");  // Is be default ClearCase font in Windows (Qt 5.12)
+    font.setPointSize(9);
+    pView->setFont(font);
+
+    pView->verticalHeader()->setMinimumSectionSize(QFontMetrics(font).height() + 4); // QT 5.12. QTBUG-69431 minimumSectionSize <= defaultSectionSize
+    pView->verticalHeader()->setDefaultSectionSize(QFontMetrics(font).height() + 4);
+    auto d1 = pView->verticalHeader()->defaultSectionSize();
+
+#if 0
+    auto h = pView->fontMetrics().height();
+    auto n = pView->fontMetrics().capHeight();
+    auto a = pView->fontMetrics().ascent();
+
+    auto f  = pView->fontInfo().family();
+    auto p1 = pView->fontInfo().pixelSize();
+    auto p2 = pView->fontInfo().pointSize();
+
+    auto d = pView->verticalHeader()->defaultSectionSize();
+
+	OK on Qt 5.11.
+		a	12	int
+		f	Segoe UI	QString
+		h	15	int
+		n	8	int
+		p1	12	int
+		p2	9	int
+		d       19      int
+#endif
 
     switch (Traits::ColumnResize)
     {
