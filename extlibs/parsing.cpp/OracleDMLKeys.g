@@ -2527,3 +2527,19 @@ depth_key
 breadth_key
     :    {toUpper(LT(1)->getText()) == "BREADTH"}? REGULAR_ID -> BREADTH_VK[$REGULAR_ID]
     ;
+
+offset_key
+    :     SQL_ISO_RESERVED_OFFSET
+    ;
+
+percent_key
+    :    {toUpper(LT(1)->getText()) == "PERCENT"}? REGULAR_ID -> PERCENT_VK[$REGULAR_ID]
+    ;
+
+ties_key
+    :    {toUpper(LT(1)->getText()) == "TIES"}? REGULAR_ID -> TIES_VK[$REGULAR_ID]
+    ;
+
+next_key
+    :    {toUpper(LT(1)->getText()) == "NEXT"}? REGULAR_ID -> NEXT_VK[$REGULAR_ID]
+    ;

@@ -498,7 +498,10 @@ tokens { // moved to the import vocabulary
     NOMINVALUE_VK;
     SEARCH_VK;
     DEPTH_VK;
-    BREADTH_VK;    
+    BREADTH_VK;
+    PERCENT_VK;
+    TIES_VK;
+    NEXT_VK;
 
 // OracleDMLCommons
     ALIAS;
@@ -1431,6 +1434,10 @@ PLSQL_NON_RESERVED_PIVOT
 
 PLSQL_NON_RESERVED_UNPIVOT
     :    'UNPIVOT'
+    ;
+
+SQL_ISO_RESERVED_OFFSET
+    :    'OFFSET'
     ;
 
 REGULAR_ID

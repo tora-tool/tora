@@ -562,8 +562,8 @@ until_part
     ;
 
 order_by_clause
-    :    order_key siblings_key? by_key order_by_elements (COMMA order_by_elements)*
-        -> ^(order_key siblings_key? ^(ORDER_BY_ELEMENTS order_by_elements+))
+    :    order_key siblings_key? by_key order_by_elements (COMMA order_by_elements)* row_limiting_clause?
+        -> ^(order_key siblings_key? ^(ORDER_BY_ELEMENTS order_by_elements+) row_limiting_clause?)
     ;
 
 order_by_elements
@@ -571,6 +571,11 @@ order_by_elements
         -> ^(ORDER_BY_ELEMENT ^(EXPR expression) asc_key? desc_key? nulls_key? first_key? last_key?)
     ;
 
+row_limiting_clause
+    :    (offset_key expression (row_key|rows_key)? )?
+         (fetch_key (first_key|next_key) (expression percent_key?)? (row_key|rows_key) (only_key|with_key ties_key) )?
+    ;            
+            
 for_update_clause
     :    for_key update_key for_update_of_part? for_update_options?
         -> ^(for_key update_key for_update_of_part? for_update_options?)
