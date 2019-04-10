@@ -76,7 +76,7 @@ void toEventQueryObserverObject::eqDescriptionAvailable(toEventQuery *query, con
         struct toQueryAbstr::HeaderDesc d;
 
         d.name = (*i).Name;
-        d.name_orig = (*i).Name;
+	//d.name_orig = (*i).Name;
         d.datatype = (*i).Datatype;
 
         headers << d;
