@@ -167,8 +167,10 @@ class toSession : public toToolWidget
 
         toSGAStatement    *CurrentStatement;
         toSGAStatement    *PreviousStatement;
-        toResultStats     *SessionStatistics;
+        toResultItem      *Transaction;
         toResultLong      *LongOps;
+        toResultStats     *SessionStatistics;
+
         toResultItem      *ConnectInfo;
         toResultTableView *LockedObjects;
         toResultLock      *PendingLocks;
@@ -182,7 +184,6 @@ class toSession : public toToolWidget
         QSplitter         *StatisticSplitter;
         toSGAStatement    *OpenStatement;
         toResultTableView *OpenCursors;
-        toResultItem      *Transaction;
         QString            LastSession;
         QMenu             *ToolMenu;
         toRefreshCombo    *Refresh;

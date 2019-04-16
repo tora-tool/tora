@@ -273,7 +273,6 @@ void toTuningFileIO::refresh(void)
             auto c1 = connect(Query, &toEventQuery::dataAvailable, this, &toTuningFileIO::receiveData);
             auto c2 = connect(Query, &toEventQuery::done, this, &toTuningFileIO::queryDone);
 
-
             Query->start();
             LastTablespace = QString::null;
         }
