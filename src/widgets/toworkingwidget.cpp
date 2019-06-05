@@ -33,6 +33,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "widgets/toworkingwidget.h"
+#include "core/tologger.h"
 
 #include <QPushButton>
 #include <QLabel>
@@ -191,18 +192,20 @@ void toWorkingWidgetNew::setType(WorkingWidgetType type)
 
 bool toWorkingWidgetNew::eventFilter(QObject *obj, QEvent *event)
 {
-	auto type = event->type();
+    auto type = event->type();
     switch (event->type())
     {
         case QEvent::Paint:
             setGeometry(parentWidget()->frameGeometry());
             show();
+            TLOG(4, toDecorator, __HERE__) << "Paint" << std::endl;
             return true;
         case QEvent::Resize:
         case QEvent::Move:
             setGeometry(parentWidget()->frameGeometry());
             repaint();
             event->ignore();
+            TLOG(4, toDecorator, __HERE__) << "Resize/Move" << std::endl;
             return true;
         default:
             // standard event processing
@@ -214,14 +217,17 @@ void toWorkingWidgetNew::display()
 {
     parentWidget()->installEventFilter(this);
     QTimer::singleShot(300, this, SLOT(forceShow()));
+    TLOG(4, toDecorator, __HERE__) << "display" << std::endl;
 }
 
 void toWorkingWidgetNew::undisplay()
 {
+    parentWidget()->removeEventFilter(this);
     if (isVisible())
     {
-        parentWidget()->removeEventFilter(this);
         hide();
         parentWidget()->repaint();
+        TLOG(4, toDecorator, __HERE__) << "undisplay(1)" << std::endl;
     }
+    TLOG(4, toDecorator, __HERE__) << "undisplay(2)" << std::endl;
 }

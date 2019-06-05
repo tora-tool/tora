@@ -55,11 +55,10 @@ toTableModelPriv::~toTableModelPriv()
 
 int toTableModelPriv::rowCount(QModelIndex const& parent) const
 {
-	if (parent.isValid())
-	{
-		throw QString("Invalid index");
-		return 0;
-	}
+    if (parent.isValid())
+    {
+        return 0;
+    }
     int r = Rows.size();
     return r;
 }
