@@ -89,7 +89,32 @@ QString toListViewFormatterXLSX::getFormattedString(toExportSettings &settings, 
     int columnCount = settings.columnsExport == toExportSettings::ColumnsSelected ? clist.size()-1 : columns;
     int rowCount    = settings.rowsExport    == toExportSettings::RowsSelected    ? rlist.size()   : rows;
 
+    if (settings.columnsHeader)
+        rowCount++;
+
     output += DOC_START.arg(columnCount).arg(rowCount);
+
+    // write header data
+    if (settings.columnsHeader)
+    {
+        output += ROW_START;
+        for (int column = 0; column < columns; column++)
+        {
+            if (settings.columnsExport == toExportSettings::ColumnsSelected && !clist.contains(column))
+                continue;
+            if (!settings.rowsHeader && column == 0)
+                continue;
+
+            output += ROW_LINE
+                    .arg("String")
+                    .arg(model->headerData(
+                            column,
+                            Qt::Horizontal,
+                            Qt::DisplayRole).toString());
+        }
+        output += ROW_END;
+    }
+
     // write data
     for (int row = 0; row < rows; row++)
     {
