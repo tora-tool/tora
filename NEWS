@@ -1,3 +1,7 @@
+3.2.202:
+2020-02-13: Copy/Paste into Excel with headers
+2020-02-13: Parsing: Oracle SQL support for row limiting clause
+
 3.2.176:
 2019-01-15: Column name completition, bugfixes
 
