@@ -569,6 +569,7 @@ void toResultTableView::slotMenuCallback(QAction *action)
         QClipboard *clip = qApp->clipboard();
         clip->setText(t);
     }
+
 }
 
 
@@ -581,6 +582,35 @@ void toResultTableView::slotHandleDone(void)
     Finished = true;
     Working->hide();
     emit done();
+
+	auto h = fontMetrics().height();
+	auto n = fontMetrics().capHeight();
+	auto a = fontMetrics().ascent();
+
+	auto f = fontInfo().family();
+	auto p1 = fontInfo().pixelSize();
+	auto p2 = fontInfo().pointSize();
+
+	auto f1 = QFontDatabase::systemFont(QFontDatabase::SmallestReadableFont);
+	auto f1_fa = f1.family();
+	auto f1_p1 = f1.pixelSize();
+	auto f1_p2 = f1.pointSize();
+
+	auto d = verticalHeader()->defaultSectionSize();
+
+#if 0
+OK on Qt 5.11.
+a	12	int
+f	Segoe UI	QString
+h	15	int
+n	8	int
+p1	12	int
+p2	9	int
+#endif
+	//QFont font("Segoe UI");
+	//font.setPointSize(9);
+	//setFont(font);
+	int x = p2;
 }
 
 

@@ -77,6 +77,10 @@ QVariant ToConfiguration::Editor::defaultValue(int option) const
             {
                 {"SE", "SELECT"},
                 {"se", "select"},
+                {"co", "count" },
+                {"CO", "COUNT" },
+                {"di", "distinct" },
+                {"DI", "DISTINCT" },
                 {"FR", "FROM"},
                 {"fr", "from"},
                 {"WH", "WHERE"},
@@ -151,6 +155,7 @@ QVariant ToConfiguration::Editor::defaultValue(int option) const
         case BreakOnModelBool:  return QVariant((bool) true);
         case BreakOnPivotBool:  return QVariant((bool) true);
         case BreakOnLimitBool:  return QVariant((bool) true);
+		case BreakOnJoinBool:   return QVariant((bool)true);
         case WidthModeBool:  return QVariant((bool) true);
         default:
             Q_ASSERT_X( false, qPrintable(__QHERE__), qPrintable(QString("Context Editor un-registered enum value: %1").arg(option)));

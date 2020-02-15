@@ -79,6 +79,7 @@ toIndent::toIndent(QMap<QString, QVariant> const &params, int adj) : adjustment(
     if (params.contains("BreakOnModelBool"))  BreakOnModelBool  = params.value("BreakOnModelBool").toBool();
     if (params.contains("BreakOnPivotBool"))  BreakOnPivotBool  = params.value("BreakOnPivotBool").toBool();
     if (params.contains("BreakOnLimitBool"))  BreakOnLimitBool  = params.value("BreakOnLimitBool").toBool();
+    if (params.contains("BreakOnJoinBool"))   BreakOnJoinBool   = params.value("BreakOnJoinBool").toBool();
     /*----------------------------*/
     if (params.contains("WidthModeBool"))     WidthModeBool     = params.value("WidthModeBool").toBool();
 }
@@ -97,6 +98,7 @@ void toIndent::setup()
     BreakOnModelBool    = toConfigurationNewSingle::Instance().option(Editor::BreakOnModelBool).toBool();
     BreakOnPivotBool    = toConfigurationNewSingle::Instance().option(Editor::BreakOnPivotBool).toBool();
     BreakOnLimitBool    = toConfigurationNewSingle::Instance().option(Editor::BreakOnLimitBool).toBool();
+    BreakOnJoinBool     = toConfigurationNewSingle::Instance().option(Editor::BreakOnJoinBool).toBool();
     /*----------------------------*/
     WidthModeBool       = toConfigurationNewSingle::Instance().option(Editor::WidthModeBool).toBool();
 }
@@ -128,6 +130,16 @@ QSet<QString> toIndent::KEYWORDS = QSet<QString>() // keywords - should have spa
                         << "PIVOT"
                         << "XML"
                         << "FOR";
+
+QSet<QString> toIndent::JOIN = QSet<QString>() // keywords that can start join
+						<< "JOIN"
+						<< "LEFT"
+						<< "RIGHT"
+						<< "CROSS"
+						<< "INNER"
+						<< "OUTER"
+						<< "FULL"
+						<< "NATURAL";
 
 static void indentPriv(SQLParser::Token const* root, QList<SQLParser::Token const*> &list);
 
@@ -190,6 +202,10 @@ void toIndent::tagToken(Token const*token)
     if (BreakOnModelBool   && word.toUpper() == "MODEL")  token->metadata().insert("LINEBREAK", 1);
     if (BreakOnPivotBool   && word.toUpper() == "PIVOT")  token->metadata().insert("LINEBREAK", 1);
     if (BreakOnLimitBool   && word.toUpper() == "LIMIT")  token->metadata().insert("LINEBREAK", 1);
+    if (BreakOnJoinBool    && JOIN.contains(word.toUpper()) && token->metadata().contains("SUBTREE_START"))
+    {
+        token->metadata().insert("LINEBREAK", 1);
+    }
 }
 
 QString toIndent::indent(QString const&input)

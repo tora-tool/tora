@@ -84,6 +84,7 @@ namespace ToConfiguration
                 , BreakOnModelBool
                 , BreakOnPivotBool
                 , BreakOnLimitBool
+                , BreakOnJoinBool
                 , WidthModeBool
             };
             virtual QVariant defaultValue(int option) const;
