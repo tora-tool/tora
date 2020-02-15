@@ -58,6 +58,7 @@ class toIndent : public QObject
     Q_PROPERTY(bool BreakOnModelBool  MEMBER BreakOnModelBool)
     Q_PROPERTY(bool BreakOnPivotBool  MEMBER BreakOnPivotBool)
     Q_PROPERTY(bool BreakOnLimitBool  MEMBER BreakOnLimitBool)
+    Q_PROPERTY(bool BreakOnJoinBool   MEMBER BreakOnJoinBool)
     Q_PROPERTY(bool WidthModeBool     MEMBER WidthModeBool)
 
 public:
@@ -95,8 +96,10 @@ protected:
     bool BreakOnModelBool;
     bool BreakOnPivotBool;
     bool BreakOnLimitBool;
+    bool BreakOnJoinBool;
     /*----------------------------*/
     bool WidthModeBool;
 
     static QSet<QString> KEYWORDS; // keywords - should have spaces around them
+    static QSet<QString> JOIN;     // keywords that can start join
 };

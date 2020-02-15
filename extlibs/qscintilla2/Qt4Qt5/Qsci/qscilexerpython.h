@@ -1,6 +1,6 @@
 // This defines the interface to the QsciLexerPython class.
 //
-// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2019 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -20,10 +20,6 @@
 
 #ifndef QSCILEXERPYTHON_H
 #define QSCILEXERPYTHON_H
-
-#ifdef __APPLE__
-extern "C++" {
-#endif
 
 #include <QObject>
 
@@ -88,7 +84,19 @@ public:
         HighlightedIdentifier = 14,
 
         //! A decorator.
-        Decorator = 15
+        Decorator = 15,
+
+        //! A double-quoted f-string.
+        DoubleQuotedFString = 16,
+
+        //! A single-quoted f-string.
+        SingleQuotedFString = 17,
+
+        //! A triple single-quoted f-string.
+        TripleSingleQuotedFString = 18,
+
+        //! A triple double-quoted f-string.
+        TripleDoubleQuotedFString = 19,
     };
 
     //! This enum defines the different conditions that can cause
@@ -321,9 +329,5 @@ private:
     QsciLexerPython(const QsciLexerPython &);
     QsciLexerPython &operator=(const QsciLexerPython &);
 };
-
-#ifdef __APPLE__
-}
-#endif
 
 #endif

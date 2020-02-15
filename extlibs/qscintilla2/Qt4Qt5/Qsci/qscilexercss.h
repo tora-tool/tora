@@ -1,6 +1,6 @@
 // This defines the interface to the QsciLexerCSS class.
 //
-// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2019 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -20,10 +20,6 @@
 
 #ifndef QSCILEXERCSS_H
 #define QSCILEXERCSS_H
-
-#ifdef __APPLE__
-extern "C++" {
-#endif
 
 #include <QObject>
 
@@ -252,9 +248,5 @@ private:
     QsciLexerCSS(const QsciLexerCSS &);
     QsciLexerCSS &operator=(const QsciLexerCSS &);
 };
-
-#ifdef __APPLE__
-}
-#endif
 
 #endif

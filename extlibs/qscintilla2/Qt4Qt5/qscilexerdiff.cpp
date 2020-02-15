@@ -1,6 +1,6 @@
 // This module implements the QsciLexerDiff class.
 //
-// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2019 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -80,9 +80,13 @@ QColor QsciLexerDiff::defaultColor(int style) const
         return QColor(0x7f,0x00,0x7f);
 
     case LineRemoved:
+    case AddingPatchRemoved:
+    case RemovingPatchRemoved:
         return QColor(0x00,0x7f,0x7f);
 
     case LineAdded:
+    case AddingPatchAdded:
+    case RemovingPatchAdded:
         return QColor(0x00,0x00,0x7f);
 
     case LineChanged:
@@ -121,6 +125,18 @@ QString QsciLexerDiff::description(int style) const
 
     case LineChanged:
         return tr("Changed line");
+
+    case AddingPatchAdded:
+        return tr("Added adding patch");
+
+    case RemovingPatchAdded:
+        return tr("Removed adding patch");
+
+    case AddingPatchRemoved:
+        return tr("Added removing patch");
+
+    case RemovingPatchRemoved:
+        return tr("Removed removing patch");
     }
 
     return QString();

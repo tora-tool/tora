@@ -1,6 +1,6 @@
 // This defines the interface to the QsciLexerCPP class.
 //
-// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2019 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -20,10 +20,6 @@
 
 #ifndef QSCILEXERCPP_H
 #define QSCILEXERCPP_H
-
-#ifdef __APPLE__
-extern "C++" {
-#endif
 
 #include <QObject>
 
@@ -398,9 +394,5 @@ private:
     QsciLexerCPP(const QsciLexerCPP &);
     QsciLexerCPP &operator=(const QsciLexerCPP &);
 };
-
-#ifdef __APPLE__
-}
-#endif
 
 #endif

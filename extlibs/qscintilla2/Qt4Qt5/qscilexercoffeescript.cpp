@@ -1,6 +1,6 @@
 // This module implements the QsciLexerCoffeeScript class.
 //
-// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2019 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -157,6 +157,9 @@ QColor QsciLexerCoffeeScript::defaultColor(int style) const
 
     case CommentDocKeywordError:
         return QColor(0x80, 0x40, 0x20);
+
+    case InstanceProperty:
+        return QColor(0xc0, 0x60, 0x00);
     }
 
     return QsciLexer::defaultColor(style);
@@ -319,6 +322,9 @@ QString QsciLexerCoffeeScript::description(int style) const
 
     case BlockRegexComment:
         return tr("Block regular expression comment");
+
+    case InstanceProperty:
+        return tr("Instance property");
     }
 
     return QString();

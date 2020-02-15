@@ -1,6 +1,6 @@
 // This defines the interface to the QsciLexerProperties class.
 //
-// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2019 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -20,10 +20,6 @@
 
 #ifndef QSCILEXERPROPERTIES_H
 #define QSCILEXERPROPERTIES_H
-
-#ifdef __APPLE__
-extern "C++" {
-#endif
 
 #include <QObject>
 
@@ -150,9 +146,5 @@ private:
     QsciLexerProperties(const QsciLexerProperties &);
     QsciLexerProperties &operator=(const QsciLexerProperties &);
 };
-
-#ifdef __APPLE__
-}
-#endif
 
 #endif

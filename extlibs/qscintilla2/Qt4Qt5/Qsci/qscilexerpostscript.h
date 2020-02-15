@@ -1,6 +1,6 @@
 // This defines the interface to the QsciLexerPostScript class.
 //
-// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2019 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -20,10 +20,6 @@
 
 #ifndef QSCILEXERPOSTSCRIPT_H
 #define QSCILEXERPOSTSCRIPT_H
-
-#ifdef __APPLE__
-extern "C++" {
-#endif
 
 #include <QObject>
 
@@ -204,9 +200,5 @@ private:
     QsciLexerPostScript(const QsciLexerPostScript &);
     QsciLexerPostScript &operator=(const QsciLexerPostScript &);
 };
-
-#ifdef __APPLE__
-}
-#endif
 
 #endif

@@ -1,6 +1,6 @@
 // The implementation of the Qt specific subclass of ScintillaBase.
 //
-// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2019 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -31,6 +31,9 @@
 
 #include "Qsci/qsciscintillabase.h"
 #include "ScintillaQt.h"
+#if !defined(QT_NO_ACCESSIBILITY)
+#include "SciAccessibility.h"
+#endif
 #include "SciClasses.h"
 
 
@@ -38,7 +41,9 @@
 #undef  SCEN_CHANGE
 #undef  SCN_AUTOCCANCELLED
 #undef  SCN_AUTOCCHARDELETED
+#undef  SCN_AUTOCCOMPLETED
 #undef  SCN_AUTOCSELECTION
+#undef  SCN_AUTOCSELECTIONCHANGE
 #undef  SCN_CALLTIPCLICK
 #undef  SCN_CHARADDED
 #undef  SCN_DOUBLECLICK
@@ -53,6 +58,7 @@
 #undef  SCN_INDICATORRELEASE
 #undef  SCN_MACRORECORD
 #undef  SCN_MARGINCLICK
+#undef  SCN_MARGINRIGHTCLICK
 #undef  SCN_MODIFIED
 #undef  SCN_MODIFYATTEMPTRO
 #undef  SCN_NEEDSHOWN
@@ -69,7 +75,9 @@ enum
     SCEN_CHANGE = 768,
     SCN_AUTOCCANCELLED = 2025,
     SCN_AUTOCCHARDELETED = 2026,
+    SCN_AUTOCCOMPLETED = 2030,
     SCN_AUTOCSELECTION = 2022,
+    SCN_AUTOCSELECTIONCHANGE = 2032,
     SCN_CALLTIPCLICK = 2021,
     SCN_CHARADDED = 2001,
     SCN_DOUBLECLICK = 2006,
@@ -84,6 +92,7 @@ enum
     SCN_INDICATORRELEASE = 2024,
     SCN_MACRORECORD = 2009,
     SCN_MARGINCLICK = 2010,
+    SCN_MARGINRIGHTCLICK = 2031,
     SCN_MODIFIED = 2008,
     SCN_MODIFYATTEMPTRO = 2004,
     SCN_NEEDSHOWN = 2011,
@@ -106,6 +115,11 @@ QsciScintillaQt::QsciScintillaQt(QsciScintillaBase *qsb_)
     // This is ignored.
     imeInteraction = imeInline;
 
+    // Using pixmaps screws things up when moving to a different display
+    // (although this could be because we haven't got the pixmap code right).
+    // However Qt shouldn't need buffered drawing anyway.
+    WndProc(SCI_SETBUFFEREDDRAW, 0, 0);
+
     for (int i = 0; i <= static_cast<int>(tickPlatform); ++i)
         timers[i] = 0;
 
@@ -123,6 +137,10 @@ QsciScintillaQt::~QsciScintillaQt()
 // Initialise the instance.
 void QsciScintillaQt::Initialise()
 {
+    // This signal is only ever emitted for systems that have a separate
+    // selection (ie. X11).
+    connect(QApplication::clipboard(), SIGNAL(selectionChanged()), this,
+            SLOT(onSelectionChanged()));
 }
 
 
@@ -155,7 +173,7 @@ void QsciScintillaQt::StartDrag()
     if (action == Qt::MoveAction && qdrag->target() != qsb->viewport())
         ClearSelection();
 
-    SetDragPosition(QSCI_SCI_NAMESPACE(SelectionPosition)());
+    SetDragPosition(Scintilla::SelectionPosition());
     inDragDrop = ddNone;
 }
 
@@ -188,10 +206,12 @@ sptr_t QsciScintillaQt::DefWndProc(unsigned int, uptr_t, sptr_t)
 void QsciScintillaQt::SetMouseCapture(bool on)
 {
     if (mouseDownCaptures)
+    {
         if (on)
             qsb->viewport()->grabMouse();
         else
             qsb->viewport()->releaseMouse();
+    }
 
     capturedMouse = on;
 }
@@ -230,7 +250,7 @@ void QsciScintillaQt::SetHorizontalScrollPos()
 
 // Set the extent of the vertical and horizontal scrollbars and return true if
 // the view needs re-drawing.
-bool QsciScintillaQt::ModifyScrollBars(int nMax,int nPage)
+bool QsciScintillaQt::ModifyScrollBars(Sci::Line nMax, Sci::Line nPage)
 {
     bool modified = false;
     QScrollBar *sb;
@@ -290,7 +310,7 @@ void QsciScintillaQt::NotifyChange()
 
 // Notify interested parties of various events.  This is the main mapping
 // between Scintilla notifications and Qt signals.
-void QsciScintillaQt::NotifyParent(QSCI_SCI_NAMESPACE(SCNotification) scn)
+void QsciScintillaQt::NotifyParent(SCNotification scn)
 {
     switch (scn.nmhdr.code)
     {
@@ -306,8 +326,20 @@ void QsciScintillaQt::NotifyParent(QSCI_SCI_NAMESPACE(SCNotification) scn)
         emit qsb->SCN_AUTOCCHARDELETED();
         break;
 
+    case SCN_AUTOCCOMPLETED:
+        emit qsb->SCN_AUTOCCOMPLETED(scn.text, scn.position, scn.ch,
+                scn.listCompletionMethod);
+        break;
+
     case SCN_AUTOCSELECTION:
-        emit qsb->SCN_AUTOCSELECTION(scn.text, scn.lParam);
+        emit qsb->SCN_AUTOCSELECTION(scn.text, scn.position, scn.ch,
+                scn.listCompletionMethod);
+        emit qsb->SCN_AUTOCSELECTION(scn.text, scn.position);
+        break;
+
+    case SCN_AUTOCSELECTIONCHANGE:
+        emit qsb->SCN_AUTOCSELECTIONCHANGE(scn.text, scn.listType,
+                scn.position);
         break;
 
     case SCN_CHARADDED:
@@ -363,12 +395,26 @@ void QsciScintillaQt::NotifyParent(QSCI_SCI_NAMESPACE(SCNotification) scn)
         emit qsb->SCN_MARGINCLICK(scn.position, scn.modifiers, scn.margin);
         break;
 
+    case SCN_MARGINRIGHTCLICK:
+        emit qsb->SCN_MARGINRIGHTCLICK(scn.position, scn.modifiers,
+                scn.margin);
+        break;
+
     case SCN_MODIFIED:
         {
             char *text;
 
+#if !defined(QT_NO_ACCESSIBILITY)
+            if ((scn.modificationType & SC_MOD_INSERTTEXT) != 0)
+                QsciAccessibleScintillaBase::textInserted(qsb, scn.position,
+                        scn.text, scn.length);
+            else if ((scn.modificationType & SC_MOD_DELETETEXT) != 0)
+                QsciAccessibleScintillaBase::textDeleted(qsb, scn.position,
+                        scn.text, scn.length);
+#endif
+
             // Give some protection to the Python bindings.
-            if (scn.text && (scn.modificationType & (SC_MOD_INSERTTEXT|SC_MOD_DELETETEXT) != 0))
+            if (scn.text && (scn.modificationType & (SC_MOD_INSERTTEXT|SC_MOD_DELETETEXT)) != 0)
             {
                 text = new char[scn.length + 1];
                 memcpy(text, scn.text, scn.length);
@@ -414,11 +460,18 @@ void QsciScintillaQt::NotifyParent(QSCI_SCI_NAMESPACE(SCNotification) scn)
         break;
 
     case SCN_UPDATEUI:
+#if !defined(QT_NO_ACCESSIBILITY)
+        QsciAccessibleScintillaBase::updated(qsb);
+#endif
         emit qsb->SCN_UPDATEUI(scn.updated);
         break;
 
     case SCN_USERLISTSELECTION:
-        emit qsb->SCN_USERLISTSELECTION(scn.text, scn.wParam);
+        emit qsb->SCN_USERLISTSELECTION(scn.text, scn.listType, scn.ch,
+                scn.listCompletionMethod, scn.position);
+        emit qsb->SCN_USERLISTSELECTION(scn.text, scn.listType, scn.ch,
+                scn.listCompletionMethod);
+        emit qsb->SCN_USERLISTSELECTION(scn.text, scn.listType);
         break;
 
     case SCN_ZOOM:
@@ -433,7 +486,7 @@ void QsciScintillaQt::NotifyParent(QSCI_SCI_NAMESPACE(SCNotification) scn)
 
 // Convert a selection to mime data.
 QMimeData *QsciScintillaQt::mimeSelection(
-        const QSCI_SCI_NAMESPACE(SelectionText) &text) const
+        const Scintilla::SelectionText &text) const
 {
     return qsb->toMimeData(QByteArray(text.Data()), text.rectangular);
 }
@@ -441,7 +494,7 @@ QMimeData *QsciScintillaQt::mimeSelection(
 
 // Copy the selected text to the clipboard.
 void QsciScintillaQt::CopyToClipboard(
-        const QSCI_SCI_NAMESPACE(SelectionText) &selectedText)
+        const Scintilla::SelectionText &selectedText)
 {
     QApplication::clipboard()->setMimeData(mimeSelection(selectedText));
 }
@@ -452,7 +505,7 @@ void QsciScintillaQt::Copy()
 {
     if (!sel.Empty())
     {
-        QSCI_SCI_NAMESPACE(SelectionText) text;
+        Scintilla::SelectionText text;
 
         CopySelectionRange(&text);
         CopyToClipboard(text);
@@ -483,14 +536,14 @@ void QsciScintillaQt::pasteFromClipboard(QClipboard::Mode mode)
     len = text.length();
     s = text.data();
 
-    std::string dest = QSCI_SCI_NAMESPACE(Document)::TransformLineEnds(s, len,
+    std::string dest = Scintilla::Document::TransformLineEnds(s, len,
             pdoc->eolMode);
 
-    QSCI_SCI_NAMESPACE(SelectionText) selText;
+    Scintilla::SelectionText selText;
     selText.Copy(dest, (IsUnicodeMode() ? SC_CP_UTF8 : 0),
             vs.styles[STYLE_DEFAULT].characterSet, rectangular, false);
 
-    QSCI_SCI_NAMESPACE(UndoGroup) ug(pdoc);
+    Scintilla::UndoGroup ug(pdoc);
 
     ClearSelection();
     InsertPasteShape(selText.Data(), selText.Length(),
@@ -500,10 +553,10 @@ void QsciScintillaQt::pasteFromClipboard(QClipboard::Mode mode)
 
 
 // Create a call tip window.
-void QsciScintillaQt::CreateCallTipWindow(QSCI_SCI_NAMESPACE(PRectangle) rc)
+void QsciScintillaQt::CreateCallTipWindow(Scintilla::PRectangle rc)
 {
     if (!ct.wCallTip.Created())
-        ct.wCallTip = ct.wDraw = new QsciSciCallTip(qsb, this);
+        ct.wCallTip = new QsciSciCallTip(qsb, this);
 
     QsciSciCallTip *w = reinterpret_cast<QsciSciCallTip *>(ct.wCallTip.GetID());
 
@@ -524,41 +577,47 @@ void QsciScintillaQt::AddToPopUp(const char *label, int cmd, bool enabled)
 }
 
 
-// Claim the selection.
+// Claim the (primary) selection.
 void QsciScintillaQt::ClaimSelection()
 {
+    QClipboard *cb = QApplication::clipboard();
     bool isSel = !sel.Empty();
 
-    if (isSel)
+    if (cb->supportsSelection())
     {
-        QClipboard *cb = QApplication::clipboard();
-
-        // If we support X11 style selection then make it available now.
-        if (cb->supportsSelection())
+        if (isSel)
         {
-            QSCI_SCI_NAMESPACE(SelectionText) text;
+            Scintilla::SelectionText text;
 
             CopySelectionRange(&text);
 
             if (text.Data())
                 cb->setMimeData(mimeSelection(text), QClipboard::Selection);
-        }
 
-        primarySelection = true;
+            primarySelection = true;
+        }
+        else
+        {
+            primarySelection = false;
+        }
     }
-    else
-        primarySelection = false;
+
+#if !defined(QT_NO_ACCESSIBILITY)
+    QsciAccessibleScintillaBase::selectionChanged(qsb, isSel);
+#endif
 
     emit qsb->QSCN_SELCHANGED(isSel);
 }
 
 
-// Unclaim the selection.
-void QsciScintillaQt::UnclaimSelection()
+// Unclaim the (primary) selection.
+void QsciScintillaQt::onSelectionChanged()
 {
-    if (primarySelection)
+    bool new_primary = QApplication::clipboard()->ownsSelection();
+
+    if (primarySelection != new_primary)
     {
-        primarySelection = false;
+        primarySelection = new_primary;
         qsb->viewport()->update();
     }
 }
@@ -575,12 +634,7 @@ sptr_t QsciScintillaQt::DirectFunction(QsciScintillaQt *sciThis, unsigned int iM
 // Draw the contents of the widget.
 void QsciScintillaQt::paintEvent(QPaintEvent *e)
 {
-    QSCI_SCI_NAMESPACE(Surface) *sw = QSCI_SCI_NAMESPACE(Surface)::Allocate(SC_TECHNOLOGY_DEFAULT);
-
-    if (!sw)
-        return;
-
-    paintState = painting;
+    Scintilla::Surface *sw;
 
     const QRect &qr = e->rect();
 
@@ -589,11 +643,16 @@ void QsciScintillaQt::paintEvent(QPaintEvent *e)
     rcPaint.right = qr.right() + 1;
     rcPaint.bottom = qr.bottom() + 1;
 
-    QSCI_SCI_NAMESPACE(PRectangle) rcText = GetTextRectangle();
-    paintingAllText = rcPaint.Contains(rcText);
+    Scintilla::PRectangle rcClient = GetClientRectangle();
+    paintingAllText = rcPaint.Contains(rcClient);
+
+    sw = Scintilla::Surface::Allocate(SC_TECHNOLOGY_DEFAULT);
+    if (!sw)
+        return;
 
     QPainter painter(qsb->viewport());
 
+    paintState = painting;
     sw->Init(&painter);
     sw->SetUnicodeMode(CodePage() == SC_CP_UTF8);
     Paint(sw, rcPaint);
@@ -603,7 +662,26 @@ void QsciScintillaQt::paintEvent(QPaintEvent *e)
     // If the painting area was insufficient to cover the new style or brace
     // highlight positions then repaint the whole thing.
     if (paintState == paintAbandoned)
+    {
+        // Do a full re-paint immediately.  This may only be needed on OS X (to
+        // avoid flicker).
+        paintingAllText = true;
+
+        sw = Scintilla::Surface::Allocate(SC_TECHNOLOGY_DEFAULT);
+        if (!sw)
+            return;
+
+        QPainter painter(qsb->viewport());
+
+        paintState = painting;
+        sw->Init(&painter);
+        sw->SetUnicodeMode(CodePage() == SC_CP_UTF8);
+        Paint(sw, rcPaint);
+
+        delete sw;
+
         qsb->viewport()->update();
+    }
 
     paintState = notPainting;
 }

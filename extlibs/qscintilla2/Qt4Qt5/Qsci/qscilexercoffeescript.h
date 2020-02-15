@@ -1,6 +1,6 @@
 // This defines the interface to the QsciLexerCoffeeScript class.
 //
-// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2019 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -20,10 +20,6 @@
 
 #ifndef QSCILEXERCOFFEESCRIPT_H
 #define QSCILEXERCOFFEESCRIPT_H
-
-#ifdef __APPLE__
-extern "C++" {
-#endif
 
 #include <QObject>
 
@@ -113,6 +109,9 @@ public:
 
         //! A block regular expression comment.
         BlockRegexComment = 24,
+
+        //! An instance property.
+        InstanceProperty = 25,
     };
 
     //! Construct a QsciLexerCoffeeScript with parent \a parent.  \a parent is
@@ -261,9 +260,5 @@ private:
     QsciLexerCoffeeScript(const QsciLexerCoffeeScript &);
     QsciLexerCoffeeScript &operator=(const QsciLexerCoffeeScript &);
 };
-
-#ifdef __APPLE__
-}
-#endif
 
 #endif

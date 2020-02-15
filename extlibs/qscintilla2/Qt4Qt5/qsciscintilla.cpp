@@ -2,7 +2,7 @@
 // Scintilla.  It is modelled on QTextEdit - a method of the same name should
 // behave in the same way.
 //
-// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2019 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -57,6 +57,9 @@ static const int defaultFoldMarginWidth = 14;
 // The default set of characters that make up a word.
 static const char *defaultWordChars = "_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
+// Forward declarations.
+static QColor asQColor(long sci_colour);
+
 
 // The ctor.
 QsciScintilla::QsciScintilla(QWidget *parent)
@@ -83,6 +86,8 @@ QsciScintilla::QsciScintilla(QWidget *parent)
              SLOT(handleIndicatorRelease(int,int)));
     connect(this,SIGNAL(SCN_MARGINCLICK(int,int,int)),
              SLOT(handleMarginClick(int,int,int)));
+    connect(this,SIGNAL(SCN_MARGINRIGHTCLICK(int,int,int)),
+             SLOT(handleMarginRightClick(int,int,int)));
     connect(this,SIGNAL(SCN_SAVEPOINTREACHED()),
              SLOT(handleSavePointReached()));
     connect(this,SIGNAL(SCN_SAVEPOINTLEFT()),
@@ -245,13 +250,10 @@ void QsciScintilla::handleCharAdded(int ch)
     // start character.  If it is then create a new list which will be a subset
     // of the current one.  The case where it isn't a start character seems to
     // be handled correctly elsewhere.
-    if (isListActive())
+    if (isListActive() && isStartChar(ch))
     {
-        if (isStartChar(ch))
-        {
-            cancelList();
-            startAutoCompletion(acSource, false, use_single == AcusAlways);
-        }
+        cancelList();
+        startAutoCompletion(acSource, false, use_single == AcusAlways);
 
         return;
     }
@@ -262,17 +264,21 @@ void QsciScintilla::handleCharAdded(int ch)
 
     // Handle auto-indentation.
     if (autoInd)
+    {
         if (lex.isNull() || (lex->autoIndentStyle() & AiMaintain))
             maintainIndentation(ch, pos);
         else
             autoIndentation(ch, pos);
+    }
 
     // See if we might want to start auto-completion.
     if (!isCallTipActive() && acSource != AcsNone)
+    {
         if (isStartChar(ch))
             startAutoCompletion(acSource, false, use_single == AcusAlways);
         else if (acThresh >= 1 && isWordCharacter(ch))
             startAutoCompletion(acSource, true, use_single == AcusAlways);
+    }
 }
 
 
@@ -384,8 +390,8 @@ void QsciScintilla::callTip()
         ct = ct_entries.join("\n");
     }
 
-    QByteArray ct_ba = ct.toLatin1();
-    const char *cts = ct_ba.data();
+    ScintillaBytes ct_bytes = textAsBytes(ct);
+    const char *cts = ScintillaBytesConstData(ct_bytes);
 
     SendScintilla(SCI_CALLTIPSHOW, adjustedCallTipPosition(shift), cts);
 
@@ -849,12 +855,16 @@ void QsciScintilla::autoIndentLine(long pos, int line, int indent)
     long new_pos = -1;
 
     if (pos_after > pos_before)
+    {
         new_pos = pos + (pos_after - pos_before);
+    }
     else if (pos_after < pos_before && pos >= pos_after)
+    {
         if (pos >= pos_before)
             new_pos = pos + (pos_after - pos_before);
         else
             new_pos = pos_after;
+    }
 
     if (new_pos >= 0)
         SendScintilla(SCI_SETSEL, new_pos, new_pos);
@@ -1076,12 +1086,24 @@ void QsciScintilla::convertEols(EolMode mode)
 }
 
 
+// Add an edge column.
+void QsciScintilla::addEdgeColumn(int colnr, const QColor &col)
+{
+    SendScintilla(SCI_MULTIEDGEADDLINE, colnr, col);
+}
+
+
+// Clear all multi-edge columns.
+void QsciScintilla::clearEdgeColumns()
+{
+    SendScintilla(SCI_MULTIEDGECLEARALL);
+}
+
+
 // Return the edge colour.
 QColor QsciScintilla::edgeColor() const
 {
-    long res = SendScintilla(SCI_GETEDGECOLOUR);
-
-    return QColor((int)res, ((int)(res >> 8)) & 0x00ff, ((int)(res >> 16)) & 0x00ff);
+    return asQColor(SendScintilla(SCI_GETEDGECOLOUR));
 }
 
 
@@ -1204,6 +1226,20 @@ void QsciScintilla::setWhitespaceVisibility(WhitespaceVisibility mode)
 }
 
 
+// Return the tab draw mode.
+QsciScintilla::TabDrawMode QsciScintilla::tabDrawMode() const
+{
+    return (TabDrawMode)SendScintilla(SCI_GETTABDRAWMODE);
+}
+
+
+// Set the tab draw mode.
+void QsciScintilla::setTabDrawMode(TabDrawMode mode)
+{
+    SendScintilla(SCI_SETTABDRAWMODE, mode);
+}
+
+
 // Return the line wrap mode.
 QsciScintilla::WrapMode QsciScintilla::wrapMode() const
 {
@@ -1243,6 +1279,9 @@ void QsciScintilla::setWrapVisualFlags(WrapVisualFlag endFlag,
 
     switch (endFlag)
     {
+    case WrapFlagNone:
+        break;
+
     case WrapFlagByText:
         flags |= SC_WRAPVISUALFLAG_END;
         loc |= SC_WRAPVISUALFLAGLOC_END_BY_TEXT;
@@ -1259,6 +1298,9 @@ void QsciScintilla::setWrapVisualFlags(WrapVisualFlag endFlag,
 
     switch (startFlag)
     {
+    case WrapFlagNone:
+        break;
+
     case WrapFlagByText:
         flags |= SC_WRAPVISUALFLAG_START;
         loc |= SC_WRAPVISUALFLAGLOC_START_BY_TEXT;
@@ -1303,6 +1345,9 @@ void QsciScintilla::setFolding(FoldStyle folding, int margin)
     // Set the marker symbols to use.
     switch (folding)
     {
+    case NoFoldStyle:
+        break;
+
     case PlainFoldStyle:
         setFoldMarker(SC_MARKNUM_FOLDEROPEN, SC_MARK_MINUS);
         setFoldMarker(SC_MARKNUM_FOLDER, SC_MARK_PLUS);
@@ -1603,6 +1648,12 @@ void QsciScintilla::handleModified(int pos, int mtype, const char *text,
         int len, int added, int line, int foldNow, int foldPrev, int token,
         int annotationLinesAdded)
 {
+    Q_UNUSED(pos);
+    Q_UNUSED(text);
+    Q_UNUSED(len);
+    Q_UNUSED(token);
+    Q_UNUSED(annotationLinesAdded);
+
     if (mtype & SC_MOD_CHANGEFOLD)
     {
         if (fold)
@@ -1661,7 +1712,8 @@ void QsciScintilla::zoomTo(int size)
 
 // Find the first occurrence of a string.
 bool QsciScintilla::findFirst(const QString &expr, bool re, bool cs, bool wo,
-        bool wrap, bool forward, int line, int index, bool show, bool posix)
+        bool wrap, bool forward, int line, int index, bool show, bool posix,
+        bool cxx11)
 {
     if (expr.isEmpty())
     {
@@ -1678,7 +1730,8 @@ bool QsciScintilla::findFirst(const QString &expr, bool re, bool cs, bool wo,
         (cs ? SCFIND_MATCHCASE : 0) |
         (wo ? SCFIND_WHOLEWORD : 0) |
         (re ? SCFIND_REGEXP : 0) |
-        (posix ? SCFIND_POSIX : 0);
+        (posix ? SCFIND_POSIX : 0) |
+        (cxx11 ? SCFIND_CXX11REGEX : 0);
 
     if (line < 0 || index < 0)
         findState.startpos = SendScintilla(SCI_GETCURRENTPOS);
@@ -1698,7 +1751,7 @@ bool QsciScintilla::findFirst(const QString &expr, bool re, bool cs, bool wo,
 
 // Find the first occurrence of a string in the current selection.
 bool QsciScintilla::findFirstInSelection(const QString &expr, bool re, bool cs,
-        bool wo, bool forward, bool show, bool posix)
+        bool wo, bool forward, bool show, bool posix, bool cxx11)
 {
     if (expr.isEmpty())
     {
@@ -1715,7 +1768,8 @@ bool QsciScintilla::findFirstInSelection(const QString &expr, bool re, bool cs,
         (cs ? SCFIND_MATCHCASE : 0) |
         (wo ? SCFIND_WHOLEWORD : 0) |
         (re ? SCFIND_REGEXP : 0) |
-        (posix ? SCFIND_POSIX : 0);
+        (posix ? SCFIND_POSIX : 0) |
+        (cxx11 ? SCFIND_CXX11REGEX : 0);
 
     findState.startpos_orig = SendScintilla(SCI_GETSELECTIONSTART);
     findState.endpos_orig = SendScintilla(SCI_GETSELECTIONEND);
@@ -1734,6 +1788,13 @@ bool QsciScintilla::findFirstInSelection(const QString &expr, bool re, bool cs,
     findState.show = show;
 
     return doFind();
+}
+
+
+// Cancel any current search.
+void QsciScintilla::cancelFind()
+{
+    findState.status = FindState::Idle;
 }
 
 
@@ -1906,6 +1967,16 @@ void QsciScintilla::handleMarginClick(int pos, int modifiers, int margin)
 }
 
 
+// Handle the SCN_MARGINRIGHTCLICK notification.
+void QsciScintilla::handleMarginRightClick(int pos, int modifiers, int margin)
+{
+    int state = mapModifiers(modifiers);
+    int line = SendScintilla(SCI_LINEFROMPOSITION, pos);
+
+    emit marginRightClicked(margin, line, Qt::KeyboardModifiers(state));
+}
+
+
 // Handle the SCN_SAVEPOINTREACHED notification.
 void QsciScintilla::handleSavePointReached()
 {
@@ -2013,6 +2084,13 @@ void QsciScintilla::setCaretWidth(int width)
 }
 
 
+// Set the width of the frame of the line containing the caret.
+void QsciScintilla::setCaretLineFrameWidth(int width)
+{
+    SendScintilla(SCI_SETCARETLINEFRAME, width);
+}
+
+
 // Set the foreground colour of the caret.
 void QsciScintilla::setCaretForegroundColor(const QColor &col)
 {
@@ -2043,7 +2121,7 @@ void QsciScintilla::setCaretLineVisible(bool enable)
 // Set the background colour of a hotspot area.
 void QsciScintilla::setHotspotBackgroundColor(const QColor &col)
 {
-    SendScintilla(SCI_SETSELBACK, 1, col);
+    SendScintilla(SCI_SETHOTSPOTACTIVEBACK, 1, col);
 }
 
 
@@ -2057,7 +2135,7 @@ void QsciScintilla::setHotspotForegroundColor(const QColor &col)
 // Reset the background colour of a hotspot area to the default.
 void QsciScintilla::resetHotspotBackgroundColor()
 {
-    SendScintilla(SCI_SETSELBACK, 0UL);
+    SendScintilla(SCI_SETHOTSPOTACTIVEBACK, 0UL);
 }
 
 
@@ -2283,6 +2361,29 @@ QString QsciScintilla::text(int line) const
 }
 
 
+// Return the text between two positions.
+QString QsciScintilla::text(int start, int end) const
+{
+    char *buf = new char[end - start + 1];
+    SendScintilla(SCI_GETTEXTRANGE, start, end, buf);
+    QString text = bytesAsText(buf);
+    delete[] buf;
+
+    return text;
+}
+
+
+// Return the text as encoded bytes between two positions.
+QByteArray QsciScintilla::bytes(int start, int end) const
+{
+    QByteArray bytes(end - start + 1, '\0');
+
+    SendScintilla(SCI_GETTEXTRANGE, start, end, bytes.data());
+
+    return bytes;
+}
+
+
 // Set the given text.
 void QsciScintilla::setText(const QString &text)
 {
@@ -2359,9 +2460,8 @@ void QsciScintilla::clear()
 {
     bool ro = ensureRW();
 
-    SendScintilla(SCI_BEGINUNDOACTION);
     SendScintilla(SCI_CLEARALL);
-    SendScintilla(SCI_ENDUNDOACTION);
+    SendScintilla(SCI_EMPTYUNDOBUFFER);
 
     setReadOnly(ro);
 }
@@ -2526,6 +2626,34 @@ bool QsciScintilla::indentationsUseTabs() const
 void QsciScintilla::setIndentationsUseTabs(bool tabs)
 {
     SendScintilla(SCI_SETUSETABS, tabs);
+}
+
+
+// Return the number of margins.
+int QsciScintilla::margins() const
+{
+    return SendScintilla(SCI_GETMARGINS);
+}
+
+
+// Set the number of margins.
+void QsciScintilla::setMargins(int margins)
+{
+    SendScintilla(SCI_SETMARGINS, margins);
+}
+
+
+// Return the margin background colour.
+QColor QsciScintilla::marginBackgroundColor(int margin) const
+{
+    return asQColor(SendScintilla(SCI_GETMARGINBACKN, margin));
+}
+
+
+// Set the margin background colour.
+void QsciScintilla::setMarginBackgroundColor(int margin, const QColor &col)
+{
+    SendScintilla(SCI_SETMARGINBACKN, margin, col);
 }
 
 
@@ -3233,7 +3361,6 @@ void QsciScintilla::detachLexer()
 
         SendScintilla(SCI_STYLERESETDEFAULT);
         SendScintilla(SCI_STYLECLEARALL);
-        SendScintilla(SCI_CLEARDOCUMENTSTYLE);
     }
 }
 
@@ -3249,6 +3376,8 @@ void QsciScintilla::setLexer(QsciLexer *lexer)
 
     if (lex)
     {
+        SendScintilla(SCI_CLEARDOCUMENTSTYLE);
+
         if (lex->lexer())
             SendScintilla(SCI_SETLEXERLANGUAGE, lex->lexer());
         else
@@ -3288,9 +3417,7 @@ void QsciScintilla::setLexer(QsciLexer *lexer)
         // incorrect) font setting gets reset when style 0 is set.
         setLexerStyle(STYLE_DEFAULT);
 
-        int nrStyles = 1 << SendScintilla(SCI_GETSTYLEBITS);
-
-        for (int s = 0; s < nrStyles; ++s)
+        for (int s = 0; s <= STYLE_MAX; ++s)
             if (!lex->description(s).isEmpty())
                 setLexerStyle(s);
 
@@ -3510,7 +3637,7 @@ long QsciScintilla::checkBrace(long pos, int brace_style, bool &colonMode)
 
 // Find a brace and it's match.  Return true if the current position is inside
 // a pair of braces.
-bool QsciScintilla::findMatchingBrace(long &brace, long &other,BraceMatch mode)
+bool QsciScintilla::findMatchingBrace(long &brace, long &other, BraceMatch mode)
 {
     bool colonMode = false;
     int brace_style = (lex.isNull() ? -1 : lex->braceStyle());
@@ -3544,7 +3671,7 @@ bool QsciScintilla::findMatchingBrace(long &brace, long &other,BraceMatch mode)
             other = SendScintilla(SCI_GETLINEENDPOSITION, lineMaxSubord);
         }
         else
-            other = SendScintilla(SCI_BRACEMATCH, brace);
+            other = SendScintilla(SCI_BRACEMATCH, brace, 0L);
 
         if (other > brace)
             isInside = !isInside;
@@ -4056,17 +4183,11 @@ QString QsciScintilla::wordAtPosition(int position) const
 
     long start_pos = SendScintilla(SCI_WORDSTARTPOSITION, position, true);
     long end_pos = SendScintilla(SCI_WORDENDPOSITION, position, true);
-    int word_len = end_pos - start_pos;
 
-    if (word_len <= 0)
+    if (start_pos >= end_pos)
         return QString();
 
-    char *buf = new char[word_len + 1];
-    SendScintilla(SCI_GETTEXTRANGE, start_pos, end_pos, buf);
-    QString word = bytesAsText(buf);
-    delete[] buf;
-
-    return word;
+    return text(start_pos, end_pos);
 }
 
 
@@ -4231,7 +4352,7 @@ bool QsciScintilla::event(QEvent *e)
             }
 
             // We want any key that is bound.
-            QsciCommand *cmd = stdCmds->boundTo(ke->key() | ke->modifiers());
+            QsciCommand *cmd = stdCmds->boundTo(ke->key() | (ke->modifiers() & ~Qt::KeypadModifier));
 
             if (cmd)
             {
@@ -4242,6 +4363,29 @@ bool QsciScintilla::event(QEvent *e)
     }
 
     return QsciScintillaBase::event(e);
+}
+
+
+// Re-implemented to zoom when the Control modifier is pressed.
+void QsciScintilla::wheelEvent(QWheelEvent *e)
+{
+#if defined(Q_OS_MAC)
+    const Qt::KeyboardModifier zoom_modifier = Qt::MetaModifier;
+#else
+    const Qt::KeyboardModifier zoom_modifier = Qt::ControlModifier;
+#endif
+
+   if ((e->modifiers() & zoom_modifier) != 0)
+   {
+       if (e->delta() > 0)
+           zoomIn();
+       else
+           zoomOut();
+   }
+   else 
+   {
+       QsciScintillaBase::wheelEvent(e);
+   }
 }
 
 
@@ -4281,9 +4425,7 @@ void QsciScintilla::changeEvent(QEvent *e)
     {
         setEnabledColors(STYLE_DEFAULT, fore, back);
 
-        int nrStyles = 1 << SendScintilla(SCI_GETSTYLEBITS);
-
-        for (int s = 0; s < nrStyles; ++s)
+        for (int s = 0; s <= STYLE_MAX; ++s)
             if (!lex->description(s).isNull())
                 setEnabledColors(s, fore, back);
     }
@@ -4307,12 +4449,15 @@ void QsciScintilla::setEnabledColors(int style, QColor &fore, QColor &back)
 // Re-implemented to implement a more Qt-like context menu.
 void QsciScintilla::contextMenuEvent(QContextMenuEvent *e)
 {
-    QMenu *menu = createStandardContextMenu();
-
-    if (menu)
+    if (contextMenuNeeded(e->x(), e->y()))
     {
-        menu->setAttribute(Qt::WA_DeleteOnClose);
-        menu->popup(e->globalPos());
+        QMenu *menu = createStandardContextMenu();
+
+        if (menu)
+        {
+            menu->setAttribute(Qt::WA_DeleteOnClose);
+            menu->popup(e->globalPos());
+        }
     }
 }
 
@@ -4381,4 +4526,41 @@ void QsciScintilla::set_shortcut(QAction *action, QsciCommand::Command cmd_id) c
 void QsciScintilla::delete_selection()
 {
     SendScintilla(SCI_CLEAR);
+}
+
+
+// Convert a Scintilla colour to a QColor.
+static QColor asQColor(long sci_colour)
+{
+    return QColor(
+            ((int)sci_colour) & 0x00ff,
+            ((int)(sci_colour >> 8)) & 0x00ff,
+            ((int)(sci_colour >> 16)) & 0x00ff);
+}
+
+
+// Set the scroll width.
+void QsciScintilla::setScrollWidth(int pixelWidth)
+{
+    SendScintilla(SCI_SETSCROLLWIDTH, pixelWidth);
+}
+
+// Get the scroll width.
+int QsciScintilla::scrollWidth() const
+{
+    return SendScintilla(SCI_GETSCROLLWIDTH);
+}
+
+
+// Set scroll width tracking.
+void QsciScintilla::setScrollWidthTracking(bool enabled)
+{
+    SendScintilla(SCI_SETSCROLLWIDTHTRACKING, enabled);
+}
+
+
+// Get scroll width tracking.
+bool QsciScintilla::scrollWidthTracking() const
+{
+    return SendScintilla(SCI_GETSCROLLWIDTHTRACKING);
 }

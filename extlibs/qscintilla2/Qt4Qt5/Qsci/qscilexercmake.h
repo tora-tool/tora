@@ -1,6 +1,6 @@
 // This defines the interface to the QsciLexerCMake class.
 //
-// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2019 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -20,10 +20,6 @@
 
 #ifndef QSCILEXERCMAKE_H
 #define QSCILEXERCMAKE_H
-
-#ifdef __APPLE__
-extern "C++" {
-#endif
 
 #include <QObject>
 
@@ -160,9 +156,5 @@ private:
     QsciLexerCMake(const QsciLexerCMake &);
     QsciLexerCMake &operator=(const QsciLexerCMake &);
 };
-
-#ifdef __APPLE__
-}
-#endif
 
 #endif
