@@ -1,6 +1,6 @@
 // This defines the interface to the QsciLexerFortran class.
 //
-// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2019 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -20,10 +20,6 @@
 
 #ifndef QSCILEXERFORTRAN_H
 #define QSCILEXERFORTRAN_H
-
-#ifdef __APPLE__
-extern "C++" {
-#endif
 
 #include <QObject>
 
@@ -59,9 +55,5 @@ private:
     QsciLexerFortran(const QsciLexerFortran &);
     QsciLexerFortran &operator=(const QsciLexerFortran &);
 };
-
-#ifdef __APPLE__
-}
-#endif
 
 #endif

@@ -5,21 +5,19 @@
 // Copyright 1998-2013 by Neil Hodgson <neilh@scintilla.org>
 // The License.txt file describes the conditions under which this software may be distributed.
 
+#include <stdexcept>
 #include <vector>
 #include <algorithm>
 
 #include "CaseFolder.h"
 #include "CaseConvert.h"
-#include "UniConversion.h"
 
-#ifdef SCI_NAMESPACE
 using namespace Scintilla;
-#endif
 
 CaseFolder::~CaseFolder() {
 }
 
-CaseFolderTable::CaseFolderTable() {
+CaseFolderTable::CaseFolderTable() : mapping{}  {
 	for (size_t iChar=0; iChar<sizeof(mapping); iChar++) {
 		mapping[iChar] = static_cast<char>(iChar);
 	}

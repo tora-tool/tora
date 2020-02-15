@@ -1,6 +1,6 @@
 // This defines the interface to the QsciLexerOctave class.
 //
-// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2019 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -20,10 +20,6 @@
 
 #ifndef QSCILEXEROCTAVE_H
 #define QSCILEXEROCTAVE_H
-
-#ifdef __APPLE__
-extern "C++" {
-#endif
 
 #include <QObject>
 
@@ -60,9 +56,5 @@ private:
     QsciLexerOctave(const QsciLexerOctave &);
     QsciLexerOctave &operator=(const QsciLexerOctave &);
 };
-
-#ifdef __APPLE__
-}
-#endif
 
 #endif

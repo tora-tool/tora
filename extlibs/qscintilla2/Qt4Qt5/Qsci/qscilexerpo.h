@@ -1,6 +1,6 @@
 // This defines the interface to the QsciLexerPO class.
 //
-// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2019 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -20,10 +20,6 @@
 
 #ifndef QSCILEXERPO_H
 #define QSCILEXERPO_H
-
-#ifdef __APPLE__
-extern "C++" {
-#endif
 
 #include <QObject>
 
@@ -163,9 +159,5 @@ private:
     QsciLexerPO(const QsciLexerPO &);
     QsciLexerPO &operator=(const QsciLexerPO &);
 };
-
-#ifdef __APPLE__
-}
-#endif
 
 #endif

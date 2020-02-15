@@ -1,6 +1,6 @@
 // This module implements the QsciLexerCustom class.
 //
-// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2019 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -39,16 +39,12 @@ QsciLexerCustom::~QsciLexerCustom()
 
 
 // Start styling.
-void QsciLexerCustom::startStyling(int start, int styleBits)
+void QsciLexerCustom::startStyling(int start, int)
 {
     if (!editor())
         return;
 
-    if (styleBits == 0)
-        styleBits = (1 << styleBitsNeeded()) - 1;
-
-    editor()->SendScintilla(QsciScintillaBase::SCI_STARTSTYLING, start,
-            styleBits);
+    editor()->SendScintilla(QsciScintillaBase::SCI_STARTSTYLING, start);
 }
 
 

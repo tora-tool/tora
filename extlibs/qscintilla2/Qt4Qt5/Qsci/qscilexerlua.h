@@ -1,6 +1,6 @@
 // This defines the interface to the QsciLexerLua class.
 //
-// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2019 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -20,10 +20,6 @@
 
 #ifndef QSCILEXERLUA_H
 #define QSCILEXERLUA_H
-
-#ifdef __APPLE__
-extern "C++" {
-#endif
 
 #include <QObject>
 
@@ -194,9 +190,5 @@ private:
     QsciLexerLua(const QsciLexerLua &);
     QsciLexerLua &operator=(const QsciLexerLua &);
 };
-
-#ifdef __APPLE__
-}
-#endif
 
 #endif

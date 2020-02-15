@@ -1,6 +1,6 @@
 // This defines the interface to the QsciLexerDiff class.
 //
-// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2019 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -20,10 +20,6 @@
 
 #ifndef QSCILEXERDIFF_H
 #define QSCILEXERDIFF_H
-
-#ifdef __APPLE__
-extern "C++" {
-#endif
 
 #include <QObject>
 
@@ -56,14 +52,26 @@ public:
         //! A position.
         Position = 4,
 
-        //! A removed line.
+        //! A line removed.
         LineRemoved = 5,
 
-        //! An added line.
+        //! A line added.
         LineAdded = 6,
 
-        //! A changed line.
-        LineChanged = 7
+        //! A line changed.
+        LineChanged = 7,
+
+        //! An adding patch added.
+        AddingPatchAdded = 8,
+
+        //! A removing patch added.
+        RemovingPatchAdded = 9,
+
+        //! An adding patch added.
+        AddingPatchRemoved = 10,
+
+        //! A removing patch added.
+        RemovingPatchRemoved = 11,
     };
 
     //! Construct a QsciLexerDiff with parent \a parent.  \a parent is
@@ -95,9 +103,5 @@ private:
     QsciLexerDiff(const QsciLexerDiff &);
     QsciLexerDiff &operator=(const QsciLexerDiff &);
 };
-
-#ifdef __APPLE__
-}
-#endif
 
 #endif

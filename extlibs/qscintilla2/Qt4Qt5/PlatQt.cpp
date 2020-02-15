@@ -1,6 +1,6 @@
 // This module implements the portability layer for the Qt port of Scintilla.
 //
-// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2019 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -28,7 +28,6 @@
 #include <qdesktopwidget.h>
 #include <qfont.h>
 #include <qimage.h>
-#include <qlibrary.h>
 #include <qpainter.h>
 #include <qpixmap.h>
 #include <qpolygon.h>
@@ -36,7 +35,9 @@
 #include <qtextlayout.h>
 #include <qwidget.h>
 
-#include "SciNamespace.h"
+#if !defined(Q_OS_WASM)
+#include <qlibrary.h>
+#endif
 
 #include "Platform.h"
 #include "XPM.h"
@@ -47,7 +48,7 @@
 #include "FontQuality.h"
 
 
-QSCI_BEGIN_SCI_NAMESPACE
+namespace Scintilla {
 
 // Type convertors.
 static QFont *PFont(FontID fid)
@@ -66,16 +67,8 @@ static QsciSciPopup *PMenu(MenuID mid)
 }
 
 
-// Create a Point instance from a long value.
-Point Point::FromLong(long lpoint)
-{
-    return Point(Platform::LowShortFromLong(lpoint),
-            Platform::HighShortFromLong(lpoint));
-}
-
-
 // Font management.
-Font::Font() : fid(0)
+Font::Font() noexcept : fid(0)
 {
 }
 
@@ -105,7 +98,7 @@ void Font::Create(const FontParameters &fp)
         strategy = QFont::PreferDefault;
     }
 
-#if defined(Q_OS_MAC)
+#if defined(Q_OS_MAC) && QT_VERSION < 0x050000
 #if QT_VERSION >= 0x040700
     strategy = static_cast<QFont::StyleStrategy>(strategy | QFont::ForceIntegerMetrics);
 #else
@@ -171,7 +164,7 @@ public:
     void Init(WindowID wid);
     void Init(SurfaceID sid, WindowID);
     void Init(QPainter *p);
-    void InitPixMap(int width, int height, Surface *, WindowID wid);
+    void InitPixMap(int width, int height, Surface *sid, WindowID wid);
 
     void Release();
     bool Initialised() {return painter;}
@@ -180,7 +173,7 @@ public:
     int DeviceHeightFont(int points) {return points;}
     void MoveTo(int x_,int y_);
     void LineTo(int x_,int y_);
-    void Polygon(Point *pts, int npts, ColourDesired fore,
+    void Polygon(Point *pts, size_t npts, ColourDesired fore,
             ColourDesired back);
     void RectangleDraw(PRectangle rc, ColourDesired fore,
             ColourDesired back);
@@ -191,6 +184,8 @@ public:
     void AlphaRectangle(PRectangle rc, int cornerSize, ColourDesired fill,
             int alphaFill, ColourDesired outline, int alphaOutline,
             int flags);
+    void GradientRectangle(PRectangle rc, const std::vector<ColourStop> &stops,
+            GradientOptions options);
     void DrawRGBAImage(PRectangle rc, int width, int height, const unsigned char *pixelsImage);
     void Ellipse(PRectangle rc, ColourDesired fore, ColourDesired back);
     void Copy(PRectangle rc, Point from, Surface &surfaceSource);
@@ -204,11 +199,9 @@ public:
     void MeasureWidths(Font &font_, const char *s, int len,
             XYPOSITION *positions);
     XYPOSITION WidthText(Font &font_, const char *s, int len);
-    XYPOSITION WidthChar(Font &font_, char ch);
     XYPOSITION Ascent(Font &font_);
     XYPOSITION Descent(Font &font_);
-    XYPOSITION InternalLeading(Font &font_) {return 0;}
-    XYPOSITION ExternalLeading(Font &font_);
+    XYPOSITION InternalLeading(Font &font_) {Q_UNUSED(font_); return 0;}
     XYPOSITION Height(Font &font_);
     XYPOSITION AverageCharWidth(Font &font_);
 
@@ -216,7 +209,7 @@ public:
     void FlushCachedState();
 
     void SetUnicodeMode(bool unicodeMode_) {unicodeMode = unicodeMode_;}
-    void SetDBCSMode(int codePage) {}
+    void SetDBCSMode(int codePage) {Q_UNUSED(codePage);}
 
     void DrawXPM(PRectangle rc, const XPM *xpm);
 
@@ -281,7 +274,7 @@ void SurfaceImpl::Init(QPainter *p)
     painter = p;
 }
 
-void SurfaceImpl::InitPixMap(int width, int height, Surface *, WindowID wid)
+void SurfaceImpl::InitPixMap(int width, int height, Surface *sid, WindowID wid)
 {
     Release();
 
@@ -298,6 +291,8 @@ void SurfaceImpl::InitPixMap(int width, int height, Surface *, WindowID wid)
 
     painter = new QPainter(pd);
     my_resources = true;
+
+    SetUnicodeMode(static_cast<SurfaceImpl *>(sid)->unicodeMode);
 }
 
 void SurfaceImpl::Release()
@@ -342,14 +337,14 @@ void SurfaceImpl::PenColour(ColourDesired fore)
     painter->setPen(convertQColor(fore));
 }
 
-void SurfaceImpl::Polygon(Point *pts, int npts, ColourDesired fore,
+void SurfaceImpl::Polygon(Point *pts, size_t npts, ColourDesired fore,
         ColourDesired back)
 {
     Q_ASSERT(painter);
 
     QPolygonF qpts(npts);
 
-    for (int i = 0; i < npts; ++i)
+    for (size_t i = 0; i < npts; ++i)
         qpts[i] = QPointF(pts[i].x, pts[i].y);
 
     painter->setPen(convertQColor(fore));
@@ -431,6 +426,35 @@ void SurfaceImpl::AlphaRectangle(PRectangle rc, int cornerSize,
     painter->drawRoundRect(
             QRectF(rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top),
             radius, radius);
+}
+
+void SurfaceImpl::GradientRectangle(PRectangle rc,
+        const std::vector<ColourStop> &stops, GradientOptions options)
+{
+    Q_ASSERT(painter);
+
+    QLinearGradient gradient;
+
+    switch (options)
+    {
+    case GradientOptions::leftToRight:
+        gradient = QLinearGradient(rc.left, rc.top, rc.right, rc.top);
+        break;
+
+    case GradientOptions::topToBottom:
+    default:
+        gradient = QLinearGradient(rc.left, rc.top, rc.left, rc.bottom);
+    }
+
+    gradient.setSpread(QGradient::RepeatSpread);
+
+    for (const ColourStop &stop : stops)
+        gradient.setColorAt(stop.position,
+                convertQColor(stop.colour, stop.colour.GetAlpha()));
+
+    painter->fillRect(
+            QRectF(rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top),
+            QBrush(gradient));
 }
 
 void SurfaceImpl::drawRect(const PRectangle &rc)
@@ -539,6 +563,8 @@ void SurfaceImpl::DrawXPM(PRectangle rc, const XPM *xpm)
 void SurfaceImpl::DrawRGBAImage(PRectangle rc, int width, int height,
         const unsigned char *pixelsImage)
 {
+    Q_UNUSED(width);
+    Q_UNUSED(height);
     Q_ASSERT(painter);
 
     const QImage *qim = reinterpret_cast<const QImage *>(pixelsImage);
@@ -611,11 +637,6 @@ XYPOSITION SurfaceImpl::WidthText(Font &font_, const char *s, int len)
 
 }
 
-XYPOSITION SurfaceImpl::WidthChar(Font &font_, char ch)
-{
-    return metrics(font_).width(ch);
-}
-
 XYPOSITION SurfaceImpl::Ascent(Font &font_)
 {
     return metrics(font_).ascent();
@@ -631,13 +652,6 @@ XYPOSITION SurfaceImpl::Descent(Font &font_)
     return metrics(font_).descent() + 1;
 }
 
-XYPOSITION SurfaceImpl::ExternalLeading(Font &font_)
-{
-    // Scintilla doesn't use this at the moment, which is good because Qt4 can
-    // return a negative value.
-    return metrics(font_).leading();
-}
-
 XYPOSITION SurfaceImpl::Height(Font &font_)
 {
     return metrics(font_).height();
@@ -648,7 +662,7 @@ XYPOSITION SurfaceImpl::AverageCharWidth(Font &font_)
 #if QT_VERSION >= 0x040200
     return metrics(font_).averageCharWidth();
 #else
-    return WidthChar(font_, 'n');
+    return metrics(font_).width('n');
 #endif
 }
 
@@ -696,7 +710,7 @@ QString SurfaceImpl::convertText(const char *s, int len)
 // Convert a Scintilla colour, and alpha component, to a Qt QColor.
 QColor SurfaceImpl::convertQColor(const ColourDesired &col, unsigned alpha)
 {
-    long c = col.AsLong();
+    int c = col.AsInteger();
 
     unsigned r = c & 0xff;
     unsigned g = (c >> 8) & 0xff;
@@ -728,12 +742,7 @@ void Window::Destroy()
     }
 }
 
-bool Window::HasFocus()
-{
-    return PWindow(wid)->hasFocus();
-}
-
-PRectangle Window::GetPosition()
+PRectangle Window::GetPosition() const
 {
     QWidget *w = PWindow(wid);
 
@@ -757,9 +766,9 @@ void Window::SetPosition(PRectangle rc)
             rc.bottom - rc.top);
 }
 
-void Window::SetPositionRelative(PRectangle rc, Window relativeTo)
+void Window::SetPositionRelative(PRectangle rc, const Window *relativeTo)
 {
-    QWidget *rel = PWindow(relativeTo.wid);
+    QWidget *rel = PWindow(relativeTo->wid);
     QPoint pos = rel->mapToGlobal(rel->pos());
 
     int x = pos.x() + rc.left;
@@ -768,7 +777,7 @@ void Window::SetPositionRelative(PRectangle rc, Window relativeTo)
     PWindow(wid)->setGeometry(x, y, rc.right - rc.left, rc.bottom - rc.top);
 }
 
-PRectangle Window::GetClientPosition()
+PRectangle Window::GetClientPosition() const
 {
     return GetPosition();
 }
@@ -843,11 +852,6 @@ void Window::SetCursor(Cursor curs)
     PWindow(wid)->setCursor(qc);
 }
 
-void Window::SetTitle(const char *s)
-{
-    PWindow(wid)->setWindowTitle(s);
-}
-
 PRectangle Window::GetMonitorRect(Point pt)
 {
     QPoint qpt = PWindow(wid)->mapToGlobal(QPoint(pt.x, pt.y));
@@ -859,7 +863,7 @@ PRectangle Window::GetMonitorRect(Point pt)
 
 
 // Menu management.
-Menu::Menu() : mid(0)
+Menu::Menu() noexcept : mid(0)
 {
 }
 
@@ -891,71 +895,48 @@ class DynamicLibraryImpl : public DynamicLibrary
 public:
     DynamicLibraryImpl(const char *modulePath)
     {
+#if !defined(Q_OS_WASM)
         m = new QLibrary(modulePath);
         m->load();
+#endif
     }
 
     virtual ~DynamicLibraryImpl()
     {
+#if !defined(Q_OS_WASM)
         if (m)
             delete m;
+#endif
     }
 
     virtual Function FindFunction(const char *name)
     {
+#if !defined(Q_OS_WASM)
         if (m)
             return (Function)m->resolve(name);
+#endif
 
         return 0;
     }
 
     virtual bool IsValid()
     {
+#if !defined(Q_OS_WASM)
         return m && m->isLoaded();
+#else
+        return false;
+#endif
     }
 
 private:
+#if !defined(Q_OS_WASM)
     QLibrary* m;
+#endif
 };
 
 DynamicLibrary *DynamicLibrary::Load(const char *modulePath)
 {
     return new DynamicLibraryImpl(modulePath);
-}
-
-
-// Elapsed time.  This implementation assumes that the maximum elapsed time is
-// less than 48 hours.
-ElapsedTime::ElapsedTime()
-{
-    QTime now = QTime::currentTime();
-
-    bigBit = now.hour() * 60 * 60 + now.minute() * 60 + now.second();
-    littleBit = now.msec();
-}
-
-double ElapsedTime::Duration(bool reset)
-{
-    long endBigBit, endLittleBit;
-    QTime now = QTime::currentTime();
-
-    endBigBit = now.hour() * 60 * 60 + now.minute() * 60 + now.second();
-    endLittleBit = now.msec();
-
-    double duration = endBigBit - bigBit;
-
-    if (duration < 0 || (duration == 0 && endLittleBit < littleBit))
-        duration += 24 * 60 * 60;
-
-    duration += (endLittleBit - littleBit) / 1000.0;
-
-    if (reset)
-    {
-        bigBit = endBigBit;
-        littleBit = endLittleBit;
-    }
-
-    return duration;
 }
 
 
@@ -989,74 +970,10 @@ unsigned int Platform::DoubleClickTime()
     return QApplication::doubleClickInterval();
 }
 
-bool Platform::MouseButtonBounce()
-{
-    return true;
-}
-
 void Platform::DebugDisplay(const char *s)
 {
     qDebug("%s", s);
 }
-
-bool Platform::IsKeyDown(int)
-{
-    return false;
-}
-
-long Platform::SendScintilla(WindowID w, unsigned int msg,
-        unsigned long wParam, long lParam)
-{
-    // This is never called.
-    return 0;
-}
-
-long Platform::SendScintillaPointer(WindowID w, unsigned int msg,
-        unsigned long wParam, void *lParam)
-{
-    // This is never called.
-    return 0;
-}
-
-bool Platform::IsDBCSLeadByte(int, char)
-{
-    // We don't support DBCS.
-    return false;
-}
-
-int Platform::DBCSCharLength(int, const char *)
-{
-    // We don't support DBCS.
-    return 1;
-}
-
-int Platform::DBCSCharMaxLength()
-{
-    // We don't support DBCS.
-    return 2;
-}
-
-int Platform::Minimum(int a, int b)
-{
-    return (a < b) ? a : b;
-}
-
-int Platform::Maximum(int a, int b)
-{
-    return (a > b) ? a : b;
-}
-
-int Platform::Clamp(int val, int minVal, int maxVal)
-{
-    if (val > maxVal)
-        val = maxVal;
-
-    if (val < minVal)
-        val = minVal;
-
-    return val;
-}
-
 
 //#define TRACE
 
@@ -1094,4 +1011,4 @@ void Platform::Assert(const char *c, const char *file, int line)
     qFatal("Assertion [%s] failed at %s %d\n", c, file, line);
 }
 
-QSCI_END_SCI_NAMESPACE
+}

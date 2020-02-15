@@ -1,6 +1,6 @@
 // This defines the interface to the QsciLexerPascal class.
 //
-// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2019 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -20,10 +20,6 @@
 
 #ifndef QSCILEXERPASCAL_H
 #define QSCILEXERPASCAL_H
-
-#ifdef __APPLE__
-extern "C++" {
-#endif
 
 #include <QObject>
 
@@ -227,9 +223,5 @@ private:
     QsciLexerPascal(const QsciLexerPascal &);
     QsciLexerPascal &operator=(const QsciLexerPascal &);
 };
-
-#ifdef __APPLE__
-}
-#endif
 
 #endif

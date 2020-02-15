@@ -1,6 +1,6 @@
 // This defines the interface to the QsciLexerJavaScript class.
 //
-// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2019 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -20,10 +20,6 @@
 
 #ifndef QSCILEXERJSCRIPT_H
 #define QSCILEXERJSCRIPT_H
-
-#ifdef __APPLE__
-extern "C++" {
-#endif
 
 #include <QObject>
 
@@ -81,9 +77,5 @@ private:
     QsciLexerJavaScript(const QsciLexerJavaScript &);
     QsciLexerJavaScript &operator=(const QsciLexerJavaScript &);
 };
-
-#ifdef __APPLE__
-}
-#endif
 
 #endif

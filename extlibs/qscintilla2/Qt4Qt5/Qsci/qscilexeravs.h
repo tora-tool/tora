@@ -1,6 +1,6 @@
 // This defines the interface to the QsciLexerAVS class.
 //
-// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2019 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -20,10 +20,6 @@
 
 #ifndef QSCILEXERAVS_H
 #define QSCILEXERAVS_H
-
-#ifdef __APPLE__
-extern "C++" {
-#endif
 
 #include <QObject>
 
@@ -174,9 +170,5 @@ private:
     QsciLexerAVS(const QsciLexerAVS &);
     QsciLexerAVS &operator=(const QsciLexerAVS &);
 };
-
-#ifdef __APPLE__
-}
-#endif
 
 #endif

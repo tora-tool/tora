@@ -1,6 +1,6 @@
 // This module implements the QsciLexerVerilog class.
 //
-// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2019 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -295,44 +295,86 @@ QString QsciLexerVerilog::description(int style) const
     case Default:
         return tr("Default");
 
+    case InactiveDefault:
+        return tr("Inactive default");
+
     case Comment:
         return tr("Comment");
+
+    case InactiveComment:
+        return tr("Inactive comment");
 
     case CommentLine:
         return tr("Line comment");
 
+    case InactiveCommentLine:
+        return tr("Inactive line comment");
+
     case CommentBang:
         return tr("Bang comment");
+
+    case InactiveCommentBang:
+        return tr("Inactive bang comment");
 
     case Number:
         return tr("Number");
 
+    case InactiveNumber:
+        return tr("Inactive number");
+
     case Keyword:
         return tr("Primary keywords and identifiers");
+
+    case InactiveKeyword:
+        return tr("Inactive primary keywords and identifiers");
 
     case String:
         return tr("String");
 
+    case InactiveString:
+        return tr("Inactive string");
+
     case KeywordSet2:
         return tr("Secondary keywords and identifiers");
+
+    case InactiveKeywordSet2:
+        return tr("Inactive secondary keywords and identifiers");
 
     case SystemTask:
         return tr("System task");
 
+    case InactiveSystemTask:
+        return tr("Inactive system task");
+
     case Preprocessor:
         return tr("Preprocessor block");
+
+    case InactivePreprocessor:
+        return tr("Inactive preprocessor block");
 
     case Operator:
         return tr("Operator");
 
+    case InactiveOperator:
+        return tr("Inactive operator");
+
     case Identifier:
         return tr("Identifier");
+
+    case InactiveIdentifier:
+        return tr("Inactive identifier");
 
     case UnclosedString:
         return tr("Unclosed string");
 
+    case InactiveUnclosedString:
+        return tr("Inactive unclosed string");
+
     case UserKeywordSet:
         return tr("User defined tasks and identifiers");
+
+    case InactiveUserKeywordSet:
+        return tr("Inactive user defined tasks and identifiers");
 
     case CommentKeyword:
         return tr("Keyword comment");
@@ -413,6 +455,7 @@ void QsciLexerVerilog::refreshProperties()
     setCommentProp();
     setCompactProp();
     setPreprocProp();
+    setAtModuleProp();
 
     // We don't provide options for these as there doesn't seem much point in
     // disabling them.

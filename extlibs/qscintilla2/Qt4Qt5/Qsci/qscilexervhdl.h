@@ -1,6 +1,6 @@
 // This defines the interface to the QsciLexerVHDL class.
 //
-// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2019 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -20,10 +20,6 @@
 
 #ifndef QSCILEXERVHDL_H
 #define QSCILEXERVHDL_H
-
-#ifdef __APPLE__
-extern "C++" {
-#endif
 
 #include <QObject>
 
@@ -221,9 +217,5 @@ private:
     QsciLexerVHDL(const QsciLexerVHDL &);
     QsciLexerVHDL &operator=(const QsciLexerVHDL &);
 };
-
-#ifdef __APPLE__
-}
-#endif
 
 #endif

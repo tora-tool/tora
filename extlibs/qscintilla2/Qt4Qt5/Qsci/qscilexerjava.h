@@ -1,6 +1,6 @@
 // This defines the interface to the QsciLexerJava class.
 //
-// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2019 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -20,10 +20,6 @@
 
 #ifndef QSCILEXERJAVA_H
 #define QSCILEXERJAVA_H
-
-#ifdef __APPLE__
-extern "C++" {
-#endif
 
 #include <QObject>
 
@@ -55,9 +51,5 @@ private:
     QsciLexerJava(const QsciLexerJava &);
     QsciLexerJava &operator=(const QsciLexerJava &);
 };
-
-#ifdef __APPLE__
-}
-#endif
 
 #endif

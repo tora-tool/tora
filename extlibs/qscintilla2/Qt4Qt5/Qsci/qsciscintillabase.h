@@ -1,6 +1,6 @@
 // This class defines the "official" low-level API.
 //
-// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2019 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -21,10 +21,6 @@
 #ifndef QSCISCINTILLABASE_H
 #define QSCISCINTILLABASE_H
 
-#ifdef __APPLE__
-extern "C++" {
-#endif
-
 #include <qglobal.h>
 
 #include <QAbstractScrollArea>
@@ -41,6 +37,7 @@ class QImage;
 class QMimeData;
 class QPainter;
 class QPixmap;
+class QUrl;
 QT_END_NAMESPACE
 
 class QsciScintillaQt;
@@ -930,6 +927,18 @@ public:
         SCI_EXPANDCHILDREN = 2239,
 
         //!
+        SCI_SETMARGINBACKN = 2250,
+
+        //!
+        SCI_GETMARGINBACKN = 2251,
+
+        //!
+        SCI_SETMARGINS = 2252,
+
+        //!
+        SCI_GETMARGINS = 2253,
+
+        //!
         SCI_SETTABINDENTS = 2260,
 
         //!
@@ -1190,6 +1199,9 @@ public:
 
         //!
         SCI_BRACEMATCH = 2353,
+
+        //!
+        SCI_LINEREVERSE = 2354,
 
         //!
         SCI_GETVIEWEOL = 2355,
@@ -1678,12 +1690,6 @@ public:
         //! This message returns a pointer to the document text.  Any
         //! subsequent message will invalidate the pointer.
         SCI_GETCHARACTERPOINTER = 2520,
-
-        //!
-        SCI_SETKEYSUNICODE = 2521,
-
-        //!
-        SCI_GETKEYSUNICODE = 2522,
 
         //!
         SCI_INDICSETALPHA = 2523,
@@ -2184,7 +2190,61 @@ public:
         SCI_SETTARGETRANGE = 2686,
 
         //!
-        SCI_GETTARGETRANGE = 2687,
+        SCI_GETTARGETTEXT = 2687,
+
+        //!
+        SCI_MULTIPLESELECTADDNEXT = 2688,
+
+        //!
+        SCI_MULTIPLESELECTADDEACH = 2689,
+
+        //!
+        SCI_TARGETWHOLEDOCUMENT = 2690,
+
+        //!
+        SCI_ISRANGEWORD = 2691,
+
+        //!
+        SCI_SETIDLESTYLING = 2692,
+
+        //!
+        SCI_GETIDLESTYLING = 2693,
+
+        //!
+        SCI_MULTIEDGEADDLINE = 2694,
+
+        //!
+        SCI_MULTIEDGECLEARALL = 2695,
+
+        //!
+        SCI_SETMOUSEWHEELCAPTURES = 2696,
+
+        //!
+        SCI_GETMOUSEWHEELCAPTURES = 2697,
+
+        //!
+        SCI_GETTABDRAWMODE = 2698,
+
+        //!
+        SCI_SETTABDRAWMODE = 2699,
+
+        //!
+        SCI_TOGGLEFOLDSHOWTEXT = 2700,
+
+        //!
+        SCI_FOLDDISPLAYTEXTSETSTYLE = 2701,
+
+        //!
+        SCI_SETACCESSIBILITY = 2702,
+
+        //!
+        SCI_GETACCESSIBILITY = 2703,
+
+        //!
+        SCI_GETCARETLINEFRAME = 2704,
+
+        //!
+        SCI_SETCARETLINEFRAME = 2705,
 
         //!
         SCI_STARTRECORD = 3001,
@@ -2278,7 +2338,61 @@ public:
 
         //!
         SCI_GETSUBSTYLEBASES = 4026,
+
+        //!
+        SCI_GETLINECHARACTERINDEX = 2710,
+
+        //!
+        SCI_ALLOCATELINECHARACTERINDEX = 2711,
+
+        //!
+        SCI_RELEASELINECHARACTERINDEX = 2712,
+
+        //!
+        SCI_LINEFROMINDEXPOSITION = 2713,
+
+        //!
+        SCI_INDEXPOSITIONFROMLINE = 2714,
+
+        //!
+        SCI_COUNTCODEUNITS = 2715,
+
+        //!
+        SCI_POSITIONRELATIVECODEUNITS = 2716,
+
+        //!
+        SCI_GETNAMEDSTYLES = 4029,
+
+        //!
+        SCI_NAMEOFSTYLE = 4030,
+
+        //!
+        SCI_TAGSOFSTYLE = 4031,
+
+        //!
+        SCI_DESCRIPTIONOFSTYLE = 4032,
+
+        //!
+        SCI_GETMOVEEXTENDSSELECTION = 2706,
+
+        //!
+        SCI_SETCOMMANDEVENTS = 2717,
+
+        //!
+        SCI_GETCOMMANDEVENTS = 2718,
+
+        //!
+        SCI_GETDOCUMENTOPTIONS = 2379,
     };
+
+	enum
+	{
+		SC_AC_FILLUP = 1,
+		SC_AC_DOUBLECLICK = 2,
+		SC_AC_TAB = 3,
+		SC_AC_NEWLINE = 4,
+		SC_AC_COMMAND = 5,
+	};
 
     enum
     {
@@ -2296,6 +2410,13 @@ public:
 
     enum
     {
+        SC_DOCUMENTOPTION_DEFAULT = 0x0000,
+        SC_DOCUMENTOPTION_STYLES_NONE = 0x0001,
+        SC_DOCUMENTOPTION_TEXT_LARGE = 0x0100,
+    };
+
+    enum
+    {
         SC_EFF_QUALITY_MASK = 0x0f,
         SC_EFF_QUALITY_DEFAULT = 0,
         SC_EFF_QUALITY_NON_ANTIALIASED = 1,
@@ -2305,8 +2426,23 @@ public:
 
     enum
     {
+        SC_IDLESTYLING_NONE = 0,
+        SC_IDLESTYLING_TOVISIBLE = 1,
+        SC_IDLESTYLING_AFTERVISIBLE = 2,
+        SC_IDLESTYLING_ALL = 3,
+    };
+
+    enum
+    {
         SC_IME_WINDOWED = 0,
         SC_IME_INLINE = 1,
+    };
+
+    enum
+    {
+        SC_LINECHARACTERINDEX_NONE = 0,
+        SC_LINECHARACTERINDEX_UTF32 = 1,
+        SC_LINECHARACTERINDEX_UTF16 = 2,
     };
 
     enum
@@ -2325,6 +2461,13 @@ public:
     {
         SC_MULTIPASTE_ONCE = 0,
         SC_MULTIPASTE_EACH = 1
+    };
+
+    enum
+    {
+        SC_POPUP_NEVER = 0,
+        SC_POPUP_ALL = 1,
+        SC_POPUP_TEXT = 2,
     };
 
     //! This enum defines the different selection modes.
@@ -2379,16 +2522,24 @@ public:
 
     enum
     {
+        SCTD_LONGARROW = 0,
+        SCTD_STRIKEOUT = 1,
+    };
+
+    enum
+    {
         SCVS_NONE = 0,
         SCVS_RECTANGULARSELECTION = 1,
-        SCVS_USERACCESSIBLE = 2
+        SCVS_USERACCESSIBLE = 2,
+        SCVS_NOWRAPLINESTART = 4,
     };
 
     enum
     {
         SCWS_INVISIBLE = 0,
         SCWS_VISIBLEALWAYS = 1,
-        SCWS_VISIBLEAFTERINDENT = 2
+        SCWS_VISIBLEAFTERINDENT = 2,
+        SCWS_VISIBLEONLYININDENT = 3,
     };
 
     enum
@@ -2553,7 +2704,11 @@ public:
         SC_MARGIN_TEXT = 4,
 
         //! The margin will display right justified text.
-        SC_MARGIN_RTEXT = 5
+        SC_MARGIN_RTEXT = 5,
+
+        //! The margin's background color will be set to the color set by
+        //! SCI_SETMARGINBACKN.
+        SC_MARGIN_COLOUR = 6,
     };
 
     enum
@@ -2565,6 +2720,7 @@ public:
         STYLE_CONTROLCHAR = 36,
         STYLE_INDENTGUIDE = 37,
         STYLE_CALLTIP = 38,
+        STYLE_FOLDDISPLAYTEXT = 39,
         STYLE_LASTPREDEFINED = 39,
         STYLE_MAX = 255
     };
@@ -2582,6 +2738,8 @@ public:
         SC_CHARSET_MAC = 77,
         SC_CHARSET_OEM = 255,
         SC_CHARSET_RUSSIAN = 204,
+        SC_CHARSET_OEM866 = 866,
+        SC_CHARSET_CYRILLIC = 1251,
         SC_CHARSET_SHIFTJIS = 128,
         SC_CHARSET_SYMBOL = 2,
         SC_CHARSET_TURKISH = 162,
@@ -2597,7 +2755,8 @@ public:
     {
         SC_CASE_MIXED = 0,
         SC_CASE_UPPER = 1,
-        SC_CASE_LOWER = 2
+        SC_CASE_LOWER = 2,
+        SC_CASE_CAMEL = 3,
     };
 
     //! This enum defines the different indentation guide views.
@@ -2644,6 +2803,10 @@ public:
         INDIC_COMPOSITIONTHIN = 15,
         INDIC_FULLBOX = 16,
         INDIC_TEXTFORE = 17,
+        INDIC_POINT = 18,
+        INDIC_POINTCHARACTER = 19,
+        INDIC_GRADIENT = 20,
+        INDIC_GRADIENTCENTRE = 21,
 
         INDIC_IME = 32,
         INDIC_IME_MAX = 35,
@@ -2666,7 +2829,8 @@ public:
         SC_PRINT_INVERTLIGHT = 1,
         SC_PRINT_BLACKONWHITE = 2,
         SC_PRINT_COLOURONWHITE = 3,
-        SC_PRINT_COLOURONWHITEDEFAULTBG = 4
+        SC_PRINT_COLOURONWHITEDEFAULTBG = 4,
+        SC_PRINT_SCREENCOLOURS = 5,
     };
 
     enum
@@ -2677,6 +2841,13 @@ public:
         SCFIND_REGEXP = 0x00200000,
         SCFIND_POSIX = 0x00400000,
         SCFIND_CXX11REGEX = 0x00800000,
+    };
+
+    enum
+    {
+        SC_FOLDDISPLAYTEXT_HIDDEN = 0,
+        SC_FOLDDISPLAYTEXT_STANDARD = 1,
+        SC_FOLDDISPLAYTEXT_BOXED = 2,
     };
 
     enum
@@ -2720,7 +2891,8 @@ public:
     {
         SC_WRAPINDENT_FIXED = 0,
         SC_WRAPINDENT_SAME = 1,
-        SC_WRAPINDENT_INDENT = 2
+        SC_WRAPINDENT_INDENT = 2,
+        SC_WRAPINDENT_DEEPINDENT = 3,
     };
 
     enum
@@ -2750,7 +2922,8 @@ public:
     {
         EDGE_NONE = 0,
         EDGE_LINE = 1,
-        EDGE_BACKGROUND = 2
+        EDGE_BACKGROUND = 2,
+        EDGE_MULTILINE = 3,
     };
 
     enum
@@ -3225,6 +3398,25 @@ public:
 
         //! Select the Tektronix extended hex lexer.
         SCLEX_TEHEX = 119,
+
+        //! Select the JSON hex lexer.
+        SCLEX_JSON = 120,
+
+        //! Select the EDIFACT lexer.
+        SCLEX_EDIFACT = 121,
+
+        //! Select the pseudo-lexer used for the indentation-based folding of
+        //! files.
+        SCLEX_INDENT = 122,
+
+        //! Select the Maxima lexer.
+        SCLEX_MAXIMA = 123,
+
+        //! Select the Stata lexer.
+        SCLEX_STATA = 124,
+
+        //! Select the SAS lexer.
+        SCLEX_SAS = 125,
     };
 
     enum
@@ -3285,6 +3477,16 @@ public:
     //! aren't associated with a particular instance.
     static QsciScintillaBase *pool();
 
+    //! Replaces the existing horizontal scroll bar with \a scrollBar.  The
+    //! existing scroll bar is deleted.  This should be called instead of
+    //! QAbstractScrollArea::setHorizontalScrollBar().
+    void replaceHorizontalScrollBar(QScrollBar *scrollBar);
+
+    //! Replaces the existing vertical scroll bar with \a scrollBar.  The
+    //! existing scroll bar is deleted.  This should be called instead of
+    //! QAbstractScrollArea::setHorizontalScrollBar().
+    void replaceVerticalScrollBar(QScrollBar *scrollBar);
+
     //! Send the Scintilla message \a msg with the optional parameters \a
     //! wParam and \a lParam.
     long SendScintilla(unsigned int msg, unsigned long wParam = 0,
@@ -3295,7 +3497,7 @@ public:
             void *lParam) const;
 
     //! \overload
-    long SendScintilla(unsigned int msg, unsigned long wParam,
+    long SendScintilla(unsigned int msg, uintptr_t wParam,
             const char *lParam) const;
 
     //! \overload
@@ -3355,20 +3557,42 @@ signals:
     //! auto-completion list is active.
     void SCN_AUTOCCHARDELETED();
 
+    //! This signal is emitted after an auto-completion has inserted its text.
+    //! \a selection is the text of the selection.  \a position is the start
+    //! position of the word being completed.  \a ch is the fillup character
+    //! that triggered the selection if method is SC_AC_FILLUP.  \a method is
+    //! the method used to trigger the selection.
+    //!
+    //! \sa SCN_AUTOCCANCELLED(), SCN_AUTOCSELECTION()
+    void SCN_AUTOCCOMPLETED(const char *selection, int position, int ch, int method);
+
     //! This signal is emitted when the user selects an item in an
     //! auto-completion list.  It is emitted before the selection is inserted.
     //! The insertion can be cancelled by sending an SCI_AUTOCANCEL message
     //! from a connected slot.
-    //! \a selection is the text of the selection.
-    //! \a position is the start position of the word being completed.
+    //! \a selection is the text of the selection.  \a position is the start
+    //! position of the word being completed.  \a ch is the fillup character
+    //! that triggered the selection if method is SC_AC_FILLUP.  \a method is
+    //! the method used to trigger the selection.
     //!
-    //! \sa SCN_AUTOCCANCELLED()
+    //! \sa SCN_AUTOCCANCELLED(), SCN_AUTOCCOMPLETED()
+    void SCN_AUTOCSELECTION(const char *selection, int position, int ch, int method);
+
+    //! \overload
     void SCN_AUTOCSELECTION(const char *selection, int position);
+
+    //! This signal is emitted when the user highlights an item in an
+    //! auto-completion or user list.
+    //! \a selection is the text of the selection.  \a id is an identifier for
+    //! the list which was passed as an argument to the SCI_USERLISTSHOW
+    //! message or 0 if the list is an auto-completion list.  \a position is
+    //! the position that the list was displayed at.
+    void SCN_AUTOCSELECTIONCHANGE(const char *selection, int id, int position);
 
     //! This signal is emitted when the document has changed for any reason.
     void SCEN_CHANGE();
 
-    //! This signal ir emitted when the user clicks on a calltip.
+    //! This signal is emitted when the user clicks on a calltip.
     //! \a direction is 1 if the user clicked on the up arrow, 2 if the user
     //! clicked on the down arrow, and 0 if the user clicked elsewhere.
     void SCN_CALLTIPCLICK(int direction);
@@ -3386,11 +3610,23 @@ signals:
     //! when the user double clicked.
     void SCN_DOUBLECLICK(int position, int line, int modifiers);
 
-    //!
-    void SCN_DWELLEND(int, int, int);
+    //! This signal is emitted when the user moves the mouse (or presses a key)
+    //! after keeping it in one position for the dwell period.
+    //! \a position is the position in the text where the mouse dwells.
+    //! \a x is the x-coordinate where the mouse dwells.  \a y is the
+    //! y-coordinate where the mouse dwells.
+    //! 
+    //! \sa SCN_DWELLSTART, SCI_SETMOUSEDWELLTIME
+    void SCN_DWELLEND(int position, int x, int y);
 
+    //! This signal is emitted when the user keeps the mouse in one position
+    //! for the dwell period.
+    //! \a position is the position in the text where the mouse dwells.
+    //! \a x is the x-coordinate where the mouse dwells.  \a y is the
+    //! y-coordinate where the mouse dwells.
     //!
-    void SCN_DWELLSTART(int, int, int);
+    //! \sa SCN_DWELLEND, SCI_SETMOUSEDWELLTIME
+    void SCN_DWELLSTART(int position, int x, int y);
 
     //! This signal is emitted when focus is received.
     void SCN_FOCUSIN();
@@ -3447,6 +3683,16 @@ signals:
     //! \sa SCI_GETMARGINSENSITIVEN, SCI_SETMARGINSENSITIVEN
     void SCN_MARGINCLICK(int position, int modifiers, int margin);
 
+    //! This signal is emitted when the user right-clicks on a sensitive
+    //! margin.  \a position is the position of the start of the line against
+    //! which the user clicked.
+    //! \a modifiers is the logical or of the modifier keys that were pressed
+    //! when the user clicked.
+    //! \a margin is the number of the margin the user clicked in: 0, 1 or 2.
+    //! 
+    //! \sa SCI_GETMARGINSENSITIVEN, SCI_SETMARGINSENSITIVEN
+    void SCN_MARGINRIGHTCLICK(int position, int modifiers, int margin);
+
     //!
     void SCN_MODIFIED(int, int, const char *, int, int, int, int, int, int, int);
 
@@ -3484,14 +3730,32 @@ signals:
     //! \sa SCI_COLOURISE, SCI_GETENDSTYLED
     void SCN_STYLENEEDED(int position);
 
+    //! This signal is emitted when a URI is dropped.
+    //! \a url is the value of the URI.
+    void SCN_URIDROPPED(const QUrl &url);
+
     //! This signal is emitted when either the text or styling of the text has
     //! changed or the selection range or scroll position has changed.
     //! \a updated contains the set of SC_UPDATE_* flags describing the changes
     //! since the signal was last emitted.
     void SCN_UPDATEUI(int updated);
 
+    //! This signal is emitted when the user selects an item in a user list.
+    //! \a selection is the text of the selection.  \a id is an identifier for
+    //! the list which was passed as an argument to the SCI_USERLISTSHOW
+    //! message and must be at least 1.  \a ch is the fillup character that
+    //! triggered the selection if method is SC_AC_FILLUP.  \a method is the
+    //! method used to trigger the selection.  \a position is the position that
+    //! the list was displayed at.
     //!
-    void SCN_USERLISTSELECTION(const char *, int);
+    //! \sa SCI_USERLISTSHOW, SCN_AUTOCSELECTION()
+    void SCN_USERLISTSELECTION(const char *selection, int id, int ch, int method, int position);
+
+    //! \overload
+    void SCN_USERLISTSELECTION(const char *selection, int id, int ch, int method);
+
+    //! \overload
+    void SCN_USERLISTSELECTION(const char *selection, int id);
 
     //!
     void SCN_ZOOM();
@@ -3522,6 +3786,9 @@ protected:
     //!
     //! \sa canInsertFromMimeData(), fromMimeData()
     virtual QMimeData *toMimeData(const QByteArray &text, bool rectangular) const;
+
+    //! \reimp
+    virtual void changeEvent(QEvent *e);
 
     //! Re-implemented to handle the context menu.
     virtual void contextMenuEvent(QContextMenuEvent *e);
@@ -3589,10 +3856,12 @@ protected:
     //! \internal Convert encoded bytes to a QString.
     QString bytesAsText(const char *bytes) const;
 
+    //! \internal A helper for QsciScintilla::contextMenuEvent().
+    bool contextMenuNeeded(int x, int y) const;
+
 private slots:
     void handleVSb(int value);
     void handleHSb(int value);
-    void handleSelection();
 
 private:
     // This is needed to allow QsciScintillaQt to emit this class's signals.
@@ -3608,14 +3877,15 @@ private:
     bool clickCausedFocus;
 #endif
 
+    void connectHorizontalScrollBar();
+    void connectVerticalScrollBar();
+
     void acceptAction(QDropEvent *e);
+
+    int eventModifiers(QMouseEvent *e);
 
     QsciScintillaBase(const QsciScintillaBase &);
     QsciScintillaBase &operator=(const QsciScintillaBase &);
 };
-
-#ifdef __APPLE__
-}
-#endif
 
 #endif

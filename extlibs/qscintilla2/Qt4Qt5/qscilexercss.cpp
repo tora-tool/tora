@@ -1,6 +1,6 @@
 // This module implements the QsciLexerCSS class.
 //
-// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2019 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -254,6 +254,9 @@ QString QsciLexerCSS::description(int style) const
 
     case Value:
         return tr("Value");
+
+    case Comment:
+        return tr("Comment");
 
     case IDSelector:
         return tr("ID selector");

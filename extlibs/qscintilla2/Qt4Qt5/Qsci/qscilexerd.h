@@ -1,6 +1,6 @@
 // This defines the interface to the QsciLexerD class.
 //
-// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2019 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -20,10 +20,6 @@
 
 #ifndef QSCILEXERD_H
 #define QSCILEXERD_H
-
-#ifdef __APPLE__
-extern "C++" {
-#endif
 
 #include <QObject>
 
@@ -242,9 +238,5 @@ private:
     QsciLexerD(const QsciLexerD &);
     QsciLexerD &operator=(const QsciLexerD &);
 };
-
-#ifdef __APPLE__
-}
-#endif
 
 #endif

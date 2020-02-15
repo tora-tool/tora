@@ -1,6 +1,6 @@
 // This defines the interface to the QsciLexerXML class.
 //
-// Copyright (c) 2015 Riverbank Computing Limited <info@riverbankcomputing.com>
+// Copyright (c) 2019 Riverbank Computing Limited <info@riverbankcomputing.com>
 // 
 // This file is part of QScintilla.
 // 
@@ -20,10 +20,6 @@
 
 #ifndef QSCILEXERXML_H
 #define QSCILEXERXML_H
-
-#ifdef __APPLE__
-extern "C++" {
-#endif
 
 #include <QObject>
 
@@ -106,9 +102,5 @@ private:
     QsciLexerXML(const QsciLexerXML &);
     QsciLexerXML &operator=(const QsciLexerXML &);
 };
-
-#ifdef __APPLE__
-}
-#endif
 
 #endif
