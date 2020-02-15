@@ -90,6 +90,8 @@ protected:
 
 private:
     QModelIndex contextMenuIndex;
+
+    bool m_columnsResized;
 };
 
 template<typename _T>
