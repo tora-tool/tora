@@ -77,6 +77,18 @@ toWorksheetText::toWorksheetText(toWorksheet *worksheet, QWidget *parent, const 
     }
     QsciScintilla::setAutoIndent(true);
 
+    /* it is possible to select multiple ranges by holding down the Ctrl key while dragging with the mouse */
+    SendScintilla(QsciScintilla::SCI_SETMULTIPLESELECTION, true);
+
+    /*  When pasting into multiple selections,
+     * the pasted text can go into just the main selection with SC_MULTIPASTE_ONCE=0
+     * or into each selection with SC_MULTIPASTE_EACH=1. SC_MULTIPASTE_ONCE is the default. */
+    SendScintilla(QsciScintilla::SCI_SETMULTIPASTE, 1);
+    /*  Whether typing, new line, cursor left/right/up/down,
+     * backspace, delete, home, and end work with multiple selections simultaneously.
+     * Also allows selection and word and line deletion commands. */
+    SendScintilla(QsciScintilla::SCI_SETADDITIONALSELECTIONTYPING, true);
+
     setCaretAlpha();
     connect(&m_caretVisible, SIGNAL(valueChanged(QVariant const&)), this, SLOT(setCaretAlpha()));
     connect(&m_caretAlpha, SIGNAL(valueChanged(QVariant const&)), this, SLOT(setCaretAlpha()));
