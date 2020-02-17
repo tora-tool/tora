@@ -55,11 +55,12 @@ public slots:
     void refresh(void);
     void changeCharts(int val);
     void changeConnection(void);
-    void poll(void);
-private slots:
-    void queryDone(void);
-private:
+    void receiveData(toEventQuery*);
 
+private slots:
+    void queryDone(toEventQuery *, unsigned long);
+
+private:
     QWidget *TablespaceTime;
     QWidget *TablespaceReads;
     QWidget *FileTime;

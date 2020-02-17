@@ -72,14 +72,15 @@ void toResultLine::query(const QString &sql, const toQueryParams &param)
     try
     {
         Query = new toEventQuery(this, connection(), sql, param, toEventQuery::READ_ALL);
-        connect(Query, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(poll()));
+
+        connect(Query, &toEventQuery::dataAvailable, this, &toResultLine::receiveData);
         connect(Query, SIGNAL(done(toEventQuery*, unsigned long)), this, SLOT(queryDone()));
         Query->start();
     }
     TOCATCH
 }
 
-void toResultLine::poll(void)
+void toResultLine::receiveData(toEventQuery*)
 {
     try
     {

@@ -124,7 +124,7 @@ class toResultLine : public toLineChart, public toResult
          */
         void addMenues(QMenu *) override;
     private slots:
-        void poll(void);
+        void receiveData(toEventQuery*);
         void queryDone(void);
         void editSQL(void);
 

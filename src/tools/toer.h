@@ -67,7 +67,7 @@ class toERSchema : public toToolWidget
         void closeEvent(QCloseEvent *event);
 
     public slots:
-        void slotPoll(toEventQuery *e);
+        void receiveData(toEventQuery *e);
 
     private slots:
         void slotExecute(void);

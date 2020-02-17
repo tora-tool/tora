@@ -85,9 +85,8 @@ class toResultStorage : public toResultView
         virtual void query(const QString &sql, toQueryParams const& param);
 
     private slots:
-        void slotPollFiles(void);
-
-        void slotPollTablespaces(void);
+        void receiveFilesData(toEventQuery*);
+        void receiveTablespaceData(toEventQuery*);
 
         void slotDoneFiles(void);
 

@@ -84,8 +84,6 @@ class toResultLock
 //        , public toResult
 {
         Q_OBJECT
-
-        toEventQuery *Query;
     public:
         toResultLock(QWidget *parent, const char *name = "toResultLock");
         ~toResultLock();

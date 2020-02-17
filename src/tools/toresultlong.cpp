@@ -91,7 +91,7 @@ void toResultLong::query(const QString &sql, const toQueryParams &param)
                                  //, Statistics
                                  , toEventQuery::READ_ALL
                                 );
-        connect(Query, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(slotAddItem()));
+        connect(Query, &toEventQuery::dataAvailable, this, &toResultLong::receiveData);
         connect(Query, SIGNAL(done(toEventQuery*, unsigned long)), this, SLOT(slotQueryDone()));
         if (ReadAll)
         {
@@ -132,7 +132,7 @@ void toResultLong::editReadAll(void)
     }
 }
 
-void toResultLong::slotAddItem(void)
+void toResultLong::receiveData(toEventQuery*)
 {
     if (!Utils::toCheckModal(this))
         return;

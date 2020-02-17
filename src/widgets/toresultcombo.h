@@ -1,4 +1,4 @@
-
+#pragma once
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  *
  * TOra - An Oracle Toolkit for DBA's and developers
@@ -32,9 +32,6 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TORESULTCOMBO_H
-#define TORESULTCOMBO_H
-
 
 #include "core/toresult.h"
 
@@ -48,7 +45,6 @@ class toSQL;
 /** This widget displays the result of a query where each field is added as an item
  * to a combobox.
  */
-
 class toResultCombo : public QComboBox, public toResult
 {
     private:
@@ -117,7 +113,7 @@ class toResultCombo : public QComboBox, public toResult
         virtual void slotQueryDone(void);
 
     private slots:
-        void slotPoll(void);
+        void receiveData(void);
         void slotChangeSelected(void);
 
     protected:
@@ -127,5 +123,3 @@ class toResultCombo : public QComboBox, public toResult
         bool SelectedFound;       // Selected field was either retrieved from DB(true) or is member of Additional fields(false)
         toEventQuery *Query;
 };
-
-#endif

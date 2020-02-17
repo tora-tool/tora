@@ -204,8 +204,8 @@ void toResultStats::slotRefreshStats(bool reset)
                                  , args
                                  , toEventQuery::READ_ALL
                                 );
-        connect(Query, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(slotPollQuery()));
-        connect(Query, SIGNAL(done(toEventQuery*, unsigned long)), this, SLOT(slotQueryDone()));
+        auto c1 = connect(Query, &toEventQuery::dataAvailable, this, &toResultStats::receiveStatisticNamesData);
+        auto c2 = connect(Query, &toEventQuery::done, this, &toResultStats::queryStatisticNamesDone);
         Query->start();
 
         if (!System)
@@ -216,8 +216,8 @@ void toResultStats::slotRefreshStats(bool reset)
                                          , args
                                          , toEventQuery::READ_ALL
                                         );
-            connect(SessionIO, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(slotPollSystem()));
-            connect(SessionIO, SIGNAL(done(toEventQuery*, unsigned long)), this, SLOT(slotSystemDone()));
+            auto c1 = connect(Query, &toEventQuery::dataAvailable, this, &toResultStats::receiveStatisticValuesData);
+            auto c2 = connect(Query, &toEventQuery::done, this, &toResultStats::queryStatisticsValuesDone);
             SessionIO->start();
         }
 
@@ -227,7 +227,7 @@ void toResultStats::slotRefreshStats(bool reset)
     TOCATCH
 }
 
-void toResultStats::slotPollQuery(void)
+void toResultStats::receiveStatisticNamesData(toEventQuery*)
 {
     if (!Utils::toCheckModal(this))
         return;
@@ -252,14 +252,14 @@ void toResultStats::slotPollQuery(void)
     }
 } // pollQuery
 
-void toResultStats::slotQueryDone(void)
+void toResultStats::queryStatisticNamesDone(toEventQuery*, unsigned long)
 {
     delete Query;
     Query = NULL;
     resizeColumnsToContents();
 } // queryDone
 
-void toResultStats::slotPollSystem(void)
+void toResultStats::receiveStatisticValuesData(toEventQuery*)
 {
     if (!Utils::toCheckModal(this))
         return;
@@ -287,7 +287,7 @@ void toResultStats::slotPollSystem(void)
     }
 } // pollSystem
 
-void toResultStats::slotSystemDone(void)
+void toResultStats::queryStatisticsValuesDone(toEventQuery*, unsigned long)
 {
     delete SessionIO;
     SessionIO = NULL;
