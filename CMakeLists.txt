@@ -39,6 +39,8 @@ OPTION(TEST_APP13 "parser/indenter" ON)
 OPTION(TEST_APP14 "xdot viewver" ON)
 OPTION(TEST_APP15 "cmdline SQL indenter" ON)
 OPTION(TEST_APP16 "cmdline SQL converter" ON)
+OPTION(TEST_APP17 "cmdline qdecimal" ON)
+OPTION(TEST_APP18 "TOMVC" ON)
 
 #Set our CMake minimum version
 #Require 2.4.2 for Qt finding
@@ -220,6 +222,7 @@ find_package(Qt5PrintSupport REQUIRED)
 find_package(Qt5Sql REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Xml REQUIRED)
+find_package(Qt5Test REQUIRED)
 find_package(Qt5LinguistTools)
 IF(APPLE)
   find_package(Qt5MacExtras REQUIRED)
