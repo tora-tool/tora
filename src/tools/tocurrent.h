@@ -109,8 +109,8 @@ class toCurrent : public toToolWidget
 
     public slots:
         void slotRefresh(void);
-        void slotPoll(void);
-        void slotQueryDone();
+        void receiveData(toEventQuery*);
+        void queryDone();
 };
 
 #endif

@@ -272,7 +272,6 @@ void toEventQuery::slotData(const ValuesList &values)
     // TODO: this signal can also be emitted asynchronically
     // from QTime - once per second
     emit dataAvailable(this);
-    emit dataAvailable(this, Values);
 }
 
 void toEventQuery::slotDesc(toQColumnDescriptionList &desc, int columns)
@@ -283,7 +282,6 @@ void toEventQuery::slotDesc(toQColumnDescriptionList &desc, int columns)
     Q_ASSERT_X(columns >= 0 , qPrintable(__QHERE__), " invalid number of columns for a result");
     ColumnCount = columns;
     emit descriptionAvailable(this);
-    emit descriptionAvailable(this, Description);
 }
 
 void toEventQuery::slotError(const toConnection::exception &msg)

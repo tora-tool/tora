@@ -64,10 +64,12 @@ toEventQuery* toEventQueryObserverObject::query()
     return m_eventQuery;
 }
 
-void toEventQueryObserverObject::eqDescriptionAvailable(toEventQuery *query, const toQColumnDescriptionList &desc)
+void toEventQueryObserverObject::eqDescriptionAvailable(toEventQuery *query)
 {
     Q_ASSERT_X(m_eventQuery != NULL , qPrintable(__QHERE__), " phantom data");
     Q_ASSERT_X(m_eventQuery == query, qPrintable(__QHERE__), " unknown data source");
+
+    toQColumnDescriptionList const&desc = query->describe();
 
     // TODO to be moved into Policy class (tomvc.h)
     toQueryAbstr::HeaderList headers;
