@@ -51,7 +51,7 @@ class toTableModelPriv;
 #include "widgets/totreeview.h"
 
 #if 1
-namespace Sessions
+namespace XSessions
 {
     struct Traits : public MVCTraits
     {
@@ -65,7 +65,7 @@ namespace Sessions
     class MVC
             : public TOMVC
               <
-              ::Sessions::Traits,
+              ::XSessions::Traits,
               Views::DefaultTableViewPolicy,
               ::DefaultDataProviderPolicy
               >
@@ -73,7 +73,7 @@ namespace Sessions
         Q_OBJECT;
     public:
         typedef TOMVC<
-                ::Sessions::Traits,
+                ::XSessions::Traits,
                  Views::DefaultTableViewPolicy,
                 ::DefaultDataProviderPolicy
                   > _s;
@@ -86,12 +86,14 @@ namespace Sessions
 /**
  * A result table displaying information about sessions
  */
-class toResultSessions: public Sessions::MVC
+class toResultXSessions: public XSessions::MVC
 {
     Q_OBJECT;
 
 public:
-    toResultSessions(QWidget *parent, const char *name = NULL);
+    toResultXSessions(QWidget *parent, const char *name = NULL)
+    : XSessions::MVC(parent)
+    {}
 };
 #endif
 
