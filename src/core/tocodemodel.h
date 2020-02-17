@@ -132,7 +132,7 @@ class toCodeModel : public QAbstractItemModel
 
     private slots:
         void cleanup(void);
-        void readData(void);
+        void receiveData(toEventQuery*);
         void queryError(const toConnection::exception &);
 
     private:

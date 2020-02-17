@@ -875,14 +875,14 @@ void toTemplateSQLObject::expand(void)
                                  , toQueryParams()
                                  , toEventQuery::READ_ALL
                                 );
-        connect(Query, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(poll()));
-        connect(Query, SIGNAL(done(toEventQuery*,unsigned long)), this, SLOT(queryDone()));
+        connect(Query, &toEventQuery::dataAvailable, this, &toTemplateSQLObject::receiveData);
+        connect(Query, &toEventQuery::done, this, [=](toEventQuery*, unsigned long){ queryDone(); });
         Query->start();
     }
     TOCATCH
 }
 
-void toTemplateSQLObject::poll(void)
+void toTemplateSQLObject::receiveData(toEventQuery*)
 {
     if (QApplication::activeModalWidget()) // Template is never in widget
         return;

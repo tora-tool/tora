@@ -32,8 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef __TOPROVIDEROBSERVER_H__
-#define __TOPROVIDEROBSERVER_H__
+#pragma once
 
 #include "core/toeventquery.h"
 #include "core/totablemodel.h"
@@ -42,7 +41,7 @@
 
 class toEventQueryObserverObject : public QObject, toEventQuery::Client
 {
-        Q_OBJECT;
+    Q_OBJECT;
     public:
         class Observer
         {
@@ -71,9 +70,7 @@ class toEventQueryObserverObject : public QObject, toEventQuery::Client
 //	template<class Traits>
 //	typename Traits::Model* model() const;
 
-    protected:
-
-    private slots:
+    public slots:
         /**
          * @name toEventQuery::Client
          * toEventQuery::Client interface implementation
@@ -82,7 +79,7 @@ class toEventQueryObserverObject : public QObject, toEventQuery::Client
         /**
          * Emitted when header descriptions are available
          */
-        virtual void eqDescriptionAvailable(toEventQuery*, const toQColumnDescriptionList&);
+        virtual void eqDescriptionAvailable(toEventQuery*);
 
         /**
          * Emitted when data has been read.
@@ -122,5 +119,3 @@ class DefaultDataProviderPolicy
 
         void fetchData(Query*);
 };
-
-#endif

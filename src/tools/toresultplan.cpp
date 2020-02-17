@@ -279,8 +279,8 @@ toResultPlanModel::toResultPlanModel(toEventQuery *query, QObject *parent)
 	for (int i = sqlidData.size(); i < Headers.size(); i++) sqlidData << "";
 	rootItem->appendChild(sqlidItem = new toPlanTreeItem("sqlid", sqlidData, rootItem));
 
-    connect(Query, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(slotPoll(toEventQuery*)));
-    connect(Query, SIGNAL(done(toEventQuery*, unsigned long)), this, SLOT(slotQueryDone(toEventQuery*)));
+    connect(Query, &toEventQuery::dataAvailable, this, &toResultPlanModel::receiveData);
+    connect(Query, &toEventQuery::done, this, &toResultPlanModel::slotQueryDone);
     connect(Query, SIGNAL(error(toEventQuery*,toConnection::exception const &)), this, SLOT(slotErrorHanler(toEventQuery*, toConnection::exception  const &)));
 }
 
@@ -572,7 +572,7 @@ void toResultPlanAbstr::queryPlanTable(toQueryParams const& params)
 
     	explainQuery = new toEventQuery(this, LockedConnection, explain, toQueryParams(), toEventQuery::READ_ALL);
         connect(explainQuery, SIGNAL(done(toEventQuery*, unsigned long)), this, SLOT(explainDone(toEventQuery*)));
-        connect(explainQuery, SIGNAL(error(toEventQuery*,toConnection::exception const &)), this, SLOT(slotErrorHanler(toEventQuery*, toConnection::exception  const &)));
+        auto c2 = connect(explainQuery, &toEventQuery::error, this, &toResultPlanAbstr::queryError);
     	Explaining = true;
     	explainQuery->start();
     }
@@ -606,7 +606,7 @@ void toResultPlanAbstr::explainDone(toEventQuery*q)
 #endif
 }
 
-void toResultPlanAbstr::slotErrorHanler(toEventQuery*, toConnection::exception  const &str)
+void toResultPlanAbstr::queryError(toEventQuery*, toConnection::exception  const &str)
 {
 	try
     {
@@ -666,7 +666,7 @@ bool toResultPlanAbstr::canHandle(const toConnection &conn)
         conn.providerIs("QPSQL");
 }
 
-void toResultPlanModel::slotPoll(toEventQuery*Query)
+void toResultPlanModel::receiveData(toEventQuery*Query)
 {
     if (this->Query != Query)
         return;

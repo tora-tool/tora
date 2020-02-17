@@ -70,7 +70,7 @@ class toResultDepend : public toResultView
         virtual void clearData();
 
     public slots:
-        void slotPoll(void);
+        void receiveData(toEventQuery*);
         void slotQueryDone(void);
 
     private:

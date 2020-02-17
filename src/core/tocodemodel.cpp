@@ -452,18 +452,9 @@ void toCodeModel::refresh(toConnection &conn, const QString &owner)
                                  , param
                                  , toEventQuery::READ_FIRST); // really?
 
-        connect(query,
-                SIGNAL(dataAvailable(toEventQuery*)),
-                this,
-                SLOT(readData()));
-        connect(query,
-                SIGNAL(error(toEventQuery*, const toConnection::exception &)),
-                this,
-                SLOT(queryError(const toConnection::exception &)));
-        connect(query,
-                SIGNAL(done(toEventQuery*, unsigned long)),
-                this,
-                SLOT(readData()));
+        auto c1 = connect(query, &toEventQuery::dataAvailable, this, &toCodeModel::receiveData);
+        auto c2 = connect(query, &toEventQuery::error, this, [=](toEventQuery*, const toConnection::exception &e){ queryError(e); });
+        auto c3 = connect(query, &toEventQuery::done, this, [=](toEventQuery *, unsigned long) { cleanup();});
 
         query->start();
     }
@@ -520,7 +511,7 @@ void toCodeModel::cleanup()
     query = 0;
 }
 
-void toCodeModel::readData()
+void toCodeModel::receiveData(toEventQuery*)
 {
     if (!query)
     {

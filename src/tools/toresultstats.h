@@ -113,10 +113,10 @@ class toResultStats : public toResultView
         void slotRefreshStats(bool reset = true);
 
     private slots:
-        void slotPollQuery(void);
-        void slotQueryDone(void);
-        void slotPollSystem(void);
-        void slotSystemDone(void);
+        void receiveStatisticNamesData(toEventQuery*);
+        void receiveStatisticValuesData(toEventQuery*);
+        void queryStatisticNamesDone(toEventQuery*, unsigned long);
+        void queryStatisticsValuesDone(toEventQuery*, unsigned long);
 
     private:
         /** Setup widget.

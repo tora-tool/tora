@@ -658,7 +658,7 @@ void toResultStorage::query(const QString &sql, toQueryParams const& param)
                                        , toSQL::string(ShowCoalesced ? SQLShowCoalesced : SQLNoShowCoalesced, connection())
                                        , args
                                        , toEventQuery::READ_ALL);
-        connect(Tablespaces, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(slotPollTablespaces()));
+        auto c1 = connect(Files, &toEventQuery::dataAvailable, this, &toResultStorage::receiveTablespaceData);
         connect(Tablespaces, SIGNAL(done(toEventQuery*, unsigned long)), this, SLOT(slotDoneTablespaces()));
         Tablespaces->start();
 
@@ -667,7 +667,7 @@ void toResultStorage::query(const QString &sql, toQueryParams const& param)
                                  , toSQL::string(SQLDatafile, connection())
                                  , args
                                  , toEventQuery::READ_ALL);
-        connect(Files, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(slotPollFiles()));
+        auto c2 = connect(Files, &toEventQuery::dataAvailable, this, &toResultStorage::receiveFilesData);
         connect(Files, SIGNAL(done(toEventQuery*, unsigned long)), this, SLOT(slotDoneFiles()));
         Files->start();
     }
@@ -756,7 +756,7 @@ void toResultStorage::updateList(void)
     setSortingEnabled(true);
 }
 
-void toResultStorage::slotPollTablespaces(void)
+void toResultStorage::receiveTablespaceData(toEventQuery*)
 {
     try
     {
@@ -787,7 +787,7 @@ void toResultStorage::slotDoneTablespaces(void)
         updateList();
 } // doneTablespaces
 
-void toResultStorage::slotPollFiles(void)
+void toResultStorage::receiveFilesData(toEventQuery*)
 {
     try
     {

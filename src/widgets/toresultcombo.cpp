@@ -82,8 +82,9 @@ void toResultCombo::query(const QString &sql, toQueryParams const& param)
                 Query = NULL;
             }
             Query = new toEventQuery(this, connection(), sql, param, toEventQuery::READ_ALL);
-            connect(Query, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(slotPoll()));
-            connect(Query, SIGNAL(done(toEventQuery*, unsigned long)), this, SLOT(slotQueryDone()));
+            auto c1 = connect(Query, &toEventQuery::dataAvailable, this, &toResultCombo::receiveData);
+            auto c2 = connect(Query, &toEventQuery::done, this, [=](toEventQuery *q, unsigned long) { slotQueryDone(); });
+            //connect(Query, SIGNAL(done(toEventQuery*, unsigned long)), this, SLOT(slotQueryDone()));
             Query->start();
         }
     }
@@ -131,7 +132,7 @@ void toResultCombo::refresh(void)
     toResult::refresh();
 }
 
-void toResultCombo::slotPoll(void)
+void toResultCombo::receiveData(void)
 {
     try
     {

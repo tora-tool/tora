@@ -113,7 +113,7 @@ void toResultDepend::query(const QString &sql, toQueryParams const& param)
                                  , toSQL::string(SQLResultDepend, connection())
                                  , param
                                  , toEventQuery::READ_ALL);
-        connect(Query, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(slotPoll()));
+        auto c1 = connect(Query, &toEventQuery::dataAvailable, this, &toResultDepend::receiveData);
         connect(Query, SIGNAL(done(toEventQuery*,unsigned long)), this, SLOT(slotQueryDone()));
         Query->start();
     }
@@ -125,7 +125,7 @@ void toResultDepend::clearData()
     clear();
 }
 
-void toResultDepend::slotPoll(void)
+void toResultDepend::receiveData(toEventQuery*)
 {
     try
     {
@@ -197,7 +197,7 @@ void toResultDepend::slotQueryDone(void)
                                  , toSQL::string(SQLResultDepend, connection())
                                  , param
                                  , toEventQuery::READ_ALL);
-        connect(Query, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(slotPoll()));
+        auto c1 = connect(Query, &toEventQuery::dataAvailable, this, &toResultDepend::receiveData);
         connect(Query, SIGNAL(done(toEventQuery*,unsigned long)), this, SLOT(slotQueryDone()));
         Query->start();
     }
