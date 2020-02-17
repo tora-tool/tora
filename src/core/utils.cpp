@@ -649,6 +649,7 @@ namespace Utils
             return str;
 
         QByteArray arr;
+        arr.resize(str.length());
         for (int i = 1; i < str.length(); i += 2)
             // qt4        arr.at(i / 2) = str.mid(i, 2).toInt(0, 16);
             arr[i / 2] = str.mid(i, 2).toInt(0, 16);
