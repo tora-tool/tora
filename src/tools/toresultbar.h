@@ -146,7 +146,7 @@ class toResultBar : public toBarChart, public toResult
          */
         void addMenues(QMenu *) override;
     private slots:
-        void poll(void);
+        void receiveData(toEventQuery*);
         void editSQL(void);
         void queryDone(void);
 };

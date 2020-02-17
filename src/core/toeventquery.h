@@ -77,7 +77,6 @@ class toEventQuery : public QObject
                  * Emitted when header descriptions are available
                  */
                 virtual void eqDescriptionAvailable(toEventQuery*) {};
-                virtual void eqDescriptionAvailable(toEventQuery*, const toQColumnDescriptionList&) {};
 
                 /**
                  * Emitted when data has been read.
@@ -203,14 +202,12 @@ class toEventQuery : public QObject
          * Emitted when header descriptions are available
          */
         void descriptionAvailable(toEventQuery*);
-        void descriptionAvailable(toEventQuery*, const toQColumnDescriptionList&);
 
         /**
          * Emitted when data has been read.
          * @param rows Number of rows to be read
          */
         void dataAvailable(toEventQuery*);
-        void dataAvailable(toEventQuery*, const ValuesList&);
 
         /**
          * Emitted with error string

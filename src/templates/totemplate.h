@@ -287,7 +287,7 @@ class toTemplateSQLObject : public QObject
 
         friend class toTemplateSQL;
     private slots:
-        void poll(void);
+        void receiveData(toEventQuery*);
         void queryDone(void);
 };
 

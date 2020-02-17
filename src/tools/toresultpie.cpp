@@ -58,14 +58,14 @@ void toResultPie::query(const QString &sql, const toQueryParams &param)
     try
     {
         Query = new toEventQuery(this, connection(), sql, param, toEventQuery::READ_ALL);
-        connect(Query, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(poll()));
+        connect(Query, &toEventQuery::dataAvailable, this, &toResultPie::receiveData);
         connect(Query, SIGNAL(done(toEventQuery*, unsigned long)), this, SLOT(queryDone()));
         Query->start();
     }
     TOCATCH
 }
 
-void toResultPie::poll(void)
+void toResultPie::receiveData(toEventQuery*)
 {
     try
     {

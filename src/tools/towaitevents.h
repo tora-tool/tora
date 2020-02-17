@@ -93,7 +93,7 @@ class toWaitEvents : public QWidget
     public slots:
         virtual void connectionChanged(void);
         virtual void changeSelection(void);
-        void slotPoll(toEventQuery*);
+        void receiveData(toEventQuery*);
         void slotQueryDone(toEventQuery*);
         void slotErrorHanler(toEventQuery*, toConnection::exception const &);
         virtual void refresh(void);

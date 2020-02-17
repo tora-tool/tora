@@ -66,8 +66,6 @@ toResultLock::toResultLock(QWidget *parent, const char *name)
 //    setSorting( -1);
 //    setRootIsDecorated(true);
     setSQLName(QString::fromLatin1("toResultLock:Locks"));
-
-    Query = NULL;
 }
 
 toResultLock::~toResultLock()

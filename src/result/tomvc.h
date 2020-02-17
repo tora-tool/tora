@@ -252,12 +252,14 @@ void TOMVC<_T, _VP, _DP>::setQuery(Query *query)
 
     m_observerObject->setQuery(query);
 
-    retval = QObject::connect(query, SIGNAL(descriptionAvailable(toEventQuery*, const toQColumnDescriptionList &))
-                              , m_observerObject, SLOT(eqDescriptionAvailable(toEventQuery*, const toQColumnDescriptionList &)));
+    retval = QObject::connect(query, SIGNAL(descriptionAvailable(toEventQuery*))
+                              , m_observerObject, SLOT(eqDescriptionAvailable(toEventQuery*)));
     Q_ASSERT_X(retval, qPrintable(__QHERE__), "connect failed: descriptionAvailable");
-    retval = QObject::connect(query, SIGNAL(dataAvailable(toEventQuery*))
-                              , m_observerObject, SLOT(eqDataAvailable(toEventQuery*)));
-    Q_ASSERT_X(retval, qPrintable(__QHERE__), "connect failed: dataAvailable");
+
+    //retval = QObject::connect(query, SIGNAL(dataAvailable(toEventQuery*)) , m_observerObject, SLOT(eqDataAvailable(toEventQuery*)));
+    //Q_ASSERT_X(retval, qPrintable(__QHERE__), "connect failed: dataAvailable");
+    connect(query, &Query::dataAvailable, m_observerObject, &ObserverObject::eqDataAvailable);
+
     retval = QObject::connect(query, SIGNAL(error(toEventQuery*, const toConnection::exception &))
                               , m_observerObject, SLOT(eqError(toEventQuery*, const toConnection::exception &)));
     Q_ASSERT_X(retval, qPrintable(__QHERE__), "connect failed: error");
@@ -267,7 +269,7 @@ void TOMVC<_T, _VP, _DP>::setQuery(Query *query)
 
     if (_T::ShowWorkingWidget)
     {
-        retval = QObject::connect(query, SIGNAL(descriptionAvailable(toEventQuery*, const toQColumnDescriptionList &))
+        retval = QObject::connect(query, SIGNAL(descriptionAvailable(toEventQuery*))
                                   , m_workingWidget, SLOT(undisplay()));
         Q_ASSERT_X(retval, qPrintable(__QHERE__), "connect failed: descriptionAvailable");
         retval = QObject::connect(query, SIGNAL(dataAvailable(toEventQuery*))

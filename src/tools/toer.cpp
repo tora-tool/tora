@@ -174,7 +174,7 @@ void toERSchema::slotExecute(void)
                                  , toSQL::sql(SQLALLRefs, conn)
                                  , toQueryParams() << conn.defaultSchema()
                                  , toEventQuery::READ_ALL);
-        connect(Query, SIGNAL(dataAvailable(toEventQuery*)), this, SLOT(slotPoll(toEventQuery*)));
+        connect(Query, &toEventQuery::dataAvailable, this, &toERSchema::receiveData);
         connect(Query, SIGNAL(done(toEventQuery*,unsigned long)), this, SLOT(slotQueryDone()));
         Query->start();
     }
@@ -184,7 +184,7 @@ void toERSchema::slotExecute(void)
     }
 }
 
-void toERSchema::slotPoll(toEventQuery *e)
+void toERSchema::receiveData(toEventQuery *e)
 {
     toQValue c1, c2, c3, c4, c5;
     while (Query->hasMore())

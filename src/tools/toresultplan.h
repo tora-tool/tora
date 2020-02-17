@@ -134,14 +134,14 @@ public:
 
 	QModelIndex rootIndex() const;
 
-	signals:
+signals:
 	/**
 	 * Emitted when query is finished.
 	 */
 	 void queryDone(toEventQuery*);
 
 	 private slots:
-	 void slotPoll(toEventQuery*);
+	 void receiveData(toEventQuery*);
 	 void slotQueryDone(toEventQuery*);
 
 	 protected:
@@ -178,7 +178,7 @@ public:
 	private slots:
 	void queryDone(toEventQuery*);
 	void explainDone(toEventQuery*);
-	void slotErrorHanler(toEventQuery*, toConnection::exception  const &);
+	void queryError(toEventQuery*, toConnection::exception  const &);
 
 	void childComboReady();
 	void childComboChanged(int NewIndex);

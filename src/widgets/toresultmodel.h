@@ -261,9 +261,16 @@ class toResultModel : public QAbstractTableModel
 
     protected slots:
         /**
+         * reads and sets up Headers
+         */
+        void receiveHeaders(toEventQuery*);
+
+        /**
          * Called when query has data available.
          */
-        void slotFetchMore(toEventQuery*);
+        void receiveData(toEventQuery*);
+
+        void queryError(toEventQuery*, const toConnection::exception &);
 
         /**
          * Called when last data piece available.
@@ -276,16 +283,9 @@ class toResultModel : public QAbstractTableModel
         void slotReadData(void);
 
         /**
-         * reads and sets up Headers
-         */
-        void slotReadHeaders(toEventQuery*);
-
-        /**
          * Load all data into model until end of query
          */
         void slotReadAll(void);
-
-        void slotQueryError(toEventQuery*, const toConnection::exception &);
 
     protected:
         void cleanup(void);
