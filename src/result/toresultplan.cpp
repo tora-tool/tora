@@ -42,6 +42,7 @@
 #include <QVBoxLayout>
 #include <QStatusBar>
 
+// TODO This is done by adding '+peeked_binds' to the format argument when using display_cursor().
 static toSQL SQLDisplayCursor("toResultPlan:DisplayCursor",
                               "SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY_CURSOR(:sqlid<char[40],in>, :chld<char[10],in>, :format<char[20],in>))"
                               //" WHERE sys.slow_one() = 1 "

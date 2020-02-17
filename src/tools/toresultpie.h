@@ -110,7 +110,7 @@ signals:
     void done();
 
 private slots:
-    void poll(void);
+    void receiveData(toEventQuery*);
     void queryDone(void);
 
 private:

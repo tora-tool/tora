@@ -138,7 +138,7 @@ class toResultLong : public toResultView
         void slotStop(void);
         /** Reimplemented for internal reasons.
          */
-        virtual void slotAddItem(void);
+        void receiveData(toEventQuery*);
         void slotQueryDone(void);
 };
 
