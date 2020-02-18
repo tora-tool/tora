@@ -1,3 +1,11 @@
+Multi-line edit:
+https://inneka.com/programming/cpp/how-can-i-make-qscintilla-auto-indent-like-sublimetext/
+https://github.com/dail8859/BetterMultiSelection/issues/4
+https://community.notepad-plus-plus.org/topic/13653/new-plugin-bettermultiselection
+http://www.hackerav.com/?post=240237
+https://stackoverflow.com/questions/50355919/how-to-implement-a-comment-feature-that-works-with-multiple-selections-in-qscint
+
+
 Core:
 
 qobject_cast<> vs. dynamic_cast<>
