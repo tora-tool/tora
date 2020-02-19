@@ -56,7 +56,11 @@ toTableView::toTableView(QWidget *parent)
 int toTableView::sizeHintForRow(int row) const
 {
     int s = super::sizeHintForRow(row);
+    auto d1 = this->verticalHeader()->defaultSectionSize();
     if (s > 60) s = 60; // TODO: This should probably be moved to configuration file
+
+    auto m = this->verticalHeader()->sectionResizeMode(row);
+    auto x = this->verticalHeader()->defaultSectionSize();
     return s;
 }
 
@@ -118,8 +122,16 @@ void toTableView::columnWasResized()
     super::resizeRowsToContents();
 }
 
+void toTableView::resizeEvent(QResizeEvent *event)
+{
+    auto old = event->oldSize();
+    auto xew = event->size();
+    super::resizeEvent(event);
+}
+
 void toTableView::applyColumnRules()
 {
+    // Assuming this will called only once from Model::firstResultReceived
     int VisibleColumns(0);
 
     // loop through columns and hide anything starting with a ' '
@@ -134,9 +146,17 @@ void toTableView::applyColumnRules()
         } else {
             VisibleColumns++;
             showColumn(col);
+
+            // inspired from https://centaurialpha.github.io/resize-qheaderview-to-contents-and-interactive
+            // But, horizontal column resize triggers vertical resize, which triggers horizontal resize ...
+            // so perform this only one, when 1st chunk of data is received
+            horizontalHeader()->setSectionResizeMode(col, QHeaderView::ResizeToContents);
+            int width = horizontalHeader()->sectionSize(col);
+            horizontalHeader()->setSectionResizeMode(col, QHeaderView::Interactive);
+            horizontalHeader()->resizeSection(col, width);
+
         }
     }
 
-    //if (!m_columnsResized)
-    super::resizeColumnsToContents();
+    //super::resizeColumnsToContents();
 }
