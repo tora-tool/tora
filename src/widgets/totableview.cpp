@@ -34,12 +34,17 @@
 
 #include "widgets/totableview.h"
 #include "core/toquery.h"
+#include "core/tocontextmenu.h"
+#include "core/tolistviewformatter.h"
+#include "core/tolistviewformatteridentifier.h"
+
+#include <QHeaderView>
+#include <QContextMenuEvent>
 
 using namespace Views;
 
 toTableView::toTableView(QWidget *parent)
     : QTableView(parent)
-    , m_columnsResized(false)
 {
     connect(horizontalHeader(), &QHeaderView::sectionResized, this, [this](int, int, int){ columnWasResized(); });
 }
@@ -51,7 +56,11 @@ toTableView::toTableView(QWidget *parent)
 int toTableView::sizeHintForRow(int row) const
 {
     int s = super::sizeHintForRow(row);
+    auto d1 = this->verticalHeader()->defaultSectionSize();
     if (s > 60) s = 60; // TODO: This should probably be moved to configuration file
+
+    auto m = this->verticalHeader()->sectionResizeMode(row);
+    auto x = this->verticalHeader()->defaultSectionSize();
     return s;
 }
 
@@ -75,13 +84,54 @@ void toTableView::setModel(QAbstractItemModel *model)
     connect(model, &QAbstractItemModel::dataChanged, this, [this](const QModelIndex &TL, const QModelIndex &BR){ resizeRowsToContents(); });
 }
 
+void toTableView::contextMenuEvent(QContextMenuEvent *e)
+{
+    // create menu
+    QMenu *popup = new QMenu(this);
+
+    // Handle parent widget's context menu fields
+    toContextMenuHandler::traverse(this, popup);
+
+    populateContextMenu(popup);
+    contextMenuIndex =  indexAt(e->pos());
+    // Display and "run" the menu
+    e->accept();
+    popup->exec(e->globalPos());
+    delete popup;
+}
+
+void toTableView::populateContextMenu(QMenu *menu)
+{
+    QAction *copyAct = menu->addAction(tr("&Copy"));
+    copyAct->setEnabled(contextMenuIndex.isValid());
+    connect(copyAct, &QAction::triggered, this, [this](bool){ editCopy(); });
+}
+
+void toTableView::editCopy()
+{
+    if(contextMenuIndex.isValid())
+    {
+        QClipboard *clip = qApp->clipboard();
+        QVariant data = model()->data(contextMenuIndex, Qt::EditRole);
+        clip->setText(data.toString());
+    }
+}
+
 void toTableView::columnWasResized()
 {
     super::resizeRowsToContents();
 }
 
+void toTableView::resizeEvent(QResizeEvent *event)
+{
+    auto old = event->oldSize();
+    auto xew = event->size();
+    super::resizeEvent(event);
+}
+
 void toTableView::applyColumnRules()
 {
+    // Assuming this will called only once from Model::firstResultReceived
     int VisibleColumns(0);
 
     // loop through columns and hide anything starting with a ' '
@@ -96,9 +146,17 @@ void toTableView::applyColumnRules()
         } else {
             VisibleColumns++;
             showColumn(col);
+
+            // inspired from https://centaurialpha.github.io/resize-qheaderview-to-contents-and-interactive
+            // But, horizontal column resize triggers vertical resize, which triggers horizontal resize ...
+            // so perform this only one, when 1st chunk of data is received
+            horizontalHeader()->setSectionResizeMode(col, QHeaderView::ResizeToContents);
+            int width = horizontalHeader()->sectionSize(col);
+            horizontalHeader()->setSectionResizeMode(col, QHeaderView::Interactive);
+            horizontalHeader()->resizeSection(col, width);
+
         }
     }
 
-    //if (!m_columnsResized)
-    super::resizeColumnsToContents();
+    //super::resizeColumnsToContents();
 }

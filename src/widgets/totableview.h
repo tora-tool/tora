@@ -40,6 +40,7 @@
 #include <QFont>
 
 class QAbstractItemModel;
+class QContextMenuEvent;
 
 namespace Views
 {
@@ -69,8 +70,26 @@ public slots:
     void setModel(QAbstractItemModel *model) override;
 
 protected:
+    /* Unless contextMenuPolicy is set to: Qt::CustomContextMenu, which is usual when toBaseEditor is used, this is called to populate menu
+     *  calls to static toContextMenuHandler::traverse(this, popup);
+     *  to traverse QWidget hierarchy and populate context menu from parent QWidgets
+     */
+    void contextMenuEvent(QContextMenuEvent *) override;
+
+    /* Populate ContextMenu for this Widget
+     *  override this if needed to extend ContextMenu
+     */
+    virtual void populateContextMenu(QMenu *);
+
+    // Handle copy operator, TODO subclasses toEditWidget
+    void editCopy();
+
     void columnWasResized();
-    bool m_columnsResized;
+
+    void resizeEvent(QResizeEvent *event) override;
+
+private:
+    QModelIndex contextMenuIndex;
 };
 
 template<typename _T>
@@ -86,7 +105,6 @@ public:
 template<typename Traits>
 void DefaultTableViewPolicy<Traits>::setup(View* pView)
 {
-
     pView->setSelectionBehavior( (QAbstractItemView::SelectionBehavior) Traits::SelectionBehavior);
     pView->setSelectionMode( (QAbstractItemView::SelectionMode) Traits::SelectionMode);
     pView->setAlternatingRowColors( Traits::AlternatingRowColorsEnabled);
@@ -97,6 +115,8 @@ void DefaultTableViewPolicy<Traits>::setup(View* pView)
         pView->verticalHeader()->hide();
     pView->setWordWrap(false);
 
+#if 1
+
     //QFont smallest = QFontDatabase::systemFont(QFontDatabase::SmallestReadableFont);
     QFont font;
     //QFont font("Segoe UI");        // Should be default ClearCase font in Windows
@@ -104,9 +124,16 @@ void DefaultTableViewPolicy<Traits>::setup(View* pView)
     font.setPointSize(9);
     pView->setFont(font);
 
+    // Note since Qt 5.12 this is totally broken. QTBUG-73721
+    // Row height when displaying QTableView differs from row height when resizing it
     pView->verticalHeader()->setMinimumSectionSize(QFontMetrics(font).height() + 4); // QT 5.12. QTBUG-69431 minimumSectionSize <= defaultSectionSize
     pView->verticalHeader()->setDefaultSectionSize(QFontMetrics(font).height() + 4);
+    pView->verticalHeader()->setMaximumSectionSize(QFontMetrics(font).height() + 4);
+    pView->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
     auto d1 = pView->verticalHeader()->defaultSectionSize();
+
+    pView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+#endif
 
 #if 0
     auto h = pView->fontMetrics().height();
@@ -128,7 +155,7 @@ void DefaultTableViewPolicy<Traits>::setup(View* pView)
 		p2	9	int
 		d       19      int
 #endif
-
+#if 1
     switch (Traits::ColumnResize)
     {
         case Traits::NoColumnResize:
@@ -138,7 +165,7 @@ void DefaultTableViewPolicy<Traits>::setup(View* pView)
             break;
         case Traits::RowColumResize:
             {
-                bool retval = QObject::connect(pView->model(), SIGNAL(firstResultReceived()), pView, SLOT(slotApplyColumnRules()));
+                bool retval = QObject::connect(pView->model(), SIGNAL(firstResultReceived()), pView, SLOT(applyColumnRules()));
                 Q_ASSERT_X(retval, qPrintable(__QHERE__), "Connection failed: Model -> View");
             }
             break;
@@ -146,6 +173,7 @@ void DefaultTableViewPolicy<Traits>::setup(View* pView)
             Q_ASSERT_X(false, qPrintable(__QHERE__), "Not implemented yet");
             break;
     }
+#endif
 }
 
 }
