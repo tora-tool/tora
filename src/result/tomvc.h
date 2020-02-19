@@ -324,7 +324,7 @@ typename _T,
          >
 void TOMVC< _T, _VP, _DP>::observeHeaders(const toQueryAbstr::HeaderList &headers)
 {
-    toQueryAbstr::HeaderList h(headers);
+    toQueryAbstr::HeaderList headersCopy(headers);
     if ( Traits::ShowRowNumber == MVCTraits::TableRowNumber )
     {
         struct toQueryAbstr::HeaderDesc d;
@@ -333,10 +333,10 @@ void TOMVC< _T, _VP, _DP>::observeHeaders(const toQueryAbstr::HeaderList &header
         d.name_orig = QString("#");
         d.datatype = QString("RowNumber");
         d.hidden = false;
-        h.prepend(d);
+        headersCopy.prepend(d);
     }
 
-    foreach(auto h, headers)
+    for(auto& h: headersCopy)
     {
         if (Traits::HideColumns == true && h.name_orig.startsWith(' '))
         {
@@ -344,7 +344,7 @@ void TOMVC< _T, _VP, _DP>::observeHeaders(const toQueryAbstr::HeaderList &header
         }
     }
 
-    Model::setHeaders(h);
+    Model::setHeaders(headersCopy);
 }
 
 template<
