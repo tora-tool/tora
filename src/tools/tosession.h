@@ -112,9 +112,10 @@ namespace Sessions
     {
         static const bool AlternatingRowColorsEnabled = true;
         static const int  ShowRowNumber = NoRowNumber;
-        static const bool ShowWorkingWidget = false;
-        //static const int  ColumnResize = RowColumResize;
+        static const bool ShowWorkingWidget = true;
+        static const int  ColumnResize = RowColumResize;
         static const int  ContextMenuPolicy = Qt::DefaultContextMenu; // the widget's QWidget::contextMenuEvent() handler is called
+        static const bool HideColumns = true;
 
         typedef Views::toTableView View;
     };
