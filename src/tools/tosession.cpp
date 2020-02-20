@@ -333,7 +333,7 @@ static toSQL SQLAccessedObjects(
 
 static toSQL SQLSessions(
     "toSession:ListSession",
-    "SELECT a.Sid \"Id\",\n"
+    "SELECT a.Sid \"SID\",\n"
     "       a.Serial# \"Serial#\",\n"
     "       a.UserName \"Username\",\n"
     "       a.SchemaName \"Schema\",\n"
@@ -345,29 +345,28 @@ static toSQL SQLSessions(
     "       a.Type \"Type\",\n"
     "       a.Module \"Module\",\n"
     "       a.Action \"Action\",\n"
-
     "       a.Client_Info \"Client Info\",\n"
-    "       b.Block_Gets \"Block Gets\",\n"
-    "       b.Consistent_Gets \"Consistent Gets\",\n"
-    "       b.Physical_Reads \"Physical Reads\",\n"
-    "       b.Block_Changes \"Block Changes\",\n"
-    "       b.Consistent_Changes \"Consistent Changes\",\n"
-//    "       c.Value*10 \"CPU (ms)\",\n"
-
+    "--io   b.Block_Gets \"Block Gets\",\n"
+    "--io   b.Consistent_Gets \"Consistent Gets\",\n"
+    "--io   b.Physical_Reads \"Physical Reads\",\n"
+    "--io   b.Block_Changes \"Block Changes\",\n"
+    "--io   b.Consistent_Changes \"Consistent Changes\",\n"
+    "--cpu  c.Value*10 \"CPU (ms)\",\n"
     "       sw.wait_class, \n"
-	"       sw.event,      \n"
+    "       sw.event,      \n"
     "       a.last_call_et \"Last Call(s)\",\n"
-	"       a.Process \"Cl. PID\",\n"
-	"       e.SPid \"Srv. PID\",\n"
+    "       a.Process \"Cl. PID\",\n"
+    "       e.SPid \"Srv. PID\",\n"
     "       d.sql_text \"Current statement\",\n"
-    "       a.SQL_Address||':'||a.SQL_Hash_Value \" SQL Address\",         \n"
-    "       a.Prev_SQL_Addr||':'||a.Prev_Hash_Value \" Prev SQl Address\", \n"
-    "       a.SQL_ID as \" SQL_ID\",                                       \n"
-    "       a.SQL_CHILD_NUMBER as \" SQL_CHILD_NUMBER\",                   \n"
-    "       a.PREV_SQL_ID as \" PREV_SQL_ID\",                             \n"
-    "       a.PREV_CHILD_NUMBER as \" PREV_CHILD_NUMBER\"                  \n"
-    "  FROM v$session a left join v$sess_io b on ( a.sid = b.sid)          \n"
-//    "       left join v$sesstat c on ( a.sid = c.sid)                      \n"
+    "       a.SQL_Address||':'||a.SQL_Hash_Value \" SQL Address\",          \n"
+    "       a.Prev_SQL_Addr||':'||a.Prev_Hash_Value \" Prev SQl Address\",  \n"
+    "       a.SQL_ID as            \" SQL_ID\",                             \n"
+    "       a.SQL_CHILD_NUMBER as  \" SQL_CHILD_NUMBER\",                   \n"
+    "       a.PREV_SQL_ID as       \" PREV_SQL_ID\",                        \n"
+    "       a.PREV_CHILD_NUMBER as \" PREV_CHILD_NUMBER\"                   \n"
+    "  FROM v$session a                                                    \n"
+    "--io   left join v$sess_io b on ( a.sid = b.sid)                      \n"
+    "--cpu  left join v$sesstat c on ( a.sid = c.sid)                      \n"
     "       left join v$sql d on (a.sql_address = d.address and            \n"
     "                             a.sql_hash_value=d.hash_value and        \n"
     "                             a.sql_child_number = d.child_number)     \n"
@@ -381,7 +380,7 @@ static toSQL SQLSessions(
 
 static toSQL SQLSessions7(
     "toSession:ListSession",
-    "SELECT a.Sid \"Id\",\n"
+    "SELECT a.Sid \"SID\",\n"
     "       a.Serial# \"Serial#\",\n"
     "       a.SchemaName \"Schema\",\n"
     "       a.Status \"Status\",\n"
@@ -393,12 +392,12 @@ static toSQL SQLSessions7(
     "       a.Module \"Module\",\n"
     "       a.Action \"Action\",\n"
     "       a.Client_Info \"Client Info\",\n"
-    "       b.Block_Gets \"Block Gets\",\n"
-    "       b.Consistent_Gets \"Consistent Gets\",\n"
-    "       b.Physical_Reads \"Physical Reads\",\n"
-    "       b.Block_Changes \"Block Changes\",\n"
-    "       b.Consistent_Changes \"Consistent Changes\",\n"
-    "       c.Value*10 \"CPU (ms)\",\n"
+    "--io   b.Block_Gets \"Block Gets\",\n"
+    "--io   b.Consistent_Gets \"Consistent Gets\",\n"
+    "--io   b.Physical_Reads \"Physical Reads\",\n"
+    "--io   b.Block_Changes \"Block Changes\",\n"
+    "--io   b.Consistent_Changes \"Consistent Changes\",\n"
+    "--cpu  c.Value*10 \"CPU (ms)\",\n"
     "       a.last_call_et \"Last SQL\",\n"
     "       a.Process \"Client PID\",\n"
     "       e.SPid \"Server PID\",\n"
@@ -406,12 +405,13 @@ static toSQL SQLSessions7(
     "       a.SQL_Address||':'||a.SQL_Hash_Value \" SQL Address\",\n"
     "       a.Prev_SQL_Addr||':'||a.Prev_Hash_Value \" Prev SQl Address\"\n"
     "  FROM v$session a,\n"
-    "       v$sess_io b,\n"
-    "       v$sesstat c,\n"
+    "--io   v$sess_io b,\n"
+    "--cpu  v$sesstat c,\n"
     "       v$sql d,\n"
     "       v$process e\n"
-    " WHERE a.sid = b.sid(+)\n"
-    "   AND a.sid = c.sid(+) AND (c.statistic# = 12 OR c.statistic# IS NULL)\n"
+    " WHERE 1=1\n"
+    "--io  ANF a.sid = b.sid(+)\n"
+    "--cpu AND a.sid = c.sid(+) AND (c.statistic# = 12 OR c.statistic# IS NULL)\n"
     "   AND a.sql_address = d.address(+) AND a.sql_hash_value = d.hash_value(+)\n"
     "   AND (d.child_number = 0 OR d.child_number IS NULL)\n"
     "   AND a.paddr = e.addr(+)\n"
@@ -558,23 +558,12 @@ toSession::toSession(QWidget *main, toConnection &connection)
     layout()->addWidget(splitter);
 
     Sessions = new toResultSessions(splitter, "session list");
-//    Sessions = new toResultTableView(true,
-//                                     false,
-//                                     splitter,
-//                                     "session list",
-//                                     false);
+    splitter->addWidget(Sessions->view());
+    Sessions->view()->horizontalHeader()->setStretchLastSection(true);
     Sessions->view()->setAlternatingRowColors(true);
-    Sessions->view()->setAlternatingRowColors(true);
-//    Sessions->view()->horizontalHeader()->setStretchLastSection(true);
     Sessions->view()->setSelectionBehavior(QAbstractItemView::SelectRows);
     Sessions->view()->setSelectionMode(QAbstractItemView::ExtendedSelection);
-
-//    Sessions->setAlternatingRowColors(true);
-//    Sessions->horizontalHeader()->setStretchLastSection(true);
-//    Sessions->setSelectionBehavior(QAbstractItemView::SelectRows);
-//    Sessions->setSelectionMode(QAbstractItemView::ExtendedSelection);
-//    Sessions->setReadAll(true);
-//    Sessions->view()->setFilter(SessionFilter);
+    //Sessions->view()->setFilter(SessionFilter);
 
     connect(Sessions, &toResultSessions::queryDone, this, [this]{ slotDone(); });
 
@@ -938,7 +927,7 @@ void toSession::slotChangeTab(int index)
         if (!item.isValid())
             return;
 
-        int idx1 = Sessions->headers().indexOf("Id");
+        int idx1 = Sessions->headers().indexOf("SID");
         int idx2 = Sessions->headers().indexOf("Serial#");
         QString connectionId = Sessions->data(item.siblingAtColumn(idx1)).toString(); // Qt 5.11
         QString serial       = Sessions->data(item.siblingAtColumn(idx2)).toString(); // Qt 5.11
@@ -1124,7 +1113,7 @@ bool toSession::eventFilter(QObject *obj, QEvent *event)
             }
         }
     }
-    return QObject::eventFilter(obj, event);
+    return super::eventFilter(obj, event);
 }
 
 toSessionDisconnect::toSessionDisconnect(toResultTableView *sessionView, QWidget *parent, const char *name)
