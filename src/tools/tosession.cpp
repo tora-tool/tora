@@ -809,8 +809,11 @@ void toSession::slotRefresh(void)
         QModelIndex item = Sessions->view()->currentIndex();
         if (item.isValid())
         {
-            Session = Sessions->data(item.siblingAtColumn(1)).toString(); // Qt 5.11
-            Serial  = Sessions->data(item.siblingAtColumn(2)).toString(); // Qt 5.11
+            int idxSid = Sessions->headers().indexOf("SID");
+            int idxSer = Sessions->headers().indexOf("Serial#");
+
+            Session = Sessions->data(item.siblingAtColumn(idxSid)).toString(); // Qt 5.11
+            Serial  = Sessions->data(item.siblingAtColumn(idxSer)).toString(); // Qt 5.11
         }
         else
             Session = Serial = QString::null;
@@ -850,20 +853,33 @@ void toSession::slotDone(void)
     int system = 0;
     int total  = 0;
     int active = 0;
-#if 0
-    for (toResultTableView::iterator it(Sessions); (*it).isValid(); it++)
-    {
-        QString session = Sessions->data((*it).row(), 1).toString();
-        QString serial  = Sessions->data((*it).row(), 2).toString();
-        QString user    = Sessions->data((*it).row(), 9).toString();
-        QString act     = Sessions->data((*it).row(), 4).toString();
 
-        if (session == Session && serial == Serial)
+    QModelIndex item = Sessions->view()->currentIndex();
+
+    int idxSid = Sessions->headers().indexOf("SID");
+    int idxSer = Sessions->headers().indexOf("Serial#");
+    int idxType = Sessions->headers().indexOf("Type");
+    int idxStat = Sessions->headers().indexOf("Status");
+
+    QModelIndex parent = QModelIndex();
+    for(int r = 0; r < Sessions->rowCount(parent); ++r)
+    {
+        QModelIndex index = Sessions->index(r, 0, parent);
+        QVariant name = Sessions->data(index);
+
+        QString session = Sessions->data(index.siblingAtColumn(idxSid)).toString();
+        QString serial  = Sessions->data(index.siblingAtColumn(idxSer)).toString();
+        QString user    = Sessions->data(index.siblingAtColumn(idxType)).toString();
+        QString act     = Sessions->data(index.siblingAtColumn(idxStat)).toString();
+
+        /* in case index row is not already selected */
+        if (!item.isValid() && session == Session && serial == Serial)
         {
             Sessions->view()->selectionModel()->select(
-                QItemSelection(*it, *it),
+                QItemSelection(index, index),
                 QItemSelectionModel::ClearAndSelect);
-            Sessions->view()->setCurrentIndex(*it);
+            Sessions->view()->setCurrentIndex(index);
+            Sessions->view()->scrollTo(index);
         }
 
         total++;
@@ -872,7 +888,7 @@ void toSession::slotDone(void)
         else if (act == "ACTIVE")
             active++;
     }
-#endif
+
     Total->setText(QString("Total <B>%1</B> (Active <B>%3</B>, System <B>%2</B>)")
                    .arg(total).arg(system).arg(active));
 }
