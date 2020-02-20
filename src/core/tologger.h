@@ -83,12 +83,14 @@ struct s_null_sink : public boost::iostreams::stream_buffer<boost::iostreams::nu
 // toDecorator header:
 // "----<tid> file.cpp:5 ----\n"
 typedef Tdecorator <
-TSLOG_TYPELIST_6(dashDecorator<4>,
+TSLOG_TYPELIST_8(dashDecorator<4>,
+                 timeTotalDecorator<DEFAULT_THREAD_MANAGER>,
+                 charDecorator < ':' > ,
                  tidDecorator<DEFAULT_THREAD_MANAGER>,
-                 charDecorator < ' ' > ,
+                 charDecorator< ' ' > ,
                  hereDecorator,
-                 dashDecorator<4>,
-                 charDecorator < '\n' >
+                 charDecorator< ' ' >,
+                 charDecorator< '\n' >
                 ) > toDecorator;
 
 typedef tidDecorator<DEFAULT_THREAD_MANAGER,0> tidDecoratorNC;
@@ -155,15 +157,15 @@ inline thread_safe_log templ_get_log_ownthread( int_to_type< idxLog> *i = NULL )
     return thread_safe_log(log);
 }
 
-DOCKLET_LOG(0)   // generic debug <0>
+DISABLE_LOG(0)   // generic debug <0>
 DISABLE_LOG(1)   // exceptions debug<1>
 DISABLE_LOG(2)
 DISABLE_LOG(3)   // debugger(disabled)
-DISABLE_LOG(4)   // data read(disabled)
-DOCKLET_LOG(5)   // connection provider finder
+DOCKLET_LOG(4)   // data read(disabled)
+DISABLE_LOG(5)   // connection provider finder
 DISABLE_LOG(6)   //
-DISABLE_LOG(7)   // toEventQuery
-//DISABLE_LOG(8)   // syntax analyzer, QScintilla
+DOCKLET_LOG(7)   // toEventQuery
+DISABLE_LOG(8)   // syntax analyzer, QScintilla
 DISABLE_LOG(9)   // report focus
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -32,14 +32,15 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOSESSION_H
-#define TOSESSION_H
+#pragma once
 
 #include "widgets/totoolwidget.h"
 #include "ui_tosessionsetupui.h"
 #include "ui_tosessiondisconnectdlgui.h"
 #include "core/tosettingtab.h"
 #include "tools/toresultlong.h"
+
+#include "tools/toresulttableview.h"
 
 #include <QLabel>
 #include <QMenu>
@@ -101,11 +102,67 @@ namespace ToConfiguration
     };
 };
 
+#include "result/tomvc.h"
+#include "widgets/totableview.h"
+#include "widgets/totreeview.h"
+
+namespace Sessions
+{
+    struct Traits : public MVCTraits
+    {
+        static const bool AlternatingRowColorsEnabled = true;
+        static const int  ShowRowNumber = NoRowNumber;
+        static const bool ShowWorkingWidget = true;
+        static const int  ColumnResize = RowColumResize;
+        static const int  ContextMenuPolicy = Qt::DefaultContextMenu; // the widget's QWidget::contextMenuEvent() handler is called
+        static const bool HideColumns = true;
+        static const int  SelectionBehavior = QAbstractItemView::SelectRows;
+
+        typedef Views::toTableView View;
+    };
+
+    class MVC
+            : public TOMVC
+              <
+              ::Sessions::Traits,
+              Views::DefaultTableViewPolicy,
+              ::DefaultDataProviderPolicy
+              >
+    {
+        Q_OBJECT;
+    public:
+        typedef TOMVC<
+                ::Sessions::Traits,
+                 Views::DefaultTableViewPolicy,
+                ::DefaultDataProviderPolicy
+                  > _s;
+        MVC(QWidget *parent) : _s(parent)
+        {};
+        virtual ~MVC() {};
+    };
+}
+
+/**
+ * A result table displaying information about sessions
+ */
+class toResultSessions: public Sessions::MVC
+{
+    Q_OBJECT;
+
+public:
+    toResultSessions(QWidget *parent, const char *name = NULL);
+signals:
+    void queryDone();
+protected:
+    void observeDone() override;
+};
+
 class toSession : public toToolWidget
 {
+        typedef toToolWidget super;
         Q_OBJECT;
 
-        toResultTableView *Sessions;
+        toResultSessions  *Sessions;
         QTabWidget        *ResultTab;
 
         QWidget *CurrentTab;
@@ -114,8 +171,10 @@ class toSession : public toToolWidget
 
         toSGAStatement    *CurrentStatement;
         toSGAStatement    *PreviousStatement;
-        toResultStats     *SessionStatistics;
+        toResultItem      *Transaction;
         toResultLong      *LongOps;
+        toResultStats     *SessionStatistics;
+
         toResultItem      *ConnectInfo;
         toResultTableView *LockedObjects;
         toResultLock      *PendingLocks;
@@ -129,7 +188,6 @@ class toSession : public toToolWidget
         QSplitter         *StatisticSplitter;
         toSGAStatement    *OpenStatement;
         toResultTableView *OpenCursors;
-        toResultItem      *Transaction;
         QString            LastSession;
         QMenu             *ToolMenu;
         toRefreshCombo    *Refresh;
@@ -144,8 +202,7 @@ class toSession : public toToolWidget
         QString Session;
         QString Serial;
 
-        void updateSchemas(void);
-        void enableStatistics(bool enable);
+        //void updateSchemas(void);
 
         friend class toSessionSetting;
     public:
@@ -156,8 +213,10 @@ class toSession : public toToolWidget
 
         static QString sessionKillProcOracle(ToConfiguration::Session::KillSessionModeEnum, const QMap<QString,QString> params);
     public slots:
+        void enableStatistics(bool enable);
+
         void slotChangeTab(int);
-        void slotChangeItem();
+        void slotChangeItem(const QModelIndex &current, const QModelIndex &previous);
         void slotChangeCursor();
         void slotRefresh(void);
         void slotRefreshTabs(void);
@@ -229,5 +288,3 @@ class toSessionSetting
 
     private:
 };
-
-#endif

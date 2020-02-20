@@ -101,21 +101,9 @@ class toResultTableView : public QTableView, public toResult, public toEditWidge
         void clearData() override;
 
         /**
-         * Set statistics widget.
-         * @param stats Statistics widget.
-         */
-        void setStatistics(toResultStats *stats)
-        {
-            Statistics = stats;
-        }
-
-        /**
          * override parent to return toResultModel pointer
          */
-        toResultModel* model(void) const
-        {
-            return Model;
-        }
+        toResultModel* model(void) const { return Model; }
 
         /**
          * True if query is running
@@ -151,7 +139,7 @@ class toResultTableView : public QTableView, public toResult, public toEditWidge
          * Must be set before query()
          */
         virtual void setModel(toResultModel *model);
-	void setModel(QAbstractItemModel *model) override;
+        void setModel(QAbstractItemModel *model) override;
 
         /**
          * Should view read all data.
@@ -291,6 +279,7 @@ class toResultTableView : public QTableView, public toResult, public toEditWidge
 			      const QItemSelection &deselected) override;
 
         // apply column rules, numbercolumn, readable columns
+    public slots:
         virtual void slotApplyColumnRules(void);
 
     protected:
@@ -324,7 +313,7 @@ class toResultTableView : public QTableView, public toResult, public toEditWidge
          * overrides parent to overlay working working message until model
          * is ready
          */
-	void paintEvent(QPaintEvent *event) override;
+        void paintEvent(QPaintEvent *event) override;
 
         /**
          * Overrides QWidget to resize columns when applicable.
@@ -348,9 +337,6 @@ class toResultTableView : public QTableView, public toResult, public toEditWidge
 
         // pointer to model
         QPointer<toResultModel> Model;
-
-        // Widget to store query statistics to.
-        toResultStats *Statistics;
 
         // if all records should be read
         bool ReadAll;
@@ -398,7 +384,7 @@ class toResultTableView : public QTableView, public toResult, public toEditWidge
 };
 
 
-
+#if 1 // toInvalid, toAnalyze, toSession need this
 /**
  * A simple iterator to walk the rows of a QTableView.
  *
@@ -467,7 +453,7 @@ class toTableViewIterator
         void updateIndex(void);
 
 };
-
+#endif
 
 /**
  * Baseclass for filters to apply to the view to hide out rows that

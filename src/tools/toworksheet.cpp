@@ -1633,7 +1633,6 @@ void toWorksheet::slotEnableStatistic(bool ena)
 {
     if (ena)
     {
-        Result->setStatistics(Statistics);
         ResultTab->setTabEnabled(ResultTab->indexOf(StatTab), true);
         statisticAct->setChecked(true);
         Statistics->clear();
@@ -1645,7 +1644,6 @@ void toWorksheet::slotEnableStatistic(bool ena)
     else
     {
         ///connection().setInit("STATISTICS", QString::fromLatin1(DISABLETIMED));
-        Result->setStatistics(NULL);
         ResultTab->setTabEnabled(ResultTab->indexOf(StatTab), false);
         statisticAct->setChecked(false);
     }
