@@ -56,7 +56,11 @@ toTableView::toTableView(QWidget *parent)
 int toTableView::sizeHintForRow(int row) const
 {
     int s = super::sizeHintForRow(row);
+    auto d1 = this->verticalHeader()->defaultSectionSize();
     if (s > 60) s = 60; // TODO: This should probably be moved to configuration file
+
+    auto m = this->verticalHeader()->sectionResizeMode(row);
+    auto x = this->verticalHeader()->defaultSectionSize();
     return s;
 }
 
