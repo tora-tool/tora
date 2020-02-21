@@ -718,7 +718,11 @@ bool toResultModel::canFetchMore(const QModelIndex &parent) const
     if (First)
         return false;
 
-    return Query && Query->hasMore();
+    if (Query && Query->hasMore())
+        return true;
+    if (Query)
+        return !Query->eof();
+    return false;
 }
 
 
@@ -755,6 +759,8 @@ void toResultModel::fetchMore(const QModelIndex &parent)
     if (MaxRows < 0 || MaxRows <= Rows.size())
         MaxRows += MaxRowsToAdd;
 
+    if (Query)
+        Query->requestMore();
     slotReadData();
 }
 

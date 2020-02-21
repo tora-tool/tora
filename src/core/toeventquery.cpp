@@ -60,6 +60,7 @@ toEventQuery::toEventQuery(QObject *parent
     , Worker(NULL)
     , Started(false)
     , WorkDone(false)
+    , Requested(false)
     , Connection(new toConnectionSubLoan(conn))
     , CancelCondition(new toEventQuery::WaitConditionWithMutex())
     , Mode(mode)
@@ -90,6 +91,7 @@ toEventQuery::toEventQuery(QObject *parent
     , Worker(NULL)
     , Started(false)
     , WorkDone(false)
+    , Requested(false)
     , Connection(conn)
     , CancelCondition(new toEventQuery::WaitConditionWithMutex())
     , Mode(mode)
@@ -160,8 +162,20 @@ void toEventQuery::start()
 void toEventQuery::setFetchMode(FETCH_MODE m)
 {
     if (Mode == READ_FIRST && m == READ_ALL)
+    {
+        Requested = true;
         emit dataRequested();
+    }
     Mode = m;
+}
+
+void toEventQuery::requestMore()
+{
+    if (Requested == false && Mode == READ_FIRST) // READ_ALL already should have a way how to request more data
+    {
+        Requested = true;
+        emit dataRequested();
+    }
 }
 
 toQColumnDescriptionList const& toEventQuery::describe(void) const
@@ -200,8 +214,11 @@ toQValue toEventQuery::readValue()
     if (Values.isEmpty())
         throw tr("Read past end of query");
 
-    if ((Values.size() == ColumnCount) && !eof())
+    if (Mode == READ_ALL && Values.size() == ColumnCount && !eof())
+    {
+        Requested = true;
         emit dataRequested();
+    }
 
     return Values.takeFirst();
 }
@@ -257,17 +274,22 @@ void toEventQuery::stop(void)
 void toEventQuery::slotStarted()
 {
     Started = true;
+    Requested = true;
     emit dataRequested();             // request 1st chunk of rows
 }
 
 // warning: values is a reference only bg thread's stack
 void toEventQuery::slotData(const ValuesList &values)
 {
+    Requested = false;
     TLOG(7, toDecorator, __HERE__) << "toEventQuery slot data" << std::endl;
     Values << values;
 
     if (Mode == READ_ALL)
+    {
+        Requested = true;
         emit consumed();
+    }
 
     // TODO: this signal can also be emitted asynchronically
     // from QTime - once per second

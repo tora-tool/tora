@@ -117,7 +117,7 @@ class toTableModelPriv : public QAbstractTableModel
          * overrides QAbstractTableModel::canFetchMore
          * not intended for toResultModel subclasses
          */
-        virtual bool canFetchMore(const QModelIndex &parent = QModelIndex()) const;
+        bool canFetchMore(const QModelIndex &parent = QModelIndex()) const override;
 
         /**
          * Fetches any available data for the items with the parent
@@ -126,12 +126,12 @@ class toTableModelPriv : public QAbstractTableModel
          *  overrides QAbstractTableModel::fetchMore
          *  not intended for toResultModel subclasses
          */
-        virtual void fetchMore(const QModelIndex &parent);
+        void fetchMore(const QModelIndex &parent) override;
 
         /**
          * Returns the item flags for the given index.
          */
-        virtual Qt::ItemFlags flags(const QModelIndex &index) const;
+        Qt::ItemFlags flags(const QModelIndex &index) const override;
 
         /**
          * Sorts the model by column in the given order.
@@ -215,7 +215,7 @@ class toTableModelPriv : public QAbstractTableModel
 
         void firstResultReceived();
 
-    private:
+    protected:
 
         // helpers for sort implementation
         toQueryAbstr::RowList mergesort(toQueryAbstr::RowList&, int, Qt::SortOrder);

@@ -147,6 +147,8 @@ class toEventQuery : public QObject
 
         void setFetchMode(FETCH_MODE);
 
+        void requestMore();
+
         /**
          * Get description of columns.
          * @return Description of columns list.
@@ -277,6 +279,7 @@ class toEventQuery : public QObject
 
         bool Started;
         bool WorkDone;
+        bool Requested;
 
         // connection for this query
         QSharedPointer<toConnectionSubLoan> Connection;
