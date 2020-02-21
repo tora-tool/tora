@@ -298,7 +298,7 @@ void SqlStatement::check_error(tstring where, sword res) const
             _conn.reset();
         }
     }
-    if (res != OCI_SUCCESS)
+    if (res != OCI_SUCCESS && res != OCI_SUCCESS_WITH_INFO) // ignore ORA-24347: Warning of a NULL column in an aggregate function
         throw_oci_exception(OciException(where, const_cast<SqlStatement&>(*this)));
 };
 
