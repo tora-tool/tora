@@ -61,10 +61,8 @@ toConnectionImport::toConnectionImport(QWidget * parent)
 
     tableView->setModel(availableModel);
 
-    connect(toolComboBox, SIGNAL(currentIndexChanged(int)),
-            this, SLOT(toolComboBox_changed(int)));
-    connect(runButton, SIGNAL(clicked()),
-            this, SLOT(refreshAvailable()));
+    connect(toolComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(toolComboBox_changed(int)));
+    connect(runButton, SIGNAL(clicked()), this, SLOT(refreshAvailable()));
 }
 
 void toConnectionImport::toolComboBox_changed(int ix)

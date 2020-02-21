@@ -87,6 +87,7 @@ struct MVCTraits
     static const bool ShowWorkingWidget = true;
     static const bool WorkingWidgetInteractive = true;
     static const bool SortingEnabled = true;
+    static const bool HideColumns = false;
 };
 
 class toResult2
@@ -272,19 +273,23 @@ void TOMVC<_T, _VP, _DP>::setQuery(Query *query)
         retval = QObject::connect(query, SIGNAL(descriptionAvailable(toEventQuery*))
                                   , m_workingWidget, SLOT(undisplay()));
         Q_ASSERT_X(retval, qPrintable(__QHERE__), "connect failed: descriptionAvailable");
+
         retval = QObject::connect(query, SIGNAL(dataAvailable(toEventQuery*))
                                   , m_workingWidget, SLOT(undisplay()));
         Q_ASSERT_X(retval, qPrintable(__QHERE__), "connect failed: dataAvailable");
+
         retval = QObject::connect(query, SIGNAL(error(toEventQuery*, const toConnection::exception &))
                                   , m_workingWidget, SLOT(undisplay()));
         Q_ASSERT_X(retval, qPrintable(__QHERE__), "connect failed: error");
+
         retval = QObject::connect(query, SIGNAL(done(toEventQuery*,unsigned long))
                                   , m_workingWidget, SLOT(undisplay()));
         Q_ASSERT_X(retval, qPrintable(__QHERE__), "connect failed: done");
 
         if (_T::WorkingWidgetInteractive)
         {
-            retval = QObject::connect(m_workingWidget, SIGNAL(stop()), query, SLOT(stop()));
+            //retval = QObject::connect(m_workingWidget, SIGNAL(stop()), query, SLOT(stop()));
+            QObject::connect(m_workingWidget, &WorkingWidget::stop, query, &Query::stop);
         }
         m_workingWidget->display();
     }
@@ -319,7 +324,7 @@ typename _T,
          >
 void TOMVC< _T, _VP, _DP>::observeHeaders(const toQueryAbstr::HeaderList &headers)
 {
-    toQueryAbstr::HeaderList h(headers);
+    toQueryAbstr::HeaderList headersCopy(headers);
     if ( Traits::ShowRowNumber == MVCTraits::TableRowNumber )
     {
         struct toQueryAbstr::HeaderDesc d;
@@ -328,9 +333,18 @@ void TOMVC< _T, _VP, _DP>::observeHeaders(const toQueryAbstr::HeaderList &header
         d.name_orig = QString("#");
         d.datatype = QString("RowNumber");
         d.hidden = false;
-        h.prepend(d);
+        headersCopy.prepend(d);
     }
-    Model::setHeaders(h);
+
+    for(auto& h: headersCopy)
+    {
+        if (Traits::HideColumns == true && h.name_orig.startsWith(' '))
+        {
+            h.hidden = true;
+        }
+    }
+
+    Model::setHeaders(headersCopy);
 }
 
 template<

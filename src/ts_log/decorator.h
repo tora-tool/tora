@@ -355,7 +355,7 @@ public:
         long long& time1 = super::getDeltaTimer();
     	long long& time2 = super::getTotalTimer();
     	long long now = thread_manager::getTimeOfDay();
-		s << "Time: " << thread_manager::timeDeltaHook(now - time1) << "us\t" << "Total: " << thread_manager::timeDeltaHook(now - time2) << "us";
+    	s << "Time: " << thread_manager::timeDeltaHook(now - time1) << "us\t" << "Total: " << thread_manager::timeDeltaHook(now - time2) << "us";
     	time1 = now;
     }
 

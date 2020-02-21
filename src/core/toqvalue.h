@@ -32,9 +32,7 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#ifndef TOQVALUE_H
-#define TOQVALUE_H
-
+#pragma once
 
 #include "core/tora_export.h"
 
@@ -249,6 +247,8 @@ class TORA_EXPORT toQValue
         /** Create value from qvariant
          */
         static toQValue fromVariant(const QVariant &);
+
+        static toQValue createFromBigDecimal(const char* str);
 };
 Q_DECLARE_METATYPE(toQValue::complexType*)
 
@@ -260,5 +260,3 @@ typedef QList<toQValue> toQueryParams;
 
 typedef QList<toQValue> ValuesList;
 Q_DECLARE_METATYPE(ValuesList);
-
-#endif

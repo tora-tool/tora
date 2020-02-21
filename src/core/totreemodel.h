@@ -146,6 +146,8 @@ class toTreeModelPriv : public QAbstractItemModel
         void appendRows(const toQueryAbstr::RowList &);
         void appendRow(const toQueryAbstr::Row &);
         void setHeaders(const toQueryAbstr::HeaderList &);
+        toQueryAbstr::HeaderList & headers(void) { return Headers; }
+        toQueryAbstr::HeaderList const& headers(void) const { return Headers; }
 
     signals:
 

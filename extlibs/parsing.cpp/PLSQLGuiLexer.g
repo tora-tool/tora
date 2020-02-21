@@ -252,7 +252,7 @@ SQLPLUS_COMMAND_INTRODUCER
     |   'PASSWORD'
     |   'PAUSE'
     |   'PRINT'
-    |   'PROMPT'
+    //|   'PROMPT'
     |   'QUIT'
     |   'RECOVER'
     |   'REMARK'
@@ -1268,7 +1268,25 @@ LINEEND
 )
 { skip(); }//{ $channel=HIDDEN; }
 	;
-	
+
+// Ambiguous word can be either PLSQL identifier or SQLPLUS command
+PROMPT
+	@init
+	{
+		ANTLR_UINT32 linePos = getCharPositionInLine(); // TODO check linePos == 0
+		ANTLR_UINT32 line = getLine();
+	}
+	: ('PROMPT' (SPACE|NEWLINE|EOF)) => e='PROMPT'
+        {
+            if( linePos == 0 )
+                $type = SQLPLUS_COMMAND_INTRODUCER;
+			else
+                $type = REGULAR_ID;
+        }
+    | 'PROMPT' { $type = REGULAR_ID; }
+	;
+
+        
 //{ Rule #522 <SPACE>
 //fragment
 SPACE

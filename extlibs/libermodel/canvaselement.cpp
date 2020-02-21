@@ -32,6 +32,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 #include <QMenu>
+#include <QDebug>
 
 ///#include <kdebug.h>
 ///#include <klocale.h>
@@ -60,6 +61,10 @@ CanvasElement::CanvasElement(
 /*  kDebug() << "Creating CanvasElement for "<<gelement->id();
   kDebug() << "    data: " << wdhcf << "," << hdvcf << "," << gh << "," 
     << scaleX << "," << scaleY << "," << xMargin << "," << yMargin << endl;*/
+  qDebug() << "Creating CanvasElement for "<<gelement->id() << endl
+          << "    data: " << m_wdhcf << "," << m_hdvcf << "," << m_gh << "," << m_scaleX << "," << m_scaleY << "," << m_xMargin << "," << m_yMargin << endl
+          << "    font: " << m_font->family() << "/" << gelement->fontName() << "(" << m_font->pointSize() << ")" << endl;
+
   
   if (element()->style() == "bold")
   {

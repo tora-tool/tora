@@ -105,7 +105,6 @@ toResultTableView::toResultTableView(bool readable,
 
 void toResultTableView::setup(bool readable, bool numberColumn, bool editable)
 {
-    Statistics      = NULL;
     ReadAll         = false;
     Filter          = NULL;
     VisibleColumns  = 0;
@@ -369,16 +368,42 @@ int toResultTableView::sizeHintForRow(int row) const
     return s;
 } // sizeHintForRow
 
-/* Controls width of all table views in TOra. Will use standart Qt function to
+/* Controls width of all table views in TOra. Will use standard Qt function to
    calculate a columns width and will control that it is not larger than a predefined
    size. Note: this height is only used in QTableView when resizeColumnsToContents
    is called. Column width is also adjusted when calculating width of column headers! */
 int toResultTableView::sizeHintForColumn(int col) const
 {
-    int s;
+    // TODO: This should probably be moved to configuration file
+    const int MAX_WIDTH(200);
 
-    s = QTableView::sizeHintForColumn(col);
-    if (s > 200) s = 200; // TODO: This should probably be moved to configuration file
+    int s = QTableView::sizeHintForColumn(col);
+
+	// max columns width (for all but last one)
+    s = (std::min)(s, MAX_WIDTH);
+
+#if 0
+	if (VisibleColumns == col) // if this is the last column
+	{
+		int previousWiths(0);
+		for (int i = 0; i < VisibleColumns; i++)
+		{
+			int pw1 = (std::min)(QTableView::sizeHintForColumn(i), MAX_WIDTH);
+			int pw2 = columnWidth(i);
+
+			previousWiths += (std::min)(QTableView::sizeHintForColumn(i), MAX_WIDTH);
+		}
+
+		int vw = maximumViewportSize().width(); // viewport width
+		int w1 = width();
+		int w2 = viewport()->width();
+		if (vw - previousWiths > 0)
+		{
+			s = vw - previousWiths;
+			return s;
+		}
+	}
+#endif
     return s;
 } // sizeHintForColumn
 
@@ -408,6 +433,16 @@ void toResultTableView::resizeEvent(QResizeEvent *event)
     {
         Working->setGeometry(this->viewport()->frameGeometry());
         Working->repaint();
+    } else {
+//        // https://centaurialpha.github.io/resize-qheaderview-to-contents-and-interactive
+//        auto header = horizontalHeader();
+//        for (int c = 0; c < header->count(); c++)
+//        {
+//            header->setSectionResizeMode(c, QHeaderView::ResizeToContents);
+//            int width = header->sectionSize(c);
+//            header->setSectionResizeMode(c, QHeaderView::Interactive);
+//            header->resizeSection(c, width);
+//        }
     }
 }
 
@@ -442,9 +477,10 @@ void toResultTableView::slotApplyColumnRules()
                         Qt::DisplayRole).toString().startsWith(" "))
             {
                 hideColumn(col);
-            }
-            else
+            } else {
                 VisibleColumns++;
+                showColumn(col);
+            }
         }
     }
 
@@ -628,6 +664,8 @@ void toResultTableView::slotHandleFirst(const toConnection::exception &res,
     Ready = true;
     Working->hide();
     emit firstResult(sql(), res, error);
+
+    slotApplyColumnRules();
 }
 
 
@@ -851,6 +889,7 @@ bool toResultTableView::queryFromCache(const QString &owner, const QString &obje
 
 // ---------------------------------------- iterator
 
+#if 1 // toInvalid, toAnalyze, toSession need this
 /**
  * Create an iterator starting at 0 on a view
  *
@@ -980,3 +1019,4 @@ toTableViewIterator& toTableViewIterator::operator=(const toTableViewIterator & 
     updateIndex();
     return *this;
 }
+#endif

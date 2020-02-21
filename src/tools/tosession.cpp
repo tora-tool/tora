@@ -148,7 +148,7 @@ static toSessionTool SessionTool;
 
 class toSessionFilter  : public toViewFilter
 {
-        QRegExp Filter;
+    QRegExp Filter;
 
     public:
         toSessionFilter()
@@ -162,7 +162,6 @@ class toSessionFilter  : public toViewFilter
             f->Filter = Filter;
             return f;
         }
-
 
         void setFilterString(const QString &f)
         {
@@ -334,7 +333,7 @@ static toSQL SQLAccessedObjects(
 
 static toSQL SQLSessions(
     "toSession:ListSession",
-    "SELECT a.Sid \"Id\",\n"
+    "SELECT a.Sid \"SID\",\n"
     "       a.Serial# \"Serial#\",\n"
     "       a.UserName \"Username\",\n"
     "       a.SchemaName \"Schema\",\n"
@@ -347,36 +346,41 @@ static toSQL SQLSessions(
     "       a.Module \"Module\",\n"
     "       a.Action \"Action\",\n"
     "       a.Client_Info \"Client Info\",\n"
-    "       b.Block_Gets \"Block Gets\",\n"
-    "       b.Consistent_Gets \"Consistent Gets\",\n"
-    "       b.Physical_Reads \"Physical Reads\",\n"
-    "       b.Block_Changes \"Block Changes\",\n"
-    "       b.Consistent_Changes \"Consistent Changes\",\n"
-    "       c.Value*10 \"CPU (ms)\",\n"
-    "       a.last_call_et \"Last SQL\",\n"
-    "       a.Process \"Client PID\",\n"
-    "       e.SPid \"Server PID\",\n"
+    "--io   b.Block_Gets \"Block Gets\",\n"
+    "--io   b.Consistent_Gets \"Consistent Gets\",\n"
+    "--io   b.Physical_Reads \"Physical Reads\",\n"
+    "--io   b.Block_Changes \"Block Changes\",\n"
+    "--io   b.Consistent_Changes \"Consistent Changes\",\n"
+    "--cpu  c.Value*10 \"CPU (ms)\",\n"
+    "       sw.wait_class, \n"
+    "       sw.event,      \n"
+    "       a.last_call_et \"Last Call(s)\",\n"
+    "       a.Process \"Cl. PID\",\n"
+    "       e.SPid \"Srv. PID\",\n"
     "       d.sql_text \"Current statement\",\n"
-    "       a.SQL_Address||':'||a.SQL_Hash_Value \" SQL Address\",         \n"
-    "       a.Prev_SQL_Addr||':'||a.Prev_Hash_Value \" Prev SQl Address\", \n"
-    "       a.SQL_ID as \" SQL_ID\",                                       \n"
-    "       a.SQL_CHILD_NUMBER as \" SQL_CHILD_NUMBER\",                   \n"
-    "       a.PREV_SQL_ID as \" PREV_SQL_ID\",                             \n"
-    "       a.PREV_CHILD_NUMBER as \" PREV_CHILD_NUMBER\"                  \n"
-    "  FROM v$session a left join v$sess_io b on ( a.sid = b.sid)          \n"
-    "       left join v$sesstat c on ( a.sid = c.sid)                      \n"
+    "       a.SQL_Address||':'||a.SQL_Hash_Value \" SQL Address\",          \n"
+    "       a.Prev_SQL_Addr||':'||a.Prev_Hash_Value \" Prev SQl Address\",  \n"
+    "       a.SQL_ID as            \" SQL_ID\",                             \n"
+    "       a.SQL_CHILD_NUMBER as  \" SQL_CHILD_NUMBER\",                   \n"
+    "       a.PREV_SQL_ID as       \" PREV_SQL_ID\",                        \n"
+    "       a.PREV_CHILD_NUMBER as \" PREV_CHILD_NUMBER\"                   \n"
+    "  FROM v$session a                                                    \n"
+    "--io   left join v$sess_io b on ( a.sid = b.sid)                      \n"
+    "--cpu  left join v$sesstat c on ( a.sid = c.sid)                      \n"
     "       left join v$sql d on (a.sql_address = d.address and            \n"
     "                             a.sql_hash_value=d.hash_value and        \n"
     "                             a.sql_child_number = d.child_number)     \n"
-    "       left join v$process e on (a.paddr = e.addr)\n"
-    " WHERE (c.statistic# = 12 OR c.statistic# IS NULL)\n"
+    "       left join v$process e on (a.paddr = e.addr)                    \n"
+    "       left join v$session_wait sw on (sw.sid = a.SID)                \n"
+    " WHERE 1=1                                                            \n"
+//    "       and (c.statistic# = 12 OR c.statistic# IS NULL)                \n"
     "%1 ORDER BY a.Sid",
     "List sessions, must have same number of columns and the first and last 2 must be the same",
     "1000");
 
 static toSQL SQLSessions7(
     "toSession:ListSession",
-    "SELECT a.Sid \"Id\",\n"
+    "SELECT a.Sid \"SID\",\n"
     "       a.Serial# \"Serial#\",\n"
     "       a.SchemaName \"Schema\",\n"
     "       a.Status \"Status\",\n"
@@ -388,12 +392,12 @@ static toSQL SQLSessions7(
     "       a.Module \"Module\",\n"
     "       a.Action \"Action\",\n"
     "       a.Client_Info \"Client Info\",\n"
-    "       b.Block_Gets \"Block Gets\",\n"
-    "       b.Consistent_Gets \"Consistent Gets\",\n"
-    "       b.Physical_Reads \"Physical Reads\",\n"
-    "       b.Block_Changes \"Block Changes\",\n"
-    "       b.Consistent_Changes \"Consistent Changes\",\n"
-    "       c.Value*10 \"CPU (ms)\",\n"
+    "--io   b.Block_Gets \"Block Gets\",\n"
+    "--io   b.Consistent_Gets \"Consistent Gets\",\n"
+    "--io   b.Physical_Reads \"Physical Reads\",\n"
+    "--io   b.Block_Changes \"Block Changes\",\n"
+    "--io   b.Consistent_Changes \"Consistent Changes\",\n"
+    "--cpu  c.Value*10 \"CPU (ms)\",\n"
     "       a.last_call_et \"Last SQL\",\n"
     "       a.Process \"Client PID\",\n"
     "       e.SPid \"Server PID\",\n"
@@ -401,12 +405,13 @@ static toSQL SQLSessions7(
     "       a.SQL_Address||':'||a.SQL_Hash_Value \" SQL Address\",\n"
     "       a.Prev_SQL_Addr||':'||a.Prev_Hash_Value \" Prev SQl Address\"\n"
     "  FROM v$session a,\n"
-    "       v$sess_io b,\n"
-    "       v$sesstat c,\n"
+    "--io   v$sess_io b,\n"
+    "--cpu  v$sesstat c,\n"
     "       v$sql d,\n"
     "       v$process e\n"
-    " WHERE a.sid = b.sid(+)\n"
-    "   AND a.sid = c.sid(+) AND (c.statistic# = 12 OR c.statistic# IS NULL)\n"
+    " WHERE 1=1\n"
+    "--io  ANF a.sid = b.sid(+)\n"
+    "--cpu AND a.sid = c.sid(+) AND (c.statistic# = 12 OR c.statistic# IS NULL)\n"
     "   AND a.sql_address = d.address(+) AND a.sql_hash_value = d.hash_value(+)\n"
     "   AND (d.child_number = 0 OR d.child_number IS NULL)\n"
     "   AND a.paddr = e.addr(+)\n"
@@ -442,8 +447,19 @@ static toSQL SQLSessionsMySQL(
     "",
     "QMYSQL");
 
+
+toResultSessions::toResultSessions(QWidget *parent, const char *name)
+    : Sessions::MVC(parent)
+{
+}
+
+void toResultSessions::observeDone()
+{
+    emit queryDone();
+}
+
 toSession::toSession(QWidget *main, toConnection &connection)
-    : toToolWidget(SessionTool,
+    : super(SessionTool,
                    "session.html",
                    main,
                    connection,
@@ -480,28 +496,16 @@ toSession::toSession(QWidget *main, toConnection &connection)
 
         toolbar->addSeparator();
 
-        enableTimedAct =
-            toolbar->addAction(
-                QIcon(QPixmap(const_cast<const char**>(clock_xpm))),
-                tr("Enable timed statistics"),
-                this,
-                SLOT(enableStatistics(void)));
+        enableTimedAct = toolbar->addAction(QIcon(QPixmap(const_cast<const char**>(clock_xpm))), tr("Enable timed statistics"));
+        QObject::connect(enableTimedAct, &QAction::triggered, this, [this]{ enableStatistics(true); });
 
-        disableTimedAct =
-            toolbar->addAction(
-                QIcon(QPixmap(const_cast<const char**>(noclock_xpm))),
-                tr("Disable timed statistics"),
-                this,
-                SLOT(disableStatistics(void)));
+        disableTimedAct = toolbar->addAction(QIcon(QPixmap(const_cast<const char**>(noclock_xpm))), tr("Disable timed statistics"));
+        connect(disableTimedAct, &QAction::triggered, this, [this]{ enableStatistics(false); });
 
         toolbar->addSeparator();
 
-        disconnectAct =
-            toolbar->addAction(
-                QIcon(QPixmap(const_cast<const char**>(kill_xpm))),
-                tr("Disconnect selected session"),
-                this,
-                SLOT(slotDisconnectSession(void)));
+        disconnectAct =  toolbar->addAction(QIcon(QPixmap(const_cast<const char**>(kill_xpm))), tr("Disconnect selected session"));
+        connect(disconnectAct, &QAction::triggered, this, [this]{ slotDisconnectSession(); } );
 
         toolbar->addSeparator();
     }
@@ -510,38 +514,31 @@ toSession::toSession(QWidget *main, toConnection &connection)
         enableTimedAct  = NULL;
         disableTimedAct = NULL;
 
-        disconnectAct =
-            toolbar->addAction(
-                QIcon(QPixmap(const_cast<const char**>(kill_xpm))),
-                tr("Cancel selected backend"),
-                this,
-                SLOT(slotCancelBackend()));
+        disconnectAct =  toolbar->addAction(QIcon(QPixmap(const_cast<const char**>(kill_xpm))), tr("Cancel selected backend"));
+        connect(disconnectAct, &QAction::triggered, this, [this]{ slotCancelBackend(); } );
     }
 
-    toolbar->addWidget(
-        new QLabel(tr("Refresh") + " ", toolbar));
+    toolbar->addWidget(new QLabel(tr("Refresh") + " ", toolbar));
 
     Refresh = new toRefreshCombo(toolbar);
     connect(Refresh, SIGNAL(activated(const QString &)), this, SLOT(slotChangeRefresh(const QString &)));
-    connect(Refresh->timer(), SIGNAL(timeout(void)), this, SLOT(slotRefreshTabs(void)));
+    connect(Refresh->timer(), &QTimer::timeout, this, [this]{ slotRefreshTabs(); });
     toolbar->addWidget(Refresh);
 
     toolbar->addSeparator();
+#if 0
+    auto selectAll = toolbar->addAction(QIcon(QPixmap(const_cast<const char**>(add_xpm))), tr("Select all sessions"));
+    connect(selectAll, &QAction::triggered, this, [this]{ slotSelectAll(); } );
 
-    toolbar->addAction(QIcon(QPixmap(const_cast<const char**>(add_xpm))),
-                       tr("Select all sessions"),
-                       this,
-                       SLOT(slotSelectAll(void)));
-
-    toolbar->addAction(QIcon(QPixmap(const_cast<const char**>(minus_xpm))),
-                       tr("Deselect all sessions"),
-                       this,
-                       SLOT(slotSelectNone(void)));
+    auto deselectAll = toolbar->addAction(QIcon(QPixmap(const_cast<const char**>(minus_xpm))), tr("Deselect all sessions"));
+    connect(selectAll, &QAction::triggered, this, [this]{ slotSelectNone(); } );
+#endif
 
     toolbar->addWidget(new QLabel(tr("Filter")));
 
     QLineEdit *filter = new QLineEdit;
-    filter->setMinimumWidth(200);
+    filter->setMinimumWidth(50);
+    filter->setMaximumWidth(150);
     toolbar->addWidget(filter);
 
     connect(filter,
@@ -551,7 +548,7 @@ toSession::toSession(QWidget *main, toConnection &connection)
 
     toolbar->addWidget(new Utils::toSpacer());
 
-    Total = new QLabel(toolbar);
+    Total = new QLabel("");
     Total->setAlignment(Qt::AlignRight | Qt::AlignVCenter/* | Qt::ExpandTabs*/);
     toolbar->addWidget(Total);
 
@@ -560,19 +557,15 @@ toSession::toSession(QWidget *main, toConnection &connection)
     QSplitter *splitter = new QSplitter(Qt::Vertical, this);
     layout()->addWidget(splitter);
 
-    Sessions = new toResultTableView(true,
-                                     false,
-                                     splitter,
-                                     "session list",
-                                     false);
-    Sessions->setAlternatingRowColors(true);
-    Sessions->horizontalHeader()->setStretchLastSection(true);
-    Sessions->setSelectionBehavior(QAbstractItemView::SelectRows);
-    Sessions->setSelectionMode(QAbstractItemView::ExtendedSelection);
-    Sessions->setReadAll(true);
-    Sessions->setFilter(SessionFilter);
+    Sessions = new toResultSessions(splitter, "session list");
+    splitter->addWidget(Sessions->view());
+    Sessions->view()->horizontalHeader()->setStretchLastSection(true);
+    Sessions->view()->setAlternatingRowColors(true);
+    Sessions->view()->setSelectionBehavior(QAbstractItemView::SelectRows);
+    Sessions->view()->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    //Sessions->view()->setFilter(SessionFilter);
 
-    connect(Sessions, SIGNAL(slotDone()), this, SLOT(slotDone()));
+    connect(Sessions, &toResultSessions::queryDone, this, [this]{ slotDone(); });
 
     ResultTab = new QTabWidget(splitter);
 
@@ -662,21 +655,12 @@ toSession::toSession(QWidget *main, toConnection &connection)
         LockedObjects->setSQL(SQLLockedObject);
     }
 
-    connect(Sessions,
-            SIGNAL(selectionChanged()),
-            this,
-            SLOT(slotChangeItem()));
-
-    connect(ResultTab,
-            SIGNAL(currentChanged(int)),
-            this,
-            SLOT(slotChangeTab(int)));
+    connect(Sessions->view()->selectionModel(), &QItemSelectionModel::currentChanged, this, [this](const QModelIndex &cur, const QModelIndex &old) { slotChangeItem(cur, old); });
+    connect(ResultTab, SIGNAL(currentChanged(int)), this, SLOT(slotChangeTab(int)));
 
     CurrentTab = CurrentStatement;
 
     ToolMenu = NULL;
-    // connect(toMainWidget()->workspace(), SIGNAL(subWindowActivated(QMdiSubWindow *)),
-    //         this, SLOT(slotWindowActivated(QMdiSubWindow *)));
     slotRefresh();
 
     QList<int> list;
@@ -684,6 +668,8 @@ toSession::toSession(QWidget *main, toConnection &connection)
     list.append(1);
     splitter->setSizes(list);
 
+// dunno what is this
+#if 0
     QList<toResultItem*> resultItems = findChildren<toResultItem*>();
     for(toResultItem* i: resultItems)
     {
@@ -694,17 +680,17 @@ toSession::toSession(QWidget *main, toConnection &connection)
     {
     	i->installEventFilter(this);
     }
+#endif
 
-
-    setFocusProxy(Sessions);
+    setFocusProxy(Sessions->view());
 }
 
 toSession::~toSession()
 {
     if (SessionFilter)
     {
-        Sessions->setFilter(NULL);
-        delete SessionFilter;
+        //Sessions->setFilter(NULL);
+        //delete SessionFilter;
     }
 }
 
@@ -765,12 +751,12 @@ QString toSession::sessionKillProcOracle(Session::KillSessionModeEnum mode, cons
 
 void toSession::slotSelectAll()
 {
-    Sessions->selectAll();
+    //Sessions->selectAll();
 }
 
 void toSession::slotSelectNone()
 {
-    Sessions->clearSelection();
+    //Sessions->clearSelection();
 }
 
 
@@ -820,11 +806,14 @@ void toSession::slotRefresh(void)
 {
     try
     {
-        QModelIndex item = Sessions->currentIndex();
+        QModelIndex item = Sessions->view()->currentIndex();
         if (item.isValid())
         {
-            Session = Sessions->model()->data(item.row(), 1).toString();
-            Serial  = Sessions->model()->data(item.row(), 2).toString();
+            int idxSid = Sessions->headers().indexOf("SID");
+            int idxSer = Sessions->headers().indexOf("Serial#");
+
+            Session = Sessions->data(item.siblingAtColumn(idxSid)).toString(); // Qt 5.11
+            Serial  = Sessions->data(item.siblingAtColumn(idxSer)).toString(); // Qt 5.11
         }
         else
             Session = Serial = QString::null;
@@ -854,7 +843,7 @@ void toSession::slotRefresh(void)
         }
 
         Sessions->setSQL(sql);
-        Sessions->refresh();
+        Sessions->refreshWithParams(toQueryParams());
     }
     TOCATCH;
 }
@@ -865,19 +854,32 @@ void toSession::slotDone(void)
     int total  = 0;
     int active = 0;
 
-    for (toResultTableView::iterator it(Sessions); (*it).isValid(); it++)
-    {
-        QString session = Sessions->model()->data((*it).row(), 1).toString();
-        QString serial  = Sessions->model()->data((*it).row(), 2).toString();
-        QString user    = Sessions->model()->data((*it).row(), 9).toString();
-        QString act     = Sessions->model()->data((*it).row(), 4).toString();
+    QModelIndex item = Sessions->view()->currentIndex();
 
-        if (session == Session && serial == Serial)
+    int idxSid = Sessions->headers().indexOf("SID");
+    int idxSer = Sessions->headers().indexOf("Serial#");
+    int idxType = Sessions->headers().indexOf("Type");
+    int idxStat = Sessions->headers().indexOf("Status");
+
+    QModelIndex parent = QModelIndex();
+    for(int r = 0; r < Sessions->rowCount(parent); ++r)
+    {
+        QModelIndex index = Sessions->index(r, 0, parent);
+        QVariant name = Sessions->data(index);
+
+        QString session = Sessions->data(index.siblingAtColumn(idxSid)).toString();
+        QString serial  = Sessions->data(index.siblingAtColumn(idxSer)).toString();
+        QString user    = Sessions->data(index.siblingAtColumn(idxType)).toString();
+        QString act     = Sessions->data(index.siblingAtColumn(idxStat)).toString();
+
+        /* in case index row is not already selected */
+        if (!item.isValid() && session == Session && serial == Serial)
         {
-            Sessions->selectionModel()->select(
-                QItemSelection(*it, *it),
+            Sessions->view()->selectionModel()->select(
+                QItemSelection(index, index),
                 QItemSelectionModel::ClearAndSelect);
-            Sessions->setCurrentIndex(*it);
+            Sessions->view()->setCurrentIndex(index);
+            Sessions->view()->scrollTo(index);
         }
 
         total++;
@@ -893,20 +895,40 @@ void toSession::slotDone(void)
 
 void toSession::enableStatistics(bool enable)
 {
-    QString sql;
-    if (enable)
-        sql = QString::fromLatin1("ALTER SYSTEM SET TIMED_STATISTICS = TRUE");
-    else
-        sql = QString::fromLatin1("ALTER SYSTEM SET TIMED_STATISTICS = FALSE");
-    try
+    TLOG(0, toDecorator, __HERE__) << std::endl;
+//    QString sql;
+//    if (enable)
+//        sql = QString::fromLatin1("ALTER SYSTEM SET TIMED_STATISTICS = TRUE");
+//    else
+//        sql = QString::fromLatin1("ALTER SYSTEM SET TIMED_STATISTICS = FALSE");
+//    try
+//    {
+//        toConnectionSubLoan conn(connection());
+//        conn.execute(sql);
+//    }
+//    catch (...)
+//    {
+//        Utils::toStatusMessage(tr("No access to timed statistics flags"));
+//    }
+//    Sessions->model()->setHeaderData()
+
+    toQueryAbstr::HeaderList &headers = Sessions->headers();
+    for(auto& h : headers)
     {
-        toConnectionSubLoan conn(connection());
-        conn.execute(sql);
+        if (h.name_orig != "Action")
+            continue;
+
+        if (h.name.startsWith(' '))
+        {
+            h.name = h.name.remove(0, 1);
+        } else {
+            h.name = QString(" ").append(h.name);
+        }
     }
-    catch (...)
-    {
-        Utils::toStatusMessage(tr("No access to timed statistics flags"));
-    }
+    Sessions->view()->applyColumnRules(); //TODO
+    int h1 = Sessions->view()->height();
+    int h2 = Sessions->view()->viewport()->height();
+    int h3 = Sessions->rowCount();
 }
 
 void toSession::slotChangeTab(int index)
@@ -916,13 +938,15 @@ void toSession::slotChangeTab(int index)
     if (tab != CurrentTab)
     {
         CurrentTab = tab;
-        QModelIndex item = Sessions->currentIndex();
+        QModelIndex item = Sessions->view()->currentIndex();
 
         if (!item.isValid())
             return;
 
-        QString connectionId = Sessions->model()->data(item.row(), 1).toString();
-        QString serial       = Sessions->model()->data(item.row(), 2).toString();
+        int idx1 = Sessions->headers().indexOf("SID");
+        int idx2 = Sessions->headers().indexOf("Serial#");
+        QString connectionId = Sessions->data(item.siblingAtColumn(idx1)).toString(); // Qt 5.11
+        QString serial       = Sessions->data(item.siblingAtColumn(idx2)).toString(); // Qt 5.11
 
         if (CurrentTab == StatisticSplitter)
         {
@@ -969,15 +993,21 @@ void toSession::slotChangeTab(int index)
         }
         else if (CurrentTab == CurrentStatement)
         {
-        	QString sql_id = Sessions->model()->data(item.row(), " SQL_ID").toString();
-        	QString cursor = Sessions->model()->data(item.row(), " SQL_CHILD_NUMBER").toString();
-        	CurrentStatement->changeAddress(toQueryParams() << sql_id << cursor);
+// TODO (PostgreSQL, MySQL)
+            int idx1 = Sessions->headers().indexOf(" SQL_ID");
+            int idx2 = Sessions->headers().indexOf(" SQL_CHILD_NUMBER");
+            QString sql_id = Sessions->data(item.siblingAtColumn(idx1)).toString();
+            QString cursor = Sessions->data(item.siblingAtColumn(idx2)).toString();
+            CurrentStatement->changeAddress(toQueryParams() << sql_id << cursor);
         }
         else if (CurrentTab == PreviousStatement)
         {
-        	QString sql_id = Sessions->model()->data(item.row(), " PREV_SQL_ID").toString();
-        	QString cursor = Sessions->model()->data(item.row(), " PREV_CHILD_NUMBER").toString();
-        	CurrentStatement->changeAddress(toQueryParams() << sql_id << cursor);
+// TODO (PostgreSQL, MySQL)
+            int idx1 = Sessions->headers().indexOf(" PREV_SQL_ID");
+            int idx2 = Sessions->headers().indexOf(" PREV_CHILD_NUMBER");
+            QString sql_id = Sessions->data(item.siblingAtColumn(idx1)).toString();
+            QString cursor = Sessions->data(item.siblingAtColumn(idx2)).toString();
+            CurrentStatement->changeAddress(toQueryParams() << sql_id << cursor);
         }
         else if (CurrentTab == AccessedObjects)
         {
@@ -1004,7 +1034,7 @@ void toSession::slotChangeCursor()
 
 void toSession::slotCancelBackend()
 {
-    QModelIndexList selected = Sessions->selectionModel()->selectedRows(1);
+    QModelIndexList selected = Sessions->view()->selectionModel()->selectedRows(1);
     foreach(QModelIndex item, selected)
     {
         if (!item.isValid())
@@ -1021,13 +1051,14 @@ void toSession::slotCancelBackend()
 
 void toSession::slotDisconnectSession()
 {
-    QModelIndexList selected = Sessions->selectionModel()->selectedRows();
+    QModelIndexList selected = Sessions->view()->selectionModel()->selectedRows();
     if (selected.isEmpty())
         return;
 
     QString str(tr("Let transaction(s) finish before disconnecting?"));
     QString sql;
 
+#if 0
 	toSessionDisconnect *widget = new toSessionDisconnect(Sessions, this, "toSessionDisconnect");
     switch(widget->exec())
     {
@@ -1041,16 +1072,15 @@ void toSession::slotDisconnectSession()
         Utils::toStatusMessage(tr("Aborted execution"), false, false);
         throw tr("Aborted execution");
     }
-
+#endif
 }
 
-void toSession::slotChangeItem()
+void toSession::slotChangeItem(const QModelIndex &current, const QModelIndex &previous)
 {
-    QModelIndex selected = Sessions->currentIndex();
-    if (!selected.isValid())
+    if (!current.isValid())
         return;
 
-    QString item = Sessions->model()->data(selected.row(), 1).toString();
+    QString item = Sessions->data(current.siblingAtColumn(1)).toString();
     if (LastSession != item)
     {
         if (!item.isEmpty())
@@ -1075,14 +1105,16 @@ void toSession::slotChangeItem()
 
 void toSession::slotRefreshTabs(void)
 {
-    slotChangeItem();
+    slotChangeItem(Sessions->view()->currentIndex(), QModelIndex());
 }
 
 
 void toSession::slotFilterChanged(const QString &text)
 {
+#if 0
     SessionFilter->setFilterString(text);
     Sessions->applyFilter();
+#endif
 }
 
 bool toSession::eventFilter(QObject *obj, QEvent *event)
@@ -1097,7 +1129,7 @@ bool toSession::eventFilter(QObject *obj, QEvent *event)
             }
         }
     }
-    return QObject::eventFilter(obj, event);
+    return super::eventFilter(obj, event);
 }
 
 toSessionDisconnect::toSessionDisconnect(toResultTableView *sessionView, QWidget *parent, const char *name)
