@@ -48,7 +48,13 @@ static toSQL SQLDisplayCursor("toResultPlan:DisplayCursor",
                               //" WHERE sys.slow_one() = 1 "
                               ,
                               "Get the contents of SQL plan from using DBMS_XPLAN.DISPLAY_CURSOR",
-        "1000");
+                              "1000");
+
+static toSQL SQLDisplayStatement("toResultPlan:DisplayStatement",
+                                 "SELECT * FROM TABLE(dbms_xplan.display(:plan_table<char[100],in>, :stat_id<char[100],in>))",
+                                 "Display explain plan",
+                                 "1000");
+
 
 void ResultPlan::PlanTextMVC::observeDone()
 {

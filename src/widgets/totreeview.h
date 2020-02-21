@@ -65,6 +65,10 @@ class toTreeView : public QTreeView
 
 
     protected:
+        /*! Catch special keyboard shortcuts.
+            Copy, etc.
+        */
+        void keyPressEvent(QKeyEvent * event) override;
 
     private:
 };
@@ -82,7 +86,6 @@ class DefaultTreeViewPolicy
 template<typename Traits>
 void DefaultTreeViewPolicy<Traits>::setup(View* pView)
 {
-
     pView->setSelectionBehavior( (QAbstractItemView::SelectionBehavior) Traits::SelectionBehavior);
     pView->setSelectionMode( (QAbstractItemView::SelectionMode) Traits::SelectionMode);
     pView->setAlternatingRowColors( Traits::AlternatingRowColorsEnabled);
@@ -98,7 +101,7 @@ void DefaultTreeViewPolicy<Traits>::setup(View* pView)
             break;
         case Traits::RowColumResize:
             {
-                //bool retval = QObject::connect(pView->model(), SIGNAL(firstResultReceived()), pView, SLOT(slotApplyColumnRules()));
+                //bool retval = QObject::connect(pView->model(), SIGNAL(firstResultReceived()), pView, SLOT(applyColumnRules()));
                 //Q_ASSERT_X(retval, qPrintable(__QHERE__), "Connection failed: Model -> View");
             }
             break;

@@ -63,3 +63,9 @@ int toTreeView::sizeHintForColumn(int col) const
 void toTreeView::slotApplyColumnRules()
 {
 }
+
+void toTreeView::keyPressEvent(QKeyEvent * event)
+{
+
+}
+
