@@ -202,10 +202,25 @@ bool toTableModelPriv::setHeaderData(int section,
     if (orientation != Qt::Horizontal)
         return false;
 
-    Headers[section].name = value.toString();
-    Headers[section].name_orig = value.toString();
-    Headers[section].hidden = false;
-    return true;
+    if (Headers.size() < section)
+    {
+        Headers[section].name = value.toString();
+        Headers[section].name_orig = value.toString();
+        Headers[section].hidden = false;
+        return true;
+    }
+    if (Headers.size() == section)
+    {
+        struct toQueryAbstr::HeaderDesc d;
+        d.name = value.toString();
+        d.name_orig = value.toString();
+        //d.datatype = ???
+        d.hidden = false;
+        Headers.append(d);
+        return true;
+    }
+    Q_ASSERT_X(false, qPrintable(__QHERE__), "Failed to extend setHeaderData");
+    return false;
 }
 
 int toTableModelPriv::columnCount(const QModelIndex &parent) const
