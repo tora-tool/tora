@@ -78,6 +78,7 @@ struct MVCTraits
         CustomColumnResize
     };
 
+    static const toEventQuery::FETCH_MODE FetchMode = toEventQuery::READ_FIRST;
     static const int  SelectionBehavior = QAbstractItemView::SelectItems;
     static const int  SelectionMode = QAbstractItemView::NoSelection;
     static const bool AlternatingRowColorsEnabled = false;
@@ -509,7 +510,7 @@ void TOMVC< _T, _VP, _DP>::refreshWithParams(toQueryParams const& params)
     {
         sql = toSQL::string(m_SQLName, connection());
     }
-    toEventQuery *Query = new toEventQuery(this, connection(), sql, m_Params, toEventQuery::READ_ALL);
+    toEventQuery *Query = new toEventQuery(this, connection(), sql, m_Params, Traits::FetchMode);
     setQuery(Query);
 }
 
@@ -535,7 +536,7 @@ void TOMVC< _T, _VP, _DP>::query()
     {
         sql = toSQL::string(m_SQLName, connection());
     }
-    toEventQuery *Query = new toEventQuery(this, connection(), sql, m_Params, toEventQuery::READ_ALL);
+    toEventQuery *Query = new toEventQuery(this, connection(), sql, m_Params, Traits::FetchMode);
     setQuery(Query);
 }
 
