@@ -135,6 +135,21 @@ void toResultTableView::setup(bool readable, bool numberColumn, bool editable)
     setSelectionMode(QAbstractItemView::ContiguousSelection);
     setAlternatingRowColors(true);
 
+    //QFont smallest = QFontDatabase::systemFont(QFontDatabase::SmallestReadableFont);
+    QFont font;
+    //QFont font("Segoe UI");        // Should be default ClearCase font in Windows
+    //QFont font("MS Shell Dlg 2");  // Is be default ClearCase font in Windows (Qt 5.12)
+    font.setPointSize(9);
+    setFont(font);
+
+    // Note since Qt 5.12 this is totally broken. QTBUG-73721
+    // Row height when displaying QTableView differs from row height when resizing it
+    verticalHeader()->setMinimumSectionSize(QFontMetrics(font).height() + 4); // QT 5.12. QTBUG-69431 minimumSectionSize <= defaultSectionSize
+    verticalHeader()->setDefaultSectionSize(QFontMetrics(font).height() + 4);
+    verticalHeader()->setMaximumSectionSize(QFontMetrics(font).height() + 4);
+    verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+    setWordWrap(false);
+
     connect(horizontalHeader(),
             SIGNAL(sectionResized(int, int, int)),
             this,
