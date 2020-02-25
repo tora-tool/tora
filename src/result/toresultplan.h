@@ -44,6 +44,7 @@ namespace ResultPlan
     {
         static const int  ShowRowNumber = NoRowNumber;
         static const int  ColumnResize = RowColumResize;
+        static const toEventQuery::FETCH_MODE FetchMode = toEventQuery::READ_ALL;
         typedef Views::toPlainTextView View;
     };
 
