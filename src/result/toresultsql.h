@@ -43,6 +43,7 @@ namespace ResultSqlText
     {
         typedef Views::toSqlTextView View;
         static const int  ContextMenuPolicy = Qt::DefaultContextMenu;
+        static const toEventQuery::FETCH_MODE FetchMode = toEventQuery::READ_ALL;
     };
 
     class SqlTextMVC
