@@ -38,6 +38,7 @@
 
 #include <QTableView>
 #include <QFont>
+#include <QHeaderView>
 
 class QAbstractItemModel;
 class QContextMenuEvent;
