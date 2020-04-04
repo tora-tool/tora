@@ -54,6 +54,7 @@
 #include <QtCore/QTimer>
 #include <QtCore/QtDebug>
 #include <QtCore/QMimeData>
+#include <QFontDatabase>
 #include <QtGui/QClipboard>
 #include <QtGui/QFont>
 #include <QtGui/QFontMetrics>

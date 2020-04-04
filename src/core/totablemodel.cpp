@@ -71,13 +71,13 @@ QVariant toTableModelPriv::data(QModelIndex const& index, int role) const
 {
     if (!index.isValid())
     {
-        goto INVALID;
+	throw QString("Invalid index row: %1").arg(index.row());
         return QVariant();
     }
 
     if (index.row() >= Rows.size()) //
     {
-        goto INVALID;
+	throw QString("Invalid index row: %1").arg(index.row());
         return QVariant();
     }
 
@@ -131,7 +131,6 @@ QVariant toTableModelPriv::data(QModelIndex const& index, int role) const
             return QVariant();
     }
 
-INVALID:
     throw QString("Invalid index row: %1").arg(index.row());
     return QVariant();
 }
