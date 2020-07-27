@@ -239,7 +239,7 @@ QStringList toCache::completeEntry(QString const& schema, QString const& object)
     auto i(m_schemaTrie.find(schema));
     if (i != m_schemaTrie.end())
     {
-    	QStringList retvalSchema = m_schemaTrie.value(schema).complete(object, schema + '.', LookupFlags(CaseInsensitive));
+        QStringList retvalSchema = m_schemaTrie.value(schema).complete(object, QString(), LookupFlags(CaseInsensitive));
     	//QStringList retvalPublic = m_schemaTrie.value("PUBLIC").complete(object, "PUBLIC.", LookupFlags(CaseInsensitive));
     	if(retvalSchema.size() < 200) retvalSchema.sort();
     	//if(retvalPublic.size() < 800) retvalPublic.sort();
