@@ -38,7 +38,10 @@
 #include "core/tolistviewformatter.h"
 #include "core/tolistviewformatteridentifier.h"
 
+#include <QApplication>
+#include <QClipboard>
 #include <QHeaderView>
+#include <QMenu>
 #include <QContextMenuEvent>
 
 using namespace Views;
