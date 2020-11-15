@@ -48,6 +48,7 @@
 #include "result/toresultsql.h"
 
 #include "views/toplantablesview.h"
+#include "views/tobindsview.h"
 
 static toSQL SQLParsingSchema(
     "toSGAStatement:ParsingSchema",
@@ -115,6 +116,11 @@ toSGAStatement::toSGAStatement(QWidget *parent, const char* name)
         SQLTables = new toPlanTablesView(this);
         SQLTables->setObjectName("toSQLTablesView");
         addTab(SQLTables->view(), tr("Tables"));
+
+        Binds = new toBindVariablesView(this);
+        Binds->setObjectName("toBindVariablesView");
+        addTab(Binds->view(), tr("Binds"));
+
     }
     else
         QTabWidget::tabBar()->hide();
@@ -144,6 +150,8 @@ void toSGAStatement::changeTab(int index)
             PlanHistory->refreshWithParams(toQueryParams() << Address);
         else if (CurrentTab == SQLTables->view())
             SQLTables->refreshWithParams(toQueryParams() << Address << ChildNumber);
+        else if (CurrentTab == Binds->view())
+            Binds->refreshWithParams(toQueryParams() << Address);
     }
     TOCATCH;
 }

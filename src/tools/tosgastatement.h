@@ -49,6 +49,7 @@ class toResultView;
 class toResultTableView;
 class toResultSql;
 class toPlanTablesView;
+class toBindVariablesView;
 
 /** This widget displays information about a statement in the Oracle SGA. To get an
  * address use the @ref toSQLToAddress function.
@@ -81,6 +82,8 @@ class toSGAStatement : public QTabWidget
         toResultPlanNew    *PlanNew;
 
         toPlanTablesView    *SQLTables;
+
+        toBindVariablesView *Binds;
 
     private slots:
         /** Change the displayed tab.
