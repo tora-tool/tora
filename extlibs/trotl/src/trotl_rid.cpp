@@ -46,7 +46,9 @@ Util::RegisterInFactory<BindParRid, BindParFactTwoParmSing> regBindRid("rid");
 Util::RegisterInFactory<BindParRid, BindParFactTwoParmSing> regBindURid("urid");
 
 // // Register Bind datatypes in factory(Define - SELECT)
-Util::RegisterInFactory<BindParRid, DefineParFactTwoParmSing, int> regDefineRid(SQLT_RDD);
+// This does not work, for some reason this SEGFAULTs when more than row is fetched
+// Use implicit conversion to VARCHAR2 (see trotl_string.cpp)
+/////Util::RegisterInFactory<BindParRid, DefineParFactTwoParmSing, int> regDefineRid(SQLT_RDD);
 
 BindParRid::BindParRid(unsigned int pos, SqlStatement &stmt, DescribeColumn* ct) : BindPar(pos, stmt, ct)
 {

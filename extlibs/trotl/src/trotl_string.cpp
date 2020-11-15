@@ -51,6 +51,8 @@ Util::RegisterInFactory<BindParRaw,     DefineParFactTwoParmSing, int> regDefine
 
 Util::RegisterInFactory<BindParLong,    DefineParFactTwoParmSing, int> regDefineLong(SQLT_LNG);
 
+Util::RegisterInFactory<BindParVarchar, DefineParFactTwoParmSing, int> regDefineRid(SQLT_RDD);
+
 BindParVarchar::BindParVarchar(unsigned int pos, SqlStatement &stmt, DescribeColumn* ct) : BindPar(pos, stmt, ct)
 {
 	/* amount of bytes =  (string length +1 )*4 * (array length) */

@@ -298,12 +298,22 @@ QString toIndent::indent(QString const&input)
         // append the last remaining part(last line)
         while (!lineBuf.isEmpty())
         {
-            LineBuffer oldLine = lineBuf.split(); // split the lineBuf (in case there are ANY single line comments in lineBuf
+            // The length of lineBuf exceeded the requested length
+            if (lineBuf.lineLenght() > IndentLineWidthInt)
+            {
+                LineBuffer oldLine = lineBuf.split(); // split the lineBuf (in case there are ANY single line comments in lineBuf
 
-            int depth = oldLine.front()->metadata().value("INDENT_DEPTH").toInt();
-            retval.append(QString(depth * IndentWidthInt + adjustment, ' '));
-            retval.append(oldLine.toString());
-            retval.append('\n');
+                int depth = oldLine.front()->metadata().value("INDENT_DEPTH").toInt();
+                retval.append(QString(depth * IndentWidthInt + adjustment, ' '));
+                retval.append(oldLine.toString());
+                retval.append('\n');
+            } else {
+                int depth = lineBuf.front()->metadata().value("INDENT_DEPTH").toInt();
+                retval.append(QString(depth * IndentWidthInt + adjustment, ' '));
+                retval.append(lineBuf.toString());
+                retval.append('\n');
+                break; // the last line was drained
+            }
         }
 
         // validation part
@@ -533,6 +543,14 @@ static void indentPriv(SQLParser::Token const* root, QList<SQLParser::Token cons
     QRegExp white("^[ \\n\\r\\t]*$");
 
     Token const *t = root; // this sub-tree's root
+#if 0
+    auto s = t->toString();
+    //auto t = t->toStringRecursive();
+    auto l = t->toLispStringRecursive();
+    auto a = t->getTokenATypeName();
+    auto b = t->getTokenTypeString();
+#endif
+
     unsigned indentDepth = 0; // indentDepth counter
     while(t->parent())    // iterate to real root, compute indent depth, ignore nodes having no text
     {

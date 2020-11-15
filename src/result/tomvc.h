@@ -260,7 +260,7 @@ void TOMVC<_T, _VP, _DP>::setQuery(Query *query)
 
     //retval = QObject::connect(query, SIGNAL(dataAvailable(toEventQuery*)), m_observerObject, SLOT(eqDataAvailable(toEventQuery*)));
     //Q_ASSERT_X(retval, qPrintable(__QHERE__), "connect failed: dataAvailable");
-    connect(query, &Query::dataAvailable, m_observerObject, &ObserverObject::eqDataAvailable);
+    QObject::connect(query, &Query::dataAvailable, m_observerObject, &ObserverObject::eqDataAvailable);
 
     retval = QObject::connect(query, SIGNAL(error(toEventQuery*, const toConnection::exception &))
                               , m_observerObject, SLOT(eqError(toEventQuery*, const toConnection::exception &)));
