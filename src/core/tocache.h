@@ -228,7 +228,7 @@ class TORA_EXPORT toCache : public QObject
 
             /** Create an object name with filled in values.
             */
-            CacheEntry(const QString &owner, const QString &name, const QString &type, const QString &comment = QString::null);
+            CacheEntry(const QString &owner, const QString &name, const QString &type, const QString &comment = QString());
 
             /** TODO delete this - this is courious constructor used to hold TORAs internal cache entries */
             CacheEntry(const QString &owner, const QString &objName, toCache::CacheEntryType objType, const QString &objComment);
@@ -474,7 +474,7 @@ Q_DECLARE_METATYPE(toQColumnDescriptionList);
 class toCacheEntryTable : public toCache::CacheEntry
 {
     public:
-        toCacheEntryTable(const QString &owner, const QString &name, const QString &comment = QString::null);
+        toCacheEntryTable(const QString &owner, const QString &name, const QString &comment = QString());
 
     private:
 };
@@ -482,7 +482,7 @@ class toCacheEntryTable : public toCache::CacheEntry
 class toCacheEntryView : public toCache::CacheEntry
 {
     public:
-        toCacheEntryView(const QString &owner, const QString &name, const QString &comment = QString::null);
+        toCacheEntryView(const QString &owner, const QString &name, const QString &comment = QString());
 
     private:
 };
@@ -490,7 +490,7 @@ class toCacheEntryView : public toCache::CacheEntry
 class toCacheEntrySynonym : public toCache::CacheEntry
 {
     public:
-        toCacheEntrySynonym(const QString &owner, const QString &name, const QString &comment = QString::null);
+        toCacheEntrySynonym(const QString &owner, const QString &name, const QString &comment = QString());
 
     private:
 };
@@ -498,7 +498,7 @@ class toCacheEntrySynonym : public toCache::CacheEntry
 class toCacheEntryProcedure: public toCache::CacheEntry
 {
     public:
-        toCacheEntryProcedure(const QString &owner, const QString &name, const QString &comment = QString::null);
+        toCacheEntryProcedure(const QString &owner, const QString &name, const QString &comment = QString());
 
     private:
 };
@@ -506,7 +506,7 @@ class toCacheEntryProcedure: public toCache::CacheEntry
 class toCacheEntryFunction: public toCache::CacheEntry
 {
     public:
-        toCacheEntryFunction(const QString &owner, const QString &name, const QString &comment = QString::null);
+        toCacheEntryFunction(const QString &owner, const QString &name, const QString &comment = QString());
 
     private:
 };
@@ -514,7 +514,7 @@ class toCacheEntryFunction: public toCache::CacheEntry
 class toCacheEntryPackage: public toCache::CacheEntry
 {
     public:
-        toCacheEntryPackage(const QString &owner, const QString &name, const QString &comment = QString::null);
+        toCacheEntryPackage(const QString &owner, const QString &name, const QString &comment = QString());
 
     private:
 };
@@ -522,7 +522,7 @@ class toCacheEntryPackage: public toCache::CacheEntry
 class toCacheEntryPackageBody: public toCache::CacheEntry
 {
     public:
-        toCacheEntryPackageBody(const QString &owner, const QString &name, const QString &comment = QString::null);
+        toCacheEntryPackageBody(const QString &owner, const QString &name, const QString &comment = QString());
 
     private:
 };
@@ -530,7 +530,7 @@ class toCacheEntryPackageBody: public toCache::CacheEntry
 class toCacheEntryIndex: public toCache::CacheEntry
 {
     public:
-        toCacheEntryIndex(const QString &owner, const QString &name, const QString &comment = QString::null);
+        toCacheEntryIndex(const QString &owner, const QString &name, const QString &comment = QString());
 
     private:
 };
@@ -538,7 +538,7 @@ class toCacheEntryIndex: public toCache::CacheEntry
 class toCacheEntrySequence: public toCache::CacheEntry
 {
     public:
-        toCacheEntrySequence(const QString &owner, const QString &name, const QString &comment = QString::null);
+        toCacheEntrySequence(const QString &owner, const QString &name, const QString &comment = QString());
 
     private:
 };
@@ -546,7 +546,7 @@ class toCacheEntrySequence: public toCache::CacheEntry
 class toCacheEntryTrigger: public toCache::CacheEntry
 {
     public:
-        toCacheEntryTrigger(const QString &owner, const QString &name, const QString &comment = QString::null);
+        toCacheEntryTrigger(const QString &owner, const QString &name, const QString &comment = QString());
 
     private:
 };
@@ -554,7 +554,7 @@ class toCacheEntryTrigger: public toCache::CacheEntry
 class toCacheEntryDatabase: public toCache::CacheEntry
 {
     public:
-        toCacheEntryDatabase(const QString &name, const QString &comment = QString::null);
+        toCacheEntryDatabase(const QString &name, const QString &comment = QString());
 
     private:
 };

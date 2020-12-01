@@ -297,13 +297,13 @@ std::list<QString> toExtract::describe(const toExtract::ObjectList &objects)
 QString toExtract::generateHeading(const QString &action, const QList<QPair<QString,toCache::ObjectRef> > &objects)
 {
     if (!Heading)
-        return QString::null;
+        return QString();
 
     QString db = Connection.host();
     if (db.length() && db != QString::fromLatin1("*"))
         db += QString::fromLatin1(":");
     else
-        db = QString::null;
+        db = QString();
     db += Connection.database();
 
     QString str = qApp->translate("toExtract", "-- This DDL was reverse engineered by\n"
@@ -361,7 +361,7 @@ QString toExtract::intSchema(const QString &owner, bool desc)
         return ret;
     }
     else if (Schema.isEmpty())
-        return QString::null;
+        return QString();
     QString ret = Connection.getTraits().quote(Schema);
     if (!desc)
         ret += ".";
@@ -444,7 +444,7 @@ QString toExtract::partDescribe(const QString &str, int level)
 {
     QStringList ctx = str.split("\01");
     if (ctx.count() <= level)
-        return QString::null;
+        return QString();
     return ctx[level];
 }
 
@@ -463,7 +463,7 @@ QString toExtract::contextDescribe(const QString &str, int level)
 
     if (level == 0)
         return str.mid(0, pos);
-    return QString::null;
+    return QString();
 }
 
 std::list<toExtract::columnInfo> toExtract::parseColumnDescription(std::list<QString>::const_iterator begin,

@@ -816,7 +816,7 @@ void toSession::slotRefresh(void)
             Serial  = Sessions->data(item.siblingAtColumn(idxSer)).toString(); // Qt 5.11
         }
         else
-            Session = Serial = QString::null;
+            Session = Serial = QString();
         QString sql = toSQL::string(SQLSessions, connection());
 
         if (connection().providerIs("Oracle"))

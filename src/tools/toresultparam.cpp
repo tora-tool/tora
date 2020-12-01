@@ -215,7 +215,7 @@ void toResultParam::showGlobal(bool glb)
 void toResultParam::query(const QString &sql, const toQueryParams &param)
 {
     saveChange();
-    LastItem = QString::null;
+    LastItem = QString();
 
     Params->refresh();
 }
@@ -429,14 +429,14 @@ void toResultParam::changeItem(void)
     }
     else
     {
-        LastItem = QString::null;
+        LastItem = QString();
         Value->setEnabled(false);
     }
 }
 
 void toResultParam::changedData(int, int, const QString &data)
 {
-    QString file = Utils::toSaveFilename(QString::null, connection().providerIs("Oracle") ? "*.pfile" : "*.conf", this);
+    QString file = Utils::toSaveFilename(QString(), connection().providerIs("Oracle") ? "*.pfile" : "*.conf", this);
     if (!file.isEmpty())
         Utils::toWriteFile(file, data);
 }

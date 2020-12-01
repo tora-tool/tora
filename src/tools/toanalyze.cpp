@@ -453,7 +453,7 @@ QStringList toAnalyze::getSQL(void)
                     switch (For->currentIndex())
                     {
                         case 0:
-                            forc = QString::null;
+                            forc = QString();
                             break;
                         case 1:
                             forc = QString::fromLatin1(" FOR TABLE");
@@ -621,7 +621,7 @@ void toAnalyze::slotStop(void)
     Running.clear();
     Pending.clear();
     Stop->setEnabled(false);
-    Current->setText(QString::null);
+    Current->setText(QString());
     //    if (!connection().needCommit())
     //    {
     //        try

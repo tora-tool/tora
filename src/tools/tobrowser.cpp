@@ -169,7 +169,7 @@ void toBrowserTool::addIndex(void)
     //     toConnection &conn = toMainWidget()->currentConnection();
     //     toBrowserIndex::modifyIndex(conn,
     //                                 conn.providerIs("QMYSQL") ? conn.database() : conn.user(),
-    //                                 QString::null,
+    //                                 QString(),
     //                                 toMainWidget());
     // }
     // TOCATCH
@@ -183,7 +183,7 @@ void toBrowserTool::addConstraint(void)
     //     toConnection &conn = toMainWidget()->currentConnection();
     //     toBrowserConstraint::modifyConstraint(conn,
     //                                           conn.providerIs("QMYSQL") ? conn.database() : conn.user(),
-    //                                           QString::null,
+    //                                           QString(),
     //                                           toMainWidget());
     // }
     // TOCATCH
@@ -1406,7 +1406,7 @@ QString toBrowser::schema(void) const
     catch (...)
     {
         TLOG(1, toDecorator, __HERE__) << "	Ignored exception." << std::endl;
-        return QString::null;
+        return QString();
     }
 }
 
@@ -1431,7 +1431,7 @@ void toBrowser::setNewFilter(toBrowserFilter *filter)
 void toBrowser::addUser()
 {
 #ifdef TOEXTENDED_MYSQL
-    UserPanel->changeParams(QString::null, QString::null);
+    UserPanel->changeParams(QString(), QString());
 #endif
 }
 
@@ -1759,7 +1759,7 @@ void toBrowser::dropSomething(const QString &type, const QString &what)
     //                           tr("Are you sure you want to drop the %1 %2.%3?\n"
     //                              "This action can not be undone!").arg(tr(type.toLatin1().constData())).arg(
     //                               Schema->selected()).arg(what),
-    //                           tr("&Yes"), tr("&Cancel"), QString::null, 0) == 0)
+    //                           tr("&Yes"), tr("&Cancel"), QString(), 0) == 0)
     // {
     //     std::list<QString> ctx;
     //     Utils::toPush(ctx, Schema->selected());
@@ -2120,7 +2120,7 @@ void toBrowser::importData(std::map<QString, QString> &data, const QString &pref
         QWidget *chld = findChild<QWidget *>(str);
         if (chld && str.length())
         {
-            SecondText = QString::null;
+            SecondText = QString();
             TopTab->setCurrentIndex(TopTab->indexOf(chld));
 
             toResultTableView *newtab = Map[chld->objectName()];

@@ -141,7 +141,7 @@ toQueryParams toParamGet::getParam(toConnection &conn, QWidget *parent, QString 
             if (current->isEnabled())
                 val = current->currentText();
             else
-                val = QString::null;
+                val = QString();
 
             QString bindName = BindParamList.at(ix);
             ++ix;

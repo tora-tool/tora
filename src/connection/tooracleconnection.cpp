@@ -149,7 +149,7 @@ toConnectionSub* toOracleConnectionImpl::createConnection(void)
                                           qApp->translate("toOracleConnection", "Password expired"),
                                           qApp->translate("toOracleConnection", "Enter new password"),
                                           QLineEdit::Password,
-                                          QString::null,
+                                          QString(),
                                           &ok);
                     if (!ok)
                         throw exc;
@@ -159,7 +159,7 @@ toConnectionSub* toOracleConnectionImpl::createConnection(void)
                                            qApp->translate("toOracleConnection", "Password expired"),
                                            qApp->translate("toOracleConnection", "Enter password again for confirmation"),
                                            QLineEdit::Password,
-                                           QString::null,
+                                           QString(),
                                            &ok);
 
                     if (!ok)

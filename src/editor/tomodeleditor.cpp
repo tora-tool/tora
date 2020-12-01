@@ -70,7 +70,7 @@ void toModelEditor::saveFile()
     if (data.type() == QVariant::UserType)
     {
         QString fn;
-        fn = Utils::toSaveFilename(QString::null, QString::null, this);
+        fn = Utils::toSaveFilename(QString(), QString(), this);
         QFile file(fn);
         if (!file.open(QIODevice::WriteOnly))
         {
@@ -312,7 +312,7 @@ void toModelEditor::store()
     if (Editor->isModified())
     {
         if (!Editor->isEnabled())
-            Model->setData(Current, QVariant(QString::null));
+            Model->setData(Current, QVariant(QString()));
         else
             Model->setData(Current, Editor->text());
     }

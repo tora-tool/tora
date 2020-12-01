@@ -96,7 +96,7 @@ class toCurrent : public toToolWidget
                              toTreeWidgetItem *parent,
                              const QString &typ,
                              const toSQL &sql,
-                             const QString &role = QString::null);
+                             const QString &role = QString());
         void processUpdate(void);
 
     protected:

@@ -180,7 +180,7 @@ void toSqlText::keyPressEvent(QKeyEvent * e)
     //        {
     //            Search = false;
     //            LastSearch = SearchString;
-    //            Utils::toStatusMessage(QString::null);
+    //            Utils::toStatusMessage(QString());
     //        }
     //    }
 #endif

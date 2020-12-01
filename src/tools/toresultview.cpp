@@ -58,7 +58,7 @@ static bool Gridlines;
 toResultViewItem::toResultViewItem(toTreeWidget *parent
                                    , toTreeWidgetItem *after
                                    , const QString &buf)
-    : toTreeWidgetItem(parent, after, QString::null)
+    : toTreeWidgetItem(parent, after, QString())
     , ColumnCount(0)
     , ColumnData(NULL)
 {
@@ -69,7 +69,7 @@ toResultViewItem::toResultViewItem(toTreeWidget *parent
 toResultViewItem::toResultViewItem(toTreeWidgetItem *parent
                                    , toTreeWidgetItem *after
                                    , const QString &buf)
-    : toTreeWidgetItem(parent, after, QString::null)
+    : toTreeWidgetItem(parent, after, QString())
     , ColumnCount(0)
     , ColumnData(NULL)
 {
@@ -221,7 +221,7 @@ int toResultViewMLine::realWidth(const QFontMetrics &fm, const toTreeWidget *top
 QString toResultViewItem::firstText(int col) const
 {
     if (col >= ColumnCount)
-        return QString::null;
+        return QString();
     QString txt = ColumnData[col].Data;
     int pos = txt.indexOf('\n');
     if (pos != -1)
@@ -232,7 +232,7 @@ QString toResultViewItem::firstText(int col) const
 QString toResultViewItem::text(int col) const
 {
     if (col >= ColumnCount)
-        return QString::null;
+        return QString();
     if (ColumnData[col].Type == keyData::Number)
         return toTreeWidgetItem::text(col);
     return firstText(col);
@@ -280,7 +280,7 @@ void toResultViewItem::paintCell(QPainter * p, const QColorGroup & cg, int colum
 
 toResultViewCheck::toResultViewCheck(toTreeWidget *parent, toTreeWidgetItem *after, const QString &text, toTreeWidgetCheck::Type type)
     :
-    toTreeWidgetCheck(parent, after, QString::null, type)
+    toTreeWidgetCheck(parent, after, QString(), type)
 {
     ColumnData = NULL;
     ColumnCount = 0;
@@ -290,7 +290,7 @@ toResultViewCheck::toResultViewCheck(toTreeWidget *parent, toTreeWidgetItem *aft
 
 toResultViewCheck::toResultViewCheck(toTreeWidgetItem *parent, toTreeWidgetItem *after, const QString &text, toTreeWidgetCheck::Type type)
     :
-    toTreeWidgetCheck(parent, after, QString::null, type)
+    toTreeWidgetCheck(parent, after, QString(), type)
 {
     ColumnData = NULL;
     ColumnCount = 0;
@@ -452,7 +452,7 @@ void toResultViewCheck::paintCell(QPainter * p, const QColorGroup & cg, int colu
 QString toResultViewCheck::text(int col) const
 {
     if (col >= ColumnCount)
-        return QString::null;
+        return QString();
     if (ColumnData[col].Type == keyData::Number)
         return toTreeWidgetCheck::text(col);
     return firstText(col);
@@ -461,7 +461,7 @@ QString toResultViewCheck::text(int col) const
 QString toResultViewCheck::firstText(int col) const
 {
     if (col >= ColumnCount)
-        return QString::null;
+        return QString();
     QString txt = ColumnData[col].Data;
     int pos = txt.indexOf('\n');
     if (pos != -1)
@@ -959,7 +959,7 @@ bool toListView::editSave(bool)
 
         toExportSettings settings = dia.exportSettings();
 
-        QString filename = Utils::toSaveFilename(QString::null, settings.extension, this);
+        QString filename = Utils::toSaveFilename(QString(), settings.extension, this);
         if (filename.isEmpty())
             return false;
         std::unique_ptr<toListViewFormatter> pFormatter(
@@ -1010,7 +1010,7 @@ QString toListView::exportAsText(toExportSettings settings)
     if (type < 0)
         type = exportType(sep, del, includeHeader, onlySelection);
     if (type < 0)
-        return QString::null;
+        return QString();
 
     std::unique_ptr<toListViewFormatter> pFormatter(toListViewFormatterFactory::Instance().CreateObject(type));
     result =  pFormatter->getFormattedString(*this);
@@ -1151,7 +1151,7 @@ QString toResultView::middleString()
     }
     catch (...)
     {
-        return QString::null;
+        return QString();
     }
 }
 
@@ -1208,7 +1208,7 @@ void toResultView::slotAddItem(void)
             RowNumber++;
             int disp = 0;
             toTreeWidgetItem *last = LastItem;
-            LastItem = createItem(LastItem, QString::null);
+            LastItem = createItem(LastItem, QString());
             if (NumberColumn)
             {
                 LastItem->setText(0, QString::number(RowNumber));

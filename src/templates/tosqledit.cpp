@@ -292,7 +292,7 @@ void toSQLEdit::loadSQL(void)
 {
     try
     {
-        QString filename = Utils::toOpenFilename(QString::null, this);
+        QString filename = Utils::toOpenFilename(QString(), this);
         if (!filename.isEmpty())
         {
             toSQL::loadSQL(filename);
@@ -307,7 +307,7 @@ void toSQLEdit::saveSQL(void)
     // must commit changes first for sql to be present in dictionary.
     commitChanges();
 
-    QString filename = Utils::toSaveFilename(QString::null, QString::null, this);
+    QString filename = Utils::toSaveFilename(QString(), QString(), this);
     if (!filename.isEmpty())
     {
         Filename = filename;
@@ -594,7 +594,7 @@ void toSQLEdit::newSQL(void)
         QString name = Name->text();
         int found = name.indexOf(QString::fromLatin1(":"));
         if (found < 0)
-            name = QString::null;
+            name = QString();
         else
             name = name.mid(0, found + 1);
         try
@@ -665,12 +665,12 @@ QString toSQLTemplateItem::allText(int) const
     {
         toSQL::sqlMap defs = toSQL::definitions();
         if (defs.find(Name) == defs.end())
-            return QString::null;
+            return QString();
         return toSQL::string(Name, conn) + ";";
     }
     catch (...)
     {
-        return QString::null;
+        return QString();
     }
 }
 

@@ -274,7 +274,7 @@ void toTuningFileIO::refresh(void)
             auto c2 = connect(Query, &toEventQuery::done, this, &toTuningFileIO::queryDone);
 
             Query->start();
-            LastTablespace = QString::null;
+            LastTablespace = QString();
         }
         TOCATCH
     }
@@ -307,7 +307,7 @@ void toTuningFileIO::receiveData(toEventQuery*)
                     timestr = Query->readValue();
                 }
                 else
-                    tablespace = QString::null;
+                    tablespace = QString();
                 if (tablespace != LastTablespace)
                 {
                     if (!LastTablespace.isNull())

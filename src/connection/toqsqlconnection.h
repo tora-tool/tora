@@ -155,7 +155,7 @@ class toQSqlConnectionSub: public toConnectionSub
 
         toQAdditionalDescriptions* decribe(toCache::ObjectRef const&) override;
 
-        static QString ErrorString(const QSqlError &err, const QString &sql = QString::null);
+        static QString ErrorString(const QSqlError &err, const QString &sql = QString());
 
         QMutex Lock;
         QSqlDatabase Connection;

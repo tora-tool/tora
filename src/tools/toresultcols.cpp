@@ -574,7 +574,7 @@ void toResultCols::query(const QString &sql, toQueryParams const& param)
     //     ///}
     //     ///else
     //     {
-    //         Comment->setText(QString::null);
+    //         Comment->setText(QString());
     //         ///EditComment->setComment(
     //         ///    true,
     //         ///    conn.quote(name.Owner) + "." + conn.quote(name.Name),

@@ -280,7 +280,7 @@ void toMemoEditor::store(void)
     if (Editor->isModified())
     {
         if (!Editor->isEnabled())
-            emit changeData(Row, Col, QString::null);
+            emit changeData(Row, Col, QString());
         else
             emit changeData(Row, Col, Editor->text());
     }
@@ -292,7 +292,7 @@ void toMemoEditor::changePosition(int row, int cols)
     if (Editor->isModified())
     {
         if (!Editor->isEnabled())
-            emit changeData(Row, Col, QString::null);
+            emit changeData(Row, Col, QString());
         else
             emit changeData(Row, Col, Editor->text());
         Editor->setModified(false);

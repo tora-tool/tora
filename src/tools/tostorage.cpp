@@ -1286,7 +1286,7 @@ void toStorage::newTablespace(void)
 {
     try
     {
-        toStorageDialog newSpace(QString::null, this);
+        toStorageDialog newSpace(QString(), this);
 
         std::list<QString> lst = newSpace.sql();
         if (newSpace.exec() && !lst.empty())

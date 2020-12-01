@@ -584,11 +584,11 @@ public:
          * @param arg1 First extra argument to add.
          */
         static void addDescription(std::list<QString> &ret, const std::list<QString> &ctx,
-                                   const QString &arg1 = QString::null, const QString &arg2 = QString::null,
-                                   const QString &arg3 = QString::null, const QString &arg4 = QString::null,
-                                   const QString &arg5 = QString::null, const QString &arg6 = QString::null,
-                                   const QString &arg7 = QString::null, const QString &arg8 = QString::null,
-                                   const QString &arg9 = QString::null);
+                                   const QString &arg1 = QString(), const QString &arg2 = QString(),
+                                   const QString &arg3 = QString(), const QString &arg4 = QString(),
+                                   const QString &arg5 = QString(), const QString &arg6 = QString(),
+                                   const QString &arg7 = QString(), const QString &arg8 = QString(),
+                                   const QString &arg9 = QString());
         /** Split a description line into its components.
          * @param str The description line to split.
          * @return The list of components.

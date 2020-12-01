@@ -341,7 +341,7 @@ toPLSQLEditor::toPLSQLEditor(QWidget *parent)
 
 void toPLSQLEditor::clear(void)
 {
-    setData(QString::null, QString::null, QString::null);
+    setData(QString(), QString(), QString());
     super::clear();
 }
 
@@ -520,7 +520,7 @@ void toPLSQLWidget::updateContent(toSQLParse::statement &statements,
         for (item = m_contents->firstChild(); item; item = item->nextSibling())
             if (item->text(0) == name && item->text(1) == id)
             {
-                item->setText(2, QString::null);
+                item->setText(2, QString());
                 break;
             }
         if (!item)

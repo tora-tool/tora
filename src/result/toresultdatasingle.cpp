@@ -182,7 +182,7 @@ void toResultDataSingle::saveRow()
     QList<QLineEdit *>::iterator val = Value.begin();
     for (int i = 1 + Model->getPriKeys().size() ; i < Model->columnCount() && val != Value.end(); i++, val++)
     {
-        QString v = QString::null;
+        QString v = QString();
         if ((*val)->isEnabled())
             v = (*val)->text();
 

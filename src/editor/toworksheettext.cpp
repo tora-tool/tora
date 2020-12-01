@@ -356,7 +356,7 @@ void toWorksheetText::autoCompleteFromAPIs()
         // firstWord might be a table name, complete secondWord as column
         toCache::ObjectRef table;
         table.context = worksheetSchema;
-        table.second = QString::null;
+        table.second = QString();
         table.first  = secondWord.text().toUpper();
         toCache::CacheEntry const* e =  connection.getCache().findEntry(table);
         if (e)
@@ -405,7 +405,7 @@ void toWorksheetText::autoCompleteColumnName(QString const& context, toSqlText::
 
     toCache::ObjectRef table;
     table.context = toToolWidget::currentSchema(this);
-    table.first  = QString::null;
+    table.first  = QString();
     table.second = context; // context is the table name
 
     QStringList compleList;
@@ -559,7 +559,7 @@ bool toWorksheetText::editOpen(const QString &suggestedFile)
     if (!suggestedFile.isEmpty())
         fname = suggestedFile;
     else
-        fname = Utils::toOpenFilename(QString::null, this);
+        fname = Utils::toOpenFilename(QString(), this);
 
     if (!fname.isEmpty())
     {
@@ -594,7 +594,7 @@ bool toWorksheetText::editSave(bool askfile)
         fn = file.absoluteFilePath();
 
     if (askfile || fn.isEmpty())
-        fn = Utils::toSaveFilename(fn, QString::null, this);
+        fn = Utils::toSaveFilename(fn, QString(), this);
 
     if (!fn.isEmpty() && Utils::toWriteFile(fn, text()))
     {

@@ -342,7 +342,7 @@ void toMain::createToolbars()
 
 void toMain::createStatusbar()
 {
-    statusBar()->showMessage(QString::null);
+    statusBar()->showMessage(QString());
 
     MemoryLabel = new QLabel(statusBar());
     statusBar()->addPermanentWidget(MemoryLabel);
@@ -579,7 +579,7 @@ void toMain::commandCallback(QAction *action)
         if (edit && editFlags.Open)
             edit->editOpen();
         else
-            this->editOpenFile(QString::null);
+            this->editOpenFile(QString());
     }
     if (action == fileMenu.commitAct)
     {
@@ -1109,7 +1109,7 @@ void toMain::importData(std::map<QString, QString> &data, const QString &prefix)
 #ifdef TORA3_SESSION
 void toMain::saveSession(void)
 {
-    QString fn = toSaveFilename(QString::null, QString::fromLatin1("*.tse"), this);
+    QString fn = toSaveFilename(QString(), QString::fromLatin1("*.tse"), this);
     if (!fn.isEmpty())
     {
         std::map<QString, QString> session;
@@ -1181,6 +1181,6 @@ void toMain::receivedFocus(toEditWidget *widget)
 /** Handle events from toEditWidget subclasses */
 void toMain::lostFocus(toEditWidget *widget)
 {
-    RowLabel->setText(QString::null);
-    ColumnLabel->setText(QString::null);
+    RowLabel->setText(QString());
+    ColumnLabel->setText(QString());
 }

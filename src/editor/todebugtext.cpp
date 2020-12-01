@@ -138,7 +138,7 @@ void toDebugText::setStatusMessage(void)
     getCursorPosition (&curline, &curcol);
     QMap<int, QString>::iterator err = Errors.find(curline);
     if (err == Errors.end())
-        m_message.text = QString::null;
+        m_message.text = QString();
     else
         m_message.text = err.value();
 

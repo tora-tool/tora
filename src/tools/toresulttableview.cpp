@@ -810,7 +810,7 @@ bool toResultTableView::editSave(bool askfile)
 
         toExportSettings settings = exp.exportSettings();
 
-        QString filename = Utils::toSaveFilename(QString::null, settings.extension, this);
+        QString filename = Utils::toSaveFilename(QString(), settings.extension, this);
         if (filename.isEmpty())
             return false;
 

@@ -771,7 +771,7 @@ bool toWorksheet::checkSave()
                 {
                     // Ask user for desired filename
                     Editor->setFilename(Utils::toSaveFilename(Editor->filename(),
-                                        QString::null,
+                                        QString(),
                                         this));
                     // Try to save the workseet text into file
                     if (Utils::toWriteFile(Editor->filename(), Editor->text()))
@@ -2306,7 +2306,7 @@ void toWorksheetSetting::saveSetting(void)
 
 void toWorksheetSetting::slotChooseFile(void)
 {
-    QString str = Utils::toOpenFilename(AutoLoad->text(), QString::null, this);
+    QString str = Utils::toOpenFilename(AutoLoad->text(), QString(), this);
     if (!str.isEmpty())
         AutoLoad->setText(str);
 }

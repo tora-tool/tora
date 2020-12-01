@@ -383,7 +383,7 @@ QString toPieChart::findLabel(QPoint p)
             j++;
         }
     }
-    return QString::null;
+    return QString();
 }
 
 void toPieChart::paintEvent(QPaintEvent *)

@@ -71,3 +71,9 @@ gitrevision.bat
 # build directory naming convention
 build/
 LastVersion.txt
+
+
+########################################
+#             Misc                     #
+########################################
+**/*.sql

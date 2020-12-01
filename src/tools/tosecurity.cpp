@@ -224,7 +224,7 @@ void toSecurityQuota::update(void)
 void toSecurityQuota::clearItem(toTreeWidgetItem *item)
 {
     item->setText(1, qApp->translate("toSecurityQuota", "None"));
-    item->setText(2, QString::null);
+    item->setText(2, QString());
     item->setText(3, qApp->translate("toSecurityQuota", "None"));
 }
 
@@ -386,7 +386,7 @@ QString toSecurityUser::sql(void)
                                           qApp->translate("toSecurityUser", "Cancel")))
             {
                 case 0:
-                    return QString::null;
+                    return QString();
                 case 1:
                     throw qApp->translate("toSecurityUser", "Passwords don't match");
             }
@@ -446,13 +446,13 @@ QString toSecurityUser::sql(void)
     if (Name->isEnabled())
     {
         if (Name->text().isEmpty())
-            return QString::null;
+            return QString();
         sql = QString::fromLatin1("CREATE ");
     }
     else
     {
         if (extra.isEmpty())
-            return QString::null;
+            return QString();
         sql = QString::fromLatin1("ALTER ");
     }
     sql += QString::fromLatin1("USER \"");
@@ -503,10 +503,10 @@ void toSecurityUser::update()
 
 void toSecurityUser::clear(bool all)
 {
-    Name->setText(QString::null);
-    Password->setText(QString::null);
-    Password2->setText(QString::null);
-    GlobalName->setText(QString::null);
+    Name->setText(QString());
+    Password->setText(QString());
+    Password2->setText(QString());
+    GlobalName->setText(QString());
     if (all)
     {
         Profile->setCurrentIndex(0);
@@ -518,7 +518,7 @@ void toSecurityUser::clear(bool all)
         Locked->setChecked(false);
     }
 
-    OrgProfile = OrgDefault = OrgTemp = OrgGlobal = QString::null;
+    OrgProfile = OrgDefault = OrgTemp = OrgGlobal = QString();
     AuthType = password;
     Name->setEnabled(true);
     OrgLocked = OrgExpired = false;
@@ -553,7 +553,7 @@ void toSecurityUser::changeUser(const QString &user)
             QString pass = (QString)query.readValue();
             if (OrgPassword == QString::fromLatin1("GLOBAL"))
             {
-                OrgPassword = QString::null;
+                OrgPassword = QString();
                 Authentication->setCurrentIndex(Authentication->indexOf(GlobalTab));
                 OrgGlobal = pass;
                 GlobalName->setText(OrgGlobal);
@@ -561,7 +561,7 @@ void toSecurityUser::changeUser(const QString &user)
             }
             else if (OrgPassword == QString::fromLatin1("EXTERNAL"))
             {
-                OrgPassword = QString::null;
+                OrgPassword = QString();
                 Authentication->setCurrentIndex(Authentication->indexOf(ExternalTab));
                 AuthType = external;
             }
@@ -657,7 +657,7 @@ QString toSecurityRole::sql(void)
                                           qApp->translate("toSecurityRole", "Cancel")))
             {
                 case 0:
-                    return QString::null;
+                    return QString();
                 case 1:
                     throw qApp->translate("toSecurityRole", "Passwords don't match");
             }
@@ -680,13 +680,13 @@ QString toSecurityRole::sql(void)
     if (Name->isEnabled())
     {
         if (Name->text().isEmpty())
-            return QString::null;
+            return QString();
         sql = QString::fromLatin1("CREATE ");
     }
     else
     {
         if (extra.isEmpty())
-            return QString::null;
+            return QString();
         sql = QString::fromLatin1("ALTER ");
     }
     sql += QString::fromLatin1("ROLE \"");
@@ -698,7 +698,7 @@ QString toSecurityRole::sql(void)
 
 void toSecurityRole::clear(void)
 {
-    Name->setText(QString::null);
+    Name->setText(QString());
     Name->setEnabled(true);
 }
 
@@ -708,8 +708,8 @@ void toSecurityRole::changeRole(const QString &role)
     {
         toConnectionSubLoan conn(Connection);
         toQuery query(conn, SQLRoleInfo, toQueryParams() << role);
-        Password->setText(QString::null);
-        Password2->setText(QString::null);
+        Password->setText(QString());
+        Password2->setText(QString());
         if (!query.eof())
         {
             Name->setText(role);
@@ -739,7 +739,7 @@ void toSecurityRole::changeRole(const QString &role)
         }
         else
         {
-            Name->setText(QString::null);
+            Name->setText(QString());
             Name->setEnabled(true);
             AuthType = none;
             Authentication->setCurrentIndex(Authentication->indexOf(NoneTab));
@@ -944,10 +944,10 @@ void toSecuritySystem::eraseUser(bool all)
         toResultViewCheck * chk = dynamic_cast<toResultViewCheck *>(item);
         if (chk && all)
             chk->setOn(false);
-        item->setText(1, QString::null);
+        item->setText(1, QString());
         for (toTreeWidgetItem *chld = item->firstChild(); chld; chld = chld->nextSibling())
         {
-            chld->setText(1, QString::null);
+            chld->setText(1, QString());
             toResultViewCheck *chk = dynamic_cast<toResultViewCheck *>(chld);
             if (chk && all)
                 chk->setOn(false);
@@ -1145,10 +1145,10 @@ void toSecurityRoleGrant::eraseUser(bool user, bool all)
         toResultViewCheck * chk = dynamic_cast<toResultViewCheck *>(item);
         if (chk && all)
             chk->setOn(false);
-        item->setText(1, QString::null);
+        item->setText(1, QString());
         for (toTreeWidgetItem *chld = item->firstChild(); chld; chld = chld->nextSibling())
         {
-            chld->setText(1, QString::null);
+            chld->setText(1, QString());
             toResultViewCheck *chk = dynamic_cast<toResultViewCheck *>(chld);
             if (chk)
             {

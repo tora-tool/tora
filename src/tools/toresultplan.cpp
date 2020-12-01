@@ -629,7 +629,7 @@ void toResultPlanAbstr::queryError(toEventQuery*, toConnection::exception  const
                                                 tr("Plan table doesn't exist"),
                                                 tr("Specified plan table %1 doesn't exist.\n"
                                                    "Should TOra try to create it?").arg(planTable),
-                                                tr("&Yes"), tr("&No"), QString::null, 0, 1);
+                                                tr("&Yes"), tr("&No"), QString(), 0, 1);
                 if (ret == 0)
                 {
                     Utils::toBusy busy;

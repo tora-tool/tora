@@ -67,7 +67,7 @@ class toSQLEdit : public toToolWidget
         void connectList(bool connect);
 
     protected:
-        void updateStatements(const QString &def = QString::null);
+        void updateStatements(const QString &def = QString());
 
         bool checkStore(bool);
         virtual bool close(bool del);

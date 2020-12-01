@@ -269,7 +269,7 @@ class toProfilerUnits : public toResultLong
         class unitsItem : public toResultViewItem
         {
             public:
-                unitsItem(toTreeWidget *parent, toTreeWidgetItem *after, const QString &buf = QString::null)
+                unitsItem(toTreeWidget *parent, toTreeWidgetItem *after, const QString &buf = QString())
                     : toResultViewItem(parent, after, buf)
                 { }
                 virtual void paintCell(QPainter *p, const QColorGroup &cg,
@@ -335,7 +335,7 @@ class toProfilerSource : public toResultLong
         class listItem : public toResultViewItem
         {
             public:
-                listItem(toTreeWidget *parent, toTreeWidgetItem *after, const QString &buf = QString::null)
+                listItem(toTreeWidget *parent, toTreeWidgetItem *after, const QString &buf = QString())
                     : toResultViewItem(parent, after, buf)
                 { }
                 virtual QString text(int col) const
@@ -549,7 +549,7 @@ toProfiler::toProfiler(QWidget *parent, toConnection &connection)
                                         tr("Profiler tables doesn't exist"),
                                         tr("Profiler tables doesn't exist. Should TOra\n"
                                            "try to create them in the current schema?"),
-                                        tr("&Yes"), tr("&No"), QString::null, 0, 1);
+                                        tr("&Yes"), tr("&No"), QString(), 0, 1);
         if (ret == 0)
         {
             Utils::toBusy busy;

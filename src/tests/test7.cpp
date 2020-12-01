@@ -50,7 +50,7 @@ string slurp(string const& fileName);
 void unslurp(string const& fileName, string const& what);
 
 static void usage();
-void toASTWalk(SQLParser::Statement &source, bool (*filter)(Token const&node));
+void toASTWalkTest(SQLParser::Statement &source, bool (*filter)(Token const&node));
 	
 int main(int argc, char **argv)
 {
@@ -65,7 +65,7 @@ int main(int argc, char **argv)
 	{
 		unique_ptr<SQLParser::Statement> parser = StatementFactTwoParmSing::Instance().create("OracleDML", qsql, "");
 		parser->dumpTree();
-		toASTWalk(*parser, [](Token const&node)
+		toASTWalkTest(*parser, [](Token const&node)
 			  {
 				  return node.getTokenType() == Token::S_SUBQUERY_FACTORED;
 			  }
@@ -189,7 +189,7 @@ void unslurp(string const& fileName, string const& what)
     ofs.close();
 }
 
-void toASTWalk(Statement &source, bool (*filter)(Token const& n))
+void toASTWalkTest(Statement &source, bool (*filter)(Token const& n))
 {
 	SQLParser::Statement::token_const_iterator node;
 	for (node = source.begin(); node != source.end(); ++node)

@@ -264,7 +264,7 @@ void toWorksheetStatistic::save(QAction *action)
     {
         if ((*i).Action == action)
         {
-            QString fn = Utils::toSaveFilename(QString::null, QString::fromLatin1("*.stat"), this);
+            QString fn = Utils::toSaveFilename(QString(), QString::fromLatin1("*.stat"), this);
             if (!fn.isEmpty())
             {
                 std::map<QString, QString> stat;

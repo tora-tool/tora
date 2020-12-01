@@ -152,7 +152,7 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, toWFlags fl)
 
 void toGlobalSetting::sqlBrowse(void)
 {
-    QString str = Utils::toOpenFilename(CustomSQL->text(), QString::null, this);
+    QString str = Utils::toOpenFilename(CustomSQL->text(), QString(), this);
     if (!str.isEmpty())
         CustomSQL->setText(str);
 }

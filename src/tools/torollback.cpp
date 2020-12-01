@@ -383,7 +383,7 @@ class toRollbackOpen : public toResultView
                     return (toRollbackOpen *)listView();
                 }
             public:
-                openItem(toTreeWidget *parent, toTreeWidgetItem *after, const QString &buf = QString::null)
+                openItem(toTreeWidget *parent, toTreeWidgetItem *after, const QString &buf = QString())
                     : toResultViewItem(parent, after, buf)
                 { }
                 virtual void paintCell (QPainter *pnt, const QColorGroup & cg,
@@ -446,7 +446,7 @@ class toRollbackOpen : public toResultView
                 toTreeWidgetItem *last = NULL;
                 while (!sql.eof())
                 {
-                    toTreeWidgetItem *item = createItem(last, QString::null);
+                    toTreeWidgetItem *item = createItem(last, QString());
                     last = item;
                     item->setText(0, (QString)sql.readValue());
                     item->setText(1, (QString)sql.readValue());

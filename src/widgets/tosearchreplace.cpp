@@ -137,7 +137,7 @@ void toSearchReplace::act_searchNext(void)
     if (t.length() && m_editWidget)
     {
         Search::SearchFlags f = Search::Search | Search::Forward | sharedFlags();
-        m_editWidget->handleSearching(searchText(), QString::null, f);
+        m_editWidget->handleSearching(searchText(), QString(), f);
     }
 }
 
@@ -150,7 +150,7 @@ void toSearchReplace::act_searchPrevious(void)
     if (t.length())
     {
         Search::SearchFlags f = Search::Search | Search::Backward | sharedFlags();
-        m_editWidget->handleSearching(searchText(), QString::null, f);
+        m_editWidget->handleSearching(searchText(), QString(), f);
     }
 }
 

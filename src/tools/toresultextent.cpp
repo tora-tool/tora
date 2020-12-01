@@ -173,7 +173,7 @@ void toResultExtent::query(const QString &sql, toQueryParams const& params)
         toQList res = toQuery::readQuery(connection(), SQLTableTablespace, toQueryParams() << owner << table);
 
         Graph->setTablespace((QString)Utils::toShift(res));
-        Graph->highlight(owner, table, QString::null);
+        Graph->highlight(owner, table, QString());
     }
     TOCATCH
 }

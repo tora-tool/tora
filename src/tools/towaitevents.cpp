@@ -57,8 +57,8 @@ class toWaitEventsItem : public toResultViewItem
 {
         int Color;
     public:
-        toWaitEventsItem(toTreeWidget *parent, toTreeWidgetItem *after, const QString &buf = QString::null)
-            : toResultViewItem(parent, after, QString::null)
+        toWaitEventsItem(toTreeWidget *parent, toTreeWidgetItem *after, const QString &buf = QString())
+            : toResultViewItem(parent, after, QString())
         {
             Color = 0;
             setText(1, buf);
@@ -255,7 +255,7 @@ void toWaitEvents::setSession(int session)
         Types->clear();
         Session = session;
         First = true;
-        Now = QString::null;
+        Now = QString();
         LastTime = 0;
         Labels.clear();
         LastCurrent.clear();
@@ -377,7 +377,7 @@ void toWaitEvents::changeSelection(void)
                                arg(total).arg(QString::fromLatin1(ShowTimes ? "/s" : " ms/s")));
 
         else
-            DeltaPie->setTitle(QString::null);
+            DeltaPie->setTitle(QString());
 #endif
     }
     TOCATCH

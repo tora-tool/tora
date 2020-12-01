@@ -6192,7 +6192,7 @@ toOracleExtract::toOracleExtract(toExtract &parent)
 #if 0
     typedef toExtract T;
     // Supports Oracle
-    registerExtract(ORACLE_NAME, QString::null, T::NO_TYPE);
+    registerExtract(ORACLE_NAME, QString(), T::NO_TYPE);
 
     // Register creates
     registerExtract(ORACLE_NAME, "CREATE", T::CONSTRAINT);

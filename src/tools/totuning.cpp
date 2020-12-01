@@ -688,7 +688,7 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
                        "tabs individually as they are needed."),
                     tr("Yes"),
                     tr("&No"),
-                    QString::null,
+                    QString(),
                     1) == 0)
         {
             def = true;

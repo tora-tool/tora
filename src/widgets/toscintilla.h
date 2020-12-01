@@ -149,7 +149,7 @@ public:
     void disableToolTips() { m_showTooTips = false; }
 
     // toEditWidget API re-implementation (most of the methods are not implemented)
-    bool editOpen(const QString &file = QString::null) override;
+    bool editOpen(const QString &file = QString()) override;
     bool editSave(bool askfile) override;
     void editUndo(void) override;
     void editRedo(void) override;

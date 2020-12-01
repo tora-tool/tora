@@ -111,7 +111,7 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 	    // -- this avoids double reference to group_key
 	    tokenTypeRef = S_GROUP;
 	    Token::_mPosition = Position(0, 0);
-	    Token::_mStr = QString::null;
+	    Token::_mStr = QString();
 	    Token::_mTokenATypeName = (const char *)Antlr3BackendImpl::OracleDML::getTokenNames()[Tokens::GROUP_BY_CLAUSE];
 	    break;
 	case Tokens::SQL92_RESERVED_ALL:

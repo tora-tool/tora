@@ -286,7 +286,7 @@ QString toHelp::path(const QString &path)
         cur = "qrc:/help/toc.html";
     else
         cur = path;
-    cur.replace(QRegExp(QString::fromLatin1("[^/]+$")), QString::null);
+    cur.replace(QRegExp(QString::fromLatin1("[^/]+$")), QString());
     return cur;
 }
 
@@ -564,7 +564,7 @@ void toHelp::setSelection(QTreeWidget *lst, const QString &source)
         if (!any)
         {
             QString t = source;
-            t.replace(QRegExp(QString::fromLatin1("#[^#]*$")), QString::null);
+            t.replace(QRegExp(QString::fromLatin1("#[^#]*$")), QString());
             if (t != source)
                 setSelection(lst, t);
         }*/

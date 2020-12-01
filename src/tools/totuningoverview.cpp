@@ -330,7 +330,7 @@ toTuningOverview::toTuningOverview(QWidget *parent)
     setupChart(PhysicalRead, tr("< Physical read"), tr(" blocks/s"), SQLOverviewPhysicalRead);
     setupChart(PhysicalWrite, tr("Physical write >"), tr(" blocks/s"), SQLOverviewPhysicalWrite);
     setupChart(RedoEntries, tr("Redo entries >"), QString::fromLatin1("/s"), SQLOverviewRedoEntries);
-    setupChart(Timescale, tr("Timescale"), QString::null, SQLOverviewTimescale);
+    setupChart(Timescale, tr("Timescale"), QString(), SQLOverviewTimescale);
 
     Timescale->showAxisLegend(true);
     Timescale->showLast(false);

@@ -232,8 +232,8 @@ void toTemplateEdit::remove(void)
         toTreeWidgetItem *item = findLast();
         TemplateMap.erase(LastTemplate);
         LastTemplate = TemplateMap.end();
-        Name->setText(QString::null);
-        Description->setText(QString::null);
+        Name->setText(QString());
+        Description->setText(QString());
         if (item)
         {
             connectList(false);
@@ -263,7 +263,7 @@ void toTemplateEdit::newTemplate(void)
 {
     changeSelection();
     LastTemplate = TemplateMap.end();
-    Description->setText(QString::null);
+    Description->setText(QString());
     toTreeWidgetItem *item = Templates->selectedItem();
     if (item)
     {
@@ -312,9 +312,9 @@ void toTemplateEdit::changeSelection(void)
         }
         else
         {
-            Name->setText(QString::null);
+            Name->setText(QString());
             Description->clear();
-            Preview->setText(QString::null);
+            Preview->setText(QString());
         }
     }
     else
@@ -478,7 +478,7 @@ class toTemplateTool : public toTool
         {
             if (!Dock || !Window)
             {
-                Dock = Utils::toAllocDock(qApp->translate("toTemplateTool", "Template"), QString::null, *toolbarImage());
+                Dock = Utils::toAllocDock(qApp->translate("toTemplateTool", "Template"), QString(), *toolbarImage());
                 // fixes warning from QMainWindow::saveState
                 Dock->setObjectName("Template");
                 Window = new toTemplate(Dock);
@@ -602,7 +602,7 @@ toTemplate::toTemplate(TODock *parent)
     List->setSelectionMode(toTreeWidget::Single);
     List->setResizeMode(toTreeWidget::AllColumns);
     Result = Utils::toAllocDock(tr("Template result"),
-                                QString::null,
+                                QString(),
                                 *TemplateTool.toolbarImage());
     // fixes warning from QMainWindow::saveState
     Result->setObjectName("templateResult");

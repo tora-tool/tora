@@ -209,7 +209,7 @@ void toResultLong::receiveData(toEventQuery*)
                 do
                 {
                     toTreeWidgetItem *last = LastItem;
-                    LastItem = createItem(LastItem, QString::null);
+                    LastItem = createItem(LastItem, QString());
                     if (NumberColumn)
                         LastItem->setText(0, QString::number(RowNumber + 1));
                     else

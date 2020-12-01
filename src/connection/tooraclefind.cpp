@@ -149,7 +149,7 @@ QString toOracleInstantFinder::clientVersion(QFileInfo path)
 
     Utils::toLibrary::LHandle hmodule = Utils::toLibrary::loadLibrary(path); // TODO this one thows, the others don't
     if ( !hmodule)
-        return QString::null;
+        return QString();
 
     pOCIClientVersion = (tpOCIClientVersion)  Utils::toLibrary::lookupSymbol( hmodule, "OCIClientVersion");
     if ( !pOCIClientVersion)

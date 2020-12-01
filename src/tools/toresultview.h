@@ -132,7 +132,7 @@ class toResultViewItem : public toTreeWidgetItem
          */
         toResultViewItem(toTreeWidget *parent
                          , toTreeWidgetItem *after
-                         , const QString &buf = QString::null);
+                         , const QString &buf = QString());
 
         /** Create a new item.
          * @param parent Parent to this item.
@@ -141,7 +141,7 @@ class toResultViewItem : public toTreeWidgetItem
          */
         toResultViewItem(toTreeWidgetItem *parent
                          , toTreeWidgetItem *after
-                         , const QString &buf = QString::null);
+                         , const QString &buf = QString());
 
         /** Reimplemented for internal reasons.
          */
@@ -171,7 +171,7 @@ class toResultViewItem : public toTreeWidgetItem
         virtual QString key(int col, bool asc) const
         {
             if (col >= ColumnCount)
-                return QString::null;
+                return QString();
             return asc ? ColumnData[col].KeyAsc : ColumnData[col].KeyDesc;
         }
         /** Reimplemented for internal reasons.
@@ -226,8 +226,8 @@ class toResultViewMLine : public toResultViewItem
          */
         toResultViewMLine(toTreeWidget *parent,
                           toTreeWidgetItem *after,
-                          const QString &buf = QString::null)
-            : toResultViewItem(parent, after, QString::null)
+                          const QString &buf = QString())
+            : toResultViewItem(parent, after, QString())
         {
             Lines = 1;
             if (!buf.isNull())
@@ -240,8 +240,8 @@ class toResultViewMLine : public toResultViewItem
          */
         toResultViewMLine(toTreeWidgetItem *parent,
                           toTreeWidgetItem *after,
-                          const QString &buf = QString::null)
-            : toResultViewItem(parent, after, QString::null)
+                          const QString &buf = QString())
+            : toResultViewItem(parent, after, QString())
         {
             Lines = 1;
             if (!buf.isNull())
@@ -308,7 +308,7 @@ class toResultViewCheck : public toTreeWidgetCheck
         toResultViewCheck(toTreeWidget *parent,
                           const QString &text,
                           toTreeWidgetCheck::Type type = Controller)
-            : toTreeWidgetCheck(parent, QString::null, type)
+            : toTreeWidgetCheck(parent, QString(), type)
         {
             ColumnData = NULL;
             ColumnCount = 0;
@@ -323,7 +323,7 @@ class toResultViewCheck : public toTreeWidgetCheck
         toResultViewCheck(toTreeWidgetItem *parent,
                           const QString &text,
                           toTreeWidgetCheck::Type type = Controller)
-            : toTreeWidgetCheck(parent, QString::null, type)
+            : toTreeWidgetCheck(parent, QString(), type)
         {
             ColumnData = NULL;
             ColumnCount = 0;
@@ -385,7 +385,7 @@ class toResultViewCheck : public toTreeWidgetCheck
         virtual QString key(int col, bool asc) const
         {
             if (col >= ColumnCount)
-                return QString::null;
+                return QString();
             return asc ? ColumnData[col].KeyAsc : ColumnData[col].KeyDesc;
         }
         /** Reimplemented for internal reasons.
@@ -439,7 +439,7 @@ class toResultViewMLCheck : public toResultViewCheck
         toResultViewMLCheck(toTreeWidget *parent,
                             const QString &text,
                             toTreeWidgetCheck::Type type = Controller)
-            : toResultViewCheck(parent, QString::null, type)
+            : toResultViewCheck(parent, QString(), type)
         {
             Lines = 1;
             if (!text.isNull())
@@ -453,7 +453,7 @@ class toResultViewMLCheck : public toResultViewCheck
         toResultViewMLCheck(toTreeWidgetItem *parent,
                             const QString &text,
                             toTreeWidgetCheck::Type type = Controller)
-            : toResultViewCheck(parent, QString::null, type)
+            : toResultViewCheck(parent, QString(), type)
         {
             Lines = 1;
             if (!text.isNull())

@@ -236,7 +236,7 @@ void toSGATrace::changeSchema(const QString &str)
     if (str != tr("Any"))
         CurrentSchema = str;
     else
-        CurrentSchema = QString::null;
+        CurrentSchema = QString();
     if (toConfigurationNewSingle::Instance().option(ToConfiguration::SgaTrace::AutoUpdate).toBool())
         refresh();
 }

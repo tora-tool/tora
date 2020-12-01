@@ -68,11 +68,11 @@ class toResultStorageItem : public toResultViewItem
         bool AvailableGraph;
     public:
         toResultStorageItem(bool available, toTreeWidget *parent, toTreeWidgetItem *after,
-                            const QString &buf = QString::null)
+                            const QString &buf = QString())
             : toResultViewItem(parent, after, buf), AvailableGraph(available)
         { }
         toResultStorageItem(bool available, toTreeWidgetItem *parent, toTreeWidgetItem *after,
-                            const QString &buf = QString::null)
+                            const QString &buf = QString())
             : toResultViewItem(parent, after, buf), AvailableGraph(available)
         { }
 
@@ -627,7 +627,7 @@ void toResultStorage::saveSelected(void)
         else
         {
             CurrentSpace = item->text(0);
-            CurrentFile = QString::null;
+            CurrentFile = QString();
         }
     }
 }

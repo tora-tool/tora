@@ -41,6 +41,7 @@
 #include "core/toconf.h"
 #include "core/tocontextmenu.h"
 #include "core/toeditmenu.h"
+#include "core/tofilemenu.h"
 #include "widgets/tosearch.h"
 
 #include "ts_log/ts_log_utils.h"
@@ -413,6 +414,14 @@ void toScintilla::keyPressEvent(QKeyEvent *e)
         toSearchReplaceDockletSingle::Instance().activate();
         e->accept();
         return;
+//    } else if (Utils::toCheckKeyEvent(e, toFileMenuSingle::Instance().saveAct->shortcut()) && flagSet().Save) {
+//        editSave(false);
+//        e->accept();
+//        return;
+//    } else if (Utils::toCheckKeyEvent(e, toFileMenuSingle::Instance().saveAsAct->shortcut()) && flagSet().Save) {
+//        editSave(true);
+//        e->accept();
+//        return;
     }
     super::keyPressEvent(e);
 }
@@ -627,7 +636,7 @@ bool toScintilla::editOpen(const QString &file) { throw __QHERE__; };
 
 bool toScintilla::editSave(bool askfile)
 {
-    QString fn = Utils::toSaveFilename(QString::null, QString::null, this);
+    QString fn = Utils::toSaveFilename(QString(), QString(), this);
     if (!fn.isEmpty() && Utils::toWriteFile(fn, text()))
     {
         setModified(false);
@@ -705,7 +714,7 @@ bool toScintilla::handleSearching(QString const& search, QString const& replace,
 QString toScintilla::getSelectionAsHTML()
 {
     if (lexer() == NULL)
-        return QString::null;
+        return QString();
 
     static const QString SPAN_CLASS = QString::fromLatin1("<span class=\"S%1\">");
 
@@ -1070,7 +1079,7 @@ static QString  GetRTFStyleChange(QString const& last, QString const& current)
 QString toScintilla::getSelectionAsRTF()
 {
     if (lexer() == NULL)
-        return QString::null;
+        return QString();
 
     static const QString RTF_HEADEROPEN = "{\\rtf1\\ansi\\deff0\\deftab720";
     static const QString RTF_FONTDEFOPEN = "{\\fonttbl";

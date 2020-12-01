@@ -399,7 +399,7 @@ void toScript::execute(void)
                                     tr("The file %1 already exists,\n"
                                        "are you sure you want to continue and write over it?")
                                     .arg(ScriptUI->Filename->text()),
-                                    tr("&Yes"), tr("&Cancel"), QString::null, 0) != 0)
+                                    tr("&Yes"), tr("&Cancel"), QString(), 0) != 0)
                         {
                             return ;
                         }
@@ -745,7 +745,7 @@ void toScript::setupExtract(toExtract &extr)
     if (ScriptUI->Schema->currentText() == tr("Same"))
         extr.setSchema(QString::fromLatin1("1"));
     else if (ScriptUI->Schema->currentText() == tr("None"))
-        extr.setSchema(QString::null);
+        extr.setSchema(QString());
     else
         extr.setSchema(ScriptUI->Schema->currentText());
 
@@ -755,13 +755,13 @@ void toScript::browseFile(void)
 {
     if (ScriptUI->OutputFile->isChecked())
     {
-        QString f = Utils::toOpenFilename(QString::null, this);
+        QString f = Utils::toOpenFilename(QString(), this);
         if (!f.isEmpty())
             ScriptUI->Filename->setText(f);
     }
     else if (ScriptUI->OutputDir->isChecked())
     {
-        QString f = TOFileDialog::getExistingDirectory(this, tr("Select a Directory"), QString::null);
+        QString f = TOFileDialog::getExistingDirectory(this, tr("Select a Directory"), QString());
         if (!f.isEmpty())
             ScriptUI->Filename->setText(f);
     }

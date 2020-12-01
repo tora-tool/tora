@@ -86,7 +86,7 @@ public:
     /** Perform an open on this widget. Default NOP.
      * @param file The file to open, if not specified prompt for file.
      */
-    virtual bool editOpen(const QString &file = QString::null) = 0;
+    virtual bool editOpen(const QString &file = QString()) = 0;
 
     /** Perform a save on this widget. Default NOP.
      * @param askfile Ask filename even if default filename is available.
