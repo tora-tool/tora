@@ -656,7 +656,7 @@ toSession::toSession(QWidget *main, toConnection &connection)
     }
 
     connect(Sessions->view()->selectionModel(), &QItemSelectionModel::currentChanged, this, [this](const QModelIndex &cur, const QModelIndex &old) { slotChangeItem(cur, old); });
-    connect(ResultTab, SIGNAL(currentChanged(int)), this, SLOT(slotChangeTab(int)));
+    connect(ResultTab, &QTabWidget::currentChanged, this, &toSession::slotChangeTab);
 
     CurrentTab = CurrentStatement;
 
