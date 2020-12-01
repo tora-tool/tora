@@ -165,8 +165,9 @@ DOCKLET_LOG(4)   // data read(disabled)
 DISABLE_LOG(5)   // connection provider finder
 DISABLE_LOG(6)   //
 DOCKLET_LOG(7)   // toEventQuery
-DISABLE_LOG(8)   // syntax analyzer, QScintilla
+//DISABLE_LOG(8)   // syntax analyzer
 DISABLE_LOG(9)   // report focus
+DISABLE_LOG(10)  // QScintilla
 
 ////////////////////////////////////////////////////////////////////////////////
 // EXAMPLE USAGE
@@ -206,6 +207,8 @@ inline thread_safe_log get_log(int idxLog)
             return templ_get_log_ownthread<8>(NULL); // browser, other tools
         case 9:
             return templ_get_log_ownthread<9>(NULL); // focus switching
+        case 10:
+            return templ_get_log_ownthread<10>(NULL); // QScintilla
         default:
             assert(false);
             return templ_get_log_ownthread<0>(NULL);

@@ -260,7 +260,7 @@ void toSqlText::setHighlighter(HighlighterTypeEnum h)
 	if (super::lexer())
 	{
 		QString txt = QLatin1String(ENUM_NAME(toSqlText, HighlighterTypeEnum, highlighterType));
-		TLOG(8, toDecorator, __HERE__) << " Lexer: " << txt << std::endl;
+		TLOG(10, toDecorator, __HERE__) << " Lexer: " << txt << std::endl;
 
 		QMetaEnum m_enum = toSyntaxAnalyzer::staticMetaObject.enumerator(toSyntaxAnalyzer::staticMetaObject.indexOfEnumerator("WordClassEnum"));
 		QString fontName = super::lexer()->font(0).toString();
@@ -268,13 +268,13 @@ void toSqlText::setHighlighter(HighlighterTypeEnum h)
 		{
 			unsigned ival = m_enum.value(idx);
 			QString  sval = m_enum.key(idx);
-			TLOG(8, toNoDecorator, __HERE__) << "  Analyzer:" << sval << '(' << ival << ')' << std::endl;
+			TLOG(10, toNoDecorator, __HERE__) << "  Analyzer:" << sval << '(' << ival << ')' << std::endl;
 			if (super::lexer() == NULL)
 				break;
 			QColor c = super::lexer()->color(ival);
 			QColor p = super::lexer()->paper(ival);
 			QFont  f = super::lexer()->font(ival);
-			TLOG(8, toNoDecorator, __HERE__) << "  Style:" << sval << std::endl
+			TLOG(10, toNoDecorator, __HERE__) << "  Style:" << sval << std::endl
 				<< "   Fore:" << c.name() << '(' << c.red() << ' ' << c.green() << ' ' << c.blue() << ' ' << c.alpha() << ')' << std::endl
 				<< "   Back:" << p.name() << '(' << p.red() << ' ' << p.green() << ' ' << p.blue() << ' ' << p.alpha() << ')' << std::endl
 				<< "   Font:" << f.toString() << std::endl;
