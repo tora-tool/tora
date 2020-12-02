@@ -101,7 +101,7 @@ void toWorkSpace::addToolWidget(toToolWidget *toolWidget)
         m_tabBar->setTabIcon(i.TabBarIndex, *image);
 
     // associate the tab with some useful QVariant data
-    QVariant data = qVariantFromValue(static_cast<QWidget*>(toolWidget));
+    QVariant data = QVariant::fromValue(static_cast<QWidget*>(toolWidget));
     m_tabBar->setTabData(i.TabBarIndex, data);
     if (m_lastWidget == NULL) // 0th tab was added (slotCurrentIndexChanged did nothing)
     {
