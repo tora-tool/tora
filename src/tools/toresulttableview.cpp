@@ -676,12 +676,12 @@ void toResultTableView::slotHandleReset(void)
 void toResultTableView::slotHandleFirst(const toConnection::exception &res,
                                         bool error)
 {
-    slotApplyColumnRules();
     Ready = true;
     Working->hide();
     emit firstResult(sql(), res, error);
 
-    slotApplyColumnRules();
+    if (!error)
+        slotApplyColumnRules();
 }
 
 

@@ -204,7 +204,7 @@ void toResultTableData::query(const QString &, toQueryParams const& params)
     if (filter && !Order[FilterName].isEmpty())
     {
         SQL += " ORDER BY ";
-        SQL += Order[FilterName];
+        SQL += conn.getTraits().quote(Order[FilterName]);
     }
 
     Edit->query(SQL, toQueryParams() << Owner << Table);
@@ -451,6 +451,7 @@ bool toResultTableData::commitChanges()
         conn->commit();
         ProgressBar->setValue(Changes.size());
         Changes.clear();
+        Model->clearStatus();
     }
 
     Utils::toStatusMessage(tr("Saved %1 changes(updated %2, added %3, deleted %4)")
@@ -551,9 +552,9 @@ unsigned toResultTableData::commitUpdate(toConnectionSubLoan &conn, toResultMode
 
     // set new value in update statement
     if (change.newValue.isNull())
-        sqlValuePlaceHolders = ASSIGNMENT.arg(change.columnName).arg("NULL");
+        sqlValuePlaceHolders = ASSIGNMENT.arg(connTraits.quote(change.columnName)).arg("NULL");
     else
-        sqlValuePlaceHolders = ASSIGNMENT.arg(change.columnName).arg((QString)change.newValue);
+        sqlValuePlaceHolders = ASSIGNMENT.arg(connTraits.quote(change.columnName)).arg((QString)change.newValue);
 
     for (int i = 1; i < Model->getPriKeys().size() + 1; i++)
     {
