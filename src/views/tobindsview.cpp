@@ -60,11 +60,13 @@ QVariant toBindModel::data(const QModelIndex &index, int role) const
         return QVariant();
     }
 
-    int r = index.row();
-    int c = index.column();
-    if (index.column() >= Rows.at(index.row()).size())
     {
-        return QVariant();
+        int r = index.row();
+        int c = index.column();
+        if (index.column() >= Rows.at(index.row()).size())
+        {
+            return QVariant();
+        }
     }
 
     return super::data(index, role);
