@@ -48,32 +48,17 @@ static toSQL toMonitoredBind("toBindVariablesView:ListMonitoredSQLs",
 
 QVariant toBindModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid())
+    if (!index.isValid() || index.row() >= Rows.size())
     {
-        goto INVALID;
-        return QVariant();
+        throw QString("Invalid index row: %1").arg(index.row());
     }
 
-    if (index.row() >= Rows.size()) //
+    if (index.column() >= Rows.at(index.row()).size())
     {
-        goto INVALID;
         return QVariant();
-    }
-
-    {
-        int r = index.row();
-        int c = index.column();
-        if (index.column() >= Rows.at(index.row()).size())
-        {
-            return QVariant();
-        }
     }
 
     return super::data(index, role);
-
-INVALID:
-    throw QString("Invalid index row: %1").arg(index.row());
-    return QVariant();
 }
 
 Qt::ItemFlags toBindModel::flags(QModelIndex const& index) const
