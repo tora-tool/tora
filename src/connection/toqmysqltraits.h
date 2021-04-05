@@ -34,6 +34,7 @@
 #pragma once
 
 #include "core/toconnectiontraits.h"
+#include "core/toconnection.h"
 
 class toQMySqlTraits: public toConnectionTraits
 {
@@ -113,4 +114,6 @@ class toQMySqlTraits: public toConnectionTraits
         	retval.append('\'');
         	return retval;
         }
+
+        QList<QString> primaryKeys(toConnection &, toCache::ObjectRef const&) const override;
 };

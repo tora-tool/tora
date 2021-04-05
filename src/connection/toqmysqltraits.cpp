@@ -33,6 +33,8 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "connection/toqmysqltraits.h"
+#include "core/toconnectionsubloan.h"
+#include "core/toquery.h"
 
 QString toQMySqlTraits::quote(const QString &name) const
 {
@@ -51,4 +53,37 @@ QString toQMySqlTraits::schemaSwitchSQL(const QString &schema) const
 {
     static const QString USE_DATABASE("USE `%1`");
     return USE_DATABASE.arg(schema);
+}
+
+QList<QString> toQMySqlTraits::primaryKeys(toConnection &conn, toCache::ObjectRef const&obj) const
+{
+    toCache::CacheEntry const* e = conn.getCache().findEntry(obj);
+    if (!e || e->type != toCache::TABLE )
+        return QList<QString>();
+
+    // Cache is used because the function is called twice for the same table
+    static QString cached_table_schema;
+    static QString cached_table_name;
+    static QList<QString> cached_pk;
+
+    if (obj.owner() == cached_table_schema && obj.name() == cached_table_name)
+        return cached_pk;
+
+    cached_table_schema = obj.owner();
+    cached_table_name = obj.name();
+    cached_pk.clear();
+
+    toConnectionSubLoan loan(conn);
+    toQuery QueryR(loan,
+        "SELECT column_name"
+        "  FROM information_schema.key_column_usage"
+        " WHERE table_schema = :f1<char[101]>"
+        "   AND table_name = :f2<char[101]>"
+        "   AND constraint_name = 'PRIMARY'"
+        " ORDER BY ordinal_position",
+        toQueryParams() << obj.owner() << obj.name());
+    while (!QueryR.eof())
+        cached_pk << QueryR.readValue();
+
+    return cached_pk;
 }
