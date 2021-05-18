@@ -39,6 +39,7 @@
 #include <QtCore/QLocale>
 #include <QtCore/QSettings>
 #include <QtCore/QDate>
+#include <QtCore/QCoreApplication>
 
 #include "core/toconf.h"
 #include "core/utils.h"
