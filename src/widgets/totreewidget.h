@@ -67,7 +67,7 @@ class toTreeWidget : public QTreeWidget
 
     public:
 
-        toTreeWidget(QWidget *parent = 0, const char *name = 0, toWFlags f = 0);
+        toTreeWidget(QWidget *parent = 0, const char *name = 0);
 
         /**
          * Returns the first (top) child of this item, or 0 if this item

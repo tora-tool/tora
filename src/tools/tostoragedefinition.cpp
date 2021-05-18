@@ -40,7 +40,7 @@
 #include <QLabel>
 #include <QSpinBox>
 
-toStorageDefinition::toStorageDefinition(QWidget* parent, const char* name, toWFlags fl)
+toStorageDefinition::toStorageDefinition(QWidget* parent, const char* name)
     : QWidget(parent)
 {
     setupUi(this);

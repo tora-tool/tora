@@ -416,15 +416,15 @@ static toSQL SQLTableColumnsMySql(
     "0500",
     "QMYSQL");
 
-toResultCols::toResultCols(QWidget *parent, const char *name, toWFlags f)
+toResultCols::toResultCols(QWidget *parent, const char *name)
     : QWidget(parent, f)
     , SQL(SQLTableColumns)
 {
     setup(name);
 }
 
-toResultCols::toResultCols(toSQL const& sql, QWidget *parent, const char *name, toWFlags f)
-    : QWidget(parent, f)
+toResultCols::toResultCols(toSQL const& sql, QWidget *parent, const char *name)
+    : QWidget(parent)
     , SQL(sql) // SQL(SQLTableColumns)
 {
     setup(name);

@@ -99,8 +99,8 @@ void toLineChart::setSamples(int samples)
     update();
 }
 
-toLineChart::toLineChart(QWidget *parent, const char *name, toWFlags f)
-    : QWidget(parent, f)
+toLineChart::toLineChart(QWidget *parent, const char *name)
+    : QWidget(parent)
 {
     if (name)
         setObjectName(name);
@@ -803,8 +803,7 @@ toLineChart *toLineChart::openCopy(QWidget *parent)
 {
     toLineChart *newWin = new toLineChart(this,
                                           parent ? parent : toMainWindow::lookup(),
-                                          NULL,
-                                          (toWFlags) (parent ? 0 : Qt::WA_DeleteOnClose));
+                                          NULL);
     if (!parent)
     {
         newWin->show();
@@ -819,8 +818,8 @@ toLineChart::~toLineChart()
 {
 }
 
-toLineChart::toLineChart (toLineChart *chart, QWidget *parent, const char *name, toWFlags f)
-    : QWidget(parent, f)
+toLineChart::toLineChart (toLineChart *chart, QWidget *parent, const char *name)
+    : QWidget(parent)
 {
 
     if (name)

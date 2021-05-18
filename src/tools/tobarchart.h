@@ -51,7 +51,7 @@ class toBarChart : public toLineChart
          * @param name Name of widget.
          * @param f Widget flags.
          */
-        toBarChart(QWidget *parent = NULL, const char *name = NULL, toWFlags f = 0);
+        toBarChart(QWidget *parent = NULL, const char *name = NULL);
 
         /** Create a new barchart by copying all the data from another barchart.
          * @param chart Chart to copy data from.
@@ -59,7 +59,7 @@ class toBarChart : public toLineChart
          * @param name Name of widget.
          * @param f Widget flags.
          */
-        toBarChart(toBarChart *chart, QWidget *parent = NULL, const char *name = NULL, toWFlags f = 0);
+        toBarChart(toBarChart *chart, QWidget *parent = NULL, const char *name = NULL);
 
         /** Open chart in new window.
          */

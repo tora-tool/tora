@@ -60,8 +60,7 @@ class toPreferences : public QDialog
     public:
         toPreferences(QWidget* parent = 0,
                       const char* name = 0,
-                      bool modal = false,
-                      toWFlags fl = 0);
+                      bool modal = false);
 
 
         static void displayPreferences(QWidget *parent);

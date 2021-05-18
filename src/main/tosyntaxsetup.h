@@ -62,7 +62,7 @@ class toSyntaxSetup
         toStylesMap Styles;  // QMap<enum toSyntaxAnalyzer::WordClass, toStyle> => toStyle
         toSyntaxAnalyzer* Analyzer;
     public:
-        toSyntaxSetup(QWidget *parent = 0, const char *name = 0, toWFlags fl = 0);
+        toSyntaxSetup(QWidget *parent = 0, const char *name = 0);
         virtual void saveSetting(void);
 
     protected slots:

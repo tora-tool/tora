@@ -55,7 +55,7 @@ class toStorageDialog;
 class toStorageDefinition : public QWidget, public Ui::toStorageDefinitionUI
 {
     public:
-        toStorageDefinition(QWidget *parent = 0, const char *name = 0, toWFlags fl = 0);
+        toStorageDefinition(QWidget *parent = 0, const char *name = 0);
 
         void forRollback(bool val);
 

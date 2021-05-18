@@ -67,8 +67,7 @@ class toGlobalSetting : public QWidget
         Q_OBJECT;
 
     public:
-        toGlobalSetting(QWidget* parent = 0, const char* name = 0,
-                        toWFlags fl = 0);
+        toGlobalSetting(QWidget* parent = 0, const char* name = 0);
 
     public slots:
         virtual void saveSetting(void);
@@ -93,7 +92,7 @@ class toToolSetting : public QWidget
         Q_OBJECT;
 
     public:
-        toToolSetting(QWidget *parent = 0, const char *name = 0, toWFlags fl = 0);
+        toToolSetting(QWidget *parent = 0, const char *name = 0);
 
     public slots:
         virtual void saveSetting(void);

@@ -35,7 +35,7 @@
 #include "widgets/tosearch.h"
 #include "widgets/tosearchreplace.h"
 
-toSearchReplaceDocklet::toSearchReplaceDocklet(QWidget *parent, toWFlags flags)
+toSearchReplaceDocklet::toSearchReplaceDocklet(QWidget *parent)
     : QDockWidget(tr("Search/Replace"), parent, flags)
 {
     setObjectName("Search Docklet");

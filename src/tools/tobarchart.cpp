@@ -40,8 +40,8 @@
 #include <QtGui/QPainter>
 #include <QtGui/QPolygon>
 
-toBarChart::toBarChart(QWidget *parent, const char *name, toWFlags f)
-    : toLineChart(parent, name, f)
+toBarChart::toBarChart(QWidget *parent, const char *name)
+    : toLineChart(parent, name)
 {
     setMinValue(0);
 }
@@ -223,8 +223,8 @@ void toBarChart::paintChart(QPainter *p, QRect &rect)
     }
 }
 
-toBarChart::toBarChart (toBarChart *chart, QWidget *parent, const char *name, toWFlags f)
-    : toLineChart(chart, parent, name, f)
+toBarChart::toBarChart (toBarChart *chart, QWidget *parent, const char *name)
+    : toLineChart(chart, parent, name)
 {}
 
 toLineChart *toBarChart::openCopy(QWidget *parent)

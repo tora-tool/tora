@@ -189,8 +189,8 @@ inline bool operator==(toResultDrawing::Edge const& one, toResultDrawing::Edge c
 	return one.name == other.name && one.from == other.from && one.to == other.to;
 }
 
-toResultDrawing::toResultDrawing(QWidget *parent, const char *name, toWFlags f)
-    : QWidget(parent, f)
+toResultDrawing::toResultDrawing(QWidget *parent, const char *name)
+    : QWidget(parent)
     , toResult()
     , distance(1)
 {

@@ -61,8 +61,6 @@
 #define TOMessageBox QMessageBox
 #define TODock QWidget
 
-typedef Qt::WindowFlags toWFlags;
-
 class QComboBox;
 class toConnection;
 class toConnectionRegistry;

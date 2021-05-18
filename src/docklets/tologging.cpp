@@ -41,8 +41,8 @@
 
 REGISTER_VIEW("Logging", toLoggingDocklet);
 
-toLoggingDocklet::toLoggingDocklet(QWidget *parent, toWFlags flags)
-    : super(tr("Logging"), parent, flags)
+toLoggingDocklet::toLoggingDocklet(QWidget *parent)
+    : super(tr("Logging"), parent)
     , toEditWidget()
     , log(toLoggingWidgetSingle::Instance())
 {

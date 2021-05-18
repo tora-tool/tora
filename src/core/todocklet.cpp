@@ -50,9 +50,8 @@ static QMap<QString, toDockletHolder *>& Docklets()
 
 
 toDocklet::toDocklet(const QString &title,
-                     QWidget *parent,
-                     toWFlags flags)
-    : QDockWidget(title, parent, flags),
+                     QWidget *parent)
+    : QDockWidget(title, parent),
       isPopup(false)
 {
     setFocusPolicy(Qt::StrongFocus);

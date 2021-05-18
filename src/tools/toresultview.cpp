@@ -469,8 +469,8 @@ QString toResultViewCheck::firstText(int col) const
     return txt;
 }
 
-toListView::toListView(QWidget *parent, const char *name, toWFlags f)
-    : toTreeWidget(parent, name, f)
+toListView::toListView(QWidget *parent, const char *name)
+    : toTreeWidget(parent, name)
     , toEditWidget()
     , AllTip(NULL)
     , MenuItem(NULL)
@@ -1173,14 +1173,14 @@ void toResultView::setup(bool readable, bool dispCol)
     SortAscending = true;
 }
 
-toResultView::toResultView(bool readable, bool dispCol, QWidget *parent, const char *name, toWFlags f)
-    : toListView(parent, name, f)
+toResultView::toResultView(bool readable, bool dispCol, QWidget *parent, const char *name)
+    : toListView(parent, name)
 {
     setup(readable, dispCol);
 }
 
-toResultView::toResultView(QWidget *parent, const char *name, toWFlags f)
-    : toListView(parent, name, f)
+toResultView::toResultView(QWidget *parent, const char *name)
+    : toListView(parent, name)
 {
     setup(false, true);
 }

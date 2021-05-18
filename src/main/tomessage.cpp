@@ -42,8 +42,8 @@
 
 #include <algorithm>
 
-toMessage::toMessage(QWidget * parent, toWFlags f)
-    : QDialog(parent, f)
+toMessage::toMessage(QWidget * parent)
+    : QDialog(parent)
 {
     setupUi(this);
     setModal(false);

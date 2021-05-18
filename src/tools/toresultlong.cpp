@@ -40,7 +40,7 @@
 #include "core/todatabaseconfig.h"
 
 toResultLong::toResultLong(bool readable, bool dispCol,
-                           QWidget *parent, const char *name, toWFlags f)
+                           QWidget *parent, const char *name)
     : toResultView(readable, dispCol, parent, name, f)
     , First(false)
     , MaxNumber(-1)
@@ -50,8 +50,8 @@ toResultLong::toResultLong(bool readable, bool dispCol,
     HasHeaders = false;
 }
 
-toResultLong::toResultLong(QWidget *parent, const char *name, toWFlags f)
-    : toResultView(parent, name, f)
+toResultLong::toResultLong(QWidget *parent, const char *name)
+    : toResultView(parent, name)
     , First(false)
     , MaxNumber(-1)
 {

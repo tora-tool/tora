@@ -57,7 +57,7 @@ class toResultTableData
         Q_OBJECT;
 
     public:
-        toResultTableData(QWidget *parent = 0, const char *name = 0, toWFlags f = 0);
+        toResultTableData(QWidget *parent = 0, const char *name = 0);
 
         /**
          * Reimplemented from toResult. First parameter is ignored.

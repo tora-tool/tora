@@ -85,8 +85,7 @@ class toNewConnection : public QDialog
         void done(int r) override;
 
     public:
-        toNewConnection(QWidget* parent = 0,
-                        toWFlags fl = 0);
+        toNewConnection(QWidget* parent = 0);
 
         toConnection* connection()
         {

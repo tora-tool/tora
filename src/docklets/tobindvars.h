@@ -48,7 +48,7 @@ class toBindVarsDocklet : public toDocklet , public toEditWidget
     Q_OBJECT;
     typedef toDocklet super;
 public:
-    toBindVarsDocklet(QWidget *parent = 0, toWFlags flags = 0);
+    toBindVarsDocklet(QWidget *parent = 0);
 
     /**
      * Get the action icon name for this docklet

@@ -53,7 +53,7 @@ class toQueryModel : public toDocklet
         QString m_lastText;
         int m_timerID;
     public:
-        toQueryModel(QWidget *parent = 0, toWFlags flags = 0);
+        toQueryModel(QWidget *parent = 0);
 
         /**
          * Get the action icon name for this docklet

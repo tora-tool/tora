@@ -53,8 +53,7 @@ class toViewConnections : public toDocklet
         QTableView            *TableView;
 
     public:
-        toViewConnections(QWidget *parent = 0,
-                          toWFlags flags = 0);
+        toViewConnections(QWidget *parent = 0);
 
 
         /**

@@ -52,8 +52,7 @@ class toViewDirectory : public toDocklet
         QListView *ListView;
 
     public:
-        toViewDirectory(QWidget *parent = 0,
-                        toWFlags flags = 0);
+        toViewDirectory(QWidget *parent = 0);
 
 
         /**

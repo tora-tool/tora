@@ -41,9 +41,8 @@
 
 REGISTER_VIEW("Directory", toViewDirectory);
 
-toViewDirectory::toViewDirectory(QWidget *parent,
-                                 toWFlags flags)
-    : toDocklet(tr("Directory"), parent, flags)
+toViewDirectory::toViewDirectory(QWidget *parent)
+    : toDocklet(tr("Directory"), parent)
 {
     using namespace ToConfiguration;
     setObjectName("Directory Docklet");

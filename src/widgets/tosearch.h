@@ -47,7 +47,7 @@ class toSearchReplaceDocklet : public QDockWidget
     Q_OBJECT;
 
 public:
-    toSearchReplaceDocklet(QWidget *parent = 0, toWFlags flags = 0);
+    toSearchReplaceDocklet(QWidget *parent = 0);
 
     /** Re-implented from toEditWidget */
     void focusInEvent (QFocusEvent*) override;

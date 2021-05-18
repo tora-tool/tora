@@ -58,8 +58,8 @@
 #include "icons/print.xpm"
 
 
-toPieChart::toPieChart(QWidget *parent, const char *name, toWFlags f)
-    : QWidget(parent, f)
+toPieChart::toPieChart(QWidget *parent, const char *name)
+    : QWidget(parent)
     , AllTip(NULL)
 {
 
@@ -127,9 +127,8 @@ void toPieChart::setValues(std::list<double> &values, std::list<QString> &labels
 
 toPieChart::toPieChart(toPieChart *pie,
                        QWidget *parent,
-                       const char *name,
-                       toWFlags f)
-    : QWidget(parent, f | Qt::Window),
+                       const char *name)
+    : QWidget(parent, Qt::WindowFlags() | Qt::Window),
       Values(pie->Values),
       Labels(pie->Labels),
       Postfix(pie->Postfix),

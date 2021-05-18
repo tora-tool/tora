@@ -52,9 +52,8 @@ public:
     void insertFromMimeData(const QMimeData *source) override;
 };
 
-toBindVarsDocklet::toBindVarsDocklet(QWidget *parent,
-                                   toWFlags flags)
-    : super(tr("Bind Values"), parent, flags)
+toBindVarsDocklet::toBindVarsDocklet(QWidget *parent)
+    : super(tr("Bind Values"), parent)
     , toEditWidget()
     , editor(new PlainTextEdit(this))
 {

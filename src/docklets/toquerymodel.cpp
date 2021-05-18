@@ -57,8 +57,8 @@ char* workaround(char *buf, int n, FILE* fp)
 
 REGISTER_VIEW(TOOL_NAME, toQueryModel);
 
-toQueryModel::toQueryModel(QWidget *parent, toWFlags flags)
-    : toDocklet(tr(TOOL_NAME), parent, flags)
+toQueryModel::toQueryModel(QWidget *parent)
+    : toDocklet(tr(TOOL_NAME), parent)
     , m_widget(NULL)
     , m_timerID(-1)
 {

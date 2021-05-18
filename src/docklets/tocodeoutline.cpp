@@ -48,9 +48,8 @@
 
 REGISTER_VIEW("Outline", toCodeOutline);
 
-toCodeOutline::toCodeOutline(QWidget *parent,
-                             toWFlags flags)
-    : toDocklet(tr("Outline"), parent, flags)
+toCodeOutline::toCodeOutline(QWidget *parent)
+    : toDocklet(tr("Outline"), parent)
     , m_currentEditor(new editHandlerHolder())
     , m_timerID(-1)
 {

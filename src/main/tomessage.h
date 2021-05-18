@@ -60,7 +60,7 @@ class toMessage : public QDialog, public Ui::toMessageUI
         Q_OBJECT;
 
     public:
-        toMessage(QWidget * parent = 0, toWFlags f = 0);
+        toMessage(QWidget * parent = 0);
 
     public slots:
         /*! \brief Appends text to the log widget.

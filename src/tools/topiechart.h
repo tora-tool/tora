@@ -80,8 +80,7 @@ class toPieChart : public QWidget
          * @param f Widget flags.
          */
         toPieChart(QWidget *parent = NULL,
-                   const char *name = NULL,
-                   toWFlags f = 0);
+                   const char *name = NULL);
 
         virtual ~toPieChart();
 
@@ -93,8 +92,7 @@ class toPieChart : public QWidget
          */
         toPieChart(toPieChart *pie,
                    QWidget *parent = NULL,
-                   const char *name = NULL,
-                   toWFlags f = 0);
+                   const char *name = NULL);
 
         /** Set the postfix text to append the current values when they
          * are displayed in the pie.
@@ -121,7 +119,7 @@ class toPieChart : public QWidget
          *
          * @param title Title of chart.
          */
-        void setTitle(const QString &title = QString::null)
+        void setTitle(const QString &title = QString())
         {
             Title = title;
             update();

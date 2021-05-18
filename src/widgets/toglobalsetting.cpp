@@ -107,7 +107,7 @@ void ConnectionColorsDialog::accept()
 
 
 
-toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name, toWFlags fl)
+toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name)
     : QWidget(parent, fl)
     , toSettingTab("preferences.html#global")
 {
@@ -283,7 +283,7 @@ void toGlobalSetting::saveSetting(void)
     Utils::toSetSessionType(Style->currentText());
 }
 
-toToolSetting::toToolSetting(QWidget *parent, const char *name, toWFlags fl)
+toToolSetting::toToolSetting(QWidget *parent, const char *name)
     : QWidget(parent/*, name, fl*/)
     , toSettingTab("toolsetting.html")
 {

@@ -90,7 +90,7 @@ void toPreferences::saveSetting(void)
     toConfigurationNewSingle::Instance().saveAll();
 }
 
-toPreferences::toPreferences(QWidget* parent, const char* name, bool modal, toWFlags fl)
+toPreferences::toPreferences(QWidget* parent, const char* name, bool modal)
     : QDialog(parent)
     , toHelpContext(QString::fromLatin1("preferences.html"))
 {

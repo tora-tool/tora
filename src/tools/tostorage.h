@@ -96,7 +96,7 @@ class toStorageTablespace : public QWidget, public Ui::toStorageTablespaceUI
         bool PermanentOrig;
 
     public:
-        toStorageTablespace(QWidget *parent = 0, const char *name = 0, toWFlags fl = 0);
+        toStorageTablespace(QWidget *parent = 0, const char *name = 0);
 
         std::list<QString> sql(void);
         bool allowStorage(void);
@@ -117,7 +117,7 @@ class toDropTablespace : public QWidget, public Ui::toDropTablespaceUI
 {
         Q_OBJECT
     public:
-        toDropTablespace(QWidget *parent = 0, const char *name = 0, toWFlags fl = 0);
+        toDropTablespace(QWidget *parent = 0, const char *name = 0);
         std::list<QString> sql(void);
     signals:
         void validContent(bool);
@@ -136,7 +136,7 @@ class toStorageDatafile : public QWidget, public Ui::toStorageDatafileUI
 
     public:
         toStorageDatafile(bool tempFile, bool dispName,
-                          QWidget *parent = 0, const char *name = 0, toWFlags fl = 0);
+                          QWidget *parent = 0, const char *name = 0);
 
         QString getName(void);
         std::list<QString> sql();

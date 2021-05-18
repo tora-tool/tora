@@ -47,7 +47,7 @@ class toDatabaseSetting : public QWidget
         Q_OBJECT;
 
     public:
-        toDatabaseSetting(QWidget *parent = 0, const char *name = 0, toWFlags fl = 0);
+        toDatabaseSetting(QWidget *parent = 0, const char *name = 0);
 
     public slots:
         virtual void saveSetting(void);

@@ -55,9 +55,7 @@ class toConnection;
 class XMdiSubWindow : public QMdiSubWindow
 {
     public:
-        XMdiSubWindow( QWidget * parent = 0
-                                          , toWFlags flags = 0
-                     )
+        XMdiSubWindow( QWidget * parent = 0)
             : QMdiSubWindow( parent, flags )
         {
             //showMaximized();

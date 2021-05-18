@@ -51,7 +51,7 @@ class toLoggingDocklet : public toDocklet , public toEditWidget
     Q_OBJECT;
     typedef toDocklet super;
 public:
-    toLoggingDocklet(QWidget *parent = 0, toWFlags flags = 0);
+    toLoggingDocklet(QWidget *parent = 0);
 
     /**
      * Get the action icon name for this docklet

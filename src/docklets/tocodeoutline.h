@@ -75,7 +75,7 @@ class toCodeOutline : public toDocklet
 
         void timerEvent(QTimerEvent *e);
     public:
-        toCodeOutline(QWidget *parent = 0, toWFlags flags = 0);
+        toCodeOutline(QWidget *parent = 0);
 
         /**
          * Get the action icon name for this docklet

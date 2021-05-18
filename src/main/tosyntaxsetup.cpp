@@ -54,7 +54,7 @@
 
 using namespace ToConfiguration;
 
-toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name, toWFlags fl)
+toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name)
     : QWidget(parent)
     , toSettingTab("fonts.html")
     , Current(NULL)

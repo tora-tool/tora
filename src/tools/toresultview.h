@@ -553,7 +553,7 @@ public:
      * @param name Name of list.
      * @param f Widget flags.
      */
-    toListView(QWidget *parent, const char *name = NULL, toWFlags f = 0);
+    toListView(QWidget *parent, const char *name = NULL);
     virtual ~toListView();
 
     /** Get SQL name of list.
@@ -784,8 +784,7 @@ class toResultView : public toListView, public toResult
         toResultView(bool readable,
                      bool numCol,
                      QWidget *parent,
-                     const char *name = NULL,
-                     toWFlags f = 0);
+                     const char *name = NULL);
 
         /** Create list. The columns are not readable and the number
          * column is displayed.
@@ -793,7 +792,7 @@ class toResultView : public toListView, public toResult
          * @param name Name of widget.
          * @param f Widget flags.
          */
-        toResultView(QWidget *parent, const char *name = NULL, toWFlags f = 0);
+        toResultView(QWidget *parent, const char *name = NULL);
         ~toResultView();
 
         /** Set the read all flag.

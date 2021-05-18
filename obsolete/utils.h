@@ -66,12 +66,6 @@
 #define TOMessageBox QMessageBox
 #define TODock QWidget
 
-#if QT_VERSION >= 0x050000
-typedef Qt::WindowFlags toWFlags;
-#else
-typedef Qt::WFlags toWFlags;
-#endif
-
 class QComboBox;
 class toTimer;
 class toConnection;
