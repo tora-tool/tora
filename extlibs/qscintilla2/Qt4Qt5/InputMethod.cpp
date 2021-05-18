@@ -224,7 +224,11 @@ QVariant QsciScintillaBase::inputMethodQuery(Qt::InputMethodQuery query) const
             return QWidget::inputMethodQuery(query);
 #endif
 
+#if QT_VERSION_MAJOR >= 6
+        case Qt::ImCursorRectangle:
+#else
         case Qt::ImMicroFocus:
+#endif
         {
             int startPos = (preeditPos >= 0) ? preeditPos : pos;
             Scintilla::Point pt = sci->LocationFromPosition(startPos);

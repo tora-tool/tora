@@ -528,7 +528,7 @@ QRect QsciAccessibleScintillaBase::characterRect(int offset) const
     int style = sb->SendScintilla(QsciScintillaBase::SCI_GETSTYLEAT, position);
     QFontMetrics metrics(fontForStyle(style));
 
-    QRect rect(x_vport, y_vport, metrics.width(ch), metrics.height());
+    QRect rect(x_vport, y_vport, metrics.boundingRect(ch).width(), metrics.height());
     rect.moveTo(sb->viewport()->mapToGlobal(rect.topLeft()));
 
     return rect;

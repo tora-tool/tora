@@ -94,7 +94,7 @@ int QsciPrinter::printRange(QsciScintillaBase *qsb, int from, int to)
     qsb -> SendScintilla(QsciScintillaBase::SCI_SETPRINTMAGNIFICATION,mag);
     qsb -> SendScintilla(QsciScintillaBase::SCI_SETPRINTWRAPMODE,wrap);
 
-    for (int i = 1; i <= numCopies(); ++i)
+    for (int i = 1; i <= copyCount(); ++i)
     {
         // If we are printing in reverse page order then remember the start
         // position of each page.

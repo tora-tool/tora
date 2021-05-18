@@ -4377,7 +4377,7 @@ void QsciScintilla::wheelEvent(QWheelEvent *e)
 
    if ((e->modifiers() & zoom_modifier) != 0)
    {
-       if (e->delta() > 0)
+       if (e->angleDelta().y() > 0)
            zoomIn();
        else
            zoomOut();

@@ -36,7 +36,7 @@
 #include <QPaintEvent>
 #include <QScrollBar>
 #include <QStyle>
-#include <QTextCodec>
+//#include <QTextCodec>
 
 #include "SciAccessibility.h"
 #include "ScintillaQt.h"
@@ -595,7 +595,11 @@ void QsciScintillaBase::mousePressEvent(QMouseEvent *e)
             sci->RightButtonDownWithModifiers(pt, clickTime,
                     QsciScintillaQt::ModifierFlags(shift, ctrl, alt));
     }
+#if QT_VERSION_MAJOR >= 6
+    else if (e->button() == Qt::MiddleButton)
+#else
     else if (e->button() == Qt::MidButton)
+#endif
     {
         QClipboard *cb = QApplication::clipboard();
 
