@@ -61,7 +61,6 @@
 #include <memory>
 #include <typeinfo>
 
-#include <QtCore/QTextCodec>
 #include <QtCore/QString>
 #include <QtCore/QTranslator>
 #include <QtCore/QLibrary>
@@ -81,7 +80,7 @@ int main(int argc, char **argv)
      * otherwise application crashes with:
      * "Fatal IO error 11 (Resource temporarily unavailable) on X server :0"
      */
-    QCoreApplication::setAttribute(Qt::AA_X11InitThreads); //  or just XInitThreads();
+    //QCoreApplication::setAttribute(Qt::AA_X11InitThreads); //  or just XInitThreads();
     QNetworkProxyFactory::setUseSystemConfiguration(true);
     toConfiguration::setQSettingsEnv();
 
@@ -125,11 +124,6 @@ int main(int argc, char **argv)
         QString style(toConfigurationNewSingle::Instance().option(ToConfiguration::Global::Style).toString());
         if (!style.isEmpty())
             QApplication::setStyle(QStyleFactory::create(style));
-
-#if QT_VERSION < 0x050000
-        // Set the default codec to use for QString
-        QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
-#endif
 
 // qt4        if (getenv("LANG"))
 //             qApp->setDefaultCodec(QTextCodec::codecForName(getenv("LANG")));
