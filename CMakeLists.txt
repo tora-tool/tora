@@ -13,6 +13,7 @@ IF(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 ENDIF()
 
 # options available for user's input
+OPTION(USE_QT6 "Enable this if you want to use Qt6, instead of Qt5" no)
 OPTION(WANT_INTERNAL_QSCINTILLA "Use internal/bundled QScintilla2 source" OFF)
 OPTION(WANT_INTERNAL_LOKI "Use internal/bundled Loki source" OFF)
 OPTION(ENABLE_ORACLE "Enable/Disable Oracle support at all. Including detection" ON)
@@ -202,13 +203,51 @@ ENDIF (WIN32 AND NOT DEFINED WANT_INTERNAL_QSCINTILLA)
 ##############################################################################################################
 ########## Find Dependencies                                                                        ##########
 
+
 SET(QT_MT_REQUIRED true)
 SET(QT_USE_QTNETWORK TRUE)
 SET(QT_USE_QTXML TRUE)
 SET(QT_USE_QTWEBKIT TRUE)
 #SET(CMAKE_AUTOMOC ON)
 
-set (QT_FOUND true)
+IF(USE_QT6)
+
+  set(CMAKE_CXX_STANDARD 17)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+  set( QT6_ROOT_PATH CACHE PATH "Qt6 root directory (i.e. where the 'bin' folder lies)" )
+  if ( QT6_ROOT_PATH )
+    list( APPEND CMAKE_PREFIX_PATH ${QT6_ROOT_PATH} )
+  endif()
+
+  find_package(Qt6 COMPONENTS Core REQUIRED)
+  find_package(Qt6 COMPONENTS Gui REQUIRED)
+  find_package(Qt6 COMPONENTS Network REQUIRED)
+  find_package(Qt6 COMPONENTS PrintSupport REQUIRED)
+  find_package(Qt6 COMPONENTS Sql REQUIRED)
+  find_package(Qt6 COMPONENTS Widgets REQUIRED)
+  find_package(Qt6 COMPONENTS Xml REQUIRED)
+  find_package(Qt6 COMPONENTS Test REQUIRED)
+  find_package(Qt6 COMPONENTS LinguistTools)
+  find_package(Qt6 COMPONENTS Core5Compat)
+
+  set(QT_INCLUDES
+    ${Qt6Core_INCLUDE_DIRS}
+    ${Qt6Core5Compat_INCLUDE_DIRS}    
+    ${Qt6Gui_INCLUDE_DIRS}
+    ${Qt6Network_INCLUDE_DIRS}
+    ${Qt6PrintSupport_INCLUDE_DIRS}
+    ${Qt6Sql_INCLUDE_DIRS}
+    ${Qt6Widgets_INCLUDE_DIRS}
+    ${Qt6Xml_INCLUDE_DIRS}
+  )
+  IF(APPLE)
+    LIST(APPEND QT_INCLUDES ${Qt6MacExtras_INCLUDE_DIRS})
+  ENDIF()
+
+  add_definitions(-D_HAS_AUTO_PTR_ETC=1)
+
+ELSE(USE_QT6)
 
 set( QT5_ROOT_PATH CACHE PATH "Qt5 root directory (i.e. where the 'bin' folder lies)" )
 if ( QT5_ROOT_PATH )
@@ -250,7 +289,6 @@ if (Qt5_POSITION_INDEPENDENT_CODE)
   SET(CMAKE_POSITION_INDEPENDENT_CODE ON)
 endif()
 
-IF (QT_FOUND)
   MESSAGE("Qt Found OK")
   #Add our Qt definitions
   ADD_DEFINITIONS(
@@ -259,9 +297,8 @@ IF (QT_FOUND)
     -DQT_GUI_LIB
     -DQT_THREAD_LIB
   )
-ELSE(QT_FOUND)
-  MESSAGE(FATAL_ERROR "No Qt found")
-ENDIF(QT_FOUND)
+
+ENDIF()
 
 IF (WANT_INTERNAL_QSCINTILLA)
   MESSAGE(STATUS "QSci: Building with internal copy of QScintilla.")
