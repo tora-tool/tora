@@ -1247,7 +1247,7 @@ namespace Loki
         Functor(const Functor& rhs) : spImpl_(Impl::Clone(rhs.spImpl_.get()))
         {}
         
-        Functor(std::auto_ptr<Impl> spImpl) : spImpl_(spImpl)
+        Functor(std::unique_ptr<Impl> spImpl) : spImpl_(spImpl)
         {}
         
         template <typename Fun>
@@ -1260,11 +1260,11 @@ namespace Loki
         : spImpl_(new MemFunHandler<Functor, PtrObj, MemFn>(p, memFn))
         {}
 
-        typedef Impl * (std::auto_ptr<Impl>::*unspecified_bool_type)() const;
+        typedef Impl * (std::unique_ptr<Impl>::*unspecified_bool_type)() const;
 
         operator unspecified_bool_type() const
         {
-            return spImpl_.get() ? &std::auto_ptr<Impl>::get : 0;
+            return spImpl_.get() ? &std::unique_ptr<Impl>::get : 0;
         }
 
         Functor& operator=(const Functor& rhs)
@@ -1425,7 +1425,7 @@ namespace Loki
         }
 
     private:
-        std::auto_ptr<Impl> spImpl_;
+        std::unique_ptr<Impl> spImpl_;
     };
     
 
@@ -1616,7 +1616,7 @@ namespace Loki
         typedef typename Private::BinderFirstTraits<Fctor>::BoundFunctorType
             Outgoing;
         
-        return Outgoing(std::auto_ptr<typename Outgoing::Impl>(
+        return Outgoing(std::unique_ptr<typename Outgoing::Impl>(
             new BinderFirst<Fctor>(fun, bound)));
     }
 
@@ -1778,7 +1778,7 @@ namespace Loki
         const Fun1& fun1,
         const Fun2& fun2)
     {
-        return Fun2(std::auto_ptr<typename Fun2::Impl>(
+        return Fun2(std::unique_ptr<typename Fun2::Impl>(
             new Chainer<Fun1, Fun2>(fun1, fun2)));
     }
 
