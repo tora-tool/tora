@@ -5,6 +5,7 @@
 #include "core/tora_export.h"
 
 #include <QtCore/QDateTime>
+#include <QtCore/QMutex>
 
 class queryImpl;
 class toQueryAbstr;
@@ -21,7 +22,7 @@ class TORA_EXPORT toConnectionSub
     public:
 
         /** Create connection to database. */
-        toConnectionSub() : Query(NULL), Broken(false), Initialized(false), mutex(QMutex::NonRecursive) {}
+        toConnectionSub() : Query(NULL), Broken(false), Initialized(false), mutex(/*QMutex::NonRecursive*/) {}
 
         /** Close connection. */
         virtual ~toConnectionSub() {}
