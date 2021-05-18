@@ -10,10 +10,10 @@
 #include <QComboBox>
 #include <QCompleter>
 #include <QDateEdit>
-#include <QDesktopWidget>
+//#include <QDesktopWidget>
 #include <QDialog>
 #include <QDialogButtonBox>
-#include <QDirModel>
+//#include <QDirModel>
 #include <QDockWidget>
 #include <QFileDialog>
 #include <QFontDialog>
@@ -109,7 +109,7 @@
 #include <QtCore/QProcess>
 #include <QtCore/QReadWriteLock>
 #include <QtCore/QRect>
-#include <QtCore/QRegExp>
+//#include <QtCore/QRegExp>
 #include <QtCore/QSemaphore>
 #include <QtCore/QSet>
 #include <QtCore/QSettings>
@@ -118,11 +118,11 @@
 #include <QtCore/QSize>
 #include <QtCore/QString>
 #include <QtCore/QStringList>
-#include <QtCore/QStringRef>
+//#include <QtCore/QStringRef>
 #include <QtCore/QtAlgorithms>
 #include <QtCore/QtDebug>
 #include <QtCore/QTemporaryFile>
-#include <QtCore/QTextCodec>
+//#include <QtCore/QTextCodec>
 #include <QtCore/QTextStream>
 #include <QtCore/QtGlobal>
 #include <QtCore/QThread>
