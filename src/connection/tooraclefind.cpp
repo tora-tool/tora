@@ -216,7 +216,7 @@ QList<toConnectionProviderFinder::ConnectionProvirerParams>  toOracleInstantFind
     {
         QStringList slEnvPaths;
 #if defined(Q_OS_WIN32)
-        QStringList slPath = QString(getenv("PATH")).split(';', QString::SkipEmptyParts );
+        QStringList slPath = QString(getenv("PATH")).split(';', Qt::SkipEmptyParts );
         slEnvPaths.append(slPath);
 #elif defined(Q_OS_LINUX)
         QStringList slLDPath = QString(getenv("LD_LIBRARY_PATH")).split(';', QString::SkipEmptyParts );
@@ -298,7 +298,7 @@ QList<toConnectionProviderFinder::ConnectionProvirerParams>  toOracleInstantFind
         {
             QString sLibPath = QDir::toNativeSeparators(d.canonicalPath()) + QDir::separator() + sLibrary;
 
-            if (!Utils::toLibrary::isValidLibrary(sLibPath))
+            if (!Utils::toLibrary::isValidLibrary(QFileInfo(sLibPath)))
             {
                 TLOG(5, toNoDecorator, __HERE__) << "skipping: " << sLibPath << std::endl;
                 continue;
@@ -580,7 +580,7 @@ QList<toConnectionProviderFinder::ConnectionProvirerParams> toOracleFinder::find
         TLOG(5, toNoDecorator, __HERE__) << "searching oh: " << dHome.absolutePath()  << std::endl;
 
         QString sLibPath = QDir::toNativeSeparators(dHome.absolutePath() + "/bin/" + m_libname.first());
-        if ( !Utils::toLibrary::isValidLibrary(sLibPath))
+        if ( !Utils::toLibrary::isValidLibrary(QFileInfo(sLibPath)))
             continue;
 
         TLOG(5, toNoDecorator, __HERE__) << "adding: " << sLibPath << ':' << version << std::endl;
@@ -613,7 +613,7 @@ QList<toConnectionProviderFinder::ConnectionProvirerParams> toOracleFinder::find
         {
             QString sLibPath = QDir::toNativeSeparators(ohLibDir.canonicalPath()) + QDir::separator() + sLibrary;
 
-            if (!Utils::toLibrary::isValidLibrary(sLibPath))
+            if (!Utils::toLibrary::isValidLibrary(QFileInfo(sLibPath)))
             {
                 TLOG(5, toNoDecorator, __HERE__) << "skipping: " << sLibPath << std::endl;
                 continue;
