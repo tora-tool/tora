@@ -177,7 +177,7 @@ QTextStream& operator<<(QTextStream& s, const GraphEdge& e)
       }
   }
   s << srcLabel << " -> " << tgtLabel << "  ["
-    << dynamic_cast<const GraphElement&>(e) << additionalAttrs << "];" << endl;
+    << dynamic_cast<const GraphElement&>(e) << additionalAttrs << "];" << Qt::endl;
 
   return s;
 }

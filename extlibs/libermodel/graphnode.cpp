@@ -111,7 +111,7 @@ QTextStream& operator<<(QTextStream& s, const GraphNode& n)
 {
   s << '"' << n.id() << '"' << "  ["
     << dynamic_cast<const GraphElement&>(n)
-    <<"];"<<endl;
+    <<"];"<<Qt::endl;
   return s;
 }
 

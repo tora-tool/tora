@@ -21,7 +21,7 @@
  
 #include <QtCore/QObject>
  
-class QStringList;
+//class QStringList;
  
 /**
  * KGraphViewerInterface is an interface implemented by KGraphViewer to

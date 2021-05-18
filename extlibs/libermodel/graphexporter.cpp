@@ -82,7 +82,7 @@ QString GraphExporter::writeDot(const DotGraph* graph, const QString& fileName)
   }
   stream <<"\" {\n";
 
-  stream << "graph [" << *graph <<"]" << endl;
+  stream << "graph [" << *graph <<"]" << Qt::endl;
 
   /// @TODO Subgraph are not represented as needed in DotGraph, so it is not
   /// possible to save them back : to be changed !

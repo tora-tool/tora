@@ -236,7 +236,7 @@ Q_UNUSED(widget)
       int fontSize = edge()->fontSize();
       m_font->setPointSize(fontSize);
       QFontMetrics fm(*m_font);
-      while (fm.width(str) > stringWidthGoal && fontSize > 1)
+      while (fm.boundingRect(str).width() > stringWidthGoal && fontSize > 1)
       {
         fontSize--;
         m_font->setPointSize(fontSize);
@@ -250,8 +250,8 @@ Q_UNUSED(widget)
       qreal x = (m_scaleX *
                        (
                          (dro.integers[0])
-                         + (((-dro.integers[2])*(fm.width(dro.str)))/2)
-                         - ( (fm.width(dro.str))/2 )
+                         + (((-dro.integers[2])*(fm.boundingRect(dro.str).width()))/2)
+                         - ( (fm.boundingRect(dro.str).width())/2 )
                        )
                       )
                       + m_xMargin;

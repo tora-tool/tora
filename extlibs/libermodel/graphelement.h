@@ -21,6 +21,7 @@
 
 #include "dotrenderop.h"
 
+#include <QObject>
 #include <QVector>
 #include <QList>
 #include <QMap>

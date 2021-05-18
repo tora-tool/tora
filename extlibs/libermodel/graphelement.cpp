@@ -181,7 +181,7 @@ QTextStream& operator<<(QTextStream& s, const GraphElement& n)
         QString label = it.value();
         if (label != "label")
         {
-          label.replace(QRegExp("\n"),"\\n");
+          label.replace(QChar('\n'),"\\n");
 //           kDebug() << it.key() << "=\"" << label << "\",";
           s << it.key() << "=\"" << label << "\",";
         }

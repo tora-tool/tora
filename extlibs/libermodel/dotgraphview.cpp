@@ -47,7 +47,7 @@
 #include <math.h>
 #include <iostream>
 
-#include <QtGui/QMatrix>
+#include <QTransform>
 #include <QtGui/QPainter>
 #include <QStyle>
 #include <QtGui/QImage>
@@ -163,9 +163,9 @@ DotGraphView::DotGraphView(QActionGroup* actions, QWidget* parent) :
 
   readViewConfig();
   
-  QMatrix m;
+  QTransform m;
   m.scale(m_zoom,m_zoom);
-  setMatrix(m);
+  setTransform(m);
   setupPopup();
   setInteractive(true);
   setDragMode(NoDrag);
@@ -256,9 +256,9 @@ DotGraphView::DotGraphView(QWidget* parent) :
 
   readViewConfig();
 
-  QMatrix m;
+  QTransform m;
   m.scale(m_zoom,m_zoom);
-  setMatrix(m);
+  setTransform(m);
   setupPopup();
   setInteractive(true);
   setDragMode(NoDrag);
@@ -632,7 +632,7 @@ bool DotGraphView::displayGraph()
       QFont* font = FontsCache::changeable().fromName(m_graph->fontName());
       font->setPointSize(fontSize);
       QFontMetrics fm(*font);
-      while (fm.width(str) > stringWidthGoal && fontSize > 1)
+      while (fm.boundingRect(str).width() > stringWidthGoal && fontSize > 1)
       {
         fontSize--;
         font->setPointSize(fontSize);
@@ -773,9 +773,9 @@ void DotGraphView::updateSizes(QSizeF s)
   {
     m_cvZoom = zoom;
 
-    QMatrix wm;
+    QTransform wm;
     wm.scale( zoom, zoom );
-    m_birdEyeView->setMatrix(wm);
+    m_birdEyeView->setTransform(wm);
 
     // make it a little bigger to compensate for widget frame
     m_birdEyeView->resize((cWidth * zoom) + 4,
@@ -922,7 +922,7 @@ void DotGraphView::wheelEvent(QWheelEvent* e)
   {
     ///kDebug() << " + Shift: zooming";
     // move canvas...
-    if (e->delta() < 0)
+    if (e->angleDelta().y() < 0)
     {
       zoomOut();
     }
@@ -934,9 +934,10 @@ void DotGraphView::wheelEvent(QWheelEvent* e)
   else
   {
     ///kDebug() << " : scrolling ";
-    if (e->orientation() == Qt::Horizontal)
+    //if (e->orientation() == Qt::Horizontal)
+    if (e->angleDelta().x() > e->angleDelta().y())
     {
-      if (e->delta() < 0)
+      if (e->angleDelta().x() < 0)
       {
         ///kDebug() << "scroll by " <<  -viewport()->width()/10 << 0;
         horizontalScrollBar()->setValue(horizontalScrollBar()->value()+viewport()->width()/10);
@@ -949,7 +950,7 @@ void DotGraphView::wheelEvent(QWheelEvent* e)
     }
     else
     {
-      if (e->delta() < 0)
+      if (e->angleDelta().y() < 0)
       {
         ///kDebug() << "scroll by " << 0 << viewport()->width()/10;
         verticalScrollBar()->setValue(verticalScrollBar()->value()+viewport()->height()/10);
@@ -989,9 +990,9 @@ void DotGraphView::setZoomFactor(double newZoom)
   qreal centerY = (sceneRect().y() + (viewport()->height() / 2))*factor;
   
   setUpdatesEnabled(false);
-  QMatrix m;
+  QTransform m;
   m.scale(m_zoom,m_zoom);
-  setMatrix(m);
+  setTransform(m);
   centerOn(centerX, centerY);
   emit zoomed(m_zoom);
   setUpdatesEnabled(true);
