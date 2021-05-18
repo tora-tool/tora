@@ -53,6 +53,7 @@
 
 #include <atomic>
 
+#if 0
 class QWidget;
 class QAction;
 class QMenu;
@@ -64,6 +65,7 @@ class toQuery;           // defined in toquery.h
 class queryImpl;         // defined in toqueryimpl.h
 class toConnectionSubLoan;
 class toSQL;
+#endif
 
 /** Represent a database connection in TOra. Observe that this can mean several actual
  * connections to the database as queries that are expected to run a long time are sometimes
