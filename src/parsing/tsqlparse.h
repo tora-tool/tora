@@ -725,7 +725,7 @@ namespace SQLParser
                 return _mDeclarations.values(alias);
             };
 
-            inline const QMap<QString, const Token*> declarations() const
+            inline const QMultiMap<QString, const Token*> declarations() const
             {
                 return _mDeclarations;
             };
@@ -873,7 +873,7 @@ namespace SQLParser
             mutable Token *_mEnd;
             //QSet<QString> _mTablesSet, _mAliasesSet;
             QVector<Token const*> _mTablesList;
-            QMap<QString, const Token*> _mDeclarations;
+            QMultiMap<QString, const Token*> _mDeclarations;
             QList<Token*> _mLeaves;
     };
 
