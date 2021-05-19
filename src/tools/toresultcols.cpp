@@ -417,7 +417,7 @@ static toSQL SQLTableColumnsMySql(
     "QMYSQL");
 
 toResultCols::toResultCols(QWidget *parent, const char *name)
-    : QWidget(parent, f)
+    : QWidget(parent)
     , SQL(SQLTableColumns)
 {
     setup(name);

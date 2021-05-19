@@ -64,7 +64,7 @@
 #include "icons/trash.xpm"
 
 toResultTableData::toResultTableData(QWidget *parent, const char *name)
-    : QWidget(parent, f)
+    : QWidget(parent)
     , Model(NULL)
     , AllFilter(false)
 {

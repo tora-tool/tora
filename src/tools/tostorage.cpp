@@ -147,7 +147,7 @@ class toStorageTool : public toTool
 };
 
 toDropTablespace::toDropTablespace(QWidget* parent, const char* name)
-    : QWidget(parent, fl)
+    : QWidget(parent)
 {
     setupUi(this);
     if (!name)
@@ -175,7 +175,7 @@ std::list<QString> toDropTablespace::sql()
 
 
 toStorageTablespace::toStorageTablespace(QWidget* parent, const char* name)
-    : QWidget(parent, fl)
+    : QWidget(parent)
 {
     setupUi(this);
     Modify = false;
@@ -291,7 +291,7 @@ std::list<QString> toStorageTablespace::sql()
 }
 
 toStorageDatafile::toStorageDatafile(bool temp, bool dispName, QWidget* parent, const char* name)
-    : QWidget(parent, fl),
+    : QWidget(parent),
       Tempfile(temp)
 {
 

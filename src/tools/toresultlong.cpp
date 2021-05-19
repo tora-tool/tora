@@ -41,7 +41,7 @@
 
 toResultLong::toResultLong(bool readable, bool dispCol,
                            QWidget *parent, const char *name)
-    : toResultView(readable, dispCol, parent, name, f)
+    : toResultView(readable, dispCol, parent, name)
     , First(false)
     , MaxNumber(-1)
 {

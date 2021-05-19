@@ -105,8 +105,7 @@ void toPieChart::openCopy(void)
 {
     QWidget *newWin = new toPieChart(this,
                                      toMainWindow::lookup(),
-                                     NULL,
-                                     0);
+                                     NULL);
 
     newWin->setAttribute(Qt::WA_DeleteOnClose);
     newWin->show();

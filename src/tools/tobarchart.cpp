@@ -231,8 +231,7 @@ toLineChart *toBarChart::openCopy(QWidget *parent)
 {
     toBarChart *newWin = new toBarChart(this,
                                         parent ? parent : toMainWindow::lookup(),
-                                        NULL,
-                                        (Qt::WindowType) (parent ? 0 : Qt::WA_DeleteOnClose));
+                                        NULL);
     if (!parent)
     {
         newWin->show();

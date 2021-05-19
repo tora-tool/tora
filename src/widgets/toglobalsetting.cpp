@@ -108,7 +108,7 @@ void ConnectionColorsDialog::accept()
 
 
 toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name)
-    : QWidget(parent, fl)
+    : QWidget(parent)
     , toSettingTab("preferences.html#global")
 {
     if (name)

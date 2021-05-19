@@ -63,7 +63,7 @@ void toDatabaseSetting::IndicateEmptyColor_clicked()
 }
 
 toDatabaseSetting::toDatabaseSetting(QWidget *parent, const char *name)
-    : QWidget(parent, fl)
+    : QWidget(parent)
     , toSettingTab("database.html")
 {
     if (name)
