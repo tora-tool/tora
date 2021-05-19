@@ -53,7 +53,7 @@
 
 #include <atomic>
 
-#if 0
+#if 1
 class QWidget;
 class QAction;
 class QMenu;
