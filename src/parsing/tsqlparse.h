@@ -494,11 +494,12 @@ namespace SQLParser
             {
                 return sizeof(*this);
             };
-
-            QString schemaName () const;
-            QString tableName () const;
-            QString columnName () const;
-
+#if 0
+            // Not used - yet
+            virtual QString schemaName() const { return QString(); };
+            virtual QString tableName() const { return QString() };
+            virtual QString columnName() const { return QString(); };
+#endif
             void resolve() const;
             bool resolved() const
             {
@@ -530,7 +531,7 @@ namespace SQLParser
                 return sizeof(*this);
             };
 
-            QString tableName () const;
+            virtual QString tableName () const;
 
             inline Token const* nodeAlias() const
             {

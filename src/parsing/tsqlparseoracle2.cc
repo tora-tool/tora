@@ -302,7 +302,19 @@ OracleDMLToken::OracleDMLToken (Token *parent, AntlrNode &node)
 	} // switch(tokentype)
 	
 };
-	
+
+class OracleDMLTokenIdentifier: public TokenIdentifier
+{
+public:
+    OracleDMLTokenIdentifier(const TokenIdentifier& other)
+        : TokenIdentifier(other)
+    {
+        //size_t me = this->size();
+        //size_t oth = other.size();
+        assert(this->size() >= other.size());
+    };
+};
+
 class OracleDMLStatement: public Statement
 {
     using TokenStream = Antlr3BackendImpl::OracleSQLParserTraits::TokenStreamType;
@@ -614,7 +626,7 @@ void OracleDMLStatement::disambiguate()
             i--; // At this moment iterator's stack points onto node being replaced.
             Token *parent = node.parent();
             Token *me = const_cast<Token*>(&node);
-            TokenIdentifier *newToken = new TokenIdentifier(node);
+            TokenIdentifier *newToken = new OracleDMLTokenIdentifier(node);
             parent->replaceChild(me->row(), newToken);
             i++;
             break;
