@@ -31,14 +31,11 @@
 #define PERSISTENTTRIE_H
 
 #include <QtCore/QHash>
+#include <QtCore/QString>
 #include <QtCore/QList>
 #include <QtCore/QSharedPointer>
 
 #include <utility>
-
-class QString;
-class QStringList;
-class QDebug;
 
 namespace QmlJS
 {
