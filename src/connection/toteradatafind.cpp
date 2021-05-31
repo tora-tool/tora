@@ -162,7 +162,7 @@ QList<toConnectionProviderFinder::ConnectionProvirerParams>  toTeradataFinder::f
         {
             QString sLibPath = QDir::toNativeSeparators(dRoot.canonicalPath()) + QDir::separator() + sLibrary;
 
-            if (!Utils::toLibrary::isValidLibrary(sLibPath))
+            if (!Utils::toLibrary::isValidLibrary(QFileInfo(sLibPath)))
             {
                 TLOG(5, toNoDecorator, __HERE__) << "skipping: " << sLibPath << std::endl;
                 continue;
