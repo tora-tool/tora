@@ -36,7 +36,7 @@
 #include "core/tolistviewformatterfactory.h"
 #include "core/tolistviewformatteridentifier.h"
 
-#include <QtCore/QRegExp>
+#include <QRegExp>
 
 #include <iostream>
 #include <vector>
