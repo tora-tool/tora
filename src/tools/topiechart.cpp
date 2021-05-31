@@ -229,7 +229,7 @@ void toPieChart::paintChart(QPainter *p, QRect rect)
                 if (j != Values.end())
                 {
                     if (DisplayPercent)
-                        sizstr.sprintf("%0.1f", 100 * (*j) / tot);
+                        sizstr.asprintf("%0.1f", 100 * (*j) / tot);
                     else
                         sizstr = toQValue::formatNumber(*j);
                     sizstr += Postfix;
@@ -273,7 +273,7 @@ void toPieChart::paintChart(QPainter *p, QRect rect)
             if (j != Values.end())
             {
                 if (DisplayPercent)
-                    sizstr.sprintf("%0.1f", 100 * (*j) / tot);
+                    sizstr.asprintf("%0.1f", 100 * (*j) / tot);
                 else
                     sizstr = toQValue::formatNumber(*j);
                 sizstr += Postfix;
