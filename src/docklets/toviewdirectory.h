@@ -39,7 +39,7 @@
 #include "core/todocklet.h"
 
 #include <QListView>
-#include <QDirModel>
+#include <QFileSystemModel>
 
 class toToolWidget;
 
@@ -48,7 +48,7 @@ class toViewDirectory : public toDocklet
         Q_OBJECT;
 
     private:
-        QDirModel *Model;
+        QFileSystemModel *Model;
         QListView *ListView;
 
     public:

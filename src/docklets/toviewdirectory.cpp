@@ -50,8 +50,9 @@ toViewDirectory::toViewDirectory(QWidget *parent)
     ListView = new QListView(this);
     setFocusProxy(ListView);
 
-    Model = new QDirModel;
-    Model->setSorting(QDir::DirsFirst | QDir::Name);
+    Model = new QFileSystemModel;
+    // NOT SUPPORTED ANYMORE Model->setSorting(QDir::DirsFirst | QDir::Name);
+    // TODO https://stackoverflow.com/a/20715646/836215
     Model->setFilter(QDir::AllEntries);
     ListView->setModel(Model);
 
@@ -72,7 +73,7 @@ toViewDirectory::toViewDirectory(QWidget *parent)
     if (!autoload.isEmpty())
         showFile(autoload);
     else
-        findRoot(toConfigurationNewSingle::Instance().option(ToConfiguration::Main::LastDir).toString());
+        findRoot(QFileInfo(toConfigurationNewSingle::Instance().option(ToConfiguration::Main::LastDir).toString()));
 }
 
 
