@@ -169,7 +169,7 @@ private:
 
     // TODO parse
     // void updateArguments(toSQLParse::statement &statements, toTreeWidgetItem *parent);
-    // void updateContent(toSQLParse::statement &statements, toTreeWidgetItem *parent, const QString &id = QString::null);
+    // void updateContent(toSQLParse::statement &statements, toTreeWidgetItem *parent, const QString &id = QString());
     void updateContent(toPLSQLEditor* editor);
     // removes all errors, warnings and static check messages from result pane
     void cleanupResults(const QString & type = NULL);

@@ -89,7 +89,7 @@ class toWorksheetText : public toSqlText
          */
         void setFilename(const QString &file);
 
-        bool editOpen(const QString &suggestedFile = QString::null) override;
+        bool editOpen(const QString &suggestedFile = QString()) override;
         bool editSave(bool askfile) override;
 
     public slots:

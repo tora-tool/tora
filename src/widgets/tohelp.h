@@ -184,7 +184,7 @@ class toHelp : public QDialog, public Ui::toHelp
          * @param path Path to strip.
          * @return Stripped path in string.
          */
-        static QString path(const QString &path = QString::null);
+        static QString path(const QString &path = QString());
         virtual ~toHelp();
         /** Display a specific help context in the internal manual. Pops up a help window that
          * displays the selected topic.

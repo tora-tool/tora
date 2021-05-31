@@ -159,7 +159,7 @@ class toLineChart : public QWidget
         /** Set title of the chart. Set to empty string to not display title.
          * @param title Title of chart.
          */
-        void setTitle(const QString &title = QString::null)
+        void setTitle(const QString &title = QString())
         {
             Title = title;
             setWindowTitle(title);
