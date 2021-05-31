@@ -243,20 +243,20 @@ static QString FormatTime(double tim)
 {
     QString timstr;
     if (tim >= 3600)
-        timstr.sprintf("%d:%02d:%02d.%02d",
+        timstr.asprintf("%d:%02d:%02d.%02d",
                        int(tim) / 3600,
                        (int(tim) / 60) % 60,
                        int(tim) % 60,
                        int(tim * 100) % 100);
     else if (tim > 1)
-        timstr.sprintf("%d:%02d.%02d",
+        timstr.asprintf("%d:%02d.%02d",
                        (int(tim) / 60) % 60,
                        int(tim) % 60,
                        int(tim * 100) % 100);
     else if (tim > 0.001)
-        timstr.sprintf("%d ms", (int)(tim * 1000));
+        timstr.asprintf("%d ms", (int)(tim * 1000));
     else if (tim > 0)
-        timstr.sprintf("%d ns", (int)(tim * 1E9));
+        timstr.asprintf("%d ns", (int)(tim * 1E9));
     else
         timstr = "0";
     return timstr;

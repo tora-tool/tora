@@ -165,7 +165,7 @@ void toSecurityQuota::changeSize(void)
         if (Value->isChecked())
         {
             QString siz;
-            siz.sprintf("%.0f KB", double(Size->value()));
+            siz.asprintf("%.0f KB", double(Size->value()));
             CurrentItem->setText(1, siz);
         }
         else if (None->isChecked())
@@ -264,14 +264,14 @@ void toSecurityQuota::changeUser(const QString &user)
                 {
                     QString usedStr;
                     QString maxStr;
-                    usedStr.sprintf("%.0f KB", usedQuota / 1024);
+                    usedStr.asprintf("%.0f KB", usedQuota / 1024);
                     if (maxQuota < 0)
                         maxStr = qApp->translate("toSecurityQuota", "Unlimited");
                     else if (maxQuota == 0)
                         maxStr = qApp->translate("toSecurityQuota", "None");
                     else
                     {
-                        maxStr.sprintf("%.0f KB", maxQuota / 1024);
+                        maxStr.asprintf("%.0f KB", maxQuota / 1024);
                     }
                     item->setText(1, maxStr);
                     item->setText(2, usedStr);

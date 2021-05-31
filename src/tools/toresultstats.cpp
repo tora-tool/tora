@@ -342,10 +342,10 @@ void toResultStats::addValue(bool reset, int id, const QString &name, double val
 
     if (value != 0)
     {
-        absVal.sprintf("%.15g", value);
+        absVal.asprintf("%.15g", value);
         if (id < TO_STAT_MAX + TO_STAT_BLOCKS)
         {
-            delta.sprintf("%.15g", value - LastValues[id]);
+            delta.asprintf("%.15g", value - LastValues[id]);
             if (value != LastValues[id] || !OnlyChanged)
             {
                 toResultViewItem *item = new toResultViewItem(this, NULL);
