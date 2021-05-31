@@ -332,7 +332,7 @@ std::list<QString> toStorageDatafile::sql(void)
         else
             str = QString::fromLatin1("DATAFILE '");
         QString filename(Filename->text());
-        filename.replace(QRegExp(QString::fromLatin1("'")), QString::fromLatin1("''"));
+        filename.replace(QString::fromLatin1("'"), QString::fromLatin1("''"));
         str.append(filename);
         str.append(QString::fromLatin1("' SIZE "));
         str.append(InitialSize->sizeString());
@@ -1372,8 +1372,8 @@ void toStorage::moveFile(void)
             str = QString::fromLatin1("ALTER TABLESPACE \"");
             str.append(Storage->currentTablespace());
             str.append(QString::fromLatin1("\" RENAME DATAFILE '"));
-            orig.replace(QRegExp(QString::fromLatin1("'")), QString::fromLatin1("''"));
-            file.replace(QRegExp(QString::fromLatin1("'")), QString::fromLatin1("''"));
+            orig.replace(QString::fromLatin1("'"), QString::fromLatin1("''"));
+            file.replace(QString::fromLatin1("'"), QString::fromLatin1("''"));
             str.append(orig);
             str.append(QString::fromLatin1("' TO '"));
             str.append(file);

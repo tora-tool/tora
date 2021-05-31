@@ -43,7 +43,6 @@
 #include "core/tosql.h"
 #include "core/utils.h"
 
-#include <QtCore/QRegExp>
 #include <QtGui/QFocusEvent>
 
 
@@ -147,7 +146,7 @@ void toResultColsComment::saveUnchanged()
             else
                 sql = SQLChangeColumnComment(conn);
             QString comment = text();
-            comment.replace(QRegExp("'"), "''");
+            comment.replace("'", "''");
             comment = "'" + comment + "'";
 
 #ifdef TORA3_QUERY

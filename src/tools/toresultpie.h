@@ -39,7 +39,7 @@
 
 #include <list>
 
-#include <QtCore/QRegExp>
+#include <QRegExp>
 
 class toEventQuery;
 class toSQL;

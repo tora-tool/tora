@@ -48,6 +48,7 @@
 #include <QtCore/QUrl>
 #include <QtCore/QDebug>
 #include <QtCore/QDate>
+#include <QRegExp>
 
 toUpdater::toUpdater()
     : QObject()

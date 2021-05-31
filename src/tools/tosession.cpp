@@ -55,6 +55,7 @@
 #include <QToolButton>
 #include <QSplitter>
 #include <QToolBar>
+#include <QRegExp>
 
 #include "icons/add.xpm"
 #include "icons/clock.xpm"
