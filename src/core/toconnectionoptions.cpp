@@ -36,6 +36,7 @@
 #include "core/toconnection.h"
 
 #include <QtCore/QStringList>
+#include <algorithm>
 
 toConnectionOptions::toConnectionOptions(const QString &_prov,
         const QString &_host,
@@ -101,10 +102,10 @@ bool toConnectionOptions::operator==(const toConnectionOptions &other) const
     if (options.size() != other.options.size())
         return false;
 
-    QStringList opts1 = options.toList();
-    qSort(opts1);
-    QStringList opts2 = other.options.toList();
-    qSort(opts2);
+    QStringList opts1 = options.values();
+    std::sort(opts1.begin(), opts1.end());
+    QStringList opts2 = other.options.values();
+    std::sort(opts2.begin(), opts2.end());
     for (int i = 0; i < opts1.size(); i++)
     {
         if (opts1.at(i) != opts2.at(i))
