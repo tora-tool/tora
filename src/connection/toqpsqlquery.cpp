@@ -34,7 +34,6 @@
 
 #include "connection/toqpsqlquery.h"
 #include "connection/toqpsqlprovider.h"
-#include "connection/toqpsqlquery.h"
 #include "connection/toqpsqlconnection.h"
 #include "core/tosql.h"
 #include "core/tocache.h"
