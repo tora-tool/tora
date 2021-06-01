@@ -33,7 +33,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include <QtGui/QKeySequence>
-#include <QtWidgets/QAction>
+#include <QAction>
 #include <QtWidgets/QBoxLayout>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QLabel>
@@ -126,10 +126,10 @@ void toOutputWidget::closeEvent(QCloseEvent *event)
 {
     try
     {
-        if (LockedConnection.data())
+        if (LockedConnection)
         {
-            LockedConnection.data()->execute(SQLDisable);
-            LockedConnection.data()->delInit("OUTPUT");
+            LockedConnection.lock()->execute(SQLDisable);
+            LockedConnection.lock()->delInit("OUTPUT");
         }
     }
     TOCATCH;
@@ -174,7 +174,7 @@ void toOutputWidget::poll()
         bool any;
         do
         {
-            toQuery query(*LockedConnection.data(), SQLLines, toQueryParams());  // TODO FETCH FROM ALL THE CONNECTIONS IN THE POOL - impossible
+            toQuery query(*LockedConnection.lock().data(), SQLLines, toQueryParams());  // TODO FETCH FROM ALL THE CONNECTIONS IN THE POOL - impossible
 
             any = false;
             while (!query.eof())
@@ -213,17 +213,17 @@ void toOutputWidget::setEnabled(bool enabled)
 {
     if (enabled)
     {
-        if (LockedConnection.data())
+        if (LockedConnection)
         {
-            LockedConnection.data()->execute(SQLEnable);
-            LockedConnection.data()->setInit("OUTPUT", "");
+            LockedConnection.lock()->execute(SQLEnable);
+            LockedConnection.lock()->setInit("OUTPUT", "");
         }
         Refresh->timer()->blockSignals(false);
     } else {
-        if (LockedConnection.data())
+        if (LockedConnection)
         {
-            LockedConnection.data()->execute(SQLDisable);
-            LockedConnection.data()->delInit("OUTPUT");
+            LockedConnection.lock()->execute(SQLDisable);
+            LockedConnection.lock()->delInit("OUTPUT");
         }
         LockedConnection.clear();
         Refresh->timer()->blockSignals(true);
