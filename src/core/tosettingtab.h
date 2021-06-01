@@ -38,7 +38,7 @@
 #include "core/tohelpcontext.h"
 #include "core/tora_export.h"
 
-class QWidget;
+#include <QtCore/QString>
 
 /**
  * Abstract baseclass for widgets defining tool settings.
