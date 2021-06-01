@@ -36,6 +36,7 @@
 #include "core/toconnection.h"
 
 #include <QtCore/QStringList>
+#include <QtCore/QMap>
 #include <algorithm>
 
 toConnectionOptions::toConnectionOptions(const QString &_prov,
@@ -124,9 +125,9 @@ bool toConnectionOptions::operator==(const toConnection &conn) const
            && (schema.isEmpty() || (conn.defaultSchema() == schema));
 }
 
-template<> bool qMapLessThanKey<toConnectionOptions>(const toConnectionOptions &key1, const toConnectionOptions &key2)
-
+bool toConnectionOptions::operator<(const toConnectionOptions& key2) const
 {
+    toConnectionOptions const& key1(*this);
     if (key1.provider != key2.provider)
         return key1.provider > key2.provider;
     if (key1.database != key2.database)
@@ -143,10 +144,11 @@ template<> bool qMapLessThanKey<toConnectionOptions>(const toConnectionOptions &
         return key1.color > key2.color;
     if (key1.options.size() != key2.options.size())
         return key1.options.size() > key2.options.size();
-    QStringList opts1 = key1.options.toList();
-    qSort(opts1);
-    QStringList opts2 = key2.options.toList();
-    qSort(opts2);
+    
+    QStringList opts1 = key1.options.values();
+    std::sort(opts1.begin(), opts1.end());
+    QStringList opts2 = key2.options.values();
+    std::sort(opts2.begin(), opts2.end());
     for (int i = 0; i < opts1.size(); i++)
     {
         if (opts1.at(i) != opts2.at(i))

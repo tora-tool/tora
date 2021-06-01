@@ -69,6 +69,7 @@ class toConnectionOptions
 
         bool operator==(const toConnectionOptions &other) const;
         bool operator==(const toConnection &conn) const;
+        bool operator<(const toConnectionOptions& conn) const;
 
         QString toString() const;
 
@@ -79,8 +80,6 @@ class toConnectionOptions
 };
 
 Q_DECLARE_METATYPE(toConnectionOptions)
-
-template<> bool qMapLessThanKey<toConnectionOptions>(const toConnectionOptions &key1, const toConnectionOptions &key2);
 
 #endif
 
