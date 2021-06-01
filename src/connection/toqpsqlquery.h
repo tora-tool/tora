@@ -40,6 +40,7 @@
 
 #include <QtSql/QSqlRecord>
 #include <QtCore/QList>
+#include <QtCore/QString>
 
 class QSqlQuery;
 class toQPSqlConnectionSub;
