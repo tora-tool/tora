@@ -47,6 +47,7 @@
 #include <QtCore/QTimerEvent>
 #include <QTabWidget>
 #include <QListView>
+#include <QRegExp>
 
 #define TOOL_NAME "QueryModel"
 
