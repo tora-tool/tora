@@ -40,8 +40,6 @@
 
 #include "ui_toqpsqlsettingui.h"
 
-class QWidget;
-
 /** Instance of this class is returnded by dll class toOracleProvider.
   * But even though this class is part of the main program
   *
