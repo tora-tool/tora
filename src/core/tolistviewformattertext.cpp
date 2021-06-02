@@ -98,7 +98,7 @@ QString toListViewFormatterText::getFormattedString(toExportSettings &settings, 
                 v = "{null}";
             else
                 v = data.toString();
-            sizes[column] = (std::max)(sizes[column], v.length());
+            sizes[column] = (std::max)(sizes[column], (int)v.length());
         }
     }
 
