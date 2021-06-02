@@ -40,6 +40,8 @@
 #include "parsing/tsqlparse.h"
 #include "parsing/tsqllexer.h"
 
+#include <QRegExp>
+
 using namespace SQLParser;
 using namespace ToConfiguration;
 
@@ -528,7 +530,7 @@ QString LineBuffer::formatToken(Token const *token)
     if (token->metadata().contains("TRAILING_NEWLINE"))
         if (token->getTokenType() == SQLParser::Token::TokenType::X_COMMENT)
         {
-            word.remove(QRegExp("[\\n\\r]*$"));
+            word.remove(QRegularExpression("[\\n\\r]*$"));
         }
     return word;
 }
