@@ -66,6 +66,8 @@
 #include <QSplitter>
 #include <QToolBar>
 #include <QButtonGroup>
+#include <QRegularExpression>
+#include <QRegExp>
 
 #include "icons/addindex.xpm"
 #include "icons/addtable.xpm"
@@ -447,7 +449,7 @@ class toBrowserFilter
                     break;
                 case FilterCommaSeparated:
                     {
-                        QStringList lst = Text.split(QRegExp(QString("\\s*,\\s*")));
+                        QStringList lst = Text.split(QRegularExpression(QString("\\s*,\\s*")));
                         for (int i = 0; i < lst.count(); i++)
                             if (IgnoreCase)
                             {
