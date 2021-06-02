@@ -42,10 +42,11 @@
 #include <QSpinBox>
 #include <QSlider>
 #include <QComboBox>
+#include <QRegularExpression>
 
 void toSettingTab::loadSettings(QWidget *widget)
 {
-    static QRegExp any(".*");
+    static QRegularExpression any(".*");
     QList<QWidget*> lst = widget->findChildren<QWidget*>(any);
     Q_FOREACH(QWidget *w, lst)
     {
@@ -147,7 +148,7 @@ void toSettingTab::loadSettings(QWidget *widget)
 
 void toSettingTab::saveSettings(QWidget *widget)
 {
-    static QRegExp any(".*");
+    static QRegularExpression any(".*");
     QList<QWidget*> lst = widget->findChildren<QWidget*>(any);
     Q_FOREACH(QWidget *w, lst)
     {
