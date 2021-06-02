@@ -43,7 +43,7 @@
 
 #include <QLabel>
 #include <QLineEdit>
-#include <QtCore/QRegExp>
+#include <QRegExp>
 #include <QToolBar>
 #include <QToolButton>
 #include <QToolTip>
