@@ -147,7 +147,7 @@ void toHelpSetting::oracleManuals()
         toHtml file(Utils::toReadFile(filename));
         QString dsc;
         bool inDsc = false;
-        QRegExp isToc(QString::fromLatin1("toc\\.htm?$"));
+        QRegularExpression isToc(QString::fromLatin1("toc\\.htm?$"));
         while (!file.eof())
         {
             file.nextToken();
