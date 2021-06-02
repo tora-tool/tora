@@ -602,7 +602,7 @@ namespace Utils
             QColor col(name);
 
             QPainter painter(&pm);
-            painter.setRenderHints(QPainter::HighQualityAntialiasing);
+            painter.setRenderHints(QPainter::Antialiasing);
             QRadialGradient brush(16 / 2, 16 / 2, 16 * 1.5, 16 / 2, 16 / 4);
             brush.setColorAt(0, col.lighter());
             brush.setColorAt(0.2, col);
