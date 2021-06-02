@@ -38,6 +38,7 @@
 
 #include <QApplication>
 #include <QtCore/QString>
+#include <QRegularExpression>
 
 // A little magic to get lrefresh to work and get a check on qApp
 
@@ -235,8 +236,8 @@ bool toSQL::saveSQL(const QString &filename, bool all)
     allocCheck();
     QString data;
 
-    QRegExp backslash(QString::fromLatin1("\\"));
-    QRegExp newline(QString::fromLatin1("\n"));
+    QRegularExpression backslash(QString::fromLatin1("\\"));
+    QRegularExpression newline(QString::fromLatin1("\n"));
     for (sqlMap::iterator i = Definitions->begin(); i != Definitions->end(); i++)
     {
         QString str;
