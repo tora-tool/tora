@@ -138,7 +138,7 @@ void toBarChart::paintChart(QPainter *p, QRect &rect)
     int zeroy = int(rect.height() - 2 - ( -zMinValue / (zMaxValue - zMinValue) * (rect.height() - 4)));
     if (samples > 1)
     {
-        const QMatrix &mtx = p->worldMatrix();
+        const QTransform &mtx = p->combinedTransform();
         p->setClipRect(int(mtx.dx() + 2), int(mtx.dy() + 2), rect.width() - 3, rect.height() - 3);
         if (Zooming)
             p->drawText(2, 2, rect.width() - 4, rect.height() - 4,
