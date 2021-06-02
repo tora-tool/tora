@@ -714,6 +714,6 @@ toHighlighterTypeButton::toHighlighterTypeButton()
 {
 }
 
-QColor toSqlText::lightCyan =  QColor(Qt::cyan).light(180);
-QColor toSqlText::lightMagenta = QColor(Qt::magenta).light(180);
+QColor toSqlText::lightCyan =  QColor(Qt::cyan).lighter(180);
+QColor toSqlText::lightMagenta = QColor(Qt::magenta).lighter(180);
 
