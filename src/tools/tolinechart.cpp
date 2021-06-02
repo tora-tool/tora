@@ -509,7 +509,7 @@ void toLineChart::paintChart(QPainter *p, QRect &rect)
     int samples = countSamples();
     if (samples > 1)
     {
-        const QMatrix &mtx = p->worldMatrix();
+        const QTransform &mtx = p->combinedTransform();
         p->setClipRect(int(mtx.dx() + 2), int(mtx.dy() + 2), rect.width() - 3, rect.height() - 3);
         if (Zooming)
             p->drawText(2, 2, rect.width() - 4, rect.height() - 4,
@@ -924,7 +924,7 @@ void toLineChart::importData(std::map<QString, QString> &ret, const QString &pre
 
     id = 1;
     Values.clear();
-    QRegExp comma(QString::fromLatin1(","));
+    QRegularExpression comma(QString::fromLatin1(","));
     while ((i = ret.find(prefix + ":Values:" + QString::number(id).toLatin1())) != ret.end())
     {
         QStringList lst = (*i).second.split(comma);
