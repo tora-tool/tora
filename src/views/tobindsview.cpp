@@ -125,7 +125,7 @@ void toBindModel::appendRow(toQueryAbstr::Row &r)
         QString xmlString = lob.userData();
         QXmlStreamReader xml(xmlString);
 
-        if (xml.readNextStartElement() && xml.name() == "binds")
+        if (xml.readNextStartElement() && xml.name().toString() == "binds")
         {
             auto n = xml.name().toString();
             while (xml.readNextStartElement()) {
@@ -138,7 +138,7 @@ void toBindModel::appendRow(toQueryAbstr::Row &r)
                 QString dtystr;
                 QString value;
 
-                if (xml.name() == "bind")
+                if (xml.name().toString() == "bind")
                 {
                     if (xml.isStartElement())
                     {
