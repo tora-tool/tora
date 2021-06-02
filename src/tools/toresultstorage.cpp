@@ -40,7 +40,7 @@
 
 #include <QtGui/QPainter>
 #include <QItemDelegate>
-
+#include <QRegularExpression>
 
 // columns count
 #define FILECOLUMNS 15
@@ -154,7 +154,7 @@ class toResultStorageItemDelegate: public QItemDelegate
                 int height = option.rect.height();
 
                 QString str = index.model()->data(index, Qt::DisplayRole).toString();
-                QStringList pct = str.split(QRegExp("/"));
+                QStringList pct = str.split(QRegularExpression("/"));
 
                 if (pct.count() == 3)
                 {
