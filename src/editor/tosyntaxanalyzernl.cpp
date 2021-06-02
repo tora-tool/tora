@@ -40,8 +40,8 @@
 #include "parsing/toscilexersql.h"
 
 #include <QtCore/QString>
-#include <QtCore/QRegExp>
 #include <QtCore/QtDebug>
+#include <QRegExp>
 
 toSyntaxAnalyzerNL::toSyntaxAnalyzerNL(toSqlText *parent)
     : toSyntaxAnalyzer(parent)
@@ -75,7 +75,7 @@ toSyntaxAnalyzer::statement toSyntaxAnalyzerNL::getStatementAt(unsigned line, un
 
 toSyntaxAnalyzer::statementList toSyntaxAnalyzerNL::getStatements(QString const& text, int lineLimit)
 {
-    QRegExp NL("\\r?\\n"); // TODO mac?, static variable can be used in both threads(can not be static)
+    QRegularExpression NL("\\r?\\n"); // TODO mac?, static variable can be used in both threads(can not be static)
     QRegExp WS("^\\s*$");
     QRegExp SEMI("^.*;\\s*(--\\s*)?$");
 
@@ -103,7 +103,7 @@ toSyntaxAnalyzer::statementList toSyntaxAnalyzerNL::getStatements(QString const&
             if ( lineStart == 0)
             {
                 // try to deduce statement type
-                QStringList words = line.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+                QStringList words = line.split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
                 foreach(QString const &word, words)
                 {
                     switch (statementClass(word))
