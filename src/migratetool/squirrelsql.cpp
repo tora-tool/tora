@@ -104,10 +104,10 @@ namespace MigrateTool
                     {
                         // format: server[:port]/dbname
                         QString connStr(url.replace("jdbc:mysql://", ""));
-                        QStringList l = connStr.split("/", QString::SkipEmptyParts);
+                        QStringList l = connStr.split("/", Qt::SkipEmptyParts);
                         if (l.size() > 1)
                             opt.database = l.at(1);
-                        QStringList k = l.at(0).split(":", QString::SkipEmptyParts);
+                        QStringList k = l.at(0).split(":", Qt::SkipEmptyParts);
                         if (k.size() > 1)
                             opt.port = k.at(1).toInt();
                         else
@@ -124,10 +124,10 @@ namespace MigrateTool
                     {
                         // format: server[:port]/sid
                         QString connStr(url.replace("dbc:oracle:thin:@", ""));
-                        QStringList l = connStr.split("/", QString::SkipEmptyParts);
+                        QStringList l = connStr.split("/", Qt::SkipEmptyParts);
                         if (l.size() > 1)
                             opt.database = l.at(1);
-                        QStringList k = l.at(0).split(":", QString::SkipEmptyParts);
+                        QStringList k = l.at(0).split(":", Qt::SkipEmptyParts);
                         if (k.size() > 1)
                             opt.port = k.at(1).toInt();
                         else
@@ -139,10 +139,10 @@ namespace MigrateTool
                     {
                         // format: server[:port]/database
                         QString connStr(url.replace("jdbc:postgresql:", ""));
-                        QStringList l = connStr.split("/", QString::SkipEmptyParts);
+                        QStringList l = connStr.split("/", Qt::SkipEmptyParts);
                         if (l.size() > 1)
                             opt.database = l.at(1);
-                        QStringList k = l.at(0).split(":", QString::SkipEmptyParts);
+                        QStringList k = l.at(0).split(":", Qt::SkipEmptyParts);
                         if (k.size() > 1)
                             opt.port = k.at(1).toInt();
                         else

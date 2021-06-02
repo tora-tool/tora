@@ -1041,7 +1041,7 @@ void toWorksheet::mySQLBeforeCreate(QString &chk)
     // do a "poor mans" parsing as we do not actually need to parse everything
     chk.replace("(", " ");
     chk.replace("\n", " ");
-    QStringList tok = chk.split(" ", QString::SkipEmptyParts);
+    QStringList tok = chk.split(" ", Qt::SkipEmptyParts);
 
     // only for "create" statements
     if (tok[0] == "create")

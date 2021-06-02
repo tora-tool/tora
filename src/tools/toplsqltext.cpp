@@ -641,7 +641,7 @@ toPLSQLEditor* toPLSQL::getAnotherPart(QString &pSchema, QString &pObject, QStri
 void toPLSQL::parseResults(const QString buf, QMultiMap<int, QString> &res)
 {
     // TODO: probably a problem on Mac as it has \r as new line character?
-    QStringList list = buf.split("\n", QString::SkipEmptyParts);
+    QStringList list = buf.split("\n", Qt::SkipEmptyParts);
     int j;
     for (int i = 0; i < list.size(); i++)
     {
