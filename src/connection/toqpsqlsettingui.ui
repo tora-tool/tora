@@ -26,7 +26,7 @@
    <string>Form1</string>
   </property>
   <layout class="QGridLayout">
-   <property name="margin">
+   <property name="margin" stdset="0">
     <number>11</number>
    </property>
    <property name="spacing">
@@ -77,24 +77,7 @@
   <tabstop>PGSQL_HOME</tabstop>
  </tabstops>
  <resources/>
- <connections>
-  <connection>
-   <sender>SelectHome</sender>
-   <signal>clicked()</signal>
-   <receiver>toQPSQLSettingUI</receiver>
-   <slot>selectHome()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>606</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>314</x>
-     <y>258</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
  <slots>
   <signal>signal1()</signal>
  </slots>
