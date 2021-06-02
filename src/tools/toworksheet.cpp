@@ -85,6 +85,7 @@
 #include <QtCore/QTextStream>
 #include <QInputDialog>
 #include <QProgressDialog>
+#include <QRegExp>
 
 #include "icons/clock.xpm"
 #include "icons/recall.xpm"
@@ -2249,7 +2250,7 @@ void toWorksheet::addLog(const QString &result)
 {
     using namespace ToConfiguration;
     QString dur = duration(Time.elapsed());
-    QString now = QDateTime::currentDateTime().toString(Qt::SystemLocaleDate);
+    QString now = QDateTime::currentDateTime().toString(QLocale().timeFormat(QLocale::LongFormat));
     toResultViewItem *item = NULL;
 
     if (!toConfigurationNewSingle::Instance().option(Worksheet::LogMultiBool).toBool())

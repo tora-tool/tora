@@ -47,6 +47,7 @@
 #include <QLabel>
 #include <QAction>
 #include <QToolBar>
+#include <QElapsedTimer>
 
 #include <map>
 
@@ -275,7 +276,7 @@ class toWorksheet : public toToolWidget, public toContextMenuHandler
         toEditableMenu *InsertSavedMenu;
 
         bool m_FirstDataReceived;
-        QTime Time;     // Timer used for query run duration (See QLabel *Started, slotPoll())
+        QElapsedTimer Time;     // Timer used for query run duration (See QLabel *Started, slotPoll())
         QTimer Poll;	// Periodically refresh duration timer "Started"
 
         QWidget *Current;
