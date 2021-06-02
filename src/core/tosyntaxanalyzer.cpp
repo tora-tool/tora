@@ -37,7 +37,7 @@
 #include "core/tologger.h"
 
 #include <QtCore/QString>
-#include <QtCore/QRegExp>
+#include <QRegExp>
 
 #include <Qsci/qscilexer.h>
 #include <Qsci/qscilexersql.h>
