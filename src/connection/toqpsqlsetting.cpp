@@ -42,7 +42,7 @@ toQPSQLSetting::toQPSQLSetting(QWidget *parent)
     , toSettingTab("database.html#QPSQL")
 {
     setupUi(this);
-    QObject::connect(SelectHome, &QToolButton::clicked, this, qOverload<>(&toQPSQLSetting::selectHome));
+    QObject::connect(SelectHome, &QToolButton::clicked, this, &toQPSQLSetting::selectHome);
 }
 
 void toQPSQLSetting::saveSetting()
