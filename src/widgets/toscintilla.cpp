@@ -1059,8 +1059,8 @@ static QString  GetRTFStyleChange(QString const& last, QString const& current)
 {
     // \f0\fs20\cf0\highlight0\b0\i0
     QString delta;
-    QStringList lastL = last.split('\\', QString::SkipEmptyParts);
-    QStringList currentL = current.split('\\', QString::SkipEmptyParts);
+    QStringList lastL = last.split('\\', Qt::SkipEmptyParts);
+    QStringList currentL = current.split('\\', Qt::SkipEmptyParts);
 
     // font face, size, color, background, bold, italic
     for (int i = 0; i < 6; i++)
