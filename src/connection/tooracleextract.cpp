@@ -38,11 +38,10 @@
 #include "core/toquery.h"
 #include "core/tosql.h"
 #include "core/utils.h"
-
-#include <QApplication>
-#include <QtCore/QRegExp>
-
 #include "connection/tooracleconfiguration.h"
+
+#include <QtCore/QRegularExpression>
+#include <QRegExp>
 
 // Implementation misc
 
@@ -156,7 +155,7 @@ QString toOracleExtract::partitionKeyColumns(
 
 QString toOracleExtract::prepareDB(const QString &db)
 {
-    static QRegExp quote("'");
+    static QRegularExpression quote("'");
     QString ret = db;
     ret.replace(quote, "''");
     return ret;
@@ -244,7 +243,7 @@ QString toOracleExtract::createComments(
                   arg(prepareDB((QString)inf.readValue()));
             if (PROMPT)
             {
-                QStringList lines = sql.split(QRegExp("\n|\r\n|\r"));
+                QStringList lines = sql.split(QRegularExpression("\n|\r\n|\r"));
                 foreach(QString line, lines)
                 {
                     ret += QString("PROMPT %1\n").arg(line);
@@ -265,7 +264,7 @@ QString toOracleExtract::createComments(
                   arg(prepareDB((QString)col.readValue()));
             if (PROMPT)
             {
-                QStringList lines = sql.split(QRegExp("\n|\r\n|\r"));
+                QStringList lines = sql.split(QRegularExpression("\n|\r\n|\r"));
                 foreach(QString line, lines)
                 {
                     ret += QString("PROMPT %1\n").arg(line);
@@ -2098,7 +2097,7 @@ QString toOracleExtract::indexColumns(
                                       const QString &name)
 {
     toConnectionSubLoan conn(ext.connection());
-    static QRegExp quote_regex("\"");
+    static QString quote_regex("\"");
     static QRegExp func("^sys_nc[0-9]+", Qt::CaseInsensitive);
     toQuery inf(conn, SQLIndexColumns, toQueryParams() << name << owner);
     QString ret = indent;
@@ -2865,7 +2864,7 @@ void toOracleExtract::describeIndexColumns(
         const QString &owner,
         const QString &name)
 {
-    static QRegExp quote_regex("\"");
+    static QRegularExpression quote_regex("\"");
     static QRegExp func("^sys_nc[0-9]g");
     toConnectionSubLoan conn(ext.connection());
     toQuery inf(conn, SQLIndexColumns, toQueryParams() << name << owner);
@@ -4700,7 +4699,7 @@ void toOracleExtract::createTableContents(const QString &owner, const QString &n
             }
             beg += ") VALUES (";
 
-            QRegExp find("'");
+            QRegularExpression find("'");
 
             int row = 0;
             int maxRow = ext.getCommitDistance();
@@ -5078,8 +5077,8 @@ QString toOracleExtract::createTrigger(const QString &owner, const QString &name
 
 
     QString trgPart = trgType + " " + event;
-    QRegExp src("\\s" + trgPart + "\\s", Qt::CaseInsensitive);
-    description.replace(QRegExp("\nON"), QString("\n ON"));
+    QRegularExpression src("\\s" + trgPart + "\\s", QRegularExpression::CaseInsensitiveOption);
+    description.replace(QRegularExpression("\nON"), QString("\n ON"));
     int pos = description.indexOf(src);
     //QString columns=description;
     QString columns;
@@ -5839,7 +5838,7 @@ void toOracleExtract::describeTrigger(const QString &owner, const QString &name,
     QString src = trgType;
     src += " ";
     src += event;
-    description.replace(QRegExp("\nON"), QString("\n ON"));
+    description.replace(QRegularExpression("\nON"), QString("\n ON"));
     int pos = description.indexOf(src);
     QString columns;
     if (pos >= 0)
@@ -6028,7 +6027,7 @@ QString toOracleExtract::createMetadata( const QString &owner, const QString &na
 {
     typedef toExtract T;
     toConnectionSubLoan conn(ext.connection());
-    QRegExp leading_space("^(\n|\r\n|\r| |\t)*");
+    QRegularExpression leading_space("^(\n|\r\n|\r| |\t)*");
     QString ret;
 
 
