@@ -38,6 +38,7 @@
 #include <QApplication>
 #include <QtCore/QString>
 #include <QtCore/QChar>
+#include <QRegExp>
 
 toHtml::toHtml(const QString &data)
     : Data(data)
@@ -64,7 +65,7 @@ void toHtml::skipSpace(void)
     if (c.isSpace())
     {
         Position++;
-        LastChar = 0;
+        LastChar = QChar::Null;
         while (Position < Length && Data[Position].isSpace())
             Position++;
     }
@@ -89,7 +90,7 @@ void toHtml::nextToken(void)
     {
         IsTag = true;
         Position++;
-        LastChar = 0;
+        LastChar = QChar::Null;
         skipSpace();
         if (Position >= Length)
             throw qApp->translate("toHtml", "Lone < at end");
@@ -123,7 +124,7 @@ void toHtml::nextToken(void)
                 c = Data[Position];
             if (c == '>')
             {
-                LastChar = 0;
+                LastChar = QChar::Null;
                 Position++;
                 break;
             }
@@ -151,7 +152,7 @@ void toHtml::nextToken(void)
                 c = Data[Position];
             if (c == '=')
             {
-                LastChar = 0;
+                LastChar = QChar::Null;
                 Position++;
                 skipSpace();
                 if (Position >= Length)
@@ -169,7 +170,7 @@ void toHtml::nextToken(void)
                     }
                     Qualifiers[QualifierNum].Value = mid(start, Position - start);
                     Position++;
-                    LastChar = 0;
+                    LastChar = QChar::Null;
                 }
                 else
                 {
@@ -193,7 +194,7 @@ void toHtml::nextToken(void)
         IsTag = false;
         int start = Position;
         Position++;
-        LastChar = 0;
+        LastChar = QChar::Null;
         while (Position < Length)
         {
             if (Data[Position] == '<')
@@ -255,7 +256,7 @@ QString toHtml::mid(int start, int size)
         arg(Length);
 
     LastChar = Data[start + size];
-    Data[start + size] = 0;
+    Data[start + size] = QChar::Null;
     return Data.mid(start, size);
 }
 
@@ -270,7 +271,7 @@ bool toHtml::search(const QString &all, const QString &str)
         inWord
     } lastState = beginning, state = beginning;
     int pos = 0;
-    QChar endString = 0;
+    QChar endString = QChar::Null;
     for (int i = 0; i < all.length(); i++)
     {
         QChar c = all.at(i).toLower();

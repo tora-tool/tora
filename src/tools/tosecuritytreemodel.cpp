@@ -169,7 +169,7 @@ bool toSecurityTreeModel::setData(const QModelIndex & index, const QVariant & va
 Qt::ItemFlags toSecurityTreeModel::flags(const QModelIndex &index) const
 {
     if (!index.isValid())
-        return 0;
+        return Qt::NoItemFlags;
 
     toSecurityTreeItem *item = static_cast<toSecurityTreeItem*>(index.internalPointer());
     if (item)
