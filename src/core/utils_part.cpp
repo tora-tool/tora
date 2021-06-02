@@ -38,8 +38,11 @@
 #include "core/tomainwindow.h"
 #include <QtCore/QDir>
 #include <QtCore/QString>
-#include <QtCore/QTextCodec>
 #include <QFileDialog>
+#include <QRegularExpression>
+#include <QRegExp>
+#include <QTextCodec>
+
 #include "core/toeditorconfiguration.h"
 
 // A little magic to get lrefresh to work and get a check on qApp
@@ -126,7 +129,7 @@ namespace Utils
 
     QString GetExtensions(void)
     {
-        static QRegExp repl(QString::fromLatin1("\\s*,\\s*"));
+        static QRegularExpression repl(QString::fromLatin1("\\s*,\\s*"));
         QString t(toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::Extensions).toString());
         t.replace(repl, QString::fromLatin1(";;")); // multiple filters are separated by double semicolons
         return t;
@@ -199,7 +202,7 @@ namespace Utils
         home = QDir::homePath();
 //#endif
 
-        ret.replace(QRegExp(QString::fromLatin1("\\$HOME")), home);
+        ret.replace(QRegularExpression(QString::fromLatin1("\\$HOME")), home);
         return ret;
     }
 

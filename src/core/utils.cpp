@@ -41,7 +41,7 @@
 #include "core/toqvalue.h"
 #include "core/toquery.h"
 
-#include <QtCore/QTextCodec>
+
 #include <QtCore/QThread>
 #include <QApplication>
 #include <QComboBox>
