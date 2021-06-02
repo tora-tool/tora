@@ -264,23 +264,23 @@ void toSyntaxSetup::changeLine(QListWidgetItem *item)
     {
         toSyntaxAnalyzer::WordClassEnum wc = (toSyntaxAnalyzer::WordClassEnum) wordClass();
         QPalette palette = FontSample->palette();
-        palette.setColor(QPalette::Background, Styles.value(wc).BGColor);
-        palette.setColor(QPalette::Foreground, Styles.value(wc).FGColor);
+        palette.setColor(QPalette::Window, Styles.value(wc).BGColor);
+        palette.setColor(QPalette::WindowText, Styles.value(wc).FGColor);
         //ExampleColor->setPalette(palette);
         //ExampleColor->setAutoFillBackground(true);
         //ExampleColor->setText("What ever text");
 
         palette = FGSample->palette();
-        palette.setColor(QPalette::Background, Styles.value(wc).FGColor);
+        palette.setColor(QPalette::Window, Styles.value(wc).FGColor);
         FGSample->setPalette(palette);
 
         palette = BGSample->palette();
-        palette.setColor(QPalette::Background, Styles.value(wc).BGColor);
+        palette.setColor(QPalette::Window, Styles.value(wc).BGColor);
         BGSample->setPalette(palette);
 
         palette = FontSample->palette();
-        palette.setColor(QPalette::Background, Styles.value(wc).BGColor);
-        palette.setColor(QPalette::Foreground, Styles.value(wc).FGColor);
+        palette.setColor(QPalette::Window, Styles.value(wc).BGColor);
+        palette.setColor(QPalette::WindowText, Styles.value(wc).FGColor);
         FontSample->setFont(Styles.value(wc).Font);
         FontSample->setPalette(palette);
         FontSample->setAutoFillBackground(true);
@@ -303,11 +303,11 @@ void toSyntaxSetup::selectFGColor(void)
                 Styles[coleng].FGColor = col;
 
                 QPalette palette = FontSample->palette();
-                palette.setColor(QPalette::Foreground, col);
+                palette.setColor(QPalette::WindowText, col);
                 FontSample->setPalette(palette);
                 FontSample->update();
 
-                palette.setColor(QPalette::Background, col);
+                palette.setColor(QPalette::Window, col);
                 FGSample->setPalette(palette);
                 FGSample->update();
 
@@ -333,11 +333,11 @@ void toSyntaxSetup::selectBGColor(void)
                 Styles[coleng].BGColor = col;
 
                 QPalette palette = FontSample->palette();
-                palette.setColor(QPalette::Background, col);
+                palette.setColor(QPalette::Window, col);
                 FontSample->setPalette(palette);
                 FontSample->update();
 
-                palette.setColor(QPalette::Background, col);
+                palette.setColor(QPalette::Window, col);
                 BGSample->setPalette(palette);
                 BGSample->update();
 
