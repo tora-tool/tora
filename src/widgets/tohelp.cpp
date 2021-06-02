@@ -46,6 +46,7 @@
 #include <QAction>
 #include <QMessageBox>
 #include <QtCore/QSettings>
+#include <QRegularExpression>
 
 QVariant ToConfiguration::Help::defaultValue(int option) const
 {
@@ -286,7 +287,7 @@ QString toHelp::path(const QString &path)
         cur = "qrc:/help/toc.html";
     else
         cur = path;
-    cur.replace(QRegExp(QString::fromLatin1("[^/]+$")), QString());
+    cur.replace(QRegularExpression(QString::fromLatin1("[^/]+$")), QString());
     return cur;
 }
 
@@ -365,11 +366,11 @@ void toHelp::search(void)
 
     Searching = true;
     Result->clear();
-    QStringList words = SearchLine->text().toLower().split(QRegExp(QString::fromLatin1("\\s+")));
+    QStringList words = SearchLine->text().toLower().split(QRegularExpression(QString::fromLatin1("\\s+")));
     if (words.count() == 0)
         return ;
-    QRegExp strip(QString::fromLatin1("\\d+-\\d+\\s*,\\s+"));
-    QRegExp stripend(QString::fromLatin1(",$"));
+    QRegularExpression strip(QString::fromLatin1("\\d+-\\d+\\s*,\\s+"));
+    QRegularExpression stripend(QString::fromLatin1(",$"));
     int steps = 1;
     Progress->setValue(0);
 
