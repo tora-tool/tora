@@ -505,8 +505,8 @@ void toSqlText::tableAtCursor(toSqlText::Word &schema, toSqlText::Word &table)
             auto sa = words.at((std::max)(idx-2, 0));
             auto sb = words.at((std::max)(idx-1, 0)); // prev word
             auto sc = words.at((std::max)(idx, 0));  // "current" word
-            auto sd = words.at((std::min)(idx+1, words.size() -1)); // next word
-            auto se = words.at((std::min)(idx+2, words.size() -1));
+            auto sd = words.at((std::min)(idx+1, (int)words.size() -1)); // next word
+            auto se = words.at((std::min)(idx+2, (int)words.size() -1));
             if ( sc.text() == ".")
             {
             	schema = sb;
