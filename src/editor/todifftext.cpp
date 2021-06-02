@@ -41,6 +41,7 @@
 #include <QListWidget>
 #include <QVBoxLayout>
 #include <QApplication>
+#include <QRegularExpression>
 
 #include <Qsci/qscilexerdiff.h>
 #include <Qsci/qscilexercustom.h>
@@ -155,7 +156,7 @@ void toDiffText::setText (const QString& oldTxt, const QString& newTxt)
 
     toScintilla::clear();
 
-    QRegExp newline("\n|\r\n|\r");
+    QRegularExpression newline("\n|\r\n|\r");
     QStringList oldLines = oldTxt.split(newline);
     QStringList newLines = newTxt.split(newline);
 
@@ -207,5 +208,5 @@ void toDiffText::setText (const QString& oldTxt, const QString& newTxt)
     }
 }
 
-QColor toDiffText::lightCyan =  QColor(Qt::cyan).light(180);
-QColor toDiffText::lightMagenta = QColor (Qt::magenta).light (180);
+QColor toDiffText::lightCyan =  QColor(Qt::cyan).lighter(180);
+QColor toDiffText::lightMagenta = QColor (Qt::magenta).lighter(180);
