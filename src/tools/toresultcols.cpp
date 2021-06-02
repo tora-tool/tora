@@ -41,7 +41,7 @@
 #include "core/toconnection.h"
 #include "core/toconnectiontraits.h"
 
-#include <QtCore/QRegExp>
+#include <QRegExp>
 #include <QCheckBox>
 #include <QLabel>
 #include <QVBoxLayout>

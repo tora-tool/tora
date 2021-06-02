@@ -37,6 +37,7 @@
 #include "core/tolistviewformatteridentifier.h"
 
 #include <QRegExp>
+#include <QRegularExpression>
 
 #include <iostream>
 #include <vector>
@@ -63,7 +64,7 @@ toListViewFormatterCSV::~toListViewFormatterCSV()
 
 QString toListViewFormatterCSV::QuoteString(const QString &str)
 {
-    static QRegExp quote(QString::fromLatin1("\""));
+    static QRegularExpression quote(QString::fromLatin1("\""));
     QString t = str;
     t.replace(quote, QString::fromLatin1("\"\""));
     return t;
