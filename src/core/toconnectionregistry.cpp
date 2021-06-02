@@ -117,7 +117,7 @@ void toConnectionRegistry::removeConnection(toConnection *conn)
     int mRemoved = m_ConnectionsMap.remove(conns.at(0));
     Q_UNUSED(mRemoved);
     m_ConnectionsList.removeAt(pos);
-    m_currentConnection = index((std::min)(pos, m_ConnectionsList.size()-1));
+    m_currentConnection = index((std::min)(pos, (int)m_ConnectionsList.size()-1));
     endRemoveRows();
     emit activeConnectionChanged(m_currentConnection);
     emit activeConnectionChanged(m_currentConnection.row());
