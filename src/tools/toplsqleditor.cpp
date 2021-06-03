@@ -677,7 +677,7 @@ toPLSQLWidget::~toPLSQLWidget()
 */
 void toPLSQLWidget::cleanupResults(const QString & type)
 {
-    if ((m_errItem != NULL) && (type == PLSQL_ERROR || type == NULL))
+    if ((m_errItem != NULL) && (type == PLSQL_ERROR || type.isEmpty()))
     {
         foreach (QTreeWidgetItem * c, m_errItem->takeChildren())
         delete c;
@@ -685,7 +685,7 @@ void toPLSQLWidget::cleanupResults(const QString & type)
         m_errItem = NULL;
     }
 
-    if ((m_warnItem != NULL) && (type == PLSQL_WARNING || type == NULL))
+    if ((m_warnItem != NULL) && (type == PLSQL_WARNING || type.isEmpty()))
     {
         foreach (QTreeWidgetItem * c, m_warnItem->takeChildren())
         delete c;
@@ -693,7 +693,7 @@ void toPLSQLWidget::cleanupResults(const QString & type)
         m_warnItem = NULL;
     }
 
-    if ((m_staticItem != NULL) && (type == PLSQL_STATIC || type == NULL))
+    if ((m_staticItem != NULL) && (type == PLSQL_STATIC || type .isEmpty()))
     {
         foreach (QTreeWidgetItem * c, m_staticItem->takeChildren())
         delete c;
