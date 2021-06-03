@@ -594,7 +594,7 @@ namespace Utils
         QPixmap pm;
         if (name.isNull() || name.isEmpty())
             return pm;
-        if (!QPixmapCache::find(name, pm))
+        if (!QPixmapCache::find(name, &pm))
         {
             // draw a "cool 3d" bullet here
             pm = QPixmap(16, 16);
