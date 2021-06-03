@@ -132,7 +132,7 @@ QVariant ToConfiguration::Editor::defaultValue(int option) const
                 QsciLexerSQL *l = new QsciLexerSQL(NULL);
                 for (int idx = 0; idx < StyleNameEnum.keyCount(); idx++)
                 {
-                    QColor fg = l->color((int)StyleNameEnum.value(idx)).light(windowText.lightness());
+                    QColor fg = l->color((int)StyleNameEnum.value(idx)).lighter(windowText.lightness());
                     QColor bg = l->paper((int)StyleNameEnum.value(idx));
                     QFont fo = Utils::toStringToFont(defaultValue(ConfCodeFont).toString());
 
