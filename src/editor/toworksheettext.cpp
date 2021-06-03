@@ -38,6 +38,7 @@
 #include "core/toconnectiontraits.h"
 #include "core/tologger.h"
 #include "core/toglobalevent.h"
+#include "core/toeditorconfiguration.h"
 
 #include "parsing/tsqlparse.h"
 
@@ -47,7 +48,8 @@
 #include <QListWidget>
 #include <QDir>
 
-#include "core/toeditorconfiguration.h"
+#include <algorithm>
+
 
 using namespace ToConfiguration;
 using namespace SQLParser;
@@ -631,7 +633,7 @@ void toWorksheetText::handleBookmark()
         markerAdd(curline, m_bookmarkMarginHandle);
         m_bookmarks.append(curline);
     }
-    qSort(m_bookmarks);
+    std::sort(m_bookmarks.begin(), m_bookmarks.end());
 }
 
 void toWorksheetText::gotoPrevBookmark()

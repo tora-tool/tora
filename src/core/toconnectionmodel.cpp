@@ -40,6 +40,8 @@
 
 #include <QtCore/QSettings>
 
+#include <algorithm>
+
 toConnectionModel::toConnectionModel(QObject *parent)
     : QAbstractTableModel(parent)
 {
@@ -114,7 +116,7 @@ void toConnectionModel::append(toConnectionOptions conn)
 {
     // find latest id (max+1)
     QList<int> keys = m_data.keys();
-    qSort(keys);
+    std::sort(keys.begin(), keys.end());
     int max = 0;
     if (!keys.empty())
         max = keys.last() + 1;
