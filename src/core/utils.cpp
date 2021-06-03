@@ -772,7 +772,7 @@ namespace Utils
         else              // only filename was provided.
             libpath = path.fileName();
 
-        handle = LoadLibraryEx( libpath.toStdString().c_str(), NULL, NULL);
+        handle = LoadLibraryEx((LPCWSTR)libpath.toStdString().c_str(), NULL, NULL);
         if ( !handle)
         {
             LPVOID lpMsgBuf;
