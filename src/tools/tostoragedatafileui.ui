@@ -159,58 +159,10 @@
  <resources/>
  <connections>
   <connection>
-   <sender>AutoExtend</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>toStorageDatafileUI</receiver>
-   <slot>autoExtend(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>UnlimitedMax</sender>
    <signal>toggled(bool)</signal>
    <receiver>toStorageDatafileUI</receiver>
    <slot>maximumSize(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>PushButton1</sender>
-   <signal>clicked()</signal>
-   <receiver>toStorageDatafileUI</receiver>
-   <slot>browseFile()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>Filename</sender>
-   <signal>textChanged(QString)</signal>
-   <receiver>toStorageDatafileUI</receiver>
-   <slot>valueChanged(QString)</slot>
    <hints>
     <hint type="sourcelabel" >
      <x>20</x>

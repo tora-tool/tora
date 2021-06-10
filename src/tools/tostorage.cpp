@@ -297,6 +297,10 @@ toStorageDatafile::toStorageDatafile(bool temp, bool dispName, QWidget* parent, 
 
     setupUi(this);
 
+    connect(AutoExtend, &QCheckBox::toggled, this, &autoExtend);
+    connect(PushButton1, &QPushButton::clicked, this, &browseFile);
+    connect(Filename, &QLineEdit::textChanged, this, &valueChanged);
+
     Modify = false;
     InitialSizeOrig = NextSizeOrig = MaximumSizeOrig = 0;
 
