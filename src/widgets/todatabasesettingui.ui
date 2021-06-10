@@ -417,38 +417,5 @@
   <tabstop>NumberDecimalsInt</tabstop>
  </tabstops>
  <resources/>
- <connections>
-  <connection>
-   <sender>NumberFormatInt</sender>
-   <signal>activated(QString)</signal>
-   <receiver>toDatabaseSettingUI</receiver>
-   <slot>numberFormatChange()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>IndicateEmptyColor</sender>
-   <signal>clicked()</signal>
-   <receiver>toDatabaseSettingUI</receiver>
-   <slot>IndicateEmptyColor_clicked()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>
