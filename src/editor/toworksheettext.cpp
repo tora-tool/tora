@@ -179,7 +179,7 @@ void toWorksheetText::keyPressEvent(QKeyEvent * e)
             removeSelectedText();
             insert(shorts.value(key).toString());
             currPosition = SendScintilla(SCI_GETCURRENTPOS);
-            SendScintilla(SCI_SETEMPTYSELECTION, currPosition + shorts.value(key).toByteArray().length());
+            SendScintilla(QsciScintillaBase::SCI_SETEMPTYSELECTION, currPosition + (unsigned)shorts.value(key).toByteArray().length());
             e->accept();
             return;
         }
@@ -475,7 +475,7 @@ void toWorksheetText::completeWithText(QString const& text)
     insert(text);
     SendScintilla(SCI_SETCURRENTPOS,
                   SendScintilla(SCI_GETCURRENTPOS) +
-                  text.length());
+                  (unsigned)text.length());
     pos = SendScintilla(SCI_GETCURRENTPOS);
     SendScintilla(SCI_SETSELECTIONSTART, pos, true);
     SendScintilla(SCI_SETSELECTIONEND, pos, true);
