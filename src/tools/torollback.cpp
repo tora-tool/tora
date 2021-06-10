@@ -163,6 +163,9 @@ toRollbackDialog::toRollbackDialog(toConnection &Connection, QWidget* parent, co
 {
     setupUi(this);
 
+    connect(ToolButton1, &QToolButton::clicked, this, &displaySQL);
+    connect(Name, &QLineEdit::textChanged, this, &valueChanged);
+
     toHelp::connectDialog(this);
 
     try

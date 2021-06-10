@@ -222,37 +222,5 @@
     </hint>
    </hints>
   </connection>
-  <connection>
-   <sender>ToolButton1</sender>
-   <signal>clicked()</signal>
-   <receiver>toRollbackDialogUI</receiver>
-   <slot>displaySQL()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>Name</sender>
-   <signal>textChanged(QString)</signal>
-   <receiver>toRollbackDialogUI</receiver>
-   <slot>valueChanged(QString)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
  </connections>
 </ui>
