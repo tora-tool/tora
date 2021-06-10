@@ -43,6 +43,7 @@
 #include <QVBoxLayout>
 #include <QGuiApplication>
 #include <QtGui/QPalette>
+#include <QScreen>
 
 toSplash::toSplash(QWidget *parent)
     : QWidget(parent)

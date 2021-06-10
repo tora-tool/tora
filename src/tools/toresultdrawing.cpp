@@ -153,7 +153,11 @@ toResultDrawing::Table::Table(QString const& _name)
 {
 }
 
+#if QT_VERSION_MAJOR < 6
+inline uint qHash(const toResultDrawing::Table &key, uint seed)
+#else
 inline uint qHash(const toResultDrawing::Table &key, size_t seed)
+#endif
 {
     return qHash(key.name, seed);
 }
