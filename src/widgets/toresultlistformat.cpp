@@ -46,6 +46,9 @@ toResultListFormat::toResultListFormat(QWidget *parent, DialogType type, const c
     using namespace ToConfiguration;
 
     setupUi(this);
+
+    connect(formatCombo, &QComboBox::activated, this, &formatChanged);
+
     setModal(true);
     formatCombo->addItem(tr("Text"));
     formatCombo->addItem(tr("Tab delimited"));

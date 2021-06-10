@@ -194,22 +194,6 @@
  <resources/>
  <connections>
   <connection>
-   <sender>formatCombo</sender>
-   <signal>activated(int)</signal>
-   <receiver>toResultListFormatUI</receiver>
-   <slot>formatChanged(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>134</x>
-     <y>24</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
    <receiver>toResultListFormatUI</receiver>
