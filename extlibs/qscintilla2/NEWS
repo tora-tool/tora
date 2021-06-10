@@ -1,3 +1,22 @@
+v2.12.1 4th March 2021
+  - Packaging bug fixes.
+
+v2.12.0 23rd February 2021
+  - Added support for Qt6.
+  - Removed support for Qt4 and Qt5 earlier than v5.11.0.
+  - sdists are now provided.
+
+v2.11.6 23rd November 2020
+  - Added the --qsci-translations-dir option to sip-wheel.
+  - Added the .api file for Python v3.9.
+  - Build system changes.
+  - Bug fixes.
+
+v2.11.5 10th June 2020
+  - The bundled .api files are now included in Python wheels if the
+    QScintilla.api file is enabled.
+  - Bug fixes.
+
 v2.11.4 19th December 2019
   - An administrative release with no code changes.
 
