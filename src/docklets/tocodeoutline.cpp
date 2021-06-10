@@ -135,7 +135,7 @@ void toCodeOutline::timerEvent(QTimerEvent *e)
         types->clear();
         exceptions->clear();
 
-        QMap<QString, const SQLParser::Token*>::const_iterator i = stat->declarations().begin();
+        auto i = stat->declarations().begin();
         for (; i != stat->declarations().end(); ++i)
         {
             TLOG(0, toDecorator, __HERE__) << i.key() << ' ' << i.value()->getPosition().toString() << std::endl;

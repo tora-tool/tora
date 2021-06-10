@@ -74,7 +74,7 @@ class toDebugText : public toSqlText
          * @param errors A map of linenumbers to errorstrings. These will be displayed in the
          *               statusbar if the cursor is placed on the line.
          */
-        void setErrors(const QMap<int, QString> &errors, bool errorsGiven = true);
+        void setErrors(const QMultiMap<int, QString> &errors, bool errorsGiven = true);
 
     public slots:
         /** Go to next error.
@@ -90,7 +90,7 @@ class toDebugText : public toSqlText
     private:
         /** Map of rows with errors and their error message.
          */
-        QMap<int, QString> Errors;
+        QMultiMap<int, QString> Errors;
 
         //! \brief A handler for debug - line highlighted
         int m_debugHandle;

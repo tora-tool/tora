@@ -63,7 +63,7 @@ void toDebugText::nextError(void)
 {
     int curline, curcol;
     getCursorPosition (&curline, &curcol);
-    for (QMap<int, QString>::iterator i = Errors.begin(); i != Errors.end(); i++)
+    for (auto i = Errors.begin(); i != Errors.end(); i++)
     {
         if (i.key() > curline)
         {
@@ -78,7 +78,7 @@ void toDebugText::previousError(void)
     int curline, curcol;
     getCursorPosition (&curline, &curcol);
     curcol = -1;
-    for (QMap<int, QString>::iterator i = Errors.begin(); i != Errors.end(); i++)
+    for (auto i = Errors.begin(); i != Errors.end(); i++)
     {
         if (i.key() >= curline)
         {
@@ -94,7 +94,7 @@ void toDebugText::previousError(void)
 
 /* Sets errors/static observations markers in margins and on text
 */
-void toDebugText::setErrors(const QMap<int, QString> &errors, bool errorsGiven)
+void toDebugText::setErrors(const QMultiMap<int, QString> &errors, bool errorsGiven)
 {
     int handle, marginHandle;
 
@@ -113,7 +113,7 @@ void toDebugText::setErrors(const QMap<int, QString> &errors, bool errorsGiven)
     setStatusMessage();
     markerDeleteAll(handle);
     markerDeleteAll(marginHandle);
-    for (QMap<int, QString>::const_iterator i = Errors.begin(); i != Errors.end(); i++)
+    for (auto i = Errors.begin(); i != Errors.end(); i++)
     {
         if (i.key() < 0)
         {
@@ -136,7 +136,7 @@ void toDebugText::setStatusMessage(void)
 {
     int curline, curcol;
     getCursorPosition (&curline, &curcol);
-    QMap<int, QString>::iterator err = Errors.find(curline);
+    auto err = Errors.find(curline);
     if (err == Errors.end())
         m_message.text = QString();
     else

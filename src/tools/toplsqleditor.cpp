@@ -787,7 +787,7 @@ void toPLSQLWidget::applyResult(const QString & type,
         TLOG(2, toDecorator, __HERE__) << "Unknown type " << type << " in toPLSQLWidget::applyResult";
 
     // add new items to the list
-    QMap<int, QString>::const_iterator i = values.constBegin();
+    auto i = values.constBegin();
     while (i != values.constEnd())
     {
         QStringList l(i.value());

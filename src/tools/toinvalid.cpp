@@ -301,7 +301,7 @@ void toInvalid::changeSelection(void)
 
             Source->refreshWithParams( toQueryParams() << owner << object << type);
 
-            QMap<int, QString> Errors;
+            QMultiMap<int, QString> Errors;
             toConnectionSubLoan conn(connection());
             toQuery errors(conn,
                            SQLReadErrors,
@@ -311,8 +311,7 @@ void toInvalid::changeSelection(void)
             while (!errors.eof())
             {
                 int line = errors.readValue().toInt() + Source->offset();
-                Errors[line] += QString::fromLatin1(" ");
-                Errors[line] += (QString)errors.readValue();
+                Errors.insert(line, QString::fromLatin1(" ") + (QString)errors.readValue());
                 firstErrorLine = (std::min)(firstErrorLine, line);
             }
             Source->setErrors(Errors);
