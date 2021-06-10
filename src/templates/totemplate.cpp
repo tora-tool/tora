@@ -101,10 +101,10 @@ toTemplateEdit::toTemplateEdit(std::map<QString, QString> &pairs,
 {
     setupUi(this);
 
-    connect(PreviewButton, &QPushButton::clicked, this, &preview);
-    connect(TrashButton, &QPushButton::clicked, this, &remove);
-    connect(NewButton, &QPushButton::clicked, this, &newTemplate);
-    connect(Templates, &toTreeWidget::selectionChanged, this, &changeSelection);
+    connect(PreviewButton, &QPushButton::clicked, this, [=]() { this->preview(); });
+    connect(TrashButton, &QPushButton::clicked, this, [=]() { this->remove(); });
+    connect(NewButton, &QPushButton::clicked, this, [=]() { this->newTemplate(); });
+    connect(Templates, &toTreeWidget::selectionChanged, this, [=]() { this->changeSelection(); });
 
     toHelp::connectDialog(this);
     LastTemplate = TemplateMap.end();
@@ -338,9 +338,9 @@ toTemplateAddFile::toTemplateAddFile(QWidget *parent, const char *name)
 
     setupUi(this);
 
-    connect(Browse, &QPushButton::clicked, this, &browse);
-    connect(Root, &QLineEdit::textChanged, this, &valid);
-    connect(Filename, &QLineEdit::textChanged, this, &valid);
+    connect(Browse, &QPushButton::clicked, this, [=]() { this->browse(); });
+    connect(Root, &QLineEdit::textChanged, this, [=]() { this->valid(); });
+    connect(Filename, &QLineEdit::textChanged, this, [=]() { this->valid(); });
 
     OkButton->setEnabled(false);
     toHelp::connectDialog(this);
@@ -373,9 +373,9 @@ toTemplateSetting::toTemplateSetting(toTool *tool, QWidget *parent, const char *
 
     setupUi(this);
 
-    connect(EditButton, &QPushButton::clicked, this, &editFile);
-    connect(RemoveButton, &QPushButton::clicked, this, &delFile);
-    connect(AddButton, &QPushButton::clicked, this, &addFile);
+    connect(EditButton, &QPushButton::clicked, this, [=]() { this->editFile(); });
+    connect(RemoveButton, &QPushButton::clicked, this, [=]() { this->delFile(); });
+    connect(AddButton, &QPushButton::clicked, this, [=]() { this->addFile(); });
 
     TemplatesMap def = DefaultText();
 

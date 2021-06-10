@@ -179,10 +179,10 @@ toStorageTablespace::toStorageTablespace(QWidget* parent, const char* name)
 {
     setupUi(this);
 
-    connect(DefaultStorage, &QCheckBox::toggled, this, &allowDefault);
-    connect(Permanent, &QCheckBox::toggled, this, &permanentToggle);
-    connect(Dictionary, &QRadioButton::toggled, this, &dictionaryToggle);
-    connect(LocalSelect, &QRadioButton::toggled, this, &uniformToggle);
+    connect(DefaultStorage, &QCheckBox::toggled, this, [=](bool val) { this->allowDefault(val); });
+    connect(Permanent, &QCheckBox::toggled, this, [=](bool val) { this->permanentToggle(val); });
+    connect(Dictionary, &QRadioButton::toggled, this, [=](bool val) { this->dictionaryToggle(val); });
+    connect(LocalSelect, &QRadioButton::toggled, this, [=](bool val) { this->uniformToggle(val); });
 
     Modify = false;
 
@@ -303,9 +303,9 @@ toStorageDatafile::toStorageDatafile(bool temp, bool dispName, QWidget* parent, 
 
     setupUi(this);
 
-    connect(AutoExtend, &QCheckBox::toggled, this, &autoExtend);
-    connect(PushButton1, &QPushButton::clicked, this, &browseFile);
-    connect(Filename, &QLineEdit::textChanged, this, &valueChanged);
+    connect(AutoExtend, &QCheckBox::toggled, this, [=](bool val) { this->autoExtend(val); });
+    connect(PushButton1, &QPushButton::clicked, this, [=]() { this->browseFile(); });
+    connect(Filename, &QLineEdit::textChanged, this, [=](QString const& s) { this->valueChanged(s); });
 
     Modify = false;
     InitialSizeOrig = NextSizeOrig = MaximumSizeOrig = 0;
@@ -451,7 +451,7 @@ void toStorageDatafile::valueChanged(const QString &)
 
 void toStorageDialog::Setup(void)
 {
-    connect(ToolButton1, &QToolButton::clicked, this, &displaySQL);
+    connect(ToolButton1, &QToolButton::clicked, this, [=]() { this->displaySQL(); });
 
     DialogTab->removeTab(DialogTab->indexOf(DefaultPage));
     toHelp::connectDialog(this);

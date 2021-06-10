@@ -332,7 +332,7 @@ class toTreeWidget : public QTreeWidget
          * both in Single selection and Multi selection mode but is most
          * useful in Multi selection mode.
          */
-        void selectionChanged(void);
+        //void selectionChanged(void);
 
 
         /**

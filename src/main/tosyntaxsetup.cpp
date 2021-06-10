@@ -69,14 +69,14 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name)
 
     setupUi(this);
 
-    connect(ResultExampleChoose, &QPushButton::clicked, this, &selectResultFont);
-    connect(CodeExampleChoose, &QPushButton::clicked, this, &selectFont);
-    connect(PickFontButton, &QPushButton::clicked, this, &selectFont);
-    connect(KeywordUpperBool, &QCheckBox::toggled, this, &changeUpper);
-    connect(PickFGButton, &QPushButton::clicked, this, &selectFGColor);
-    connect(PickBGButton, &QPushButton::clicked, this, &selectBGColor);
-    connect(SyntaxComponent, &QListWidget::currentItemChanged, this, &changeLine);
-    connect(TextExampleChoose, &QPushButton::clicked, this, &selectText);
+    connect(ResultExampleChoose, &QPushButton::clicked, this, [=]() { this->selectResultFont(); });
+    connect(CodeExampleChoose, &QPushButton::clicked, this, [=]() { this->selectFont(); });
+    connect(PickFontButton, &QPushButton::clicked, this, [=]() { this->selectFont(); });
+    connect(KeywordUpperBool, &QCheckBox::toggled, this, [=](bool checked) { this->changeUpper(checked); });
+    connect(PickFGButton, &QPushButton::clicked, this, [=]() { this->selectFGColor(); });
+    connect(PickBGButton, &QPushButton::clicked, this, [=]() { this->selectBGColor(); });
+    connect(SyntaxComponent, &QListWidget::currentItemChanged, this, [=](QListWidgetItem* current) { this->changeLine(current); });
+    connect(TextExampleChoose, &QPushButton::clicked, this, [=]() { this->selectText(); });
 
     connect(EditorShortcutsEdit, SIGNAL(clicked()),
             this, SLOT(openEditorShortcutsDialog()));

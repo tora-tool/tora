@@ -71,8 +71,8 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent, const char *name)
     setupUi(this);
 
     connect(IndicateEmptyBool, SIGNAL(clicked(bool)), IndicateEmptyColor, SLOT(setEnabled(bool)));
-    connect(NumberFormatInt, &QComboBox::activated, this, (&numberFormatChange));
-    connect(IndicateEmptyColor, &QPushButton::clicked, this, (&IndicateEmptyColor_clicked));
+    connect(NumberFormatInt, &QComboBox::activated, this, [=]() { this->numberFormatChange(); });
+    connect(IndicateEmptyColor, &QPushButton::clicked, this, [=]() { this->IndicateEmptyColor_clicked(); });
 
     toSettingTab::loadSettings(this);
 
