@@ -69,15 +69,14 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name)
 
     setupUi(this);
 
-    QObject::connect(ResultExampleChoose, &QPushButton::clicked, toSyntaxSetupUI, qOverload<>(&QWidget::selectResultFont));
-    QObject::connect(CodeExampleChoose, &QPushButton::clicked, toSyntaxSetupUI, qOverload<>(&QWidget::selectFont));
-    QObject::connect(PickFontButton, &QPushButton::clicked, toSyntaxSetupUI, qOverload<>(&QWidget::selectFont));
-    QObject::connect(KeywordUpperBool, &QCheckBox::toggled, toSyntaxSetupUI, &QWidget::changeUpper);
-    QObject::connect(PickFGButton, &QPushButton::clicked, toSyntaxSetupUI, qOverload<>(&QWidget::selectFGColor));
-    QObject::connect(PickBGButton, &QPushButton::clicked, toSyntaxSetupUI, qOverload<>(&QWidget::selectBGColor));
-    QObject::connect(SyntaxComponent, &QListWidget::currentItemChanged, toSyntaxSetupUI, &QWidget::changeLine);
-    QObject::connect(TextExampleChoose, &QPushButton::clicked, toSyntaxSetupUI, qOverload<>(&QWidget::selectText));
-
+    connect(ResultExampleChoose, &QPushButton::clicked, this, &selectResultFont);
+    connect(CodeExampleChoose, &QPushButton::clicked, this, &selectFont);
+    connect(PickFontButton, &QPushButton::clicked, this, &selectFont);
+    connect(KeywordUpperBool, &QCheckBox::toggled, this, &changeUpper);
+    connect(PickFGButton, &QPushButton::clicked, this, &selectFGColor);
+    connect(PickBGButton, &QPushButton::clicked, this, &selectBGColor);
+    connect(SyntaxComponent, &QListWidget::currentItemChanged, this, &changeLine);
+    connect(TextExampleChoose, &QPushButton::clicked, this, &selectText);
 
     connect(EditorShortcutsEdit, SIGNAL(clicked()),
             this, SLOT(openEditorShortcutsDialog()));
