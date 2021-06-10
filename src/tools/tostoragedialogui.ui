@@ -130,11 +130,5 @@
       <receiver>toStorageDialogUI</receiver>
       <slot>reject()</slot>
     </connection>
-    <connection>
-      <sender>ToolButton1</sender>
-      <signal>clicked()</signal>
-      <receiver>toStorageDialogUI</receiver>
-      <slot>displaySQL()</slot>
-    </connection>
   </connections>
 </ui>

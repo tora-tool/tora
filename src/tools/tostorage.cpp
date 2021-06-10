@@ -445,6 +445,8 @@ void toStorageDatafile::valueChanged(const QString &)
 
 void toStorageDialog::Setup(void)
 {
+    connect(ToolButton1, &QToolButton::clicked, this, &displaySQL);
+
     DialogTab->removeTab(DialogTab->indexOf(DefaultPage));
     toHelp::connectDialog(this);
 }
