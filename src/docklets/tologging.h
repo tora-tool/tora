@@ -41,7 +41,6 @@
 #include "loki/Singleton.h"
 
 #include <QListView>
-#include <QDirModel>
 #include <QPlainTextEdit>
 
 class toToolWidget;
