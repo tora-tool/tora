@@ -71,7 +71,7 @@ toFileMenu::toFileMenu()
     closeConnAct->setToolTip(tr("Disconnect"));
 
     commitAct = new QAction(QPixmap(const_cast<const char**>(commit_xpm)), tr("&Commit Connection"), this);
-    commitAct->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_C);
+    commitAct->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_C);
     commitAct->setToolTip(tr("Commit transaction"));
     commitAct->setDisabled(true);
 
@@ -81,7 +81,7 @@ toFileMenu::toFileMenu()
     rollbackAct->setDisabled(true);
 
     currentAct = new QAction(tr("&Current Connection"), this);
-    currentAct->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_U);
+    currentAct->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_U);
 
     stopAct = new QAction(QPixmap(const_cast<const char**>(stop_xpm)), tr("Stop All Queries"), this);
     stopAct->setShortcut(Qt::CTRL + Qt::Key_J);
@@ -95,7 +95,7 @@ toFileMenu::toFileMenu()
     saveAct->setShortcut(QKeySequence::Save);
 
     saveAsAct = new QAction(tr("Save &As..."), this);
-    saveAsAct->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_W);
+    saveAsAct->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_W);
 
 #ifdef TORA3_SESSION
     openSessionAct = new QAction(QPixmap(const_cast<const char**>(fileopen_xpm)), tr("Open Session..."), this);

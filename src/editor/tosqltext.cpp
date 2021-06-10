@@ -117,7 +117,7 @@ toSqlText::toSqlText(QWidget *parent, const char *name)
     scheduleParsing();
 
     m_indent->setCheckable(true);
-    m_indent->setShortcut(Qt::CTRL + Qt::ALT + Qt::Key_Backslash);
+    m_indent->setShortcut(Qt::CTRL | Qt::ALT | Qt::Key_Backslash);
     connect(m_indent, SIGNAL(triggered()), this, SLOT(indentCurrentSql()));
 
     m_wrap->setCheckable(true);

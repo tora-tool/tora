@@ -906,14 +906,14 @@ toBrowser::toBrowser(QWidget *parent, toConnection &connection)
     FilterButton->setIcon(QIcon(QPixmap(const_cast<const char**>(filter_xpm))));
     FilterButton->setToolTip(tr("Define the object filter"));
     connect(FilterButton, SIGNAL(triggered(bool)), this, SLOT(defineFilter()));
-    FilterButton->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_G);
+    FilterButton->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_G);
     toolbar->addAction(FilterButton);
 
     clearFilterAct = new QAction(QPixmap(const_cast<const char**>(nofilter_xpm)),
                                  tr("Remove any object filter"),
                                  this);
     connect(clearFilterAct, SIGNAL(triggered()), this, SLOT(clearFilter(void)));
-    clearFilterAct->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_H);
+    clearFilterAct->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_H);
     toolbar->addAction(clearFilterAct);
 
     QLabel *strech;
