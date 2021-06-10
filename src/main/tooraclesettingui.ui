@@ -267,22 +267,6 @@
  <resources/>
  <connections>
   <connection>
-   <sender>CreatePlanTable</sender>
-   <signal>clicked()</signal>
-   <receiver>toOracleSettingUI</receiver>
-   <slot>createPlanTable()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>436</x>
-     <y>214</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>UnlimitedBool</sender>
    <signal>toggled(bool)</signal>
    <receiver>MaxLongInt</receiver>

@@ -53,6 +53,9 @@ toOracleSetting::toOracleSetting(QWidget *parent)
 {
 
     setupUi(this);
+
+    connect(CreatePlanTable, &QPushButton::clicked, this, &createPlanTable);
+
     toSettingTab::loadSettings(this);
     int len = toConfigurationNewSingle::Instance().option(ToConfiguration::Oracle::MaxLong).toInt();
     if (len >= 0)
