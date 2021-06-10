@@ -100,6 +100,12 @@ toTemplateEdit::toTemplateEdit(std::map<QString, QString> &pairs,
     TemplateMap(pairs)
 {
     setupUi(this);
+
+    connect(PreviewButton, &QPushButton::clicked, this, &preview);
+    connect(TrashButton, &QPushButton::clicked, this, &remove);
+    connect(NewButton, &QPushButton::clicked, this, &newTemplate);
+    connect(Templates, &toTreeWidget::selectionChanged, this, &changeSelection);
+
     toHelp::connectDialog(this);
     LastTemplate = TemplateMap.end();
     updateFromMap();
