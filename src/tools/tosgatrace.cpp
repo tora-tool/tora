@@ -195,7 +195,7 @@ toSGATrace::toSGATrace(QWidget *main, toConnection &connection)
     QFont fixed(Utils::toStringToFont(toConfigurationNewSingle::Instance().option(ToConfiguration::Editor::ConfCodeFont).toString()));
     QFontMetrics mtr(fixed);
     SQL_ID->setFont(fixed);
-    SQL_ID->setMaximumWidth(mtr.width("1234567890123") + 10);
+    SQL_ID->setMaximumWidth(mtr.boundingRect("1234567890123").width() + 10);
     SQL_ID->setMaxLength(13); // sql_id VARCHAR2(13)
     SQL_ID->setPlaceholderText("sql_id");
     connect(SQL_ID, SIGNAL(returnPressed()), this, SLOT(refresh(void)));

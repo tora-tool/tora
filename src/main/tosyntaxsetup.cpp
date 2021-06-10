@@ -169,7 +169,7 @@ toSyntaxSetup::toSyntaxSetup(QWidget *parent, const char *name)
 void toSyntaxSetup::checkFixedWidth(const QFont &fnt)
 {
     QFontMetrics mtr(fnt);
-    if (mtr.width(QString::fromLatin1("iiiiiiii")) == mtr.width(QString::fromLatin1("MMMMMMMM")))
+    if (mtr.boundingRect(QString::fromLatin1("iiiiiiii")).width() == mtr.boundingRect(QString::fromLatin1("MMMMMMMM")).width())
         KeywordUpperBool->setEnabled(true);
     else
     {
