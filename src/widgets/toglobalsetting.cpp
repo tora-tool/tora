@@ -298,6 +298,8 @@ toToolSetting::toToolSetting(QWidget *parent, const char *name)
 {
     setupUi(this);
 
+    connect(Enabled, &toTreeWidget::selectionChanged, this, &changeEnable);
+
     Enabled->setSorting(0);
     QMap<QString, QVariant> tMap = toConfigurationNewSingle::Instance().option(ToConfiguration::Main::ToolsMap).toMap();
     // loop over all registered tool names and check if they are enabled

@@ -115,22 +115,5 @@
   <tabstop>DefaultTool</tabstop>
  </tabstops>
  <resources/>
- <connections>
-  <connection>
-   <sender>Enabled</sender>
-   <signal>selectionChanged()</signal>
-   <receiver>toToolSettingUI</receiver>
-   <slot>changeEnable()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>
