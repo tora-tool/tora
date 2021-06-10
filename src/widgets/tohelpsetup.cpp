@@ -86,6 +86,11 @@ toHelpSetting::toHelpSetting(toTool *tool, QWidget *parent, const char *name)
         setObjectName(name);
 
     setupUi(this);
+
+    connect(AddButton, &QPushButton::clicked, this, &addFile);
+    connect(RemoveButton, &QPushButton::clicked, this, &delFile);
+    connect(AddOracle, &QPushButton::clicked, this, &oracleManuals);
+
     toSettingTab::loadSettings(this);
 //     int tot = Tool->config("Number", "-1").toInt();
 //     if (tot != -1)

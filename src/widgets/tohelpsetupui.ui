@@ -141,54 +141,5 @@
   <tabstop>RemoveButton</tabstop>
  </tabstops>
  <resources/>
- <connections>
-  <connection>
-   <sender>AddButton</sender>
-   <signal>clicked()</signal>
-   <receiver>toHelpSetupUI</receiver>
-   <slot>addFile()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>RemoveButton</sender>
-   <signal>clicked()</signal>
-   <receiver>toHelpSetupUI</receiver>
-   <slot>delFile()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>AddOracle</sender>
-   <signal>clicked()</signal>
-   <receiver>toHelpSetupUI</receiver>
-   <slot>oracleManuals()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>
