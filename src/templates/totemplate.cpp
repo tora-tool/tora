@@ -372,6 +372,11 @@ toTemplateSetting::toTemplateSetting(toTool *tool, QWidget *parent, const char *
 {
 
     setupUi(this);
+
+    connect(EditButton, &QPushButton::clicked, this, &editFile);
+    connect(RemoveButton, &QPushButton::clicked, this, &delFile);
+    connect(AddButton, &QPushButton::clicked, this, &addFile);
+
     TemplatesMap def = DefaultText();
 
     TemplatesMap tMap = toConfigurationNewSingle::Instance().option(ToConfiguration::Template::TemplateMap).toMap();

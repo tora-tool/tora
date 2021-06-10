@@ -136,54 +136,5 @@
   <tabstop>RemoveButton</tabstop>
  </tabstops>
  <resources/>
- <connections>
-  <connection>
-   <sender>EditButton</sender>
-   <signal>clicked()</signal>
-   <receiver>toTemplateSetupUI</receiver>
-   <slot>editFile()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>RemoveButton</sender>
-   <signal>clicked()</signal>
-   <receiver>toTemplateSetupUI</receiver>
-   <slot>delFile()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>AddButton</sender>
-   <signal>clicked()</signal>
-   <receiver>toTemplateSetupUI</receiver>
-   <slot>addFile()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>
