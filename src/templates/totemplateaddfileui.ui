@@ -149,53 +149,5 @@
     </hint>
    </hints>
   </connection>
-  <connection>
-   <sender>Browse</sender>
-   <signal>clicked()</signal>
-   <receiver>toTemplateAddFileUI</receiver>
-   <slot>browse()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>Root</sender>
-   <signal>textChanged(QString)</signal>
-   <receiver>toTemplateAddFileUI</receiver>
-   <slot>valid()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>Filename</sender>
-   <signal>textChanged(QString)</signal>
-   <receiver>toTemplateAddFileUI</receiver>
-   <slot>valid()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
  </connections>
 </ui>

@@ -331,6 +331,11 @@ toTemplateAddFile::toTemplateAddFile(QWidget *parent, const char *name)
         setObjectName(name);
 
     setupUi(this);
+
+    connect(Browse, &QPushButton::clicked, this, &browse);
+    connect(Root, &QLineEdit::textChanged, this, &valid);
+    connect(Filename, &QLineEdit::textChanged, this, &valid);
+
     OkButton->setEnabled(false);
     toHelp::connectDialog(this);
 }
