@@ -129,9 +129,9 @@ void ShortcutEditorDialog::importButton_clicked()
         xml.readNext();
         if (xml.isStartElement())
         {
-            if (xml.name() == "sqliteman-shortcuts")
+            if (xml.name().toString() == "sqliteman-shortcuts")
                 isXML = true;
-            if (isXML && xml.name() == "pair")
+            if (isXML && xml.name().toString() == "pair")
             {
                 model->insertRow(xml.attributes().value("key").toString(),
                                  xml.attributes().value("value").toString());

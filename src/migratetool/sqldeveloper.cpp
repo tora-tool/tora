@@ -71,7 +71,7 @@ namespace MigrateTool
         while (!xml.atEnd())
         {
             xml.readNext();
-            if (isXML && xml.isEndElement() && xml.name() == "RefAddresses")
+            if (isXML && xml.isEndElement() && xml.name().toString() == "RefAddresses")
             {
 //             qDebug() << "connection -----";
                 if (!opt.username.isEmpty() && !opt.provider.isEmpty())
@@ -95,16 +95,16 @@ namespace MigrateTool
             if (xml.isStartElement())
             {
 //             qDebug() << "debug" <<xml.name().toString();
-                if (xml.name() == "References")
+                if (xml.name().toString() == "References")
                 {
                     isXML = true;
 //                 qDebug() << "connections";
                 }
-                if (isXML && xml.name() == "StringRefAddr")
+                if (isXML && xml.name().toString() == "StringRefAddr")
                 {
                     attr = xml.attributes().value("addrType").toString();
                 }
-                if (isXML && xml.name() == "Contents")
+                if (isXML && xml.name().toString() == "Contents")
                 {
 //                 qDebug() << "StringRefAddr" << attr;//.toString();
                     QString val(xml.readElementText());

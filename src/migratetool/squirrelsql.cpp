@@ -71,7 +71,7 @@ namespace MigrateTool
         while (!xml.atEnd())
         {
             xml.readNext();
-            if (xml.isEndElement() && isXML && xml.name() == "Bean")
+            if (xml.isEndElement() && isXML && xml.name().toString() == "Bean")
             {
                 if (!opt.username.isEmpty() && !opt.provider.isEmpty())
                 {
@@ -88,16 +88,16 @@ namespace MigrateTool
             if (xml.isStartElement())
             {
 //             qDebug() << "debug" <<xml.name().toString();
-                if (xml.name() == "Beans")
+                if (xml.name().toString() == "Beans")
                 {
                     isXML = true;
 //                 qDebug() << "connections";
                 }
-                if (isXML && xml.name() == "password")
+                if (isXML && xml.name().toString() == "password")
                     opt.password = xml.readElementText();
-                if (isXML && xml.name() == "userName")
+                if (isXML && xml.name().toString() == "userName")
                     opt.username = xml.readElementText();
-                if (isXML && xml.name() == "url")
+                if (isXML && xml.name().toString() == "url")
                 {
                     QString url(xml.readElementText());
                     if (url.indexOf("jdbc:mysql://") != -1) // mysql found
