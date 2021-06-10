@@ -178,6 +178,12 @@ toStorageTablespace::toStorageTablespace(QWidget* parent, const char* name)
     : QWidget(parent)
 {
     setupUi(this);
+
+    connect(DefaultStorage, &QCheckBox::toggled, this, &allowDefault);
+    connect(Permanent, &QCheckBox::toggled, this, &permanentToggle);
+    connect(Dictionary, &QRadioButton::toggled, this, &dictionaryToggle);
+    connect(LocalSelect, &QRadioButton::toggled, this, &uniformToggle);
+
     Modify = false;
 
     if (!name)
