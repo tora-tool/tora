@@ -51,7 +51,7 @@ void toFilesize::setup()
     QWidget *hcontainer = new QWidget(this);
     vlayout->addWidget(hcontainer);
     QHBoxLayout *layout = new QHBoxLayout(hcontainer);
-    layout->setMargin(10);
+    layout->setContentsMargins(10, 10, 10, 10);
     layout->setSpacing(10);
     vlayout->addSpacing(2);
     hcontainer->setLayout(layout);
