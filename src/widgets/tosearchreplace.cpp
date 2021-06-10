@@ -222,7 +222,7 @@ void toSearchReplace::keyPressEvent(QKeyEvent *event)
 
 void toSearchReplace::act_searchChanged(const QString & text)
 {
-    bool ena = text > 0;
+    bool ena = !text.isEmpty();
     SearchNext->setEnabled(ena);
     SearchPrevious->setEnabled(ena);
     Replace->setEnabled(ena);
