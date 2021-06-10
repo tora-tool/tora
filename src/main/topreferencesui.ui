@@ -161,53 +161,5 @@
     </hint>
    </hints>
   </connection>
-  <connection>
-   <sender>TabSelection</sender>
-   <signal>currentItemChanged(QListWidgetItem*,QListWidgetItem*)</signal>
-   <receiver>toPreferencesUI</receiver>
-   <slot>selectTab(QListWidgetItem*)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>HelpButton</sender>
-   <signal>clicked()</signal>
-   <receiver>toPreferencesUI</receiver>
-   <slot>help()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>PushButton2_2</sender>
-   <signal>clicked()</signal>
-   <receiver>toPreferencesUI</receiver>
-   <slot>saveSetting()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
  </connections>
 </ui>

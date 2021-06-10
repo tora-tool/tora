@@ -97,6 +97,10 @@ toPreferences::toPreferences(QWidget* parent, const char* name, bool modal)
 
     setupUi(this);
 
+    connect(TabSelection, &QListWidget::currentItemChanged, this, &selectTab);
+    connect(HelpButton, &QPushButton::clicked, this, &help);
+    connect(PushButton2_2, &QPushButton::clicked, this, &saveSetting);
+
     try
     {
         toHelp::connectDialog(this);
