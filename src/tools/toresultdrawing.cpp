@@ -153,7 +153,7 @@ toResultDrawing::Table::Table(QString const& _name)
 {
 }
 
-inline uint qHash(const toResultDrawing::Table &key, uint seed)
+inline uint qHash(const toResultDrawing::Table &key, size_t seed)
 {
     return qHash(key.name, seed);
 }
