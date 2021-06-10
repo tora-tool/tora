@@ -39,9 +39,9 @@
 #include <QApplication>
 #include <QtGui/QPixmap>
 #include <QLabel>
-#include <QDesktopWidget>
 #include <QProgressBar>
 #include <QVBoxLayout>
+#include <QGuiApplication>
 #include <QtGui/QPalette>
 
 toSplash::toSplash(QWidget *parent)
@@ -69,7 +69,7 @@ toSplash::toSplash(QWidget *parent)
     Progress = new QProgressBar(this);
     vbox->addWidget(Progress);
 
-    QRect d = QApplication::desktop()->availableGeometry(-1);
+    QRect d = QGuiApplication::primaryScreen()->availableGeometry();
     move(d.center() - frameGeometry().center()/2);
 }
 
