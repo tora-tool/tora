@@ -167,7 +167,7 @@ void toResultCombo::receiveData(void)
     catch (const QString &exc)
     {
         blockSignals(false);
-        emit currentIndexChanged(currentText());
+        emit currentIndexChanged(currentIndex());
         emit done();
         Utils::toStatusMessage(exc);
     }
@@ -196,7 +196,7 @@ void toResultCombo::slotQueryDone(void)
     setFont(font()); // Small hack to invalidate size hint of combobox which should resize to needed size.
     updateGeometry();
 
-    emit currentIndexChanged(currentText());
+    emit currentIndexChanged(currentIndex());
     emit done();
     delete Query;
     Query = NULL;
