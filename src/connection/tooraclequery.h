@@ -131,7 +131,7 @@ class oracleQuery : public queryImpl
                     desc.AlignRight = false;
 
                 //datatypearg1 = description[i].char_size;
-                desc.Datatype.sprintf(desc.Datatype.toUtf8().constData(), datatypearg1, datatypearg2);
+                desc.Datatype = QString::asprintf(desc.Datatype.toUtf8().constData(), datatypearg1, datatypearg2);
                 //desc.Null = description[i].nullok;
 
                 ret.insert(ret.end(), desc);

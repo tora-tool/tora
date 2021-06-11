@@ -88,7 +88,7 @@ toTool::toTool(int priority, const char *name)
       ButtonPicture(0),
       toolAction(0)
 {
-    Key.asprintf("%05d%s", priority, name);
+    Key = QString::asprintf("%05d%s", priority, name);
     ToolsRegistrySing::Instance().insert(Key, this);
 }
 

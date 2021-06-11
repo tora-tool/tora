@@ -702,7 +702,7 @@ void toResultStorage::updateList(void)
             QString t;
 //             t.sprintf("%05.1f / %05.1f / %05.1f%%", (user-free)*100, free*100, (1 - user)*100);
 // spaces seems better than 0-filling...
-            t.asprintf("%#5.1f / %#5.1f / %#5.1f%%", (user - free) * 100, free * 100, (1 - user) * 100);
+            t = QString::asprintf("%#5.1f / %#5.1f / %#5.1f%%", (user - free) * 100, free * 100, (1 - user) * 100);
             tablespace->setText(COL_USED_FREE_AUTO, t);
             tablespace->setSortValue(COL_USED_FREE_AUTO, (user - free) * 100);
             // end of Used/Free/Autoextend column

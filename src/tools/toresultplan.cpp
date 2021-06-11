@@ -715,7 +715,7 @@ void toResultPlanModel::receiveData(toEventQuery*Query)
                 int hours = (int) (seconds / 3600);
                 int mins = (int) (( seconds - hours * 3600) / 60);
                 int secs = (int) seconds - (hours * 3600 + mins * 60);
-                time.asprintf("%d:%02d:%02d", hours, mins, secs);
+                time = QString::asprintf("%d:%02d:%02d", hours, mins, secs);
             }
 
             columnData
