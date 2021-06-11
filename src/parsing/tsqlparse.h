@@ -32,7 +32,7 @@ namespace SQLParser
     class ParseException;
 
     /* each instance of T_SELECT can holds transtation map TABLE_ALIAS -> TABLE_REF */
-    class TORA_EXPORT Translation : public QMap<QString, Token*>
+    class TORA_EXPORT Translation : public QMultiMap<QString, Token*>
     {
         public:
             virtual ~Translation() {};
