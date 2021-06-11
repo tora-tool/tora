@@ -34,6 +34,8 @@
 
 #include "connection/tooraclequery.h"
 
+#include <QRegularExpression>
+
 oracleQuery::oracleQuery(toQueryAbstr *query, toOracleConnectionSub *) : queryImpl(query)
 {
     TLOG(6, toDecorator, __HERE__) << std::endl;
@@ -65,7 +67,7 @@ void oracleQuery::execute(void)
             throw QString::fromLatin1("Query aborted before started");
         Running = true;
 
-        QRegExp stripnl("\r");
+        QRegularExpression stripnl("\r");
         QString sql = this->query()->sql();
         sql.replace(stripnl, "");
 
