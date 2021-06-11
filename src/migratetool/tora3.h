@@ -39,6 +39,8 @@
 
 #include "core/toconnectionoptions.h"
 
+class QWidget;
+
 namespace MigrateTool
 {
 

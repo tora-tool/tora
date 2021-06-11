@@ -41,6 +41,7 @@
 #include "parsing/tsqllexer.h"
 
 #include <QRegExp>
+#include <QRegularExpression>
 
 using namespace SQLParser;
 using namespace ToConfiguration;

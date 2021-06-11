@@ -40,6 +40,8 @@
 
 #include <QtCore/QString>
 
+class QWidget;
+
 /**
  * Abstract baseclass for widgets defining tool settings.
  */
