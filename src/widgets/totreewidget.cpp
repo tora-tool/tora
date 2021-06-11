@@ -33,7 +33,7 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "widgets/totreewidget.h"
-
+#include "ts_log/ts_log_utils.h"
 
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
@@ -363,11 +363,14 @@ void toTreeWidget::updateContents()
 
 void toTreeWidget::handleSelectionChange()
 {
+#pragma message WARN("TODO: QT6 slots toTreeWidget::selectionChanged")
+#if 0
     QList<QTreeWidgetItem *> s = QTreeWidget::selectedItems();
     if (s.size() > 0)
         emit selectionChanged(dynamic_cast<toTreeWidgetItem *>(s.at(0)));
 
     emit selectionChanged();
+#endif
 }
 
 

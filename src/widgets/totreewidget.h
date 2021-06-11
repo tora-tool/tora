@@ -44,6 +44,7 @@
 #include <QtCore/QVariant>
 
 #include "core/utils.h"
+#include "ts_log/ts_log_utils.h"
 
 class QPainter;
 class QColorGroup;
@@ -332,8 +333,10 @@ class toTreeWidget : public QTreeWidget
          * both in Single selection and Multi selection mode but is most
          * useful in Multi selection mode.
          */
-        //void selectionChanged(void);
-
+#pragma message WARN("TODO: QT6 slots toTreeWidget::selectionChanged")
+#if 0
+        void selectionChanged(void);
+#endif
 
         /**
          * This signal is emitted whenever the set of selected items has
@@ -341,8 +344,10 @@ class toTreeWidget : public QTreeWidget
          * both in Single selection and Multi selection mode but is most
          * useful in Multi selection mode.
          */
+#pragma message WARN("TODO: QT6 slots toTreeWidget::selectionChanged")
+#if 0
         void selectionChanged(toTreeWidgetItem *);
-
+#endif
 
         /**
          * This signal is emitted whenever an item is double-clicked. It's
