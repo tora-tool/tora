@@ -76,7 +76,7 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent, const char *name)
 #if QT_VERSION_MAJOR < 6
     connect(NumberFormatInt, SIGNAL(activated(int)), this, SLOT(numberFormatChange()));
 #else
-    connect(NumberFormatInt, qOverload<>(&QComboBox::activated), this, [=](int) { this->numberFormatChange(); });
+    connect(NumberFormatInt, qOverload<int>(&QComboBox::activated), this, [=](int) { this->numberFormatChange(); });
 #endif
     connect(IndicateEmptyColor, &QPushButton::clicked, this, [=]() { this->IndicateEmptyColor_clicked(); });
 
