@@ -90,13 +90,13 @@ public:
 
 	template<class KeyType, class ValueType>
 	class UnOrderedMapType : public std::map< KeyType, ValueType, std::less<KeyType>, 
-										AllocatorType<std::pair<KeyType, ValueType> > >
+										AllocatorType<std::pair<const KeyType, ValueType> > >
 	{
 	};
 
 	template<class KeyType, class ValueType>
 	class OrderedMapType : public std::map< KeyType, ValueType, std::less<KeyType>, 
-										AllocatorType<std::pair<KeyType, ValueType> > >
+										AllocatorType<std::pair<const KeyType, ValueType> > >
 	{
 	};
 
