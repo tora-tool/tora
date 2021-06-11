@@ -58,6 +58,8 @@
 #include <QtCore/QSettings>
 #include <QtCore/QDir>
 
+#include <algorithm>
+
 class toOracleConnectionImpl;
 class toOracleConnectionSub;
 
@@ -345,7 +347,7 @@ QList<QString> toOracleProvider::databases(const QString &host, const QString &u
     // whole file and have all that information.
     //! \todo The information of all databases should be stored in some structure in memory that contains all stuff that is in TNS file, so that we for example
     //        know the hostname of database, port and so on.
-    qSort(ret);
+    std::sort(ret.begin(), ret.end());
     return ret;
 }
 
