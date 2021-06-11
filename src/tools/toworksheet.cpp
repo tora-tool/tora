@@ -255,13 +255,13 @@ void toWorksheet::viewResources(void)
 void toWorksheet::createActions()
 {
     parseAct = new QAction(tr("Check syntax of buffer"), this);
-    parseAct->setShortcut(Qt::CTRL + Qt::Key_F9);
+    parseAct->setShortcut(Qt::CTRL | Qt::Key_F9);
     connect(parseAct, SIGNAL(triggered()), this, SLOT(slotParse(void)));
 
     executeAct = new QAction(QPixmap(const_cast<const char**>(execute_xpm)),
                              tr("Execute current statement"),
                              this);
-    executeAct->setShortcut(Qt::CTRL + Qt::Key_Return);
+    executeAct->setShortcut(Qt::CTRL | Qt::Key_Return);
     connect(executeAct, SIGNAL(triggered()), this, SLOT(slotExecute(void)));
 
     executeStepAct = new QAction(QPixmap(const_cast<const char**>(executestep_xpm)),
@@ -291,7 +291,7 @@ void toWorksheet::createActions()
     describeActNew = new QAction(QPixmap(const_cast<const char**>(describe_xpm)),
                                  tr("Describe under cursor(New parser)"),
                                  this);
-    describeActNew->setShortcut(Qt::SHIFT + Qt::Key_F4);
+    describeActNew->setShortcut(Qt::SHIFT | Qt::Key_F4);
     connect(describeActNew, SIGNAL(triggered()), this, SLOT(slotDescribeNew(void)));
 
     explainAct = new QAction(QPixmap(const_cast<const char**>(explainplan_xpm)),
