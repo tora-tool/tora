@@ -47,7 +47,11 @@ toResultListFormat::toResultListFormat(QWidget *parent, DialogType type, const c
 
     setupUi(this);
 
+#if QT_VERSION_MAJOR < 6
+	connect(formatCombo, SIGNAL(activated(int)), this, SLOT(formatChanged(int)));
+#else
     connect(formatCombo, &QComboBox::activated, this, [=](int i) { this->formatChanged(i); });
+#endif
 
     setModal(true);
     formatCombo->addItem(tr("Text"));

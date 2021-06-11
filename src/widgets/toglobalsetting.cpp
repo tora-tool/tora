@@ -298,7 +298,11 @@ toToolSetting::toToolSetting(QWidget *parent, const char *name)
 {
     setupUi(this);
 
-    connect(Enabled, &toTreeWidget::selectionChanged, this, [=]() { this->changeEnable(); });
+#if QT_VERSION_MAJOR < 6
+	connect(Enabled, SIGNAL(selectionChanged()), this, SLOT(changeEnable()));
+#else
+	connect(Enabled, &toTreeWidget::selectionChanged, this, [=]() { this->changeEnable(); });
+#endif
 
     Enabled->setSorting(0);
     QMap<QString, QVariant> tMap = toConfigurationNewSingle::Instance().option(ToConfiguration::Main::ToolsMap).toMap();

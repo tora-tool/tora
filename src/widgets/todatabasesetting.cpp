@@ -42,6 +42,8 @@
 #include <QFileDialog>
 
 #include <QtCore/QDebug>
+#include <QComboBox>
+#include <QtGlobal>
 
 void toDatabaseSetting::numberFormatChange()
 {
@@ -71,7 +73,11 @@ toDatabaseSetting::toDatabaseSetting(QWidget *parent, const char *name)
     setupUi(this);
 
     connect(IndicateEmptyBool, SIGNAL(clicked(bool)), IndicateEmptyColor, SLOT(setEnabled(bool)));
-    connect(NumberFormatInt, &QComboBox::activated, this, [=]() { this->numberFormatChange(); });
+#if QT_VERSION_MAJOR < 6
+    connect(NumberFormatInt, SIGNAL(activated(int)), this, SLOT(numberFormatChange()));
+#else
+    connect(NumberFormatInt, qOverload<>(&QComboBox::activated), this, [=](int) { this->numberFormatChange(); });
+#endif
     connect(IndicateEmptyColor, &QPushButton::clicked, this, [=]() { this->IndicateEmptyColor_clicked(); });
 
     toSettingTab::loadSettings(this);

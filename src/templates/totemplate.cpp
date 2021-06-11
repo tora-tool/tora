@@ -104,7 +104,11 @@ toTemplateEdit::toTemplateEdit(std::map<QString, QString> &pairs,
     connect(PreviewButton, &QPushButton::clicked, this, [=]() { this->preview(); });
     connect(TrashButton, &QPushButton::clicked, this, [=]() { this->remove(); });
     connect(NewButton, &QPushButton::clicked, this, [=]() { this->newTemplate(); });
+#if QT_VERSION_MAJOR < 6
+	connect(Templates, SIGNAL(selectionChanged()), this, SLOT(changeSelection()));
+#else
     connect(Templates, &toTreeWidget::selectionChanged, this, [=]() { this->changeSelection(); });
+#endif
 
     toHelp::connectDialog(this);
     LastTemplate = TemplateMap.end();

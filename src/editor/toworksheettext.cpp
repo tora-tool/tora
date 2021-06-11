@@ -190,6 +190,7 @@ void toWorksheetText::keyPressEvent(QKeyEvent * e)
         e->accept();
         return;
     }
+
     else if (m_completeEnabled && e->modifiers() == Qt::ControlModifier && e->key() == Qt::Key_T)
     {
         toSqlText::Word firstWord, secondWord;

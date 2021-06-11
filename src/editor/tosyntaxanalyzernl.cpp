@@ -42,6 +42,7 @@
 #include <QtCore/QString>
 #include <QtCore/QtDebug>
 #include <QRegExp>
+#include <QRegularExpression>
 
 toSyntaxAnalyzerNL::toSyntaxAnalyzerNL(toSqlText *parent)
     : toSyntaxAnalyzer(parent)
