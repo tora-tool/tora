@@ -409,7 +409,7 @@ void OracleDMLStatement::parse()
 
 	// Get sorted list of Token tree structure leaves
 	QList<Token*> _mLeaves = treeWalkToken(_mAST);
-	qSort(_mLeaves.begin(), _mLeaves.end(),
+	std::sort(_mLeaves.begin(), _mLeaves.end(),
 	      [](Token* a, Token* b)
 	      {
 	            return a->getPosition() < b->getPosition();
@@ -896,7 +896,7 @@ void OracleDMLStatement::addTableRef(Token const *tableRef, Token const *context
                 k->getTokenType() == Token::X_ROOT)
         {
             TokenSubquery &s = static_cast<TokenSubquery&>(*k);
-            s.nodeTables().insertMulti(tableRef->toStringRecursive(false).toUpper(), const_cast<Token*>(tableRef));
+            s.nodeTables().insert(tableRef->toStringRecursive(false).toUpper(), const_cast<Token*>(tableRef));
             //std::cout << "Table ref added:" << tableRef->toStringRecursive(true).toStdString() << " context: " << k->toString().toStdString() << std::endl;
             break;
         }
