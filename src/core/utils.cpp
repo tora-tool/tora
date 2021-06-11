@@ -778,16 +778,16 @@ namespace Utils
             LPVOID lpMsgBuf;
             DWORD dw = GetLastError();
 
-            FormatMessage(
+            FormatMessageW(
                 FORMAT_MESSAGE_ALLOCATE_BUFFER |
                 FORMAT_MESSAGE_FROM_SYSTEM |
                 FORMAT_MESSAGE_IGNORE_INSERTS,
                 NULL,
                 dw,
                 MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-                (LPTSTR) &lpMsgBuf,
+                (LPWSTR) &lpMsgBuf,
                 0, NULL );
-            QString errmsg((char*)lpMsgBuf);
+            QString errmsg = QString::fromWCharArray((LPWSTR)lpMsgBuf);
             LocalFree(lpMsgBuf);
             QDir::setCurrent(oldDir);
             throw errmsg.append("\nLoading: %1").arg(libpath);
