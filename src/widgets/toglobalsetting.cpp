@@ -116,14 +116,14 @@ toGlobalSetting::toGlobalSetting(QWidget *parent, const char *name)
 
     setupUi(this);
 
-    connect(CacheBrowse, &QPushButton::clicked, this, &cacheBrowse);
-    connect(SQLBrowse, &QPushButton::clicked, this, &sqlBrowse);
-    connect(HelpBrowse, &QPushButton::clicked, this, &helpBrowse);
-    connect(HelpBrowse_2, &QPushButton::clicked, this, &sessionBrowse);
-    connect(OracleHomeBrowse, &QPushButton::clicked, this, &oracleBrowse);
-    connect(MySQLHomeBrowse, &QPushButton::clicked, this, &mysqlBrowse);
-    connect(PgSQLHomeBrowse, &QPushButton::clicked, this, &pqsqlBrowse);
-    connect(GraphvizHomeBrowse, &QPushButton::clicked, this, &graphvizBrowse);
+    connect(CacheBrowse, &QPushButton::clicked, this, [=]() { this->cacheBrowse(); });
+    connect(SQLBrowse, &QPushButton::clicked, this, [=]() { this->sqlBrowse(); });
+    connect(HelpBrowse, &QPushButton::clicked, this, [=]() { this->helpBrowse(); });
+    connect(HelpBrowse_2, &QPushButton::clicked, this, [=]() { this->sessionBrowse(); });
+    connect(OracleHomeBrowse, &QPushButton::clicked, this, [=]() { this->oracleBrowse(); });
+    connect(MySQLHomeBrowse, &QPushButton::clicked, this, [=]() { this->mysqlBrowse(); });
+    connect(PgSQLHomeBrowse, &QPushButton::clicked, this, [=]() { this->pqsqlBrowse(); });
+    connect(GraphvizHomeBrowse, &QPushButton::clicked, this, [=]() { graphvizBrowse(); });
 
     // style (load fields into ComboBox)
     Style->addItems(QStyleFactory::keys());
@@ -298,7 +298,7 @@ toToolSetting::toToolSetting(QWidget *parent, const char *name)
 {
     setupUi(this);
 
-    connect(Enabled, &toTreeWidget::selectionChanged, this, &changeEnable);
+    connect(Enabled, &toTreeWidget::selectionChanged, this, [=]() { this->changeEnable(); });
 
     Enabled->setSorting(0);
     QMap<QString, QVariant> tMap = toConfigurationNewSingle::Instance().option(ToConfiguration::Main::ToolsMap).toMap();

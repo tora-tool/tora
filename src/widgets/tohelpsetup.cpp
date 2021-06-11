@@ -87,9 +87,9 @@ toHelpSetting::toHelpSetting(toTool *tool, QWidget *parent, const char *name)
 
     setupUi(this);
 
-    connect(AddButton, &QPushButton::clicked, this, &addFile);
-    connect(RemoveButton, &QPushButton::clicked, this, &delFile);
-    connect(AddOracle, &QPushButton::clicked, this, &oracleManuals);
+    connect(AddButton, &QPushButton::clicked, this, [=]() { this->addFile(); });
+    connect(RemoveButton, &QPushButton::clicked, this, [=]() { this->delFile(); });
+    connect(AddOracle, &QPushButton::clicked, this, [=]() { this->oracleManuals(); });
 
     toSettingTab::loadSettings(this);
 //     int tot = Tool->config("Number", "-1").toInt();
