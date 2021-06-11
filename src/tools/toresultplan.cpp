@@ -257,21 +257,21 @@ toResultPlanModel::toResultPlanModel(toEventQuery *query, QObject *parent)
 {
 	Query->setParent(this); // this will satisfy QObject's disposal
 
-	Headers
-	<< HeaderDesc{"Operation", 0}
-	<< HeaderDesc{"Options", 0}
-	<< HeaderDesc{"Object name", 0}
-	<< HeaderDesc{"Mode", 0}
-	<< HeaderDesc{"Cost", 0}
+    Headers
+    << HeaderDesc{"Operation", Qt::AlignHCenter}
+	<< HeaderDesc{"Options", Qt::AlignHCenter }
+	<< HeaderDesc{"Object name", Qt::AlignHCenter }
+	<< HeaderDesc{"Mode", Qt::AlignHCenter }
+	<< HeaderDesc{"Cost", Qt::AlignHCenter }
 	<< HeaderDesc{"%CPU", Qt::AlignRight}
 	<< HeaderDesc{"Bytes", Qt::AlignRight}
 	<< HeaderDesc{"Rows",  Qt::AlignRight}
-	<< HeaderDesc{"Time", 0}
-	<< HeaderDesc{"Access pred.", 0}
-	<< HeaderDesc{"Filter pred.", 0}
-	<< HeaderDesc{"TEMP Space", Qt::AlignRight}
-	<< HeaderDesc{"Startpartition", 0}
-	<< HeaderDesc{"Endpartition", 0};
+	<< HeaderDesc{"Time", Qt::AlignHCenter }
+	<< HeaderDesc{"Access pred.", Qt::AlignHCenter }
+	<< HeaderDesc{"Filter pred.", Qt::AlignHCenter }
+	<< HeaderDesc{"TEMP Space", Qt::AlignRight }
+	<< HeaderDesc{"Startpartition", Qt::AlignHCenter }
+	<< HeaderDesc{"Endpartition", Qt::AlignHCenter }
 	;
 
 	rootItem = new toPlanTreeItem("root", QList<QVariant>());
@@ -561,7 +561,7 @@ void toResultPlanAbstr::queryPlanTable(toQueryParams const& params)
 			this->LockedConnection = c;
 		}
 
-    	planId = QString::fromLatin1("TOra ") + QString::number(QDateTime::currentMSecsSinceEpoch()/1000 + qrand());
+    	planId = QString::fromLatin1("TOra ") + QString::number(QDateTime::currentMSecsSinceEpoch()/1000 +  qrand());
 
     	QString planTable = ToConfiguration::Oracle::planTable(conn.user());
 
