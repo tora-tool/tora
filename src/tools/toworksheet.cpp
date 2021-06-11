@@ -2296,7 +2296,7 @@ toWorksheetSetting::toWorksheetSetting(toTool *tool, QWidget* parent, const char
 
     setupUi(this);
 
-    connect(FileChoose, &QPushButton::clicked, this, &slotChooseFile);
+    connect(FileChoose, &QPushButton::clicked, this, [=]() { this->slotChooseFile(); });
 
     toSettingTab::loadSettings(this);
 }
