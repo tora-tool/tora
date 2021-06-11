@@ -561,7 +561,7 @@ void toResultPlanAbstr::queryPlanTable(toQueryParams const& params)
 			this->LockedConnection = c;
 		}
 
-    	planId = QString::fromLatin1("TOra ") + QString::number(QDateTime::currentMSecsSinceEpoch()/1000 +  qrand());
+    	planId = QString::fromLatin1("TOra ") + QString::number(QDateTime::currentMSecsSinceEpoch()/1000 +  rand());
 
     	QString planTable = ToConfiguration::Oracle::planTable(conn.user());
 
