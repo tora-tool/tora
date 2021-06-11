@@ -329,7 +329,7 @@ bool toResultPlanModel::setData(const QModelIndex &index, const QVariant &value,
 Qt::ItemFlags toResultPlanModel::flags(const QModelIndex &index) const
 {
     if (!index.isValid())
-        return 0;
+        return Qt::NoItemFlags;
 
     return QAbstractItemModel::flags(index);
 }
@@ -715,7 +715,7 @@ void toResultPlanModel::receiveData(toEventQuery*Query)
                 int hours = (int) (seconds / 3600);
                 int mins = (int) (( seconds - hours * 3600) / 60);
                 int secs = (int) seconds - (hours * 3600 + mins * 60);
-                time.sprintf("%d:%02d:%02d", hours, mins, secs);
+                time.asprintf("%d:%02d:%02d", hours, mins, secs);
             }
 
             columnData
