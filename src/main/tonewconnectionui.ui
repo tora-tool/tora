@@ -243,9 +243,6 @@
          <property name="editable">
           <bool>true</bool>
          </property>
-         <property name="autoCompletion">
-          <bool>true</bool>
-         </property>
          <property name="duplicatesEnabled">
           <bool>false</bool>
          </property>
@@ -359,9 +356,6 @@
           </size>
          </property>
          <property name="editable">
-          <bool>true</bool>
-         </property>
-         <property name="autoCompletion">
           <bool>true</bool>
          </property>
          <property name="duplicatesEnabled">
