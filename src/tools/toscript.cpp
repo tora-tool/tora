@@ -51,7 +51,8 @@
 #include <QtCore/QDir>
 #include <QFileDialog>
 #include <QCompleter>
-#include <QDirModel>
+#include <QFilesystemModel>
+#include <QRegularExpression>
 #include <QtCore/QSettings>
 #include <QSplitter>
 #include <QtCore/QTextStream>
@@ -159,7 +160,8 @@ toScript::toScript(QWidget *parent, toConnection &connection)
     Report->hide();
 
     QCompleter *FilenameCompleter = new QCompleter(this);
-    FilenameCompleter->setModel(new QDirModel(FilenameCompleter));
+    QFileSystemModel* m = new QFileSystemModel(FilenameCompleter);
+    FilenameCompleter->setModel(m);
     ScriptUI->Filename->setCompleter(FilenameCompleter);
 
     DropList = new toListView(hsplitter);
@@ -441,7 +443,7 @@ void toScript::execute(void)
 
                     QTextStream pstream(&pfile);
 
-                    QRegExp repl("\\W+");
+                    QRegularExpression repl("\\W+");
                     for (auto i = sourceObjects.begin(); i != sourceObjects.end(); i++)
                     {
                         toExtract::ObjectList t;
@@ -517,8 +519,11 @@ void toScript::execute(void)
             WorksheetText->hide();
             Report->hide();
             SearchList->show();
-            QRegExp re(ScriptUI->SearchWord->text(), Qt::CaseInsensitive);
-            QStringList words(ScriptUI->SearchWord->text().toUpper().simplified().split(QRegExp(QString::fromLatin1(" "))));
+            QRegularExpression re(ScriptUI->SearchWord->text(), QRegularExpression::PatternOption::CaseInsensitiveOption);
+            QStringList words(ScriptUI->SearchWord->text()
+                .toUpper()
+                .simplified()
+                .split(QRegularExpression(QString::fromLatin1(" "))));
             QString word = ScriptUI->SearchWord->text().toUpper();
             int searchMode = 0;
             if (ScriptUI->AllWords->isChecked())
@@ -556,7 +561,7 @@ void toScript::execute(void)
                             result.insert(result.end(), *i);
                         break;
                     case 3:
-                        if (re.indexIn(ctx.last()) >= 0)
+                        if (re.match(ctx.last()).hasMatch())
                             result.insert(result.end(), *i);
                         break;
                 }
