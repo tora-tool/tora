@@ -1,3 +1,8 @@
+#IF (WIN32)
+set (CMAKE_SYSTEM_VERSION 10.0 (latest installed version))
+message(STATUS "test: ${CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION}")
+#ENDIF ()
+
 #Project Setup
 PROJECT(TOra)
 
@@ -135,8 +140,17 @@ SET(PLUGIN_PERMISSIONS WORLD_EXECUTE GROUP_EXECUTE OWNER_EXECUTE WORLD_READ GROU
 
 ##############################################################################################################
 ########## check for the CPU we build for                                                           ##########
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+IF(USE_QT6)
+  set(CMAKE_CXX_STANDARD 17)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+  # force MSVC to define correct values for __cplusplus macro
+  string(APPEND CMAKE_CXX_FLAGS " /Zc:__cplusplus -utf-8" )
+ELSE()
+  set(CMAKE_CXX_STANDARD 11)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+ENDIF()
+
 IF (CMAKE_COMPILER_IS_GNUCC)
   SET(CMAKE_CXX_FLAGS_DEBUG   "-Wall -ggdb3 -O0 -fno-inline -rdynamic")
   SET(CMAKE_C_FLAGS_DEBUG     "-Wall -ggdb3 -O0 -fno-inline -rdynamic")
@@ -175,13 +189,12 @@ ENDIF()
 # output. Wall can slow down compiletion up to hours and
 # my boxes can boil eggs too.
 # MSVC, MSVC_IDE, MSVC60, MSVC70, MSVC71, MSVC80, CMAKE_COMPILER_2005
-IF (MSVC)
+IF (MSVC)  
   SET (CXX_WARNINGS "")
   ADD_DEFINITIONS(-D_CRT_SECURE_NO_DEPRECATE)
 ELSE (MSVC)
   SET (CXX_WARNINGS "-Wall")
 ENDIF (MSVC)
-
 
 IF (WANT_INTERNAL_LOKI)
   SET(TORA_LOKI_LIB "tora_loki_lib")
@@ -211,10 +224,6 @@ SET(QT_USE_QTWEBKIT TRUE)
 #SET(CMAKE_AUTOMOC ON)
 
 IF(USE_QT6)
-
-  set(CMAKE_CXX_STANDARD 17)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
   set( QT6_ROOT_PATH CACHE PATH "Qt6 root directory (i.e. where the 'bin' folder lies)" )
   if ( QT6_ROOT_PATH )
     list( APPEND CMAKE_PREFIX_PATH ${QT6_ROOT_PATH} )
