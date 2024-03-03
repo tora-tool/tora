@@ -223,7 +223,7 @@ bool toScintilla::showToolTip(toScintilla::ToolTipData const& t)
         return false;
     char *buf = new char[word_len + 1];
     SendScintilla(SCI_GETTEXTRANGE, t.wordStart, t.wordEnd, buf);
-    QString word = bytesAsText(buf);
+    QString word = bytesAsText(buf, word_len);
     delete[] buf;
 
     QToolTip::showText(t.globalPos, word, viewport(), t.rect);
