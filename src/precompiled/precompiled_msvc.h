@@ -109,7 +109,7 @@
 #include <QtCore/QProcess>
 #include <QtCore/QReadWriteLock>
 #include <QtCore/QRect>
-//#include <QtCore/QRegExp>
+#include <QtCore/QRegularExpression>
 #include <QtCore/QSemaphore>
 #include <QtCore/QSet>
 #include <QtCore/QSettings>

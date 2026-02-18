@@ -39,7 +39,7 @@
 #include "core/tomainwindow.h"
 #include "tohelp.h"
 
-#include <QRegExp>
+#include <QRegularExpression>
 
 toHelpAddFile::toHelpAddFile(QWidget *parent, const char *name)
     : QDialog(parent)

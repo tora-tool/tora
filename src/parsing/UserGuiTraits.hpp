@@ -182,10 +182,10 @@ namespace Antlr3GuiImpl
                         tokenBuffer.push(t);
                     }
 
-                    ANTLR_INLINE void enqueueToken(std::auto_ptr< TokenType> &t)
-                    {
-                        tokenBuffer.push(t.release());
-                    }
+                    // ANTLR_INLINE void enqueueToken(std::auto_ptr< TokenType> &t)
+                    // {
+                    //     tokenBuffer.push(t.release());
+                    // }
 
                     ANTLR_INLINE void enqueueToken(std::unique_ptr< TokenType> &t)
                     {

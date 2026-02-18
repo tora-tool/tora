@@ -40,7 +40,6 @@
 #include "parsing/tsqlparse.h"
 #include "parsing/tsqllexer.h"
 
-#include <QRegExp>
 #include <QRegularExpression>
 
 using namespace SQLParser;
@@ -148,7 +147,7 @@ static void indentPriv(SQLParser::Token const* root, QList<SQLParser::Token cons
 
 void toIndent::tagToken(Token const*token)
 {
-    static QRegExp TRAILING_NEWLINE("^.*[\\n\\r]+$");
+    static QRegularExpression TRAILING_NEWLINE("^.*[\\n\\r]+$");
 
     int depth = token->metadata().value("INDENT_DEPTH").toInt();
     int line = token->getPosition().getLine();
@@ -543,7 +542,7 @@ QString LineBuffer::formatToken(Token const *token)
 static void indentPriv(SQLParser::Token const* root, QList<SQLParser::Token const*> &list)
 {
     using namespace SQLParser;
-    QRegExp white("^[ \\n\\r\\t]*$");
+    QRegularExpression white("^[ \\n\\r\\t]*$");
 
     Token const *t = root; // this sub-tree's root
 #if 0

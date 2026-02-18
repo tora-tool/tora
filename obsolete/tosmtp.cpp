@@ -67,9 +67,9 @@ toSMTP::toSMTP(const QString &from,
               QString::fromLatin1("\nTo: ") + to +
               QString::fromLatin1("\nSubject: ") + subject +
               QString::fromLatin1("\n\n") + body + "\n";
-    Message.replace(QRegExp(QString::fromLatin1("\n")),
+    Message.replace(QRegularExpression(QString::fromLatin1("\n")),
                     QString::fromLatin1("\r\n"));
-    Message.replace(QRegExp(QString::fromLatin1("\r\n.\r\n")),
+    Message.replace(QRegularExpression(QString::fromLatin1("\r\n.\r\n")),
                     QString::fromLatin1("\r\n..\r\n"));
 
     QString server(toConfigurationSingle::Instance().smtp());

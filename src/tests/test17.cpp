@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
 #if 0
   QStringList args = QCoreApplication::arguments();
 
-  QRegExp flagre("--(\\w+)=.*");
+  QRegularExpression flagre("--(\\w+)=.*");
   QStringList tc_args;
   QStringList qt_args;
 

@@ -67,7 +67,7 @@
 
 #include <QCheckBox>
 #include <QLabel>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QSizePolicy>
 #include <QSplitter>
 #include <QTabWidget>
@@ -1105,7 +1105,7 @@ QString toDebug::constructAnonymousBlock(toTreeWidgetItem * head, toTreeWidgetIt
                 sql += sep;
                 sql += QString::fromLatin1(":");
                 QString nam = (*i).Name;
-                nam.replace(QRegExp(QString::fromLatin1("[^a-zA-Z0-9]+")), QString::fromLatin1("_"));
+                nam.replace(QRegularExpression(QString::fromLatin1("[^a-zA-Z0-9]+")), QString::fromLatin1("_"));
                 sql += nam;
                 sql += QString::fromLatin1("<char[");
                 sql += QString::number(toConfigurationSingle::Instance().maxColSize());
@@ -3264,7 +3264,7 @@ void toDebug::changeWatch(toTreeWidgetItem *item)
             else
             {
                 escdata = data = dialog.Value->text();
-                escdata.replace(QRegExp(QString::fromLatin1("'")), QString::fromLatin1("''"));
+                escdata.replace(QRegularExpression(QString::fromLatin1("'")), QString::fromLatin1("''"));
                 escdata.prepend(QString::fromLatin1("'"));
                 escdata += QString::fromLatin1("'");
             }

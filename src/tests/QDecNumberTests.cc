@@ -53,7 +53,7 @@ QDecNumberTests::QDecNumberTests(const QStringList& args)
         << "testfilefilter";
 
   // Generic flag format
-  QRegExp flagre("--(\\w+)=(.*)");
+  QRegularExpression flagre("--(\\w+)=(.*)");
 
   // Store flags and values in m_argsMap
   for(int i=0; i<args.size(); i++) {
@@ -558,10 +558,10 @@ void QDecNumberTests::procTestFile(const QString& filename)
 int QDecNumberTests::procTestLine(const QString& line,
                                   QStringList& tokens)
 {
-  QRegExp re_space("^\\s*");
-  QRegExp re_comment("^(\\s*)--(.*)");
-  QRegExp re_directive("^([^:]+):(.+)");
-  QRegExp re_testop("^(.+)->(.+)");
+  QRegularExpression re_space("^\\s*");
+  QRegularExpression re_comment("^(\\s*)--(.*)");
+  QRegularExpression re_directive("^([^:]+):(.+)");
+  QRegularExpression re_testop("^(.+)->(.+)");
 
   tokens.clear();
 
@@ -595,7 +595,7 @@ int QDecNumberTests::procTestLine(const QString& line,
   }
   else if(re_testop.exactMatch(ln)) {
     // Unary/Binary test operation tokens
-    QRegExp tot("^\\s*(\\S+)\\s+(\\S+)\\s+('[^']+'|\\S+)\\s*(\\S*)\\s*(\\S*)\\s*->\\s*(\\S+)\\s*(.*)");
+    QRegularExpression tot("^\\s*(\\S+)\\s+(\\S+)\\s+('[^']+'|\\S+)\\s*(\\S*)\\s*(\\S*)\\s*->\\s*(\\S+)\\s*(.*)");
     if(tot.exactMatch(ln)) {
       QString id = tot.cap(1).simplified();
       QString op = tot.cap(2).simplified();
@@ -1186,8 +1186,8 @@ bool QDecNumberTests::token2QDecNumber(const QString& token, const QDecContext& 
     tt.remove(QChar('\"'));
 
   if(token.contains('#')) {
-    QRegExp expl("#([0-9a-fA-F]+)"); // explicit notation
-    QRegExp altn("([0-9]+)#(.+)"); // alternative notation
+    QRegularExpression expl("#([0-9a-fA-F]+)"); // explicit notation
+    QRegularExpression altn("([0-9]+)#(.+)"); // alternative notation
 
     if(expl.exactMatch(token)) {
       QString hexval = expl.cap(1); // get hex value

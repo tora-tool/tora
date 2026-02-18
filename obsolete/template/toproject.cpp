@@ -92,7 +92,7 @@ void toProjectTemplateItem::setup(const QString &name, bool open)
         {
             // read in Filename (encoded according to locale settings)
             QString data = toReadFile(Filename);
-            QStringList files = data.split(QRegExp(QString::fromLatin1("\n")));
+            QStringList files = data.split(QRegularExpression(QString::fromLatin1("\n")));
             toProjectTemplateItem *last = NULL;
             for (int i = 0; i < files.count(); i++)
                 last = new toProjectTemplateItem(this, last, files[i]);

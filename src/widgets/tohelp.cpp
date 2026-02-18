@@ -519,8 +519,8 @@ void toHelp::setSelection(QTreeWidget *lst, const QString &source)
         bool any = false;
 
         QString t = source;
-        t.replace(QRegExp(QString::fromLatin1("^file:")), QString::fromLatin1(""));
-
+        t.replace(QRegularExpression(QStringLiteral("^file:")), QString());
+     
         toTreeWidgetItem *next = NULL;
         for (toTreeWidgetItem *item = lst->firstChild();item;item = next)
         {
@@ -565,7 +565,7 @@ void toHelp::setSelection(QTreeWidget *lst, const QString &source)
         if (!any)
         {
             QString t = source;
-            t.replace(QRegExp(QString::fromLatin1("#[^#]*$")), QString());
+            t.replace(QRegularExpression(QString::fromLatin1("#[^#]*$")), QString());
             if (t != source)
                 setSelection(lst, t);
         }*/

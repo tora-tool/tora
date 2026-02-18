@@ -38,7 +38,7 @@
 #include <QApplication>
 #include <QtCore/QString>
 #include <QtCore/QChar>
-#include <QRegExp>
+#include <QRegularExpression>
 
 toHtml::toHtml(const QString &data)
     : Data(data)
@@ -328,9 +328,9 @@ QString toHtml::escape(const QString &html)
 {
     QString ret = html;
 
-    static QRegExp amp(QString::fromLatin1("\\&"));
-    static QRegExp lt(QString::fromLatin1("\\<"));
-    static QRegExp gt(QString::fromLatin1("\\>"));
+    static QRegularExpression amp(QString::fromLatin1("\\&"));
+    static QRegularExpression lt(QString::fromLatin1("\\<"));
+    static QRegularExpression gt(QString::fromLatin1("\\>"));
 
     return ret;
 }

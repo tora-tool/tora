@@ -50,7 +50,7 @@
 #include <QtGui/QClipboard>
 #include <QtGui/QPainter>
 #include <QProgressDialog>
-#include <QRegExp>
+#include <QRegularExpression>
 
 static int MaxColDisp;
 static bool Gridlines;
@@ -105,7 +105,7 @@ void toResultViewItem::setText(int col, const QString &txt)
             ColumnCount = ns;
         }
 
-        static QRegExp number(QString::fromLatin1("^-?\\d*\\.?\\d+E?-?\\d*.?.?$"));
+        static QRegularExpression number(QString::fromLatin1("^-?\\d*\\.?\\d+E?-?\\d*.?.?$"));
 
         ColumnData[col].Data = txt;
 
@@ -320,7 +320,7 @@ void toResultViewCheck::setText(int col, const QString &txt)
             ColumnCount = ns;
         }
 
-        static QRegExp number(QString::fromLatin1("^\\d*\\.?\\d+E?-?\\d*.?.?$"));
+        static QRegularExpression number(QString::fromLatin1("^\\d*\\.?\\d+E?-?\\d*.?.?$"));
 
         ColumnData[col].Data = txt;
 

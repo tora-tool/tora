@@ -839,7 +839,7 @@ void toChartHandler::valueAdded(toLineChart *chart,
         }
         if (file.isOpen())
         {
-            static QRegExp quote(QString::fromLatin1("\""));
+            static QRegularExpression quote(QString::fromLatin1("\""));
             QString out = "\"";
             if (header)
             {

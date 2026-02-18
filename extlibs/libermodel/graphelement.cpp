@@ -24,7 +24,7 @@
 
 ///#include <kdebug.h>
 
-#include <QRegExp>
+#include <QRegularExpression>
 #ifdef GV_LIB
 #include <graphviz/gvc.h>
 #endif
@@ -149,7 +149,7 @@ void GraphElement::exportToGraphviz(void* element) const
         QString label = it.value();
         if (label != "label")
         {
-          label.replace(QRegExp("\n"),"\\n");
+          label.replace("\n", "\\n");
           //           kDebug() << it.key() << "=\"" << label << "\",";
           agsafeset(element, it.key().toUtf8().data(), label.toUtf8().data(), QString().toUtf8().data());
         }

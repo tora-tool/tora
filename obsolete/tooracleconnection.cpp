@@ -94,7 +94,7 @@ using namespace std;
 #include <qinputdialog.h>
 #include <qlineedit.h>
 #include <qpushbutton.h>
-#include <qregexp.h>
+#include <QRegularExpression>
 #include <qspinbox.h>
 #include <qvalidator.h>
 
@@ -1103,7 +1103,7 @@ public:
                 if (parambeg >= 0 && host.isEmpty())
                 {
                     QString tmp = QString::fromLatin1(buf + parambeg, pos - parambeg);
-                    tmp.replace(QRegExp(QString::fromLatin1("\\s+")), QString::null);
+                    tmp.replace(QRegularExpression(QString::fromLatin1("\\s+")), QString::null);
                     if (tmp.toLower().startsWith(QString::fromLatin1("sid=")))
                         ret.insert(ret.end(), tmp.mid(4));
                 }
@@ -1138,7 +1138,7 @@ void toOracleProvider::oracleQuery::execute(void)
             throw QString::fromLatin1("Query aborted before started");
         Running = true;
 
-        QRegExp stripnl("\r");
+        QRegularExpression stripnl("\r");
         Query = new otl_stream;
         Query->set_commit(0);
         if (toQValue::numberFormat() == 0)

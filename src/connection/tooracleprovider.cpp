@@ -324,7 +324,7 @@ QList<QString> toOracleProvider::databases(const QString &host, const QString &u
                 {
                     // If the database has no name but has some SID, we use its SID instead:
                     QString tmp = tns_file.mid(parambeg, pos - parambeg);
-                    tmp.replace(QRegExp(QString::fromLatin1("\\s+")), QString());
+                    tmp.replace(QRegularExpression(QString::fromLatin1("\\s+")), QString());
                     if (tmp.toLower().startsWith(QString::fromLatin1("sid=")))
                         ret.insert(ret.end(), tmp.mid(4));
                 }

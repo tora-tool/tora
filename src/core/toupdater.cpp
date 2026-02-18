@@ -48,7 +48,7 @@
 #include <QtCore/QUrl>
 #include <QtCore/QDebug>
 #include <QtCore/QDate>
-#include <QRegExp>
+#include <QRegularExpression>
 
 toUpdater::toUpdater()
     : QObject()
@@ -151,10 +151,10 @@ void toUpdater::replyFinished(QNetworkReply* reply)
 		m_version.append(text);
 #endif
 		QString version(body);
-		QRegExp gitversionRegexp("GITVERSION\\s*\"([-a-z0-9.]+)\"");
-		int pos = gitversionRegexp.indexIn(body);
-		if (pos > -1) {
-		    QString gitversion = gitversionRegexp.cap(1);
+        QRegularExpression gitversionRegexp("GITVERSION\\s*\"([-a-z0-9.]+)\"");
+        QRegularExpressionMatch match = gitversionRegexp.match(body);
+		if (match.hasMatch()) {
+            QString gitversion = match.captured(1);
 		    if (gitversion == TORAVERSION)
 		        m_version.append(QString("LastVersion version: %1\n\n").arg(gitversion));
 		    else

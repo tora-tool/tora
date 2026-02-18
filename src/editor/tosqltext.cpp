@@ -332,7 +332,7 @@ void toSqlText::indentCurrentSql() // slot
 void toSqlText::indentPriv(SQLParser::Token const* root, QList<SQLParser::Token const*> &list)
 {
     using namespace SQLParser;
-    QRegExp white("^[ \\n\\r\\t]*$");
+    QRegularExpression white("^[ \\n\\r\\t]*$");
 
     Token const*t = root;
     unsigned depth = 0;

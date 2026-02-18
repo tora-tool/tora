@@ -67,7 +67,7 @@
 #include <QToolBar>
 #include <QButtonGroup>
 #include <QRegularExpression>
-#include <QRegExp>
+#include <QRegularExpression>
 
 #include "icons/addindex.xpm"
 #include "icons/addtable.xpm"
@@ -220,7 +220,7 @@ class toBrowserFilter
         QString            Text;
         int                TablespaceType;
         std::list<QString> Tablespaces;
-        QRegExp            Match;
+        QRegularExpression Match;
         bool               OnlyOwnSchema;
         bool               Empty;
 

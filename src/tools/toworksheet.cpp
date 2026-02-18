@@ -85,7 +85,7 @@
 #include <QtCore/QTextStream>
 #include <QInputDialog>
 #include <QProgressDialog>
-#include <QRegExp>
+#include <QRegularExpression>
 
 #include "icons/clock.xpm"
 #include "icons/recall.xpm"
@@ -986,7 +986,7 @@ void toWorksheet::slotRefresh(void)
 
 bool toWorksheet::describe(toSyntaxAnalyzer::statement const& query)
 {
-	static QRegExp desc("\\s*DESC(R(I(B(E)?)?)?)?\\s+",  Qt::CaseInsensitive);
+    static QRegularExpression desc("\\s*DESC(R(I(B(E)?)?)?)?\\s+",  QRegularExpression::CaseInsensitiveOption);
 
 	if (!query.firstWord.startsWith("DESC", Qt::CaseInsensitive))
 		return false;

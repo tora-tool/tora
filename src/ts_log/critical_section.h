@@ -287,7 +287,7 @@ class boost_thread_manager
 
 #ifdef USE_QT_THREAD_MANAGER
 
-#include <QtCore/QMutex>
+#include <QtCore/QReadWriteLock>
 #include <QtCore/QThread>
 #include <QtCore/QDateTime>
 #if defined(__linux__)
@@ -382,11 +382,11 @@ class qt_thread_manager
             return stid;
         }
 
-        class critical_section : public QMutex
+        class critical_section : public QReadWriteLock
         {
                 critical_section(const critical_section &);
             public:
-                critical_section(void): QMutex(QMutex::NonRecursive) {};
+                critical_section(void): QReadWriteLock(QReadWriteLock::NonRecursive) {};
         };
 
         // automatic locking/unlocking of a resource
@@ -397,7 +397,7 @@ class qt_thread_manager
             public:
                 auto_lock_unlock( critical_section & cs) : m_cs( cs)
                 {
-                    m_cs.lock();
+		    m_cs.lockForWrite();
                 }
                 ~auto_lock_unlock()
                 {

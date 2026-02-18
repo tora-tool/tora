@@ -986,8 +986,8 @@ namespace Utils
         QString data;
 
         {
-            // qt4        QRegExp newline(QString::fromLatin1("\n"));
-            // qt4        QRegExp backslash(QString::fromLatin1("\\"));
+            // qt4        QRegularExpression newline(QString::fromLatin1("\n"));
+            // qt4        QRegularExpression backslash(QString::fromLatin1("\\"));
             QString newline("\n");
             QString backslash("\\");
             for (std::map<QString, QString>::iterator i = pairs.begin(); i != pairs.end(); i++)

@@ -42,7 +42,6 @@
 
 #include <QtCore/QPair>
 #include <QRegularExpression>
-#include <QRegExp>
 
 using namespace ToConfiguration;
 
@@ -152,7 +151,7 @@ void toResultCode::query(const QString &sql, toQueryParams const& param)
             // Try to detect where create statement really starts
             m_offset = 0;
             QStringList lines = text.split(QRegularExpression("\n|\r\n"));
-            QRegExp pattern(QString::fromLatin1("^\\s*[A-Z ]*%1.*%2.*").arg(type).arg(name));
+            QRegularExpression pattern(QString::fromLatin1("^\\s*[A-Z ]*%1.*%2.*").arg(type).arg(name));
             foreach(QString line, lines)
             {
 

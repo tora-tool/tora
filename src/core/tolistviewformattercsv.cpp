@@ -36,7 +36,6 @@
 #include "core/tolistviewformatterfactory.h"
 #include "core/tolistviewformatteridentifier.h"
 
-#include <QRegExp>
 #include <QRegularExpression>
 
 #include <iostream>

@@ -40,8 +40,7 @@
 #include <QtCore/QString>
 #include <QFileDialog>
 #include <QRegularExpression>
-#include <QRegExp>
-#include <QTextCodec>
+//#include <QTextCodec>
 
 #include "core/toeditorconfiguration.h"
 
@@ -137,20 +136,19 @@ namespace Utils
 
     static QString AddExt(QString t, const QString &filter)
     {
-        static QRegExp hasext(QString::fromLatin1("\\.[^\\/]*$"));
+        static QRegularExpression hasext(QString::fromLatin1("\\.[^\\/]*$"));
         if (t.isEmpty())
             return t;
 
         toConfigurationNewSingle::Instance().setOption(ToConfiguration::Main::LastDir, QVariant(t));
-
-        if (hasext.indexIn(t) < 0)
+        QRegularExpressionMatch hasextMatch = hasext.match(t);
+        if (!hasextMatch.hasMatch())
         {
-            static QRegExp findext(QString::fromLatin1("\\.[^ \t\r\n\\)\\|]*"));
-            int len = 0;
-            int pos = findext.indexIn(filter, 0);
-            len = findext.matchedLength();
-            if (pos >= 0)
-                t += filter.mid(pos, len);
+            static QRegularExpression findext(QString::fromLatin1("\\.[^ \t\r\n\\)\\|]*"));
+            QRegularExpressionMatch findextMatch = findext.match(filter);
+            if (findextMatch.hasMatch()) {
+                t += findextMatch.captured(0);
+            }
             else
             {
                 QFile file(t);
@@ -161,16 +159,16 @@ namespace Utils
         return t;
     }
 
-    /* Get encoding used to read/write files.
-    */
-    QTextCodec * toGetCodec(void)
-    {
-        QString codecConf = toConfigurationNewSingle::Instance().option(ToConfiguration::Main::Encoding).toString();
-        if (codecConf == "Default")
-            return QTextCodec::codecForLocale();
-        else
-            return QTextCodec::codecForName(codecConf.toLatin1());
-    } // toGetCodec
+//    /* Get encoding used to read/write files.
+//    */
+//    QTextCodec * toGetCodec(void)
+//    {
+//        QString codecConf = toConfigurationNewSingle::Instance().option(ToConfiguration::Main::Encoding).toString();
+//        if (codecConf == "Default")
+//            return QTextCodec::codecForLocale();
+//        else
+//            return QTextCodec::codecForName(codecConf.toLatin1());
+//    } // toGetCodec
 
     QString toExpandFile(const QString &file)
     {
@@ -250,8 +248,9 @@ namespace Utils
 
     QString toReadFile(const QString &filename)
     {
-        QTextCodec *codec = toGetCodec();
-        return codec->toUnicode(toReadFileB(filename));
+//        QTextCodec *codec = toGetCodec();
+//        return codec->toUnicode(toReadFileB(filename));
+        return toReadFileB(filename);
     }
 
     QByteArray toReadFileB(const QString &filename)
@@ -291,7 +290,7 @@ namespace Utils
                     QString("Couldn't open %1 for writing").arg(filename).toLatin1().constData()));
             return false;
         }
-        QTextCodec *codec = toGetCodec();
+//        QTextCodec *codec = toGetCodec();
 
         // Check if line end type should be changed to particular one
         // Note that line end type can be changed manually via menu
@@ -307,10 +306,12 @@ namespace Utils
                 changeLineEnds(&ba, T_EOL_CRLF);
             else if (lineEndSetting == "Mac")
                 changeLineEnds(&ba, T_EOL_CR);
-            file.write(codec->fromUnicode(ba));
+            //file.write(codec->fromUnicode(ba));
+            file.write(ba);
         }
         else
-            file.write(codec->fromUnicode(data));
+            //file.write(codec->fromUnicode(data));
+            file.write(data);
 
         if (file.error() != QFile::NoError)
         {

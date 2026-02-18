@@ -155,7 +155,7 @@ class toToolWidget : public QWidget
 #ifdef QT_DEBUG
         /* Inherited from QWidget - for debuging purposes only - buggy MDI */
         virtual void focusInEvent(QFocusEvent *);
-        virtual void enterEvent(QEvent *);
+        virtual void enterEvent(QEnterEvent *);
         virtual void paintEvent(QPaintEvent *);
         virtual void setVisible(bool visible);
 #endif

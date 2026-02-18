@@ -263,7 +263,7 @@ void toToolWidget::focusInEvent(QFocusEvent *e)
     QWidget::focusInEvent(e);
 }
 
-void toToolWidget::enterEvent(QEvent *e)
+void toToolWidget::enterEvent(QEnterEvent *e)
 {
     QWidget::enterEvent(e);
 }

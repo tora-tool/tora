@@ -151,7 +151,7 @@ bool toWorksheetWidget::describe(const QString &query)
 {
     try
     {
-        QRegExp white(QString::fromLatin1("[ \r\n\t.]+"));
+        QRegularExpression white(QString::fromLatin1("[ \r\n\t.]+"));
         QStringList part = query.split(white);
         if (part[0].toUpper() == QString::fromLatin1("DESC") ||
                 part[0].toUpper() == QString::fromLatin1("DESCRIBE"))

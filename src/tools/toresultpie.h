@@ -39,7 +39,7 @@
 
 #include <list>
 
-#include <QRegExp>
+#include <QRegularExpression>
 
 class toEventQuery;
 class toSQL;
@@ -82,20 +82,20 @@ public:
      * @param filter A regexp which the label must match.
      * @param valueFilter A regexp which the value must match.
      */
-    void setFilter(const QRegExp &filter, const QRegExp &valueFilter)
+    void setFilter(const QRegularExpression &filter, const QRegularExpression &valueFilter)
     {
         Filter = filter;
         ValueFilter = valueFilter;
     }
     /** Get the current filter.
      */
-    const QRegExp &filter(void)
+    const QRegularExpression &filter(void)
     {
         return Filter;
     }
     /** Get the current value filter.
      */
-    const QRegExp &valueFilter(void)
+    const QRegularExpression &valueFilter(void)
     {
         return ValueFilter;
     }
@@ -120,6 +120,6 @@ private:
     int Columns;
     bool Started;
     bool LabelFirst;
-    QRegExp Filter;
-    QRegExp ValueFilter;
+    QRegularExpression Filter;
+    QRegularExpression ValueFilter;
 };

@@ -41,7 +41,6 @@
 
 #include <QtCore/QString>
 #include <QtCore/QtDebug>
-#include <QRegExp>
 #include <QRegularExpression>
 
 toSyntaxAnalyzerNL::toSyntaxAnalyzerNL(toSqlText *parent)
@@ -77,8 +76,8 @@ toSyntaxAnalyzer::statement toSyntaxAnalyzerNL::getStatementAt(unsigned line, un
 toSyntaxAnalyzer::statementList toSyntaxAnalyzerNL::getStatements(QString const& text, int lineLimit)
 {
     QRegularExpression NL("\\r?\\n"); // TODO mac?, static variable can be used in both threads(can not be static)
-    QRegExp WS("^\\s*$");
-    QRegExp SEMI("^.*;\\s*(--\\s*)?$");
+    QRegularExpression WS("^\\s*$");
+    QRegularExpression SEMI("^.*;\\s*(--\\s*)?$");
 
     toSyntaxAnalyzer::statementList retval;
 

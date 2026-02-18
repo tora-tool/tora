@@ -43,7 +43,7 @@
 //#include "core/totool.h"
 
 #include <QApplication>
-#include <QtCore/QRegExp>
+#include <QtCore/QRegularExpression>
 
 // Some convenient defines
 

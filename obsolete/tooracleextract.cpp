@@ -42,8 +42,7 @@
 #include "core/totool.h"
 
 #include <QApplication>
-#include <QtCore/QRegExp>
-
+#include <QRegularExpression>
 #include "connection/tooracleconfiguration.h"
 
 static toOracleExtract OracleExtractor;
@@ -79,7 +78,7 @@ QString toOracleExtract::displaySource(toExtract &ext,
     QString re("^\\s*");
     re += type;
     re += "\\s+";
-    QRegExp StripType(re, Qt::CaseInsensitive);
+    QRegularExpression StripType(re, Qt::CaseInsensitive);
 
     toConnectionSubLoan conn(CONNECTION);
     toQuery inf(conn, SQLDisplaySource, toQueryParams() << type << name << owner);
@@ -160,7 +159,7 @@ QString toOracleExtract::partitionKeyColumns(toExtract &ext,
 
 QString toOracleExtract::prepareDB(const QString &db)
 {
-    static QRegExp quote("'");
+    static QRegularExpression quote("'");
     QString ret = db;
     ret.replace(quote, "''");
     return ret;
@@ -950,8 +949,8 @@ QString toOracleExtract::createMViewIndex(toExtract &ext,
         return "";
     ext.setState("IsASnapIndex", true);
 
-    static QRegExp start("^INITRANS");
-    static QRegExp ignore("LOGGING");
+    static QRegularExpression start("^INITRANS");
+    static QRegularExpression ignore("LOGGING");
 
     bool started = false;
     bool done = false;
@@ -1083,7 +1082,7 @@ QString toOracleExtract::createMViewTable(toExtract &ext,
         return "";
     ext.setState("IsASnapTable", true);
 
-    static QRegExp parallel("^PARALLEL");
+    static QRegularExpression parallel("^PARALLEL");
 
     bool started = false;
     bool done = false;
@@ -2132,8 +2131,8 @@ QString toOracleExtract::indexColumns(toExtract &ext,
                                       const QString &name) const
 {
     toConnectionSubLoan conn(ext.connection());
-    static QRegExp quote("\"");
-    static QRegExp func("^sys_nc[0-9]+", Qt::CaseInsensitive);
+    static QRegularExpression quote("\"");
+    static QRegularExpression func("^sys_nc[0-9]+", Qt::CaseInsensitive);
     toQuery inf(conn, SQLIndexColumns, toQueryParams() << name << owner);
     QString ret = indent;
     ret += "(\n";
@@ -2903,8 +2902,8 @@ void toOracleExtract::describeIndexColumns(toExtract &ext,
         const QString &owner,
         const QString &name) const
 {
-    static QRegExp quote("\"");
-    static QRegExp func("^sys_nc[0-9]g");
+    static QRegularExpression quote("\"");
+    static QRegularExpression func("^sys_nc[0-9]g");
     toConnectionSubLoan conn(ext.connection());
     toQuery inf(conn, SQLIndexColumns, toQueryParams() << name << owner);
     int num = 1;
@@ -3023,8 +3022,8 @@ void toOracleExtract::describeMViewIndex(toExtract &ext,
         return ;
     ext.setState("IsASnapIndex", true);
 
-    static QRegExp start("^[^\001]+[\001][^\001]+[\001][^\001]+[\001]INITTRANS");
-    static QRegExp ignore("^[^\001]+[\001][^\001]+[\001][^\001]+[\001]LOGGING");
+    static QRegularExpression start("^[^\001]+[\001][^\001]+[\001][^\001]+[\001]INITTRANS");
+    static QRegularExpression ignore("^[^\001]+[\001][^\001]+[\001][^\001]+[\001]LOGGING");
 
     bool started = false;
     bool done = false;
@@ -3105,7 +3104,7 @@ void toOracleExtract::describeMViewTable(toExtract &ext,
         return ;
     ext.setState("IsASnapTable", true);
     //                        Schema        Table         Name
-    static QRegExp parallel("^[^\001]+[\001][^\001]+[\001][^\001]+[\001]PARALLEL");
+    static QRegularExpression parallel("^[^\001]+[\001][^\001]+[\001][^\001]+[\001]PARALLEL");
 
     bool started = false;
     bool done = false;
@@ -4851,7 +4850,7 @@ void toOracleExtract::createTableContents(toExtract &ext,
             }
             beg += ") VALUES (";
 
-            QRegExp find("'");
+            QRegularExpression find("'");
 
             int row = 0;
             int maxRow = ext.getCommitDistance();
@@ -5242,8 +5241,8 @@ QString toOracleExtract::createTrigger(toExtract &ext,
 
 
     QString trgPart = trgType + " " + event;
-    QRegExp src("\\s" + trgPart + "\\s", Qt::CaseInsensitive);
-    description.replace(QRegExp("\nON"), QString("\n ON"));
+    QRegularExpression src("\\s" + trgPart + "\\s", Qt::CaseInsensitive);
+    description.replace(QRegularExpression("\nON"), QString("\n ON"));
     int pos = description.indexOf(src);
     //QString columns=description;
     QString columns;
@@ -6130,7 +6129,7 @@ void toOracleExtract::describeTrigger(toExtract &ext,
     QString src = trgType;
     src += " ";
     src += event;
-    description.replace(QRegExp("\nON"), QString("\n ON"));
+    description.replace(QRegularExpression("\nON"), QString("\n ON"));
     int pos = description.indexOf(src);
     QString columns;
     if (pos >= 0)

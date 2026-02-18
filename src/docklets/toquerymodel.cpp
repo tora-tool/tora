@@ -47,7 +47,7 @@
 #include <QtCore/QTimerEvent>
 #include <QTabWidget>
 #include <QListView>
-#include <QRegExp>
+#include <QRegularExpression>
 
 #define TOOL_NAME "QueryModel"
 
@@ -271,7 +271,7 @@ void toQueryModel::elementSelected(const QMap<QString,QString>&element)
 
         QString comment = element["comment"];
 
-        QRegExp commentRegexp("\\[([0-9]+),([0-9]+)\\]");
+        QRegularExpression commentRegexp("\\[([0-9]+),([0-9]+)\\]");
         int pos = commentRegexp.indexIn(comment);
         if (pos > -1) {
             QString lineStr = commentRegexp.cap(1);

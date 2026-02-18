@@ -55,7 +55,7 @@
 #include <QToolButton>
 #include <QSplitter>
 #include <QToolBar>
-#include <QRegExp>
+#include <QRegularExpression>
 
 #include "icons/add.xpm"
 #include "icons/clock.xpm"
@@ -149,7 +149,7 @@ static toSessionTool SessionTool;
 
 class toSessionFilter  : public toViewFilter
 {
-    QRegExp Filter;
+    QRegularExpression Filter;
 
     public:
         toSessionFilter()
@@ -168,14 +168,14 @@ class toSessionFilter  : public toViewFilter
         {
             if (f.isEmpty())
             {
-                QRegExp filter;
+                QRegularExpression filter;
                 Filter = filter;
             }
             else
             {
-                QRegExp filter(QString("*") + f + QString("*"),
+                QRegularExpression filter(QString("*") + f + QString("*"),
                                Qt::CaseInsensitive,
-                               QRegExp::Wildcard);
+                                          QRegularExpression::Wildcard);
                 Filter = filter;
             }
         }
