@@ -247,11 +247,9 @@ IF(USE_QT6)
   find_package(Qt6 COMPONENTS Xml REQUIRED)
   find_package(Qt6 COMPONENTS Test REQUIRED)
   find_package(Qt6 COMPONENTS LinguistTools)
-  find_package(Qt6 COMPONENTS Core5Compat)
 
   set(QT_INCLUDES
     ${Qt6Core_INCLUDE_DIRS}
-    ${Qt6Core5Compat_INCLUDE_DIRS}    
     ${Qt6Gui_INCLUDE_DIRS}
     ${Qt6Network_INCLUDE_DIRS}
     ${Qt6PrintSupport_INCLUDE_DIRS}
