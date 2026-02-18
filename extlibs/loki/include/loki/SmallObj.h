@@ -459,7 +459,7 @@ namespace Loki
         /// @note MSVC complains about non-empty exception specification lists.
         static void * operator new ( std::size_t size )
 #else
-        static void * operator new ( std::size_t size ) throw ( std::bad_alloc )
+        static void * operator new ( std::size_t size ) //throw ( std::bad_alloc )
 #endif
         {
             typename MyThreadingModel::Lock lock;
@@ -512,8 +512,7 @@ namespace Loki
         /// @note MSVC complains about non-empty exception specification lists.
         static void * operator new [] ( std::size_t size )
 #else
-        static void * operator new [] ( std::size_t size )
-            throw ( std::bad_alloc )
+	static void * operator new [] ( std::size_t size ) //throw ( std::bad_alloc )
 #endif
         {
             typename MyThreadingModel::Lock lock;

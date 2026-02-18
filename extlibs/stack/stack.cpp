@@ -344,7 +344,7 @@ namespace
     }
 #pragma comment(lib, "DBGHELP")
 #elif defined(__GNUC__)
-    #if defined(__i386__) || defined(__amd64__)
+    #if defined(__i386__) || defined(__amd64__) || defined(__arm64__)
 
     void fill_frames(std::list<dbg::stack_frame> &frames, dbg::stack::depth_type limit)
     {

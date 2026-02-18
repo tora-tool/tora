@@ -784,7 +784,7 @@ IF(USE_QT6)
     ${Qt6Core_LIBRARIES}          # dynamic qt6
     ${Qt6Gui_LIBRARIES}           # dynamic qt6
     ${Qt6Network_LIBRARIES}       # dynamic qt6
-    ${Qt6PrintSupport_LIBRARIES}  # dynamic qt6  
+    #${Qt6PrintSupport_LIBRARIES}  # dynamic qt6  
     ${Qt6Sql_LIBRARIES}           # dynamic qt6
     ${Qt6Widgets_LIBRARIES}       # dynamic qt6
     ${Qt6Xml_LIBRARIES}           # dynamic qt6
@@ -795,7 +795,7 @@ ELSE()
     ${Qt5Core_LIBRARIES}          # dynamic qt5
     ${Qt5Gui_LIBRARIES}           # dynamic qt5
     ${Qt5Network_LIBRARIES}       # dynamic qt5
-    ${Qt5PrintSupport_LIBRARIES}  # dynamic qt5  
+    #${Qt5PrintSupport_LIBRARIES}  # dynamic qt5  
     ${Qt5Sql_LIBRARIES}           # dynamic qt5
     ${Qt5Widgets_LIBRARIES}       # dynamic qt5
     ${Qt5Xml_LIBRARIES}           # dynamic qt5    
@@ -947,7 +947,7 @@ IF (TORA_DEBUG AND USE_EXPERIMENTAL)
     SET(LOGGING_SOURCES ${LOGGING_OBJECT_MOC_SOURCES})
 
     # add_subdirectory(tests)
-    include(tests/CMakeLists.txt)
+    ##TODO QT6    include(tests/CMakeLists.txt)
 ENDIF()
 
 ################################################################################

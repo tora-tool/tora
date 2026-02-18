@@ -36,6 +36,7 @@
 #define TOSQL_H
 
 #include <map>
+#include <list>
 
 #include <QtCore/QString>
 #include <QtCore/QList>
