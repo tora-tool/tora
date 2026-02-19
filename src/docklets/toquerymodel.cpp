@@ -272,10 +272,10 @@ void toQueryModel::elementSelected(const QMap<QString,QString>&element)
         QString comment = element["comment"];
 
         QRegularExpression commentRegexp("\\[([0-9]+),([0-9]+)\\]");
-        int pos = commentRegexp.indexIn(comment);
-        if (pos > -1) {
-            QString lineStr = commentRegexp.cap(1);
-            QString linePos = commentRegexp.cap(2);
+        QRegularExpressionMatch match = commentRegexp.match(comment);        
+        if (match.hasMatch()) {
+            QString lineStr = match.captured(1);
+            QString linePos = match.captured(2);
 
             int position = t->positionFromLineIndex(lineStr.toInt() - 1, linePos.toInt());
             t->gotoPosition(position);
