@@ -144,9 +144,9 @@ SET(PLUGIN_PERMISSIONS WORLD_EXECUTE GROUP_EXECUTE OWNER_EXECUTE WORLD_READ GROU
 IF(USE_QT6)
   set(CMAKE_CXX_STANDARD 17)
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
-  # force MSVC to define correct values for __cplusplus macro
-  IF(WIN32)
-   string(APPEND CMAKE_CXX_FLAGS " /Zc:__cplusplus -utf-8" )
+  # force MSVC to define correct values for __cplusplus macro  
+  IF(WIN32)  
+   string(APPEND CMAKE_CXX_FLAGS " /permissive- /Zc:__cplusplus -utf-8" )
   ENDIF()
   IF(APPLE)
     set(CMAKE_CXX_STANDARD 17)
