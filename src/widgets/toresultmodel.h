@@ -89,14 +89,14 @@ class toResultModel : public QAbstractTableModel
          * Tip: When implementing a table based model, rowCount()
          * should return 0 when the parent is valid.
          */
-        virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
+            virtual int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
 
         /**
          * Returns the data stored under the given role for the item
          * referred to by the index.
          */
-        virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+        virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
         /**
          * Convience function to return Qt::EditRole data for row and
@@ -118,7 +118,7 @@ class toResultModel : public QAbstractTableModel
          */
         QVariant headerData(int section,
                             Qt::Orientation orientation,
-                            int role = Qt::DisplayRole) const;
+                            int role = Qt::DisplayRole) const override;
 
         /*! Update the header.name attribute for the horizontal header.
         This method changes data which are taken from DB (but it doesn't
@@ -136,7 +136,7 @@ class toResultModel : public QAbstractTableModel
          * parent. When the parent is valid it means that rowCount is
          * returning the number of children of parent.
          */
-        virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
+        virtual int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
         /**
          * Returns true if there is more data available for parent,
@@ -145,7 +145,7 @@ class toResultModel : public QAbstractTableModel
          * overrides QAbstractTableModel::canFetchMore
          * not intended for toResultModel subclasses
          */
-        virtual bool canFetchMore(const QModelIndex &parent = QModelIndex()) const;
+        virtual bool canFetchMore(const QModelIndex &parent = QModelIndex()) const override;
 
         /**
          * Fetches any available data for the items with the parent
@@ -154,12 +154,12 @@ class toResultModel : public QAbstractTableModel
          *  overrides QAbstractTableModel::fetchMore
          *  not intended for toResultModel subclasses
          */
-        virtual void fetchMore(const QModelIndex &parent);
+        virtual void fetchMore(const QModelIndex &parent) override;
 
         /**
          * Returns the item flags for the given index.
          */
-        virtual Qt::ItemFlags flags(const QModelIndex &index) const;
+        virtual Qt::ItemFlags flags(const QModelIndex &index) const override;
 
         /**
          * Set the column alignment for given column
@@ -169,7 +169,7 @@ class toResultModel : public QAbstractTableModel
         /**
          * Sorts the model by column in the given order.
          */
-        virtual void sort(int column, Qt::SortOrder order = Qt::AscendingOrder);
+        virtual void sort(int column, Qt::SortOrder order = Qt::AscendingOrder) override;
 
         /**
          * override parent to make public
@@ -207,7 +207,7 @@ class toResultModel : public QAbstractTableModel
          * Returns a list of MIME types that can be used to describe a
          * list of model indexes.
          */
-        virtual QStringList mimeTypes() const;
+        virtual QStringList mimeTypes() const override; 
 
         /**
          * Returns an object that contains serialized items of data
