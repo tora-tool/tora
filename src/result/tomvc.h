@@ -148,8 +148,8 @@ class TOMVC
         virtual void observeData(toQueryAbstr::RowList&);
         virtual void observeData(QObject*); // toQuery or toEventQuery
         virtual void observeEndData();
-        virtual void observeDone();
-        virtual void observeError(const toConnection::exception &);
+        virtual void observeDone() override;
+        virtual void observeError(const toConnection::exception &) override;
         ///@}
 
         /**

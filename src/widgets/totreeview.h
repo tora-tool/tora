@@ -55,13 +55,13 @@ class toTreeView : public QTreeView
            calculate a row height and will control that it is not larger than a predefined
            size. Note: this height is only used in QTableView when resizeRowsToContents
            is called. */
-        virtual int sizeHintForRow(int row) const;
+        virtual int sizeHintForRow(int row) const override;
 
         /* Controls width of all table views in TOra. Will use standart Qt function to
            calculate a columns width and will control that it is not larger than a predefined
            size. Note: this height is only used in QTableView when resizeColumnsToContents
            is called. Column width is also adjusted when calculating width of column headers! */
-        virtual int sizeHintForColumn(int row) const;
+        virtual int sizeHintForColumn(int row) const override;
 
 
     protected:

@@ -93,7 +93,7 @@ class toTableModelPriv : public QAbstractTableModel
          * Returns the data for the given role and section in the header
          * with the specified orientation.
          */
-        QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+        QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
         /*! Update the header.name attribute for the horizontal header.
           This method changes data wchich are taken from DB (but it doesn't
@@ -101,14 +101,14 @@ class toTableModelPriv : public QAbstractTableModel
           It's allowed for Horizontal orientation and DisplayRole only. Else
           it returns always false and it does not do anything.
         */
-        bool setHeaderData(int section, Qt::Orientation orientation, const QVariant & value, int role = Qt::EditRole);
+        bool setHeaderData(int section, Qt::Orientation orientation, const QVariant & value, int role = Qt::EditRole) override;
 
         /**
          * Returns the number of columns for the children of the given
          * parent. When the parent is valid it means that rowCount is
          * returning the number of children of parent.
          */
-        virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
+        virtual int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
         /**
          * Returns true if there is more data available for parent,
@@ -136,13 +136,13 @@ class toTableModelPriv : public QAbstractTableModel
         /**
          * Sorts the model by column in the given order.
          */
-        virtual void sort(int column, Qt::SortOrder order = Qt::AscendingOrder);
+        virtual void sort(int column, Qt::SortOrder order = Qt::AscendingOrder) override;
 
         /**
          * Returns a list of MIME types that can be used to describe a
          * list of model indexes.
          */
-        virtual QStringList mimeTypes() const;
+        virtual QStringList mimeTypes() const override;
 
         /**
          * Returns an object that contains serialized items of data
@@ -153,7 +153,7 @@ class toTableModelPriv : public QAbstractTableModel
          * If the list of indexes is empty, or there are no supported MIME
          * types, 0 is returned rather than a serialized empty list.
          */
-        virtual QMimeData* mimeData(const QModelIndexList &indexes) const;
+         virtual QMimeData* mimeData(const QModelIndexList &indexes) const override;
 
         /**
          * Handles the data supplied by a drag and drop operation that
@@ -181,7 +181,7 @@ class toTableModelPriv : public QAbstractTableModel
                                   Qt::DropAction action,
                                   int row,
                                   int column,
-                                  const QModelIndex &parent);
+                                  const QModelIndex &parent) override;
 
         /**
          * Returns the drop actions supported by this model.
@@ -191,7 +191,7 @@ class toTableModelPriv : public QAbstractTableModel
          * that you must also reimplement the dropMimeData() function to
          * handle the additional operations.
          */
-        virtual Qt::DropActions supportedDropActions() const;
+        virtual Qt::DropActions supportedDropActions() const override;
 
         /// This method is not public in @ref QAbstractTableModel
         void beginInsertRows(const QModelIndex &parent, int first, int last);
