@@ -182,7 +182,7 @@ class toResultModel : public QAbstractTableModel
         /**
          * override parent to make it traceable
          */
-        virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const
+        virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override
         {
             return QAbstractTableModel::index(row, column, parent);
         }
@@ -218,7 +218,7 @@ class toResultModel : public QAbstractTableModel
          * If the list of indexes is empty, or there are no supported MIME
          * types, 0 is returned rather than a serialized empty list.
          */
-        virtual QMimeData* mimeData(const QModelIndexList &indexes) const;
+        virtual QMimeData* mimeData(const QModelIndexList &indexes) const override;
 
         /**
          * Returns the drop actions supported by this model.
@@ -228,7 +228,7 @@ class toResultModel : public QAbstractTableModel
          * that you must also reimplement the dropMimeData() function to
          * handle the additional operations.
          */
-        virtual Qt::DropActions supportedDropActions() const;
+        virtual Qt::DropActions supportedDropActions() const override;
 
         /** Get raw data of the data model. This is currently used to
          * prepare and send data to cache.

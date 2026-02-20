@@ -142,12 +142,12 @@ class TOMVC
          * toEventQueryObserverObject::Observer interface implementation
          */
         ///@{
-        virtual void observeHeaders(const toQueryAbstr::HeaderList&);
-        virtual void observeBeginData();
-        virtual void observeRow(toQueryAbstr::Row&);
-        virtual void observeData(toQueryAbstr::RowList&);
-        virtual void observeData(QObject*); // toQuery or toEventQuery
-        virtual void observeEndData();
+        virtual void observeHeaders(const toQueryAbstr::HeaderList&) override;
+        virtual void observeBeginData()override;
+        virtual void observeRow(toQueryAbstr::Row&) override;
+        virtual void observeData(toQueryAbstr::RowList&) override;
+        virtual void observeData(QObject*) override; // toQuery or toEventQuery
+        virtual void observeEndData() override;
         virtual void observeDone() override;
         virtual void observeError(const toConnection::exception &) override;
         ///@}
