@@ -87,7 +87,7 @@ toSyntaxAnalyzer::statementList toSyntaxAnalyzerNL::getStatements(QString const&
     bool splitOnSemi = false;
     foreach(QString const &line, lines)
     {
-        if ( WS.exactMatch(line))
+        if ( WS.match(line).hasMatch())
         {
             // Empty line found
             if ( lineStart && lineEnd )
@@ -138,7 +138,7 @@ LINE_IGNORED:
             lineEnd = lineNumber;
         }
 
-        if(splitOnSemi && SEMI.exactMatch(line))
+        if(splitOnSemi && SEMI.match(line).hasMatch())
         {
             if ( lineStart && lineEnd )
             {

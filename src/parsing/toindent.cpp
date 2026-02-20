@@ -157,7 +157,7 @@ void toIndent::tagToken(Token const*token)
     // mark token / trailing newline from single line comment in toString
     if (tt == SQLParser::Token::TokenType::X_COMMENT) // comment or white char
     {
-        if (TRAILING_NEWLINE.exactMatch(word))
+        if (TRAILING_NEWLINE.match(word).hasMatch())
         {
             token->metadata().insert("TRAILING_NEWLINE", 1);
             //token->metadata().insert("LINEBREAK", 1);
@@ -542,7 +542,7 @@ QString LineBuffer::formatToken(Token const *token)
 static void indentPriv(SQLParser::Token const* root, QList<SQLParser::Token const*> &list)
 {
     using namespace SQLParser;
-    QRegularExpression white("^[ \\n\\r\\t]*$");
+    QRegularExpression WHITE("^[ \\n\\r\\t]*$");
 
     Token const *t = root; // this sub-tree's root
 #if 0
@@ -556,7 +556,7 @@ static void indentPriv(SQLParser::Token const* root, QList<SQLParser::Token cons
     unsigned indentDepth = 0; // indentDepth counter
     while(t->parent())    // iterate to real root, compute indent depth, ignore nodes having no text
     {
-        if (!white.exactMatch(t->toString()))
+        if (!WHITE.match(t->toString()).hasMatch())
             indentDepth++; // increase indentDepth every time parent token in non-empty
         t = t->parent();
     }
@@ -568,7 +568,7 @@ static void indentPriv(SQLParser::Token const* root, QList<SQLParser::Token cons
     // set INDENT_DEPTH for all pre spacer tokens (token on the left side from me)
     foreach(Token const *t, root->prevTokens())
     {
-        if (white.exactMatch(t->toString()))
+        if (WHITE.match(t->toString()).hasMatch())
             continue;
 
         t->metadata().insert("INDENT_DEPTH", indentDepth);
@@ -578,7 +578,7 @@ static void indentPriv(SQLParser::Token const* root, QList<SQLParser::Token cons
     }
 
     // set INDENT_DEPTH to this subtree's root
-    if (!white.exactMatch(root->toString()))
+    if (!WHITE.match(root->toString()).hasMatch())
     {
         root->metadata().insert("INDENT_DEPTH", indentDepth);
         me.append(root);
@@ -588,7 +588,7 @@ static void indentPriv(SQLParser::Token const* root, QList<SQLParser::Token cons
     // set INDENT_DEPTH for all pre spacer tokens (token on the right side from me)
     foreach(Token const* t, root->postTokens())
     {
-        if (white.exactMatch(t->toString()))
+        if (WHITE.match(t->toString()).hasMatch())
             continue;
 
         t->metadata().insert("INDENT_DEPTH", indentDepth);
