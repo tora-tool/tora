@@ -42,7 +42,6 @@
 #include "core/toconfiguration.h"
 #include "core/toglobalconfiguration.h"
 #include "core/todatabaseconfig.h"
-#include "core/toconfiguration.h"
 #include "core/toeditorconfiguration.h"
 
 #include <QtCore/QTimer>

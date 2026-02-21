@@ -21,6 +21,7 @@
 #include "Qsci/qscicommandset.h"
 
 #include <QSettings>
+#include <QKeyCombination>
 
 #include "Qsci/qscicommand.h"
 #include "Qsci/qsciscintilla.h"

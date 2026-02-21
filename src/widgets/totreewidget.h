@@ -43,7 +43,6 @@
 #include <QtCore/QList>
 #include <QtCore/QVariant>
 
-#include "core/utils.h"
 #include "ts_log/ts_log_utils.h"
 
 class QPainter;

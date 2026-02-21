@@ -187,7 +187,7 @@ class toSessionFilter  : public toViewFilter
          */
         virtual bool check(const toResultModel *model, const int row)
         {
-            if (Filter.isEmpty())
+            if (Filter.pattern().isEmpty())
                 return true;
 
             int rows = model->rowCount();

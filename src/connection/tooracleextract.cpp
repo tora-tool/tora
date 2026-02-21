@@ -41,7 +41,6 @@
 #include "connection/tooracleconfiguration.h"
 
 #include <QtCore/QRegularExpression>
-#include <QRegularExpression>
 
 // Implementation misc
 
@@ -950,7 +949,7 @@ QString toOracleExtract::createMViewIndex(
         QString line = *i;
         QRegularExpressionMatch startMatch = start.match(line);
         
-        if (startMatch.hasMatch() >= 0)
+        if (startMatch.hasMatch())
             started = true;
         
         if (started)

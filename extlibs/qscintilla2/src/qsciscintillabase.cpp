@@ -525,7 +525,7 @@ void QsciScintillaBase::mouseDoubleClickEvent(QMouseEvent *e)
     // Make sure Scintilla will interpret this as a double-click.
     unsigned clickTime = sci->lastClickTime + Scintilla::Platform::DoubleClickTime() - 1;
 
-    sci->ButtonDownWithModifiers(Scintilla::Point(e->x(), e->y()), clickTime,
+    sci->ButtonDownWithModifiers(Scintilla::Point(e->position().x(), e->position().y()), clickTime,
             eventModifiers(e));
 
     // Remember the current position and time in case it turns into a triple
@@ -538,8 +538,9 @@ void QsciScintillaBase::mouseDoubleClickEvent(QMouseEvent *e)
 // Handle a mouse move.
 void QsciScintillaBase::mouseMoveEvent(QMouseEvent *e)
 {
-    sci->ButtonMoveWithModifiers(Scintilla::Point(e->x(), e->y()), 0,
-            eventModifiers(e));
+    sci->ButtonMoveWithModifiers(
+        Scintilla::Point(e->position().x(), e->position().y()), 0,
+        eventModifiers(e));
 }
 
 
@@ -548,7 +549,7 @@ void QsciScintillaBase::mousePressEvent(QMouseEvent *e)
 {
     setFocus();
 
-    Scintilla::Point pt(e->x(), e->y());
+    Scintilla::Point pt(e->position().x(), e->position().y());
 
     if (e->button() == Qt::LeftButton || e->button() == Qt::RightButton)
     {
@@ -607,7 +608,7 @@ void QsciScintillaBase::mouseReleaseEvent(QMouseEvent *e)
     if (e->button() != Qt::LeftButton)
         return;
 
-    Scintilla::Point pt(e->x(), e->y());
+    Scintilla::Point pt(e->position().x(), e->position().y());
 
     if (sci->HaveMouseCapture())
     {
@@ -690,7 +691,7 @@ void QsciScintillaBase::dragMoveEvent(QDragMoveEvent *e)
     {
         sci->SetDragPosition(
                 sci->SPositionFromLocation(
-                        Scintilla::Point(e->pos().x(), e->pos().y()), false,
+                        Scintilla::Point(e->position().x(), e->position().y()), false,
                         false, sci->UserVirtualSpace()));
 
         acceptAction(e);
