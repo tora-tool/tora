@@ -171,8 +171,8 @@ toNewConnection::toNewConnection(QWidget* parent)
     // must make sure this gets called manually.
     changeProvider(Provider->currentIndex());
 
-    int r = connectionModel()->rowCount() - 1;
-    QModelIndex last = connectionModel()->index(r, 1);
+    int r = proxyModel()->rowCount() - 1;
+    QModelIndex last = proxyModel()->index(r, 1);
     Previous->setCurrentIndex(last);
     Previous->selectionModel()->clear();
     searchEdit->setFocus(Qt::OtherFocusReason);
