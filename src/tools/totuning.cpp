@@ -721,7 +721,7 @@ toTuning::toTuning(QWidget *main, toConnection &connection)
 
     // used in pulldown menu
     changeRefreshAct = new QAction(tr("&Change Refresh"), this);
-    changeRefreshAct->setShortcut(Qt::ALT + Qt::Key_R);
+    changeRefreshAct->setShortcut(Qt::ALT | Qt::Key_R);
     connect(changeRefreshAct, SIGNAL(triggered()), Refresh, SLOT(setFocus(void)));
 
     toolbar->addSeparator();

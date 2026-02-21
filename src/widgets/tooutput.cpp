@@ -81,7 +81,7 @@ toOutputWidget::toOutputWidget(QWidget *parent)
     clearAct = new QAction(QIcon(QPixmap(const_cast<const char**>(eraselog_xpm))),
                            tr("Clear output"),
                            this);
-    clearAct->setShortcut(Qt::CTRL + Qt::Key_Backspace);
+    clearAct->setShortcut(Qt::CTRL | Qt::Key_Backspace);
     connect(clearAct, SIGNAL(triggered()), this, SLOT(clear(void)));
     Toolbar->addAction(clearAct);
 

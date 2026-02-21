@@ -347,7 +347,7 @@ void toPLSQL::createActions(void)
             this,
             SLOT(nextError()),
             Qt::QueuedConnection);
-    nextErrorAct->setShortcut(Qt::CTRL + Qt::Key_N);
+    nextErrorAct->setShortcut(Qt::CTRL | Qt::Key_N);
 
     previousErrorAct = new QAction(QIcon(QPixmap(const_cast<const char**>(prevbug_xpm))),
                                    tr("Pre&vious Error"),
@@ -357,7 +357,7 @@ void toPLSQL::createActions(void)
             this,
             SLOT(prevError()),
             Qt::QueuedConnection);
-    previousErrorAct->setShortcut(Qt::CTRL + Qt::Key_P);
+    previousErrorAct->setShortcut(Qt::CTRL | Qt::Key_P);
 
     // tool button to check code
     checkCodeAct = new QAction(QIcon(QPixmap(const_cast<const char**>(checkcode_xpm))),
