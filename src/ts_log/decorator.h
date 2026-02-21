@@ -285,28 +285,13 @@ class timeStartDecorator : public decoratorInterface
 protected:
 	// NOTE: use function here to wrap static thread_local variable into header file
 	static inline long long& getDeltaTimer() {
-// Visual Studio 2013
-#if (defined _MSC_VER) && (_MSC_VER <= 1800)
-		__declspec(thread) static long long time;
-#elif (	defined __APPLE__)
-#pragma message WARN("TODO/FIXME: thread local storage on OSX")
-        static long long time;
-#else
-	thread_local static long long time;
-#endif
-        return time;
+        static thread_local long long deltaTime = 0;
+        return deltaTime;
     };
+
 	static inline long long& getTotalTimer() {
-// Visual Studio 2013
-#if (defined _MSC_VER) && (_MSC_VER <= 1800)
-		__declspec(thread) static long long time;
-#elif (	defined __APPLE__)
-#pragma message WARN("TODO/FIXME: thread local storage on OSX")
-        static long long time;
-#else
-	thread_local static long long time;
-#endif
-        return time;
+        static thread_local long long totalTime = 0;
+        return totalTime;
     };
 
 public:
