@@ -42,7 +42,6 @@
 
 #include "icons/largelogo.xpm"
 
-#include <QStringRef>
 #include <QtCore/QFile>
 
 #include "core/tomemory.h"
