@@ -64,7 +64,7 @@ toFileMenu::toFileMenu()
     connect(this, SIGNAL(aboutToShow()), this, SLOT(slotAboutToShow()));
 
     newConnAct = new QAction(QPixmap(const_cast<const char**>(connect_xpm)), tr("&New Connection..."), this);
-    newConnAct->setShortcut(Qt::CTRL + Qt::Key_G);
+    newConnAct->setShortcut(Qt::CTRL | Qt::Key_G);
     newConnAct->setToolTip(tr("Create a new connection"));
 
     closeConnAct = new QAction(QPixmap(const_cast<const char**>(disconnect_xpm)), tr("&Close Connection"), this);
@@ -76,7 +76,7 @@ toFileMenu::toFileMenu()
     commitAct->setDisabled(true);
 
     rollbackAct = new QAction(QPixmap(const_cast<const char**>(rollback_xpm)), tr("&Rollback Connection"), this);
-    rollbackAct->setShortcut(Qt::CTRL + Qt::Key_Less);
+    rollbackAct->setShortcut(Qt::CTRL | Qt::Key_Less);
     rollbackAct->setToolTip(tr("Rollback transaction"));
     rollbackAct->setDisabled(true);
 
@@ -84,7 +84,7 @@ toFileMenu::toFileMenu()
     currentAct->setShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_U);
 
     stopAct = new QAction(QPixmap(const_cast<const char**>(stop_xpm)), tr("Stop All Queries"), this);
-    stopAct->setShortcut(Qt::CTRL + Qt::Key_J);
+    stopAct->setShortcut(Qt::CTRL | Qt::Key_J);
 
     refreshAct = new QAction(QPixmap(const_cast<const char**>(refresh_xpm)), tr("Reread Object Cache"), this);
 
