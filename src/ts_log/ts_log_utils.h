@@ -14,8 +14,14 @@
 #else
 #include <string>
 #include <xstring>
-#define __QHERE__ QString::fromLatin1(__FILE__) + ":"__HERE1__(__LINE__)
-#define __HERE__  std::string(__FILE__) + ":"__HERE1__(__LINE__)
+
+// TODO : use std::source_location when we can require C++20, and remove the dependency on __FUNCSIG__ (which is MSVC-specific)
+//#include <source_location>
+//#define __HERE__ std::string{std::source_location::current().file_name()} + 
+//":" + std::to_string(std::source_location::current().line()) +
+//"\\t" + std::string{ std::source_location::current().function_name() }
+#define __QHERE__ QString::fromLatin1(__FILE__) + ":" + __HERE1__(__LINE__)
+#define __HERE__  std::string(__FILE__) + ":" + __HERE1__(__LINE__)
 #define __HERE1__(x)   STR(x)"\t" +  __FUNCSIG__
 #define STR(a) #a
 #endif
