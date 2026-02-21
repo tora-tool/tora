@@ -33,7 +33,6 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "views/tobindsview.h"
-#include <QXmlSimpleReader>
 #include <QXmlStreamAttribute>
 #include <QXmlStreamAttributes>
 
