@@ -155,7 +155,7 @@ void toResultCode::query(const QString &sql, toQueryParams const& param)
             foreach(QString line, lines)
             {
 
-                if (pattern.exactMatch(line))
+                if (pattern.match(line).hasMatch())
                     break;
                 m_offset++;
             }

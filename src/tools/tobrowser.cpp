@@ -248,7 +248,7 @@ class toBrowserFilter
             if (!str.isEmpty())
             {
                 Match.setPattern(str);
-                Match.setCaseSensitivity(cas ? Qt::CaseSensitive : Qt::CaseInsensitive);
+                Match.setPatternOptions(cas ? QRegularExpression::NoPatternOption : QRegularExpression::CaseInsensitiveOption);
             }
 
             storeFilterSettings();
@@ -461,8 +461,7 @@ class toBrowserFilter
                     }
                     break;
                 case FilterRegExp:
-// qt4             if (Match.match(str) >= 0)
-                    if (Match.indexIn(str) >= 0)
+                    if (Match.match(str).hasMatch())
                         return !Invert;
                     break;
             }

@@ -94,9 +94,9 @@ void toResultPie::receiveData(toEventQuery*)
                 }
                 else
                     val = Query->readValue();
-                if (!Filter.isEmpty() && !Filter.exactMatch(lab))
+                if (!Filter.pattern().isEmpty() && !Filter.match(lab).hasMatch())
                     continue;
-                if (!ValueFilter.isEmpty() && !ValueFilter.exactMatch(val))
+                if (!ValueFilter.pattern().isEmpty() && !ValueFilter.match(val).hasMatch())
                     continue;
                 Values.insert(Values.end(), val.toDouble());
                 if (Columns > 1)
