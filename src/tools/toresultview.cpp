@@ -115,17 +115,15 @@ void toResultViewItem::setText(int col, const QString &txt)
             ColumnData[col].KeyAsc = "\xff";
             ColumnData[col].KeyDesc = "\x00";
         }
-        else if (number.indexIn(txt) >= 0)   // qt4 match()
+        else if (number.match(txt).hasMatch())
         {
             ColumnData[col].Type = keyData::Number;
 
-            static char buf[100];
-            double val = txt.toFloat();
-            if (val < 0)
-                sprintf(buf, "\x01%015.5f", val);
-            else
-                sprintf(buf, "%015.5f", val);
-            ColumnData[col].KeyAsc = ColumnData[col].KeyDesc = QString::fromLatin1(buf);
+            double val = txt.toDouble();
+            QString s = (val < 0)
+                ? QString::asprintf("\x01%015.5f", val)
+                : QString::asprintf("%015.5f", val);
+            ColumnData[col].KeyAsc = ColumnData[col].KeyDesc = s;
         }
         else
         {
@@ -330,18 +328,14 @@ void toResultViewCheck::setText(int col, const QString &txt)
             ColumnData[col].KeyAsc = "\xff";
             ColumnData[col].KeyDesc = "\x00";
         }
-// qt4        else if (number.match(txt) >= 0)
-        else if (number.indexIn(txt) >= 0)
+        else if (number.match(txt).hasMatch())
         {
             ColumnData[col].Type = keyData::Number;
-
-            static char buf[100];
-            double val = txt.toFloat();
-            if (val < 0)
-                sprintf(buf, "\x01%015.5f", val);
-            else
-                sprintf(buf, "%015.5f", val);
-            ColumnData[col].KeyAsc = ColumnData[col].KeyDesc = QString::fromLatin1(buf);
+            double val = txt.toDouble();
+            QString s = (val < 0)
+                ? QString::asprintf("\x01%015.5f", val)
+                : QString::asprintf("%015.5f", val);
+            ColumnData[col].KeyAsc = ColumnData[col].KeyDesc = s;
         }
         else
         {
