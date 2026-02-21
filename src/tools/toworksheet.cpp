@@ -986,16 +986,16 @@ void toWorksheet::slotRefresh(void)
 
 bool toWorksheet::describe(toSyntaxAnalyzer::statement const& query)
 {
-    static QRegularExpression desc("\\s*DESC(R(I(B(E)?)?)?)?\\s+",  QRegularExpression::CaseInsensitiveOption);
+    static const QRegularExpression desc(R"(\s*DESC(R(I(B(E)?)?)?)?\s+)", QRegularExpression::CaseInsensitiveOption);    
 
 	if (!query.firstWord.startsWith("DESC", Qt::CaseInsensitive))
 		return false;
 
-	int pos = desc.indexIn(query.sql, 0);
-	if (pos == -1)
-		return false;
-
-	Editor->gotoPosition(query.posFrom + desc.matchedLength());
+    auto match = desc.match(query.sql, 0);
+    if (!match.hasMatch())
+        return false;
+	
+    Editor->gotoPosition(query.posFrom + match.capturedLength());
 	slotDescribe();
 	return true;
 }

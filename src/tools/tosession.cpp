@@ -173,10 +173,7 @@ class toSessionFilter  : public toViewFilter
             }
             else
             {
-                QRegularExpression filter(QString("*") + f + QString("*"),
-                               Qt::CaseInsensitive,
-                                          QRegularExpression::Wildcard);
-                Filter = filter;
+                Filter = QRegularExpression::fromWildcard(QString("*") + f + QString("*"), Qt::CaseInsensitive);
             }
         }
 
@@ -197,7 +194,7 @@ class toSessionFilter  : public toViewFilter
                 if (data.isEmpty())
                     continue;
 
-                if (Filter.exactMatch(data))
+				if (Filter.match(data).hasMatch())
                     return true;
             }
 
