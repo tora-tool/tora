@@ -18,7 +18,6 @@ IF(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 ENDIF()
 
 # options available for user's input
-OPTION(USE_QT6 "Enable this if you want to use Qt6, instead of Qt5" no)
 OPTION(WANT_INTERNAL_QSCINTILLA "Use internal/bundled QScintilla2 source" OFF)
 OPTION(WANT_INTERNAL_LOKI "Use internal/bundled Loki source" OFF)
 OPTION(ENABLE_ORACLE "Enable/Disable Oracle support at all. Including detection" ON)
@@ -49,9 +48,7 @@ OPTION(TEST_APP17 "cmdline qdecimal" ON)
 OPTION(TEST_APP18 "TOMVC" ON)
 
 #Set our CMake minimum version
-#Require 2.4.2 for Qt finding
-#Require 2.4.3 for moc change detection and rpath updates for custom cairo install
-CMAKE_MINIMUM_REQUIRED(VERSION 3.1 FATAL_ERROR) # qt5 requirement
+CMAKE_MINIMUM_REQUIRED(VERSION 3.16 FATAL_ERROR) # CMake 3.16+ handles PCH generation
 #CMAKE_POLICY(SET CMP0046 OLD) # The dependency target "revisiontag" of target "tora" does not exist
 #CMAKE_POLICY(SET CMP0042 OLD) # MACOSX_RPATH
 
@@ -141,23 +138,20 @@ SET(PLUGIN_PERMISSIONS WORLD_EXECUTE GROUP_EXECUTE OWNER_EXECUTE WORLD_READ GROU
 ##############################################################################################################
 ########## check for the CPU we build for                                                           ##########
 
-IF(USE_QT6)
   set(CMAKE_CXX_STANDARD 17)
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
   # force MSVC to define correct values for __cplusplus macro  
-  IF(WIN32)  
-   string(APPEND CMAKE_CXX_FLAGS " /permissive- /Zc:__cplusplus -utf-8" )
-  ENDIF()
-  IF(APPLE)
-    set(CMAKE_CXX_STANDARD 17)
-    set(CMAKE_CXX_STANDARD_REQUIRED ON)
-    set(CMAKE_CXX_EXTENSIONS OFF)
-    add_definitions("-D_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES" )
-    add_definitions("-D_HAS_AUTO_PTR_ETC" )
-  ENDIF()
-ELSE()
-  set(CMAKE_CXX_STANDARD 11)
+
+IF(WIN32)  
+ string(APPEND CMAKE_CXX_FLAGS " /permissive- /Zc:__cplusplus -utf-8" )
+ENDIF()
+ 
+IF(APPLE)
+  set(CMAKE_CXX_STANDARD 17)
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
+  set(CMAKE_CXX_EXTENSIONS OFF)
+  add_definitions("-D_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES" )
+  add_definitions("-D_HAS_AUTO_PTR_ETC" )
 ENDIF()
 
 IF (CMAKE_COMPILER_IS_GNUCC)
@@ -225,96 +219,42 @@ ENDIF (WIN32 AND NOT DEFINED WANT_INTERNAL_QSCINTILLA)
 ##############################################################################################################
 ########## Find Dependencies                                                                        ##########
 
-
-SET(QT_MT_REQUIRED true)
-SET(QT_USE_QTNETWORK TRUE)
-SET(QT_USE_QTXML TRUE)
-SET(QT_USE_QTWEBKIT TRUE)
+#SET(QT_MT_REQUIRED true)
+#SET(QT_USE_QTNETWORK TRUE)
+#SET(QT_USE_QTXML TRUE)
+#SET(QT_USE_QTWEBKIT TRUE)
 #SET(CMAKE_AUTOMOC ON)
 
-IF(USE_QT6)
-  set( QT6_ROOT_PATH CACHE PATH "Qt6 root directory (i.e. where the 'bin' folder lies)" )
-  if ( QT6_ROOT_PATH )
-    list( APPEND CMAKE_PREFIX_PATH ${QT6_ROOT_PATH} )
-  endif()
 
-  find_package(Qt6 COMPONENTS Core REQUIRED)
-  find_package(Qt6 COMPONENTS Gui REQUIRED)
-  find_package(Qt6 COMPONENTS Network REQUIRED)
-  find_package(Qt6 COMPONENTS PrintSupport REQUIRED)
-  find_package(Qt6 COMPONENTS Sql REQUIRED)
-  find_package(Qt6 COMPONENTS Widgets REQUIRED)
-  find_package(Qt6 COMPONENTS Xml REQUIRED)
-  find_package(Qt6 COMPONENTS Test REQUIRED)
-  find_package(Qt6 COMPONENTS LinguistTools)
-
-  set(QT_INCLUDES
-    ${Qt6Core_INCLUDE_DIRS}
-    ${Qt6Gui_INCLUDE_DIRS}
-    ${Qt6Network_INCLUDE_DIRS}
-    ${Qt6PrintSupport_INCLUDE_DIRS}
-    ${Qt6Sql_INCLUDE_DIRS}
-    ${Qt6Widgets_INCLUDE_DIRS}
-    ${Qt6Xml_INCLUDE_DIRS}
-  )
-  IF(APPLE)
-    LIST(APPEND QT_INCLUDES ${Qt6MacExtras_INCLUDE_DIRS})
-  ENDIF()
-
-  add_definitions(-D_HAS_AUTO_PTR_ETC=1)
-
-ELSE(USE_QT6)
-
-set( QT5_ROOT_PATH CACHE PATH "Qt5 root directory (i.e. where the 'bin' folder lies)" )
-if ( QT5_ROOT_PATH )
-  list( APPEND CMAKE_PREFIX_PATH ${QT5_ROOT_PATH} )
+set( QT6_ROOT_PATH CACHE PATH "Qt6 root directory (i.e. where the 'bin' folder lies)" )
+if ( QT6_ROOT_PATH )
+  list( APPEND CMAKE_PREFIX_PATH ${QT6_ROOT_PATH} )
 endif()
 
-find_package(Qt5Core REQUIRED)
-find_package(Qt5Gui REQUIRED)
-find_package(Qt5Network REQUIRED)
-find_package(Qt5PrintSupport REQUIRED)
-find_package(Qt5Sql REQUIRED)
-find_package(Qt5Widgets REQUIRED)
-find_package(Qt5Xml REQUIRED)
-find_package(Qt5Test REQUIRED)
-find_package(Qt5LinguistTools)
-IF(APPLE)
-  find_package(Qt5MacExtras REQUIRED)
-ENDIF()
+find_package(Qt6 COMPONENTS Core REQUIRED)
+find_package(Qt6 COMPONENTS Gui REQUIRED)
+find_package(Qt6 COMPONENTS Network REQUIRED)
+find_package(Qt6 COMPONENTS PrintSupport REQUIRED)
+find_package(Qt6 COMPONENTS Sql REQUIRED)
+find_package(Qt6 COMPONENTS Widgets REQUIRED)
+find_package(Qt6 COMPONENTS Xml REQUIRED)
+find_package(Qt6 COMPONENTS Test REQUIRED)
+find_package(Qt6 COMPONENTS LinguistTools)
+
 set(QT_INCLUDES
-  ${Qt5Core_INCLUDE_DIRS}
-  ${Qt5Gui_INCLUDE_DIRS}
-  ${Qt5Network_INCLUDE_DIRS}
-  ${Qt5PrintSupport_INCLUDE_DIRS}
-  ${Qt5Sql_INCLUDE_DIRS}
-  ${Qt5Widgets_INCLUDE_DIRS}
-  ${Qt5Xml_INCLUDE_DIRS}
+  ${Qt6Core_INCLUDE_DIRS}
+  ${Qt6Gui_INCLUDE_DIRS}
+  ${Qt6Network_INCLUDE_DIRS}
+  ${Qt6PrintSupport_INCLUDE_DIRS}
+  ${Qt6Sql_INCLUDE_DIRS}
+  ${Qt6Widgets_INCLUDE_DIRS}
+  ${Qt6Xml_INCLUDE_DIRS}
 )
 IF(APPLE)
-  LIST(APPEND QT_INCLUDES ${Qt5MacExtras_INCLUDE_DIRS})
+  LIST(APPEND QT_INCLUDES ${Qt6MacExtras_INCLUDE_DIRS})
 ENDIF()
-include_directories(${QT_INCLUDES})
-# SET(CMAKE_CXX_FLAGS         "${CMAKE_CXX_FLAGS} ${Qt5Core_EXECUTABLE_COMPILE_FLAGS}")
-# SET(CMAKE_C_FLAGS           "${CMAKE_C_FLAGS}   ${Qt5Core_EXECUTABLE_COMPILE_FLAGS}")
-# STRING(TOUPPER "CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}" _flags_var_name)
-# SET(${_flags_var_name}      "${${_flags_var_name}} ${Qt5Core_EXECUTABLE_COMPILE_FLAGS}")
-# SET("CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}" _flags_var_name)
-# # prevent error "You must build your code with position independent code if Qt was built with..
-if (Qt5_POSITION_INDEPENDENT_CODE)
-  SET(CMAKE_POSITION_INDEPENDENT_CODE ON)
-endif()
 
-  MESSAGE("Qt Found OK")
-  #Add our Qt definitions
-  ADD_DEFINITIONS(
-    ${QT_DEFINITIONS}
-    -DQT_CORE_LIB
-    -DQT_GUI_LIB
-    -DQT_THREAD_LIB
-  )
-
-ENDIF()
+add_definitions(-D_HAS_AUTO_PTR_ETC=1)
 
 IF (WANT_INTERNAL_QSCINTILLA)
   MESSAGE(STATUS "QSci: Building with internal copy of QScintilla.")
@@ -505,18 +445,6 @@ IF (WIN32)
   IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT OR CMAKE_INSTALL_PREFIX MATCHES "^C:/Program Files")
     SET(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}/TARGET/" CACHE PATH "TOra install prefix" FORCE )
   ENDIF()
-  if(QT5_BUILD)
-    get_target_property(_moc_location Qt5::moc IMPORTED_LOCATION)
-    get_filename_component(QTBINDIR ${_moc_location} DIRECTORY)
-    message(STATUS "QTBINDIR \"${QTBINDIR}\"")
-    set(WINDEPLOYQT_PROG "${QTBINDIR}/windeployqt.exe")
-    #find_program(WINDEPLOYQT_PROG windeployqt.exe PATHS ${QTBINDIR} $ENV{QTDIR}/bin/)
-    #if(WINDEPLOYQT_PROG)
-    message(STATUS "Found ${WINDEPLOYQT_PROG}")
-    #else()
-    #message(WARNING "Unable to find windeployqt")
-    #endif()
-  endif()
 ENDIF()
 
 MESSAGE(STATUS "TOra ${VERSION} will be built & installed into ${CMAKE_INSTALL_PREFIX}")

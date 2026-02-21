@@ -1,14 +1,14 @@
 # Precompiled headers
-IF(USE_PCH AND WIN32 AND MSVC)
-  INCLUDE(PrecompiledHeader)
-  SET(PCH_DEFINED TRUE)
-  SET(PCH_HEADER "precompiled_msvc.h")
-  SET(PCH_SOURCE "precompiled/precompiled_msvc.cpp")
-ELSEIF (USE_PCH AND CMAKE_COMPILER_IS_GNUCXX AND ${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-  INCLUDE(PrecompiledHeader)
-  SET(PCH_DEFINED TRUE)
-  SET(PCH_HEADER "precompiled/precompiled_linux.h")
-ENDIF()
+##- IF(USE_PCH AND WIN32 AND MSVC)
+##-   INCLUDE(PrecompiledHeader)
+##-   SET(PCH_DEFINED TRUE)
+##-   SET(PCH_HEADER "precompiled_msvc.h")
+##-   SET(PCH_SOURCE "precompiled/precompiled_msvc.cpp")
+##- ELSEIF (USE_PCH AND CMAKE_COMPILER_IS_GNUCXX AND ${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+##-   INCLUDE(PrecompiledHeader)
+##-   SET(PCH_DEFINED TRUE)
+##-   SET(PCH_HEADER "precompiled/precompiled_linux.h")
+##- ENDIF()
 
 ################################################################################
 #                              Subdirectories                                  #
@@ -688,9 +688,9 @@ SET(TORA_SOURCES
   #     tooracletable.cpp
   )
 
-IF (PCH_DEFINED)
-  LIST(APPEND TORA_SOURCES ${PCH_SOURCE})
-ENDIF (PCH_DEFINED)
+##- IF (PCH_DEFINED)
+##-   LIST(APPEND TORA_SOURCES ${PCH_SOURCE})
+##- ENDIF (PCH_DEFINED)
 
 IF(ORACLE_FOUND)
   LIST(APPEND TORA_SOURCES main/tooraclesetting.cpp connection/tooracleconfiguration.cpp connection/tooraclefind.cpp)
@@ -729,13 +729,6 @@ IF (USE_QT6)
   QT6_WRAP_UI(TORA_UI_SOURCES ${TORA_UI_SRC} )
   QT6_WRAP_CPP(TORA_MOC_SOURCES ${TORA_MOC_CLASSES})
   QT6_ADD_RESOURCES(TORA_RCC_SRCS ${TORA_RCC_FILES})
-ELSE ()
-  if(Qt5LinguistTools_FOUND)
-    QT5_ADD_TRANSLATION(TORA_I18N_QM ${TORA_I18N_TS} ${TORA_I18N_TS_TOAD})
-  endif()
-  QT5_WRAP_UI(TORA_UI_SOURCES ${TORA_UI_SRC} )
-  QT5_WRAP_CPP(TORA_MOC_SOURCES ${TORA_MOC_CLASSES})
-  QT5_ADD_RESOURCES(TORA_RCC_SRCS ${TORA_RCC_FILES})
 ENDIF ()
 
 ################################################################################
@@ -790,23 +783,11 @@ IF(USE_QT6)
     ${Qt6Xml_LIBRARIES}           # dynamic qt6
     ${Qt6Core5Compat_LIBRARIES}   # dynamic qt6
     )
-ELSE()
-    LIST(APPEND TORA_LIBS
-    ${Qt5Core_LIBRARIES}          # dynamic qt5
-    ${Qt5Gui_LIBRARIES}           # dynamic qt5
-    ${Qt5Network_LIBRARIES}       # dynamic qt5
-    #${Qt5PrintSupport_LIBRARIES}  # dynamic qt5  
-    ${Qt5Sql_LIBRARIES}           # dynamic qt5
-    ${Qt5Widgets_LIBRARIES}       # dynamic qt5
-    ${Qt5Xml_LIBRARIES}           # dynamic qt5    
-    ) 
 ENDIF()
 
 IF (APPLE)
   IF(USE_QT6)
     LIST(APPEND TORA_LIBS ${Qt6MacExtras_LIBRARIES})
-  ELSE()
-    LIST(APPEND TORA_LIBS ${Qt5MacExtras_LIBRARIES})
   ENDIF()
 ENDIF()
 
@@ -854,10 +835,16 @@ SET_TARGET_PROPERTIES(${EXE_NAME} PROPERTIES ENABLE_EXPORTS ON)
 IF(HAVE_GIT_VERSION)
   ADD_DEPENDENCIES(${EXE_NAME} revisiontag) # explicitly say that the executable depends on the gitversion
 ENDIF()
-IF(PCH_DEFINED)
-  # NOTE: this macro calls SET_SOURCE_FILES_PROPERTIES macro which set props for source within ALL tagets
-  ADD_PRECOMPILED_HEADER(${EXE_NAME} ${PCH_HEADER} FORCEINCLUDE)
-ENDIF()
+##- IF(PCH_DEFINED)
+##-   # NOTE: this macro calls SET_SOURCE_FILES_PROPERTIES macro which set props for source within ALL tagets
+##-   ADD_PRECOMPILED_HEADER(${EXE_NAME} ${PCH_HEADER} FORCEINCLUDE)
+##- ENDIF()
+
+IF (MSVC)
+   target_precompile_headers(${EXE_NAME} PRIVATE precompiled/precompiled_msvc.h)
+ELSE()
+   target_precompile_headers(${EXE_NAME} PRIVATE precompiled/precompiled_linux.h)
+ENDIF()   
 
 ################################################################################
 #                                   Tests                                      #
@@ -867,7 +854,6 @@ IF (TORA_DEBUG AND USE_EXPERIMENTAL)
     # CORE sources
     FILE(GLOB CORE_OBJECT_SOURCES "core/*.cpp")
     FILE(GLOB CORE_OBJECT_HEADERS "core/*.h")
-    #QT5_WRAP_CPP(CORE_OBJECT_MOC_SOURCES ${CORE_OBJECT_HEADERS})
     QT6_WRAP_CPP(CORE_OBJECT_MOC_SOURCES ${CORE_OBJECT_HEADERS})
 
     #ADD_LIBRARY(CORE_OBJECT_LIB OBJECT ${CORE_OBJECT_SOURCES} ${CORE_OBJECT_MOC_SOURCES} ${PCH_SOURCE})
@@ -876,7 +862,6 @@ IF (TORA_DEBUG AND USE_EXPERIMENTAL)
     # PARSING sources
     FILE(GLOB PARSING_OBJECT_SOURCES "parsing/*.cpp" "parsing/*.cc")    
     FILE(GLOB PARSING_OBJECT_HEADERS "parsing/*.h")
-    #QT5_WRAP_CPP(PARSING_OBJECT_MOC_SOURCES ${PARSING_OBJECT_HEADERS})
     QT6_WRAP_CPP(PARSING_OBJECT_MOC_SOURCES ${PARSING_OBJECT_HEADERS})
 
     SET(PARSING_SOURCES ${PARSING_OBJECT_SOURCES} ${PARSING_OBJECT_MOC_SOURCES})
@@ -884,28 +869,23 @@ IF (TORA_DEBUG AND USE_EXPERIMENTAL)
     # WIDGETS SOURCES
     FILE(GLOB WIDGETS_OBJECT_SOURCES "widgets/*.cpp")
     FILE(GLOB WIDGETS_OBJECT_UI "widgets/*.ui")
-    #QT5_WRAP_UI(WIDGETS_OBJECT_UI_SRC ${WIDGETS_OBJECT_UI})
     QT6_WRAP_UI(WIDGETS_OBJECT_UI_SRC ${WIDGETS_OBJECT_UI})
     FILE(GLOB WIDGETS_OBJECT_HEADERS "widgets/*.h")
-    #QT5_WRAP_CPP(WIDGETS_OBJECT_MOC_SOURCES ${WIDGETS_OBJECT_HEADERS})
     QT6_WRAP_CPP(WIDGETS_OBJECT_MOC_SOURCES ${WIDGETS_OBJECT_HEADERS})    
     SET(WIDGETS_SOURCES ${WIDGETS_OBJECT_SOURCES} ${WIDGETS_OBJECT_UI_SRC} ${WIDGETS_OBJECT_MOC_SOURCES})
 
     # VIEWS SOURCES
     FILE(GLOB VIEWS_OBJECT_SOURCES "views/*.cpp")
     FILE(GLOB VIEWS_OBJECT_UI "views/*.ui")
-    #QT5_WRAP_UI(VIEWS_OBJECT_UI_SRC ${VIEWS_OBJECT_UI})
     QT6_WRAP_UI(VIEWS_OBJECT_UI_SRC ${VIEWS_OBJECT_UI})
 
     FILE(GLOB VIEWS_OBJECT_HEADERS "views/*.h")
-    #QT5_WRAP_CPP(VIEWS_OBJECT_MOC_SOURCES ${VIEWS_OBJECT_HEADERS})
     QT6_WRAP_CPP(VIEWS_OBJECT_MOC_SOURCES ${VIEWS_OBJECT_HEADERS})    
     SET(VIEWS_SOURCES ${VIEWS_OBJECT_SOURCES} ${VIEWS_OBJECT_UI_SRC} ${VIEWS_OBJECT_MOC_SOURCES})
 
     # VIEWS SOURCES
     FILE(GLOB VIEWS_OBJECT_SOURCES "views/*.cpp")
     FILE(GLOB VIEWS_OBJECT_HEADERS "views/*.h")
-    #QT5_WRAP_CPP(VIEWS_OBJECT_MOC_SOURCES ${VIEWS_OBJECT_HEADERS})
     QT6_WRAP_CPP(VIEWS_OBJECT_MOC_SOURCES ${VIEWS_OBJECT_HEADERS})    
     SET(VIEWS_SOURCES ${VIEWS_OBJECT_SOURCES} ${VIEWS_OBJECT_MOC_SOURCES})
 
@@ -968,11 +948,7 @@ IF(ORACLE_FOUND)
     SET(STACK_LIB "stack_lib")
   ENDIF()
 
-  IF(USE_QT6)
-    TARGET_LINK_LIBRARIES(${PROVIDER_ORACLE} ${ORACLE_LIBRARIES} Qt6::Core Qt6::Widgets ${TORA_LIB} ${TROTL_LIB_FLAGS} "trotl" ${STACK_LIB})
-  ELSE()
-    TARGET_LINK_LIBRARIES(${PROVIDER_ORACLE} ${ORACLE_LIBRARIES} Qt5::Core Qt5::Widgets ${TORA_LIB} ${TROTL_LIB_FLAGS} "trotl" ${STACK_LIB})
-  ENDIF()
+  TARGET_LINK_LIBRARIES(${PROVIDER_ORACLE} ${ORACLE_LIBRARIES} Qt6::Core Qt6::Widgets ${TORA_LIB} ${TROTL_LIB_FLAGS} "trotl" ${STACK_LIB})
   
   IF(DEFINED TORA_LIB)
     ADD_DEPENDENCIES(${PROVIDER_ORACLE} ${TORA_LIB})
@@ -1043,7 +1019,6 @@ ELSEIF (APPLE)
     add_definitions(-DPROVIDERS_PATH=\"../Libraries\")
 
 ELSEIF (UNIX)
-
     # Unix install
     install(TARGETS ${EXE_NAME} RUNTIME DESTINATION bin LIBRARY DESTINATION lib${LIB_SUFFIX})
     install(FILES ${TORA_I18N_QM} DESTINATION ${CMAKE_INSTALL_PREFIX}/share/tora-${VERSION}/i18n)
@@ -1054,6 +1029,3 @@ ELSEIF (UNIX)
     add_definitions(-DSHARE_DIR=\"${CMAKE_INSTALL_PREFIX}/share/tora-${VERSION}\")
 ENDIF()
 
-#set (FILES_TO_TRANSLATE ${TORA_UI_SRC} ${TORA_SOURCES} ${TORA_MOC_CLASSES})
-#qt4_create_translation(QM_FILES ${FILES_TO_TRANSLATE} ${TORA_I18N_TS})
-#add_custom_command (lupdate DEPENDS ${QM_FILES} )

@@ -8,10 +8,10 @@
 #include <QComboBox>
 #include <QCompleter>
 #include <QDateEdit>
-#include <QDesktopWidget>
+//#include <QDesktopWidget>
 #include <QDialog>
 #include <QDialogButtonBox>
-#include <QDirModel>
+//#include <QDirModel>
 #include <QDockWidget>
 #include <QFileDialog>
 #include <QFontDialog>
@@ -116,11 +116,11 @@
 #include <QtCore/QSize>
 #include <QtCore/QString>
 #include <QtCore/QStringList>
-#include <QtCore/QStringRef>
+//#include <QtCore/QStringRef>
 #include <QtCore/QtAlgorithms>
 #include <QtCore/QtDebug>
 #include <QtCore/QTemporaryFile>
-#include <QtCore/QTextCodec>
+//#include <QtCore/QTextCodec>
 #include <QtCore/QTextStream>
 #include <QtCore/QtGlobal>
 #include <QtCore/QThread>
@@ -209,7 +209,7 @@
 // OS headers
 #include <dlfcn.h>
 #include <stdlib.h>
-#include <sys/prctl.h>
+////#include <sys/prctl.h> // Missing on MAC
 #include <unistd.h>
 
 // Other headers
