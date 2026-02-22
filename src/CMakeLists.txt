@@ -1,14 +1,3 @@
-# Precompiled headers
-##- IF(USE_PCH AND WIN32 AND MSVC)
-##-   INCLUDE(PrecompiledHeader)
-##-   SET(PCH_DEFINED TRUE)
-##-   SET(PCH_HEADER "precompiled_msvc.h")
-##-   SET(PCH_SOURCE "precompiled/precompiled_msvc.cpp")
-##- ELSEIF (USE_PCH AND CMAKE_COMPILER_IS_GNUCXX AND ${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-##-   INCLUDE(PrecompiledHeader)
-##-   SET(PCH_DEFINED TRUE)
-##-   SET(PCH_HEADER "precompiled/precompiled_linux.h")
-##- ENDIF()
 
 ################################################################################
 #                              Subdirectories                                  #
@@ -835,11 +824,8 @@ SET_TARGET_PROPERTIES(${EXE_NAME} PROPERTIES ENABLE_EXPORTS ON)
 IF(HAVE_GIT_VERSION)
   ADD_DEPENDENCIES(${EXE_NAME} revisiontag) # explicitly say that the executable depends on the gitversion
 ENDIF()
-##- IF(PCH_DEFINED)
-##-   # NOTE: this macro calls SET_SOURCE_FILES_PROPERTIES macro which set props for source within ALL tagets
-##-   ADD_PRECOMPILED_HEADER(${EXE_NAME} ${PCH_HEADER} FORCEINCLUDE)
-##- ENDIF()
 
+# Precompiled headers CMAKE native way
 IF (MSVC)
    target_precompile_headers(${EXE_NAME} PRIVATE precompiled/precompiled_msvc.h)
 ELSE()

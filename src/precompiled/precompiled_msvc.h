@@ -1,6 +1,14 @@
 
 #pragma once
 
+// Note this has to be force included BEFERE any QT include defines word "emit as an empty string
+#include "extlibs/libantlr3cpp-3.5.3/include/antlr3.hpp"
+
+
+// Define WIN32_LEAN_AND_MEAN before #include <windows.h> in your precompiled header. This macro excludes Winsock and other rarely used APIs from windows.h, preventing the conflict without changing include order elsewhere.
+// See https://docs.microsoft.com/en-us/windows/win32/winprog/using-the-windows-headers#lean-and-mean-windows-headers for more details.
+#define WIN32_LEAN_AND_MEAN
+
 // QT headers first
 #include <QAction>
 #include <QApplication>

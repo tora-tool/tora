@@ -10,6 +10,8 @@
 
 #include "TokenAttr.hpp"
 
+#undef emit
+
 namespace Antlr3GuiImpl
 {
     class PLSQLGuiLexer;

@@ -1,4 +1,7 @@
 
+// Note this has to be force included BEFERE any QT include defines word "emit as an empty string
+#include "extlibs/libantlr3cpp-3.5.3/include/antlr3.hpp"
+
 // QT headers first
 #include <QAction>
 #include <QApplication>
