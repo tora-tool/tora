@@ -138,17 +138,15 @@ SET(PLUGIN_PERMISSIONS WORLD_EXECUTE GROUP_EXECUTE OWNER_EXECUTE WORLD_READ GROU
 ##############################################################################################################
 ########## check for the CPU we build for                                                           ##########
 
-  set(CMAKE_CXX_STANDARD 17)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
-  # force MSVC to define correct values for __cplusplus macro  
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-IF(WIN32)  
+IF(WIN32)
+ # force MSVC to define correct values for __cplusplus macro
  string(APPEND CMAKE_CXX_FLAGS " /permissive- /Zc:__cplusplus -utf-8" )
 ENDIF()
  
 IF(APPLE)
-  set(CMAKE_CXX_STANDARD 17)
-  set(CMAKE_CXX_STANDARD_REQUIRED ON)
   set(CMAKE_CXX_EXTENSIONS OFF)
   add_definitions("-D_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION -D_LIBCPP_ENABLE_CXX17_REMOVED_FEATURES" )
   add_definitions("-D_HAS_AUTO_PTR_ETC" )
@@ -219,17 +217,10 @@ ENDIF (WIN32 AND NOT DEFINED WANT_INTERNAL_QSCINTILLA)
 ##############################################################################################################
 ########## Find Dependencies                                                                        ##########
 
-#SET(QT_MT_REQUIRED true)
-#SET(QT_USE_QTNETWORK TRUE)
-#SET(QT_USE_QTXML TRUE)
-#SET(QT_USE_QTWEBKIT TRUE)
-#SET(CMAKE_AUTOMOC ON)
-
-
 set( QT6_ROOT_PATH CACHE PATH "Qt6 root directory (i.e. where the 'bin' folder lies)" )
-if ( QT6_ROOT_PATH )
+IF ( QT6_ROOT_PATH )
   list( APPEND CMAKE_PREFIX_PATH ${QT6_ROOT_PATH} )
-endif()
+ENDIF()
 
 find_package(Qt6 COMPONENTS Core REQUIRED)
 find_package(Qt6 COMPONENTS Gui REQUIRED)
@@ -330,7 +321,7 @@ ELSE (NOT ENABLE_TERADATA)
 ENDIF (NOT ENABLE_TERADATA)
 
 IF (USE_EXPERIMENTAL)
-  FIND_PACKAGE(PopplerQt4)
+  #FIND_PACKAGE(PopplerQt4)
   #FIND_PACKAGE(GraphViz)
 ELSE ()
   ADD_DEFINITIONS("-DTOBUILDTYPE_RELEASE=1")

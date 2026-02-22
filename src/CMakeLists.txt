@@ -50,11 +50,11 @@ IF (NOT WANT_INTERNAL_QSCINTILLA)
   INCLUDE_DIRECTORIES(${QSCINTILLA_INCLUDE_DIR})
 ENDIF (NOT WANT_INTERNAL_QSCINTILLA)
 
-IF (USE_EXPERIMENTAL)
-  IF (POPPLER_QT4_FOUND)
-    INCLUDE_DIRECTORIES(${POPPLER_QT4_INCLUDE_DIR})
-  ENDIF (POPPLER_QT4_FOUND)
-ENDIF(USE_EXPERIMENTAL)
+# IF (USE_EXPERIMENTAL)
+#   IF (POPPLER_QT4_FOUND)
+#     INCLUDE_DIRECTORIES(${POPPLER_QT4_INCLUDE_DIR})
+#   ENDIF (POPPLER_QT4_FOUND)
+# ENDIF(USE_EXPERIMENTAL)
 
 ################################################################################
 #                              Resource files                                  #
@@ -148,9 +148,9 @@ IF (ORACLE_FOUND)
   LIST (APPEND TORA_UI_SRC main/tooraclesettingui.ui)
 ENDIF (ORACLE_FOUND)
 
-IF (POPPLER_QT4_FOUND)
-  #    LIST(APPEND TORA_UI_SRC pdfview/pdfviewwidget.ui)
-ENDIF (POPPLER_QT4_FOUND)
+# IF (POPPLER_QT4_FOUND)
+#    LIST(APPEND TORA_UI_SRC pdfview/pdfviewwidget.ui)
+# ENDIF (POPPLER_QT4_FOUND)
 
 ################################################################################
 #                           QObject sub-classes(moc)                           #
@@ -381,9 +381,9 @@ IF (ORACLE_FOUND)
   LIST(APPEND TORA_MOC_CLASSES main/tooraclesetting.h connection/tooracleconfiguration.h)
 ENDIF (ORACLE_FOUND)
 
-IF (POPPLER_QT4_FOUND)
-  #    LIST(APPEND TORA_MOC_CLASSES pdfview/documentwidget.h pdfview/pdfviewwidget.h)
-ENDIF (POPPLER_QT4_FOUND)
+# IF (POPPLER_QT4_FOUND)
+#    LIST(APPEND TORA_MOC_CLASSES pdfview/documentwidget.h pdfview/pdfviewwidget.h)
+# ENDIF (POPPLER_QT4_FOUND)
 
 IF (USE_EXPERIMENTAL)
   LIST(APPEND TORA_MOC_CLASSES tools/toscript.h)
@@ -677,10 +677,6 @@ SET(TORA_SOURCES
   #     tooracletable.cpp
   )
 
-##- IF (PCH_DEFINED)
-##-   LIST(APPEND TORA_SOURCES ${PCH_SOURCE})
-##- ENDIF (PCH_DEFINED)
-
 IF(ORACLE_FOUND)
   LIST(APPEND TORA_SOURCES main/tooraclesetting.cpp connection/tooracleconfiguration.cpp connection/tooraclefind.cpp)
 ENDIF(ORACLE_FOUND)
@@ -692,9 +688,9 @@ IF (USE_EXPERIMENTAL)
   LIST (APPEND TORA_SOURCES docklets/tobindvars.cpp)
 ENDIF (USE_EXPERIMENTAL)
 
-IF(POPPLER_QT4_FOUND)
-  #    LIST(APPEND TORA_SOURCES pdfview/pdfviewwidget.cpp pdfview/documentwidget.cpp)
-ENDIF (POPPLER_QT4_FOUND)
+# IF(POPPLER_QT4_FOUND)
+#    LIST(APPEND TORA_SOURCES pdfview/pdfviewwidget.cpp pdfview/documentwidget.cpp)
+# ENDIF (POPPLER_QT4_FOUND)
 
 ################################################################################
 #             compiled in icons for windows(MSVC and Mingw way)                #
@@ -712,9 +708,9 @@ IF (WIN32 AND MINGW)
 ENDIF (WIN32 AND MINGW)
 
 IF (USE_QT6)
-  if(Qt6LinguistTools_FOUND)
+  IF(Qt6LinguistTools_FOUND)
     QT6_ADD_TRANSLATION(TORA_I18N_QM ${TORA_I18N_TS} ${TORA_I18N_TS_TOAD})
-  endif()
+  ENDIF()
   QT6_WRAP_UI(TORA_UI_SOURCES ${TORA_UI_SRC} )
   QT6_WRAP_CPP(TORA_MOC_SOURCES ${TORA_MOC_CLASSES})
   QT6_ADD_RESOURCES(TORA_RCC_SRCS ${TORA_RCC_FILES})
@@ -780,9 +776,9 @@ IF (APPLE)
   ENDIF()
 ENDIF()
 
-IF (POPPLER_QT4_FOUND)
-  LIST(APPEND TORA_LIBS ${POPPLER_QT4_LIBRARIES})
-ENDIF(POPPLER_QT4_FOUND)
+# IF (POPPLER_QT4_FOUND)
+#  LIST(APPEND TORA_LIBS ${POPPLER_QT4_LIBRARIES})
+# ENDIF(POPPLER_QT4_FOUND)
 
 # prevent opening the cmd.exe window
 IF (WIN32)
@@ -798,7 +794,7 @@ IF (UNIX)
 ENDIF()
 
 IF (POSTGRESQL_FOUND)
-   LIST(APPEND TORA_LIBS ${POSTGRESQL_LIBRARIES})
+  LIST(APPEND TORA_LIBS ${POSTGRESQL_LIBRARIES})
 ENDIF (POSTGRESQL_FOUND)
 
 IF(UNIX AND NOT APPLE)
