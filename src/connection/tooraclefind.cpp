@@ -193,7 +193,7 @@ QList<toConnectionProviderFinder::ConnectionProvirerParams>  toOracleInstantFind
             continue;
         if ( possibleOracleHomes.contains(dHome.absolutePath()))
             continue;
-        TLOG(5, toNoDecorator, __HERE__) << "searching: " << dHome.absolutePath()  << std::endl;
+        TLOG(5, toNoDecorator, __HERE__) << "searching(cHome): " << dHome.absolutePath()  << std::endl;
         possibleOracleHomes.insert(dHome.absolutePath());
     }
     while (false);
@@ -208,7 +208,7 @@ QList<toConnectionProviderFinder::ConnectionProvirerParams>  toOracleInstantFind
             continue;
         if ( possibleOracleHomes.contains(dHome.absolutePath()))
             continue;
-        TLOG(5, toNoDecorator, __HERE__) << "searching: " << dHome.absolutePath()  << std::endl;
+        TLOG(5, toNoDecorator, __HERE__) << "searching(sHome): " << dHome.absolutePath()  << std::endl;
         possibleOracleHomes.insert(dHome.absolutePath());
     }
     while (false);
@@ -240,7 +240,7 @@ QList<toConnectionProviderFinder::ConnectionProvirerParams>  toOracleInstantFind
             if ( dHome.exists("sqlldr.exe"))
                 continue;
 #endif
-            TLOG(5, toNoDecorator, __HERE__) << "searching: " << dHome.absolutePath()  << std::endl;
+            TLOG(5, toNoDecorator, __HERE__) << "searching(pHome): " << dHome.absolutePath()  << std::endl;
             possibleOracleHomes.insert(dHome.absolutePath());
         }
     }
@@ -383,42 +383,9 @@ void toOracleInstantFinder::loadLib(ConnectionProvirerParams const &params)
     else
       throw QString("Could not create: %1").arg(userLib.absolutePath());
 
-    if ( !QDir::setCurrent(userLib.absolutePath()))
-      throw QString("Could change cwd: %1").arg(userLib.absolutePath());
-#if 0  // If embedding instant client
-    QDir pathDir(params.value("PATH").toString());
-    QFileInfoList libraries = pathDir.entryInfoList( QStringList() << "libclntsh*.dylib*" << "libnnz*.dylib*", QDir::Files );
-    foreach(QFileInfo const& library, libraries)
-    {
-      if (library.isFile())
-      {
-	TLOG(5, toNoDecorator, __HERE__) << "Re-creating symlink:" << library.absoluteFilePath() << std::endl;
-	QFileInfo targetLibrary(userLib, library.fileName());
-	if (targetLibrary.isSymLink())
-	{
-	  TLOG(5, toNoDecorator, __HERE__) << "rm -f " << targetLibrary.fileName() << std::endl;
-	  retval = unlink(targetLibrary.fileName().toStdString().c_str());
-	}
-	TLOG(5, toNoDecorator, __HERE__) << "ln -sf " << library.absoluteFilePath() << ' ' << targetLibrary.fileName() << std::endl;
-	retval = symlink(library.absoluteFilePath().toStdString().c_str(), targetLibrary.fileName().toStdString().c_str());
-      }
-    }
+    if ( !QDir::setCurrent(QCoreApplication::applicationDirPath() + "/../PlugIns/"))
+        throw QString("Could change cwd: %1").arg("/../PlugIns/");
 
-    QDir installDir(QCoreApplication::applicationDirPath());
-    TLOG(5, toNoDecorator, __HERE__) << "Location: " << QCoreApplication::applicationDirPath() << std::endl;
-
-    if( installDir != cwdDir)
-      QDir::setCurrent(installDir.absolutePath());
-
-    TLOG(5, toNoDecorator, __HERE__) << "Loading: " << libPath.absoluteFilePath() << std::endl;
-    Utils::toLibrary::LHandle hmoduleOCI = Utils::toLibrary::loadLibrary(libPath);
-    if ( hmoduleOCI)
-        TLOG(5, toNoDecorator, __HERE__) << " OK" << std::endl;
-#else
-    //if embedding
-    //install_name_tool -change @rpath/libclntsh.dylib.11.1 @loader_path/libclntsh.dylib.11.1 libporacle.so
-#endif
-    QDir::setCurrent(QCoreApplication::applicationDirPath() + "/../PlugIns/");
     TLOG(5, toNoDecorator, __HERE__) << "Loading: " PROVIDER_LIB << std::endl;
     TLOG(5, toNoDecorator, __HERE__) << "From: " << QDir::currentPath() << std::endl;
     Utils::toLibrary::LHandle hmodulePOracle = Utils::toLibrary::loadLibrary(QFileInfo(PROVIDER_LIB));

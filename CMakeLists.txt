@@ -402,10 +402,8 @@ SET(CPACK_IGNORE_FILES
     "CMakeCache.txt"
     "refresh-copyright-and-license.pl")
 SET(CPACK_SOURCE_IGNORE_FILES ${CPACK_IGNORE_FILES})
-INCLUDE(CPack)
-# simulate autotools' "make dist"
-add_custom_target(dist COMMAND ${CMAKE_MAKE_PROGRAM} package_source)
 
+INCLUDE(CPack)
 
 IF (WANT_RPM)
   SET(RPM_DEFINES --define "_sourcedir ${CMAKE_SOURCE_DIR}" )
@@ -445,6 +443,15 @@ IF (WIN32)
   IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT OR CMAKE_INSTALL_PREFIX MATCHES "^C:/Program Files")
     SET(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}/TARGET/" CACHE PATH "TOra install prefix" FORCE )
   ENDIF()
+ENDIF()
+
+IF(APPLE)
+  set(CPACK_GENERATOR "DragNDrop")
+  set(CPACK_DMG_VOLUME_NAME "TOra-${VERSION}")
+  set(CPACK_DMG_BACKGROUND_IMAGE "${CMAKE_SOURCE_DIR}/dmg-background.tiff")
+  set(CPACK_DMG_DS_STORE_SETUP_SCRIPT "${CMAKE_SOURCE_DIR}/dmg-setup.scpt")
+  set(CPACK_DMG_FORMAT "UDZO")  # Compressed
+  set(CPACK_DMG_FILESYSTEM "APFS")  # Modern FS
 ENDIF()
 
 MESSAGE(STATUS "TOra ${VERSION} will be built & installed into ${CMAKE_INSTALL_PREFIX}")
