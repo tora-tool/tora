@@ -100,6 +100,46 @@ IF(Qt5Widgets_FOUND)
   ENDIF()
 ENDIF(Qt5Widgets_FOUND)
 
+IF(Qt6Widgets_FOUND)
+  # Iterate over the include list of the Qt5Widgets module
+  FOREACH(TEMPPATH ${Qt6Widgets_INCLUDE_DIRS})
+    # Check for a Qsci directory
+    FIND_PATH(QSCINTILLA_INCLUDE_DIR qsciglobal.h ${TEMPPATH}/Qsci)
+
+    # Found - break loop
+    IF(QSCINTILLA_INCLUDE_DIR)
+      BREAK()
+    ENDIF()
+  ENDFOREACH()
+
+  # Check
+  IF(QSCINTILLA_INCLUDE_DIR)
+
+    # Get Qt5Widgets library and cut off the library name
+    GET_TARGET_PROPERTY(QT6_WIDGETSLIBRARY Qt6::Widgets LOCATION)
+    GET_FILENAME_COMPONENT(QT6_WIDGETSLIBRARYPATH ${QT6_WIDGETSLIBRARY} PATH)
+
+    # Add library
+    SET(LIBRARYPATH ${QT6_WIDGETSLIBRARYPATH} "/usr/lib/" "/usr/local/lib")
+    MESSAGE("QScintilla2 LIBPATH \"${LIBRARYPATH}\"")
+
+    FIND_LIBRARY(QSCINTILLA_LIBRARY NAMES qscintilla2-qt6 qt5scintilla2 libqscintilla2_qt6.so libqscintilla2.so libqscintilla2.a qscintilla2.lib PATHS ${LIBRARYPATH})
+
+    # Check
+    IF(QSCINTILLA_LIBRARY)
+      # Enable library
+      SET(QSCINTILLA_LIBRARIES ${QSCINTILLA_LIBRARY})
+      SET(QSCINTILLA_FOUND true)
+      MARK_AS_ADVANCED(QSCINTILLA_INCLUDE_DIR QSCINTILLA_LIBRARY)
+    ELSE()
+      MESSAGE(FATAL_ERROR "QScintilla2 library not found")
+    ENDIF()
+  ELSE()
+    MESSAGE(FATAL_ERROR "Cannot find QScintilla2 header")
+  ENDIF()
+ENDIF(Qt6Widgets_FOUND)
+
+
 IF (QSCINTILLA_FOUND)
   IF (NOT QScintilla_FIND_QUIETLY)
     MESSAGE(STATUS "Found QScintilla2: ${QSCINTILLA_LIBRARY}")
