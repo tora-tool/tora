@@ -223,7 +223,9 @@ bool toScintilla::showToolTip(toScintilla::ToolTipData const& t)
         return false;
     char *buf = new char[word_len + 1];
     SendScintilla(SCI_GETTEXTRANGE, t.wordStart, t.wordEnd, buf);
-    QString word = bytesAsText(buf);
+//    QString word = bytesAsText(buf); // unused. It's defined as "protected" at owner owner class.
+//  Replace to standart function from Qt
+    QString word = QString::fromUtf8(buf);
     delete[] buf;
 
     QToolTip::showText(t.globalPos, word, viewport(), t.rect);
