@@ -51,7 +51,7 @@
 #include <QtCore/QDir>
 #include <QFileDialog>
 #include <QCompleter>
-#include <QFilesystemModel>
+#include <QFileSystemModel>
 #include <QRegularExpression>
 #include <QtCore/QSettings>
 #include <QSplitter>

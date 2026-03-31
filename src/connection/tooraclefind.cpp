@@ -219,11 +219,11 @@ QList<toConnectionProviderFinder::ConnectionProvirerParams>  toOracleInstantFind
         QStringList slPath = QString(getenv("PATH")).split(';', Qt::SkipEmptyParts );
         slEnvPaths.append(slPath);
 #elif defined(Q_OS_LINUX)
-        QStringList slLDPath = QString(getenv("LD_LIBRARY_PATH")).split(';', QString::SkipEmptyParts );
+        QStringList slLDPath = QString(getenv("LD_LIBRARY_PATH")).split(';', Qt::SkipEmptyParts );
         slEnvPaths.append(slLDPath);
-        QStringList slLDPath32 = QString(getenv("LD_LIBRARY_PATH32")).split(';', QString::SkipEmptyParts );
+        QStringList slLDPath32 = QString(getenv("LD_LIBRARY_PATH32")).split(';', Qt::SkipEmptyParts );
         slEnvPaths.append(slLDPath32);
-        QStringList slLDPath64 = QString(getenv("LD_LIBRARY_PATH64")).split(';', QString::SkipEmptyParts );
+        QStringList slLDPath64 = QString(getenv("LD_LIBRARY_PATH64")).split(';', Qt::SkipEmptyParts );
         slEnvPaths.append(slLDPath64);
 #endif
         foreach(QString sHome, slEnvPaths)

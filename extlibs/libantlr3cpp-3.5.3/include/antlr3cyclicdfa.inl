@@ -24,32 +24,33 @@ CyclicDFA<ImplTraits, CtxType>::CyclicDFA( ANTLR_INT32	decisionNumber
 
 template<class ImplTraits, class CtxType>
 CyclicDFA<ImplTraits, CtxType>::CyclicDFA( const CyclicDFA& dfa )
+				:m_decisionNumber(dfa.decisionNumber)
+				, m_description(dfa.m_description)
+				, m_eot(dfa.eot)
+				, m_eof(dfa.eof)
+				, m_min(dfa.min)
+				, m_max(dfa.max)
+				, m_accept(dfa.accept)
+				, m_special(dfa.special)
+				, m_transition(dfa.transition)
 {
-	m_decisionNumber = dfa.m_decisionNumber;
-	m_description = dfa.m_description;
-	m_eot = dfa.m_eot;
-	m_eof = dfa.m_eof;
-	m_min = dfa.m_min;
-	m_max = dfa.m_max;
-	m_accept = dfa.m_accept;
-	m_special = dfa.m_special;
-	m_transition = dfa.m_transition;
 }
 
-template<class ImplTraits, class CtxType>
-CyclicDFA<ImplTraits, CtxType>& CyclicDFA<ImplTraits, CtxType>::operator=( const CyclicDFA& dfa)
-{
-	m_decisionNumber = dfa.m_decisionNumber;
-	m_description = dfa.m_description;
-	m_eot = dfa.m_eot;
-	m_eof = dfa.m_eof;
-	m_min = dfa.m_min;
-	m_max = dfa.m_max;
-	m_accept = dfa.m_accept;
-	m_special = dfa.m_special;
-	m_transition = dfa.m_transition;
-	return *this;
-}
+// not compatible for C++ 17? or above
+//template<class ImplTraits, class CtxType>
+//CyclicDFA<ImplTraits, CtxType>& CyclicDFA<ImplTraits, CtxType>::operator=( const CyclicDFA& dfa)
+//{
+//	m_decisionNumber = dfa.m_decisionNumber;
+//	m_description = dfa.m_description;
+//	m_eot = dfa.m_eot;
+//	m_eof = dfa.m_eof;
+//	m_min = dfa.m_min;
+//	m_max = dfa.m_max;
+//	m_accept = dfa.m_accept;
+//	m_special = dfa.m_special;
+//	m_transition = dfa.m_transition;
+//	return *this;
+//}
 
 template<class ImplTraits, class CtxType>
 ANTLR_INT32	CyclicDFA<ImplTraits, CtxType>::specialStateTransition(CtxType * ,
